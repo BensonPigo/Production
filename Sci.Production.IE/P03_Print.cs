@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -17,7 +13,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P03_Print
     /// </summary>
-    public partial class P03_Print : Sci.Win.Tems.PrintForm
+    public partial class P03_Print : Win.Tems.PrintForm
     {
         private DataRow masterData;
         private string display;
@@ -89,7 +85,7 @@ namespace Sci.Production.IE
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region 切分頁計算 takt
             decimal ttlnocount = MyUtility.Convert.GetInt(this.masterData["CurrentOperators"]);
@@ -393,7 +389,7 @@ order by no
             }
             #endregion
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -410,7 +406,7 @@ order by no
             }
 
             // string strXltName = Sci.Env.Cfg.XltPathDir + (this.display == "U" ? "\\IE_P03_Print_U.xltx" : "\\IE_P03_Print_Z.xltx");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P03_Print.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\IE_P03_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -520,7 +516,7 @@ order by no
             excel.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_P03_Print");
+            string strExcelName = Class.MicrosoftFile.GetName("IE_P03_Print");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -583,7 +579,7 @@ order by no
 
             // 右下簽名位置
             worksheet.Cells[29, 20] = DateTime.Now.ToString("d");
-            worksheet.Cells[32, 20] = Sci.Env.User.UserName;
+            worksheet.Cells[32, 20] = Env.User.UserName;
 
             // 左下表頭資料
             worksheet.Cells[56, 4] = this.masterData["Version"];
@@ -827,7 +823,7 @@ order by no
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         TotalGSDFormula = $"='{worksheet.Name}'!{(leftDirection ? "C" : "W")}{norow}",
-                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "X")}{norow}"
+                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "X")}{norow}",
                     });
 
                     list_CycleTimeChart.Add(new CycleTimeChart()
@@ -835,7 +831,7 @@ order by no
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "R")}{norow}",
                         ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
-                        TaktFormula = $"=E1"
+                        TaktFormula = $"=E1",
                     });
 
                     if (leftDirection)
@@ -960,7 +956,7 @@ order by no
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         TotalGSDFormula = $"='{worksheet.Name}'!{(rightDirection ? "W" : "C")}{norow}",
-                        TotalCycleFormula = $"='{worksheet.Name}'!{(rightDirection ? "X" : "B")}{norow}"
+                        TotalCycleFormula = $"='{worksheet.Name}'!{(rightDirection ? "X" : "B")}{norow}",
                     });
 
                     list_CycleTimeChart.Add(new CycleTimeChart()
@@ -968,7 +964,7 @@ order by no
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         ActCycleFormula = $"='{worksheet.Name}'!{(rightDirection ? "R" : "K")}{norow}",
                         ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
-                        TaktFormula = $"=E1"
+                        TaktFormula = $"=E1",
                     });
 
                     if (rightDirection)
@@ -1088,7 +1084,7 @@ order by no
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         TotalGSDFormula = $"='{worksheet.Name}'!{(leftDirection ? "C" : "S")}{norow}",
-                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "X")}{norow}"
+                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "X")}{norow}",
                     });
 
                     list_CycleTimeChart.Add(new CycleTimeChart()
@@ -1096,7 +1092,7 @@ order by no
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "R")}{norow}",
                         ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
-                        TaktFormula = $"=E1"
+                        TaktFormula = $"=E1",
                     });
 
                     if (leftDirection)

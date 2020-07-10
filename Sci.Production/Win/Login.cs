@@ -2,145 +2,152 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
-using Sci.Production.Class.Commons;
 using System.IO;
 using System.Configuration;
 using System.Transactions;
 using System.Data.SqlClient;
-using Microsoft.SqlServer.Server;
 using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
 using System.Linq;
 using System.Xml.Linq;
 
-
 namespace Sci.Production.Win
 {
+    /// <summary>
+    /// Login
+    /// </summary>
     public partial class Login : Sci.Win.Tools.Base
     {
-        Sci.Production.Main app;
-        DualResult result;
-        string flagPathFile = Path.Combine(Application.StartupPath, "sql_update.txt");
+        private Main app;
+        private DualResult result;
+        private string flagPathFile = Path.Combine(Application.StartupPath, "sql_update.txt");
 
-        public Login(Sci.Production.Main app)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Login"/> class.
+        /// </summary>
+        /// <param name="app">app</param>
+        public Login(Main app)
         {
             this.app = app;
-            InitializeComponent();          
-                          
-            ok.Click += ok_Click;
-            exit.Click += exit_Click;
-            //Sci.Production.SCHEMAS.PASS1Row data;
+            this.InitializeComponent();
 
-            if (ConfigurationManager.AppSettings["TaipeiServer"] != "")
+            this.ok.Click += this.Ok_Click;
+            this.exit.Click += this.Exit_Click;
+
+            // Sci.Production.SCHEMAS.PASS1Row data;
+            if (ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty)
             {
-                //Assembly a = typeof(Module1).Assembly;
-                label4.Visible = true;
-                comboBox2.Visible = true;
+                // Assembly a = typeof(Module1).Assembly;
+                this.label4.Visible = true;
+                this.comboBox2.Visible = true;
                 this.checkBoxTestEnvironment.Visible = true;
                 this.ChangeTaipeiServer();
             }
         }
 
-
-        void ok_Click(object sender, EventArgs e)
+        private void Ok_Click(object sender, EventArgs e)
         {
             string act = this.act.Text;
             string loginFactory = (string)this.comboBox1.SelectedValue;
             string pwd = this.pwd.Text;
 
-            if (0 == act.Length)
+            if (act.Length == 0)
             {
-                ShowErr("Please enter account.");
+                this.ShowErr("Please enter account.");
                 this.act.Focus();
                 return;
             }
-            if (0 == pwd.Length)
+
+            if (pwd.Length == 0)
             {
-                ShowErr("Please enter password.");
+                this.ShowErr("Please enter password.");
                 this.pwd.Focus();
                 return;
             }
+
             if (MyUtility.Check.Empty(loginFactory))
             {
-                ShowErr("Please select factory.");
+                this.ShowErr("Please select factory.");
                 this.comboBox1.Focus();
                 return;
             }
 
-
             IUserInfo user = null;
             UserInfo u = new UserInfo();
-            result = UserLogin(act, pwd, loginFactory, u);
+            this.result = UserLogin(act, pwd, loginFactory, u);
 
-            if (!result)
+            if (!this.result)
             {
-                ShowErr(result);
+                this.ShowErr(this.result);
                 return;
             }
+
             user = u;
-            if (!(result = app.DoLogin(user)))
+            if (!(this.result = this.app.DoLogin(user)))
             {
-                ShowErr(result);
+                this.ShowErr(this.result);
                 return;
             }
 
-            //Sci.Env.App.Text = string.Format("Production Management System-({2})-{0}-({1})", Sci.Env.User.Factory, Sci.Env.User.UserID, Environment.MachineName);
-
+            // Sci.Env.App.Text = string.Format("Production Management System-({2})-{0}-({1})", Sci.Env.User.Factory, Sci.Env.User.UserID, Environment.MachineName);
             var appVerText = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
             var appDirName = new DirectoryInfo(Application.StartupPath).Name;
-            ConfigurationManager.AppSettings["formTextSufix"] = string.Format("Production Management System - ({0}-ver {1}) - ({2})"
-                , appDirName
-                , appVerText
-                , System.Environment.MachineName);
+            ConfigurationManager.AppSettings["formTextSufix"] = string.Format(
+                "Production Management System - ({0}-ver {1}) - ({2})",
+                appDirName,
+                appVerText,
+                Environment.MachineName);
 
-            string userData = string.Format("-{0}-({1}))"
-                , Sci.Env.User.Factory
-                , Sci.Env.User.UserID);
+            string userData = string.Format(
+                "-{0}-({1}))",
+                Env.User.Factory,
+                Env.User.UserID);
 
-            Sci.Env.App.Text = ConfigurationManager.AppSettings["formTextSufix"] + userData;
+            Env.App.Text = ConfigurationManager.AppSettings["formTextSufix"] + userData;
 
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
 
-            //若sql_update.txt不存在，則執行SQL UPDATE
-            //if (!File.Exists(flagPathFile)) this.checkUpdateSQL();
-
-            Close();
+            // 若sql_update.txt不存在，則執行SQL UPDATE
+            // if (!File.Exists(flagPathFile)) this.checkUpdateSQL();
+            this.Close();
         }
 
-        void exit_Click(object sender, EventArgs e)
+        private void Exit_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
-            Close();
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
 
-        private void act_Validated(object sender, CancelEventArgs e)
+        private void Act_Validated(object sender, CancelEventArgs e)
         {
-            comboBox1.DataSource = null;
+            this.comboBox1.DataSource = null;
             if (MyUtility.Check.Empty(this.act.Text.Trim()))
             {
                 return;
             }
 
             DataTable dtPass1;
-            string SQLCmd = "SELECT ID, Factory FROM Pass1 WHERE ID = @ID";
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            sp1.ParameterName = "@ID";
-            sp1.Value = this.act.Text;
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-            cmds.Add(sp1);
-
-            if (!(result = DBProxy.Current.Select(null, SQLCmd, cmds, out dtPass1)))
+            string sqlCmd = "SELECT ID, Factory FROM Pass1 WHERE ID = @ID";
+            SqlParameter sp1 = new SqlParameter
             {
-                MyUtility.Msg.ErrorBox(result.ToString());
+                ParameterName = "@ID",
+                Value = this.act.Text,
+            };
+            IList<SqlParameter> cmds = new List<SqlParameter>
+            {
+                sp1,
+            };
+
+            if (!(this.result = DBProxy.Current.Select(null, sqlCmd, cmds, out dtPass1)))
+            {
+                MyUtility.Msg.ErrorBox(this.result.ToString());
                 e.Cancel = true;
                 return;
             }
+
             if (dtPass1.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Account does not exist!");
@@ -148,7 +155,7 @@ namespace Sci.Production.Win
                 return;
             }
 
-            Dictionary<String, String> factoryOption = new Dictionary<String, String>();
+            Dictionary<string, string> factoryOption = new Dictionary<string, string>();
             string[] factories = dtPass1.Rows[0]["Factory"].ToString().Split(new char[] { ',' });
             if (factories.Length > 0)
             {
@@ -156,22 +163,32 @@ namespace Sci.Production.Win
                 {
                     factoryOption.Add(factories[i].Trim().ToUpper(), factories[i].Trim().ToUpper());
                 }
-                comboBox1.DataSource = new BindingSource(factoryOption, null);
-                comboBox1.ValueMember = "Key";
-                comboBox1.DisplayMember = "Value";
+
+                this.comboBox1.DataSource = new BindingSource(factoryOption, null);
+                this.comboBox1.ValueMember = "Key";
+                this.comboBox1.DisplayMember = "Value";
             }
         }
 
+        /// <summary>
+        /// User Login
+        /// </summary>
+        /// <param name="userid">User ID</param>
+        /// <param name="pwd">PWD</param>
+        /// <param name="factoryID">Factory ID</param>
+        /// <param name="u">User Info</param>
+        /// <returns>DualResult</returns>
         public static DualResult UserLogin(string userid, string pwd, string factoryID, UserInfo u)
         {
             DualResult result;
             DataTable dtFactory;
-            string keyword = "";
+            string keyword = string.Empty;
             factoryID = factoryID.TrimEnd();
             if (!(result = DBProxy.Current.Select(null, string.Format("SELECT MDivisionID FROM Factory WHERE ID = '{0}'", factoryID), out dtFactory)))
             {
                 return result;
             }
+
             if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["MDivisionID"].ToString()))
             {
                 keyword = dtFactory.Rows[0]["MDivisionID"].ToString().TrimEnd();
@@ -181,18 +198,45 @@ namespace Sci.Production.Win
                 return new DualResult(false, "Mdivision does not exist!");
             }
 
-            Sci.Production.SCHEMAS.PASS1Row data;
-            if (!(result = Sci.Production.Win.ProjUtils.GetPass1(userid, pwd, out data))) return result;
-            if (null == data) return new DualResult(false, "Account or password invalid.");
+            SCHEMAS.PASS1Row data;
+            if (!(result = ProjUtils.GetPass1(userid, pwd, out data)))
+            {
+                return result;
+            }
+
+            if (data == null)
+            {
+                return new DualResult(false, "Account or password invalid.");
+            }
 
             u.UserID = userid;
             u.UserPassword = pwd;
-            if (!data.IsNAMENull()) u.UserName = data.NAME;
-            if (!data.IsISADMINNull()) u.IsAdmin = data.ISADMIN;
-            //if (!data.IsFACTORYNull()) Sci.Production.ProductionEnv.UserFactories = data.FACTORY;
-            if (!data.IsFACTORYNull()) u.FactoryList = data.FACTORY;
-            if (!data.IsISMISNull()) u.IsMIS = data.ISMIS;
-            if (!data.IsEMAILNull()) u.MailAddress = data.EMAIL;
+            if (!data.IsNAMENull())
+            {
+                u.UserName = data.NAME;
+            }
+
+            if (!data.IsISADMINNull())
+            {
+                u.IsAdmin = data.ISADMIN;
+            }
+
+            // if (!data.IsFACTORYNull()) Sci.Production.ProductionEnv.UserFactories = data.FACTORY;
+            if (!data.IsFACTORYNull())
+            {
+                u.FactoryList = data.FACTORY;
+            }
+
+            if (!data.IsISMISNull())
+            {
+                u.IsMIS = data.ISMIS;
+            }
+
+            if (!data.IsEMAILNull())
+            {
+                u.MailAddress = data.EMAIL;
+            }
+
             u.Factory = factoryID;
             u.Keyword = keyword;
 
@@ -204,14 +248,14 @@ namespace Sci.Production.Win
             }
             else
             {
-                Sci.Env.Cfg.MailServerIP = drSystem["Mailserver"].ToString().Trim();
-                Sci.Env.Cfg.MailFrom = drSystem["Sendfrom"].ToString().Trim();
-                Sci.Env.Cfg.MailServerAccount = drSystem["EmailID"].ToString().Trim();
-                Sci.Env.Cfg.MailServerPassword = drSystem["EmailPwd"].ToString().Trim();
-                Sci.Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
-                Sci.Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
-                Sci.Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
-                Sci.Env.Cfg.ClipDir = drSystem["ClipPath"].ToString().Trim();
+                Env.Cfg.MailServerIP = drSystem["Mailserver"].ToString().Trim();
+                Env.Cfg.MailFrom = drSystem["Sendfrom"].ToString().Trim();
+                Env.Cfg.MailServerAccount = drSystem["EmailID"].ToString().Trim();
+                Env.Cfg.MailServerPassword = drSystem["EmailPwd"].ToString().Trim();
+                Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
+                Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
+                Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
+                Env.Cfg.ClipDir = drSystem["ClipPath"].ToString().Trim();
             }
             #endregion
             #region 寫入登入時間
@@ -226,37 +270,38 @@ namespace Sci.Production.Win
             #region 在台北端(PMSDB 或 testing)登入時, 關閉紀錄UserLog功能
             if (DBProxy.Current.DefaultModuleName.Contains("PMSDB") || DBProxy.Current.DefaultModuleName.Contains("testing"))
             {
-                Sci.Env.Cfg.EnableUserLog = false;
+                Env.Cfg.EnableUserLog = false;
             }
             #endregion
             return result;
         }
 
-        private void checkUpdateSQL()
+        private void CheckUpdateSQL()
         {
             string sql_update_receiver = ConfigurationManager.AppSettings["sql_update_receiver"];
-            string[] dirs = Directory.GetFiles(Sci.Env.Cfg.ReportTempDir, "*.sql");
+            string[] dirs = Directory.GetFiles(Env.Cfg.ReportTempDir, "*.sql");
             if (dirs.Length == 0)
             {
-                try 
+                try
                 {
-                    System.IO.File.WriteAllText(flagPathFile, "");  //新增sql_update.txt以註記SQL更新成功
+                    File.WriteAllText(this.flagPathFile, string.Empty);  // 新增sql_update.txt以註記SQL更新成功
                 }
                 catch (Exception e)
                 {
-                    sendmail(e.ToString(), sql_update_receiver);
+                    this.Sendmail(e.ToString(), sql_update_receiver);
                 }
+
                 return;
             }
 
             foreach (string dir in dirs)
             {
                 string script = File.ReadAllText(dir);
-                string strConnection = "";
-                string strServer = "";
+                string strConnection = string.Empty;
+                string strServer = string.Empty;
 
-                TransactionScope _transactionscope = new TransactionScope();
-                using (_transactionscope)
+                TransactionScope transactionscope = new TransactionScope();
+                using (transactionscope)
                 {
                     try
                     {
@@ -270,15 +315,16 @@ namespace Sci.Production.Win
                             db.ConnectionContext.ExecuteNonQuery(script);
                         }
 
-                        _transactionscope.Complete();
-                        _transactionscope.Dispose();
+                        transactionscope.Complete();
+                        transactionscope.Dispose();
                     }
                     catch (Exception ex)
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
 
                         string subject = string.Format("Auto Update SQL ERROR");
-                        string desc = string.Format(@"
+                        string desc = string.Format(
+                            @"
 Hi all,
     Factory = {0}, Account = {1},
     SQL UPDATE FAIL, Please check it.
@@ -287,50 +333,55 @@ Hi all,
 -------------------------------------------------------------------
 Script
 {3}
-", Sci.Env.User.Factory
- , Sci.Env.User.UserName
- , ex.ToString()
- , script);
-                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, sql_update_receiver, "", subject, "", desc, true, true);
+", Env.User.Factory,
+                            Env.User.UserName,
+                            ex.ToString(),
+                            script);
+                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Env.Cfg.MailFrom, sql_update_receiver, string.Empty, subject, string.Empty, desc, true, true);
                         mail.ShowDialog();
                         return;
                     }
                 }
-                _transactionscope.Dispose();
-                _transactionscope = null;
+
+                transactionscope.Dispose();
+                transactionscope = null;
             }
 
             try
             {
-                System.IO.File.WriteAllText(flagPathFile, "");  //新增sql_update.txt以註記SQL更新成功
+                File.WriteAllText(this.flagPathFile, string.Empty);  // 新增sql_update.txt以註記SQL更新成功
             }
             catch (Exception e)
             {
-                sendmail(e.ToString(), sql_update_receiver);
+                this.Sendmail(e.ToString(), sql_update_receiver);
             }
         }
 
-        private void sendmail(string desc, string receiver)
+        private void Sendmail(string desc, string receiver)
         {
             string subject = "Auto Update SQL ERROR";
-            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, receiver, "", subject, "", desc, true, true);
+            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Env.Cfg.MailFrom, receiver, string.Empty, subject, string.Empty, desc, true, true);
             mail.ShowDialog();
         }
 
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox2.SelectedValue == null) return;
-            DBProxy.Current.DefaultModuleName = comboBox2.SelectedValue2.ToString();
-            act.Text = "";
-            pwd.Text = "";
-            comboBox1.DataSource = null;
+            if (this.comboBox2.SelectedValue == null)
+            {
+                return;
+            }
+
+            DBProxy.Current.DefaultModuleName = this.comboBox2.SelectedValue2.ToString();
+            this.act.Text = string.Empty;
+            this.pwd.Text = string.Empty;
+            this.comboBox1.DataSource = null;
         }
 
         private void ChangeTaipeiServer()
         {
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
             var hasConnectionNamedQuery = docx.Descendants("modules").Elements().Select(e => e.FirstAttribute.Value).ToList();
-            Dictionary<String, String> SystemOption = new Dictionary<String, String>();
+            Dictionary<string, string> systemOption = new Dictionary<string, string>();
             string[] strSevers = ConfigurationManager.AppSettings["TaipeiServer"].Split(new char[] { ',' });
             if (strSevers.Length > 0 && hasConnectionNamedQuery.Count > 0)
             {
@@ -340,15 +391,15 @@ Script
                     {
                         if (strSever == hasConnectionNamedQuery[i])
                         {
-                            SystemOption.Add(hasConnectionNamedQuery[i].Trim(), hasConnectionNamedQuery[i].Replace("PMSDB_", string.Empty).Replace("testing_", string.Empty).Trim().ToUpper());
+                            systemOption.Add(hasConnectionNamedQuery[i].Trim(), hasConnectionNamedQuery[i].Replace("PMSDB_", string.Empty).Replace("testing_", string.Empty).Trim().ToUpper());
                             break;
                         }
                     }
                 }
 
-                comboBox2.ValueMember = "Key";
-                comboBox2.DisplayMember = "Value";
-                comboBox2.DataSource = new BindingSource(SystemOption, null);
+                this.comboBox2.ValueMember = "Key";
+                this.comboBox2.DisplayMember = "Value";
+                this.comboBox2.DataSource = new BindingSource(systemOption, null);
             }
         }
 

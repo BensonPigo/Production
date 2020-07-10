@@ -18,11 +18,11 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R10
     /// </summary>
-    public partial class R10 : Sci.Win.Tems.PrintForm
+    public partial class R10 : Win.Tems.PrintForm
     {
-        private DateTime currentTime = System.DateTime.Now;
+        private DateTime currentTime = DateTime.Now;
 
-        private int ReportType = 1;
+        private int reportType = 1;
         private string BrandID = string.Empty;
         private string ArtWorkType = string.Empty;
         private bool isSCIDelivery = true;
@@ -35,8 +35,6 @@ namespace Sci.Production.Planning
         private bool byCPU;
         private bool byBrand;
         private bool IncludeCancelOrder;
-
-        private int sheetStart = 6;
         private string title = string.Empty;
         private string cmd;
         private string cmd2;
@@ -54,10 +52,10 @@ namespace Sci.Production.Planning
         private Dictionary<string, string> dic = new Dictionary<string, string>();
         private DualResult dtresult;
 
-        private System.Data.DataTable[] dt2;
-        private System.Data.DataTable dt3fty;
-        private System.Data.DataTable dt2Factory = null;
-        private System.Data.DataTable dt2All = null;
+        private DataTable[] dt2;
+        private DataTable dt3fty;
+        private DataTable dt2Factory = null;
+        private DataTable dt2All = null;
 
         /// <inheritdoc/>
         public R10(ToolStripMenuItem menuitem)
@@ -66,7 +64,7 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.EditMode = true;
             this.print.Visible = false;
-            this.txtMDivision.Text = Sci.Env.User.Keyword;
+            this.txtMDivision.Text = Env.User.Keyword;
         }
 
         /// <inheritdoc/>
@@ -93,7 +91,7 @@ namespace Sci.Production.Planning
                 return false;
             }
 
-            this.ReportType = this.rdMonth.Checked ? 1 : 2;
+            this.reportType = this.rdMonth.Checked ? 1 : 2;
             this.BrandID = this.txtBrand1.Text;
             this.ArtWorkType = this.cbReportType.SelectedValue.ToString();
             this.isSCIDelivery = (this.cbDateType.SelectedItem.ToString() == "SCI Delivery") ? true : false;
@@ -150,11 +148,11 @@ namespace Sci.Production.Planning
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             if (this.rdMonth.Checked || this.rdHalfMonth.Checked)
             {
-                DualResult result = Result.True;
+                DualResult result = Ict.Result.True;
                 try
                 {
                     List<string> artworkLis = new List<string>();
@@ -171,29 +169,29 @@ namespace Sci.Production.Planning
                         artworkLis.Add(this.ArtWorkType);
                     }
 
-                    //string xltPath = string.Empty;
-                    //string strHeaderRange = string.Empty;
-                    //if (this.ReportType == 1)
-                    //{
+                    // string xltPath = string.Empty;
+                    // string strHeaderRange = string.Empty;
+                    // if (this.reportType == 1)
+                    // {
                     //    xltPath = @"Planning_R10_01.xltx";
                     //    strHeaderRange = "A2:O4";
-                    //}
-                    //else
-                    //{
+                    // }
+                    // else
+                    // {
                     //    xltPath = @"Planning_R10_02.xltx";
                     //    strHeaderRange = "A2:Q5";
-                    //}
+                    // }
 
-                    //SaveXltReportCls sxrc = new SaveXltReportCls(xltPath);
-                    //Microsoft.Office.Interop.Excel.Worksheet wks = sxrc.ExcelApp.ActiveSheet;
+                    // SaveXltReportCls sxrc = new SaveXltReportCls(xltPath);
+                    // Microsoft.Office.Interop.Excel.Worksheet wks = sxrc.ExcelApp.ActiveSheet;
 
-                    //Dictionary<string, DataTable[]> dic = new Dictionary<string, DataTable[]>();
-                    //foreach (string art in artworkLis)
-                    //{
+                    // Dictionary<string, DataTable[]> dic = new Dictionary<string, DataTable[]>();
+                    // foreach (string art in artworkLis)
+                    // {
                     //    DataTable[] datas;
                     //    DualResult res = DBProxy.Current.SelectSP(string.Empty, "Planning_Report_R10", this.NewMethod(art), out datas);
 
-                    //    if (res && datas[1].Rows.Count > 0 && datas[0].Rows.Count > 0)
+                    // if (res && datas[1].Rows.Count > 0 && datas[0].Rows.Count > 0)
                     //    {
                     //        dic.Add(art, datas);
                     //    }
@@ -201,11 +199,10 @@ namespace Sci.Production.Planning
                     //    {
                     //        dic.Add(art, null);
                     //    }
-                    //}
-
+                    // }
                     Dictionary<string, object> paras = new Dictionary<string, object>
                     {
-                        { "ReportType", this.ReportType },
+                        { "ReportType", this.reportType },
                         { "BrandID", this.BrandID },
                         { "isSCIDelivery", this.isSCIDelivery },
                         { "Year", this.intYear },
@@ -217,19 +214,19 @@ namespace Sci.Production.Planning
                         { "Zone", this.zone },
                         { "CalculateCPU", this.byCPU },
                         { "CalculateByBrand", this.byBrand },
-                        { "IncludeCancelOrder", this.IncludeCancelOrder }
+                        { "IncludeCancelOrder", this.IncludeCancelOrder },
                     };
 
-                    result = RunPlanningR10Report(false, this.chkByCPU.Checked, this.ReportType, artworkLis, paras);
+                    result = this.RunPlanningR10Report(false, this.chkByCPU.Checked, this.reportType, artworkLis, paras);
 
-                    //                    this.sheetStart = 6; // 起始位置
+                    // this.sheetStart = 6; // 起始位置
                     //                    int artWorkStart = 2;
 
-                    //#if DEBUG
+                    // #if DEBUG
                     //                    sxrc.ExcelApp.Visible = false;
-                    //#endif
+                    // #endif
 
-                    //                    foreach (string art in artworkLis)
+                    // foreach (string art in artworkLis)
                     //                    {
                     //                        string artworkUnit = MyUtility.GetValue.Lookup($"select ArtworkUnit from ArtworkType where Id = '{art}'");
                     //                        string artworkUnitStr = artworkUnit == "PCS" ? "(PCS)": artworkUnit == "STITCH" ? "(STITCH in thousands)" : "TMS/Min";
@@ -238,15 +235,15 @@ namespace Sci.Production.Planning
                     //                        {
                     //                            artWorkStart = this.sheetStart;
 
-                    //                            Microsoft.Office.Interop.Excel.Range desRg = wks.get_Range(string.Format("A{0}:A{0}", this.sheetStart.ToString()));
+                    // Microsoft.Office.Interop.Excel.Range desRg = wks.get_Range(string.Format("A{0}:A{0}", this.sheetStart.ToString()));
                     //                            wks.get_Range(strHeaderRange).Copy();
                     //                            desRg.PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll);
                     //                            this.sheetStart += 3;
                     //                        }
 
-                    //                        if (dic[art] != null)
+                    // if (dic[art] != null)
                     //                        {
-                    //                            if (this.ReportType == 1)
+                    //                            if (this.reportType == 1)
                     //                            {
                     //                                this.TransferReport1(dic[art], sxrc.ExcelApp.ActiveSheet);
                     //                            }
@@ -259,11 +256,11 @@ namespace Sci.Production.Planning
                     //                        {
                     //                            wks.Cells[this.sheetStart, 1].Value = string.Format("{0} data not found.", art);
 
-                    //                            // 載入失敗
+                    // // 載入失敗
                     //                        }
 
-                    //                        // 修改Header
-                    //                        if (this.ReportType == 1)
+                    // // 修改Header
+                    //                        if (this.reportType == 1)
                     //                        {
                     //                            wks.Cells[artWorkStart, 1].Value = string.Format("Factory Capacity by Month Report  {0}", art + " " + artworkUnitStr);
                     //                            wks.Cells[artWorkStart + 1, 1].Value = string.Format("Year:{0}", this.intYear);
@@ -277,10 +274,10 @@ namespace Sci.Production.Planning
                     //                            wks.Cells[artWorkStart + 1, 8].Value = "By " + (this.isSCIDelivery ? "Sci Delivery" : "Buyer Delivery");
                     //                        }
 
-                    //                        this.sheetStart += 3; // 每個Artwork間隔 n - 1 格
+                    // this.sheetStart += 3; // 每個Artwork間隔 n - 1 格
                     //                    }
 
-                    //                    sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_Report_R10"));
+                    // sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_Report_R10"));
                     return new DualResult(true);
                 }
                 catch (Exception ex)
@@ -482,11 +479,11 @@ namespace Sci.Production.Planning
                             DROP TABLE #tmpWorkHours
                             DROP TABLE  #printdata                
                             ", this.intYear,
-                            this.intMonth,
-                            this.dStart,
-                            this.dEnd,
-                            this.dLoad,
-                            this.endDay);
+                    this.intMonth,
+                    this.dStart,
+                    this.dEnd,
+                    this.dLoad,
+                    this.endDay);
                 #endregion
                 this.cmd3 = string.Format(
                     @"
@@ -508,7 +505,7 @@ namespace Sci.Production.Planning
                             DROP TABLE #tmpWorkHours
                             DROP TABLE #tmpWorkingHour
                             ", this.STARTday,
-                            this.endDay);
+                    this.endDay);
                 this.dtresult = DBProxy.Current.Select(string.Empty, this.cmd3, out this.dt3fty);
                 if (!this.dtresult)
                 {
@@ -572,9 +569,9 @@ namespace Sci.Production.Planning
                             DROP TABLE #tmpWorkingHour
                             DROP TABLE #t
                             ", this.STARTday,
-                            this.endDay,
-                            this.s,
-                            this.b);
+                    this.endDay,
+                    this.s,
+                    this.b);
 
                 this.dtresult = DBProxy.Current.Select(string.Empty, this.cmd, out this.dt);
                 if (!this.dtresult)
@@ -597,11 +594,11 @@ namespace Sci.Production.Planning
             return new DualResult(true);
         }
 
-        //private List<SqlParameter> NewMethod(string art)
-        //{
+        // private List<SqlParameter> NewMethod(string art)
+        // {
         //    return new List<SqlParameter>
         //                    {
-        //                        new SqlParameter("@ReportType", this.ReportType),
+        //                        new SqlParameter("@ReportType", this.reportType),
         //                        new SqlParameter("@BrandID", this.BrandID),
         //                        new SqlParameter("@ArtWorkType", art),
         //                        new SqlParameter("@isSCIDelivery", this.isSCIDelivery),
@@ -612,10 +609,10 @@ namespace Sci.Production.Planning
         //                        new SqlParameter("@Fty", this.Fty),
         //                        new SqlParameter("@Zone", this.zone)
         //                    };
-        //}
+        // }
 
         /// <inheritdoc/>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             #region raProductionStatus
             if (this.radioProductionStatus.Checked == true)
@@ -626,7 +623,7 @@ namespace Sci.Production.Planning
                     return false;
                 }
 
-                Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Planning_R10_ProuctionStatus.xltx", keepApp: true);
+                SaveXltReportCls xl = new SaveXltReportCls("Planning_R10_ProuctionStatus.xltx", keepApp: true);
                 xl.BoOpenFile = true;
 
                 SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(this.dt);
@@ -642,7 +639,7 @@ namespace Sci.Production.Planning
                 SaveXltReportCls.ReplaceAction a = this.SetRow1;
                 xl.DicDatas.Add("##setRow1", a);
 
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_R10_ProuctionStatus"));
+                xl.Save(Class.MicrosoftFile.GetName("Planning_R10_ProuctionStatus"));
 
                 int startRow = 3; // title有2列
                 int lastRow = dt2.Rows.Count + 3;
@@ -701,7 +698,7 @@ namespace Sci.Production.Planning
 
             var exelis = artworkLis
                 .AsParallel()
-                .Select(art => ExecSP1(art, paras, dic))
+                .Select(art => this.ExecSP1(art, paras, dic))
                 .AsSequential()
                 .ToList();
 
@@ -745,8 +742,8 @@ namespace Sci.Production.Planning
                         wks.Cells[sheetStart + 1, 3].Value = string.Format("Print Type:< {0} >", sourceStr);
                         wks.Cells[sheetStart + 1, 8].Value = string.Format(
                             "By {0}                             Buyer : {1}",
-                             isSCIDelivery ? "Sci Delivery" : "Buyer Delivery",
-                          brandID);
+                            isSCIDelivery ? "Sci Delivery" : "Buyer Delivery",
+                            brandID);
 
                         if (sheetStart < 5)
                         {
@@ -754,8 +751,8 @@ namespace Sci.Production.Planning
                             sxrc.ExcelApp.Worksheets[2].Cells[sheetStart + 1, 5].Value = string.Format("Print Type:< {0} >", sourceStr);
                             sxrc.ExcelApp.Worksheets[2].Cells[sheetStart + 1, 10].Value = string.Format(
                                 "By {0}                             Buyer : {1}",
-                               isSCIDelivery ? "Sci Delivery" : "Buyer Delivery",
-                               brandID);
+                                isSCIDelivery ? "Sci Delivery" : "Buyer Delivery",
+                                brandID);
                         }
                     }
                     else
@@ -772,12 +769,12 @@ namespace Sci.Production.Planning
                     {
                         if (reportType == 1)
                         {
-                            TransferReport1(dic[art].Item1, reportType, intYear, byBrand, zone, mdivisionID, Fty, sxrc.ExcelApp.Worksheets[1], ref sheetStart);
-                            TransferReport1_Summary(dic[art].Item1, intYear, sxrc.ExcelApp.Worksheets[2], ref sheetStart_sum, art, artworkUnitStr);
+                            this.TransferReport1(dic[art].Item1, reportType, intYear, byBrand, zone, mdivisionID, Fty, sxrc.ExcelApp.Worksheets[1], ref sheetStart);
+                            this.TransferReport1_Summary(dic[art].Item1, intYear, sxrc.ExcelApp.Worksheets[2], ref sheetStart_sum, art, artworkUnitStr);
                         }
                         else
                         {
-                            TransferReport2(dic[art].Item1, reportType, intYear, intMonth, isSCIDelivery, zone, mdivisionID, Fty, sxrc.ExcelApp.Worksheets[1], ref sheetStart);
+                            this.TransferReport2(dic[art].Item1, reportType, intYear, intMonth, isSCIDelivery, zone, mdivisionID, Fty, sxrc.ExcelApp.Worksheets[1], ref sheetStart);
                         }
                     }
                     else
@@ -793,7 +790,7 @@ namespace Sci.Production.Planning
             }
             catch (Exception ex)
             {
-                return Result.F(ex.ToString());
+                return Ict.Result.F(ex.ToString());
             }
 
             if (saveReport)
@@ -804,13 +801,13 @@ namespace Sci.Production.Planning
                 // 2020/02/21 [IST20200294] modify by Anderson 經由批次轉廠呼叫時，當發生錯誤時回報錯誤，不產生報表
                 if (isErrorOccured)
                 {
-                    result = Result.F(errorMsg);
+                    result = Ict.Result.F(errorMsg);
                 }
                 else
                 {
                     var savePath = Path.Combine(tmpDir, $"{mdivisionID}_Planning-R10_{DateTime.Now.ToString("yyyyMMdd_hhmmss")}.xlsx");
                     sxrc.Save(savePath);
-                    result = Result.True;
+                    result = Ict.Result.True;
                 }
             }
             else
@@ -826,7 +823,7 @@ namespace Sci.Production.Planning
         {
             var plis = new List<SqlParameter>
             {
-                new SqlParameter("ArtWorkType", art)
+                new SqlParameter("ArtWorkType", art),
             };
 
             paras.AsEnumerable().ToList().ForEach(x =>
@@ -849,6 +846,12 @@ namespace Sci.Production.Planning
         /// Report1，開啟xlt填入資料
         /// </summary>
         /// <param name="datas"> dataset from procedures </param>
+        /// <param name="reportType">reportType</param>
+        /// <param name="intYear">intYear</param>
+        /// <param name="byBrand">byBrand</param>
+        /// <param name="zone">zone</param>
+        /// <param name="mdivision">mdivision</param>
+        /// <param name="fty">fty</param>
         /// <param name="wks"> work sheet </param>
         /// <param name="sheetStart"> sheet index </param>
         /// <returns> excute success or not </returns>
@@ -890,22 +893,22 @@ namespace Sci.Production.Planning
             {
                 lisBold.Add(sheetStart.ToString());
                 string countryID = dtCountryList.Rows[idxCty]["CountryID"].ToString();
-                DataTable dtCountry = SafeGetDt(dt1, $"CountryID = '{countryID}'");
+                DataTable dtCountry = this.SafeGetDt(dt1, $"CountryID = '{countryID}'");
 
                 // if (dtCountry.Rows.Count == 0) continue;
                 // string CountryName = dtCountry.Rows[0]["CountryName"].ToString();
                 string countryName = dtCountryList.Rows[idxCty]["CountryName"].ToString();
 
                 lisCtyIdx.Add(sheetStart.ToString());
-                SetTableToRow(wks, intYear, sheetStart, countryName, dtCountry, "FtyTmsCapa");
+                this.SetTableToRow(wks, intYear, sheetStart, countryName, dtCountry, "FtyTmsCapa");
                 sheetStart += 1;
 
-                DataTable dtMDVList = SafeGetDt(dtList, $"CountryID = '{countryID}'").DefaultView.ToTable(true, "MDivisionID");
+                DataTable dtMDVList = this.SafeGetDt(dtList, $"CountryID = '{countryID}'").DefaultView.ToTable(true, "MDivisionID");
                 List<string> lisSumFtyNonSis = new List<string>();
                 List<string> shortageLis = new List<string>();
 
-                SetColumnToBack(dtMDVList, "MDivisionID", "Sample");
-                SetColumnToBack(dtMDVList, "MDivisionID", string.Empty);
+                this.SetColumnToBack(dtMDVList, "MDivisionID", "Sample");
+                this.SetColumnToBack(dtMDVList, "MDivisionID", string.Empty);
                 bool isSample = false;
                 for (int idxMDV = 0; idxMDV < dtMDVList.Rows.Count; idxMDV++)
                 {
@@ -917,12 +920,12 @@ namespace Sci.Production.Planning
 
                     isSample = mdivisionID == "Sample";
 
-                    DataTable dtOneMDV = SafeGetDt(dtCountry, $"MDivisionID = '{mdivisionID}'");
-                    SetTableToRow(wks, intYear, sheetStart, mdivisionID, dtOneMDV, "FtyTmsCapa");
+                    DataTable dtOneMDV = this.SafeGetDt(dtCountry, $"MDivisionID = '{mdivisionID}'");
+                    this.SetTableToRow(wks, intYear, sheetStart, mdivisionID, dtOneMDV, "FtyTmsCapa");
                     sheetStart += 1;
 
                     // 4 Factory Data，這裡需要迴圈For每個工廠
-                    DataTable dtFactoryList = SafeGetDt(dtList, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'").DefaultView.ToTable(true, "FactoryID");
+                    DataTable dtFactoryList = this.SafeGetDt(dtList, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'").DefaultView.ToTable(true, "FactoryID");
 
                     int ftyStart = sheetStart;
                     foreach (DataRow row in dtFactoryList.Rows)
@@ -930,11 +933,11 @@ namespace Sci.Production.Planning
                         string factoryID = row["FactoryID"].ToString();
                         wks.Cells[sheetStart, 1].Value = factoryID;
 
-                        DataTable dtFactory = SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}' and FactoryID = '{factoryID}'");
-                        DataTable dtFactoryAdd = SafeGetDt(dt5, $"CountryID = '{countryID}' and MDivisionID = '{mdivisionID}' and FactoryID = '{factoryID}'");
-                        DataTable dtFactoryDiff = SafeGetDt(dt5, $"CountryID2 = '{countryID}' and MDivisionID2 = '{mdivisionID}' and FactoryID2 = '{factoryID}'");
+                        DataTable dtFactory = this.SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}' and FactoryID = '{factoryID}'");
+                        DataTable dtFactoryAdd = this.SafeGetDt(dt5, $"CountryID = '{countryID}' and MDivisionID = '{mdivisionID}' and FactoryID = '{factoryID}'");
+                        DataTable dtFactoryDiff = this.SafeGetDt(dt5, $"CountryID2 = '{countryID}' and MDivisionID2 = '{mdivisionID}' and FactoryID2 = '{factoryID}'");
 
-                        SetTableToRow_SubconInType(
+                        this.SetTableToRow_SubconInType(
                             wks,
                             intYear,
                             sheetStart,
@@ -955,18 +958,18 @@ namespace Sci.Production.Planning
                     // 5 By non-sister
                     int nonSisStart = sheetStart;
                     string zoneFilter = MyUtility.Check.Empty(zone) ? string.Empty : $" and zone = '{zone}'";
-                    DataTable dtByNonSister = SafeGetDt(dt2, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + zoneFilter);
-                    SetTableToRow(wks, intYear, sheetStart, "non-sister sub-in", dtByNonSister, "OrderCapacity");
-                    DrawBottomLine(wks, sheetStart, 1);
+                    DataTable dtByNonSister = this.SafeGetDt(dt2, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + zoneFilter);
+                    this.SetTableToRow(wks, intYear, sheetStart, "non-sister sub-in", dtByNonSister, "OrderCapacity");
+                    this.DrawBottomLine(wks, sheetStart, 1);
                     sheetStart += 1;
 
                     lisSumFtyNonSis.Add(ftyStart.ToString() + "," + nonSisStart.ToString());
 
                     // Shortage
                     int shortageStart = sheetStart;
-                    DataTable dtByShortage = SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + zoneFilter);
-                    SetTableToRow(wks, intYear, sheetStart, "Shortage", dtByShortage, "OrderShortage");
-                    DrawBottomLine(wks, sheetStart, 1);
+                    DataTable dtByShortage = this.SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + zoneFilter);
+                    this.SetTableToRow(wks, intYear, sheetStart, "Shortage", dtByShortage, "OrderShortage");
+                    this.DrawBottomLine(wks, sheetStart, 1);
                     shortageLis.Add(sheetStart.ToString());
                     sheetStart += 1;
 
@@ -977,14 +980,14 @@ namespace Sci.Production.Planning
 
                     // MDV total
                     mdvTotalIdx = sheetStart;
-                    SetFormulaToRow(wks, reportType, sheetStart, mdivisionID + " total", string.Format("=SUM({{0}}{0}:{{0}}{1}) - {{0}}{2}", ftyStart, nonSisStart, shortageStart));
+                    this.SetFormulaToRow(wks, reportType, sheetStart, mdivisionID + " total", string.Format("=SUM({{0}}{0}:{{0}}{1}) - {{0}}{2}", ftyStart, nonSisStart, shortageStart));
 
-                    DrawBottomLine(wks, sheetStart, 1);
+                    this.DrawBottomLine(wks, sheetStart, 1);
                     sheetStart += 1;
 
                     // 6 ForecastCapacity
                     lisPercent.Add(sheetStart.ToString());
-                    DataTable dtForecastCapacityByMDV = SafeGetDt(dt3, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
+                    DataTable dtForecastCapacityByMDV = this.SafeGetDt(dt3, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
                     wks.Cells[sheetStart, 1].Value = $"{mdivisionID} Forecast shared";
                     for (int mon = 1; mon < 13; mon++)
                     {
@@ -998,25 +1001,25 @@ namespace Sci.Production.Planning
                     sheetStart += 1;
 
                     // MDV 1 Loading - CAPA
-                    SetFormulaToRow(wks, reportType, sheetStart, $"{mdivisionID} Loading - CAPA", string.Format("=({{0}}{0} - {{0}}{1})", mdvTotalIdx, mdvIdx), EnuDrawColor.Normal);
+                    this.SetFormulaToRow(wks, reportType, sheetStart, $"{mdivisionID} Loading - CAPA", string.Format("=({{0}}{0} - {{0}}{1})", mdvTotalIdx, mdvIdx), EnuDrawColor.Normal);
                     sheetStart += 1;
 
                     // MDV FILL RATE
                     lisPercent.Add(sheetStart.ToString());
-                    SetFormulaToRow(wks, reportType, sheetStart, $"{mdivisionID} FILL RATE", string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", mdvIdx, mdvTotalIdx));
+                    this.SetFormulaToRow(wks, reportType, sheetStart, $"{mdivisionID} FILL RATE", string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", mdvIdx, mdvTotalIdx));
 
-                    DrawBottomLine(wks, sheetStart, 1);
+                    this.DrawBottomLine(wks, sheetStart, 1);
                     sheetStart += 1;
 
                     // Max(OutputDate)
                     // Order+FactoryOrder 的 SewCapacity
-                    DataTable dtOutputMDV = SafeGetDt(dt4, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
-                    DataTable dtOutputMDVAdd = SafeGetDt(dt5, $"CountryID = '{countryID}' and MdivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
-                    DataTable dtOutputMDVDiff = SafeGetDt(dt5, $"CountryID2 = '{countryID}' and MdivisionID2 = '{mdivisionID}'" + filterZoneMdivisionDiff);
+                    DataTable dtOutputMDV = this.SafeGetDt(dt4, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
+                    DataTable dtOutputMDVAdd = this.SafeGetDt(dt5, $"CountryID = '{countryID}' and MdivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
+                    DataTable dtOutputMDVDiff = this.SafeGetDt(dt5, $"CountryID2 = '{countryID}' and MdivisionID2 = '{mdivisionID}'" + filterZoneMdivisionDiff);
                     string maxSewOutPut = dtOutputMDV.Compute("MAX(SewingYYMM)", string.Empty).ToString();
                     maxSewOutPut = maxSewOutPut.Length > 0 ? maxSewOutPut.Substring(5, maxSewOutPut.Length - 5) : string.Empty;
 
-                    SetTableToRow_SubconInType(
+                    this.SetTableToRow_SubconInType(
                         wks,
                         intYear,
                         sheetStart,
@@ -1031,9 +1034,9 @@ namespace Sci.Production.Planning
 
                     // MDV Output  Rate
                     lisPercent.Add(sheetStart.ToString());
-                    SetFormulaToRow(wks, reportType, sheetStart, $"{mdivisionID} Output  Rate", string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", mdvTotalIdx, sheetStart - 1));
+                    this.SetFormulaToRow(wks, reportType, sheetStart, $"{mdivisionID} Output  Rate", string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", mdvTotalIdx, sheetStart - 1));
 
-                    DrawBottomLine(wks, sheetStart, 2);
+                    this.DrawBottomLine(wks, sheetStart, 2);
 
                     sheetStart += 1;
                 }
@@ -1049,14 +1052,14 @@ namespace Sci.Production.Planning
                     sumFtyStr += string.Format("+SUM({{0}}{0}:{{0}}{1}) - {{0}}{2}", str.Split(',')[0], str.Split(',')[1], str2);
                 }
 
-                SetFormulaToRow(wks, reportType, sheetStart, $"{countryID} Grand TTL", sumFtyStr);
+                this.SetFormulaToRow(wks, reportType, sheetStart, $"{countryID} Grand TTL", sumFtyStr);
 
-                DrawBottomLine(wks, sheetStart, 1);
+                this.DrawBottomLine(wks, sheetStart, 1);
                 sheetStart += 1;
 
                 // CountryID Forecast shared
                 lisPercent.Add(sheetStart.ToString());
-                DataTable dtForecastCapacityByCty = SafeGetDt(dt3, $"CountryID = '{countryID}'" + filterZoneMdivisionAdd);
+                DataTable dtForecastCapacityByCty = this.SafeGetDt(dt3, $"CountryID = '{countryID}'" + filterZoneMdivisionAdd);
                 wks.Cells[sheetStart, 1].Value = $"{countryID} Forecast shared";
                 for (int mon = 1; mon < 13; mon++)
                 {
@@ -1070,23 +1073,23 @@ namespace Sci.Production.Planning
                 sheetStart += 1;
 
                 // CountryID Loading - CAPA
-                SetFormulaToRow(wks, reportType, sheetStart, $"{countryID} Loading - CAPA", string.Format("=({{0}}{0} - {{0}}{1})", sheetStart - 2, lisCtyIdx[lisCtyIdx.Count - 1]), EnuDrawColor.Normal);
+                this.SetFormulaToRow(wks, reportType, sheetStart, $"{countryID} Loading - CAPA", string.Format("=({{0}}{0} - {{0}}{1})", sheetStart - 2, lisCtyIdx[lisCtyIdx.Count - 1]), EnuDrawColor.Normal);
                 sheetStart += 1;
 
                 // CountryID FILL Rate
                 lisPercent.Add(sheetStart.ToString());
-                SetFormulaToRow(wks, reportType, sheetStart, $"{countryID} FILL Rate", string.Format("=IF({{0}}{1}>0,{{0}}{0}/{{0}}{1},0)", sheetStart - 3, lisCtyIdx[lisCtyIdx.Count - 1]));
+                this.SetFormulaToRow(wks, reportType, sheetStart, $"{countryID} FILL Rate", string.Format("=IF({{0}}{1}>0,{{0}}{0}/{{0}}{1},0)", sheetStart - 3, lisCtyIdx[lisCtyIdx.Count - 1]));
                 sheetStart += 1;
 
                 // CountryID Output()
                 lisOutputIdx.Add(sheetStart.ToString());
-                DataTable dtOutputCty = SafeGetDt(dt4, $"CountryID = '{countryID}'" + filterZoneMdivisionAdd);
-                DataTable dtOutputCtyAdd = SafeGetDt(dt5, $"CountryID = '{countryID}'" + filterZoneMdivisionAdd);
-                DataTable dtOutputCtyDiff = SafeGetDt(dt5, $"CountryID2 = '{countryID}'" + filterZoneMdivisionDiff);
+                DataTable dtOutputCty = this.SafeGetDt(dt4, $"CountryID = '{countryID}'" + filterZoneMdivisionAdd);
+                DataTable dtOutputCtyAdd = this.SafeGetDt(dt5, $"CountryID = '{countryID}'" + filterZoneMdivisionAdd);
+                DataTable dtOutputCtyDiff = this.SafeGetDt(dt5, $"CountryID2 = '{countryID}'" + filterZoneMdivisionDiff);
                 string maxSewOutPutCty = dtOutputCty.Compute("MAX(SewingYYMM)", string.Empty).ToString();
                 maxSewOutPutCty = maxSewOutPutCty.Length > 0 ? maxSewOutPutCty.Substring(5, maxSewOutPutCty.Length - 5) : string.Empty;
 
-                SetTableToRow_SubconInType(
+                this.SetTableToRow_SubconInType(
                     wks,
                     intYear,
                     sheetStart,
@@ -1101,9 +1104,9 @@ namespace Sci.Production.Planning
 
                 // CountryID Output  Rate
                 lisPercent.Add(sheetStart.ToString());
-                SetFormulaToRow(wks, reportType, sheetStart, $"{countryID} Output  Rate", string.Format("=IF({0}{1} > 0, {0}{2} / {0}{1},0)", "{0}", mdvTotalIdx, sheetStart - 1));
+                this.SetFormulaToRow(wks, reportType, sheetStart, $"{countryID} Output  Rate", string.Format("=IF({0}{1} > 0, {0}{2} / {0}{1},0)", "{0}", mdvTotalIdx, sheetStart - 1));
 
-                DrawBottomLine(wks, sheetStart, 3);
+                this.DrawBottomLine(wks, sheetStart, 3);
 
                 sheetStart += 1;
             }
@@ -1116,7 +1119,7 @@ namespace Sci.Production.Planning
                 totalStr += string.Format("+{0}{1}", "{0}", str);
             }
 
-            SetFormulaToRow(wks, reportType, sheetStart, "Total Capacity", totalStr);
+            this.SetFormulaToRow(wks, reportType, sheetStart, "Total Capacity", totalStr);
 
             sheetStart += 1;
 
@@ -1128,7 +1131,7 @@ namespace Sci.Production.Planning
                 totalLoadStr += string.Format("+{0}{1}", "{0}", str);
             }
 
-            SetFormulaToRow(wks, reportType, sheetStart, "Total Loading", totalLoadStr);
+            this.SetFormulaToRow(wks, reportType, sheetStart, "Total Loading", totalLoadStr);
 
             sheetStart += 1;
 
@@ -1151,13 +1154,13 @@ namespace Sci.Production.Planning
 
             // Total Loading - CAPA
             lisBold.Add(sheetStart.ToString());
-            SetFormulaToRow(wks, reportType, sheetStart, "Loading-CAPA", string.Format("=({0}{1} - {0}{2})", "{0}", sheetStart - 2, sheetStart - 3), EnuDrawColor.Normal);
+            this.SetFormulaToRow(wks, reportType, sheetStart, "Loading-CAPA", string.Format("=({0}{1} - {0}{2})", "{0}", sheetStart - 2, sheetStart - 3), EnuDrawColor.Normal);
             sheetStart += 1;
 
             // FILL Rate
             lisBold.Add(sheetStart.ToString());
             lisPercent.Add(sheetStart.ToString());
-            SetFormulaToRow(wks, reportType, sheetStart, "FIll RATE", string.Format("=IF({0}{2}>0,{0}{1}/{0}{2},0)", "{0}", sheetStart - 3, sheetStart - 4));
+            this.SetFormulaToRow(wks, reportType, sheetStart, "FIll RATE", string.Format("=IF({0}{2}>0,{0}{1}/{0}{2},0)", "{0}", sheetStart - 3, sheetStart - 4));
             sheetStart += 1;
 
             // Output()
@@ -1172,13 +1175,13 @@ namespace Sci.Production.Planning
             string maxSewOutPutT = dtOutput.Compute("MAX(SewingYYMM)", string.Empty).ToString();
             maxSewOutPutT = maxSewOutPutT.Length > 0 ? maxSewOutPutT.Substring(5, maxSewOutPutT.Length - 5) : string.Empty;
 
-            SetFormulaToRow(wks, reportType, sheetStart, $"Output ({maxSewOutPutT})", outPutStr);
+            this.SetFormulaToRow(wks, reportType, sheetStart, $"Output ({maxSewOutPutT})", outPutStr);
             sheetStart += 1;
 
             // Output  Rate
             lisPercent.Add(sheetStart.ToString());
             lisBold.Add(sheetStart.ToString());
-            SetFormulaToRow(wks, reportType, sheetStart, "Output  Rate", string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", sheetStart - 5, sheetStart - 1));
+            this.SetFormulaToRow(wks, reportType, sheetStart, "Output  Rate", string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", sheetStart - 5, sheetStart - 1));
 
             // 第一排置中
             Microsoft.Office.Interop.Excel.Range rg = wks.get_Range(MyExcelPrg.GetExcelColumnName(1) + artworkStart.ToString(), MyExcelPrg.GetExcelColumnName(1) + sheetStart.ToString());
@@ -1215,13 +1218,14 @@ namespace Sci.Production.Planning
             rg = wks.get_Range("A:A");
             rg.Columns.AutoFit();
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
         /// Report1，開啟xlt填入資料
         /// </summary>
         /// <param name="datas"> dataset from procedures </param>
+        /// <param name="intYear">intYear</param>
         /// <param name="wks"> work sheet </param>
         /// <param name="sheetStart"> sheet index </param>
         /// <param name="artworkName"> artwork name </param>
@@ -1255,19 +1259,19 @@ namespace Sci.Production.Planning
                 lisCty.Add(sheetStart.ToString());
                 lisBold.Add(sheetStart.ToString());
                 string countryID = dtCountryList.Rows[idxCty]["CountryID"].ToString();
-                DataTable dtCountry = SafeGetDt(dt1, string.Format("CountryID = '{0}'", countryID));
+                DataTable dtCountry = this.SafeGetDt(dt1, string.Format("CountryID = '{0}'", countryID));
 
                 // if (dtCountry.Rows.Count == 0) continue;
                 // string CountryName = dtCountry.Rows[0]["CountryName"].ToString();
                 string countryName = dtCountryList.Rows[idxCty]["CountryName"].ToString();
 
                 lisCtyIdx.Add(sheetStart.ToString());
-                SetTableToRow_sum(wks, intYear, sheetStart, countryName, artworkSeq + " - " + artworkName, artworkUnit, "-", dtCountry, "FtyTmsCapa");
+                this.SetTableToRow_sum(wks, intYear, sheetStart, countryName, artworkSeq + " - " + artworkName, artworkUnit, "-", dtCountry, "FtyTmsCapa");
                 sheetStart += 1;
 
-                DataTable dtM = SafeGetDt(dtList, string.Format("CountryID = '{0}'", countryID)).DefaultView.ToTable(true, "MdivisionID");
-                DataTable dtFactorySB2 = SafeGetDt(dt5, string.Format("CountryID = '{0}'", countryID));
-                DataTable dtNonSister = SafeGetDt(dt6, string.Format("CountryID = '{0}'", countryID));
+                DataTable dtM = this.SafeGetDt(dtList, string.Format("CountryID = '{0}'", countryID)).DefaultView.ToTable(true, "MdivisionID");
+                DataTable dtFactorySB2 = this.SafeGetDt(dt5, string.Format("CountryID = '{0}'", countryID));
+                DataTable dtNonSister = this.SafeGetDt(dt6, string.Format("CountryID = '{0}'", countryID));
                 bool isSample = false;
                 for (int idxM = 0; idxM < dtM.Rows.Count; idxM++)
                 {
@@ -1278,10 +1282,10 @@ namespace Sci.Production.Planning
 
                     isSample = mID == "Sample";
 
-                    DataTable dtOneM = SafeGetDt(dtCountry, string.Format("MdivisionID = '{0}'", mID));
+                    DataTable dtOneM = this.SafeGetDt(dtCountry, string.Format("MdivisionID = '{0}'", mID));
 
                     // Capacity(CPU)
-                    SetTableToRow_sum(wks, intYear, sheetStart, mID, artworkSeq + " - " + artworkName, artworkUnit, "Capacity", dtOneM, "FtyTmsCapa");
+                    this.SetTableToRow_sum(wks, intYear, sheetStart, mID, artworkSeq + " - " + artworkName, artworkUnit, "Capacity", dtOneM, "FtyTmsCapa");
                     sheetStart += 1;
 
                     // Loading(CPU)
@@ -1400,13 +1404,20 @@ namespace Sci.Production.Planning
 
             sheetStart += 1;
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
         /// Report2，開啟xlt填入資料
         /// </summary>
         /// <param name="datas"> dataset from procedure </param>
+        /// <param name="reportType">reportType</param>
+        /// <param name="intYear">intYear</param>
+        /// <param name="intMonth">intMonth</param>
+        /// <param name="isSCIDelivery">isSCIDelivery</param>
+        /// <param name="zone">zone</param>
+        /// <param name="mdivision">mdivision</param>
+        /// <param name="fty">fty</param>
         /// <param name="wks"> work sheet </param>
         /// <param name="sheetStart"> sheet index </param>
         /// <returns> execute success or not </returns>
@@ -1464,7 +1475,7 @@ namespace Sci.Production.Planning
             for (int idxCty = 0; idxCty < dtCountryList.Rows.Count; idxCty++)
             {
                 string countryID = dtCountryList.Rows[idxCty]["CountryID"].ToString();
-                DataTable dtCountry = SafeGetDt(dt1, string.Format("CountryID = '{0}'", countryID));
+                DataTable dtCountry = this.SafeGetDt(dt1, string.Format("CountryID = '{0}'", countryID));
                 if (dtCountry.Rows.Count == 0)
                 {
                     continue;
@@ -1473,13 +1484,13 @@ namespace Sci.Production.Planning
                 string countryName = dtCountry.Rows[0]["CountryName"].ToString();
                 wks.Cells[sheetStart, 1].Value = countryName;
 
-                DataTable dtMDVList = SafeGetDt(dtList, string.Format("CountryID = '{0}'", countryID)).DefaultView.ToTable(true, "MDivisionID");
+                DataTable dtMDVList = this.SafeGetDt(dtList, string.Format("CountryID = '{0}'", countryID)).DefaultView.ToTable(true, "MDivisionID");
 
                 List<string> lisCapaCty = new List<string>();
                 List<string> lisLoadingCty = new List<string>();
                 List<string> lisShortage = new List<string>();
-                SetColumnToBack(dtMDVList, "MDivisionID", "Sample");
-                SetColumnToBack(dtMDVList, "MDivisionID", string.Empty);
+                this.SetColumnToBack(dtMDVList, "MDivisionID", "Sample");
+                this.SetColumnToBack(dtMDVList, "MDivisionID", string.Empty);
                 int idx = 0;
 
                 for (int idxMDV = 0; idxMDV < dtMDVList.Rows.Count; idxMDV++)
@@ -1487,9 +1498,9 @@ namespace Sci.Production.Planning
                     string mdivisionID = dtMDVList.Rows[idxMDV]["MDivisionID"].ToString();
                     wks.Cells[sheetStart, 2].Value = mdivisionID;
 
-                    DataTable dtOneMDV = SafeGetDt(dtCountry, string.Format("MDivisionID = '{0}'", mdivisionID));
-                    DataTable dtFactory = SafeGetDt(dtOneMDV, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mdivisionID));
-                    DataTable dtFactoryList = SafeGetDt(dtList, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mdivisionID)).DefaultView.ToTable(true, "FactoryID");
+                    DataTable dtOneMDV = this.SafeGetDt(dtCountry, string.Format("MDivisionID = '{0}'", mdivisionID));
+                    DataTable dtFactory = this.SafeGetDt(dtOneMDV, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mdivisionID));
+                    DataTable dtFactoryList = this.SafeGetDt(dtList, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mdivisionID)).DefaultView.ToTable(true, "FactoryID");
                     int ftyStart = sheetStart;
                     List<string> lisCapa = new List<string>();
                     List<string> lisLoading = new List<string>();
@@ -1503,7 +1514,7 @@ namespace Sci.Production.Planning
                         idx = 0;
                         for (int mon = intMonth; mon < intMonth + 6; mon++)
                         {
-                            DataRow[] rows = dtFactory.Select(string.Format("FactoryID = '{0}' and MONTH = '{1}'", factoryID, GetCurrMonth(intYear, mon)));
+                            DataRow[] rows = dtFactory.Select(string.Format("FactoryID = '{0}' and MONTH = '{1}'", factoryID, this.GetCurrMonth(intYear, mon)));
                             decimal capacity1 = 0;
                             decimal capacity2 = 0;
                             if (rows.Length > 0)
@@ -1528,16 +1539,16 @@ namespace Sci.Production.Planning
                         lisLoadingCty.Add(sheetStart.ToString());
                         wks.Cells[sheetStart, 4].Value = "Load.";
                         idx = 0;
-                        DataTable dtLoadCPU = SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}' and FactoryID = '{factoryID}'");
-                        DataTable dtFactoryAdd = SafeGetDt(dt5, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}' and FactoryID = '{factoryID}'");
-                        DataTable dtFactoryDiff = SafeGetDt(dt5, $"CountryID2 = '{countryID}' And MDivisionID2 = '{mdivisionID}' and FactoryID2 = '{factoryID}'");
+                        DataTable dtLoadCPU = this.SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}' and FactoryID = '{factoryID}'");
+                        DataTable dtFactoryAdd = this.SafeGetDt(dt5, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}' and FactoryID = '{factoryID}'");
+                        DataTable dtFactoryDiff = this.SafeGetDt(dt5, $"CountryID2 = '{countryID}' And MDivisionID2 = '{mdivisionID}' and FactoryID2 = '{factoryID}'");
                         for (int mon = intMonth; mon < intMonth + 6; mon++)
                         {
-                            DataRow[] rows = dtLoadCPU.Select(string.Format("MONTH = '{0}'", GetCurrMonth(intYear, mon)));
-                            DataRow[] rowsSB2add1 = dtFactoryAdd.Select($"Month = '{GetCurrMonth(intYear, mon) + "1"}'");
-                            DataRow[] rowsSB2add2 = dtFactoryAdd.Select($"Month = '{GetCurrMonth(intYear, mon) + "2"}'");
-                            DataRow[] rowsSB2diff1 = dtFactoryDiff.Select($"Month = '{GetCurrMonth(intYear, mon) + "1"}'");
-                            DataRow[] rowsSB2diff2 = dtFactoryDiff.Select($"Month = '{GetCurrMonth(intYear, mon) + "2"}'");
+                            DataRow[] rows = dtLoadCPU.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(intYear, mon)));
+                            DataRow[] rowsSB2add1 = dtFactoryAdd.Select($"Month = '{this.GetCurrMonth(intYear, mon) + "1"}'");
+                            DataRow[] rowsSB2add2 = dtFactoryAdd.Select($"Month = '{this.GetCurrMonth(intYear, mon) + "2"}'");
+                            DataRow[] rowsSB2diff1 = dtFactoryDiff.Select($"Month = '{this.GetCurrMonth(intYear, mon) + "1"}'");
+                            DataRow[] rowsSB2diff2 = dtFactoryDiff.Select($"Month = '{this.GetCurrMonth(intYear, mon) + "2"}'");
                             decimal capacity1 = (rows.Length > 0) ? rows.Sum(rr => MyUtility.Convert.GetDecimal(rr["Capacity1"])) : 0;
                             decimal capacity2 = (rows.Length > 0) ? rows.Sum(rr => MyUtility.Convert.GetDecimal(rr["Capacity2"])) : 0;
                             decimal? vSB2add1 = (rowsSB2add1.Length > 0) ? rowsSB2add1.Sum(rr => MyUtility.Convert.GetDecimal(rr["OrderCapacity"])) : 0;
@@ -1596,7 +1607,7 @@ namespace Sci.Production.Planning
                             wks.Cells[sheetStart, i] = str;
                         }
 
-                        DrawBottomLine(wks, sheetStart, 4, 3, 17);
+                        this.DrawBottomLine(wks, sheetStart, 4, 3, 17);
 
                         sheetStart += 1;
                     }
@@ -1605,10 +1616,10 @@ namespace Sci.Production.Planning
                     int shortageStart = sheetStart;
                     wks.Cells[sheetStart, 3].Value = string.Format("{0} Shortage.", mdivisionID);
                     idx = 0;
-                    DataTable dtShortage = SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
+                    DataTable dtShortage = this.SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
                     for (int mon = intMonth; mon < intMonth + 6; mon++)
                     {
-                        DataRow[] rows = dtShortage.Select(string.Format("MONTH = '{0}'", GetCurrMonth(intYear, mon)));
+                        DataRow[] rows = dtShortage.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(intYear, mon)));
                         decimal orderShortage1 = 0;
                         decimal orderShortage2 = 0;
                         if (rows.Length > 0)
@@ -1669,11 +1680,11 @@ namespace Sci.Production.Planning
                     // 6 ForecastCapacity
                     lisPercent.Add(sheetStart.ToString());
                     idx = 0;
-                    DataTable dtForecastCapacityByMDV = SafeGetDt(dt2, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}' " + filterZoneMdivisionAdd);
+                    DataTable dtForecastCapacityByMDV = this.SafeGetDt(dt2, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}' " + filterZoneMdivisionAdd);
                     wks.Cells[sheetStart, 3].Value = string.Format("{0} Total FC Shared", mdivisionID);
                     for (int mon = intMonth; mon < intMonth + 6; mon++)
                     {
-                        DataRow[] rows = dtForecastCapacityByMDV.Select(string.Format("MONTH = '{0}'", GetCurrMonth(intYear, mon)));
+                        DataRow[] rows = dtForecastCapacityByMDV.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(intYear, mon)));
                         decimal capacity1 = 0;
                         decimal capacity2 = 0;
                         if (rows.Length > 0)
@@ -1696,20 +1707,20 @@ namespace Sci.Production.Planning
                     sheetStart += 1;
 
                     // Total Vari.
-                    SetFormulaToRow(wks, reportType, sheetStart, string.Format("{0} Total Vari.", mdivisionID), string.Format("={0}{1} - {0}{2}", "{0}", sheetStart - 2, sheetStart - 3), EnuDrawColor.Normal);
+                    this.SetFormulaToRow(wks, reportType, sheetStart, string.Format("{0} Total Vari.", mdivisionID), string.Format("={0}{1} - {0}{2}", "{0}", sheetStart - 2, sheetStart - 3), EnuDrawColor.Normal);
 
                     sheetStart += 1;
 
                     // Total Fill Rate
                     lisPercent.Add(sheetStart.ToString());
-                    SetFormulaToRow(wks, reportType, sheetStart, string.Format("{0} Total Fill Rate", mdivisionID), string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", "{0}", sheetStart - 3, sheetStart - 4), EnuDrawColor.Normal);
+                    this.SetFormulaToRow(wks, reportType, sheetStart, string.Format("{0} Total Fill Rate", mdivisionID), string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", "{0}", sheetStart - 3, sheetStart - 4), EnuDrawColor.Normal);
 
                     sheetStart += 1;
 
                     // Output()
-                    DataTable dtOutputMDV = SafeGetDt(dt3, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
-                    DataTable dtOutputMDVAdd = SafeGetDt(dt5, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
-                    DataTable dtOutputMDVDiff = SafeGetDt(dt5, $"CountryID2 = '{countryID}' And MDivisionID2 = '{mdivisionID}'" + filterZoneMdivisionDiff);
+                    DataTable dtOutputMDV = this.SafeGetDt(dt3, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
+                    DataTable dtOutputMDVAdd = this.SafeGetDt(dt5, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
+                    DataTable dtOutputMDVDiff = this.SafeGetDt(dt5, $"CountryID2 = '{countryID}' And MDivisionID2 = '{mdivisionID}'" + filterZoneMdivisionDiff);
                     string maxSewOutPut = dtOutputMDV.Compute("MAX(SewingYYMM)", string.Empty).ToString();
                     maxSewOutPut = maxSewOutPut.Length > 0 ? maxSewOutPut.Substring(5, maxSewOutPut.Length - 5) : string.Empty;
                     wks.Cells[sheetStart, 3].Value = $"{mdivisionID} Output ({maxSewOutPut})";
@@ -1718,12 +1729,12 @@ namespace Sci.Production.Planning
                     idx = 0;
                     for (int mon = intMonth; mon < intMonth + 6; mon++)
                     {
-                        DataRow[] rows1 = dtOutputMDV.Select(string.Format("MONTH = '{0}'", GetCurrMonth(intYear, mon) + "1") + zoneFilter);
-                        DataRow[] rows2 = dtOutputMDV.Select(string.Format("MONTH = '{0}'", GetCurrMonth(intYear, mon) + "2") + zoneFilter);
-                        DataRow[] rowsSB2add1 = dtOutputMDVAdd.Select(string.Format("Month = '{1}'", mdivisionID, GetCurrMonth(intYear, mon) + "1"));
-                        DataRow[] rowsSB2add2 = dtOutputMDVAdd.Select(string.Format("Month = '{1}'", mdivisionID, GetCurrMonth(intYear, mon) + "2"));
-                        DataRow[] rowsSB2diff1 = dtOutputMDVDiff.Select(string.Format("Month = '{1}'", mdivisionID, GetCurrMonth(intYear, mon) + "1"));
-                        DataRow[] rowsSB2diff2 = dtOutputMDVDiff.Select(string.Format("Month = '{1}'", mdivisionID, GetCurrMonth(intYear, mon) + "2"));
+                        DataRow[] rows1 = dtOutputMDV.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(intYear, mon) + "1") + zoneFilter);
+                        DataRow[] rows2 = dtOutputMDV.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(intYear, mon) + "2") + zoneFilter);
+                        DataRow[] rowsSB2add1 = dtOutputMDVAdd.Select(string.Format("Month = '{1}'", mdivisionID, this.GetCurrMonth(intYear, mon) + "1"));
+                        DataRow[] rowsSB2add2 = dtOutputMDVAdd.Select(string.Format("Month = '{1}'", mdivisionID, this.GetCurrMonth(intYear, mon) + "2"));
+                        DataRow[] rowsSB2diff1 = dtOutputMDVDiff.Select(string.Format("Month = '{1}'", mdivisionID, this.GetCurrMonth(intYear, mon) + "1"));
+                        DataRow[] rowsSB2diff2 = dtOutputMDVDiff.Select(string.Format("Month = '{1}'", mdivisionID, this.GetCurrMonth(intYear, mon) + "2"));
                         decimal? capacity1 = (rows1.Length > 0) ? rows1.Sum(rr => MyUtility.Convert.GetDecimal(rr["SewCapacity"])) : 0;
                         decimal? capacity2 = (rows2.Length > 0) ? rows2.Sum(rr => MyUtility.Convert.GetDecimal(rr["SewCapacity"])) : 0;
                         decimal? vSB2add1 = (rowsSB2add1.Length > 0) ? rowsSB2add1.Sum(rr => MyUtility.Convert.GetDecimal(rr["SewCapacity"])) : 0;
@@ -1794,7 +1805,7 @@ namespace Sci.Production.Planning
                         wks.Cells[sheetStart, i] = str;
                     }
 
-                    DrawBottomLine(wks, sheetStart, 4, 2, 17);
+                    this.DrawBottomLine(wks, sheetStart, 4, 2, 17);
 
                     sheetStart += 1;
                 }
@@ -1830,12 +1841,12 @@ namespace Sci.Production.Planning
                 // Country FC Shared
                 lisPercent.Add(sheetStart.ToString());
                 idx = 0;
-                DataTable dtForecastCapacity = SafeGetDt(dt2, $"CountryID = '{countryID}'" + filterZoneMdivisionAdd);
+                DataTable dtForecastCapacity = this.SafeGetDt(dt2, $"CountryID = '{countryID}'" + filterZoneMdivisionAdd);
                 wks.Cells[sheetStart, 3].Value = string.Format("{0} Total FC Shared", countryID);
                 for (int mon = intMonth; mon < intMonth + 6; mon++)
                 {
-                    var capa1 = dtForecastCapacity.Compute("SUM(Capacity1)", string.Format("MONTH = '{0}'", GetCurrMonth(intYear, mon)));
-                    var capa2 = dtForecastCapacity.Compute("SUM(Capacity2)", string.Format("MONTH = '{0}'", GetCurrMonth(intYear, mon)));
+                    var capa1 = dtForecastCapacity.Compute("SUM(Capacity1)", string.Format("MONTH = '{0}'", this.GetCurrMonth(intYear, mon)));
+                    var capa2 = dtForecastCapacity.Compute("SUM(Capacity2)", string.Format("MONTH = '{0}'", this.GetCurrMonth(intYear, mon)));
                     decimal capacity1 = capa1 == DBNull.Value ? 0 : Convert.ToDecimal(capa1);
                     decimal capacity2 = capa2 == DBNull.Value ? 0 : Convert.ToDecimal(capa2);
                     wks.Cells[sheetStart, 5 + (idx * 2)].Value = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(5 + (idx * 2)), sheetStart - 1, capacity1);
@@ -1849,19 +1860,19 @@ namespace Sci.Production.Planning
                 sheetStart += 1;
 
                 // Country Total Vari.
-                SetFormulaToRow(wks, reportType, sheetStart, string.Format("{0} Total Vari.", countryID), string.Format("={0}{1} - {0}{2}", "{0}", sheetStart - 2, sheetStart - 3), EnuDrawColor.Normal);
+                this.SetFormulaToRow(wks, reportType, sheetStart, string.Format("{0} Total Vari.", countryID), string.Format("={0}{1} - {0}{2}", "{0}", sheetStart - 2, sheetStart - 3), EnuDrawColor.Normal);
 
                 sheetStart += 1;
 
                 // Country Total Fill Rate
                 lisPercent.Add(sheetStart.ToString());
-                SetFormulaToRow(wks, reportType, sheetStart, string.Format("{0} Total Fill Rate", countryID), string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", "{0}", sheetStart - 3, sheetStart - 4), EnuDrawColor.Normal);
+                this.SetFormulaToRow(wks, reportType, sheetStart, string.Format("{0} Total Fill Rate", countryID), string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", "{0}", sheetStart - 3, sheetStart - 4), EnuDrawColor.Normal);
                 sheetStart += 1;
 
                 // CountryID Output()
-                DataTable dtOutputCty = SafeGetDt(dt3, $"CountryID = '{countryID}'" + filterZoneMdivisionAdd);
-                DataTable dtOutputCtyAdd = SafeGetDt(dt5, $"CountryID = '{countryID}'" + filterZoneMdivisionAdd);
-                DataTable dtOutputCtyDiff = SafeGetDt(dt5, $"CountryID2 = '{countryID}'" + filterZoneMdivisionDiff);
+                DataTable dtOutputCty = this.SafeGetDt(dt3, $"CountryID = '{countryID}'" + filterZoneMdivisionAdd);
+                DataTable dtOutputCtyAdd = this.SafeGetDt(dt5, $"CountryID = '{countryID}'" + filterZoneMdivisionAdd);
+                DataTable dtOutputCtyDiff = this.SafeGetDt(dt5, $"CountryID2 = '{countryID}'" + filterZoneMdivisionDiff);
                 string maxSewOutPutCty = dtOutputCty.Compute("MAX(SewingYYMM)", string.Empty).ToString();
                 maxSewOutPutCty = maxSewOutPutCty.Length > 0 ? maxSewOutPutCty.Substring(5, maxSewOutPutCty.Length - 5) : string.Empty;
                 string zoneFilterCty = zone == string.Empty ? string.Empty : $" And Zone = '{zone}'";
@@ -1871,12 +1882,12 @@ namespace Sci.Production.Planning
                 idx = 0;
                 for (int mon = intMonth; mon < intMonth + 6; mon++)
                 {
-                    DataRow[] rows1 = dtOutputCty.Select(string.Format("MONTH = '{0}'", GetCurrMonth(intYear, mon) + "1") + zoneFilterCty);
-                    DataRow[] rows2 = dtOutputCty.Select(string.Format("MONTH = '{0}'", GetCurrMonth(intYear, mon) + "2") + zoneFilterCty);
-                    DataRow[] rowsSB2add1 = dtOutputCtyAdd.Select(string.Format("Month = '{0}'", GetCurrMonth(intYear, mon) + "1"));
-                    DataRow[] rowsSB2add2 = dtOutputCtyAdd.Select(string.Format("Month = '{0}'", GetCurrMonth(intYear, mon) + "2"));
-                    DataRow[] rowsSB2diff1 = dtOutputCtyDiff.Select(string.Format("Month = '{0}'", GetCurrMonth(intYear, mon) + "1"));
-                    DataRow[] rowsSB2diff2 = dtOutputCtyDiff.Select(string.Format("Month = '{0}'", GetCurrMonth(intYear, mon) + "2"));
+                    DataRow[] rows1 = dtOutputCty.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(intYear, mon) + "1") + zoneFilterCty);
+                    DataRow[] rows2 = dtOutputCty.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(intYear, mon) + "2") + zoneFilterCty);
+                    DataRow[] rowsSB2add1 = dtOutputCtyAdd.Select(string.Format("Month = '{0}'", this.GetCurrMonth(intYear, mon) + "1"));
+                    DataRow[] rowsSB2add2 = dtOutputCtyAdd.Select(string.Format("Month = '{0}'", this.GetCurrMonth(intYear, mon) + "2"));
+                    DataRow[] rowsSB2diff1 = dtOutputCtyDiff.Select(string.Format("Month = '{0}'", this.GetCurrMonth(intYear, mon) + "1"));
+                    DataRow[] rowsSB2diff2 = dtOutputCtyDiff.Select(string.Format("Month = '{0}'", this.GetCurrMonth(intYear, mon) + "2"));
                     decimal? capacity1 = (rows1.Length > 0) ? rows1.Sum(rr => MyUtility.Convert.GetDecimal(rr["SewCapacity"])) : 0;
                     decimal? capacity2 = (rows2.Length > 0) ? rows2.Sum(rr => MyUtility.Convert.GetDecimal(rr["SewCapacity"])) : 0;
                     decimal? vSB2add1 = (rowsSB2add1.Length > 0) ? rowsSB2add1.Sum(rr => MyUtility.Convert.GetDecimal(rr["SewCapacity"])) : 0;
@@ -1946,7 +1957,7 @@ namespace Sci.Production.Planning
                     wks.Cells[sheetStart, i] = str;
                 }
 
-                DrawBottomLine(wks, sheetStart, 5, 1, 17);
+                this.DrawBottomLine(wks, sheetStart, 5, 1, 17);
 
                 sheetStart += 1;
             }
@@ -1982,7 +1993,7 @@ namespace Sci.Production.Planning
             // sxrc = null;
             GC.Collect();
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         #region 減少Code用
@@ -2150,11 +2161,11 @@ namespace Sci.Production.Planning
                         decimal.TryParse(wks.Cells[sheetStart, i].Value.ToString(), out value);
                         if (value >= 0)
                         {
-                            wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FF99CC"));
+                            wks.Cells[sheetStart, i].Interior.Color = ColorTranslator.ToOle(ColorTranslator.FromHtml("#FF99CC"));
                         }
                         else if (value < 0)
                         {
-                            wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#CCFFCC"));
+                            wks.Cells[sheetStart, i].Interior.Color = ColorTranslator.ToOle(ColorTranslator.FromHtml("#CCFFCC"));
                         }
                     }
                 }
@@ -2188,11 +2199,11 @@ namespace Sci.Production.Planning
                             decimal.TryParse(wks.Cells[sheetStart, i].Value.ToString(), out value);
                             if (value >= 0)
                             {
-                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FF99CC"));
+                                wks.Cells[sheetStart, i].Interior.Color = ColorTranslator.ToOle(ColorTranslator.FromHtml("#FF99CC"));
                             }
                             else if (value < 0)
                             {
-                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#CCFFCC"));
+                                wks.Cells[sheetStart, i].Interior.Color = ColorTranslator.ToOle(ColorTranslator.FromHtml("#CCFFCC"));
                             }
                         }
                     }
@@ -2239,7 +2250,7 @@ namespace Sci.Production.Planning
 
             if (this.rdHalfMonth.Checked)
             {
-                this.numMonth.Value = System.DateTime.Today.Month;
+                this.numMonth.Value = DateTime.Today.Month;
             }
         }
 
@@ -2276,10 +2287,14 @@ namespace Sci.Production.Planning
 
         private void TxtZone_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select distinct zone from Factory WITH (NOLOCK) where isSCI=1 and junk=0 ", "8", this.Text, false, ",");
-            item.Size = new System.Drawing.Size(300, 250);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select distinct zone from Factory WITH (NOLOCK) where isSCI=1 and junk=0 ", "8", this.Text, false, ",");
+            item.Size = new Size(300, 250);
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.TxtZone.Text = item.GetSelectedString();
         }
 

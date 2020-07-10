@@ -1,17 +1,15 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
-using System.Transactions;
 using static Sci.Production.Packing.P26;
 
 namespace Sci.Production.Packing
 {
-    public partial class P26_AssignPackingList : Sci.Win.Tems.Base
+    public partial class P26_AssignPackingList : Win.Tems.Base
     {
         private List<NewFormModel> _NewFormModels;
         private DataTable _P25Dt;
@@ -25,7 +23,7 @@ namespace Sci.Production.Packing
         private Dictionary<string, string> _File_Name_PDF;
         private List<string> _wattingForConvert_contentsOfZPL;
 
-        public P26_AssignPackingList(List<NewFormModel> newFormModels, DataTable p25Dt , string uploadType, List<string> wattingForConvert , Dictionary<string, string> File_Name_PDF , List<string> wattingForConvert_contentsOfZPL)
+        public P26_AssignPackingList(List<NewFormModel> newFormModels, DataTable p25Dt, string uploadType, List<string> wattingForConvert, Dictionary<string, string> File_Name_PDF, List<string> wattingForConvert_contentsOfZPL)
         {
             this.InitializeComponent();
             this._NewFormModels = newFormModels;
@@ -34,6 +32,7 @@ namespace Sci.Production.Packing
             this.GridDt.Columns.Add(new DataColumn() { ColumnName = "Sel", DataType = typeof(bool) });
             this.GridDt.Columns.Add(new DataColumn() { ColumnName = "FileName", DataType = typeof(string) });
             this.GridDt.Columns.Add(new DataColumn() { ColumnName = "PONO", DataType = typeof(string) });
+
             // this.GridDt.Columns.Add(new DataColumn() { ColumnName = "SKU", DataType = typeof(string) });
             // this.GridDt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(string) });
             this.GridDt.Columns.Add(new DataColumn() { ColumnName = "PackingListID", DataType = typeof(string) });
@@ -107,7 +106,7 @@ namespace Sci.Production.Packing
                                 {
                                     PONO = pono,
                                     FileName = fileName,
-                                    PackingListID = packinListID
+                                    PackingListID = packinListID,
                                 };
                                 list.Add(m);
                             }
@@ -115,7 +114,7 @@ namespace Sci.Production.Packing
                             this.PO_File_List.Add(new PDF_Model()
                             {
                                 PONO = pono,
-                                FileName = fileName
+                                FileName = fileName,
                             });
                         }
                     }
@@ -135,12 +134,12 @@ namespace Sci.Production.Packing
                 this.grid2.IsEditingReadOnly = false;
                 this.Helper.Controls.Grid.Generator(this.grid2)
                 .CheckBox("Sel", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+
                 // .Text("FileName", header: "File Name ", width: Widths.AnsiChars(70), iseditingreadonly: true)
                 .Text("PONO", header: "PO#", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Text("PackingListID", header: "PackingList#", width: Widths.AnsiChars(30), iseditingreadonly: false)
                 ;
             }
-
         }
 
         private void BtnProcessing_Click(object sender, EventArgs e)
@@ -194,7 +193,7 @@ namespace Sci.Production.Packing
                 }
             }
 
-            Sci.Production.Packing.P26 p26 = new P26(null);
+            P26 p26 = new P26(null);
 
             foreach (var item in file_PackID)
             {
@@ -213,12 +212,14 @@ namespace Sci.Production.Packing
                     foreach (var aModel in this._NewFormModels)
                     {
                         model.ZPL_List = aModel.ZPL_List.Where(o => o.CustPONo == pono).ToList();
-                        //foreach (var bModel in aModel.ZPL_List)
-                        //{
+
+                        // foreach (var bModel in aModel.ZPL_List)
+                        // {
                         //    //bModel.CustPONo
-                        //}
+                        // }
                     }
                 }
+
                 List<UpdateModel> updateModels = new List<UpdateModel>();
 
                 if (this._UploadType == "ZPL")
@@ -232,7 +233,6 @@ namespace Sci.Production.Packing
                 }
 
                 this.UpdateModel_List.Add(updateModels);
-
             }
 
             // 先完成P24資料寫入、轉圖片、將圖片存入P24表身
@@ -254,7 +254,7 @@ namespace Sci.Production.Packing
                     {
                         string fileName = item.Key;
 
-                        List<DataRow> dl = this._P25Dt.AsEnumerable().Where(o => o["FileName"].ToString() == fileName).ToList();//.FirstOrDefault()["Result"] = "Pass";
+                        List<DataRow> dl = this._P25Dt.AsEnumerable().Where(o => o["FileName"].ToString() == fileName).ToList(); // .FirstOrDefault()["Result"] = "Pass";
 
                         foreach (DataRow dr in dl)
                         {
@@ -277,7 +277,6 @@ namespace Sci.Production.Packing
                             dr["Result"] = "Pass";
                         }
                     }
-
                 }
             }
             else
@@ -288,7 +287,7 @@ namespace Sci.Production.Packing
                 {
                     string fileName = item.Key;
 
-                    List<DataRow> dl = this._P25Dt.AsEnumerable().Where(o => o["FileName"].ToString() == fileName).ToList();//.FirstOrDefault()["Result"] = "Pass";
+                    List<DataRow> dl = this._P25Dt.AsEnumerable().Where(o => o["FileName"].ToString() == fileName).ToList(); // .FirstOrDefault()["Result"] = "Pass";
 
                     foreach (DataRow dr in dl)
                     {
@@ -311,8 +310,7 @@ namespace Sci.Production.Packing
 
                 foreach (var fileName in list)
                 {
-
-                    List<DataRow> dl = this._P25Dt.AsEnumerable().Where(o => o["FileName"].ToString() == fileName).ToList();//.FirstOrDefault()["Result"] = "Pass";
+                    List<DataRow> dl = this._P25Dt.AsEnumerable().Where(o => o["FileName"].ToString() == fileName).ToList(); // .FirstOrDefault()["Result"] = "Pass";
 
                     foreach (DataRow dr in dl)
                     {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Data;
 using Ict;
 using Ict.Win;
 using Sci.Data;
@@ -14,7 +8,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_ProductionOutput_SewingDetail
     /// </summary>
-    public partial class P01_ProductionOutput_SewingDetail : Sci.Win.Subs.Base
+    public partial class P01_ProductionOutput_SewingDetail : Win.Subs.Base
     {
         private string orderID;
         private string type;

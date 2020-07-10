@@ -6,7 +6,7 @@ namespace Sci.Production.SubProcess
     /// <summary>
     /// SubProcess_B03
     /// </summary>
-    public partial class B03 : Sci.Win.Tems.Input1
+    public partial class B03 : Win.Tems.Input1
     {
         /// <summary>
         /// B03
@@ -16,7 +16,7 @@ namespace Sci.Production.SubProcess
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = $"MDivisionID = '{Sci.Env.User.Keyword}'";
+            this.DefaultFilter = $"MDivisionID = '{Env.User.Keyword}'";
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Sci.Production.SubProcess
         {
             this.txtType.ReadOnly = false;
             this.txtID.ReadOnly = false;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             base.ClickNewAfter();
         }
 
@@ -95,7 +95,7 @@ namespace Sci.Production.SubProcess
         // Type 右鍵開窗
         private void TxtType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 @"Select  Id,ArtworkTypeId  from  subprocess  where isselection=1 and Junk=0  order by Id ",
                 "10,20",
                 this.txtType.Text);

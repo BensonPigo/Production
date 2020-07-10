@@ -1,30 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 using Sci.Win.UI;
-using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtdepartment : Sci.Win.UI.TextBox
+    /// <summary>
+    /// Txtdepartment
+    /// </summary>
+    public partial class Txtdepartment : Win.UI.TextBox
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtdepartment"/> class.
+        /// </summary>
+        public Txtdepartment()
+        {
+            this.Size = new System.Drawing.Size(80, 23);
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from SciMachine_MiscDepartment WITH (NOLOCK) where Junk = 0 order by ID", "10,50", this.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name from SciMachine_MiscDepartment WITH (NOLOCK) where Junk = 0 order by ID", "10,50", this.Text);
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -34,17 +43,12 @@ namespace Sci.Production.Class
             {
                 if (MyUtility.Check.Seek(str, "SciMachine_MiscDepartment", "id") == false)
                 {
-                    this.Text = "";
+                    this.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Department : {0} > not found!!!", str));
                     return;
                 }
             }
-        }
-
-        public txtdepartment()
-        {
-            this.Size = new System.Drawing.Size(80, 23);
         }
     }
 }

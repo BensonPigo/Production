@@ -31,18 +31,18 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
+            this.txtSpreadingNo1 = new Sci.Production.Class.TxtSpreadingNo();
             this.label2 = new Sci.Win.UI.Label();
             this.txtComb = new Sci.Win.UI.TextBox();
             this.lbComb = new Sci.Win.UI.Label();
             this.txtCutno = new Sci.Win.UI.TextBox();
             this.dateBundlecreatedDate = new Sci.Win.UI.DateBox();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txtuser1 = new Sci.Production.Class.Txtuser();
             this.lbCutno = new Sci.Win.UI.Label();
             this.lbBundlecreatedDate = new Sci.Win.UI.Label();
             this.lbBundlecreator = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtfactoryByM = new Sci.Production.Class.txtfactory();
+            this.txtfactoryByM = new Sci.Production.Class.Txtfactory();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.txtCell = new Sci.Win.UI.TextBox();
             this.txtSize = new Sci.Win.UI.TextBox();
@@ -221,7 +221,7 @@
             // txtfactoryByM
             // 
             this.txtfactoryByM.BackColor = System.Drawing.Color.White;
-            this.txtfactoryByM.boolFtyGroupList = true;
+            this.txtfactoryByM.BoolFtyGroupList = true;
             this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactoryByM.IsProduceFty = false;
@@ -602,10 +602,10 @@
         private Win.UI.Panel panel5;
         private Win.UI.Grid grid1;
         private Win.UI.Label label1;
-        private Class.txtfactory txtfactoryByM;
+        private Class.Txtfactory txtfactoryByM;
         private Win.UI.TextBox txtCutno;
         private Win.UI.DateBox dateBundlecreatedDate;
-        private Class.txtuser txtuser1;
+        private Class.Txtuser txtuser1;
         private Win.UI.Label lbCutno;
         private Win.UI.Label lbBundlecreatedDate;
         private Win.UI.Label lbBundlecreator;
@@ -613,6 +613,6 @@
         private Win.UI.Label lbComb;
         private System.Windows.Forms.CheckBox checkChangepagebyCut;
         private Win.UI.Label label2;
-        private Class.txtSpreadingNo txtSpreadingNo1;
+        private Class.TxtSpreadingNo txtSpreadingNo1;
     }
 }

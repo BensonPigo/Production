@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
-using Sci.Utility.Excel;
 using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
@@ -16,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R13
     /// </summary>
-    public partial class R13 : Sci.Win.Tems.PrintForm
+    public partial class R13 : Win.Tems.PrintForm
     {
         private DateTime? buyerDlv1;
         private DateTime? buyerDlv2;
@@ -39,7 +34,7 @@ namespace Sci.Production.Shipping
             DataTable shipperID, factory;
             DBProxy.Current.Select(null, "select '' as ShipperID union all select ShipperID from FSRCpuCost WITH (NOLOCK) ", out shipperID);
             MyUtility.Tool.SetupCombox(this.comboShipper, 1, shipperID);
-            this.comboShipper.Text = Sci.Env.User.Keyword;
+            this.comboShipper.Text = Env.User.Keyword;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.dateBuyerDelivery.Value1 = DateTime.Today;
@@ -75,7 +70,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"with cte as (
@@ -170,7 +165,7 @@ Where o.LocalOrder = 0 ");
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -186,7 +181,7 @@ Where o.LocalOrder = 0 ");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Shipping_R13_FactoryCMTForecast.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Shipping_R13_FactoryCMTForecast.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Shipping_R13_FactoryCMTForecast.xltx", 3, false, null, objApp);
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             string buyer_Delivery = " ~ ";
@@ -207,7 +202,7 @@ Where o.LocalOrder = 0 ");
             objSheets.Cells[2, 11] = MyUtility.Convert.GetString(this.comboCategory.Text.Replace(this.category + "-", string.Empty));
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_R13_FactoryCMTForecast");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_R13_FactoryCMTForecast");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

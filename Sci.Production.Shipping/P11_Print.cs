@@ -2,24 +2,20 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P11_Print : Sci.Win.Tems.PrintForm
+    public partial class P11_Print : Win.Tems.PrintForm
     {
         private IList<DataRow> DetailDatas;
         private DataRow CurrentMaintain;
+
         /// <summary>
         /// P11_Print
         /// </summary>
@@ -229,8 +225,8 @@ drop table #tmpBIRInvoice,#tmpPackOrder,#tmpOrderStdFtyCMP,#PackCMP
                 rowNum++;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P11_BIRSalesReport.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P11_BIRSalesReport.xltx";
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 this.HideWaitMessage();
@@ -244,7 +240,7 @@ drop table #tmpBIRInvoice,#tmpPackOrder,#tmpOrderStdFtyCMP,#PackCMP
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P11_BIRSalesReport");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_P11_BIRSalesReport");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -326,15 +322,15 @@ group by o.CustPONo,o.StyleID,s.Description,o.PoPrice,o.id,o.CPU,o.CurrencyID,st
             }
             #endregion
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P11.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P11.xltx";
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 this.HideWaitMessage();
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             #region 產生頁首頁尾資料
 
@@ -381,7 +377,7 @@ where a.id = '{top1id}'
             decimal sumM = sumJ;
             decimal sumE = MyUtility.Convert.GetDecimal(dt.Compute("sum(E)", null));
 
-            //worksheet.Cells[48, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND CENTS", Environment.NewLine + "AND CENTS");
+            // worksheet.Cells[48, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND CENTS", Environment.NewLine + "AND CENTS");
             worksheet.Cells[57, 3] = MyUtility.Convert.USDMoney(sumJ);
 
             string sumGW = $@"
@@ -453,7 +449,7 @@ where p.INVNo in ({string.Join(",", ids)})
             #region Save & Show Excel
             worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Activate();
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P11");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_P11");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

@@ -15,7 +15,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P02
     /// </summary>
-    public partial class P02 : Sci.Win.Tems.QueryForm
+    public partial class P02 : Win.Tems.QueryForm
     {
         private DataTable selectDataTable = new DataTable();
 
@@ -42,10 +42,10 @@ namespace Sci.Production.Logistic
         {
             base.OnFormLoaded();
             TextBox a = new TextBox();
-            a.Text = Sci.Env.User.Keyword;
+            a.Text = Env.User.Keyword;
             this.txtcloglocationLocationNo.MDivisionObjectName = a;
 
-            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_chk = new Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings col_chk = new DataGridViewGeneratorCheckBoxColumnSettings();
             col_chk.CellValidating += (s, e) =>
             {
                 DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
@@ -189,14 +189,14 @@ from (
 order by rn
 
 drop table #tmp_TransferToClog
-", Sci.Env.User.Keyword,
-            dicSqlFilte["PackingList ID"],
-            dicSqlFilte["Order ID"],
-            dicSqlFilte["Orders CustPONo"],
-            dicSqlFilte["Orders FtyGroup"],
-            dicSqlFilte["TransferToClog AddDate Start"],
-            dicSqlFilte["TransferToClog AddDate End"],
-            dicSqlFilte["TransferToClog TransferSlipNo"]);
+", Env.User.Keyword,
+                dicSqlFilte["PackingList ID"],
+                dicSqlFilte["Order ID"],
+                dicSqlFilte["Orders CustPONo"],
+                dicSqlFilte["Orders FtyGroup"],
+                dicSqlFilte["TransferToClog AddDate Start"],
+                dicSqlFilte["TransferToClog AddDate End"],
+                dicSqlFilte["TransferToClog TransferSlipNo"]);
 
             DualResult selectResult;
             if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.selectDataTable))
@@ -236,6 +236,7 @@ drop table #tmp_TransferToClog
             {
                 this.numSelectedCTNQty.Value = 0;
                 this.numTotalCTNQty.Value = 0;
+
                 // 先將Grid的結構給開出來
                 string selectCommand = @"
 Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, 
@@ -314,7 +315,7 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFr
                                     dr["TransferDate"] = seekData["TransferDate"];
 
                                     string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
-                                    if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                    if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
                                     {
                                         dr["Remark"] = "The order's M is not equal to login M.";
                                     }
@@ -326,7 +327,7 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFr
                                                                             left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
                                                                             where a.ID = '{0}' and a.MDivisionID = '{1}'",
                                         dr["OrderID"].ToString(),
-                                        Sci.Env.User.Keyword,
+                                        Env.User.Keyword,
                                         seq);
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                     {
@@ -374,7 +375,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                         dr["TransferDate"] = seekData["TransferDate"];
 
                                         string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
-                                        if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                        if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
                                         {
                                             dr["Remark"] = "The order's M is not equal to login M.";
                                         }
@@ -388,7 +389,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                                                             left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
                                                                             where a.ID = '{0}' and a.MDivisionID = '{1}'",
                                             dr["OrderID"].ToString(),
-                                            Sci.Env.User.Keyword,
+                                            Env.User.Keyword,
                                             seq);
                                         if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                         {
@@ -453,7 +454,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                     string packinglistid = seekData["id"].ToString().Trim();
                                     string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
                                     string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
-                                    if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                    if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
                                     {
                                         dr["Remark"] = "The order's M is not equal to login M.";
                                     }
@@ -465,7 +466,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                                                             left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
                                                                             where a.ID = '{0}' and a.MDivisionID = '{1}'",
                                         dr["OrderID"].ToString(),
-                                        Sci.Env.User.Keyword,
+                                        Env.User.Keyword,
                                         seq);
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                     {
@@ -565,7 +566,7 @@ insert into ClogReceive (
                     MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"]),
                     MyUtility.Convert.GetString(dr["ClogLocationId"]),
-                    Sci.Env.User.UserID,
+                    Env.User.UserID,
                     MyUtility.Convert.GetString(dr["SCICtnNo"])));
 
                 // 要順便更新PackingList_Detail
@@ -600,19 +601,19 @@ where   ID = '{0}'
                 MyUtility.Msg.ErrorBox("Prepare update orders data fail!\r\n" + ex.ToString());
             }
 
-            DualResult result1 = Result.True, result2 = Result.True;
+            DualResult result1 = Ict.Result.True, result2 = Ict.Result.True;
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
                 {
                     if (updateCmds.Count > 0)
                     {
-                        result1 = Sci.Data.DBProxy.Current.Executes(null, updateCmds);
+                        result1 = DBProxy.Current.Executes(null, updateCmds);
                     }
 
                     if (insertCmds.Count > 0)
                     {
-                        result2 = Sci.Data.DBProxy.Current.Executes(null, insertCmds);
+                        result2 = DBProxy.Current.Executes(null, insertCmds);
                     }
 
                     DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
@@ -696,7 +697,7 @@ where   ID = '{0}'
         {
             this.gridImport.ValidateControl();
             DataGridViewColumn column = this.gridImport.Columns["Selected"];
-            if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(listControlBindingSource1.DataSource))
+            if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
                 int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
                 this.numSelectedCTNQty.Value = sint;

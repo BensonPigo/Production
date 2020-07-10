@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
@@ -14,10 +11,10 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B43_AddNLCode
     /// </summary>
-    public partial class B43_AddNLCode : Sci.Win.Subs.Base
+    public partial class B43_AddNLCode : Win.Subs.Base
     {
         private DataRow masterData;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings unit = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings unit = new DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// B43_AddNLCode
@@ -190,7 +187,7 @@ values('{0}','{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}',GETDATE(
                     MyUtility.Convert.GetString(dr["Price"]),
                     MyUtility.Convert.GetString(dr["LocalPurchase"]).ToUpper() == "TRUE" ? "1" : "0",
                     MyUtility.Convert.GetString(dr["NecessaryItem"]).ToUpper() == "TRUE" ? "1" : "0",
-                    Sci.Env.User.UserID));
+                    Env.User.UserID));
 
                 if (MyUtility.Check.Seek(string.Format("select ID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(this.masterData["ID"]), MyUtility.Convert.GetString(dr["NLCode"]))))
                 {

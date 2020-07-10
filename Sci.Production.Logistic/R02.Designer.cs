@@ -37,10 +37,10 @@
             this.txtPONoEnd = new Sci.Win.UI.TextBox();
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.comboM = new Sci.Win.UI.ComboBox();
-            this.txtcloglocationLocationStart = new Sci.Production.Class.txtcloglocation();
-            this.txtcloglocationLocationEnd = new Sci.Production.Class.txtcloglocation();
+            this.txtcloglocationLocationStart = new Sci.Production.Class.Txtcloglocation();
+            this.txtcloglocationLocationEnd = new Sci.Production.Class.Txtcloglocation();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
@@ -339,10 +339,10 @@
         private Win.UI.TextBox txtPONoEnd;
         private Win.UI.TextBox txtSPNoStart;
         private Win.UI.TextBox txtSPNoEnd;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.ComboBox comboM;
-        private Class.txtcloglocation txtcloglocationLocationStart;
-        private Class.txtcloglocation txtcloglocationLocationEnd;
+        private Class.Txtcloglocation txtcloglocationLocationStart;
+        private Class.Txtcloglocation txtcloglocationLocationEnd;
         private Win.UI.Label label6;
         private Win.UI.Label label7;
         private Win.UI.Label label8;

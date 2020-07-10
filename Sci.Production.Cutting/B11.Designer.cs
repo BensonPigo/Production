@@ -36,9 +36,9 @@
             this.txtDescription = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.chkJunk = new Sci.Win.UI.CheckBox();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.txtseason1 = new Sci.Production.Class.txtseason();
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
+            this.txtseason1 = new Sci.Production.Class.Txtseason();
+            this.txtstyle1 = new Sci.Production.Class.Txtstyle();
             this.label5 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -184,8 +184,8 @@
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
             this.txtstyle1.TabIndex = 15;
-            this.txtstyle1.tarBrand = null;
-            this.txtstyle1.tarSeason = null;
+            this.txtstyle1.TarBrand = null;
+            this.txtstyle1.TarSeason = null;
             // 
             // label5
             // 
@@ -334,9 +334,9 @@
         private Win.UI.TextBox txtDescription;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtID;
-        private Class.txtbrand txtbrand1;
-        private Class.txtseason txtseason1;
-        private Class.txtstyle txtstyle1;
+        private Class.Txtbrand txtbrand1;
+        private Class.Txtseason txtseason1;
+        private Class.Txtstyle txtstyle1;
         private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;

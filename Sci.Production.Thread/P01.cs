@@ -1,25 +1,18 @@
 ﻿using Ict.Win;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections;
-using Sci.Production.PublicPrg;
-using Sci.Production.Class;
 
 namespace Sci.Production.Thread
 {
     /// <summary>
     /// P01
     /// </summary>
-    public partial class P01 : Sci.Win.Tems.Input8
+    public partial class P01 : Win.Tems.Input8
     {
-        private string factory = Sci.Env.User.Factory;
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string factory = Env.User.Factory;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
 
         /// <summary>
         /// P01
@@ -38,12 +31,12 @@ namespace Sci.Production.Thread
         {
             DataTable detTable = (DataTable)this.detailgridbs.DataSource;
 
-            Sci.Production.Thread.P01_Detail p01_Detail = new Sci.Production.Thread.P01_Detail(this.CurrentMaintain, this.CurrentDetailData, Sci.Production.PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit"));
+            P01_Detail p01_Detail = new P01_Detail(this.CurrentMaintain, this.CurrentDetailData, PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit"));
             p01_Detail.ShowDialog();
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnSubDetailSelectCommandPrepare(Win.Tems.Input8.PrepareSubDetailSelectCommandEventArgs e)
+        protected override Ict.DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
         {
             this.SubDetailSelectCommand = string.Format(
                 @"
@@ -66,7 +59,7 @@ where b.Id = a.OperationId and a.id='{0}'",
 
             operation.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     this.OpenSubDetailPage();
                 }
@@ -91,14 +84,14 @@ where b.Id = a.OperationId and a.id='{0}'",
             //    P01_Detail.ShowDialog();
             // }});
             #endregion
-            this.btnGenerate.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
-            this.btnGenerate.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
+            this.btnGenerate.Enabled = PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
+            this.btnGenerate.Visible = PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
         }
 
         private void BtnGenerate_Click(object sender, EventArgs e)
         {
             DataTable detTable = (DataTable)this.detailgridbs.DataSource;
-            Form p01_Generate = new Sci.Production.Thread.P01_Generate(this.CurrentMaintain["Ukey"].ToString(), this.CurrentMaintain["id"].ToString(), this.CurrentMaintain["seasonid"].ToString(), this.CurrentMaintain["brandid"].ToString());
+            Form p01_Generate = new P01_Generate(this.CurrentMaintain["Ukey"].ToString(), this.CurrentMaintain["id"].ToString(), this.CurrentMaintain["seasonid"].ToString(), this.CurrentMaintain["brandid"].ToString());
             p01_Generate.ShowDialog();
             this.RenewData();
         }
@@ -106,7 +99,7 @@ where b.Id = a.OperationId and a.id='{0}'",
         /// <inheritdoc/>
         protected override bool ClickCopy()
         {
-            Sci.Production.Thread.P01_CopyTo p01_CopyTo = new Sci.Production.Thread.P01_CopyTo(this.CurrentMaintain);
+            P01_CopyTo p01_CopyTo = new P01_CopyTo(this.CurrentMaintain);
             p01_CopyTo.ShowDialog();
 
             // return base.ClickCopy();

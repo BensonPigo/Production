@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Data;
 using Ict.Win;
-using Ict;
-using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// B42_Detail
     /// </summary>
-    public partial class B42_Detail : Sci.Win.Subs.Base
+    public partial class B42_Detail : Win.Subs.Base
     {
         private DataTable gridData;
 

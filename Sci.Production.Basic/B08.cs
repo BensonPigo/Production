@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Ict.Win;
-using Sci;
 using Sci.Data;
 
 namespace Sci.Production.Basic
@@ -15,7 +11,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B08
     /// </summary>
-    public partial class B08 : Sci.Win.Tems.Input1
+    public partial class B08 : Win.Tems.Input1
     {
         /// <summary>
         /// B08
@@ -56,8 +52,8 @@ namespace Sci.Production.Basic
                 }
             }
 
-            bool hasEditauthority = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "B08. CD Code", "CanEdit");
-            Sci.Production.Basic.B08_ProductionFabricType rm = new Sci.Production.Basic.B08_ProductionFabricType(hasEditauthority, selectDataTable.Rows[0]);
+            bool hasEditauthority = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "B08. CD Code", "CanEdit");
+            B08_ProductionFabricType rm = new B08_ProductionFabricType(hasEditauthority, selectDataTable.Rows[0]);
             rm.ShowDialog(this);
             this.OnDetailEntered();
         }

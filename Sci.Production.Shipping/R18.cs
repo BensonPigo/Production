@@ -1,19 +1,14 @@
 ﻿using Ict;
 using Sci.Data;
 using Sci.Win;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
 {
-    public partial class R18 : Sci.Win.Tems.PrintForm
+    public partial class R18 : Win.Tems.PrintForm
     {
         private DataTable PrintTable;
         private string ShippingExpenseID_s_Where;
@@ -30,7 +25,7 @@ namespace Sci.Production.Shipping
         private void TxtShippingExpenseID_s_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select ID from ShipExpense";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", string.Empty, "ID");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20", string.Empty, "ID");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -43,7 +38,7 @@ namespace Sci.Production.Shipping
         private void TxtShippingExpenseID_e_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select ID from ShipExpense";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", string.Empty, "ID");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20", string.Empty, "ID");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -134,7 +129,7 @@ WHERE 1=1
 
             this.ShowWaitMessage("Excel Processing...");
             string excelName = "Shipping_R18";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             MyUtility.Excel.CopyToXls(this.PrintTable, string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
             excelApp.DisplayAlerts = false;
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表

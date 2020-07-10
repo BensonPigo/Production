@@ -52,9 +52,9 @@
             this.displaySPNo = new Sci.Win.UI.DisplayBox();
             this.displaySEQ2 = new Sci.Win.UI.DisplayBox();
             this.labelSuppID = new Sci.Win.UI.Label();
-            this.txtsupplierID = new Sci.Production.Class.txtsupplier();
-            this.txttpeuserTeamLeader = new Sci.Production.Class.txttpeuser();
-            this.txtunit_ftyUnit = new Sci.Production.Class.txtunit_fty();
+            this.txtsupplierID = new Sci.Production.Class.Txtsupplier();
+            this.txttpeuserTeamLeader = new Sci.Production.Class.Txttpeuser();
+            this.txtunit_ftyUnit = new Sci.Production.Class.Txtunit_fty();
             this.comboCategory = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -482,11 +482,11 @@
         private Win.UI.EditBox editRemark;
         private Win.UI.DisplayBox displayBrand;
         private Win.UI.Label labelBrand;
-        private Class.txttpeuser txttpeuserTeamLeader;
+        private Class.Txttpeuser txttpeuserTeamLeader;
         private Win.UI.TextBox txtReceiver;
         private Win.UI.Label labelReceiver;
         private Win.UI.NumericBox numNW;
-        private Class.txtunit_fty txtunit_ftyUnit;
+        private Class.Txtunit_fty txtunit_ftyUnit;
         private Win.UI.Label labelUnit;
         private Win.UI.NumericBox numQty;
         private Win.UI.TextBox txtCTNNo;
@@ -505,7 +505,7 @@
         private Win.UI.DisplayBox displaySPNo;
         private Win.UI.DisplayBox displaySEQ2;
         private Win.UI.Label labelSuppID;
-        private Class.txtsupplier txtsupplierID;
+        private Class.Txtsupplier txtsupplierID;
         private Win.UI.ComboBox comboCategory;
     }
 }

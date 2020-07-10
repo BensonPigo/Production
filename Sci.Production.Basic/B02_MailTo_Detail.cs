@@ -5,7 +5,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B02_MailTo_Detail
     /// </summary>
-    public partial class B02_MailTo_Detail : Sci.Win.Subs.Input6A
+    public partial class B02_MailTo_Detail : Win.Subs.Input6A
     {
         /// <summary>
         /// B02_MailTo_Detail

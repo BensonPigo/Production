@@ -54,7 +54,7 @@
             this.numSelectedCTNQty = new Sci.Win.UI.NumericBox();
             this.lbTotalCTNQty = new Sci.Win.UI.Label();
             this.lbSelectedCTNQty = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.lbFactory = new Sci.Win.UI.Label();
             this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
             this.label1 = new Sci.Win.UI.Label();
@@ -366,7 +366,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -541,7 +541,7 @@
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.Label label2;
         private Win.UI.Label lbFactory;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.NumericBox numTotalCTNQty;
         private Win.UI.NumericBox numSelectedCTNQty;
         private Win.UI.Label lbTotalCTNQty;

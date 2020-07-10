@@ -97,7 +97,7 @@
             this.labelPatternPanel = new Sci.Win.UI.Label();
             this.txtPatternPanel = new Sci.Win.UI.DisplayBox();
             this.numMarkerLengthY = new Sci.Win.UI.TextBox();
-            this.txtCutCell = new Sci.Production.Class.txtCell();
+            this.txtCutCell = new Sci.Production.Class.TxtCell();
             this.txtMarkerLength = new Sci.Win.UI.TextBox();
             this.btn_Refresh = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -1317,7 +1317,7 @@
         private Win.UI.TextBox txtFabricCombo;
         private Win.UI.TextBox txtFabricPanelCode;
         private Win.UI.NumericBox numCons;
-        private Class.txtCell txtCutCell;
+        private Class.TxtCell txtCutCell;
         private Win.UI.NumericBox numUnitCons;
         private Win.UI.TextBox txtMarkerLengthE;
         private Win.UI.Label label17;

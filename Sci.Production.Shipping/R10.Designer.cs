@@ -42,11 +42,11 @@
             this.radioGarment = new Sci.Win.UI.RadioButton();
             this.datePulloutDate = new Sci.Win.UI.DateRange();
             this.dateAPApvDate = new Sci.Win.UI.DateRange();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtcustcd = new Sci.Production.Class.txtcustcd();
-            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
-            this.txtshipmode = new Sci.Production.Class.txtshipmode();
-            this.txtsubconForwarder = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtcustcd = new Sci.Production.Class.Txtcustcd();
+            this.txtcountryDestination = new Sci.Production.Class.Txtcountry();
+            this.txtshipmode = new Sci.Production.Class.Txtshipmode();
+            this.txtsubconForwarder = new Sci.Production.Class.TxtsubconNoConfirm();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
             this.radioDetailListBySPNoByFeeType = new Sci.Win.UI.RadioButton();
             this.radioDetailListbySPNo = new Sci.Win.UI.RadioButton();
@@ -269,9 +269,9 @@
             // 
             this.txtsubconForwarder.DisplayBox1Binding = "";
             this.txtsubconForwarder.IsIncludeJunk = true;
-            this.txtsubconForwarder.isMisc = false;
-            this.txtsubconForwarder.isShipping = false;
-            this.txtsubconForwarder.isSubcon = false;
+            this.txtsubconForwarder.IsMisc = false;
+            this.txtsubconForwarder.IsShipping = false;
+            this.txtsubconForwarder.IsSubcon = false;
             this.txtsubconForwarder.Location = new System.Drawing.Point(119, 292);
             this.txtsubconForwarder.Name = "txtsubconForwarder";
             this.txtsubconForwarder.Size = new System.Drawing.Size(170, 23);
@@ -490,11 +490,11 @@
         private Win.UI.RadioButton radioGarment;
         private Win.UI.DateRange datePulloutDate;
         private Win.UI.DateRange dateAPApvDate;
-        private Class.txtbrand txtbrand;
-        private Class.txtcustcd txtcustcd;
-        private Class.txtcountry txtcountryDestination;
-        private Class.txtshipmode txtshipmode;
-        private Class.txtsubconNoConfirm txtsubconForwarder;
+        private Class.Txtbrand txtbrand;
+        private Class.Txtcustcd txtcustcd;
+        private Class.Txtcountry txtcountryDestination;
+        private Class.Txtshipmode txtshipmode;
+        private Class.TxtsubconNoConfirm txtsubconForwarder;
         private Win.UI.RadioPanel radioPanel2;
         private Win.UI.RadioButton radioDetailListBySPNoByFeeType;
         private Win.UI.RadioButton radioDetailListbySPNo;

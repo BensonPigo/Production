@@ -26,7 +26,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' and FabricType = 'A'";
+            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "' and FabricType = 'A'";
             this.txtuserApprove.TextBox1.ReadOnly = true;
             this.txtuserApprove.TextBox1.IsSupportEditMode = false;
             this.InsertDetailGridOnDoubleClick = false;
@@ -41,7 +41,7 @@ namespace Sci.Production.PPIC
         public P11(ToolStripMenuItem menuitem, string id)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' and FabricType = 'A' and id = '" + id + "'";
+            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "' and FabricType = 'A' and id = '" + id + "'";
             this.txtuserApprove.TextBox1.ReadOnly = true;
             this.txtuserApprove.TextBox1.IsSupportEditMode = false;
             this.InsertDetailGridOnDoubleClick = false;
@@ -132,7 +132,7 @@ order by ld.Seq1,ld.Seq2", masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -151,7 +151,7 @@ order by ld.Seq1,ld.Seq2", masterID);
                             dr["RefNo"] = MyUtility.Convert.GetString(selectData[0]["RefNo"]);
                             dr["Description"] = MyUtility.Convert.GetString(selectData[0]["Description"]);
                             DataTable wHdata;
-                            DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT m.InQty,m.OutQty FROM MDivisionPoDetail m WITH (NOLOCK) inner join Orders o WITH (NOLOCK) on m.POID=o.ID inner join Factory f WITH (NOLOCK) on f.ID=o.FtyGroup WHERE m.POID = '{0}' AND m.Seq1 = '{1}' AND m.Seq2 = '{2}' AND f.MDivisionID = '{3}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]), Sci.Env.User.Keyword), out wHdata);
+                            DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT m.InQty,m.OutQty FROM MDivisionPoDetail m WITH (NOLOCK) inner join Orders o WITH (NOLOCK) on m.POID=o.ID inner join Factory f WITH (NOLOCK) on f.ID=o.FtyGroup WHERE m.POID = '{0}' AND m.Seq1 = '{1}' AND m.Seq2 = '{2}' AND f.MDivisionID = '{3}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]), Env.User.Keyword), out wHdata);
                             if (whdr)
                             {
                                 if (wHdata.Rows.Count > 0)
@@ -236,7 +236,7 @@ OUTER APPLY(
 )LockStatus
 
 where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType = 'A'",
-                        MyUtility.Convert.GetString(
+                            MyUtility.Convert.GetString(
                             this.CurrentMaintain["POID"]),
                             inputString[0],
                             inputString[1],
@@ -280,12 +280,12 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
             #region RefNo的CoubleClick
             refno.EditingMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["Description"]), "Description", false, null);
+                        Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["Description"]), "Description", false, null);
                         callNextForm.ShowDialog(this);
                     }
                 }
@@ -317,12 +317,12 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,Description from PPICReason WITH (NOLOCK) where Type = 'AL' and Junk = 0 and TypeForUse = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Type"])), "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select ID,Description from PPICReason WITH (NOLOCK) where Type = 'AL' and Junk = 0 and TypeForUse = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Type"])), "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -411,9 +411,9 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
         {
             base.ClickNewAfter();
             this.CurrentMaintain["IssueDate"] = DateTime.Today;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["FabricType"] = "A";
-            this.CurrentMaintain["ApplyName"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["ApplyName"] = Env.User.UserID;
             this.CurrentMaintain["Status"] = "New";
         }
 
@@ -553,7 +553,7 @@ where a.RequestQty > a.StockQty",
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Factory + "LR", "Lack", DateTime.Today, 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(Env.User.Factory + "LR", "Lack", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -590,7 +590,7 @@ where a.RequestQty > a.StockQty",
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P11.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\PPIC_P11.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -632,7 +632,7 @@ where a.RequestQty > a.StockQty",
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P11");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_P11");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -692,7 +692,7 @@ where a.RequestQty > a.StockQty",
 
                         // 用登入的Factory 抓取對應的FtyGroup
                         DataTable ftyGroupData;
-                        DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}' and IsProduceFty = 1", Sci.Env.User.Factory), out ftyGroupData);
+                        DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}' and IsProduceFty = 1", Env.User.Factory), out ftyGroupData);
                         if (ftyGroupData.Rows.Count == 0)
                         {
                             MyUtility.Msg.WarningBox("SP No. not found!!");
@@ -755,7 +755,7 @@ where a.RequestQty > a.StockQty",
         {
             base.ClickConfirm();
             DualResult result;
-            string updateCmd = string.Format("update Lack set Status = 'Confirmed',ApvName = '{0}',ApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update Lack set Status = 'Confirmed',ApvName = '{0}',ApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -776,13 +776,13 @@ where a.RequestQty > a.StockQty",
 
             DialogResult confirmResult;
             confirmResult = MyUtility.Msg.QuestionBox("Are you sure you want to unconfirm this data?", caption: "Confirm", buttons: MessageBoxButtons.YesNo);
-            if (confirmResult != System.Windows.Forms.DialogResult.Yes)
+            if (confirmResult != DialogResult.Yes)
             {
                 return;
             }
 
             DualResult result;
-            string updateCmd = string.Format("update Lack set Status = 'New',ApvName = '',ApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update Lack set Status = 'New',ApvName = '',ApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -802,7 +802,7 @@ where a.RequestQty > a.StockQty",
             }
 
             DualResult result;
-            string updateCmd = string.Format("update Lack set Status = 'Received', EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update Lack set Status = 'Received', EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -855,7 +855,7 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
@@ -863,7 +863,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.PPIC.P10_P11_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, "Accessory");
+            var frm = new P10_P11_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, "Accessory");
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -896,7 +896,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             }
 
             DataRow dr;
-            if (!MyUtility.Check.Seek($@"select [type],[apvdate],[issuelackid],[Shift],[SubconName] from dbo.lack WITH (NOLOCK) where id='{this.CurrentMaintain["ID"]}' and fabrictype='A' and mdivisionid='{Sci.Env.User.Keyword}'", out dr, null))
+            if (!MyUtility.Check.Seek($@"select [type],[apvdate],[issuelackid],[Shift],[SubconName] from dbo.lack WITH (NOLOCK) where id='{this.CurrentMaintain["ID"]}' and fabrictype='A' and mdivisionid='{Env.User.Keyword}'", out dr, null))
             {
                 MyUtility.Msg.WarningBox("Please check requestid is Accessory.", "Data not found!!");
                 return;
@@ -916,7 +916,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 }
             }
 
-            string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IL", "IssueLack", DateTime.Now);
+            string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "IL", "IssueLack", DateTime.Now);
             if (MyUtility.Check.Empty(tmpId))
             {
                 MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -964,7 +964,6 @@ where a.id = '{this.CurrentMaintain["ID"]}' and c.lock = 0 and  c.inqty - c.outq
             if (!MyUtility.Check.Empty(msg))
             {
                 MyUtility.Msg.WarningBox("These items are understocked" + Environment.NewLine + msg);
-
             }
             #endregion
 
@@ -972,7 +971,7 @@ where a.id = '{this.CurrentMaintain["ID"]}' and c.lock = 0 and  c.inqty - c.outq
             StringBuilder strSQLCmd = new StringBuilder();
             strSQLCmd.Append($@"
 INSERT INTO [dbo].[IssueLack]([Id],[Type],[MDivisionID],[FactoryID],[IssueDate],[Status],[RequestID],[Remark],[ApvName],[ApvDate],[FabricType],[AddName],[AddDate])
-VALUES('{tmpId}','{type}','{Sci.Env.User.Keyword}','{Sci.Env.User.Factory}',GETDATE(),'NEW','{requestid}','{this.CurrentMaintain["Remark"]}','',null,'A','{Sci.Env.User.UserID}',GETDATE())
+VALUES('{tmpId}','{type}','{Env.User.Keyword}','{Env.User.Factory}',GETDATE(),'NEW','{requestid}','{this.CurrentMaintain["Remark"]}','',null,'A','{Env.User.UserID}',GETDATE())
 ");
 
             strSQLCmd.Append($@"
@@ -1011,7 +1010,9 @@ where a.id = '{this.CurrentMaintain["ID"]}' and c.lock = 0
 
             // 判斷LACKING
             if (type != "Lacking")
-            { strSQLCmd.Append(" and (c.inqty-c.outqty + c.adjustqty) > 0"); }
+            {
+                strSQLCmd.Append(" and (c.inqty-c.outqty + c.adjustqty) > 0");
+            }
             #endregion
 
             using (TransactionScope scope = new TransactionScope())

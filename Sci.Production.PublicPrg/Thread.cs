@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using Sci.Data;
-using Sci;
 using Ict;
-using Ict.Win;
 using System.Transactions;
-using Sci.Win.Tems;
 
 namespace Sci.Production.PublicPrg
 {
-
     public static partial class Prgs
     {
-        #region Thread Issue Confirm Update Sql 
+        #region Thread Issue Confirm Update Sql
         public static DualResult ThreadIssueConfirm(IList<DataRow> DetailDatas, string mainSql, bool checkLocationStock = true)
         {
             string updatesql = mainSql;
@@ -52,7 +45,6 @@ namespace Sci.Production.PublicPrg
                         lmsg2 = true;
                     }
                 }
-                
 
                 updatesql = updatesql + string.Format("update ThreadStock set UsedCone = UsedCone-{0},NewCone = NewCone-{1},editName = '{5}',editDate = GetDate() where refno ='{2}' and ThreadColorid = '{3}' and threadLocationid = '{4}' ;", dr["usedCone"], dr["newcone"], dr["refno"].ToString(), dr["threadColorid"].ToString(), dr["threadlocationid"].ToString(), Env.User.UserID);
             }
@@ -94,8 +86,9 @@ namespace Sci.Production.PublicPrg
             transactionscope = null;
             return new DualResult(true);
         }
+
         #endregion
-        #region Thread Issue UnConfirm Update Sql 
+        #region Thread Issue UnConfirm Update Sql
         public static DualResult ThreadIssueUnConfirm(IList<DataRow> DetailDatas, string mainSql)
         {
             string updateThread = mainSql;
@@ -129,7 +122,7 @@ namespace Sci.Production.PublicPrg
                         if (!(upResult = DBProxy.Current.Execute(null, insertsql)))
                         {
                             transactionscope.Dispose();
-                            return upResult; 
+                            return upResult;
                         }
                     }
 
@@ -150,5 +143,4 @@ namespace Sci.Production.PublicPrg
         }
         #endregion
    }
-
 }

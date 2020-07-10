@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
@@ -18,7 +16,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P10
     /// </summary>
-    public partial class P10 : Sci.Win.Tems.QueryForm
+    public partial class P10 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
@@ -106,7 +104,7 @@ from (
     and a.MDivisionID = '{0}' 
     and (a.Type = 'B' or a.Type = 'L')
 	and b.CTNQty=1
-", Sci.Env.User.Keyword));
+", Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
                 sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.txtSP.Text.ToString().Trim()));
@@ -180,7 +178,7 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                 this.listControlBindingSource1.DataSource = selectDataTable;
 
                 // 讀檔案
-                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
+                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, Encoding.UTF8))
                 {
                     DataRow seekData;
                     DataTable loginMErr = selectDataTable.Clone();
@@ -231,7 +229,7 @@ where   pd.ID = '{0}'
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     #region checkM & checkTransfer
-                                    if (!seekData["MDivisionID"].ToString().EqualString(Sci.Env.User.Keyword))
+                                    if (!seekData["MDivisionID"].ToString().EqualString(Env.User.Keyword))
                                     {
                                         loginMErr.Rows.Add(dr.ItemArray);
                                         continue;
@@ -301,7 +299,7 @@ where   pd.CustCTN= '{dr["CustCTN"]}'
                                         if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                         {
                                             #region checkM & checkTransfer
-                                            if (!seekData["MDivisionID"].ToString().EqualString(Sci.Env.User.Keyword))
+                                            if (!seekData["MDivisionID"].ToString().EqualString(Env.User.Keyword))
                                             {
                                                 loginMErr.Rows.Add(dr.ItemArray);
                                                 continue;
@@ -387,7 +385,7 @@ where   pd.CustCTN= '{dr["CustCTN"]}'
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                     {
                                         #region checkM & checkTransfer
-                                        if (!seekData["MDivisionID"].ToString().EqualString(Sci.Env.User.Keyword))
+                                        if (!seekData["MDivisionID"].ToString().EqualString(Env.User.Keyword))
                                         {
                                             loginMErr.Rows.Add(dr.ItemArray);
                                             continue;
@@ -533,11 +531,11 @@ where   a.ID = '{0}'",
                 insertCmds.Add(string.Format(
                     @"insert into TransferToClog(TransferDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName,SCICtnNo)
 values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}','{5}');",
-                    Sci.Env.User.Keyword,
+                    Env.User.Keyword,
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"]),
-                    Sci.Env.User.UserID,
+                    Env.User.UserID,
                     MyUtility.Convert.GetString(dr["SCICtnNo"])));
 
                 // 要順便更新PackingList_Detail
@@ -565,19 +563,19 @@ where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}' and DisposeFromClog=
                 MyUtility.Msg.ErrorBox("Prepare update orders data fail!\r\n" + ex.ToString());
             }
 
-            DualResult result1 = Result.True, result2 = Result.True;
+            DualResult result1 = Ict.Result.True, result2 = Ict.Result.True;
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
                 {
                     if (updateCmds.Count > 0)
                     {
-                        result1 = Sci.Data.DBProxy.Current.Executes(null, updateCmds);
+                        result1 = DBProxy.Current.Executes(null, updateCmds);
                     }
 
                     if (insertCmds.Count > 0)
                     {
-                        result2 = Sci.Data.DBProxy.Current.Executes(null, insertCmds);
+                        result2 = DBProxy.Current.Executes(null, insertCmds);
                     }
 
                     DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);

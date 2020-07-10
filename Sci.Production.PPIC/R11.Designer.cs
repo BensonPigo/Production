@@ -34,10 +34,10 @@
             this.labFactory = new Sci.Win.UI.Label();
             this.labDateGap = new Sci.Win.UI.Label();
             this.numDateGap = new Sci.Win.UI.NumericBox();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.labBrand = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.chkHoliday = new Sci.Win.UI.CheckBox();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
@@ -135,7 +135,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -245,10 +245,10 @@
         private Win.UI.Label labFactory;
         private Win.UI.Label labDateGap;
         private Win.UI.NumericBox numDateGap;
-        private Class.txtfactory txtfactory;
-        private Class.txtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label labBrand;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.CheckBox chkHoliday;
         private Win.UI.CheckBox chkIncludeCancelOrder;
     }

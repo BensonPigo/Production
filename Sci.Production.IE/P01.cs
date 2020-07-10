@@ -18,14 +18,14 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P01
     /// </summary>
-    public partial class P01 : Sci.Win.Tems.Input6
+    public partial class P01 : Win.Tems.Input6
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings operation = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings machine = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings mold = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings frequency = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings smvsec = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings mold = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings frequency = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings smvsec = new DataGridViewGeneratorNumericColumnSettings();
         private string styleID;
         private string seasonID;
         private string brandID;
@@ -203,7 +203,7 @@ order by td.Seq", masterID);
         {
             base.OnDetailEntered();
             this.GenCD(null, null);  // 撈CD Code
-            bool canEdit = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. Factory GSD", "CanEdit");
+            bool canEdit = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P01. Factory GSD", "CanEdit");
             this.btnNewVersion.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit;
             this.btnNewStatus.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit;
             this.btnHistory.Enabled = !this.EditMode && this.CurrentMaintain != null;
@@ -260,10 +260,10 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
 
-            celltxtMachineGroup txtSubReason = (celltxtMachineGroup)celltxtMachineGroup.GetGridCell();
+            TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
             #region Seq & Operation Code & Frequency & SMV & ST/MC Type & Attachment按右鍵與Validating
             #region Seq的Valid
@@ -286,15 +286,15 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                            Sci.Production.IE.P01_SelectOperationCode callNextForm = new Sci.Production.IE.P01_SelectOperationCode();
+                            P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
                             DialogResult result = callNextForm.ShowDialog(this);
-                            if (result == System.Windows.Forms.DialogResult.Cancel)
+                            if (result == DialogResult.Cancel)
                             {
                                 if (callNextForm.P01SelectOperationCode != null)
                                 {
@@ -315,7 +315,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                 }
                             }
 
-                            if (result == System.Windows.Forms.DialogResult.OK)
+                            if (result == DialogResult.OK)
                             {
                                 dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
                                 dr["OperationDescEN"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
@@ -366,15 +366,15 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                         else
                         {
                             // sql參數
-                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                            SqlParameter sp1 = new SqlParameter
                             {
                                 ParameterName = "@id",
-                                Value = e.FormattedValue.ToString()
+                                Value = e.FormattedValue.ToString(),
                             };
 
-                            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                            IList<SqlParameter> cmds = new List<SqlParameter>
                             {
-                                sp1
+                                sp1,
                             };
 
                             string sqlCmd = "select DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID,Annotation from Operation WITH (NOLOCK) where CalibratedCode = 1 and ID = @id";
@@ -463,8 +463,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
 
                     // if (MyUtility.Convert.GetDecimal(e.FormattedValue) == MyUtility.Convert.GetDecimal(dr["SMV"]))
                     // {
-                        dr["SMV"] = e.FormattedValue.ToString();
-                        if (MyUtility.Convert.GetDecimal(e.FormattedValue) == 0)
+                    dr["SMV"] = e.FormattedValue.ToString();
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) == 0)
                         {
                             dr["PcsPerHour"] = 0;
                         }
@@ -473,7 +473,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                             dr["PcsPerHour"] = MyUtility.Convert.GetDouble(dr["SMV"]) == 0 ? 0 : MyUtility.Math.Round(3600.0 / MyUtility.Convert.GetDouble(dr["SMV"]), 1);
                         }
 
-                        dr.EndEdit();
+                    dr.EndEdit();
 
                     // }
                 }
@@ -484,13 +484,13 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,35", dr["MachineTypeID"].ToString());
+                            SelectItem item = new SelectItem(sqlCmd, "8,35", dr["MachineTypeID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -531,13 +531,13 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,DescEN from Mold WITH (NOLOCK) where Junk = 0";
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,15", dr["Mold"].ToString());
+                            SelectItem item = new SelectItem(sqlCmd, "8,15", dr["Mold"].ToString());
 
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -560,15 +560,15 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                     if (MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Mold"]))
                     {
                         // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                        SqlParameter sp1 = new SqlParameter
                         {
                             ParameterName = "@id",
-                            Value = MyUtility.Convert.GetString(e.FormattedValue)
+                            Value = MyUtility.Convert.GetString(e.FormattedValue),
                         };
 
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                        IList<SqlParameter> cmds = new List<SqlParameter>
                         {
-                            sp1
+                            sp1,
                         };
 
                         DataTable moldData;
@@ -604,9 +604,9 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                 {
                     string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
 
-                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
+                    SelectItem2 item = new SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
-                        Width = 666
+                        Width = 666,
                     };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -708,9 +708,9 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
         /// <returns>bool</returns>
         protected override bool ClickCopyBefore()
         {
-            Sci.Production.IE.P01_Copy callNextForm = new Sci.Production.IE.P01_Copy(this.CurrentMaintain);
+            P01_Copy callNextForm = new P01_Copy(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 this.styleID = callNextForm.P01CopyStyleData.Rows[0]["ID"].ToString();
                 this.seasonID = callNextForm.P01CopyStyleData.Rows[0]["SeasonID"].ToString();
@@ -805,10 +805,10 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             #region 檢查輸入的資料是否存在系統
 
             // sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            SqlParameter sp1 = new SqlParameter();
+            SqlParameter sp2 = new SqlParameter();
+            SqlParameter sp3 = new SqlParameter();
+            SqlParameter sp4 = new SqlParameter();
             sp1.ParameterName = "@styleid";
             sp1.Value = this.CurrentMaintain["StyleID"].ToString();
             sp2.ParameterName = "@seasonid";
@@ -818,12 +818,12 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             sp4.ParameterName = "@combotype";
             sp4.Value = this.CurrentMaintain["ComboType"].ToString();
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+            IList<SqlParameter> cmds = new List<SqlParameter>
             {
                 sp1,
                 sp2,
                 sp3,
-                sp4
+                sp4,
             };
             string sqlCmd = "select sl.Location from Style s WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid and s.Ukey = sl.StyleUkey and sl.Location = @combotype";
             DataTable locationData;
@@ -851,7 +851,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             }
             #endregion
             #region 檢查是否為套裝(Style.styleunit <> 'PCS')
-                if (MyUtility.Check.Seek(string.Format(
+            if (MyUtility.Check.Seek(string.Format(
                     @" 
 select 1
 from TimeStudy t
@@ -901,7 +901,7 @@ and s.StyleUnit='PCS'
             {
                 new SqlParameter() { ParameterName = "@id", Value = this.CurrentMaintain["StyleID"].ToString() },
                 new SqlParameter() { ParameterName = "@seasonid", Value = this.CurrentMaintain["SeasonID"].ToString() },
-                new SqlParameter() { ParameterName = "@brandid", Value = this.CurrentMaintain["BrandID"].ToString() }
+                new SqlParameter() { ParameterName = "@brandid", Value = this.CurrentMaintain["BrandID"].ToString() },
             };
             sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
             DataTable styleDT;
@@ -1028,7 +1028,7 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
                 string toAddress = MyUtility.Convert.GetString(dr[0]);
                 string subject = $"IE P01 Factory GSD Style：{this.CurrentMaintain["StyleID"]} ,Brand：{this.CurrentMaintain["BrandID"]} ,Season：{this.CurrentMaintain["SeasonID"]} have changed ";
                 string description = $@"Please regenerate Thread P01.Thread Color Combination data.";
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, string.Empty, subject, string.Empty, description, true, true);
+                var email = new MailTo(Env.Cfg.MailFrom, toAddress, string.Empty, subject, string.Empty, description, true, true);
                 email.ShowDialog();
             }
         }
@@ -1056,7 +1056,7 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
                 return false;
             }
 
-            Sci.Production.IE.P01_Print callNextForm = new Sci.Production.IE.P01_Print(this.CurrentMaintain);
+            P01_Print callNextForm = new P01_Print(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -1075,7 +1075,7 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
 
             SelectItem item = new SelectItem(styleData, "ID,SeasonID,Description,BrandID", "14,6,40,10", this.Text, headercaptions: "Style,Season,Description,Brand")
             {
-                Width = 780
+                Width = 780,
             };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -1120,8 +1120,8 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
                  new SqlParameter()
                 {
                     ParameterName = "@sytleID",
-                    Value = styleID
-                }
+                    Value = styleID,
+                },
             };
 
             sqlCmd = "select ID, SeasonID, BrandID, Description, UKey from Style WITH (NOLOCK) where ID = @sytleID and Junk = 0 order by ID";
@@ -1146,7 +1146,7 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
             {
                 SelectItem item = new SelectItem(dt, "ID,SeasonID,Description,BrandID", "14,6,40,10", this.Text, headercaptions: "Style,Season,Description,Brand")
                 {
-                    Width = 700
+                    Width = 700,
                 };
 
                 DialogResult returnResult = item.ShowDialog();
@@ -1175,8 +1175,8 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
                  new SqlParameter()
                 {
                     ParameterName = "@UKey",
-                    Value = ukey
-                }
+                    Value = ukey,
+                },
             };
             sqlCmd = "select Location from Style_Location WITH (NOLOCK) where StyleUkey = @UKey";
             result = DBProxy.Current.Select(null, sqlCmd, cmds, out dt);
@@ -1198,14 +1198,14 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
         // Art. Sum
         private void BtnArtSum_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01_ArtworkSummary callNextForm = new Sci.Production.IE.P01_ArtworkSummary("TimeStudy_Detail", Convert.ToInt64(this.CurrentMaintain["ID"]));
+            P01_ArtworkSummary callNextForm = new P01_ArtworkSummary("TimeStudy_Detail", Convert.ToInt64(this.CurrentMaintain["ID"]));
             DialogResult result = callNextForm.ShowDialog(this);
         }
 
         // Sketch
         private void BtnSketch_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01_Sketch callNextForm = new Sci.Production.IE.P01_Sketch(this.CurrentMaintain);
+            P01_Sketch callNextForm = new P01_Sketch(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
         }
 
@@ -1215,7 +1215,7 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
             // 將現有資料寫入TimeStudyHistory,TimeStudyHistory_History，並將現有資料的Version+1
             DialogResult confirmResult;
             confirmResult = MyUtility.Msg.QuestionBox("Are you sure you want to create new version?", caption: "Confirm", buttons: MessageBoxButtons.YesNo);
-            if (confirmResult == System.Windows.Forms.DialogResult.Yes)
+            if (confirmResult == DialogResult.Yes)
             {
                 string executeCmd = string.Format(
                     @"insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
@@ -1276,7 +1276,7 @@ where ID = {0}",
 
             DialogResult confirmResult;
             confirmResult = MyUtility.Msg.QuestionBox("Are you sure you want to create new status?", caption: "Confirm", buttons: MessageBoxButtons.YesNo);
-            if (confirmResult == System.Windows.Forms.DialogResult.Yes)
+            if (confirmResult == DialogResult.Yes)
             {
                 string executeCmd = string.Format(
                     @"insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
@@ -1342,7 +1342,7 @@ where ID = {0}",
             {
                 DialogResult confirmResult;
                 confirmResult = MyUtility.Msg.QuestionBox("Detail data have operation code now! Are you sure you want to erase it?", caption: "Confirm", buttons: MessageBoxButtons.YesNo);
-                if (confirmResult != System.Windows.Forms.DialogResult.Yes)
+                if (confirmResult != DialogResult.Yes)
                 {
                     return;
                 }
@@ -1365,10 +1365,10 @@ where ID = {0}",
             #endregion
 
             #region 設定sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            SqlParameter sp1 = new SqlParameter();
+            SqlParameter sp2 = new SqlParameter();
+            SqlParameter sp3 = new SqlParameter();
+            SqlParameter sp4 = new SqlParameter();
             sp1.ParameterName = "@id";
             sp1.Value = this.txtStyle.Text;
             sp2.ParameterName = "@seasonid";
@@ -1382,11 +1382,11 @@ where ID = {0}",
                 sp4.Value = this.comboStyle.Text;
             }
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+            IList<SqlParameter> cmds = new List<SqlParameter>
             {
                 sp1,
                 sp2,
-                sp3
+                sp3,
             };
             if (isComboType)
             {
@@ -1448,7 +1448,7 @@ where ID = {0}",
         // History
         private void BtnHistory_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01_History callNextForm = new Sci.Production.IE.P01_History(this.CurrentMaintain);
+            P01_History callNextForm = new P01_History(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
         }
 
@@ -1456,9 +1456,9 @@ where ID = {0}",
         private void BtnStdGSDList_Click(object sender, EventArgs e)
         {
             // sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            SqlParameter sp1 = new SqlParameter();
+            SqlParameter sp2 = new SqlParameter();
+            SqlParameter sp3 = new SqlParameter();
             sp1.ParameterName = "@id";
             sp1.Value = this.CurrentMaintain["StyleID"].ToString();
             sp2.ParameterName = "@seasonid";
@@ -1466,11 +1466,11 @@ where ID = {0}",
             sp3.ParameterName = "@brandid";
             sp3.Value = this.CurrentMaintain["BrandID"].ToString();
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+            IList<SqlParameter> cmds = new List<SqlParameter>
             {
                 sp1,
                 sp2,
-                sp3
+                sp3,
             };
 
             string sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
@@ -1484,7 +1484,7 @@ where ID = {0}",
 
             if (styleUkey.Rows.Count > 0)
             {
-                Sci.Production.PublicForm.StdGSDList callNextForm = new Sci.Production.PublicForm.StdGSDList(MyUtility.Convert.GetLong(styleUkey.Rows[0]["UKey"]));
+                StdGSDList callNextForm = new StdGSDList(MyUtility.Convert.GetLong(styleUkey.Rows[0]["UKey"]));
                 DialogResult dresult = callNextForm.ShowDialog(this);
             }
             else
@@ -1576,7 +1576,7 @@ where ID = {0}",
             {
                 new SqlParameter() { ParameterName = "@styleid", Value = this.CurrentMaintain["StyleID"].ToString() },
                 new SqlParameter() { ParameterName = "@seasonid", Value = this.CurrentMaintain["SeasonID"].ToString() },
-                new SqlParameter() { ParameterName = "@brandid", Value = this.CurrentMaintain["BrandID"].ToString() }
+                new SqlParameter() { ParameterName = "@brandid", Value = this.CurrentMaintain["BrandID"].ToString() },
             };
 
             this.displayCD.Value = string.Empty;
@@ -1681,7 +1681,7 @@ where ID = {0}",
 
                 if (targetRowToInsertReplace == null)
                 {
-                    if (MyUtility.Msg.QuestionBox("there is no " + seqTarget + " exists, can't locate insert position, append to the last. \r\n\r\ncontinue?") != System.Windows.Forms.DialogResult.Yes)
+                    if (MyUtility.Msg.QuestionBox("there is no " + seqTarget + " exists, can't locate insert position, append to the last. \r\n\r\ncontinue?") != DialogResult.Yes)
                     {
                         return;
                     }

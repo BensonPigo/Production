@@ -47,11 +47,11 @@
             this.labelCategory = new Sci.Win.UI.Label();
             this.checkIncludeFarmOutInDate = new Sci.Win.UI.CheckBox();
             this.labelSubcon = new Sci.Win.UI.Label();
-            this.txtMultiSubconSubcon = new Sci.Production.Class.txtMultiSubconNoConfirm();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtartworktype_ftySubProcess = new Sci.Production.Class.txtartworktype_fty();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.txtMultiSubconSubcon = new Sci.Production.Class.TxtMultiSubconNoConfirm();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtartworktype_ftySubProcess = new Sci.Production.Class.Txtartworktype_fty();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -324,8 +324,8 @@
             // txtartworktype_ftySubProcess
             // 
             this.txtartworktype_ftySubProcess.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftySubProcess.cClassify = "";
-            this.txtartworktype_ftySubProcess.cSubprocess = "Y";
+            this.txtartworktype_ftySubProcess.CClassify = "";
+            this.txtartworktype_ftySubProcess.CSubprocess = "Y";
             this.txtartworktype_ftySubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftySubProcess.Location = new System.Drawing.Point(114, 302);
             this.txtartworktype_ftySubProcess.Name = "txtartworktype_ftySubProcess";
@@ -430,15 +430,15 @@
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label labelBuyerDelivery;
         private Win.UI.Label labelSubProcess;
-        private Class.txtMdivision txtMdivision;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label labelM;
         private Win.UI.Label labelFactory;
-        private Class.txtartworktype_fty txtartworktype_ftySubProcess;
-        private Class.txtfactory txtfactory;
+        private Class.Txtartworktype_fty txtartworktype_ftySubProcess;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labelCategory;
         private Win.UI.CheckBox checkIncludeFarmOutInDate;
-        private Class.txtMultiSubconNoConfirm txtMultiSubconSubcon;
+        private Class.TxtMultiSubconNoConfirm txtMultiSubconSubcon;
         private Win.UI.Label labelSubcon;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboCategory;
     }
 }

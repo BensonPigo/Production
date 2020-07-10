@@ -1,10 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -12,66 +9,82 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         DataTable[] printData;
-        string WorkOrder, factory, CuttingSP1, CuttingSP2,Style;
-        DateTime? Est_CutDate1, Est_CutDate2, EarliestSCIDelivery1, EarliestSCIDelivery2, EarliestSewingInline1, EarliestSewingInline2, EarliestBuyerDelivery1, EarliestBuyerDelivery2, ActCuttingDate1, ActCuttingDate2;
-        DateTime? BuyerDelivery1, BuyerDelivery2, SCIDelivery1, SCIDelivery2, SewingInline1, SewingInline2;
+        string WorkOrder;
+        string factory;
+        string CuttingSP1;
+        string CuttingSP2;
+        string Style;
+        DateTime? Est_CutDate1;
+        DateTime? Est_CutDate2;
+        DateTime? EarliestSCIDelivery1;
+        DateTime? EarliestSCIDelivery2;
+        DateTime? EarliestSewingInline1;
+        DateTime? EarliestSewingInline2;
+        DateTime? EarliestBuyerDelivery1;
+        DateTime? EarliestBuyerDelivery2;
+        DateTime? ActCuttingDate1;
+        DateTime? ActCuttingDate2;
+        DateTime? BuyerDelivery1;
+        DateTime? BuyerDelivery2;
+        DateTime? SCIDelivery1;
+        DateTime? SCIDelivery2;
+        DateTime? SewingInline1;
+        DateTime? SewingInline2;
         StringBuilder condition = new StringBuilder();
 
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable WorkOrder, factory;
             DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
-            MyUtility.Tool.SetupCombox(comboM, 1, WorkOrder);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);//要預設空白
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboM.Text = Sci.Env.User.Keyword;
-            comboFactory.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(this.comboM, 1, WorkOrder);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory); // 要預設空白
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.SelectedIndex = 0;
         }
-        
+
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            
-            WorkOrder = comboM.Text;
-            factory = comboFactory.Text;
-            
-            Est_CutDate1 = dateEstCutDate.Value1;
-            Est_CutDate2 = dateEstCutDate.Value2;
-            ActCuttingDate1 = dateActCuttingDate.Value1;
-            ActCuttingDate2 = dateActCuttingDate.Value2;
-            CuttingSP1 = txtCuttingSPStart.Text;
-            CuttingSP2 = txtCuttingSPEnd.Text;
-            BuyerDelivery1 = dateBuyerDelivery.Value1;
-            BuyerDelivery2 = dateBuyerDelivery.Value2;
-            SCIDelivery1 = dateSCIDelivery.Value1;
-            SCIDelivery2 = dateSCIDelivery.Value2;
-            SewingInline1 = dateSewingInline.Value1;
-            SewingInline2 = dateSewingInline.Value2;
-            Style = txtstyle1.Text;
-            EarliestSCIDelivery1 = dateEarliestSCIDelivery.Value1;
-            EarliestSCIDelivery2 = dateEarliestSCIDelivery.Value2;
-            EarliestSewingInline1 = dateEarliestSewingInline.Value1;
-            EarliestSewingInline2 = dateEarliestSewingInline.Value2;
-            EarliestBuyerDelivery1 = dateEarliestBuyerDelivery.Value1;
-            EarliestBuyerDelivery2 = dateEarliestBuyerDelivery.Value2;
+            this.WorkOrder = this.comboM.Text;
+            this.factory = this.comboFactory.Text;
+
+            this.Est_CutDate1 = this.dateEstCutDate.Value1;
+            this.Est_CutDate2 = this.dateEstCutDate.Value2;
+            this.ActCuttingDate1 = this.dateActCuttingDate.Value1;
+            this.ActCuttingDate2 = this.dateActCuttingDate.Value2;
+            this.CuttingSP1 = this.txtCuttingSPStart.Text;
+            this.CuttingSP2 = this.txtCuttingSPEnd.Text;
+            this.BuyerDelivery1 = this.dateBuyerDelivery.Value1;
+            this.BuyerDelivery2 = this.dateBuyerDelivery.Value2;
+            this.SCIDelivery1 = this.dateSCIDelivery.Value1;
+            this.SCIDelivery2 = this.dateSCIDelivery.Value2;
+            this.SewingInline1 = this.dateSewingInline.Value1;
+            this.SewingInline2 = this.dateSewingInline.Value2;
+            this.Style = this.txtstyle1.Text;
+            this.EarliestSCIDelivery1 = this.dateEarliestSCIDelivery.Value1;
+            this.EarliestSCIDelivery2 = this.dateEarliestSCIDelivery.Value2;
+            this.EarliestSewingInline1 = this.dateEarliestSewingInline.Value1;
+            this.EarliestSewingInline2 = this.dateEarliestSewingInline.Value2;
+            this.EarliestBuyerDelivery1 = this.dateEarliestBuyerDelivery.Value1;
+            this.EarliestBuyerDelivery2 = this.dateEarliestBuyerDelivery.Value2;
 
             // 除了M與Factory外, 不可全為空值
-            if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2)
-                && MyUtility.Check.Empty(ActCuttingDate1) && MyUtility.Check.Empty(ActCuttingDate2)
-                && MyUtility.Check.Empty(CuttingSP1) && MyUtility.Check.Empty(CuttingSP2)
-                && MyUtility.Check.Empty(BuyerDelivery1) && MyUtility.Check.Empty(BuyerDelivery2)
-                && MyUtility.Check.Empty(SCIDelivery1) && MyUtility.Check.Empty(SCIDelivery2)
-                && MyUtility.Check.Empty(SewingInline1) && MyUtility.Check.Empty(SewingInline2)
-                && MyUtility.Check.Empty(Style)
-                && MyUtility.Check.Empty(EarliestBuyerDelivery1) && MyUtility.Check.Empty(EarliestBuyerDelivery2)
-                && MyUtility.Check.Empty(EarliestSCIDelivery1) && MyUtility.Check.Empty(EarliestSCIDelivery2) 
-                && MyUtility.Check.Empty(EarliestSewingInline1) && MyUtility.Check.Empty(EarliestSewingInline2)
-                )
+            if (MyUtility.Check.Empty(this.Est_CutDate1) && MyUtility.Check.Empty(this.Est_CutDate2)
+                && MyUtility.Check.Empty(this.ActCuttingDate1) && MyUtility.Check.Empty(this.ActCuttingDate2)
+                && MyUtility.Check.Empty(this.CuttingSP1) && MyUtility.Check.Empty(this.CuttingSP2)
+                && MyUtility.Check.Empty(this.BuyerDelivery1) && MyUtility.Check.Empty(this.BuyerDelivery2)
+                && MyUtility.Check.Empty(this.SCIDelivery1) && MyUtility.Check.Empty(this.SCIDelivery2)
+                && MyUtility.Check.Empty(this.SewingInline1) && MyUtility.Check.Empty(this.SewingInline2)
+                && MyUtility.Check.Empty(this.Style)
+                && MyUtility.Check.Empty(this.EarliestBuyerDelivery1) && MyUtility.Check.Empty(this.EarliestBuyerDelivery2)
+                && MyUtility.Check.Empty(this.EarliestSCIDelivery1) && MyUtility.Check.Empty(this.EarliestSCIDelivery2)
+                && MyUtility.Check.Empty(this.EarliestSewingInline1) && MyUtility.Check.Empty(this.EarliestSewingInline2))
             {
                 MyUtility.Msg.WarningBox("Can't all empty!!");
                 return false;
@@ -80,8 +93,8 @@ namespace Sci.Production.Cutting
             return base.ValidateInput();
         }
 
-        //非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        // 非同步取資料
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
@@ -258,109 +271,109 @@ where 1=1
 
 ");
             #region Append畫面上的條件
-            if (!MyUtility.Check.Empty(CuttingSP1))
+            if (!MyUtility.Check.Empty(this.CuttingSP1))
             {
-                sqlCmd.Append(string.Format(" and wo.ID >= '{0}'", CuttingSP1));
+                sqlCmd.Append(string.Format(" and wo.ID >= '{0}'", this.CuttingSP1));
             }
 
-            if (!MyUtility.Check.Empty(CuttingSP2))
+            if (!MyUtility.Check.Empty(this.CuttingSP2))
             {
-                sqlCmd.Append(string.Format(" and wo.ID <= '{0}'", CuttingSP2));
+                sqlCmd.Append(string.Format(" and wo.ID <= '{0}'", this.CuttingSP2));
             }
 
-            if (!MyUtility.Check.Empty(Est_CutDate1))
+            if (!MyUtility.Check.Empty(this.Est_CutDate1))
             {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate >= cast('{0}' as date) ", Convert.ToDateTime(Est_CutDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and wo.EstCutDate >= cast('{0}' as date) ", Convert.ToDateTime(this.Est_CutDate1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(Est_CutDate2))
+            if (!MyUtility.Check.Empty(this.Est_CutDate2))
             {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate <= cast('{0}' as date) ", Convert.ToDateTime(Est_CutDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and wo.EstCutDate <= cast('{0}' as date) ", Convert.ToDateTime(this.Est_CutDate2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(ActCuttingDate1))
+            if (!MyUtility.Check.Empty(this.ActCuttingDate1))
             {
-                sqlCmd.Append(string.Format(" and MincDate.MincoDate >= cast('{0}' as date) ", Convert.ToDateTime(ActCuttingDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MincDate.MincoDate >= cast('{0}' as date) ", Convert.ToDateTime(this.ActCuttingDate1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(ActCuttingDate2))
+            if (!MyUtility.Check.Empty(this.ActCuttingDate2))
             {
-                sqlCmd.Append(string.Format(" and MincDate.MincoDate <= cast('{0}' as date) ", Convert.ToDateTime(ActCuttingDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MincDate.MincoDate <= cast('{0}' as date) ", Convert.ToDateTime(this.ActCuttingDate2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(BuyerDelivery1))
+            if (!MyUtility.Check.Empty(this.BuyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= cast('{0}' as date)", Convert.ToDateTime(BuyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= cast('{0}' as date)", Convert.ToDateTime(this.BuyerDelivery1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(BuyerDelivery2))
+            if (!MyUtility.Check.Empty(this.BuyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= cast('{0}' as date) ", Convert.ToDateTime(BuyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= cast('{0}' as date) ", Convert.ToDateTime(this.BuyerDelivery2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(SCIDelivery1))
+            if (!MyUtility.Check.Empty(this.SCIDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.SCIDelivery >= cast('{0}' as date) ", Convert.ToDateTime(SCIDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SCIDelivery >= cast('{0}' as date) ", Convert.ToDateTime(this.SCIDelivery1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(SCIDelivery2))
+            if (!MyUtility.Check.Empty(this.SCIDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.SCIDelivery <= cast('{0}' as date)", Convert.ToDateTime(SCIDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SCIDelivery <= cast('{0}' as date)", Convert.ToDateTime(this.SCIDelivery2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(SewingInline1))
+            if (!MyUtility.Check.Empty(this.SewingInline1))
             {
-                sqlCmd.Append(string.Format(" and o.SewInLine >= cast('{0}' as date)", Convert.ToDateTime(SewingInline1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SewInLine >= cast('{0}' as date)", Convert.ToDateTime(this.SewingInline1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(SewingInline2))
+            if (!MyUtility.Check.Empty(this.SewingInline2))
             {
-                sqlCmd.Append(string.Format(" and o.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(SewingInline2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(this.SewingInline2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(Style))
+            if (!MyUtility.Check.Empty(this.Style))
             {
-                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", Style));
+                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", this.Style));
             }
 
-            if (!MyUtility.Check.Empty(EarliestBuyerDelivery1))
+            if (!MyUtility.Check.Empty(this.EarliestBuyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinOBD >= cast('{0}' as date)", Convert.ToDateTime(EarliestBuyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD >= cast('{0}' as date)", Convert.ToDateTime(this.EarliestBuyerDelivery1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(EarliestBuyerDelivery2))
+            if (!MyUtility.Check.Empty(this.EarliestBuyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinOBD <= cast('{0}' as date) ", Convert.ToDateTime(EarliestBuyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestBuyerDelivery2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(EarliestSCIDelivery1))
+            if (!MyUtility.Check.Empty(this.EarliestSCIDelivery1))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinSCI >= cast('{0}' as date)", Convert.ToDateTime(EarliestSCIDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinSCI >= cast('{0}' as date)", Convert.ToDateTime(this.EarliestSCIDelivery1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(EarliestSCIDelivery2))
+            if (!MyUtility.Check.Empty(this.EarliestSCIDelivery2))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinSCI <= cast('{0}' as date) ", Convert.ToDateTime(EarliestSCIDelivery2).ToString("d")));
-            }
-            
-            if (!MyUtility.Check.Empty(EarliestSewingInline1))
-            {
-                sqlCmd.Append(string.Format(@" and c.SewInLine >= cast('{0}' as date) ", Convert.ToDateTime(EarliestSewingInline1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinSCI <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSCIDelivery2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(EarliestSewingInline2))
+            if (!MyUtility.Check.Empty(this.EarliestSewingInline1))
             {
-                sqlCmd.Append(string.Format(" and c.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(EarliestSewingInline2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and c.SewInLine >= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSewingInline1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(WorkOrder))
+            if (!MyUtility.Check.Empty(this.EarliestSewingInline2))
             {
-                sqlCmd.Append(string.Format(" and wo.MDivisionID = '{0}'", WorkOrder));
+                sqlCmd.Append(string.Format(" and c.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSewingInline2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.WorkOrder))
             {
-                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
+                sqlCmd.Append(string.Format(" and wo.MDivisionID = '{0}'", this.WorkOrder));
+            }
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", this.factory));
             }
             #endregion
             sqlCmd.Append(@"
@@ -468,75 +481,75 @@ exec (@exT)
 
 drop table #tmp,#tmpL");
 
-            DBProxy.Current.DefaultTimeout = 900; 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DBProxy.Current.DefaultTimeout = 900;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-            
-            return Result.True;
+
+            return Ict.Result.True;
         }
 
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData[0].Rows.Count);
+            this.SetCount(this.printData[0].Rows.Count);
 
-            if (printData[0].Rows.Count <= 0)
+            if (this.printData[0].Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-            
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R03_CuttingScheduleListReport.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData[0], "", "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, objApp);// 將datatable copy to excel
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R03_CuttingScheduleListReport.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, objApp); // 將datatable copy to excel
+            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             // Perimeter(Decimal)
-            int PerimeterCol = printData[0].Columns.Count - 3;
+            int PerimeterCol = this.printData[0].Columns.Count - 3;
             objApp.Cells[3, PerimeterCol] = $"=IFERROR(LEFT(AJ3,SEARCH(\"yd\",AJ3,1)-1)+0+(IFERROR(RIGHT(LEFT(AJ3,SEARCH(\"\"\"\",AJ3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AJ3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
-            int rowct = printData[0].Rows.Count + 2;
+            int rowct = this.printData[0].Rows.Count + 2;
             objApp.Range[objApp.Cells[3, PerimeterCol], objApp.Cells[3, PerimeterCol]].Copy();
-            objApp.Range[objApp.Cells[4, PerimeterCol], objApp.Cells[rowct, PerimeterCol]].PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll, Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+            objApp.Range[objApp.Cells[4, PerimeterCol], objApp.Cells[rowct, PerimeterCol]].PasteSpecial(Excel.XlPasteType.xlPasteAll, Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
             objApp.Range[objApp.Cells[2, 1], objApp.Cells[2, 1]].Select();
             objSheets.get_Range("Q2").ColumnWidth = 15.38;
             objSheets.get_Range("U2").ColumnWidth = 15.38;
 
             objSheets = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表
             objSheets.Name = "summary";
-            for (int i = 1; i < printData.Length; i++)
+            for (int i = 1; i < this.printData.Length; i++)
             {
-                int row = 2 + (i - 1) * 10;
-                objSheets.Cells[row, 3] = printData[i].Rows[0][0];
-                objSheets.get_Range((Excel.Range)objSheets.Cells[row, 3], (Excel.Range)objSheets.Cells[row, printData[i].Columns.Count]).Merge(false);
-                for (int col = 1; col < printData[i].Columns.Count ; col++)
+                int row = 2 + ((i - 1) * 10);
+                objSheets.Cells[row, 3] = this.printData[i].Rows[0][0];
+                objSheets.get_Range((Excel.Range)objSheets.Cells[row, 3], (Excel.Range)objSheets.Cells[row, this.printData[i].Columns.Count]).Merge(false);
+                for (int col = 1; col < this.printData[i].Columns.Count; col++)
                 {
-                    objSheets.Cells[row + 1, col + 1] = printData[i].Columns[col].ColumnName;
+                    objSheets.Cells[row + 1, col + 1] = this.printData[i].Columns[col].ColumnName;
 
-                    for (int k = 0; k < printData[i].Rows.Count ; k++)
+                    for (int k = 0; k < this.printData[i].Rows.Count; k++)
                     {
-                        objSheets.Cells[row + 2 + k, col + 1] = printData[i].Rows[k][col];
+                        objSheets.Cells[row + 2 + k, col + 1] = this.printData[i].Rows[k][col];
                     }
                 }
 
-                objSheets.get_Range((Excel.Range)objSheets.Cells[row, 2], (Excel.Range)objSheets.Cells[row + 7, printData[i].Columns.Count]).Borders.Weight = 3; // 設定全框線
+                objSheets.get_Range((Excel.Range)objSheets.Cells[row, 2], (Excel.Range)objSheets.Cells[row + 7, this.printData[i].Columns.Count]).Borders.Weight = 3; // 設定全框線
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R03_CuttingScheduleListReport");
-            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            string strExcelName = Class.MicrosoftFile.GetName("Cutting_R03_CuttingScheduleListReport");
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();
-            Marshal.ReleaseComObject(objSheets);    //釋放sheet
-            Marshal.ReleaseComObject(objApp);          //釋放objApp
+            Marshal.ReleaseComObject(objSheets);    // 釋放sheet
+            Marshal.ReleaseComObject(objApp);          // 釋放objApp
             Marshal.ReleaseComObject(workbook);
-            
+
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return true;
         }
     }

@@ -2,22 +2,19 @@
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using Ict;
 using Ict.Win;
-using Sci.Win.Tems;
 using Sci.Data;
 using System.Transactions;
-using System.Linq;
 
 namespace Sci.Production.SubProcess
 {
     /// <summary>
     /// SubProcess.B02
     /// </summary>
-    public partial class B02 : Sci.Win.Tems.Input6
+    public partial class B02 : Win.Tems.Input6
     {
-        private string user = Sci.Env.User.UserID;
+        private string user = Env.User.UserID;
         private DataTable dtSMV = new DataTable();
         private int newUkey = 0;
 
@@ -60,25 +57,25 @@ where styleUkey = '{0}'",
         /// </summary>
         protected override void OnDetailGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings gridType = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings gridFeature = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings gridRemark = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings gridSMV = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorTextColumnSettings gridType = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings gridFeature = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings gridRemark = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings gridSMV = new DataGridViewGeneratorNumericColumnSettings();
 
             #region gridType
             gridType.EditingMouseDown += (s, e) =>
              {
                  if (this.EditMode && e.Button == MouseButtons.Right)
                  {
-                    Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select  Id,ArtworkTypeId  from  subprocess  where isselection=1 and Junk=0  order by Id", "10,20", null);
-                     DialogResult result = item.ShowDialog();
-                     if (result == DialogResult.Cancel)
+                     Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select  Id,ArtworkTypeId  from  subprocess  where isselection=1 and Junk=0  order by Id", "10,20", null);
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
                      {
                          return;
                      }
 
-                     var x = item.GetSelecteds();
-                     this.CurrentDetailData["Type"] = x[0]["ID"].ToString();
+                    var x = item.GetSelecteds();
+                    this.CurrentDetailData["Type"] = x[0]["ID"].ToString();
                  }
              };
 
@@ -94,7 +91,7 @@ where styleUkey = '{0}'",
                      if (!MyUtility.Check.Seek(
                          string.Format(
                              @"Select  Id  from  subprocess  where isselection=1 and Junk=0 and id='{0}'",
-                         e.FormattedValue),
+                             e.FormattedValue),
                          out find))
                      {
                          MyUtility.Msg.WarningBox(string.Format(@"<Type: {0}> not found!", e.FormattedValue));
@@ -112,7 +109,7 @@ where styleUkey = '{0}'",
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format(@"Select  Feature,Remark  from  SubProcessFeature where Type='{0}' and Junk=0  order by Feature", this.CurrentDetailData["Type"].ToString()), "30,20", null);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format(@"Select  Feature,Remark  from  SubProcessFeature where Type='{0}' and Junk=0  order by Feature", this.CurrentDetailData["Type"].ToString()), "30,20", null);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -136,8 +133,8 @@ where styleUkey = '{0}'",
                     if (!MyUtility.Check.Seek(
                         string.Format(
                             @"Select  Feature  from  SubProcessFeature where Type='{0}' and Junk=0 and Feature='{1}'",
-                        this.CurrentDetailData["Type"],
-                        e.FormattedValue),
+                            this.CurrentDetailData["Type"],
+                            e.FormattedValue),
                         out find))
                     {
                         MyUtility.Msg.WarningBox(string.Format(@"<Feature: {0}> not found!", e.FormattedValue));
@@ -165,7 +162,7 @@ Left join Operation o on o.id=SFS.OperationID
 Where StyleFeatureUkey={featueUkey}
 Order by Seq
 ";
-                        Sci.Win.Tools.SelectItem item1 = new Win.Tools.SelectItem(sqlcmd, "6,15,30,10,10,10,10", null, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", columndecimals: "0,0,0,0,0,0,4");
+                        Win.Tools.SelectItem item1 = new Win.Tools.SelectItem(sqlcmd, "6,15,30,10,10,10,10", null, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", columndecimals: "0,0,0,0,0,0,4");
                         item1.Width = 1000;
                         DialogResult returnResult = item1.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
@@ -175,7 +172,7 @@ Order by Seq
                     }
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     string brand = MyUtility.Convert.GetString(this.CurrentMaintain["brandid"]);
                     string style = MyUtility.Convert.GetString(this.CurrentMaintain["id"]);
@@ -211,7 +208,7 @@ left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where td.ID = '{id}'
 order by td.Seq ";
 
-                        Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "IETMSSMV");
+                        Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "IETMSSMV");
                         DialogResult dresult = item.ShowDialog();
                         if (dresult == DialogResult.Cancel)
                         {
@@ -259,7 +256,7 @@ order by td.Seq ";
                     }
                     else
                     {
-                        Sci.Win.Tools.SelectItem item1 = new Win.Tools.SelectItem($@"select COMBOTYPE from timestudy where brandid='{brand}'and styleid= '{style}' and seasonid = '{season}'", null, null);
+                        Win.Tools.SelectItem item1 = new Win.Tools.SelectItem($@"select COMBOTYPE from timestudy where brandid='{brand}'and styleid= '{style}' and seasonid = '{season}'", null, null);
                         DialogResult returnResult = item1.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {
@@ -282,7 +279,7 @@ left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where COMBOTYPE = '{combo}' and t.brandid='{brand}'and t.styleid= '{style}' and t.seasonid = '{season}'
 order by td.Seq";
 
-                        Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "IETMSSMV");
+                        Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "IETMSSMV");
                         DialogResult dresult = item.ShowDialog();
                         if (dresult == DialogResult.Cancel)
                         {
@@ -346,7 +343,6 @@ order by td.Seq";
                             transactionscope.Dispose();
                         }
                     }
-
                 }
             };
             gridSMV.CellValidating += (s, e) =>
@@ -369,7 +365,7 @@ order by td.Seq";
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Type", header: "Type", width: Widths.AnsiChars(10),  settings: gridType)
             .Text("Feature", header: "Feature", width: Widths.AnsiChars(30),  settings: gridFeature)
-            .Numeric("SMV", header: "SMV", width: Widths.AnsiChars(8), integer_places: 7,  decimal_places: 4,maximum: 999, settings: gridSMV)
+            .Numeric("SMV", header: "SMV", width: Widths.AnsiChars(8), integer_places: 7,  decimal_places: 4, maximum: 999, settings: gridSMV)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), settings: gridRemark)
             .Text("AddName", header: "AddName", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .DateTime("AddDate", header: "AddDate", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -390,7 +386,6 @@ order by td.Seq";
             this.CurrentDetailData["AddName"] = this.user;
             this.CurrentDetailData["AddDate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
             this.CurrentDetailData["NewUkey"] = this.newUkey + 1;
-
         }
 
         /// <summary>
@@ -515,7 +510,7 @@ values({MyUtility.Convert.GetInt(dtDetail.Rows[i]["ukey"])},'{this.dtSMV.Rows[ii
                     {
                         transactionscope.Dispose();
                         MyUtility.Msg.WarningBox(dualResult.ToString());
-                        return Result.True;
+                        return Ict.Result.True;
                     }
 
                     transactionscope.Complete();
@@ -523,7 +518,7 @@ values({MyUtility.Convert.GetInt(dtDetail.Rows[i]["ukey"])},'{this.dtSMV.Rows[ii
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -538,7 +533,7 @@ values({MyUtility.Convert.GetInt(dtDetail.Rows[i]["ukey"])},'{this.dtSMV.Rows[ii
             pass1Schema.IsSupportEditDate = false;
             pass1Schema.IsSupportEditName = false;
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>

@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -8,12 +7,12 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Sci.Data;
-using System.Transactions;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 using Ict.Win.UI;
 using Sci.Production.PublicPrg;
 using System.Linq;
+using Sci.Production.Class;
 
 namespace Sci.Production.Thread
 {
@@ -22,9 +21,9 @@ namespace Sci.Production.Thread
     /// </summary>
     public partial class P02 : Win.Tems.Input8
     {
-        private string factory = Sci.Env.User.Factory;
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string factory = Env.User.Factory;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_color;
         private DataGridViewNumericBoxColumn col_cons;
         private DataGridViewNumericBoxColumn col_Allowance;
@@ -55,7 +54,7 @@ union
 select distinct FTYGroup 
 from Factory 
 where MDivisionID = '{0}'",
-                Sci.Env.User.Keyword);
+                Env.User.Keyword);
 
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
@@ -112,7 +111,7 @@ where MDivisionID = '{0}'",
         }
 
         /// <inheritdoc/>
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["OrderID"].ToString();
             this.DetailSelectCommand = string.Format(
@@ -161,7 +160,7 @@ WHERE a.OrderID = '{0}'",
         }
 
         /// <inheritdoc/>
-        protected override DualResult OnSubDetailSelectCommandPrepare(Win.Tems.Input8.PrepareSubDetailSelectCommandEventArgs e)
+        protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Detail == null) ? string.Empty : e.Detail["Ukey"].ToString();
 
@@ -175,7 +174,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
         }
 
-        private celllocalitem refno = (celllocalitem)celllocalitem.GetGridCell("Thread", null, ",,,description");
+        private Txtlocalitem.Celllocalitem refno = (Txtlocalitem.Celllocalitem)Txtlocalitem.Celllocalitem.GetGridCell("Thread", null, ",,,description");
 
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
@@ -294,7 +293,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -303,7 +302,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                                 return;
                             }
 
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ThreadColor WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.CurrentDetailData["ThreadColorid"].ToString().Trim());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from ThreadColor WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.CurrentDetailData["ThreadColorid"].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -334,7 +333,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             };
             cons.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     this.OpenSubDetailPage();
                 }
@@ -647,7 +646,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             string msg = result.ToString().ToUpper();
             if (msg.Contains("PK") && msg.Contains("DUPLICAT"))
             {
-                result = Result.F("<OrderID> duplicated", result.GetException());
+                result = Ict.Result.F("<OrderID> duplicated", result.GetException());
             }
 
             return result;
@@ -681,7 +680,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             foreach (Control item in this.masterpanel.Controls)
             {
-                if (item is Sci.Win.UI.Label || item is Sci.Win.UI.Button || item == this.displayM || item == this.txtSP)
+                if (item is Win.UI.Label || item is Win.UI.Button || item == this.displayM || item == this.txtSP)
                 {
                 }
                 else
@@ -1584,7 +1583,7 @@ and {0} <= tas.UpperBound",
                 dt.Rows.Add(dr);
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_P02.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Thread_P02.xltx"); // 預先開啟excel app
             bool result = MyUtility.Excel.CopyToXls(dt, string.Empty, showExcel: false, xltfile: "Thread_P02.xltx", headerRow: 7, excelApp: objApp);
 
             if (!result)
@@ -1617,7 +1616,7 @@ and {0} <= tas.UpperBound",
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Thread_P02");
+            string strExcelName = Class.MicrosoftFile.GetName("Thread_P02");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

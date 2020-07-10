@@ -40,8 +40,8 @@
             this.labBuyerDlv = new Sci.Win.UI.Label();
             this.dateRangeBuyerDlv = new Sci.Win.UI.DateRange();
             this.labFactory = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtSeq = new Sci.Production.Class.TxtSeq();
             this.SuspendLayout();
             // 
             // print
@@ -225,8 +225,8 @@
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq.Location = new System.Drawing.Point(127, 161);
             this.txtSeq.Name = "txtSeq";
-            this.txtSeq.seq1 = "";
-            this.txtSeq.seq2 = "";
+            this.txtSeq.Seq1 = "";
+            this.txtSeq.Seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 50;
             // 
@@ -280,12 +280,12 @@
         private Win.UI.DateRange dateEstReturnDate;
         private Win.UI.Label labelBorrowSPNo;
         private Win.UI.Label labelEstReturnDate;
-        private Class.txtSeq txtSeq;
+        private Class.TxtSeq txtSeq;
         private Win.UI.Label labBorrowDate;
         private Win.UI.DateRange dateRangeBorrowDate;
         private Win.UI.Label labBuyerDlv;
         private Win.UI.DateRange dateRangeBuyerDlv;
         private Win.UI.Label labFactory;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
     }
 }

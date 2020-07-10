@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
@@ -14,7 +12,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P09
     /// </summary>
-    public partial class P09 : Sci.Win.Tems.QueryForm
+    public partial class P09 : Win.Tems.QueryForm
     {
         private bool canUnConfirm;
         private DataTable PackID;
@@ -28,7 +26,7 @@ namespace Sci.Production.Packing
         {
             this.InitializeComponent();
             this.checkOnlyNotYetScanComplete.Checked = true;
-            this.canUnConfirm = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P09. Scan && Pack", "CanUnConfirm");
+            this.canUnConfirm = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P09. Scan && Pack", "CanUnConfirm");
         }
 
         /// <summary>
@@ -71,7 +69,7 @@ namespace Sci.Production.Packing
             {
                 // sql參數
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", this.txtSP.Text);
-                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisioinid", Sci.Env.User.Keyword);
+                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisioinid", Env.User.Keyword);
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(sp1);
@@ -136,7 +134,7 @@ namespace Sci.Production.Packing
                 this.displaySeason.Value = MyUtility.Convert.GetString(ordersData["SeasonID"]);
                 this.displayBrand.Value = MyUtility.Convert.GetString(ordersData["BrandID"]);
                 this.displayBuyer.Value = MyUtility.Convert.GetString(ordersData["BuyerID"]);
-                this.displayM.Value = Sci.Env.User.Keyword;
+                this.displayM.Value = Env.User.Keyword;
                 this.displayOrder.Value = MyUtility.Convert.GetString(ordersData["Customize1"]);
                 this.displayPONo.Value = MyUtility.Convert.GetString(ordersData["CustPONo"]);
                 this.displayFactory.Value = MyUtility.Convert.GetString(ordersData["FtyGroup"]);
@@ -304,7 +302,7 @@ order by ID,Seq", this.txtSP.Text);
         {
             // 問是否要做Uncomplete，確定才繼續往下做
             DialogResult buttonResult = MyUtility.Msg.WarningBox("This carton had been scanned, are you sure you want to < Uncomplete >?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -343,9 +341,9 @@ order by ID,Seq", this.txtSP.Text);
             P09_IDX_CTRL iDX = new P09_IDX_CTRL();
             if (iDX.IdxCall(1, "8:?", 4))
             {
-                Sci.Production.Packing.P09_StartToScan callNextForm = new Sci.Production.Packing.P09_StartToScan(dr, iDX);
+                P09_StartToScan callNextForm = new P09_StartToScan(dr, iDX);
                 DialogResult result = callNextForm.ShowDialog(this);
-                if (result == System.Windows.Forms.DialogResult.OK)
+                if (result == DialogResult.OK)
                 {
                     this.btnUncomplete.Enabled = this.canUnConfirm && MyUtility.Convert.GetString(dr["NotYetScan"]) == "0";
                 }

@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using System.Transactions;
-using Sci;
-using System.Data.SqlClient;
 using System.Linq;
 using Sci.Production.PublicPrg;
 
@@ -19,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B42_BatchImport
     /// </summary>
-    public partial class B42_BatchImport : Sci.Win.Subs.Base
+    public partial class B42_BatchImport : Win.Subs.Base
     {
         private DataTable dtBatchImport;
 
@@ -274,7 +267,7 @@ where   id = '{id}' and
 
                     idu.Append(string.Format(
                         @"update VNConsumption set EditName = '{0}',EditDate = '{1}' where CustomSP = '{2}' and VNContractID = '{3}' ;",
-                        Sci.Env.User.UserID,
+                        Env.User.UserID,
                         datetime,
                         customSP,
                         vnContractID));
@@ -372,7 +365,7 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
 
         private void BtnDownloadExcel_Click(object sender, EventArgs e)
         {
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_B42_Batch Import.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_B42_Batch Import.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {

@@ -37,7 +37,7 @@
             this.displayTotal = new Sci.Win.UI.DisplayBox();
             this.labelTotal = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
+            this.txtSeq1 = new Sci.Production.Class.TxtSeq();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelStockType = new Sci.Win.UI.Label();
             this.comboStockType = new Sci.Win.UI.ComboBox();
@@ -47,7 +47,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.txtWKno = new Sci.Win.UI.TextBox();
-            this.comboFabric = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboFabric = new Sci.Production.Class.ComboDropDownList(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -155,8 +155,8 @@
             this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq1.Location = new System.Drawing.Point(447, 18);
             this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Seq1 = "";
+            this.txtSeq1.Seq2 = "";
             this.txtSeq1.Size = new System.Drawing.Size(61, 23);
             this.txtSeq1.TabIndex = 2;
             // 
@@ -306,10 +306,10 @@
         private Win.UI.ComboBox comboStockType;
         private Win.UI.Label labelSPNo;
         private Win.UI.Label labelStockType;
-        private Class.txtSeq txtSeq1;
+        private Class.TxtSeq txtSeq1;
         private Win.UI.DisplayBox displayTotal;
         private Win.UI.Label labelTotal;
-        private Class.comboDropDownList comboFabric;
+        private Class.ComboDropDownList comboFabric;
         private Win.UI.TextBox txtWKno;
         private Win.UI.Label label2;
         private Win.UI.Label label1;

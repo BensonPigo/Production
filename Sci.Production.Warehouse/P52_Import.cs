@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
 using Ict;
@@ -13,7 +9,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P52_Import : Sci.Win.Subs.Base
+    public partial class P52_Import : Win.Subs.Base
     {
         private object stockType;
         private DataTable dtResultImportData;
@@ -22,7 +18,7 @@ namespace Sci.Production.Warehouse
         public P52_Import(object stockType)
         {
             this.stockType = stockType;
-            InitializeComponent();
+            this.InitializeComponent();
             this.grid.IsEditingReadOnly = false;
             DualResult result;
             #region Set ComboBox
@@ -49,7 +45,7 @@ where Classify = 'p'
             {
                 MyUtility.Msg.WarningBox(result.Description, "Set ComboBox");
             }
-            #endregion 
+            #endregion
         }
 
         protected override void OnFormLoaded()
@@ -57,7 +53,7 @@ where Classify = 'p'
             base.OnFormLoaded();
             #region Set Grid Columns
             this.Helper.Controls.Grid.Generator(this.grid)
-                .CheckBox("sel", header: "", trueValue: 1, falseValue: 0, iseditable: true)
+                .CheckBox("sel", header: string.Empty, trueValue: 1, falseValue: 0, iseditable: true)
                 .Text("Poid", header: "SP#")
                 .Text("Refno", header: "Ref#", iseditingreadonly: true)
                 .Text("Color", header: "Color", iseditingreadonly: true)
@@ -67,19 +63,20 @@ where Classify = 'p'
             #endregion
             for (int i = 0; i < this.grid.Columns.Count; i++)
             {
-                grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                this.grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
         }
 
         private void textBoxLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string strLocation = string.Format(@"
+            string strLocation = string.Format(
+                @"
 select  [Location ID] = id
         , Description 
 from    mtllocation WITH (NOLOCK) 
 where   junk != '1'
         and StockType = '{0}'", this.stockType);
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(strLocation, "10,20", this.textBoxLocation.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(strLocation, "10,20", this.textBoxLocation.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -103,9 +100,9 @@ where   junk != '1'
             listSqlParameter.Add(new SqlParameter("@EndSPNum", this.textBoxSPNumEnd.Text));
             listSqlParameter.Add(new SqlParameter("@Location", this.textBoxLocation.Text));
             listSqlParameter.Add(new SqlParameter("@Count", this.textBoxCountOfRandom.Text));
-            #endregion 
+            #endregion
             #region SQL Filte
-            string strLocationFilte = "", strUnitPriceFilte = "", strOrderIDFilte = "";
+            string strLocationFilte = string.Empty, strUnitPriceFilte = string.Empty, strOrderIDFilte = string.Empty;
             #region LocationFilte
             if (!this.textBoxLocation.Text.Empty())
             {
@@ -146,15 +143,16 @@ where   junk != '1'
             #endregion
 
             Dictionary<string, string> dicSQLFilte = new Dictionary<string, string>();
-            dicSQLFilte.Add("TopCount", this.textBoxCountOfRandom.Text.Empty() ? "" : "top (Convert (int, @Count))");
-            dicSQLFilte.Add("Category", this.comboBoxCategory.Text.EqualString("All") ? "" : "and LItem.Category = @Category");
+            dicSQLFilte.Add("TopCount", this.textBoxCountOfRandom.Text.Empty() ? string.Empty : "top (Convert (int, @Count))");
+            dicSQLFilte.Add("Category", this.comboBoxCategory.Text.EqualString("All") ? string.Empty : "and LItem.Category = @Category");
             dicSQLFilte.Add("Location", strLocationFilte);
             dicSQLFilte.Add("UnitPrice", strUnitPriceFilte);
             dicSQLFilte.Add("OrderID", strOrderIDFilte);
-            dicSQLFilte.Add("Random", this.textBoxCountOfRandom.Text.Empty() ? "" : "order by NEWID() DESC");
-            #endregion 
+            dicSQLFilte.Add("Random", this.textBoxCountOfRandom.Text.Empty() ? string.Empty : "order by NEWID() DESC");
+            #endregion
             #region SQL Command
-            string strSQLCommand = string.Format(@"
+            string strSQLCommand = string.Format(
+                @"
 select *
 from (
 	-- Top Count
@@ -198,14 +196,15 @@ from (
     -- Random
 	{6}
 ) Datas
-order by Datas.Poid, Datas.Refno", dicSQLFilte["TopCount"]
-                                 , Sci.Env.User.Keyword
-                                 , dicSQLFilte["Category"]
-                                 , dicSQLFilte["Location"]
-                                 , dicSQLFilte["UnitPrice"]
-                                 , dicSQLFilte["OrderID"]
-                                 , dicSQLFilte["Random"]);
-            #endregion 
+order by Datas.Poid, Datas.Refno",
+                dicSQLFilte["TopCount"],
+                Env.User.Keyword,
+                dicSQLFilte["Category"],
+                dicSQLFilte["Location"],
+                dicSQLFilte["UnitPrice"],
+                dicSQLFilte["OrderID"],
+                dicSQLFilte["Random"]);
+            #endregion
             this.ShowWaitMessage("Data Processing...");
             #region SQL Process
             DataTable dtResult;
@@ -216,6 +215,7 @@ order by Datas.Poid, Datas.Refno", dicSQLFilte["TopCount"]
                 {
                     MyUtility.Msg.InfoBox("Data not found.");
                 }
+
                 this.grid.DataSource = dtResult;
             }
             else
@@ -234,6 +234,7 @@ order by Datas.Poid, Datas.Refno", dicSQLFilte["TopCount"]
                 this.dtResultImportData = dtCheckData;
                 this.boolImport = true;
             }
+
             this.Close();
         }
 

@@ -31,9 +31,9 @@
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.labLocation = new Sci.Win.UI.Label();
-            this.txtMtlLocation = new Sci.Production.Class.txtMtlLocation(this.components);
+            this.txtMtlLocation = new Sci.Production.Class.TxtMtlLocation(this.components);
             this.dateATA = new Sci.Win.UI.DateRange();
-            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.txtReceivingid = new Sci.Win.UI.TextBox();
@@ -41,7 +41,7 @@
             this.txtwkno = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.labelSEQ = new Sci.Win.UI.Label();
-            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.txtSeq = new Sci.Production.Class.TxtSeq();
             this.comboStockType = new Sci.Win.UI.ComboBox();
             this.labelStockType = new Sci.Win.UI.Label();
             this.txtSP = new Sci.Win.UI.TextBox();
@@ -208,8 +208,8 @@
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq.Location = new System.Drawing.Point(258, 10);
             this.txtSeq.Name = "txtSeq";
-            this.txtSeq.seq1 = "";
-            this.txtSeq.seq2 = "";
+            this.txtSeq.Seq1 = "";
+            this.txtSeq.Seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 1;
             // 
@@ -421,7 +421,7 @@
         private Win.UI.ComboBox comboStockType;
         private Win.UI.Button btnLock;
         private Win.UI.Button btnExcel;
-        private Class.txtSeq txtSeq;
+        private Class.TxtSeq txtSeq;
         private Win.UI.Label labelSEQ;
         private Win.UI.TextBox txtReceivingid;
         private Win.UI.Label label2;
@@ -429,9 +429,9 @@
         private Win.UI.Label label1;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Class.comboDropDownList comboDropDownList1;
+        private Class.ComboDropDownList comboDropDownList1;
         private Win.UI.DateRange dateATA;
         private Win.UI.Label labLocation;
-        private Class.txtMtlLocation txtMtlLocation;
+        private Class.TxtMtlLocation txtMtlLocation;
     }
 }

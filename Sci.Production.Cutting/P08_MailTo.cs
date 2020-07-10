@@ -2,7 +2,7 @@
 
 namespace Sci.Production.Cutting
 {
-    public partial class P08_MailTo : Sci.Win.Subs.Input4
+    public partial class P08_MailTo : Win.Subs.Input4
     {
         public P08_MailTo(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)

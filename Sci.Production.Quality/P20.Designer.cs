@@ -57,8 +57,8 @@
             this.txtRFT = new Sci.Win.UI.TextBox();
             this.labConfirm = new System.Windows.Forms.Label();
             this.txtCPU = new Sci.Win.UI.TextBox();
-            this.txtLine = new Sci.Production.Class.txtSewingScheduleLine();
-            this.comboShift = new Sci.Production.Class.txtdropdownlist();
+            this.txtLine = new Sci.Production.Class.TxtSewingScheduleLine();
+            this.comboShift = new Sci.Production.Class.Txtdropdownlist();
             this.labBuyerDelivery = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -510,7 +510,7 @@
             // txtLine
             // 
             this.txtLine.BackColor = System.Drawing.Color.White;
-            this.txtLine.cell = null;
+            this.txtLine.Cell = null;
             this.txtLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewinglineID", true));
             this.txtLine.Factorytxt = null;
             this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -594,7 +594,7 @@
         #endregion
 
         private Win.UI.TextBox txtSP;
-        private Class.txtSewingScheduleLine txtLine;
+        private Class.TxtSewingScheduleLine txtLine;
         private Win.UI.Label labelDate;
         private Win.UI.DateBox dateDate;
         private Win.UI.Label labelSP;
@@ -619,7 +619,7 @@
         private Win.UI.Label labelCPU;
         private Win.UI.DisplayBox displayDestination;
         private Win.UI.DisplayBox displayStyle;
-        private Class.txtdropdownlist comboShift;
+        private Class.Txtdropdownlist comboShift;
         private Win.UI.ComboBox comboTeam;
         private Win.UI.TextBox txtRFT;
         private System.Windows.Forms.Label labConfirm;

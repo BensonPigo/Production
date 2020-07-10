@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
-using System.Data.SqlClient;
-using System.Runtime.InteropServices;
 using System.Linq;
 
 namespace Sci.Production.PPIC
 {
     /// <inheritdoc/>
-    public partial class P08_BatchConfirmRespDept : Sci.Win.Tems.QueryForm
+    public partial class P08_BatchConfirmRespDept : Win.Tems.QueryForm
     {
         private readonly string Type;
         private DataTable dt1;
@@ -172,10 +164,10 @@ where IRD.ID in('{string.Join("','", ids)}')
             var emaillist = drs.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["EMail"])).Distinct().ToList();
             var ids = drs.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["id"])).ToList();
             string mailto = string.Join(";", emaillist);
-            string mailCC = Sci.Env.User.MailAddress;
+            string mailCC = Env.User.MailAddress;
             string subject = "Replacement Report responsibility update";
             string description = "Pls re-check and update responsibility information." + "\r\n" + string.Join("\r\n", ids);
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, string.Empty, description, false, true);
+            var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, string.Empty, description, false, true);
             email.ShowDialog(this);
         }
 
@@ -203,7 +195,7 @@ where IRD.ID in('{string.Join("','", ids)}')
             var ids = drs.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["id"])).ToList();
             string sqlupdate = $@"
 update ReplacementReport
-Set RespDeptConfirmDate = getdate(), RespDeptConfirmName = '{Sci.Env.User.UserID}'
+Set RespDeptConfirmDate = getdate(), RespDeptConfirmName = '{Env.User.UserID}'
 where ID in('{string.Join("','", ids)}')
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlupdate);

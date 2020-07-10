@@ -1,14 +1,9 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Logistic
@@ -16,16 +11,17 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_R03
     /// </summary>
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private StringBuilder sqlWHERE = new StringBuilder();
+
         /// <summary>R03</summary>
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboM.setDefalutIndex(true);
+            this.comboM.SetDefalutIndex(true);
             this.comboCancel.SelectedIndex = 0;
         }
 
@@ -102,9 +98,9 @@ namespace Sci.Production.Logistic
         /// </summary>
         /// <param name="e">ReportEventArgs</param>
         /// <returns>Result</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            StringBuilder sqlcmd = new StringBuilder(); 
+            StringBuilder sqlcmd = new StringBuilder();
             #region "SQL"
             sqlcmd.Append(
                 $@"
@@ -171,7 +167,7 @@ group by o.MDivisionID,o.FactoryID,o.ID,pd.ID,cd.CTNStartNO,cd.ID,c.DisposeDate,
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -191,17 +187,17 @@ group by o.MDivisionID,o.FactoryID,o.ID,pd.ID,cd.CTNStartNO,cd.ID,c.DisposeDate,
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Logistic_R03.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Logistic_R03.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R03.xltx", 1, false, null, excel);// 將datatable copy to excel 
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R03.xltx", 1, false, null, excel); // 將datatable copy to excel
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_R03");
+            string strExcelName = Class.MicrosoftFile.GetName("Logistic_R03");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

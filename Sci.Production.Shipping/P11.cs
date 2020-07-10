@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using System.Runtime.InteropServices;
-using Sci.Win.Tems;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// P11
     /// </summary>
-    public partial class P11 : Sci.Win.Tems.Input6
+    public partial class P11 : Win.Tems.Input6
     {
         /// <summary>
         /// P11
@@ -120,7 +115,7 @@ namespace Sci.Production.Shipping
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -139,7 +134,7 @@ namespace Sci.Production.Shipping
         protected override void ClickConfirm()
         {
             string sqlupdate = $@"
-update BIRInvoice set Status='Approved', Approve='{Sci.Env.User.UserID}', ApproveDate=getdate(), EditName='{Sci.Env.User.UserID}', EditDate=getdate()
+update BIRInvoice set Status='Approved', Approve='{Env.User.UserID}', ApproveDate=getdate(), EditName='{Env.User.UserID}', EditDate=getdate()
 where id = '{this.CurrentMaintain["ID"]}'
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlupdate);
@@ -162,7 +157,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             }
 
             string sqlupdate = $@"
-update BIRInvoice set Status='New', Approve='{Sci.Env.User.UserID}', ApproveDate=getdate(), EditName='{Sci.Env.User.UserID}', EditDate=getdate()
+update BIRInvoice set Status='New', Approve='{Env.User.UserID}', ApproveDate=getdate(), EditName='{Env.User.UserID}', EditDate=getdate()
 where id = '{this.CurrentMaintain["ID"]}'
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlupdate);
@@ -171,6 +166,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 this.ShowErr(result);
                 return;
             }
+
             base.ClickUnconfirm();
         }
 
@@ -252,7 +248,7 @@ and InvSerial like '{this.CurrentMaintain["InvSerial"]}%'
 
         private void BtnBatchApprove(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P11_BatchApprove callNextForm = new P11_BatchApprove(this.Reload);
+            P11_BatchApprove callNextForm = new P11_BatchApprove(this.Reload);
             callNextForm.ShowDialog(this);
         }
 

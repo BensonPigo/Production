@@ -1,14 +1,14 @@
-﻿using Ict;
-using Sci.Data;
+﻿using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
+
 namespace Sci.Production.Quality
 {
-    public partial class R09 : Sci.Win.Tems.PrintForm
+    public partial class R09 : Win.Tems.PrintForm
     {
         DateTime? DateInspDateStart; DateTime? DateInspDateEnd;
         DateTime? DateArrStart; DateTime? DateArrEnd;
@@ -19,78 +19,83 @@ namespace Sci.Production.Quality
         public R09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent(); 
-            print.Enabled = false;
+            this.InitializeComponent();
+            this.print.Enabled = false;
         }
 
         protected override bool ValidateInput()
         {
-            DateArrStart = dateArriveWHDate.Value1;
-            DateArrEnd = dateArriveWHDate.Value2;
-            DateInspDateStart = dateInspDate.Value1;
-            DateInspDateEnd = dateInspDate.Value2;
-            spStrat = txtSPStart.Text.ToString();
-            spEnd = txtSPEnd.Text.ToString();
-            Ref = txtRefno.Text.ToString();
-            Supp = txtsupplier.TextBox1.Text;
+            this.DateArrStart = this.dateArriveWHDate.Value1;
+            this.DateArrEnd = this.dateArriveWHDate.Value2;
+            this.DateInspDateStart = this.dateInspDate.Value1;
+            this.DateInspDateEnd = this.dateInspDate.Value2;
+            this.spStrat = this.txtSPStart.Text.ToString();
+            this.spEnd = this.txtSPEnd.Text.ToString();
+            this.Ref = this.txtRefno.Text.ToString();
+            this.Supp = this.txtsupplier.TextBox1.Text;
 
-            bool date_Arrive_Empty = MyUtility.Check.Empty(DateArrStart) || MyUtility.Check.Empty(DateArrEnd), 
-                date_SCI_Empty = MyUtility.Check.Empty(DateInspDateStart) || MyUtility.Check.Empty(DateInspDateEnd);
+            bool date_Arrive_Empty = MyUtility.Check.Empty(this.DateArrStart) || MyUtility.Check.Empty(this.DateArrEnd),
+                date_SCI_Empty = MyUtility.Check.Empty(this.DateInspDateStart) || MyUtility.Check.Empty(this.DateInspDateEnd);
 
             if (date_Arrive_Empty && date_SCI_Empty)
             {
-                dateArriveWHDate.Focus();
+                this.dateArriveWHDate.Focus();
                 MyUtility.Msg.ErrorBox("Please select [Last Physical Insp Date] or [Arrive W/H Date] at least one field entry.");
                 return false;
             }
-             
-            lis = new List<SqlParameter>();
-            string sqlWhere = "";
+
+            this.lis = new List<SqlParameter>();
+            string sqlWhere = string.Empty;
             List<string> sqlWheres = new List<string>();
             #region --組WHERE--
 
-            if (!MyUtility.Check.Empty(DateInspDateStart) && !MyUtility.Check.Empty(DateInspDateEnd))
+            if (!MyUtility.Check.Empty(this.DateInspDateStart) && !MyUtility.Check.Empty(this.DateInspDateEnd))
             {
                 sqlWheres.Add("fir.PhysicalDate between @PhysicalDate1 and @PhysicalDate2");
-                lis.Add(new SqlParameter("@PhysicalDate1", DateInspDateStart));
-                lis.Add(new SqlParameter("@PhysicalDate2", DateInspDateEnd));
+                this.lis.Add(new SqlParameter("@PhysicalDate1", this.DateInspDateStart));
+                this.lis.Add(new SqlParameter("@PhysicalDate2", this.DateInspDateEnd));
             }
-            if (!MyUtility.Check.Empty(DateArrStart) && !MyUtility.Check.Empty(DateArrEnd))
+
+            if (!MyUtility.Check.Empty(this.DateArrStart) && !MyUtility.Check.Empty(this.DateArrEnd))
             {
                 sqlWheres.Add("rec.WhseArrival between @ArrDate1 and @ArrDate2");
-                lis.Add(new SqlParameter("@ArrDate1", DateArrStart));
-                lis.Add(new SqlParameter("@ArrDate2", DateArrEnd));
-            } 
-            if (!MyUtility.Check.Empty(spStrat))
-            {
-                sqlWheres.Add("fir.POID >= @sp1"); 
-                lis.Add(new SqlParameter("@sp1", spStrat));
+                this.lis.Add(new SqlParameter("@ArrDate1", this.DateArrStart));
+                this.lis.Add(new SqlParameter("@ArrDate2", this.DateArrEnd));
             }
-            if (!MyUtility.Check.Empty(spEnd))
+
+            if (!MyUtility.Check.Empty(this.spStrat))
+            {
+                sqlWheres.Add("fir.POID >= @sp1");
+                this.lis.Add(new SqlParameter("@sp1", this.spStrat));
+            }
+
+            if (!MyUtility.Check.Empty(this.spEnd))
             {
                 sqlWheres.Add("fir.POID <= @sp2");
-                lis.Add(new SqlParameter("@sp2", spEnd));
+                this.lis.Add(new SqlParameter("@sp2", this.spEnd));
             }
-            if (!MyUtility.Check.Empty(Ref))
+
+            if (!MyUtility.Check.Empty(this.Ref))
             {
                 sqlWheres.Add("fir.Refno = @Ref");
-                lis.Add(new SqlParameter("@Ref", Ref));
+                this.lis.Add(new SqlParameter("@Ref", this.Ref));
             }
-            if (!MyUtility.Check.Empty(Supp))
+
+            if (!MyUtility.Check.Empty(this.Supp))
             {
                 sqlWheres.Add("fir.Suppid = @Supp");
-                lis.Add(new SqlParameter("@Supp", Supp));
+                this.lis.Add(new SqlParameter("@Supp", this.Supp));
             }
 
             #endregion
-            sqlWhere = string.Join(" and ", sqlWheres); 
-            if (sqlWheres.Count!=0)
+            sqlWhere = string.Join(" and ", sqlWheres);
+            if (sqlWheres.Count != 0)
             {
                 sqlWhere = " where " + sqlWhere;
             }
             #region --撈ListExcel資料--
 
-            cmd = string.Format(
+            this.cmd = string.Format(
 @"
 Select row_number() over(ORDER BY ord.FactoryID, fir.poid, ord.StyleID, fir.SEQ1, fir.SEQ2, firo.roll, firo.Dyelot) as [No]
 	  --, ord.FactoryID [Factory]
@@ -123,22 +128,22 @@ order by ord.FactoryID, fir.poid, ord.StyleID, fir.SEQ1, fir.SEQ2, firo.roll, fi
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            return DBProxy.Current.Select("", cmd, lis, out dt);;
+            return DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(dt.Rows.Count);
-            if (dt == null || dt.Rows.Count == 0)
+            this.SetCount(this.dt.Rows.Count);
+            if (this.dt == null || this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
 
             string xltx = "Quality_R09.xltx";
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltx); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(dt, "", xltx, 2, true, null, objApp);// 將datatable copy to excel
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + xltx); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.dt, string.Empty, xltx, 2, true, null, objApp); // 將datatable copy to excel
             return true;
         }
     }

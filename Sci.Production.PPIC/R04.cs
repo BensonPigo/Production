@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -15,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R04
     /// </summary>
-    public partial class R04 : Sci.Win.Tems.PrintForm
+    public partial class R04 : Win.Tems.PrintForm
     {
         private DateTime? date1;
         private DateTime? date2;
@@ -47,8 +43,8 @@ namespace Sci.Production.PPIC
             MyUtility.Tool.SetupCombox(this.comboLeadtime, 2, 1, "7200,2hrs,10800,3hrs,14400,4hrs");
             this.comboReportType.SelectedIndex = 0;
             this.comboLeadtime.SelectedIndex = 1;
-            this.comboM.Text = Sci.Env.User.Keyword;
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
 
             this.dateApvDate.Value1 = DateTime.Today.AddDays(-1);
             this.dateApvDate.Value2 = DateTime.Today.AddDays(-1);
@@ -79,7 +75,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlCondition = new StringBuilder();
@@ -210,7 +206,7 @@ order by MDivisionID,FactoryID",
                 this.totalFactory = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select COUNT(distinct FactoryID) from Lack l WITH (NOLOCK) {0}", sqlCondition.ToString())));
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -226,7 +222,7 @@ order by MDivisionID,FactoryID",
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + (this.reportType == 0 ? "\\PPIC_R04_FabricBCS.xltx" : "\\PPIC_R04_AccessoryBCS.xltx");
+            string strXltName = Env.Cfg.XltPathDir + (this.reportType == 0 ? "\\PPIC_R04_FabricBCS.xltx" : "\\PPIC_R04_AccessoryBCS.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -418,7 +414,7 @@ order by MDivisionID,FactoryID",
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.reportType == 0 ? "PPIC_R04_FabricBCS" : "PPIC_R04_AccessoryBCS");
+            string strExcelName = Class.MicrosoftFile.GetName(this.reportType == 0 ? "PPIC_R04_FabricBCS" : "PPIC_R04_AccessoryBCS");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

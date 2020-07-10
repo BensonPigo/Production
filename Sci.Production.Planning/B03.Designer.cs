@@ -293,6 +293,6 @@
         private Win.UI.Label labelBrand;
         private Win.UI.DisplayBox displayBrand;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        public Win.UI.Grid gridArtworkType;
+        private Win.UI.Grid gridArtworkType;
     }
 }

@@ -45,8 +45,8 @@
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.labelRefundReason = new Sci.Win.UI.Label();
             this.labelAction = new Sci.Win.UI.Label();
-            this.txtwhseReasonRefundReason = new Sci.Production.Class.txtwhseReason();
-            this.txtwhseRefundAction = new Sci.Production.Class.txtwhseRefundAction();
+            this.txtwhseReasonRefundReason = new Sci.Production.Class.TxtwhseReason();
+            this.txtwhseRefundAction = new Sci.Production.Class.TxtwhseRefundAction();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -413,7 +413,7 @@
         private Win.UI.Button btnAccumulatedQty;
         private Win.UI.Label labelAction;
         private Win.UI.Label labelRefundReason;
-        private Class.txtwhseReason txtwhseReasonRefundReason;
-        private Class.txtwhseRefundAction txtwhseRefundAction;
+        private Class.TxtwhseReason txtwhseReasonRefundReason;
+        private Class.TxtwhseRefundAction txtwhseRefundAction;
     }
 }

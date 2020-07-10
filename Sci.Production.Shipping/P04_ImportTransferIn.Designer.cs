@@ -32,9 +32,9 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.txtScifactoryToFactory = new Sci.Production.Class.txtscifactory();
+            this.txtScifactoryToFactory = new Sci.Production.Class.Txtscifactory();
             this.labelToFactory = new Sci.Win.UI.Label();
-            this.txtScifactoryFromFactory = new Sci.Production.Class.txtscifactory();
+            this.txtScifactoryFromFactory = new Sci.Production.Class.Txtscifactory();
             this.btnQuery = new Sci.Win.UI.Button();
             this.labelFromFactory = new Sci.Win.UI.Label();
             this.txtSPNo = new Sci.Win.UI.TextBox();
@@ -249,8 +249,8 @@
         private Win.UI.Panel panel5;
         private Win.UI.Grid gridImport;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Class.txtscifactory txtScifactoryToFactory;
+        private Class.Txtscifactory txtScifactoryToFactory;
         private Win.UI.Label labelToFactory;
-        private Class.txtscifactory txtScifactoryFromFactory;
+        private Class.Txtscifactory txtScifactoryFromFactory;
     }
 }

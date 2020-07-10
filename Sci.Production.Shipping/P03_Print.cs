@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
@@ -15,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P03_Print
     /// </summary>
-    public partial class P03_Print : Sci.Win.Tems.PrintForm
+    public partial class P03_Print : Win.Tems.PrintForm
     {
         private string reportType;
         private string eta1;
@@ -78,7 +72,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             if (this.reportType == "1")
             {
@@ -111,8 +105,7 @@ order by e.ID",
                     MyUtility.Check.Empty(this.eta1) ? string.Empty : " and e.Eta >= '" + this.eta1 + "'",
                     MyUtility.Check.Empty(this.eta2) ? string.Empty : " and e.Eta <= '" + this.eta2 + "'",
                     MyUtility.Check.Empty(this.factory) ? string.Empty : " and e.FactoryID = '" + this.factory + "'",
-                    MyUtility.Check.Empty(this.shipmode) ? string.Empty : " and e.shipmodeID = '" + this.shipmode + "'"
-                    );
+                    MyUtility.Check.Empty(this.shipmode) ? string.Empty : " and e.shipmodeID = '" + this.shipmode + "'");
 
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
                 if (!result)
@@ -122,7 +115,7 @@ order by e.ID",
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -130,7 +123,7 @@ order by e.ID",
         {
             if (this.reportType == "1")
             {
-                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P03_Detail.xltx";
+                string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P03_Detail.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null)
                 {
@@ -189,7 +182,7 @@ order by e.ID",
                 }
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P03_Detail");
+                string strExcelName = Class.MicrosoftFile.GetName("Shipping_P03_Detail");
                 excel.ActiveWorkbook.SaveAs(strExcelName);
                 excel.Quit();
                 Marshal.ReleaseComObject(excel);
@@ -209,7 +202,7 @@ order by e.ID",
                     return false;
                 }
 
-                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P03_List.xltx";
+                string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P03_List.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null)
                 {
@@ -247,7 +240,7 @@ order by e.ID",
                 excel.Cells.EntireRow.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P03_List");
+                string strExcelName = Class.MicrosoftFile.GetName("Shipping_P03_List");
                 excel.ActiveWorkbook.SaveAs(strExcelName);
                 excel.Quit();
                 Marshal.ReleaseComObject(excel);

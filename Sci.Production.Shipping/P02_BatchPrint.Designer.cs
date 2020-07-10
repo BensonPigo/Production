@@ -34,7 +34,7 @@
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelSeq = new Sci.Win.UI.Label();
             this.txtReceiver = new Sci.Win.UI.TextBox();
-            this.txtUserInCharge = new Sci.Production.Class.txtuser();
+            this.txtUserInCharge = new Sci.Production.Class.Txtuser();
             this.txtCNo = new Sci.Win.UI.TextBox();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.txtSeqStart = new Sci.Win.UI.TextBox();
@@ -215,7 +215,7 @@
         private Win.UI.Label labelSPNo;
         private Win.UI.Label labelSeq;
         private Win.UI.TextBox txtReceiver;
-        private Class.txtuser txtUserInCharge;
+        private Class.Txtuser txtUserInCharge;
         private Win.UI.TextBox txtCNo;
         private Win.UI.TextBox txtSPNo;
         private Win.UI.TextBox txtSeqStart;

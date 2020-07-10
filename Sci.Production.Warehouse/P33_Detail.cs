@@ -1,52 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Sci;
 using Ict.Win;
 using Ict;
-using Sci.Data;
 using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P33_Detail : Sci.Win.Subs.Input8A
+    public partial class P33_Detail : Win.Subs.Input8A
     {
         public DataTable dtIssueBreakDown { get; set; }
-        public bool combo, isSave;
+
+        public bool combo;
+        public bool isSave;
         private string oriSuppColor = string.Empty;
 
         public P33_Detail()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.KeyField1 = "id";
             this.KeyField2 = "Issue_SummaryUkey";
         }
+
         ///Issue_Detail
         protected override void OnSubDetailInsert(int index = -1)
         {
-            var frm = new Sci.Production.Warehouse.P33_Detail_Detail(CurrentDetailData, (DataTable)gridbs.DataSource , CurrentDetailData["AccuIssued"].ToString() , CurrentDetailData["Use Qty By Stock Unit"].ToString());
+            var frm = new P33_Detail_Detail(this.CurrentDetailData, (DataTable)this.gridbs.DataSource, this.CurrentDetailData["AccuIssued"].ToString(), this.CurrentDetailData["Use Qty By Stock Unit"].ToString());
             frm.P33_Detail = this;
             frm.ShowDialog(this);
-            sum_checkedqty();
-            //base.OnSubDetailInsert(index);
-            //CurrentSubDetailData["Issue_SummaryUkey"] = 0;
+            this.sum_checkedqty();
+
+            // base.OnSubDetailInsert(index);
+            // CurrentSubDetailData["Issue_SummaryUkey"] = 0;
         }
 
         protected override void OnAttached()
         {
             base.OnAttached();
 
-            DataTable temp =(DataTable)gridbs.DataSource;
+            DataTable temp = (DataTable)this.gridbs.DataSource;
             if (!temp.Columns.Contains("BulkQty"))
             {
                 DataTable dtFtyinventory;
-                Ict.DualResult result;
-                if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        (temp, "", @"  
+                DualResult result;
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(
+                        temp, string.Empty, @"  
 
 select t.poid
        , t.Seq1
@@ -78,23 +77,25 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;
                 }
-                gridbs.DataSource = dtFtyinventory;
-                //dtFtyinventory.DefaultView.Sort = "dyelot,balanceqty desc";
+
+                this.gridbs.DataSource = dtFtyinventory;
+
+                // dtFtyinventory.DefaultView.Sort = "dyelot,balanceqty desc";
             }
 
-            this.displaySCIRefno.Text = CurrentDetailData["SCIRefno"].ToString();
-            this.displayRefno.Text = CurrentDetailData["Refno"].ToString();
-            this.displaySCIRefno.Text = CurrentDetailData["SCIRefno"].ToString();
-            this.displaySPNo.Text = CurrentDetailData["POID"].ToString();
-            this.displayColorID.Text = CurrentDetailData["ColorID"].ToString();
-            this.displaySuppColor.Text = CurrentDetailData["SuppColor"].ToString();
-            this.oriSuppColor = CurrentDetailData["SuppColor"].ToString();
-            this.editDesc.Text = CurrentDetailData["DescDetail"].ToString();
+            this.displaySCIRefno.Text = this.CurrentDetailData["SCIRefno"].ToString();
+            this.displayRefno.Text = this.CurrentDetailData["Refno"].ToString();
+            this.displaySCIRefno.Text = this.CurrentDetailData["SCIRefno"].ToString();
+            this.displaySPNo.Text = this.CurrentDetailData["POID"].ToString();
+            this.displayColorID.Text = this.CurrentDetailData["ColorID"].ToString();
+            this.displaySuppColor.Text = this.CurrentDetailData["SuppColor"].ToString();
+            this.oriSuppColor = this.CurrentDetailData["SuppColor"].ToString();
+            this.editDesc.Text = this.CurrentDetailData["DescDetail"].ToString();
 
-            this.numAccuIssue.Text = CurrentDetailData["AccuIssued"].ToString();
-            this.numRequestQty.Text = CurrentDetailData["Use Qty By Stock Unit"].ToString();
+            this.numAccuIssue.Text = this.CurrentDetailData["AccuIssued"].ToString();
+            this.numRequestQty.Text = this.CurrentDetailData["Use Qty By Stock Unit"].ToString();
 
-            if (MyUtility.Check.Empty(CurrentDetailData["Use Qty By Stock Unit"]))
+            if (MyUtility.Check.Empty(this.CurrentDetailData["Use Qty By Stock Unit"]))
             {
                 this.btnAutoPick.EditMode = Win.UI.AdvEditModes.DisableOnEdit;
             }
@@ -102,17 +103,16 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
             {
                 this.btnAutoPick.EditMode = Win.UI.AdvEditModes.EnableOnEdit;
             }
-
         }
 
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 // 先排除被刪掉的Row
-                DataTable subDT = ((DataTable)gridbs.DataSource).AsEnumerable().Where(o=>o.RowState != DataRowState.Deleted).CopyToDataTable();
-                
+                DataTable subDT = ((DataTable)this.gridbs.DataSource).AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).CopyToDataTable();
+
                 DataRow row = subDT.Rows[e.RowIndex];
 
                 if (row.RowState == DataRowState.Deleted)
@@ -134,15 +134,15 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
 
                 row["Qty"] = Convert.ToInt32(e.FormattedValue);
                 subDT.EndInit();
-                sum_checkedqty();
+                this.sum_checkedqty();
             };
-            Helper.Controls.Grid.Generator(this.grid)
-            .Text("seq1", header: "Seq1", width: Widths.AnsiChars(5), iseditingreadonly: true)  
+            this.Helper.Controls.Grid.Generator(this.grid)
+            .Text("seq1", header: "Seq1", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("seq2", header: "Seq2", width: Widths.AnsiChars(5), iseditingreadonly: true)
-            .Numeric("BulkQty", header: "Bulk Qty", width: Widths.AnsiChars(8), decimal_places: 0, integer_places: 8, iseditingreadonly: true)   
+            .Numeric("BulkQty", header: "Bulk Qty", width: Widths.AnsiChars(8), decimal_places: 0, integer_places: 8, iseditingreadonly: true)
             .Numeric("Qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: ns)
             .Text("BulkLocation", header: "Bulk Location", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            ;    
+            ;
 
             this.grid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
 
@@ -151,63 +151,68 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
 
         protected override bool OnSaveBefore()
         {
-            grid.ValidateControl();
-            var dr2 = ((DataTable)gridbs.DataSource).Select("qty = 0");
+            this.grid.ValidateControl();
+            var dr2 = ((DataTable)this.gridbs.DataSource).Select("qty = 0");
             if (dr2.Length > 0)
             {
                 MyUtility.Msg.WarningBox("Issue Qty of selected row can't be zero!", "Warning");
                 return false;
             }
-            var dr2_ba = ((DataTable)gridbs.DataSource).Select("qty > BulkQty");
+
+            var dr2_ba = ((DataTable)this.gridbs.DataSource).Select("qty > BulkQty");
             if (dr2_ba.Length > 0)
             {
                 MyUtility.Msg.WarningBox("Issue Qty of selected row can't be more then Bulk qty!", "Warning");
                 return false;
             }
+
             return base.OnSaveBefore();
         }
 
         protected override bool OnUndo()
         {
             this.isSave = false;
-            CurrentDetailData["SuppColor"] = this.oriSuppColor;
+            this.CurrentDetailData["SuppColor"] = this.oriSuppColor;
             return base.OnUndo();
         }
 
-        
-
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
-            decimal AccuIssued = MyUtility.Check.Empty(CurrentDetailData["AccuIssued"]) ? 0 : Convert.ToDecimal(CurrentDetailData["AccuIssued"]);
-            List<DataRow> issuedList = PublicPrg.Prgs.Thread_AutoPick(CurrentDetailData, AccuIssued);
+            decimal AccuIssued = MyUtility.Check.Empty(this.CurrentDetailData["AccuIssued"]) ? 0 : Convert.ToDecimal(this.CurrentDetailData["AccuIssued"]);
+            List<DataRow> issuedList = PublicPrg.Prgs.Thread_AutoPick(this.CurrentDetailData, AccuIssued);
 
             if (issuedList == null)
             {
                 return;
             }
 
-            DataTable subDT = (DataTable)gridbs.DataSource;
+            DataTable subDT = (DataTable)this.gridbs.DataSource;
 
-            foreach (DataRow temp in subDT.ToList()) temp.Delete();
-                
-            //subDT.Clear();
+            foreach (DataRow temp in subDT.ToList())
+            {
+                temp.Delete();
+            }
+
+            // subDT.Clear();
             foreach (DataRow dr2 in issuedList)
             {
                 dr2.AcceptChanges();
                 dr2.SetAdded();
                 subDT.ImportRow(dr2);
             }
-            sum_checkedqty();
+
+            this.sum_checkedqty();
         }
 
         private void sum_checkedqty()
         {
-            grid.EndEdit();
-            DataTable subDT = (DataTable)gridbs.DataSource;
-            Object SumIssueQTY = subDT.Compute("Sum(Qty)", "");
+            this.grid.EndEdit();
+            DataTable subDT = (DataTable)this.gridbs.DataSource;
+            object SumIssueQTY = subDT.Compute("Sum(Qty)", string.Empty);
             this.numIssueQty.Text = SumIssueQTY.ToString();
-            //this.numVariance.Value = this.numBalanceQty.Value - this.numIssueQty.Value;
-            CurrentDetailData["IssueQty"] = MyUtility.Check.Empty(subDT.Compute("Sum(Qty)", "")) ? 0 : (decimal)subDT.Compute("Sum(Qty)", "");
+
+            // this.numVariance.Value = this.numBalanceQty.Value - this.numIssueQty.Value;
+            this.CurrentDetailData["IssueQty"] = MyUtility.Check.Empty(subDT.Compute("Sum(Qty)", string.Empty)) ? 0 : (decimal)subDT.Compute("Sum(Qty)", string.Empty);
 
             #region 根據新的Seq，動態串出SuppColor，並寫入Issue_Summary
             List<string> allSuppColor = new List<string>();
@@ -219,11 +224,12 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
                 string suppColor = MyUtility.GetValue.Lookup($@"
 SELECT SuppColor 
 FROM PO_Supp_Detail WITH(NOLOCK) 
-WHERE ID = '{CurrentDetailData["POID"]}' 
-AND SCIRefno = '{CurrentDetailData["SCIRefno"]}' 
-AND ColorID='{CurrentDetailData["ColorID"]}'
+WHERE ID = '{this.CurrentDetailData["POID"]}' 
+AND SCIRefno = '{this.CurrentDetailData["SCIRefno"]}' 
+AND ColorID='{this.CurrentDetailData["ColorID"]}'
 AND Seq1 = '{seq1}' AND Seq2 = '{seq2}'
 ");
+
                 // 重複就不加進去了
                 if (!allSuppColor.Contains(suppColor))
                 {
@@ -231,12 +237,13 @@ AND Seq1 = '{seq1}' AND Seq2 = '{seq2}'
                 }
 
                 // 若還沒有Issue.ID，表示是全新的第三層，因此除了Deleted的都是Add
-                if (item.RowState != DataRowState.Added && MyUtility.Check.Empty(CurrentDetailData["ID"]))
+                if (item.RowState != DataRowState.Added && MyUtility.Check.Empty(this.CurrentDetailData["ID"]))
                 {
                     item.SetAdded();
                 }
             }
-            CurrentDetailData["SuppColor"] = allSuppColor.JoinToString(",");
+
+            this.CurrentDetailData["SuppColor"] = allSuppColor.JoinToString(",");
             this.displaySuppColor.Text = this.CurrentDetailData["SuppColor"].ToString();
             #endregion
         }
@@ -248,8 +255,7 @@ AND Seq1 = '{seq1}' AND Seq2 = '{seq2}'
 
         private void delete_Click(object sender, EventArgs e)
         {
-            sum_checkedqty();
+            this.sum_checkedqty();
         }
-
     }
 }

@@ -16,12 +16,13 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P08_Import : Sci.Win.Subs.Base
+    public partial class P08_Import : Win.Subs.Base
     {
         DataTable gridTable;
+
         public P08_Import()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void OnFormLoaded()
@@ -30,7 +31,7 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorTextColumnSettings dyelot = new DataGridViewGeneratorTextColumnSettings();
             dyelot.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
                 if (e.Button == MouseButtons.Right)
                 {
                     string sql = $@"
@@ -54,7 +55,11 @@ and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) > 0
 ";
                     SelectItem selectItem = new SelectItem(sql, string.Empty, MyUtility.Convert.GetString(dr["Dyelot"]));
                     DialogResult result = selectItem.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     dr["Dyelot"] = selectItem.GetSelecteds()[0]["Dyelot"];
                     dr.EndEdit();
                 }
@@ -67,7 +72,7 @@ and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) > 0
                     return;
                 }
 
-                DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
                 string sql = $@"
 select  1
 from PO_Supp_Detail psd with(nolock)
@@ -87,9 +92,9 @@ and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) > 0
                 }
             };
 
-            this.gridImport.IsEditingReadOnly = false; //必設定
-            Helper.Controls.Grid.Generator(this.gridImport)
-            .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+            this.gridImport.IsEditingReadOnly = false; // 必設定
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("CuttingID", header: "CuttingID", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Fab Combo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -201,14 +206,14 @@ outer apply(
 where e.Id = @CuttingID and e.CuttingPiece = 1 
 order by MarkerName, ColorID 
 ";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlParameters, out gridTable);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlParameters, out this.gridTable);
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
 
-            if (gridTable.Rows.Count == 0)
+            if (this.gridTable.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return;
@@ -217,13 +222,12 @@ order by MarkerName, ColorID
             DataTable dt0 = Prgs.GetCuttingTapeData(this.txtCuttingID.Text);
             if (dt0.Rows.Count > 0)
             {
-                foreach (DataRow row in gridTable.Rows)
+                foreach (DataRow row in this.gridTable.Rows)
                 {
                     var x = dt0.AsEnumerable().Where(w =>
                     MyUtility.Convert.GetString(w["MarkerName"]) == MyUtility.Convert.GetString(row["MarkerName"]) &&
                     MyUtility.Convert.GetString(w["ColorID"]) == MyUtility.Convert.GetString(row["ColorID"]) &&
-                    MyUtility.Convert.GetString(w["Article"]) == MyUtility.Convert.GetString(row["Article"])
-                    );
+                    MyUtility.Convert.GetString(w["Article"]) == MyUtility.Convert.GetString(row["Article"]));
                     if (x.Any())
                     {
                         row["remark"] = x.Select(s => new
@@ -231,13 +235,13 @@ order by MarkerName, ColorID
                             remark = MyUtility.Convert.GetString(s["SP"]) + "\\" +
                                  MyUtility.Convert.GetString(s["Article"]) + "\\" +
                                  MyUtility.Convert.GetString(s["SizeCode"]) + "\\" +
-                                 MyUtility.Convert.GetString(s["CutQty"])
+                                 MyUtility.Convert.GetString(s["CutQty"]),
                         }).OrderBy(o => o.remark).Select(s => s.remark).JoinToString(",");
                     }
                 }
             }
 
-            this.listControlBindingSource1.DataSource = gridTable;
+            this.listControlBindingSource1.DataSource = this.gridTable;
             this.gridImport.AutoResizeColumns();
         }
 
@@ -257,8 +261,8 @@ order by MarkerName, ColorID
         private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
-            importedIDs.Clear();
-            if (this.listControlBindingSource1.DataSource == null || gridTable.Rows.Count == 0)
+            this.importedIDs.Clear();
+            if (this.listControlBindingSource1.DataSource == null || this.gridTable.Rows.Count == 0)
             {
                 return;
             }
@@ -269,7 +273,7 @@ order by MarkerName, ColorID
                 return;
             }
 
-            if (MyUtility.Check.Empty(dateEstCutDate.Value))
+            if (MyUtility.Check.Empty(this.dateEstCutDate.Value))
             {
                 MyUtility.Msg.WarningBox("<Est. Cut Date> can not be empty.");
                 return;
@@ -279,7 +283,7 @@ order by MarkerName, ColorID
             if (!MyUtility.Check.Empty(this.dateEstCutDate.Value) && ((DateTime)this.dateEstCutDate.Value).Date < DateTime.Today)
             {
                 MyUtility.Msg.WarningBox("Est. Cutting Date can't earlier than today!");
-                dateEstCutDate.Value = null;
+                this.dateEstCutDate.Value = null;
                 return;
             }
 
@@ -309,7 +313,7 @@ order by MarkerName, ColorID
                     s.Key.MarkerName,
                     s.Key.ColorID,
                     s.Key.Dyelot,
-                    ct = s.Count()
+                    ct = s.Count(),
                 }).Any(r => r.ct > 1))
             {
                 MyUtility.Msg.WarningBox("CuttingID, Fabric Combo, MarkerName, ColorID, Dyelot can not duplicate!!");
@@ -325,7 +329,7 @@ order by MarkerName, ColorID
                     FabCombo = g["Fab Combo"].ToString(),
                     MarkerName = g["MarkerName"].ToString(),
                     ColorID = g["ColorID"].ToString(),
-                    Qty = MyUtility.Convert.GetDecimal(g["Qty"])
+                    Qty = MyUtility.Convert.GetDecimal(g["Qty"]),
                 })
                 .Select(s => new
                 {
@@ -334,7 +338,7 @@ order by MarkerName, ColorID
                     s.Key.MarkerName,
                     s.Key.ColorID,
                     s.Key.Qty,
-                    ReleaseQty = s.Sum(i => MyUtility.Convert.GetDecimal(i["ReleaseQty"]))
+                    ReleaseQty = s.Sum(i => MyUtility.Convert.GetDecimal(i["ReleaseQty"])),
                 });
             if (x.Where(w => w.ReleaseQty > w.Qty).Any())
             {
@@ -344,7 +348,7 @@ order by MarkerName, ColorID
             #endregion
 
             string cutTapePlanID = MyUtility.GetValue.GetID(Env.User.Keyword + "CT", "CutTapePlan");
-            importedIDs.Add(cutTapePlanID);
+            this.importedIDs.Add(cutTapePlanID);
             string insertsql = $@"
 INSERT INTO [dbo].[CutTapePlan]
            ([ID]
@@ -425,7 +429,7 @@ from #tmp
         private void BtnSplit_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
-            if (this.listControlBindingSource1.DataSource == null || gridTable.Rows.Count == 0)
+            if (this.listControlBindingSource1.DataSource == null || this.gridTable.Rows.Count == 0)
             {
                 return;
             }
@@ -437,14 +441,15 @@ from #tmp
             }
 
             DataTable seldt = this.gridTable.Select("selected = 1").CopyToDataTable();
-            Parallel.ForEach(seldt.AsEnumerable(), row => { row["ReleaseQty"] = 0; row["Selected"] = 0; });
+            Parallel.ForEach(seldt.AsEnumerable(), row => { row["ReleaseQty"] = 0;
+                row["Selected"] = 0; });
             this.gridTable.Merge(seldt);
         }
 
         private void BtnDelete_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
-            if (this.listControlBindingSource1.DataSource == null || gridTable.Rows.Count == 0)
+            if (this.listControlBindingSource1.DataSource == null || this.gridTable.Rows.Count == 0)
             {
                 return;
             }
@@ -459,7 +464,6 @@ from #tmp
             {
                 this.gridTable.Select("selected = 1")[i].Delete();
             }
-             
         }
     }
 }

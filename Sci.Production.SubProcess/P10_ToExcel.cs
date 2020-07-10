@@ -2,25 +2,19 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
-using Range = Microsoft.Office.Interop.Excel.Range;
-using Microsoft.Office.Tools;
 using Sci.Win;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.SubProcess
 {
     /// <summary>
     /// P10_ToExcel
     /// </summary>
-    public partial class P10_ToExcel : Sci.Win.Tems.PrintForm
+    public partial class P10_ToExcel : Win.Tems.PrintForm
     {
         private DataTable dtRight;
         private DataTable dtLeft;
@@ -127,7 +121,7 @@ order by num";
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void GroupFillRateCheck()
@@ -183,7 +177,7 @@ order by num";
         }
 
         /// <inheritdoc/>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             this.ShowWaitMessage("Excel Processing...");
 
@@ -334,7 +328,7 @@ from (
                     }
 
                     #region Save & Show Excel
-                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("P10_ToExcel");
+                    string strExcelName = Class.MicrosoftFile.GetName("P10_ToExcel");
                     myBook.SaveAs(strExcelName);
                     myBook.Close();
                     myExcel.Quit();
@@ -464,8 +458,8 @@ from (
                         }
                     }
 
-                    //for (int i = 0; i < dtRightGroupByWeek.Columns.Count; i++)
-                    //{
+                    // for (int i = 0; i < dtRightGroupByWeek.Columns.Count; i++)
+                    // {
                     //    if (dtRightGroupByWeek.Rows[0][i].EqualDecimal(intCheckWeek))
                     //    {
                     //        intCountWeekDays++;
@@ -482,11 +476,11 @@ from (
                     //        strDateRange += $"-{Convert.ToDateTime(dtRightGroupByWeek.Columns[i - 1].ColumnName).ToString("MM/dd")}";
                     //        //DataRow newdtToExcel = dtToExcel.NewRow();
 
-                    //        dtToExcel.Rows[intRowIndex]["DateRange"] = strDateRange;
+                    // dtToExcel.Rows[intRowIndex]["DateRange"] = strDateRange;
                     //        dtToExcel.Rows[intRowIndex]["WeeklyWorkingDays"] = intCountWeekDays;
                     //        dtToExcel.Rows[intRowIndex]["WorkLoad"] = intSumCPU;
 
-                    //        decimal decCPU;
+                    // decimal decCPU;
                     //        decimal.TryParse(dtRightGroupByWeek.Rows[1][i].ToString(), out decCPU);
                     //        intCheckWeek = MyUtility.Convert.GetInt(dtRightGroupByWeek.Rows[0][i]);
                     //        intCountWeekDays = 1;
@@ -494,8 +488,7 @@ from (
                     //        strDateRange = Convert.ToDateTime(dtRightGroupByWeek.Columns[i].ColumnName).ToString("MM/dd");
                     //        intRowIndex++;
                     //    }
-                    //}
-
+                    // }
                     dtToExcel.Rows[dtToExcel.Rows.Count - 1]["DateRange"] = sdate + "~" + Convert.ToDateTime(dtRightGroupByWeek.Columns[dtRightGroupByWeek.Columns.Count - 1].ColumnName).ToString("MM/dd");
                     dtToExcel.Rows[dtToExcel.Rows.Count - 1]["WeeklyWorkingDays"] = intCountWeekDays;
                     dtToExcel.Rows[dtToExcel.Rows.Count - 1]["WorkLoad"] = sumCPU;
@@ -579,7 +572,7 @@ from (
                     mySheet.Shapes.Item(mySheet.Shapes.Count).Left = 1;
 
                     #region Save & Show Excel
-                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("P10_ToExcel");
+                    string strExcelName = Class.MicrosoftFile.GetName("P10_ToExcel");
                     myBook.SaveAs(strExcelName);
                     myBook.Close();
                     myExcel.Quit();

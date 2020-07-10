@@ -68,10 +68,10 @@
             this.labelCofirmed = new Sci.Win.UI.Label();
             this.btnDownload = new Sci.Win.UI.Button();
             this.btnImportFromExcel = new Sci.Win.UI.Button();
-            this.txtcountry = new Sci.Production.Class.txtcountry();
-            this.txtcustcd = new Sci.Production.Class.txtcustcd();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtshipmode = new Sci.Production.Class.txtshipmode();
+            this.txtcountry = new Sci.Production.Class.Txtcountry();
+            this.txtcustcd = new Sci.Production.Class.Txtcustcd();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtshipmode = new Sci.Production.Class.Txtshipmode();
             this.numTtlGW = new Sci.Win.UI.NumericBox();
             this.labelTtlGW = new Sci.Win.UI.Label();
             this.labelPullOutNo = new Sci.Win.UI.Label();
@@ -1123,7 +1123,7 @@
         private Win.UI.Label labelRemark;
         private Win.UI.Label labelNo;
         private Win.UI.ComboBox comboSortby;
-        private Class.txtshipmode txtshipmode;
+        private Class.Txtshipmode txtshipmode;
         private Win.UI.Label labelPurchaseCtn;
         private Win.UI.Label labelTtlCBM;
         private Win.UI.Label labelShipQty;
@@ -1153,9 +1153,9 @@
         private Win.UI.Button btnRecalculateWeight;
         private Win.UI.Button btnCartonSummary;
         private Win.UI.EditBox editRemark;
-        private Class.txtcountry txtcountry;
-        private Class.txtcustcd txtcustcd;
-        private Class.txtbrand txtbrand;
+        private Class.Txtcountry txtcountry;
+        private Class.Txtcustcd txtcustcd;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelDestination;
         private Win.UI.Label labelCustCD;
         private Win.UI.Label labelBrand;

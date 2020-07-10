@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtSewingScheduleLine
+    partial class TxtSewingScheduleLine
     {
         /// <summary>
         /// 設計工具所需的變數。

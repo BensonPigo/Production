@@ -32,9 +32,9 @@
             this.labelSeason = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelLineMappingVersion = new Sci.Win.UI.Label();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.btnCopy = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.txtLineMappingVersion = new Sci.Win.UI.TextBox();
@@ -164,9 +164,9 @@
         private Win.UI.Label labelSeason;
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelLineMappingVersion;
-        private Class.txtstyle txtstyle;
-        private Class.txtseason txtseason;
-        private Class.txtbrand txtbrand;
+        private Class.Txtstyle txtstyle;
+        private Class.Txtseason txtseason;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Button btnCopy;
         private Win.UI.Button btnClose;
         private Win.UI.TextBox txtLineMappingVersion;

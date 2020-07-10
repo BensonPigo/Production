@@ -2,12 +2,9 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -16,7 +13,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// R20
     /// </summary>
-    public partial class R20 : Sci.Win.Tems.PrintForm
+    public partial class R20 : Win.Tems.PrintForm
     {
         private string sp1;
         private string sp2;
@@ -47,10 +44,10 @@ namespace Sci.Production.Thread
             this.comboFactory.ValueMember = "FTYGroup";
             this.comboFactory.DisplayMember = "FTYGroup";
             this.comboFactory.SelectedIndex = 0;
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.comboBoxStatus.SelectedIndex = 0;
 
-            this.comboMDivision.setDefalutIndex(true);
+            this.comboMDivision.SetDefalutIndex(true);
             this.print.Enabled = false;
         }
 
@@ -216,7 +213,7 @@ outer apply(
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
             res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);
@@ -240,7 +237,7 @@ outer apply(
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.dt.Rows.Count);
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R20.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Thread_R20.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Thread_R20.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             this.ShowWaitMessage("Excel Processing...");
@@ -249,7 +246,7 @@ outer apply(
             worksheet.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Thread_R20");
+            string strExcelName = Class.MicrosoftFile.GetName("Thread_R20");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

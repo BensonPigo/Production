@@ -42,10 +42,10 @@
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.comboCentralizedFactory1 = new Sci.Production.Class.comboCentralizedFactory(this.components);
-            this.comboCentralizedM1 = new Sci.Production.Class.comboCentralizedM(this.components);
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.comboFtyZone = new Sci.Production.Class.comboFtyZone(this.components);
+            this.comboCentralizedFactory1 = new Sci.Production.Class.ComboCentralizedFactory(this.components);
+            this.comboCentralizedM1 = new Sci.Production.Class.ComboCentralizedM(this.components);
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
+            this.comboFtyZone = new Sci.Production.Class.ComboFtyZone(this.components);
             this.radioMonthly = new Sci.Win.UI.RadioButton();
             this.radioSemiMonthly = new Sci.Win.UI.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
@@ -358,9 +358,9 @@
         #endregion
 
         private Win.UI.NumericUpDown numYear;
-        private Class.txtbrand txtbrand1;
-        private Class.comboCentralizedM comboCentralizedM1;
-        private Class.comboCentralizedFactory comboCentralizedFactory1;
+        private Class.Txtbrand txtbrand1;
+        private Class.ComboCentralizedM comboCentralizedM1;
+        private Class.ComboCentralizedFactory comboCentralizedFactory1;
         private Win.UI.ComboBox cmbDate;
         private Win.UI.CheckBox chkOrder;
         private Win.UI.CheckBox chkForecast;
@@ -373,7 +373,7 @@
         private Win.UI.Label label5;
         private Win.UI.Label label6;
         private Win.UI.Label label7;
-        private Class.comboFtyZone comboFtyZone;
+        private Class.ComboFtyZone comboFtyZone;
         private Win.UI.RadioButton radioMonthly;
         private Win.UI.RadioButton radioSemiMonthly;
     }

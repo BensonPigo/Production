@@ -1,39 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Ict;
-using System.Linq;
-using Sci.Utility.Excel;
 using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_Refno : Sci.Win.Subs.Base
+    public partial class P03_Refno : Win.Subs.Base
     {
-        string comboColorvalue = "All", comboSizevalue = "All";
         DataRow dr;
         DataTable selectDataTable1;
-        protected Sci.Win.UI.ContextMenuStrip myCMS = new Win.UI.ContextMenuStrip();
+        protected Win.UI.ContextMenuStrip myCMS = new Win.UI.ContextMenuStrip();
+
         public P03_Refno(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
-            gridRefNo.ContextMenuStrip = myCMS;
-            this.Text += string.Format(" ({0})", dr["refno"]);
+            this.InitializeComponent();
+            this.dr = data;
+            this.gridRefNo.ContextMenuStrip = this.myCMS;
+            this.Text += string.Format(" ({0})", this.dr["refno"]);
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             string selectCommand1
-                = string.Format(@"
+                = string.Format(
+                    @"
 Select  a.FtyGroup
         ,b.id
         ,a.StyleID
@@ -62,30 +55,33 @@ where   b.refno = '{0}'
         and b.seq1 = c.seq1
         and a.WhseClose is null
 order by ColorID, SizeSpec ,SewinLine
-", dr["refno"].ToString());
-            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
-            if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
+", this.dr["refno"].ToString());
+            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out this.selectDataTable1);
+            if (selectResult1 == false)
+            {
+                this.ShowErr(selectCommand1, selectResult1);
+            }
             else
             {
-                listControlBindingSource1.DataSource = selectDataTable1;
+                this.listControlBindingSource1.DataSource = this.selectDataTable1;
             }
 
             ////分別加入comboboxitem
-            //cmbFactory.Items.Clear();
-            //comboSize.Items.Clear();
+            // cmbFactory.Items.Clear();
+            // comboSize.Items.Clear();
 
-            //List<string> dts2 = selectDataTable1.AsEnumerable().Select(row => row["FtyGroup"].ToString()).Distinct().OrderBy(o => o[0]).ToList();
-            //List<string> dts3 = selectDataTable1.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
+            // List<string> dts2 = selectDataTable1.AsEnumerable().Select(row => row["FtyGroup"].ToString()).Distinct().OrderBy(o => o[0]).ToList();
+            // List<string> dts3 = selectDataTable1.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
 
-            //dts2.Insert(0, "");
-            //dts2.Insert(0, "All");
-            //dts3.Insert(0, "All");
+            // dts2.Insert(0, "");
+            // dts2.Insert(0, "All");
+            // dts3.Insert(0, "All");
 
-            //if (!dts2.Empty()) cmbFactory.DataSource = dts2;
+            // if (!dts2.Empty()) cmbFactory.DataSource = dts2;
 
-            //if (!dts2.Empty()) comboSize.DataSource = dts3;
-
-            string sizespeccmd = string.Format(@"
+            // if (!dts2.Empty()) comboSize.DataSource = dts3;
+            string sizespeccmd = string.Format(
+                @"
 Select distinct b.sizespec ,a.WhseClose
 into #tmp
 from orders a WITH (NOLOCK) 
@@ -108,13 +104,19 @@ from
 )xx
 
 drop table #tmp
-", dr["scirefno"].ToString());
+", this.dr["scirefno"].ToString());
             DataTable dtsizespec;
             DualResult selectResult4 = DBProxy.Current.Select(null, sizespeccmd, out dtsizespec);
-            if (!selectResult4) { ShowErr(sizespeccmd, selectResult4); return; }
-            MyUtility.Tool.SetupCombox(comboSize, 1, dtsizespec);
+            if (!selectResult4)
+            {
+                this.ShowErr(sizespeccmd, selectResult4);
+                return;
+            }
 
-            string factorycmd = string.Format(@"
+            MyUtility.Tool.SetupCombox(this.comboSize, 1, dtsizespec);
+
+            string factorycmd = string.Format(
+                @"
 
 Select a.FtyGroup ,a.WhseClose
 into #tmp
@@ -138,13 +140,19 @@ from
 )xx
 
 drop table #tmp
-", dr["scirefno"].ToString());
+", this.dr["scirefno"].ToString());
             DataTable dtfactory;
             DualResult selectResult3 = DBProxy.Current.Select(null, factorycmd, out dtfactory);
-            if (!selectResult3) { ShowErr(factorycmd, selectResult3); return; }
-            MyUtility.Tool.SetupCombox(cmbFactory, 1, dtfactory);
+            if (!selectResult3)
+            {
+                this.ShowErr(factorycmd, selectResult3);
+                return;
+            }
 
-            string coloridcmd = string.Format(@"
+            MyUtility.Tool.SetupCombox(this.cmbFactory, 1, dtfactory);
+
+            string coloridcmd = string.Format(
+                @"
 Select a.BrandID,b.colorid,a.WhseClose
 into #tmp
 from orders a WITH (NOLOCK) 
@@ -172,17 +180,22 @@ from
 )xx
 
 drop table #tmp
-", dr["scirefno"].ToString());
+", this.dr["scirefno"].ToString());
             DataTable dtcolorid;
             DualResult selectResult2 = DBProxy.Current.Select(null, coloridcmd, out dtcolorid);
-            if (!selectResult2) { ShowErr(coloridcmd, selectResult2); return; }
-            MyUtility.Tool.SetupCombox(comboColor, 1, dtcolorid);
-            
-            //設定Grid1的顯示欄位
+            if (!selectResult2)
+            {
+                this.ShowErr(coloridcmd, selectResult2);
+                return;
+            }
+
+            MyUtility.Tool.SetupCombox(this.comboColor, 1, dtcolorid);
+
+            // 設定Grid1的顯示欄位
             MyUtility.Tool.AddMenuToPopupGridFilter(this, this.gridRefNo, null, "factoryid,colorid,sizespec");
             this.gridRefNo.IsEditingReadOnly = true;
-            this.gridRefNo.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridRefNo)
+            this.gridRefNo.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridRefNo)
                  .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(13))
                  .Text("id", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("StyleID", header: "Style", width: Widths.AnsiChars(13))
@@ -210,32 +223,38 @@ drop table #tmp
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Excel Processing...");
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Refno.xltx"); //預先開啟excel app
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P03_Refno.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(@"
+            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(
+                @"
 select NameEN
 from Factory
-where id = '{0}'", Sci.Env.User.Keyword));
-            objSheets.Cells[3, 2] = MyUtility.Convert.GetString(dr["refno"].ToString());
+where id = '{0}'", Env.User.Keyword));
+            objSheets.Cells[3, 2] = MyUtility.Convert.GetString(this.dr["refno"].ToString());
 
-            MyUtility.Excel.CopyToXls(dt.DefaultView.ToTable(), "", "Warehouse_P03_Refno.xltx", 4, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(dt.DefaultView.ToTable(), string.Empty, "Warehouse_P03_Refno.xltx", 4, true, null, objApp);      // 將datatable copy to excel
 
             Marshal.ReleaseComObject(objSheets);
             this.HideWaitMessage();
         }
-        
+
         private void combo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbFactory.SelectedValue == null || comboSize.SelectedValue == null || comboColor.SelectedValue == null) return;
-            string cmbFactoryvalue = cmbFactory.SelectedValue.ToString();
-            string comboSizevalue = comboSize.SelectedValue.ToString();
-            string comboColorvalue = comboColor.SelectedValue.ToString();
-            string filter = string.Format(@"
+            if (this.cmbFactory.SelectedValue == null || this.comboSize.SelectedValue == null || this.comboColor.SelectedValue == null)
+            {
+                return;
+            }
+
+            string cmbFactoryvalue = this.cmbFactory.SelectedValue.ToString();
+            string comboSizevalue = this.comboSize.SelectedValue.ToString();
+            string comboColorvalue = this.comboColor.SelectedValue.ToString();
+            string filter = string.Format(
+                @"
 (FtyGroup = '{0}' or 'All'='{0}')
 and (sizespec = '{1}' or 'All'='{1}')
 and (colorid = '{2}' or 'All'='{2}')", cmbFactoryvalue, comboSizevalue, comboColorvalue);
-            ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+            ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
         }
     }
 }

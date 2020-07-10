@@ -33,8 +33,8 @@
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelShipMode = new Sci.Win.UI.Label();
             this.datePulloutDate = new Sci.Win.UI.DateRange();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtshipmode = new Sci.Production.Class.txtshipmode();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtshipmode = new Sci.Production.Class.Txtshipmode();
             this.dateETD = new Sci.Win.UI.DateRange();
             this.labelOnBoardDate = new Sci.Win.UI.Label();
             this.dateInvoice = new Sci.Win.UI.DateRange();
@@ -348,8 +348,8 @@
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelShipMode;
         private Win.UI.DateRange datePulloutDate;
-        private Class.txtbrand txtbrand;
-        private Class.txtshipmode txtshipmode;
+        private Class.Txtbrand txtbrand;
+        private Class.Txtshipmode txtshipmode;
         private Win.UI.DateRange dateETD;
         private Win.UI.Label labelOnBoardDate;
         private Win.UI.DateRange dateInvoice;

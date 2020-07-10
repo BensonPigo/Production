@@ -43,11 +43,11 @@
             this.txtSpnoStart = new Sci.Win.UI.TextBox();
             this.txtSpnoEnd = new Sci.Win.UI.TextBox();
             this.labelAPDate = new Sci.Win.UI.Label();
-            this.txtMdivisionM = new Sci.Production.Class.txtMdivision();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
-            this.txtFinanceEnReasonRateType = new Sci.Production.Class.txtFinanceEnReason();
-            this.txtdropdownlistOrderType = new Sci.Production.Class.txtdropdownlist();
+            this.txtMdivisionM = new Sci.Production.Class.TxtMdivision();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.Txtartworktype_fty();
+            this.txtFinanceEnReasonRateType = new Sci.Production.Class.TxtFinanceEnReason();
+            this.txtdropdownlistOrderType = new Sci.Production.Class.Txtdropdownlist();
             this.dateGLDate = new Sci.Win.UI.DateRange();
             this.labelGLDate = new Sci.Win.UI.Label();
             this.chk_IrregularPriceReason = new Sci.Win.UI.CheckBox();
@@ -237,14 +237,14 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(170, 23);
             this.txtstyle.TabIndex = 7;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // txtartworktype_ftyArtworkType
             // 
             this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyArtworkType.cClassify = "";
-            this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
+            this.txtartworktype_ftyArtworkType.CClassify = "";
+            this.txtartworktype_ftyArtworkType.CSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(114, 111);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
@@ -387,9 +387,9 @@
         private Win.UI.Label labelStyle;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.DateRange dateAPDate;
-        private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
-        private Class.txtstyle txtstyle;
-        private Class.txtMdivision txtMdivisionM;
+        private Class.Txtartworktype_fty txtartworktype_ftyArtworkType;
+        private Class.Txtstyle txtstyle;
+        private Class.TxtMdivision txtMdivisionM;
         private Win.UI.Label labelM;
         private Win.UI.Label labelSPNo;
         private Win.UI.Label label10;
@@ -400,8 +400,8 @@
         private Win.UI.TextBox txtSpnoStart;
         private Win.UI.TextBox txtSpnoEnd;
         private Win.UI.Label labelAPDate;
-        private Class.txtFinanceEnReason txtFinanceEnReasonRateType;
-        private Class.txtdropdownlist txtdropdownlistOrderType;
+        private Class.TxtFinanceEnReason txtFinanceEnReasonRateType;
+        private Class.Txtdropdownlist txtdropdownlistOrderType;
         private Win.UI.DateRange dateGLDate;
         private Win.UI.Label labelGLDate;
         private Win.UI.CheckBox chk_IrregularPriceReason;

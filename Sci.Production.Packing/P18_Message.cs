@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Drawing;
 
 namespace Sci.Production.Packing
 {
@@ -30,6 +24,5 @@ namespace Sci.Production.Packing
             this.txt_msg.Text = msg;
             this.ShowDialog();
         }
-
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -8,7 +7,6 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
 using System.Transactions;
 using Sci.Production.PublicPrg;
 
@@ -17,7 +15,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_ImportFromPO
     /// </summary>
-    public partial class P02_ImportFromPO : Sci.Win.Subs.Base
+    public partial class P02_ImportFromPO : Win.Subs.Base
     {
         private DataRow masterData;
 
@@ -36,8 +34,8 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ctnno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings receiver = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ctnno = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings receiver = new DataGridViewGeneratorTextColumnSettings();
             Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
             // CTNNo要Trim掉空白字元
@@ -223,21 +221,21 @@ where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a",
                 insertCmds.Add(string.Format(
                     @"insert into Express_Detail(ID,OrderID,Seq1,Seq2,Qty,NW,CTNNo,Category,SuppID,Price,UnitID,Receiver,BrandID,Leader,Remark,InCharge,AddName,AddDate)
  values('{0}','{1}','{2}','{3}',{4},{5},'{6}','4','{7}',{8},'{9}','{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
-                                            MyUtility.Convert.GetString(this.masterData["ID"]),
-                                            MyUtility.Convert.GetString(dr["ID"]),
-                                            MyUtility.Convert.GetString(dr["Seq1"]),
-                                            MyUtility.Convert.GetString(dr["Seq2"]),
-                                            MyUtility.Convert.GetString(dr["Qty"]),
-                                            MyUtility.Convert.GetString(dr["NW"]),
-                                            MyUtility.Convert.GetString(dr["CTNNo"]),
-                                            MyUtility.Convert.GetString(dr["SuppID"]),
-                                            MyUtility.Convert.GetString(dr["Price"]),
-                                            MyUtility.Convert.GetString(dr["UnitID"]),
-                                            MyUtility.Convert.GetString(dr["Receiver"]),
-                                            MyUtility.Convert.GetString(dr["BrandID"]),
-                                            MyUtility.Convert.GetString(dr["LeaderID"]),
-                                            this.txtRemark.Text.Replace("'", "''"),
-                                            Sci.Env.User.UserID));
+                    MyUtility.Convert.GetString(this.masterData["ID"]),
+                    MyUtility.Convert.GetString(dr["ID"]),
+                    MyUtility.Convert.GetString(dr["Seq1"]),
+                    MyUtility.Convert.GetString(dr["Seq2"]),
+                    MyUtility.Convert.GetString(dr["Qty"]),
+                    MyUtility.Convert.GetString(dr["NW"]),
+                    MyUtility.Convert.GetString(dr["CTNNo"]),
+                    MyUtility.Convert.GetString(dr["SuppID"]),
+                    MyUtility.Convert.GetString(dr["Price"]),
+                    MyUtility.Convert.GetString(dr["UnitID"]),
+                    MyUtility.Convert.GetString(dr["Receiver"]),
+                    MyUtility.Convert.GetString(dr["BrandID"]),
+                    MyUtility.Convert.GetString(dr["LeaderID"]),
+                    this.txtRemark.Text.Replace("'", "''"),
+                    Env.User.UserID));
             }
 
             // Qty不可為0
@@ -287,7 +285,7 @@ where a.TtlQty > a.POQty"),
                 try
                 {
                     result1 = DBProxy.Current.Executes(null, insertCmds);
-                    result2 = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.masterData["ID"])));
+                    result2 = DBProxy.Current.Execute(null, Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.masterData["ID"])));
                     if (result1 && result2)
                     {
                         transactionScope.Complete();

@@ -5,18 +5,15 @@ using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
     /// <inheritdoc/>
-    public partial class P20 : Sci.Win.Tems.Input1
+    public partial class P20 : Win.Tems.Input1
     {
         private string reasonTypeID;
         private DataTable shipdata1;
@@ -44,7 +41,7 @@ namespace Sci.Production.PPIC
 
             // 預設查詢為 Exclude Junk
             this.queryfors.SelectedIndex = 0;
-            this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Sci.Env.User.Keyword}' and isnull(OrderChangeApplication.ConfirmedName,'') = '' and OrderChangeApplication.ConfirmedDate is null";
+            this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Env.User.Keyword}' and isnull(OrderChangeApplication.ConfirmedName,'') = '' and OrderChangeApplication.ConfirmedDate is null";
             this.ReloadDatas();
             this.queryfors.SelectedIndexChanged += (s, e) =>
             {
@@ -53,12 +50,13 @@ namespace Sci.Production.PPIC
                 {
                     case "0":
                     default:
-                        this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Sci.Env.User.Keyword}' and isnull(OrderChangeApplication.ConfirmedName,'') = '' and OrderChangeApplication.ConfirmedDate is null";
+                        this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Env.User.Keyword}' and isnull(OrderChangeApplication.ConfirmedName,'') = '' and OrderChangeApplication.ConfirmedDate is null";
                         break;
                     case "1":
-                        this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Sci.Env.User.Keyword}'";
+                        this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Env.User.Keyword}'";
                         break;
                 }
+
                 this.ReloadDatas();
             };
 
@@ -283,9 +281,9 @@ left join Order_SizeCode os WITH (NOLOCK) on os.ID = '{1}' and os.SizeCode = p.S
                 this.txttpeuserPoSmr.DisplayBox1.Text = currPO["POSMR"].ToString();
             }
 
-            if (MyUtility.Check.Seek($"select [OrderNewQty] =cast(sum(iif(oc.ReasonID IN ('OCR05', 'OCR06'), 0, Qty)) as int) from OrderChangeApplication_Detail ocd inner join OrderChangeApplication oc on oc.id = ocd.id where ocd.id = '{ this.CurrentDataRow["ID"].ToString()}'", out currPO))
+            if (MyUtility.Check.Seek($"select [OrderNewQty] =cast(sum(iif(oc.ReasonID IN ('OCR05', 'OCR06'), 0, Qty)) as int) from OrderChangeApplication_Detail ocd inner join OrderChangeApplication oc on oc.id = ocd.id where ocd.id = '{this.CurrentDataRow["ID"].ToString()}'", out currPO))
             {
-                this.DisOrderNewQty.Text = currPO["OrderNewQty"].ToString ();
+                this.DisOrderNewQty.Text = currPO["OrderNewQty"].ToString();
             }
 
             // 設定為黃底
@@ -398,8 +396,8 @@ select
     ,Seq
 from pivotData p
 order by ASeq",
-                this.CurrentMaintain["ID"],
-                sizeCode);
+this.CurrentMaintain["ID"],
+sizeCode);
             result = DBProxy.Current.Select(null, sqlCmd, out this.shipdata2);
             if (!result)
             {
@@ -520,8 +518,8 @@ select
     ,Seq
 from pivotData p
 order by ASeq",
-                this.CurrentMaintain["ID"],
-                sizeCode);
+this.CurrentMaintain["ID"],
+sizeCode);
             result = DBProxy.Current.Select(null, sqlCmd, out this.shipApplydata2);
             if (!result)
             {
@@ -576,9 +574,9 @@ order by ASeq",
 update OrderChangeApplication set ConfirmedName = '{0}',ConfirmedDate = GETDATE(), EditName = '{0}', EditDate = GETDATE(),FTYComments = '{2}' where ID = '{1}'
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 VALUES('{1}','Confirmed','{0}',getdate())
-", Sci.Env.User.UserID,
-MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
+", Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -610,9 +608,9 @@ MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
 update OrderChangeApplication set Status = 'Reject',RejectName = '{0}',RejectDate = GETDATE(), EditName = '{0}', EditDate = GETDATE(),FTYComments = '{2}' where ID = '{1}'
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 VALUES('{1}','Reject','{0}',getdate())
-", Sci.Env.User.UserID,
-MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
+", Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -647,7 +645,7 @@ MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
             string subject = $@"{this.CurrentMaintain["ID"]} {this.CurrentMaintain["Orderid"]} {factory} {status}";
             string description = $@"{status} SP#{this.CurrentMaintain["Orderid"]}-{factory} request change qty, please check, apply id# - {this.CurrentMaintain["ID"]}";
 
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, true, true);
+            var email = new MailTo(Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, true, true);
             email.ShowDialog(this);
         }
 
@@ -697,7 +695,7 @@ MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
             }
             else
             {
-                Sci.Production.PPIC.P01_ProductionOutput callNextForm = new Sci.Production.PPIC.P01_ProductionOutput(currOrder);
+                P01_ProductionOutput callNextForm = new P01_ProductionOutput(currOrder);
                 callNextForm.tabControl1.TabPages.Remove(callNextForm.tabControl1.TabPages[2]);
                 callNextForm.tabControl1.TabPages.Remove(callNextForm.tabControl1.TabPages[1]);
                 callNextForm.ShowDialog(this);

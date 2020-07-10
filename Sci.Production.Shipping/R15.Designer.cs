@@ -36,7 +36,7 @@
             this.labApproveDate = new Sci.Win.UI.Label();
             this.dateAddDate = new Sci.Win.UI.DateRange();
             this.labAddDate = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -204,6 +204,6 @@
         private Win.UI.Label labApproveDate;
         private Win.UI.DateRange dateAddDate;
         private Win.UI.Label labAddDate;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
     }
 }

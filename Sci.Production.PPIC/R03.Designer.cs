@@ -70,10 +70,10 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtSp2 = new Sci.Win.UI.TextBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtcustcd = new Sci.Production.Class.txtcustcd();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtcustcd = new Sci.Production.Class.Txtcustcd();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.checkByCPU = new Sci.Win.UI.CheckBox();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
@@ -623,8 +623,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(186, 23);
             this.txtstyle.TabIndex = 9;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // checkByCPU
             // 
@@ -801,10 +801,10 @@
         private Win.UI.CheckBox checkSample;
         private Win.UI.CheckBox checkMaterial;
         private Win.UI.CheckBox checkForecast;
-        private Class.txtstyle txtstyle;
-        private Class.txtseason txtseason;
-        private Class.txtcustcd txtcustcd;
-        private Class.txtbrand txtbrand;
+        private Class.Txtstyle txtstyle;
+        private Class.Txtseason txtseason;
+        private Class.Txtcustcd txtcustcd;
+        private Class.Txtbrand txtbrand;
         private Win.UI.CheckBox checkGarment;
         private Win.UI.Label labelArticle;
         private Win.UI.TextBox txtArticle;

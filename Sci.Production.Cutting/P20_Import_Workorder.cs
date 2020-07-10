@@ -1,43 +1,36 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
-using System.Transactions;
-using Sci.Win.Tools;
 using System.Linq;
-
 
 namespace Sci.Production.Cutting
 {
-    public partial class P20_Import_Workorder : Sci.Win.Subs.Base
+    public partial class P20_Import_Workorder : Win.Subs.Base
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
-        DataTable gridTable, detailTable, currentdetailTable;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
+        DataTable gridTable;
+        DataTable detailTable;
+        DataTable currentdetailTable;
         DataRow drCurrentMaintain;
-
 
         public P20_Import_Workorder(DataRow _drCurrentMaintain, DataTable dt)
         {
-            InitializeComponent();
-            drCurrentMaintain = _drCurrentMaintain;
-            currentdetailTable = dt;
+            this.InitializeComponent();
+            this.drCurrentMaintain = _drCurrentMaintain;
+            this.currentdetailTable = dt;
 
-            if (MyUtility.Check.Empty(drCurrentMaintain["cDate"]))
+            if (MyUtility.Check.Empty(this.drCurrentMaintain["cDate"]))
             {
-                dateEstCutDate.Value = DateTime.Today;
+                this.dateEstCutDate.Value = DateTime.Today;
             }
             else
             {
-                dateEstCutDate.Value = Convert.ToDateTime(drCurrentMaintain["cDate"]);
+                this.dateEstCutDate.Value = Convert.ToDateTime(this.drCurrentMaintain["cDate"]);
             }
         }
 
@@ -45,41 +38,44 @@ namespace Sci.Production.Cutting
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
             Layer.CellValidating += (s, e) =>
             {
-                if (!EditMode)
+                if (!this.EditMode)
                 {
                     return;
                 }
+
                 if (e.RowIndex == -1)
                 {
                     return;
                 }
+
                 var dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
-                //if (MyUtility.Convert.GetInt(e.FormattedValue).EqualDecimal(0))
-                //{
+
+                // if (MyUtility.Convert.GetInt(e.FormattedValue).EqualDecimal(0))
+                // {
                 //    MyUtility.Msg.WarningBox("Cutting layer can not be zero.");
                 //    dr["CuttingLayer"] = dr["CuttingLayer", DataRowVersion.Original];
                 //    e.Cancel = true;
                 //    return;
-                //}
-                //if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
-                //{
+                // }
+                // if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
+                // {
                 //    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
                 //    dr["CuttingLayer"] = dr["CuttingLayer",DataRowVersion.Original];
                 //    e.Cancel = true;
                 //    return;
-                //}
+                // }
                 dr["CuttingLayer"] = e.FormattedValue;
                 dr["Cons"] = MyUtility.Convert.GetDecimal(e.FormattedValue) * MyUtility.Convert.GetDecimal(dr["ConsPC"]) * MyUtility.Convert.GetDecimal(dr["SizeRatioQty"]);
-                dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"])- MyUtility.Convert.GetInt(dr["AccuCuttingLayer"])- MyUtility.Convert.GetInt(dr["CuttingLayer"]);
+                dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["CuttingLayer"]);
 
                 dr.EndEdit();
             };
-            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            Helper.Controls.Grid.Generator(this.gridImport)
-            .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+            this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+            .CheckBox("Sel", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("Cutref", header: "Cut Ref#", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Cuttingid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -107,22 +103,28 @@ namespace Sci.Production.Cutting
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateEstCutDate.Value) &&
-                MyUtility.Check.Empty(txtSP.Text) &&
-                MyUtility.Check.Empty(txtCutRef.Text))
+            if (MyUtility.Check.Empty(this.dateEstCutDate.Value) &&
+                MyUtility.Check.Empty(this.txtSP.Text) &&
+                MyUtility.Check.Empty(this.txtCutRef.Text))
             {
                 MyUtility.Msg.WarningBox("<Est. Cut Date>, <SP#>, <CutRef#> can not be empty.");
                 return;
             }
-            gridImport.DataSource = null;
+
+            this.gridImport.DataSource = null;
             StringBuilder strSQLCmd = new StringBuilder();
-            DateTime? estcutdate = dateEstCutDate.Value;
+            DateTime? estcutdate = this.dateEstCutDate.Value;
             string cutRef = this.txtCutRef.Text;
             string SPNo = this.txtSP.Text;
             string FactoryID = this.txtfactory.Text;
-            string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["Workorderukey"].ToString() : "") + "'"));
-            if (MyUtility.Check.Empty(condition)) condition = @"''";            
-            strSQLCmd.Append(string.Format(@"
+            string condition = string.Join(",", this.currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["Workorderukey"].ToString() : string.Empty) + "'"));
+            if (MyUtility.Check.Empty(condition))
+            {
+                condition = @"''";
+            }
+
+            strSQLCmd.Append(string.Format(
+                @"
 Select sel = 0,
 	a.*,
 	Cuttingid = a.id,
@@ -170,61 +172,66 @@ outer apply(select CuttingLayer = case when cl.CuttingLayer > a.Layer - isnull(a
 where mDivisionid = '{0}'
 and a.Layer > isnull(acc.AccuCuttingLayer,0)
 and CutRef != ''
-and a.ukey not in ( {1} ) ", keyWord, condition));
+and a.ukey not in ( {1} ) ", this.keyWord, condition));
             if (estcutdate.HasValue)
             {
-                strSQLCmd.Append(string.Format(@" 
+                strSQLCmd.Append(string.Format(
+                    @" 
                 and a.estcutdate = '{0}'", estcutdate.Value.ToString("yyyy/MM/dd")));
             }
+
             if (!MyUtility.Check.Empty(cutRef))
             {
-                strSQLCmd.Append(string.Format(@" 
+                strSQLCmd.Append(string.Format(
+                    @" 
                 and a.CutRef = '{0}'", cutRef));
             }
+
             if (!MyUtility.Check.Empty(SPNo))
             {
-                strSQLCmd.Append(string.Format(@"
-                and a.orderID='{0}'",SPNo));
+                strSQLCmd.Append(string.Format(
+                    @"
+                and a.orderID='{0}'", SPNo));
             }
 
             if (!MyUtility.Check.Empty(FactoryID))
             {
-                strSQLCmd.Append(string.Format(@"
+                strSQLCmd.Append(string.Format(
+                    @"
                 and a.FactoryID='{0}'", FactoryID));
             }
 
-
             strSQLCmd.Append(@" order by cutref");
-            DualResult dResult = DBProxy.Current.Select(null, strSQLCmd.ToString(), out detailTable);
+            DualResult dResult = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.detailTable);
             if (dResult)
             {
-                if (detailTable.Rows.Count == 0)
+                if (this.detailTable.Rows.Count == 0)
                 {
                     MyUtility.Msg.InfoBox("Data not Found!");
                 }
 
-                gridTable = detailTable.Copy();
-                gridImport.DataSource = gridTable;
+                this.gridTable = this.detailTable.Copy();
+                this.gridImport.DataSource = this.gridTable;
             }
             else
             {
-                ShowErr(strSQLCmd.ToString(), dResult);
+                this.ShowErr(strSQLCmd.ToString(), dResult);
                 return;
             }
         }
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            gridImport.ValidateControl();
-            DataRow[] selDr = gridTable.Select("Sel=1","");
-            if(selDr.Length>0)
+            this.gridImport.ValidateControl();
+            DataRow[] selDr = this.gridTable.Select("Sel=1", string.Empty);
+            if (selDr.Length > 0)
             {
                 foreach (DataRow dr in selDr)
                 {
-                    DataRow[] exist = currentdetailTable.Select(string.Format("WorkorderUkey={0}", dr["WorkorderUkey"]));
+                    DataRow[] exist = this.currentdetailTable.Select(string.Format("WorkorderUkey={0}", dr["WorkorderUkey"]));
                     if (exist.Length == 0)
                     {
-                        DataRow ndr = currentdetailTable.NewRow();
+                        DataRow ndr = this.currentdetailTable.NewRow();
                         ndr["cutref"] = dr["Cutref"];
                         ndr["Cuttingid"] = dr["Cuttingid"];
                         ndr["OrderID"] = dr["Orderid"];
@@ -243,8 +250,7 @@ and a.ukey not in ( {1} ) ", keyWord, condition));
                         ndr["WorkorderUkey"] = dr["WorkorderUkey"];
                         ndr["consPC"] = dr["consPC"];
                         ndr["sizeRatioQty"] = dr["sizeRatioQty"];
-                        currentdetailTable.Rows.Add(ndr);
-                        
+                        this.currentdetailTable.Rows.Add(ndr);
                     }
                     else
                     {
@@ -267,11 +273,10 @@ and a.ukey not in ( {1} ) ", keyWord, condition));
                         exist[0]["ConsPC"] = dr["ConsPC"];
                         exist[0]["sizeRatioQty"] = dr["sizeRatioQty"];
                     }
-                    
                 }
-                gridTable.Clear();
+
+                this.gridTable.Clear();
             }
         }
-
     }
 }

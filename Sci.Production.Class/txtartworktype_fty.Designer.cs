@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtartworktype_fty
+    partial class Txtartworktype_fty
     {
         /// <summary> 
         /// 設計工具所需的變數。

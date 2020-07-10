@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtshipterm
+    partial class Txtshipterm
     {
         /// <summary> 
         /// 設計工具所需的變數。

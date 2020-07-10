@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel6 = new System.Windows.Forms.Panel();
-            this.txtReturnTo = new Sci.Production.Class.txtDropDownList();
+            this.txtReturnTo = new Sci.Production.Class.TxtDropDownList();
             this.label1 = new Sci.Win.UI.Label();
             this.txtPackID = new Sci.Win.UI.TextBox();
             this.dateReturnDate = new Sci.Win.UI.DateRange();
@@ -217,6 +217,6 @@
         private Win.UI.Label label1;
         private Win.UI.TextBox txtPackID;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Class.txtDropDownList txtReturnTo;
+        private Class.TxtDropDownList txtReturnTo;
     }
 }

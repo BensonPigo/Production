@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using Sci.Data;
@@ -17,7 +14,7 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// P03
     /// </summary>
-    public partial class P03 : Sci.Win.Tems.QueryForm
+    public partial class P03 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P03
@@ -677,7 +674,7 @@ drop table #tmp, #PoidAvailableReserveQty, #OrdersAccuNeedQty, #OrdersReceiveTmp
             listSqlParameter.Add(new SqlParameter("@FromSP", this.textBoxFromSpNum.Text));
             listSqlParameter.Add(new SqlParameter("@StartDate", this.dateRangeBuyerDelivery.Value1.Empty() ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value1).ToString("yyyy/MM/dd")));
             listSqlParameter.Add(new SqlParameter("@EndDate", this.dateRangeBuyerDelivery.Value2.Empty() ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value2).ToString("yyyy/MM/dd")));
-            listSqlParameter.Add(new SqlParameter("@Factory", Sci.Env.User.Factory));
+            listSqlParameter.Add(new SqlParameter("@Factory", Env.User.Factory));
             #endregion
             #region SQL Filte
             #region BuyerDelivery Filte

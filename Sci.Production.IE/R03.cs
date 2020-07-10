@@ -13,7 +13,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_R03
     /// </summary>
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         private string factory;
         private string style;
@@ -64,7 +64,7 @@ namespace Sci.Production.IE
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             List<SqlParameter> paras = new List<SqlParameter>();
@@ -174,7 +174,7 @@ where EXISTS (
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_R03.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\IE_R03.xltx";
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(strXltName); // 預先開啟excel app
             if (objApp == null)
             {

@@ -1,29 +1,20 @@
 ﻿using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-
-using System.Windows.Forms;
-using Sci;
-using Sci.Win;
-using Sci.Win.Tools;
 using Ict;
-using Ict.Data;
 
 namespace Sci.Production.Thread
 {
     /// <summary>
     /// P07_Import
     /// </summary>
-    public partial class P07_Import : Sci.Win.Subs.Base
+    public partial class P07_Import : Win.Subs.Base
     {
         private DataTable detTable;
         private DataTable gridTable;
-        private string keyword = Sci.Env.User.Keyword;
+        private string keyword = Env.User.Keyword;
 
         /// <summary>
         /// P07_Import

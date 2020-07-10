@@ -1,11 +1,5 @@
-﻿using Ict;
-using Sci.Data;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Basic
@@ -13,7 +7,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B06
     /// </summary>
-    public partial class B06 : Sci.Win.Tems.Input1
+    public partial class B06 : Win.Tems.Input1
     {
         /// <summary>
         /// B06
@@ -23,7 +17,7 @@ namespace Sci.Production.Basic
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "'";
+            this.DefaultFilter = "MdivisionID = '" + Env.User.Keyword + "'";
         }
 
         /// <inheritdoc/>
@@ -38,7 +32,7 @@ namespace Sci.Production.Basic
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
         }
 
         /// <inheritdoc/>

@@ -1,13 +1,9 @@
 ﻿using Ict;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 // 請有興趣使用但是目前沒有那個領域的控制項，而想加新東西的人；
 // 或是目前有那個領域東西，但是一些通用行為不支援的情況
@@ -19,7 +15,7 @@ namespace Sci.Production.Class
     /// </summary>
     public static class Extension
     {
-        private static SqlConnection ObtainSqlConnection(Sci.Data.IDBProxy proxy)
+        private static SqlConnection ObtainSqlConnection(Data.IDBProxy proxy)
         {
             SqlConnection cn;
             if (proxy.OpenConnection(string.Empty, out cn) == false)
@@ -38,7 +34,7 @@ namespace Sci.Production.Class
         /// <param name="sql">string</param>
         /// <param name="args">object[]</param>
         /// <returns><![CDATA[DualDisposableResult<DataTable>]]></returns>
-        public static DualDisposableResult<DataTable> SelectEx(this Sci.Data.IDBProxy proxy, string sql, params object[] args)
+        public static DualDisposableResult<DataTable> SelectEx(this Data.IDBProxy proxy, string sql, params object[] args)
         {
             return SelectEx(proxy, sql, false, args);
         }
@@ -52,7 +48,7 @@ namespace Sci.Production.Class
         /// <param name="withSchema">bool</param>
         /// <param name="args">object[]</param>
         /// <returns><![CDATA[DualDisposableResult<DataTable>]]></returns>
-        public static DualDisposableResult<DataTable> SelectEx(this Sci.Data.IDBProxy proxy, string sql, bool withSchema, params object[] args)
+        public static DualDisposableResult<DataTable> SelectEx(this Data.IDBProxy proxy, string sql, bool withSchema, params object[] args)
         {
             using (var cn = ObtainSqlConnection(proxy))
             {

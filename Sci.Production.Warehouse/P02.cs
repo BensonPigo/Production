@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
-using Sci.Data;
-using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P02 : Sci.Win.Tems.Input2
+    public partial class P02 : Win.Tems.Input2
     {
         private string _wkNo;
         private string _spNo;
@@ -20,14 +14,15 @@ namespace Sci.Production.Warehouse
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            detailgrid.AllowUserToOrderColumns = true;
+            this.InitializeComponent();
+            this.detailgrid.AllowUserToOrderColumns = true;
         }
-        public P02(string wkNo,string spNo,ToolStripMenuItem menuitem)
+
+        public P02(string wkNo, string spNo, ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            detailgrid.AllowUserToOrderColumns = true;
+            this.InitializeComponent();
+            this.detailgrid.AllowUserToOrderColumns = true;
 
             this._wkNo = wkNo;
             this._spNo = spNo;
@@ -39,31 +34,32 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(this._wkNo))
             {
-                this.DefaultWhere = $"ID='{_wkNo}'";
-                this.ReloadDatas();
-            }
-            if (!MyUtility.Check.Empty(this._spNo))
-            {
-                this.DefaultWhere = $"(exists( select 1 from Export_Detail where id = Export.Id and Export_Detail.PoID  =  '{_spNo}' ))";
+                this.DefaultWhere = $"ID='{this._wkNo}'";
                 this.ReloadDatas();
             }
 
+            if (!MyUtility.Check.Empty(this._spNo))
+            {
+                this.DefaultWhere = $"(exists( select 1 from Export_Detail where id = Export.Id and Export_Detail.PoID  =  '{this._spNo}' ))";
+                this.ReloadDatas();
+            }
         }
 
         protected override bool ClickEditBefore()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            DataRow dr = this.grid.GetDataRow<DataRow>(this.grid.GetSelectedRowIndex());
             string sqlcmd;
             #region -- 檢查export detail是否含有成衣物料 --
 
-            sqlcmd = string.Format(@"
+            sqlcmd = string.Format(
+                @"
 select 1 chk 
 where exists(   
     select * 
     from dbo.Export_Detail ed WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = ed.PoID and pd.seq1 = ed.seq1 and pd.seq2 = ed.Seq2 
     where ed.ID='{0}'
-)", CurrentMaintain["id"]);
+)", this.CurrentMaintain["id"]);
             if (MyUtility.Check.Seek(sqlcmd))
             {
                 MyUtility.Msg.WarningBox("The shipment have material, can't revise < Arrive W/H Date > or < P/L Rcv Date >.", "Warning");
@@ -77,8 +73,9 @@ where exists(
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"
+            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
+            this.DetailSelectCommand = string.Format(
+                @"
 select  FactoryID = iif(ed.potype='M'
                         , (case when ed.FabricType = 'M' then ( select mpo.FactoryID 
                                                                 from SciMachine_MachinePO mpo
@@ -169,45 +166,54 @@ where ed.ID = '{0}'", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            txtLocateSP.ReadOnly = false;
-            label21.Visible = MyUtility.Convert.GetString(CurrentMaintain["Junk"]) == "True" ? true : false;
-            switch (MyUtility.Convert.GetString(CurrentMaintain["Payer"]))
+            this.txtLocateSP.ReadOnly = false;
+            this.label21.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Junk"]) == "True" ? true : false;
+            switch (MyUtility.Convert.GetString(this.CurrentMaintain["Payer"]))
             {
                 case "S":
-                    displayPayer.Value = "By Sci Taipei Office(Sender)";
+                    this.displayPayer.Value = "By Sci Taipei Office(Sender)";
                     break;
                 case "M":
-                    displayPayer.Value = "By Mill(Sender)";
+                    this.displayPayer.Value = "By Mill(Sender)";
                     break;
                 case "F":
-                    displayPayer.Value = "By Factory(Receiver)";
+                    this.displayPayer.Value = "By Factory(Receiver)";
                     break;
                 default:
-                    displayPayer.Value = "";
+                    this.displayPayer.Value = string.Empty;
                     break;
             }
-            btnShippingMark.Enabled = !MyUtility.Check.Empty(MyUtility.Convert.GetString(CurrentMaintain["ShipMarkDesc"])) ;
+
+            this.btnShippingMark.Enabled = !MyUtility.Check.Empty(MyUtility.Convert.GetString(this.CurrentMaintain["ShipMarkDesc"]));
         }
 
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
                 var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P02_Cartondetail(MyUtility.Convert.GetString(dr["Ukey"]));
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P02_Cartondetail(MyUtility.Convert.GetString(dr["Ukey"]));
                 frm.ShowDialog(this);
             };
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("FactoryID", header: "Prod. Factory", width: Widths.AnsiChars(7))
                 .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(13))
                 .Text("ProjectID", header: "Project Name", width: Widths.AnsiChars(5))
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13))
-                .Text("Carton", header: "Carton#", width: Widths.AnsiChars(8),iseditingreadonly: true , settings: ts)
+                .Text("Carton", header: "Carton#", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: ts)
                 .Date("SCIDlv", header: "Earliest SCI Del", width: Widths.AnsiChars(9))
                 .Text("Category", header: "Category", width: Widths.AnsiChars(8))
                 .Date("InspDate", header: "Inspect Dead Line", width: Widths.AnsiChars(9))
@@ -238,28 +244,32 @@ where ed.ID = '{0}'", masterID);
             DateTime WhseArrival;
             DateTime ETA;
             bool chk;
-            String msg;
+            string msg;
 
-            //Arrive Port Date 不可晚於 Arrive W/H Date
-            if (!MyUtility.Check.Empty(CurrentMaintain["PortArrival"]) && !MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]))
+            // Arrive Port Date 不可晚於 Arrive W/H Date
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["PortArrival"]) && !MyUtility.Check.Empty(this.CurrentMaintain["WhseArrival"]))
             {
-                ArrivePortDate = DateTime.Parse(CurrentMaintain["PortArrival"].ToString());
-                WhseArrival = DateTime.Parse(CurrentMaintain["WhseArrival"].ToString());
-                if (!(chk = Production.PublicPrg.Prgs.CheckArrivedWhseDateWithArrivedPortDate(ArrivePortDate, WhseArrival, out msg)))
+                ArrivePortDate = DateTime.Parse(this.CurrentMaintain["PortArrival"].ToString());
+                WhseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString());
+                if (!(chk = PublicPrg.Prgs.CheckArrivedWhseDateWithArrivedPortDate(ArrivePortDate, WhseArrival, out msg)))
                 {
                     MyUtility.Msg.WarningBox(msg);
                     return false;
                 }
             }
 
-            ETA = DateTime.Parse(CurrentMaintain["eta"].ToString());//eta
-            WhseArrival = DateTime.Parse(CurrentMaintain["WhseArrival"].ToString());
+            ETA = DateTime.Parse(this.CurrentMaintain["eta"].ToString()); // eta
+            WhseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString());
+
             // 到倉日如果早於ETA 3天，則提示窗請USER再確認是否存檔。
             // 到倉日如果晚於ETA 15天，則提示窗請USER再確認是否存檔。
-            if (!(chk = Production.PublicPrg.Prgs.CheckArrivedWhseDateWithEta(ETA, WhseArrival, out msg)))
+            if (!(chk = PublicPrg.Prgs.CheckArrivedWhseDateWithEta(ETA, WhseArrival, out msg)))
             {
                 DialogResult dResult = MyUtility.Msg.QuestionBox(msg);
-                if (dResult == DialogResult.No) return false;
+                if (dResult == DialogResult.No)
+                {
+                    return false;
+                }
             }
 
             return base.ClickSaveBefore();
@@ -267,45 +277,54 @@ where ed.ID = '{0}'", masterID);
 
         protected override bool ClickPrint()
         {
-            Sci.Production.Shipping.P03_Print callNextForm = new Sci.Production.Shipping.P03_Print(CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            Shipping.P03_Print callNextForm = new Shipping.P03_Print(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
 
-        //Find
+        // Find
         private void btnFind_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
+            if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
+            {
+                return;
+            }
+
             int index = -1;
 
-            //判斷 Poid
-            if (txtSeq1.checkEmpty(showErrMsg: false))
+            // 判斷 Poid
+            if (this.txtSeq1.CheckEmpty(showErrMsg: false))
             {
-                index = detailgridbs.Find("poid", txtLocateSP.Text.TrimEnd());
+                index = this.detailgridbs.Find("poid", this.txtLocateSP.Text.TrimEnd());
             }
-            //判斷 Poid + Seq1
-            else if (txtSeq1.checkSeq2Empty())
+
+            // 判斷 Poid + Seq1
+            else if (this.txtSeq1.CheckSeq2Empty())
             {
-                index = detailgridbs.Find("PoidSeq1", txtLocateSP.Text.TrimEnd() + txtSeq1.seq1);
+                index = this.detailgridbs.Find("PoidSeq1", this.txtLocateSP.Text.TrimEnd() + this.txtSeq1.Seq1);
             }
-            //判斷 Poid + Seq1 + Seq2
+
+            // 判斷 Poid + Seq1 + Seq2
             else
             {
-                index = detailgridbs.Find("PoidSeq", txtLocateSP.Text.TrimEnd() + txtSeq1.getSeq());
+                index = this.detailgridbs.Find("PoidSeq", this.txtLocateSP.Text.TrimEnd() + this.txtSeq1.GetSeq());
             }
 
             if (index == -1)
-            { MyUtility.Msg.WarningBox("Data was not found!!"); }
+            {
+                MyUtility.Msg.WarningBox("Data was not found!!");
+            }
             else
-            { detailgridbs.Position = index; }
+            {
+                this.detailgridbs.Position = index;
+            }
         }
 
-        //Shipping Mark
+        // Shipping Mark
         private void btnShippingMark_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
             callNextForm.ShowDialog(this);
         }
-
     }
 }

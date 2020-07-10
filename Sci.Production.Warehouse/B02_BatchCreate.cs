@@ -2,22 +2,15 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class B02_BatchCreate : Sci.Win.Tems.Base
+    public partial class B02_BatchCreate : Win.Tems.Base
     {
         public B02_BatchCreate()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -29,12 +22,12 @@ namespace Sci.Production.Warehouse
         {
             List<MtlLocation> MtlLocations = new List<MtlLocation>();
             DualResult result;
-            if(MyUtility.Check.Empty(this.txtID.Text) && !(this.chkBulk.Checked || this.chkInventory.Checked || this.chkScrap.Checked))
+            if (MyUtility.Check.Empty(this.txtID.Text) && !(this.chkBulk.Checked || this.chkInventory.Checked || this.chkScrap.Checked))
             {
                 MyUtility.Msg.InfoBox("<Code> can not be empty and at least one <Stock Type> is checked.");
                 return;
             }
-            else if(MyUtility.Check.Empty(this.txtID.Text))
+            else if (MyUtility.Check.Empty(this.txtID.Text))
             {
                 MyUtility.Msg.InfoBox("<Code> can not be empty.");
                 return;
@@ -53,11 +46,11 @@ namespace Sci.Production.Warehouse
                         ID = this.txtID.Text,
                         Description = this.txtDescription.Text,
                         StockType = "B",
-                        AddName=Sci.Env.User.UserID,
-                        AddDate=DateTime.Now
-
+                        AddName = Env.User.UserID,
+                        AddDate = DateTime.Now,
                     });
                 }
+
                 if (this.chkInventory.Checked)
                 {
                     MtlLocations.Add(new MtlLocation()
@@ -65,10 +58,11 @@ namespace Sci.Production.Warehouse
                         ID = this.txtID.Text,
                         Description = this.txtDescription.Text,
                         StockType = "I",
-                        AddName = Sci.Env.User.UserID,
-                        AddDate = DateTime.Now
+                        AddName = Env.User.UserID,
+                        AddDate = DateTime.Now,
                     });
                 }
+
                 if (this.chkScrap.Checked)
                 {
                     MtlLocations.Add(new MtlLocation()
@@ -76,8 +70,8 @@ namespace Sci.Production.Warehouse
                         ID = this.txtID.Text,
                         Description = this.txtDescription.Text,
                         StockType = "O",
-                        AddName = Sci.Env.User.UserID,
-                        AddDate = DateTime.Now
+                        AddName = Env.User.UserID,
+                        AddDate = DateTime.Now,
                     });
                 }
             }
@@ -122,7 +116,7 @@ INSERT INTO [dbo].[MtlLocation]
                 result = DBProxy.Current.Execute(null, insertCmd);
                 if (!result)
                 {
-                    ShowErr(result);
+                    this.ShowErr(result);
                     return;
                 }
             }
@@ -135,9 +129,13 @@ INSERT INTO [dbo].[MtlLocation]
         public class MtlLocation
         {
             public string ID { get; set; }
+
             public string Description { get; set; }
+
             public string StockType { get; set; }
+
             public string AddName { get; set; }
+
             public DateTime AddDate { get; set; }
         }
     }

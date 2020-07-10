@@ -54,10 +54,10 @@
             this.btnRevisedHistory = new Sci.Win.UI.Button();
             this.btnShareWorkingHoursToSP = new Sci.Win.UI.Button();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtdropdownlistShift = new Sci.Production.Class.txtdropdownlist();
-            this.txtsewinglineLine = new Sci.Production.Class.txtsewingline();
+            this.txtdropdownlistShift = new Sci.Production.Class.Txtdropdownlist();
+            this.txtsewinglineLine = new Sci.Production.Class.Txtsewingline();
             this.labelSubconOutFty = new Sci.Win.UI.Label();
-            this.txtSubconOutFty = new Sci.Production.Class.txtLocalSupp();
+            this.txtSubconOutFty = new Sci.Production.Class.TxtLocalSupp();
             this.label1 = new Sci.Win.UI.Label();
             this.txtSubConOutContractNumber = new Sci.Win.UI.TextBox();
             this.btnRequestUnlock = new Sci.Win.UI.Button();
@@ -575,7 +575,7 @@
             // 
             this.txtsewinglineLine.BackColor = System.Drawing.Color.White;
             this.txtsewinglineLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewinglineLine.factoryobjectName = this.displayFactory;
+            this.txtsewinglineLine.FactoryobjectName = this.displayFactory;
             this.txtsewinglineLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewinglineLine.Location = new System.Drawing.Point(112, 30);
             this.txtsewinglineLine.Name = "txtsewinglineLine";
@@ -725,15 +725,15 @@
         private Win.UI.Label labelWHours;
         private Win.UI.Label labelManpower;
         private Win.UI.ComboBox comboTeam;
-        private Class.txtdropdownlist txtdropdownlistShift;
-        private Class.txtsewingline txtsewinglineLine;
+        private Class.Txtdropdownlist txtdropdownlistShift;
+        private Class.Txtsewingline txtsewinglineLine;
         private Win.UI.DateBox dateDate;
         private Win.UI.Label labelTeam;
         private Win.UI.Label labelShift;
         private Win.UI.Label labelLine;
         private Win.UI.Label labelDate;
         private Win.UI.Label labelFactory;
-        private Class.txtLocalSupp txtSubconOutFty;
+        private Class.TxtLocalSupp txtSubconOutFty;
         private Win.UI.Label labelSubconOutFty;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtSubConOutContractNumber;

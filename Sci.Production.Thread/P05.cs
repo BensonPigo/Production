@@ -1,25 +1,23 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
+using Sci.Production.Class;
 
 namespace Sci.Production.Thread
 {
     /// <summary>
     /// P05
     /// </summary>
-    public partial class P05 : Sci.Win.Tems.Input6
+    public partial class P05 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
 
         /// <summary>
         /// P05
@@ -28,7 +26,6 @@ namespace Sci.Production.Thread
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-
             this.InitializeComponent();
             Dictionary<string, string> comboBox1_RowSource2 = new Dictionary<string, string>();
             comboBox1_RowSource2.Add("Fordward", "Fordward");
@@ -40,7 +37,7 @@ namespace Sci.Production.Thread
         }
 
         /// <inheritdoc/>
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
@@ -58,7 +55,7 @@ namespace Sci.Production.Thread
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread", null, "LocalSuppid,Supp,category,Description,ThreadTex,ThreadTypeid");
+            DataGridViewGeneratorTextColumnSettings refno = Txtlocalitem.Celllocalitem.GetGridCell("Thread", null, "LocalSuppid,Supp,category,Description,ThreadTex,ThreadTypeid");
             DataGridViewGeneratorTextColumnSettings thcolor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings thlocation = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
@@ -310,7 +307,7 @@ namespace Sci.Production.Thread
             if (MyUtility.Check.Empty(this.CurrentMaintain["cDate"].ToString()))
             {
                 this.dateDate.Focus();
-               MyUtility.Msg.WarningBox("<Date> can not be empty!", "Warning");
+                MyUtility.Msg.WarningBox("<Date> can not be empty!", "Warning");
                 return false;
             }
 
@@ -504,7 +501,7 @@ namespace Sci.Production.Thread
         private void BtnImport_Click(object sender, EventArgs e)
         {
             DataTable detTable = (DataTable)this.detailgridbs.DataSource;
-            Form p05_import = new Sci.Production.Thread.P05_Import(detTable);
+            Form p05_import = new P05_Import(detTable);
             p05_import.ShowDialog();
         }
 

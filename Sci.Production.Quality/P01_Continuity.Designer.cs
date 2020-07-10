@@ -63,8 +63,8 @@
             this.textID = new Sci.Win.UI.DisplayBox();
             this.dateLastInspectionDate = new Sci.Win.UI.DateBox();
             this.btnPrintFormatReport = new Sci.Win.UI.Button();
-            this.txtuserApprover = new Sci.Production.Class.txtuser();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.txtuserApprover = new Sci.Production.Class.Txtuser();
+            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.txtContinuityInspector = new Sci.Win.UI.TextBox();
             this.labinspector = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -577,7 +577,7 @@
         private Win.UI.DisplayBox displaySEQ;
         private Win.UI.Label labelSEQ;
         private Win.UI.Label labelSupplier;
-        private Class.txtsupplier txtsupplier;
+        private Class.Txtsupplier txtsupplier;
         private Win.UI.Label labelRefno;
         private Win.UI.DisplayBox displaySCIRefno;
         private Win.UI.DisplayBox displaySCIRefno1;
@@ -596,7 +596,7 @@
         private Win.UI.Button btnEncode;
         private Win.UI.Label labelApprover;
         private Win.UI.DisplayBox displayApprover;
-        private Class.txtuser txtuserApprover;
+        private Class.Txtuser txtuserApprover;
         private Win.UI.DisplayBox displayResult;
         private Win.UI.DateBox dateArriveWHDate;
         private Win.UI.DateBox dateBox1;

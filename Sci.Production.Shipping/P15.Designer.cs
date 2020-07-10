@@ -67,7 +67,7 @@
             this.disApd = new Sci.Win.UI.DisplayBox();
             this.disAwd = new Sci.Win.UI.DisplayBox();
             this.displayBox13 = new Sci.Win.UI.DisplayBox();
-            this.txtHandle = new Sci.Production.Class.txttpeuser();
+            this.txtHandle = new Sci.Production.Class.Txttpeuser();
             this.disPayer = new Sci.Win.UI.DisplayBox();
             this.disShipMode = new Sci.Win.UI.DisplayBox();
             this.disWaEta = new Sci.Win.UI.DisplayBox();
@@ -902,7 +902,7 @@
         private Win.UI.DisplayBox disWaEta;
         private Win.UI.DisplayBox disShipMode;
         private Win.UI.DisplayBox disPayer;
-        private Class.txttpeuser txtHandle;
+        private Class.Txttpeuser txtHandle;
         private Win.UI.NumericBox numForCBMCY;
         private Win.UI.NumericBox numForCBM;
         private Win.UI.NumericBox numFobCBM;

@@ -31,9 +31,9 @@
             this.labelSewingDate = new Sci.Win.UI.Label();
             this.dateSewingDate = new Sci.Win.UI.DateRange();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.comboArtworkType = new Sci.Win.UI.ComboBox();
             this.labelArtworkType = new Sci.Win.UI.Label();
             this.SuspendLayout();
@@ -170,9 +170,9 @@
         private Win.UI.Label labelSewingDate;
         private Win.UI.DateRange dateSewingDate;
         private Win.UI.Label labelFactory;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labelM;
-        private Class.txtMdivision txtMdivision;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.ComboBox comboArtworkType;
         private Win.UI.Label labelArtworkType;
     }

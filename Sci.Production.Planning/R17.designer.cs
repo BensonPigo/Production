@@ -37,9 +37,9 @@
             this.labelFactoryKPIDate = new Sci.Win.UI.Label();
             this.labelType = new Sci.Win.UI.Label();
             this.radioGarment = new Sci.Win.UI.RadioButton();
-            this.txtFactory = new Sci.Production.Class.txtfactory();
+            this.txtFactory = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
-            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -160,7 +160,7 @@
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
-            this.txtFactory.boolFtyGroupList = true;
+            this.txtFactory.BoolFtyGroupList = true;
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFactory.IsProduceFty = false;
@@ -240,11 +240,11 @@
         private Win.UI.DateRange dateFactoryKPIDate;
         private Win.UI.Label labelFactory;
         private Win.UI.CheckBox checkExportDetailData;
-        private Class.txtfactory txtFactory;
+        private Class.Txtfactory txtFactory;
         private Win.UI.Label labelFactoryKPIDate;
         private Win.UI.Label labelType;
         private Win.UI.RadioButton radioGarment;
         private Win.UI.Label label1;
-        private Class.comboDropDownList comboDropDownList1;
+        private Class.ComboDropDownList comboDropDownList1;
     }
 }

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using System.Linq;
 using System.Data.SqlClient;
@@ -15,15 +12,16 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P08_Import : Sci.Win.Subs.Base
+    public partial class P08_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
+
         public P08_Import(DataRow master, DataTable detail)
         {
-            InitializeComponent();
-            dr_master = master;
-            dt_detail = detail;
+            this.InitializeComponent();
+            this.dr_master = master;
+            this.dt_detail = detail;
         }
 
         protected override void OnFormLoaded()
@@ -32,19 +30,22 @@ namespace Sci.Production.Warehouse
 
             this.EditMode = true;
 
-
             #region Location 右鍵開窗
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings Location_Setting = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings Location_Setting = new DataGridViewGeneratorTextColumnSettings();
             Location_Setting.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    DataRow currentRow = grid.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow currentRow = this.grid.GetDataRow<DataRow>(e.RowIndex);
                     string currentLocation = currentRow["Location"].ToString();
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", currentLocation);
+                    Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", currentLocation);
                     DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     currentRow["Location"] = item.GetSelectedString();
                 }
             };
@@ -53,9 +54,10 @@ namespace Sci.Production.Warehouse
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow currentRow = grid.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow currentRow = this.grid.GetDataRow<DataRow>(e.RowIndex);
                     currentRow["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"
+                    string sqlcmd = string.Format(
+                        @"
 SELECT  id
         , Description
         , StockType 
@@ -70,12 +72,12 @@ WHERE   StockType='{0}'
                     List<string> trueLocation = new List<string>();
                     foreach (string location in getLocation)
                     {
-                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !location.EqualString(string.Empty))
                         {
                             selectId &= false;
                             errLocation.Add(location);
                         }
-                        else if (!(location.EqualString("")))
+                        else if (!location.EqualString(string.Empty))
                         {
                             trueLocation.Add(location);
                         }
@@ -84,11 +86,13 @@ WHERE   StockType='{0}'
                     if (!selectId)
                     {
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errLocation.ToArray()) + "  Data not found !!", "Data not found");
                     }
+
                     trueLocation.Sort();
-                    currentRow["location"] = string.Join(",", (trueLocation).ToArray());
-                    //去除錯誤的Location將正確的Location填回
+                    currentRow["location"] = string.Join(",", trueLocation.ToArray());
+
+                    // 去除錯誤的Location將正確的Location填回
                     currentRow.EndEdit();
                 }
             };
@@ -101,16 +105,16 @@ WHERE   StockType='{0}'
             this.grid.IsEditingReadOnly = false;
 
             #region 欄位設定
-            Helper.Controls.Grid.Generator(this.grid)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  
-                .Text("Refno", header: "Ref#", width: Widths.AnsiChars(9), iseditingreadonly: true)   
-                .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) 
+            this.Helper.Controls.Grid.Generator(this.grid)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+                .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("Refno", header: "Ref#", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("ColorID", header: "Color", iseditingreadonly: true)
                 .Text("SizeSpec", header: "Size", iseditingreadonly: true)
                 .Date("FinalETA", header: "ETA", iseditingreadonly: true)
                 .Numeric("InQty", header: "In Qty", width: Widths.AnsiChars(11), decimal_places: 0, integer_places: 10, iseditingreadonly: true)
-                .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
+                .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 6
                 .Text("StockUnit", header: "Stock Unit", iseditingreadonly: true)
                 .Text("Roll", header: "Roll",  iseditingreadonly: false).Get(out cbb_Roll)
                 .Text("Dyelot", header: "Dyelot",  iseditingreadonly: false).Get(out cbb_Dyelot)
@@ -142,7 +146,7 @@ WHERE   StockType='{0}'
             string Seq2 = this.txtSeq2.Text;
 
             // 這邊必須和P08表身一致
-            string cmd= $@"
+            string cmd = $@"
 select  [Selected] = 0
         , [ID]=''
         , [POID] = p.id
@@ -208,23 +212,23 @@ and p.Junk = 0
                 this.ShowErr(result);
                 return;
             }
+
             if (dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
             }
 
-
             this.listControlBindingSource.DataSource = dt;
-
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
-
-            grid.ValidateControl();
-            DataTable dtGridBS1 = (DataTable)listControlBindingSource.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
-
+            this.grid.ValidateControl();
+            DataTable dtGridBS1 = (DataTable)this.listControlBindingSource.DataSource;
+            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0)
+            {
+                return;
+            }
 
             DataRow[] selectedRows = dtGridBS1.Select("Selected = 1");
             if (selectedRows.Length == 0)
@@ -232,7 +236,6 @@ and p.Junk = 0
                 MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
-
 
             selectedRows = dtGridBS1.Select("StockQty = 0 and Selected = 1");
             if (selectedRows.Length > 0)
@@ -245,9 +248,7 @@ and p.Junk = 0
 
             foreach (DataRow tmp in selectedRows)
             {
-
-                DataRow[] findrow = dt_detail.Select($@"POID = '{tmp["POID"].ToString()}'AND Seq1 = '{tmp["Seq1"].ToString()}' AND Seq2 = '{tmp["Seq2"].ToString()}' AND Roll='{tmp["Roll"].ToString()}' AND Dyelot='{tmp["Dyelot"].ToString()}' ");
-
+                DataRow[] findrow = this.dt_detail.Select($@"POID = '{tmp["POID"].ToString()}'AND Seq1 = '{tmp["Seq1"].ToString()}' AND Seq2 = '{tmp["Seq2"].ToString()}' AND Roll='{tmp["Roll"].ToString()}' AND Dyelot='{tmp["Dyelot"].ToString()}' ");
 
                 if (findrow.Length > 0)
                 {
@@ -257,16 +258,15 @@ and p.Junk = 0
                 else
                 {
                     // 表頭ID
-                    tmp["id"] = dr_master["id"];
+                    tmp["id"] = this.dr_master["id"];
 
                     tmp.AcceptChanges();
                     tmp.SetAdded();
-                    dt_detail.ImportRow(tmp);
+                    this.dt_detail.ImportRow(tmp);
                 }
             }
 
             this.Close();
-
         }
     }
 }

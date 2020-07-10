@@ -2,21 +2,16 @@
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
     /// <inheritdoc/>
-    public partial class Endline_B12 : Sci.Win.Tems.Input1
+    public partial class Endline_B12 : Win.Tems.Input1
     {
         private string reasonType = "ID";
+
         /// <inheritdoc/>
         public Endline_B12(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -30,7 +25,7 @@ namespace Sci.Production.Centralized
         {
             base.OnDetailEntered();
 
-            bool canJunk = Prgs.GetAuthority(Sci.Env.User.UserID, "Endline_B12 Idle Reason", "CanJunk");
+            bool canJunk = Prgs.GetAuthority(Env.User.UserID, "Endline_B12 Idle Reason", "CanJunk");
 
             this.chkJunk.Enabled = canJunk;
         }

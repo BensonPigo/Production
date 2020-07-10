@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using Sci.Data;
@@ -18,7 +13,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R10
     /// </summary>
-    public partial class R10 : Sci.Win.Tems.PrintForm
+    public partial class R10 : Win.Tems.PrintForm
     {
         private string strSPStart;
         private string strSPEnd;
@@ -37,8 +32,8 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtfactory.Text = Sci.Env.User.Factory;
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
+            this.txtMdivision.Text = Env.User.Keyword;
             this.dateBoxSewingOutput.Value = DateTime.Today.AddDays(-1);
         }
 
@@ -71,7 +66,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region SQL Parameter
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
@@ -312,7 +307,7 @@ ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"],
                 return result;
             }
             #endregion
-            return new Ict.DualResult(true);
+            return new DualResult(true);
         }
 
         /// <inheritdoc/>
@@ -386,7 +381,7 @@ ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"],
             #region Excel Process
             Excel.Application objApp = null;
             Excel.Worksheet worksheet = null;
-            objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R10.xltx");
+            objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R10.xltx");
             MyUtility.Excel.CopyToXls(this.resultDt, string.Empty, "PPIC_R10.xltx", 3, showExcel: false, excelApp: objApp);
             worksheet = objApp.Sheets[1];
 
@@ -401,8 +396,8 @@ ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"],
             worksheet.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R10");
-            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_R10");
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();

@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 
@@ -14,7 +10,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R41
     /// </summary>
-    public partial class R41 : Sci.Win.Tems.PrintForm
+    public partial class R41 : Win.Tems.PrintForm
     {
         private DataTable printImport;
         private DataTable printExport;
@@ -55,7 +51,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCondition = new StringBuilder();
             if (!MyUtility.Check.Empty(this.date1))
@@ -78,7 +74,7 @@ namespace Sci.Production.Shipping
                 sqlCondition.Append(string.Format(" and v.VNContractID = '{0}'", this.contractNo));
             }
 
-            DualResult result, failResult;
+            DualResult result;
             if (this.type == "Import" || this.type == string.Empty)
             {
                 if (this.rdSummary.Checked)
@@ -142,7 +138,7 @@ namespace Sci.Production.Shipping
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -174,7 +170,7 @@ namespace Sci.Production.Shipping
             {
                 if (this.rdSummary.Checked)
                 {
-                    result = MyUtility.Excel.CopyToXls(this.printImport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Import"), xltfile: "Shipping_R41_Import.xltx", headerRow: 1, showSaveMsg: false);
+                    result = MyUtility.Excel.CopyToXls(this.printImport, Class.MicrosoftFile.GetName("Shipping_R41_Import"), xltfile: "Shipping_R41_Import.xltx", headerRow: 1, showSaveMsg: false);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -183,7 +179,7 @@ namespace Sci.Production.Shipping
 
                 if (this.rdDetail.Checked)
                 {
-                    result = MyUtility.Excel.CopyToXls(this.printImport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Import_Detail"), xltfile: "Shipping_R41_Import_Detail.xltx", headerRow: 1, showSaveMsg: false);
+                    result = MyUtility.Excel.CopyToXls(this.printImport, Class.MicrosoftFile.GetName("Shipping_R41_Import_Detail"), xltfile: "Shipping_R41_Import_Detail.xltx", headerRow: 1, showSaveMsg: false);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -197,7 +193,7 @@ namespace Sci.Production.Shipping
             {
                 if (this.rdSummary.Checked)
                 {
-                    result = MyUtility.Excel.CopyToXls(this.printExport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Export"), xltfile: "Shipping_R41_Export.xltx", headerRow: 1, showSaveMsg: false);
+                    result = MyUtility.Excel.CopyToXls(this.printExport, Class.MicrosoftFile.GetName("Shipping_R41_Export"), xltfile: "Shipping_R41_Export.xltx", headerRow: 1, showSaveMsg: false);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -206,7 +202,7 @@ namespace Sci.Production.Shipping
 
                 if (this.rdDetail.Checked)
                 {
-                    result = MyUtility.Excel.CopyToXls(this.printExport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Export_Detail"), xltfile: "Shipping_R41_Export_Detail.xltx", headerRow: 1, showSaveMsg: false);
+                    result = MyUtility.Excel.CopyToXls(this.printExport, Class.MicrosoftFile.GetName("Shipping_R41_Export_Detail"), xltfile: "Shipping_R41_Export_Detail.xltx", headerRow: 1, showSaveMsg: false);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -220,7 +216,7 @@ namespace Sci.Production.Shipping
             {
                 if (this.rdSummary.Checked)
                 {
-                    result = MyUtility.Excel.CopyToXls(this.printAdjust, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Adjust"), xltfile: "Shipping_R41_Adjust.xltx", headerRow: 1, showSaveMsg: false);
+                    result = MyUtility.Excel.CopyToXls(this.printAdjust, Class.MicrosoftFile.GetName("Shipping_R41_Adjust"), xltfile: "Shipping_R41_Adjust.xltx", headerRow: 1, showSaveMsg: false);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -229,7 +225,7 @@ namespace Sci.Production.Shipping
 
                 if (this.rdDetail.Checked)
                 {
-                    result = MyUtility.Excel.CopyToXls(this.printAdjust, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Adjust_Detail"), xltfile: "Shipping_R41_Adjust_Detail.xltx", headerRow: 1, showSaveMsg: false);
+                    result = MyUtility.Excel.CopyToXls(this.printAdjust, Class.MicrosoftFile.GetName("Shipping_R41_Adjust_Detail"), xltfile: "Shipping_R41_Adjust_Detail.xltx", headerRow: 1, showSaveMsg: false);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -242,7 +238,7 @@ namespace Sci.Production.Shipping
         }
 
         // 查詢Import資料
-        private Ict.DualResult QueryImport(string sqlCondition)
+        private DualResult QueryImport(string sqlCondition)
         {
             string sqlCmd = string.Format(
                 @"select v.ID,v.CDate,v.VNContractID,v.DeclareNo,IIF(v.BLNo='',v.WKNo,v.BLNo) as BLWK,vd.NLCode,vd.HSCode,vd.Qty,vd.UnitID,vd.Remark
@@ -255,7 +251,7 @@ order by v.ID", sqlCondition);
         }
 
         // 查詢Export資料
-        private Ict.DualResult QueryExport(string sqlCondition)
+        private DualResult QueryExport(string sqlCondition)
         {
             string sqlCmd = string.Format(
                 @"select v.ID,v.CDate,v.VNContractID,v.DeclareNo,v.InvNo,ed.StyleID,ed.SeasonID,ed.BrandID,ed.ExportQty,
@@ -275,7 +271,7 @@ order by v.ID", sqlCondition);
         }
 
         // 查詢Adjust資料
-        private Ict.DualResult QueryAdjust(string sqlCondition)
+        private DualResult QueryAdjust(string sqlCondition)
         {
             string sqlCmd = string.Format(
                 @"select v.CDate,v.VNContractID,v.DeclareNo,vd.NLCode,isnull(cd.HSCode,'') as HSCode,vd.Qty,isnull(cd.UnitID,'') as UnitID,v.Remark
@@ -289,7 +285,7 @@ order by v.CDate", sqlCondition);
         }
 
         // 查詢ImportDetail資料
-        private Ict.DualResult QueryImportDetail(string sqlCondition)
+        private DualResult QueryImportDetail(string sqlCondition)
         {
             string sqlCmd = string.Format(
                 @"
@@ -310,7 +306,7 @@ order by v.ID", sqlCondition);
         }
 
         // 查詢ExportDetail資料
-        private Ict.DualResult QueryExportDetail(string sqlCondition)
+        private DualResult QueryExportDetail(string sqlCondition)
         {
             string sqlCmd = string.Format(
                 @"
@@ -335,7 +331,7 @@ order by v.ID", sqlCondition);
         }
 
         // 查詢AdjustDetail資料
-        private Ict.DualResult QueryAdjustDetail(string sqlCondition)
+        private DualResult QueryAdjustDetail(string sqlCondition)
         {
             string sqlCmd = string.Format(
                 @"
@@ -356,7 +352,7 @@ order by v.CDate", sqlCondition);
 
         private void TxtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract]", "20,10,10", this.Text, false, ",", headercaptions: "Contract No, Start Date, End Date");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract]", "20,10,10", this.Text, false, ",", headercaptions: "Contract No, Start Date, End Date");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

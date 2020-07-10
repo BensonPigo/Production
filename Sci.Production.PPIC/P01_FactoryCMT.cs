@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
@@ -15,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_FactoryCMT
     /// </summary>
-    public partial class P01_FactoryCMT : Sci.Win.Subs.Base
+    public partial class P01_FactoryCMT : Win.Subs.Base
     {
         private DataRow orderData;
 
@@ -86,7 +82,7 @@ select  [SubProcessCPU] = @subProcessCPU,
             List<SqlParameter> parGetStdCost = new List<SqlParameter>()
             {
                 new SqlParameter("@inputCPUCost", this.numCPUCost.Value),
-                new SqlParameter("@inputOrderID", this.orderData["ID"].ToString())
+                new SqlParameter("@inputOrderID", this.orderData["ID"].ToString()),
             };
 
             DataRow drSubprocessCost;

@@ -18,7 +18,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P09
     /// </summary>
-    public partial class P09 : Sci.Win.Tems.Input6
+    public partial class P09 : Win.Tems.Input6
     {
         private string excelFile;
 
@@ -30,7 +30,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("Type = 'A' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("Type = 'A' and MDivisionID = '{0}'", Env.User.Keyword);
             this.InsertDetailGridOnDoubleClick = false;
             MyUtility.Tool.SetupCombox(this.comboDefectResponsibilityExplanation, 2, 1, "F,Factory,M,Mill,S,Subcon in Local,T,SCI dep. (purchase/s. mrs/sample room)");
         }
@@ -56,6 +56,7 @@ namespace Sci.Production.PPIC
 
             this.btnBatchReCalculateResponsibilityDeptAmt.Enabled = this.Perm.Edit;
             this.btnBatch.Enabled = this.Perm.Confirm;
+
             // GridReplacement 欄位設定
             this.Helper.Controls.Grid.Generator(this.gridReplacement)
           .Text("SP", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -121,11 +122,11 @@ order by rd.Seq1,rd.Seq2", masterID);
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
-            this.toolbar.cmdJunk.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Junked" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])) && MyUtility.Check.Empty(this.CurrentMaintain["ApplyDate"]) ? true : false;
-            this.toolbar.cmdCheck.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])) ? true : false;
-            this.toolbar.cmdUncheck.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Checked" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])) ? true : false;
-            this.toolbar.cmdConfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Checked" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])) ? true : false;
-            this.toolbar.cmdUnconfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])) && MyUtility.Check.Empty(this.CurrentMaintain["TPECFMDate"]) ? true : false;
+            this.toolbar.cmdJunk.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Junked" && Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])) && MyUtility.Check.Empty(this.CurrentMaintain["ApplyDate"]) ? true : false;
+            this.toolbar.cmdCheck.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" && Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])) ? true : false;
+            this.toolbar.cmdUncheck.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Checked" && Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])) ? true : false;
+            this.toolbar.cmdConfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Checked" && Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])) ? true : false;
+            this.toolbar.cmdUnconfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved" && Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])) && MyUtility.Check.Empty(this.CurrentMaintain["TPECFMDate"]) ? true : false;
         }
 
         /// <inheritdoc/>
@@ -135,10 +136,10 @@ order by rd.Seq1,rd.Seq2", masterID);
 
             this.btnMailto.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Junked" && !MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? true : false;
             this.displayStyleNo.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), "Orders", "ID");
-            this.displayPreparedby.Value = MyUtility.Check.Empty(this.CurrentMaintain["ApplyDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApplyDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
-            this.displayPPICFactorymgr.Value = MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApvDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
-            this.displayConfirmby.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPECFMDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
-            this.displayTPELastEditDate.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPEEditDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            this.displayPreparedby.Value = MyUtility.Check.Empty(this.CurrentMaintain["ApplyDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApplyDate"]).ToString(string.Format("{0}", Env.Cfg.DateStringFormat));
+            this.displayPPICFactorymgr.Value = MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApvDate"]).ToString(string.Format("{0}", Env.Cfg.DateStringFormat));
+            this.displayConfirmby.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPECFMDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Env.Cfg.DateStringFormat));
+            this.displayTPELastEditDate.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPEEditDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
             this.label8.Visible = !MyUtility.Check.Empty(this.CurrentMaintain["RespDeptConfirmDate"]);
             this.numTtlEstAmt.Value = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("sum(EstReplacementAMT)", string.Empty));
             this.numTotalUS.Value =
@@ -277,7 +278,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             {
                 if (e.ColumnIndex == 1)
                 {
-                    Sci.Production.PPIC.P09_InputData callInputDataForm = new Sci.Production.PPIC.P09_InputData(this.CurrentMaintain);
+                    P09_InputData callInputDataForm = new P09_InputData(this.CurrentMaintain);
                     callInputDataForm.Set(this.EditMode, this.DetailDatas, this.CurrentDetailData);
                     callInputDataForm.ShowDialog(this);
                 }
@@ -304,7 +305,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["CDate"] = DateTime.Today;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "A";
@@ -362,6 +363,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             }
 
             int count = 0; // 紀錄表身筆數
+
             // 刪除表身Grid的Seq為空資料
             foreach (DataRow dr in this.DetailDatas)
             {
@@ -383,7 +385,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Factory + MyUtility.Convert.GetString(this.CurrentMaintain["POID"]).Substring(0, 8), "ReplacementReport", DateTime.Today, 6, "Id", null);
+                string id = MyUtility.GetValue.GetID(Env.User.Factory + MyUtility.Convert.GetString(this.CurrentMaintain["POID"]).Substring(0, 8), "ReplacementReport", DateTime.Today, 6, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -435,7 +437,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P09.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\PPIC_P09.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -532,7 +534,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             worksheet.Protect(Password: "Sport2006");
 
             #region Save Excel
-            this.excelFile = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P09");
+            this.excelFile = Class.MicrosoftFile.GetName("PPIC_P09");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(this.excelFile);
             workbook.Close();
@@ -557,11 +559,11 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                 if (!MyUtility.Check.Empty(this.txtSPNo.Text))
                 {
                     // sql參數
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", this.txtSPNo.Text);
+                    SqlParameter sp1 = new SqlParameter("@poid", this.txtSPNo.Text);
 
                     // 用登入的Factory 抓取對應的FtyGroup
                     DataTable ftyGroupData;
-                    DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}' and IsProduceFty = 1", Sci.Env.User.Factory), out ftyGroupData);
+                    DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}' and IsProduceFty = 1", Env.User.Factory), out ftyGroupData);
                     if (ftyGroupData.Rows.Count == 0)
                     {
                         MyUtility.Msg.WarningBox("SP No. not found!!");
@@ -571,9 +573,9 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                         return;
                     }
 
-                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@factoryid", ftyGroupData.Rows[0]["FTYGroup"].ToString());
+                    SqlParameter sp2 = new SqlParameter("@factoryid", ftyGroupData.Rows[0]["FTYGroup"].ToString());
 
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                    IList<SqlParameter> cmds = new List<SqlParameter>();
                     cmds.Add(sp1);
                     cmds.Add(sp2);
                     string sqlCmd = "select ID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and FtyGroup  = @factoryid  AND Category !='A'";
@@ -670,7 +672,7 @@ group by a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2,a.Refno,[dbo].getMtlDesc(a.POI
         {
             base.ClickJunk();
             DualResult result;
-            string updateCmd = string.Format("update ReplacementReport set Status = 'Junked', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ReplacementReport set Status = 'Junked', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -716,7 +718,7 @@ where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and Repl
                 return;
             }
 
-            updateCmds.Add(string.Format("update ReplacementReport set Status = 'Checked', ApplyDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update ReplacementReport set Status = 'Checked', ApplyDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -732,13 +734,13 @@ where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and Repl
             base.ClickUncheck();
             DialogResult confirmResult;
             confirmResult = MyUtility.Msg.QuestionBox("Are you sure you want to uncheck this data?", caption: "Confirm", buttons: MessageBoxButtons.YesNo);
-            if (confirmResult != System.Windows.Forms.DialogResult.Yes)
+            if (confirmResult != DialogResult.Yes)
             {
                 return;
             }
 
             IList<string> updateCmds = new List<string>();
-            updateCmds.Add(string.Format("update ReplacementReport set Status = 'New', ApplyDate = Null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update ReplacementReport set Status = 'New', ApplyDate = Null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             updateCmds.Add(string.Format(
                 @"update AIR 
 set ReplacementReportID = isnull((select top(1) rr.ID
@@ -780,7 +782,7 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(this.CurrentMain
                 return;
             }
 
-            string updateCmd = string.Format("update ReplacementReport set SendToTrade = 1,Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ReplacementReport set SendToTrade = 1,Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -797,13 +799,13 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(this.CurrentMain
             base.ClickUnconfirm();
             DialogResult confirmResult;
             confirmResult = MyUtility.Msg.QuestionBox("Are you sure you want to unconfirm this data?", caption: "Confirm", buttons: MessageBoxButtons.YesNo);
-            if (confirmResult != System.Windows.Forms.DialogResult.Yes)
+            if (confirmResult != DialogResult.Yes)
             {
                 return;
             }
 
             DualResult result;
-            string updateCmd = string.Format("update ReplacementReport set Status = 'Checked', ApvDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ReplacementReport set Status = 'Checked', ApvDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -891,7 +893,7 @@ If the replacement report can be accept and cfm to proceed, please approve it th
                     totalFile = this.excelFile + allFile.ToString();
                 }
 
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, totalFile, content.ToString(), false, true);
+                var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject, totalFile, content.ToString(), false, true);
                 email.ShowDialog(this);
 
                 // 刪除Excel File
@@ -918,7 +920,7 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;

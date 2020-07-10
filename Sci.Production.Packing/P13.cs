@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -8,14 +6,13 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
 
 namespace Sci.Production.Packing
 {
     /// <summary>
     /// Packing_P13
     /// </summary>
-    public partial class P13 : Sci.Win.Tems.QueryForm
+    public partial class P13 : Win.Tems.QueryForm
     {
         private DataTable gridData;
         private DataGridViewGeneratorNumericColumnSettings ctnqty = new DataGridViewGeneratorNumericColumnSettings();
@@ -190,7 +187,7 @@ left join LocalSupp ls WITH (NOLOCK) on li.LocalSuppid = ls.ID
                 sqlCmd.Append(" inner join #tmp_PackData pd on o.ID = pd.OrderID");
             }
 
-            sqlCmd.Append(string.Format(" where o.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+            sqlCmd.Append(string.Format(" where o.MDivisionID = '{0}'", Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
                 sqlCmd.Append(string.Format(" and o.SciDelivery >= cast('{0}' as date)", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));

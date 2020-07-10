@@ -2,13 +2,7 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
@@ -16,7 +10,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P17
     /// </summary>
-    public partial class P17 : Sci.Win.Tems.QueryForm
+    public partial class P17 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P17
@@ -40,7 +34,7 @@ namespace Sci.Production.PPIC
             List<SqlParameter> listPar = new List<SqlParameter>()
             {
                 new SqlParameter("@startDate", this.dateRangeImport.DateBox1.Value),
-                new SqlParameter("@endDate", this.dateRangeImport.DateBox2.Value)
+                new SqlParameter("@endDate", this.dateRangeImport.DateBox2.Value),
             };
             this.ShowWaitMessage("Update processing....");
             DualResult result = DBProxy.Current.Execute(null, "exec exp_SUNRISE @startDate,@endDate", listPar);

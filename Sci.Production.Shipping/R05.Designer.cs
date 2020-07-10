@@ -35,7 +35,7 @@
             this.dateDate = new Sci.Win.UI.DateRange();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboOrderby = new Sci.Win.UI.ComboBox();
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtSubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.SuspendLayout();
             // 
             // print
@@ -165,6 +165,6 @@
         private Win.UI.DateRange dateDate;
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboOrderby;
-        private Class.txtsubconNoConfirm txtSubconSupplier;
+        private Class.TxtsubconNoConfirm txtSubconSupplier;
     }
 }

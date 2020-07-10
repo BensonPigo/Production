@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
@@ -14,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_TMSAndCost
     /// </summary>
-    public partial class P04_TMSAndCost : Sci.Win.Subs.Input4
+    public partial class P04_TMSAndCost : Win.Subs.Input4
     {
         private Ict.Win.UI.DataGridViewNumericBoxColumn colQty = new Ict.Win.UI.DataGridViewNumericBoxColumn();
         private Ict.Win.UI.DataGridViewNumericBoxColumn colTms = new Ict.Win.UI.DataGridViewNumericBoxColumn();
@@ -40,9 +37,9 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings tms = new DataGridViewGeneratorNumericColumnSettings();
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings price = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings tms = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings price = new DataGridViewGeneratorNumericColumnSettings();
             qty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             tms.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             price.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
@@ -142,7 +139,7 @@ where a.StyleUkey = ''", this.KeyValue1);
                 newdr["ArtworkUnit"] = dr["ArtworkUnit"];
                 newdr["TMS"] = 0;
                 newdr["Price"] = 0;
-                newdr["AddName"] = Sci.Env.User.UserID;
+                newdr["AddName"] = Env.User.UserID;
                 newdr["AddDate"] = DateTime.Now;
                 newdr["isTms"] = dr["isTms"];
                 newdr["isPrice"] = dr["isPrice"];
@@ -333,7 +330,7 @@ select * from UpdateData", this.KeyValue1);
                             dr["ArtworkUnit"].ToString(),
                             dr["TMS"].ToString(),
                             dr["Price"].ToString(),
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             dr["ID"].ToString(),
                             dr["ArtworkTypeID"].ToString()));
                     }
@@ -347,7 +344,7 @@ select * from UpdateData", this.KeyValue1);
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>

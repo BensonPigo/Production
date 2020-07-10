@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtunit_local
+    partial class Txtunit_local
     {
         /// <summary> 
         /// 設計工具所需的變數。

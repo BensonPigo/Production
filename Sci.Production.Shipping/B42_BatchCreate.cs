@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
@@ -10,22 +9,21 @@ using Ict;
 using Sci.Data;
 using System.Transactions;
 using Sci.Production.PublicPrg;
-using System.Linq;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// B42_BatchCreate
     /// </summary>
-    public partial class B42_BatchCreate : Sci.Win.Subs.Base
+    public partial class B42_BatchCreate : Win.Subs.Base
     {
         private DataTable AllDetailData;
         private DataTable MidDetailData;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CustomSP;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings vncontract = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings currentcustom = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings consumption = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings vncontract = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings currentcustom = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings consumption = new DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// B42_BatchCreate
@@ -47,7 +45,7 @@ namespace Sci.Production.Shipping
             #region Current Custom的DbClick
             this.currentcustom.EditingMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     if (e.RowIndex != -1)
                     {
@@ -68,12 +66,12 @@ namespace Sci.Production.Shipping
             #region Contract no 按右鍵與validating
             this.vncontract.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.gridBatchCreate.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", MyUtility.Convert.GetString(dr["VNContractID"]), headercaptions: "Contract No.,Start Date, End Date");
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", MyUtility.Convert.GetString(dr["VNContractID"]), headercaptions: "Contract No.,Start Date, End Date");
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {
@@ -104,12 +102,12 @@ namespace Sci.Production.Shipping
             #region Consumption的DbClick
             this.consumption.EditingMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.gridBatchCreate.GetDataRow<DataRow>(e.RowIndex);
-                        B42_BatchCreate_Consumption callNextForm = new Sci.Production.Shipping.B42_BatchCreate_Consumption(this.MidDetailData, this.AllDetailData, MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(dr["VNContractID"]));
+                        B42_BatchCreate_Consumption callNextForm = new B42_BatchCreate_Consumption(this.MidDetailData, this.AllDetailData, MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(dr["VNContractID"]));
                         DialogResult result = callNextForm.ShowDialog(this);
                         callNextForm.Dispose();
                     }
@@ -158,7 +156,7 @@ namespace Sci.Production.Shipping
             parData.Style = this.txtstyle.Text;
             parData.Category = this.comboCategory.Text;
             parData.BrandID = this.txtbrand.Text;
-            parData.ContractID = "";
+            parData.ContractID = string.Empty;
             DualResult result = Prgs.GetVNConsumption_Detail_Detail(parData, out this.AllDetailData);
             if (!result)
             {
@@ -611,7 +609,7 @@ from a where rnd=1
         // update Contract
         private void TxtVNContractID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", this.txtVNContractID.Text, headercaptions: "Contract No.,Start Date, End Date");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", this.txtVNContractID.Text, headercaptions: "Contract No.,Start Date, End Date");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -743,7 +741,7 @@ where Contract = '' or CustomSPNo <> ''";
                     if (MyUtility.Convert.GetString(dr["Selected"]) == "1" && MyUtility.Check.Empty(dr["ID"]))
                     {
                         insertCmds.Clear();
-                        newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SP", "VNConsumption", Convert.ToDateTime(dr["CDate"]), 2, "ID", null);
+                        newID = MyUtility.GetValue.GetID(Env.User.Keyword + "SP", "VNConsumption", Convert.ToDateTime(dr["CDate"]), 2, "ID", null);
                         maxVersion = MyUtility.GetValue.Lookup(string.Format("select isnull(MAX(Version),0) as MaxVersion from VNConsumption WITH (NOLOCK) where StyleUKey = {0}", MyUtility.Convert.GetString(dr["StyleUKey"])));
                         vnMultiple = MyUtility.GetValue.Lookup("select VNMultiple from System WITH (NOLOCK) ");
                         insertCmds.Add(string.Format(
@@ -806,20 +804,20 @@ Insert into VNConsumption_Article (
 
                         for (int i = 0; i < selectedData.Length; i++)
                         {
-                            DataRow[] selectedDetailData = this.AllDetailData.Select(string.Format(@"
+                            DataRow[] selectedDetailData = this.AllDetailData.Select(string.Format(
+                                @"
 StyleUKey = {0} 
 and SizeCode = '{1}' 
 and Article = '{2}' 
 and NLCode = '{3}'  
 and Category = '{4}' 
-and (VNContractID = '{5}' or VNContractID ='NA')"
-                            , MyUtility.Convert.GetString(dr["StyleUKey"])
-                            , MyUtility.Convert.GetString(dr["SizeCode"])
-                            , MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','))
-                            , MyUtility.Convert.GetString(selectedData[i]["NLCode"])
-                            , MyUtility.Convert.GetString(dr["Category"])
-                            , MyUtility.Convert.GetString(dr["VNContractID"])
-                            ));
+and (VNContractID = '{5}' or VNContractID ='NA')",
+                                MyUtility.Convert.GetString(dr["StyleUKey"]),
+                                MyUtility.Convert.GetString(dr["SizeCode"]),
+                                MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')),
+                                MyUtility.Convert.GetString(selectedData[i]["NLCode"]),
+                                MyUtility.Convert.GetString(dr["Category"]),
+                                MyUtility.Convert.GetString(dr["VNContractID"])));
                             #region 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
                             bool isVNConsumption_Detail_DetailHasDupData = !Prgs.CheckVNConsumption_Detail_Dup(selectedDetailData, false);
                             if (isVNConsumption_Detail_DetailHasDupData)
@@ -853,8 +851,7 @@ Insert into VNConsumption_Detail_Detail (
                                         MyUtility.Convert.GetString(selectedDetailData[j]["BrandID"]),
                                         MyUtility.Convert.GetString(selectedDetailData[j]["FabricType"]),
                                         MyUtility.Convert.GetString(selectedDetailData[j]["UsageQty"]),
-                                        MyUtility.Convert.GetString(selectedDetailData[j]["UsageUnit"])
-                                        ));
+                                        MyUtility.Convert.GetString(selectedDetailData[j]["UsageUnit"])));
                                 }
                             }
                         }

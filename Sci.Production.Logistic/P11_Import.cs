@@ -3,21 +3,16 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Sci.Production.Logistic
 {
     /// <summary>
     /// P11_Import
     /// </summary>
-    public partial class P11_Import : Sci.Win.Subs.Base
+    public partial class P11_Import : Win.Subs.Base
     {
         private DataTable dtMasterDetail;
         private DataTable dtImport;
@@ -42,7 +37,7 @@ namespace Sci.Production.Logistic
             base.OnFormLoaded();
             #region -- 欄位設定 --
             this.Helper.Controls.Grid.Generator(this.gridImport)
-            .CheckBox("selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+            .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("CTNStartNO", header: "CTN#", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)

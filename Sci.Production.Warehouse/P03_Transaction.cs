@@ -1,51 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Ict;
-using Sci.Production.PublicPrg;
-using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_Transaction : Sci.Win.Subs.Base
+    public partial class P03_Transaction : Win.Subs.Base
     {
         DataRow dr;
         bool _byroll;   // 從p20呼叫時，會傳入true
 
         public P03_Transaction(DataRow data, bool byRoll = false)
         {
-            InitializeComponent();
-            dr = data;
-            _byroll = byRoll;
+            this.InitializeComponent();
+            this.dr = data;
+            this._byroll = byRoll;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            btnReCalculate.Enabled = !_byroll;     // 從p20呼叫時，不開啟。
-            btnReCalculate.Visible = !_byroll;     // 從p20呼叫時，不開啟。
+            this.btnReCalculate.Enabled = !this._byroll;     // 從p20呼叫時，不開啟。
+            this.btnReCalculate.Visible = !this._byroll;     // 從p20呼叫時，不開啟。
 
-            if (_byroll)
+            if (this._byroll)
             {
-                this.Text += string.Format(@" ({0}-{1}-{2}-{3}-{4})", dr["id"], dr["seq1"], dr["seq2"], dr["roll"], dr["dyelot"]);
+                this.Text += string.Format(@" ({0}-{1}-{2}-{3}-{4})", this.dr["id"], this.dr["seq1"], this.dr["seq2"], this.dr["roll"], this.dr["dyelot"]);
             }
             else
             {
-                this.Text += string.Format(@" ({0}-{1}-{2})", dr["id"], dr["seq1"], dr["seq2"]);
+                this.Text += string.Format(@" ({0}-{1}-{2})", this.dr["id"], this.dr["seq1"], this.dr["seq2"]);
             }
 
             #region sql command
             StringBuilder selectCommand1 = new StringBuilder();
-            selectCommand1.Append(string.Format(@"select *,
+            selectCommand1.Append(string.Format(
+                @"select *,
             --sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.addDate,TMP.inqty desc, TMP.outqty,tmp.adjust) as [balance] 
             sum(TMP.inqty - TMP.outqty+tmp.adjust) over (order by IssueDate,tmp.addDate, name) as [balance] 
             from (
@@ -76,17 +71,18 @@ namespace Sci.Production.Warehouse
 								          )x			
 								          for xml path('')),1,1,'') 
 			) MtlLocation            
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and a.Type not in  ('R','O')"
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and a.Type not in  ('R','O')",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
 
-            if (_byroll)
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type,AddDate, MtlLocation.location 
 
             union all
@@ -115,17 +111,18 @@ namespace Sci.Production.Warehouse
 								          for xml path('')),1,1,'') 
 			) MtlLocation             
             where type='A' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
-            and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+            and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
 
-            if (_byroll)
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
@@ -154,16 +151,17 @@ namespace Sci.Production.Warehouse
 								          for xml path('')),1,1,'') 
 			) MtlLocation                
             where type='A' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
-                and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+                and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
@@ -192,17 +190,18 @@ namespace Sci.Production.Warehouse
 								          for xml path('')),1,1,'') 
 			) MtlLocation
             where type='B' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
-                and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+                and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
 
-            if (_byroll)
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
@@ -231,16 +230,17 @@ namespace Sci.Production.Warehouse
 								          for xml path('')),1,1,'') 
 			) MtlLocation 
             where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
-                and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+                and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
@@ -271,16 +271,17 @@ namespace Sci.Production.Warehouse
 								          )x			
 								          for xml path('')),1,1,'') 
 			) MtlLocation
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, poid, seq1, Seq2, remark, a.IssueDate, a.type, AddDate, MtlLocation.location
 
             union all
@@ -312,16 +313,17 @@ namespace Sci.Production.Warehouse
 								          for xml path('')),1,1,'') 
 			) MtlLocation 
             where Status in ('Confirmed','Closed') and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  
-                and a.id = b.id and Type='R'  "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+                and a.id = b.id and Type='R'  ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, poid, seq1,Seq2, a.remark  ,a.IssueDate,a.FabricType,AddDate, MtlLocation.location 
 
             union all
@@ -349,16 +351,17 @@ namespace Sci.Production.Warehouse
 								          )x			
 								          for xml path('')),1,1,'') 
 			) MtlLocation   
-            where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+            where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.Id, poid, seq1,Seq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
@@ -375,16 +378,17 @@ namespace Sci.Production.Warehouse
 					for xml path('')
 				)
 			)X
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,a.eta,AddDate,X.Location
 
             union all
@@ -412,16 +416,17 @@ namespace Sci.Production.Warehouse
 								          )x			
 								          for xml path('')),1,1,'') 
 			) MtlLocation     
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, poid, seq1,Seq2, remark,a.IssueDate ,AddDate, MtlLocation.location 
                                                                               
             union all
@@ -438,16 +443,17 @@ namespace Sci.Production.Warehouse
 				)
 			)X
             where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  
-            and a.id = b.id and type = 'B' "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+            and a.id = b.id and type = 'B' ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type ,AddDate,X.Location                                                                               
             union all
 	            select issuedate, a.id
@@ -464,16 +470,17 @@ namespace Sci.Production.Warehouse
                                     for XML PATH('')) as ToLocation,AddDate
             from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and type = 'B' 
-            "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+            ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate,AddDate
 
             union all
@@ -490,16 +497,17 @@ namespace Sci.Production.Warehouse
                                                     and b1.Seq2 = b.Seq2 group by b1.Location) tmp 
                                     for XML PATH('')) as Location,AddDate
             from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,AddDate
 
             union all
@@ -527,16 +535,17 @@ namespace Sci.Production.Warehouse
 								          )x			
 								          for xml path('')),1,1,'') 
 			) MtlLocation   
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, poid, Seq1,Seq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
@@ -555,18 +564,19 @@ namespace Sci.Production.Warehouse
 									,AddDate
             from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
             where type='C' and Status='Confirmed' and topoid='{0}' and toseq1 = '{1}' and toSeq2 = '{2}'  
-            and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+            and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                //0000584: WAREHOUSE_P20_Detail_Transaction detail
-                //selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
-                selectCommand1.Append(string.Format(@" and ToRoll='{0}' and ToDyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                // 0000584: WAREHOUSE_P20_Detail_Transaction detail
+                // selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and ToRoll='{0}' and ToDyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, topoid, toSeq1, toSeq2,a.IssueDate,a.Type,a.remark,AddDate
             
             union all
@@ -584,16 +594,17 @@ namespace Sci.Production.Warehouse
 					for xml path('')
 				)
 			)X
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
             group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,a.remark,AddDate,X.location
 
             union all
@@ -614,15 +625,15 @@ namespace Sci.Production.Warehouse
 									,AddDate
             from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
             where (type='D' or type='E') and Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' 
-            and FromSeq2 = '{2}'  and a.id = b.id "
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
+            and FromSeq2 = '{2}'  and a.id = b.id ",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString()));
+            if (this._byroll)
             {
-                //0000584: WAREHOUSE_P20_Detail_Transaction detail
-                //selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
-                selectCommand1.Append(string.Format(@" and FromRoll='{0}' and FromDyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                // 0000584: WAREHOUSE_P20_Detail_Transaction detail
+                // selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and FromRoll='{0}' and FromDyelot = '{1}'", this.dr["roll"], this.dr["dyelot"]));
             }
 
             selectCommand1.Append(@"
@@ -636,7 +647,9 @@ namespace Sci.Production.Warehouse
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
             if (selectResult1 == false)
-            { ShowErr(selectCommand1.ToString(), selectResult1); }
+            {
+                this.ShowErr(selectCommand1.ToString(), selectResult1);
+            }
             else if (selectDataTable1.Rows.Count > 0)
             {
                 object inqty = selectDataTable1.Compute("sum(inqty)", null);
@@ -649,146 +662,148 @@ namespace Sci.Production.Warehouse
                 this.numTotal4.Value = !MyUtility.Check.Empty(balance) ? decimal.Parse(balance.ToString()) : 0m;
             }
 
-            bindingSource1.DataSource = selectDataTable1;
+            this.bindingSource1.DataSource = selectDataTable1;
 
             #region 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.CellMouseDoubleClick += (s, e) =>
             {
-                var frm =new Sci.Win.Tems.Input6(null);
+                var frm = new Win.Tems.Input6(null);
                 var dr2 = this.gridTransactionDetail.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr2) return;
-                switch (dr2["name"].ToString().Substring(0,3))
+                if (dr2 == null)
+                {
+                    return;
+                }
+
+                switch (dr2["name"].ToString().Substring(0, 3))
                 {
                     case "P07":
-                        //P07
-                        frm = new Sci.Production.Warehouse.P07(null, dr2["id"].ToString());
+                        // P07
+                        frm = new P07(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
                     case "P08":
-                        //	P08
-                        frm = new Sci.Production.Warehouse.P08(null, dr2["id"].ToString());
+                        // P08
+                        frm = new P08(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
                     case "P09":
-                        //	P09
-                        //frm = new Sci.Production.Warehouse.P09(null, dr2["id"].ToString());
-                        //frm.ShowDialog(this);
+                        // P09
+                        // frm = new Sci.Production.Warehouse.P09(null, dr2["id"].ToString());
+                        // frm.ShowDialog(this);
                         break;
                     case "P37":
-                    //	P37
-
-                    break;
+                    // P37
+                        break;
                     case "P10":
-                    //	P10
-                        frm = new Sci.Production.Warehouse.P10(null, dr2["id"].ToString());
+                    // P10
+                        frm = new P10(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
                     case "P11":
-                    //	P11
-                        frm = new Sci.Production.Warehouse.P11(null, dr2["id"].ToString());
+                    // P11
+                        frm = new P11(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
                     case "P12":
-                        //	P12
-                        frm = new Sci.Production.Warehouse.P12(null, dr2["id"].ToString());
+                        // P12
+                        frm = new P12(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
                     case "P13":
-                        //	P13
-                        frm = new Sci.Production.Warehouse.P13(null, dr2["id"].ToString());
+                        // P13
+                        frm = new P13(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
 
                     case "P15":
-                        //	P15
-                        frm = new Sci.Production.Warehouse.P15(null, dr2["id"].ToString());
+                        // P15
+                        frm = new P15(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
                     case "P16":
-                        //	P16
-                        frm = new Sci.Production.Warehouse.P16(null, dr2["id"].ToString());
+                        // P16
+                        frm = new P16(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
 
                     case "P17":
-                        //	P17
-                        frm = new Sci.Production.Warehouse.P17(null, dr2["id"].ToString());
+                        // P17
+                        frm = new P17(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
 
                     case "P18":
-                        //	P18
-                        frm = new Sci.Production.Warehouse.P18(null, dr2["id"].ToString());
+                        // P18
+                        frm = new P18(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
                     case "P19":
-                        //	P19
-                        frm = new Sci.Production.Warehouse.P19(null, dr2["id"].ToString());
+                        // P19
+                        frm = new P19(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
 
                     case "P22":
-                            //P22
-                        frm = new Sci.Production.Warehouse.P22(null, dr2["id"].ToString());
+                            // P22
+                        frm = new P22(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
                     case "P23":
-                        //	P23
-                        frm = new Sci.Production.Warehouse.P23(null, dr2["id"].ToString());
+                        // P23
+                        frm = new P23(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
 
                     case "P24":
-                        //	P24
-                        frm = new Sci.Production.Warehouse.P24(null, dr2["id"].ToString());
+                        // P24
+                        frm = new P24(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
                     case "P25":
-                        //	P25
-                        frm = new Sci.Production.Warehouse.P25(null, dr2["id"].ToString());
+                        // P25
+                        frm = new P25(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
 
-
                     case "P31":
-                        //	P31 borrow
-                        frm = new Sci.Production.Warehouse.P31(null, dr2["id"].ToString());
+                        // P31 borrow
+                        frm = new P31(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
                     case "P32":
-                        //	P32 give back
-                        frm = new Sci.Production.Warehouse.P32(null, dr2["id"].ToString());
+                        // P32 give back
+                        frm = new P32(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
 
                     case "P34":
-                        //	P34 adjust Inventory
-                        frm = new Sci.Production.Warehouse.P34(null, dr2["id"].ToString());
+                        // P34 adjust Inventory
+                        frm = new P34(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
-                    case "P35": 
-                        //	P35 adjust Bulk
-                        frm = new Sci.Production.Warehouse.P35(null, dr2["id"].ToString());
+                    case "P35":
+                        // P35 adjust Bulk
+                        frm = new P35(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
 
                     case "P36":
-                        //	P36
-                        frm = new Sci.Production.Warehouse.P36(null, dr2["id"].ToString());
+                        // P36
+                        frm = new P36(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
                 }
-                //var frm = new Sci.Production.Subcon.P01_FarmInList(dr);
-                //frm.ShowDialog(this);
 
+                // var frm = new Sci.Production.Subcon.P01_FarmInList(dr);
+                // frm.ShowDialog(this);
             };
             #endregion
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridTransactionDetail.IsEditingReadOnly = true;
-            this.gridTransactionDetail.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.gridTransactionDetail)
+            this.gridTransactionDetail.DataSource = this.bindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridTransactionDetail)
                  .Date("IssueDate", header: "Date", width: Widths.AnsiChars(10))
                  .Text("ID", header: "Transaction#", width: Widths.AnsiChars(15), settings: ts2)
                 .Text("Name", header: "Name", width: Widths.AnsiChars(25))
@@ -807,55 +822,57 @@ namespace Sci.Production.Warehouse
 
         private void btnReCalculate_Click(object sender, EventArgs e)
         {
-            
-            if (null == dr) return;
+            if (this.dr == null)
+            {
+                return;
+            }
+
             DualResult result;
             #region store procedure parameters
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 
             System.Data.SqlClient.SqlParameter sp_StocktakingID = new System.Data.SqlClient.SqlParameter();
             sp_StocktakingID.ParameterName = "@Ukey";
-            sp_StocktakingID.Value = dr["ukey"].ToString();
+            sp_StocktakingID.Value = this.dr["ukey"].ToString();
             cmds.Add(sp_StocktakingID);
 
-            //System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
-            //sp_mdivision.ParameterName = "@MDivisionid";
-            //sp_mdivision.Value = Sci.Env.User.Keyword;
-            //cmds.Add(sp_mdivision);
-
+            // System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
+            // sp_mdivision.ParameterName = "@MDivisionid";
+            // sp_mdivision.Value = Sci.Env.User.Keyword;
+            // cmds.Add(sp_mdivision);
             System.Data.SqlClient.SqlParameter sp_poid = new System.Data.SqlClient.SqlParameter();
             sp_poid.ParameterName = "@poid";
-            sp_poid.Value = dr["id"].ToString();
+            sp_poid.Value = this.dr["id"].ToString();
             cmds.Add(sp_poid);
 
             System.Data.SqlClient.SqlParameter sp_seq1 = new System.Data.SqlClient.SqlParameter();
             sp_seq1.ParameterName = "@seq1";
-            sp_seq1.Value = dr["seq1"].ToString();
+            sp_seq1.Value = this.dr["seq1"].ToString();
             cmds.Add(sp_seq1);
 
             System.Data.SqlClient.SqlParameter sp_seq2 = new System.Data.SqlClient.SqlParameter();
             sp_seq2.ParameterName = "@seq2";
-            sp_seq2.Value = dr["seq2"].ToString();
+            sp_seq2.Value = this.dr["seq2"].ToString();
             cmds.Add(sp_seq2);
 
             #endregion
-            if (!(result = DBProxy.Current.ExecuteSP("", "dbo.usp_SingleItemRecaculate", cmds)))
+            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_SingleItemRecaculate", cmds)))
             {
-                //MyUtility.Msg.WarningBox(result.Messages[1].ToString()); 
+                // MyUtility.Msg.WarningBox(result.Messages[1].ToString());
                 Exception ex = result.GetException();
                 MyUtility.Msg.WarningBox(ex.Message);
                 return;
             }
 
             MyUtility.Msg.InfoBox("Finished!!");
-            this.Dispose();  //重算完自動關閉視窗
+            this.Dispose();  // 重算完自動關閉視窗
         }
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel("");
-            //MyUtility.Excel.CopyToXls(grid1.GetTable(), "", "", headerRow: 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(string.Empty);
 
+            // MyUtility.Excel.CopyToXls(grid1.GetTable(), "", "", headerRow: 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
             this.ShowWaitMessage("Excel Processing...");
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Columns[1].NumberFormat = "yyyy-MM-dd";
@@ -868,16 +885,16 @@ namespace Sci.Production.Warehouse
             worksheet.Columns[8].NumberFormat = "@";
             worksheet.Columns[9].NumberFormat = "@";
 
-            for (int i = 1; i <= gridTransactionDetail.Columns.Count; i++)
+            for (int i = 1; i <= this.gridTransactionDetail.Columns.Count; i++)
             {
-                worksheet.Cells[1, i] = gridTransactionDetail.Columns[i - 1].Name;
+                worksheet.Cells[1, i] = this.gridTransactionDetail.Columns[i - 1].Name;
             }
 
-            for (int i = 0; i < gridTransactionDetail.Rows.Count; i++)
+            for (int i = 0; i < this.gridTransactionDetail.Rows.Count; i++)
             {
-                for (int j = 0; j < gridTransactionDetail.Columns.Count; j++)
+                for (int j = 0; j < this.gridTransactionDetail.Columns.Count; j++)
                 {
-                    worksheet.Cells[i + 2, j + 1] = gridTransactionDetail.Rows[i].Cells[j].Value;
+                    worksheet.Cells[i + 2, j + 1] = this.gridTransactionDetail.Rows[i].Cells[j].Value;
                 }
             }
 
@@ -885,7 +902,7 @@ namespace Sci.Production.Warehouse
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P03_Transaction");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P03_Transaction");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

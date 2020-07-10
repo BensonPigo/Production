@@ -2,18 +2,14 @@
 using Sci.Data;
 using Sci.Win;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
 {
-    public partial class R17 : Sci.Win.Tems.PrintForm
+    public partial class R17 : Win.Tems.PrintForm
     {
         private string BuyerDelivery1;
         private string BuyerDelivery2;
@@ -197,7 +193,7 @@ drop table #tmp,#DistinctSeq,#diffSeq,#diffSeqData
 
             this.ShowWaitMessage("Excel Processing...");
             string excelName = "Shipping_R17";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             MyUtility.Excel.CopyToXls(this.PrintTable, string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
             excelApp.DisplayAlerts = false;
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
@@ -210,8 +206,15 @@ drop table #tmp,#DistinctSeq,#diffSeq,#diffSeqData
             workbook.Close();
             excelApp.Quit();
 
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);
-            if (excelApp != null) Marshal.FinalReleaseComObject(excelApp);
+            if (worksheet != null)
+            {
+                Marshal.FinalReleaseComObject(worksheet);
+            }
+
+            if (excelApp != null)
+            {
+                Marshal.FinalReleaseComObject(excelApp);
+            }
             #endregion
 
             this.HideWaitMessage();

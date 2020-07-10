@@ -1,13 +1,5 @@
 ﻿using Ict;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 // 請有興趣使用但是目前沒有那個領域的控制項，而想加新東西的人；
 // 或是目前有那個領域東西，但是一些通用行為不支援的情況

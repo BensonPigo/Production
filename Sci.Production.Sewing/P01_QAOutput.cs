@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿using System.Data;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
-using System.Linq;
-using Sci.Data;
 
 namespace Sci.Production.Sewing
 {
     /// <summary>
     /// P01_QAOutput
     /// </summary>
-    public partial class P01_QAOutput : Sci.Win.Subs.Input8A
+    public partial class P01_QAOutput : Win.Subs.Input8A
     {
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings qaqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings qaqty = new DataGridViewGeneratorNumericColumnSettings();
 
         /// <summary>
         /// P01_QAOutput

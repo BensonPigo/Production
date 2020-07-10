@@ -31,7 +31,7 @@
             this.labelDate = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.dateDate = new Sci.Win.UI.DateRange();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -108,6 +108,6 @@
         private Win.UI.Label labelDate;
         private Win.UI.Label labelBrand;
         private Win.UI.DateRange dateDate;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
     }
 }

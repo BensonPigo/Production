@@ -36,7 +36,7 @@
             this.txtReceiver = new Sci.Win.UI.TextBox();
             this.labelReceiver = new Sci.Win.UI.Label();
             this.numNW = new Sci.Win.UI.NumericBox();
-            this.txtunit_ftyUnit = new Sci.Production.Class.txtunit_fty();
+            this.txtunit_ftyUnit = new Sci.Production.Class.Txtunit_fty();
             this.labelUnit = new Sci.Win.UI.Label();
             this.numQty = new Sci.Win.UI.NumericBox();
             this.txtCTNNo = new Sci.Win.UI.TextBox();
@@ -53,9 +53,9 @@
             this.labelPrice = new Sci.Win.UI.Label();
             this.labelDescription = new Sci.Win.UI.Label();
             this.labelSPNo = new Sci.Win.UI.Label();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.txtTeamLeader = new Sci.Win.UI.TextBox();
             this.displayTeamLeader = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -513,7 +513,7 @@
         private Win.UI.TextBox txtReceiver;
         private Win.UI.Label labelReceiver;
         private Win.UI.NumericBox numNW;
-        private Class.txtunit_fty txtunit_ftyUnit;
+        private Class.Txtunit_fty txtunit_ftyUnit;
         private Win.UI.Label labelUnit;
         private Win.UI.NumericBox numQty;
         private Win.UI.TextBox txtCTNNo;
@@ -530,9 +530,9 @@
         private Win.UI.Label labelPrice;
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelSPNo;
-        private Class.txtseason txtseason;
-        private Class.txtstyle txtstyle;
-        private Class.txtbrand txtbrand;
+        private Class.Txtseason txtseason;
+        private Class.Txtstyle txtstyle;
+        private Class.Txtbrand txtbrand;
         private Win.UI.TextBox txtTeamLeader;
         private Win.UI.DisplayBox displayTeamLeader;
     }

@@ -41,7 +41,7 @@
             this.txtRemark = new Sci.Win.UI.TextBox();
             this.checkHoliday = new Sci.Win.UI.CheckBox();
             this.btnBatchEdit = new Sci.Win.UI.Button();
-            this.txtSewingLine = new Sci.Production.Class.txtsewingline();
+            this.txtSewingLine = new Sci.Production.Class.Txtsewingline();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -246,7 +246,7 @@
             // 
             this.txtSewingLine.BackColor = System.Drawing.Color.White;
             this.txtSewingLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtSewingLine.factoryobjectName = this.displayFactory;
+            this.txtSewingLine.FactoryobjectName = this.displayFactory;
             this.txtSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSewingLine.Location = new System.Drawing.Point(130, 135);
             this.txtSewingLine.Name = "txtSewingLine";
@@ -281,7 +281,7 @@
         private Win.UI.CheckBox checkHoliday;
         private Win.UI.TextBox txtRemark;
         private Win.UI.NumericBox numWorkingHours;
-        private Class.txtsewingline txtSewingLine;
+        private Class.Txtsewingline txtSewingLine;
         private Win.UI.DisplayBox displayDay;
         private Win.UI.DateBox dateDate;
         private Win.UI.DisplayBox displayFactory;

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
+            this.txtartworktype_ftyCategory = new Sci.Production.Class.Txtartworktype_fty();
             this.labelCategory = new Sci.Win.UI.Label();
             this.labelCone = new Sci.Win.UI.Label();
             this.labelRefno = new Sci.Win.UI.Label();
@@ -53,14 +53,14 @@
             this.labelH = new Sci.Win.UI.Label();
             this.txtRefno = new Sci.Win.UI.TextBox();
             this.txtDescription = new Sci.Win.UI.TextBox();
-            this.txtcurrencyPrice = new Sci.Production.Class.txtcurrency();
+            this.txtcurrencyPrice = new Sci.Production.Class.Txtcurrency();
             this.displayPrice = new Sci.Win.UI.DisplayBox();
             this.comboCartonDimension = new Sci.Win.UI.ComboBox();
             this.txtThreadType = new Sci.Win.UI.TextBox();
             this.label25 = new Sci.Win.UI.Label();
             this.label26 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.dropDownUnpack = new Sci.Production.Class.comboDropDownList(this.components);
+            this.dropDownUnpack = new Sci.Production.Class.ComboDropDownList(this.components);
             this.label3 = new Sci.Win.UI.Label();
             this.btnSetCardboardPads = new Sci.Win.UI.Button();
             this.numCTNWeight = new Sci.Win.UI.NumericBox();
@@ -81,12 +81,12 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.btnQuotationRecord = new Sci.Win.UI.Button();
             this.btnPaymentHistory = new Sci.Win.UI.Button();
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtSubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.dateQuotDate = new Sci.Win.UI.DateBox();
-            this.txtunit_ftyUnit = new Sci.Production.Class.txtunit_local();
+            this.txtunit_ftyUnit = new Sci.Production.Class.Txtunit_local();
             this.label2 = new Sci.Win.UI.Label();
             this.btnBatchApprove = new Sci.Win.UI.Button();
-            this.txtAccountNo = new Sci.Production.Class.txtAccountNo();
+            this.txtAccountNo = new Sci.Production.Class.TxtAccountNo();
             this.chkIsCarton = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -161,8 +161,8 @@
             // txtartworktype_ftyCategory
             // 
             this.txtartworktype_ftyCategory.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyCategory.cClassify = "\'P\'";
-            this.txtartworktype_ftyCategory.cSubprocess = "";
+            this.txtartworktype_ftyCategory.CClassify = "\'P\'";
+            this.txtartworktype_ftyCategory.CSubprocess = "";
             this.txtartworktype_ftyCategory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "category", true));
             this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(92, 41);
@@ -891,9 +891,9 @@
             this.txtSubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
             this.txtSubconSupplier.DisplayBox1Binding = "";
             this.txtSubconSupplier.IsIncludeJunk = false;
-            this.txtSubconSupplier.isMisc = false;
-            this.txtSubconSupplier.isShipping = false;
-            this.txtSubconSupplier.isSubcon = false;
+            this.txtSubconSupplier.IsMisc = false;
+            this.txtSubconSupplier.IsShipping = false;
+            this.txtSubconSupplier.IsSubcon = false;
             this.txtSubconSupplier.Location = new System.Drawing.Point(93, 130);
             this.txtSubconSupplier.Name = "txtSubconSupplier";
             this.txtSubconSupplier.Size = new System.Drawing.Size(159, 23);
@@ -1030,7 +1030,7 @@
         private Win.UI.Label labelRefno;
         private Win.UI.Label labelCone;
         private Win.UI.Label labelCategory;
-        private Class.txtartworktype_fty txtartworktype_ftyCategory;
+        private Class.Txtartworktype_fty txtartworktype_ftyCategory;
         private Win.UI.Button btnPaymentHistory;
         private Win.UI.Button btnQuotationRecord;
         private Win.UI.CheckBox checkJunk;
@@ -1041,8 +1041,8 @@
         private Win.UI.Label label25;
         private Win.UI.ComboBox comboCartonDimension;
         private Win.UI.DisplayBox displayPrice;
-        private Class.txtcurrency txtcurrencyPrice;
-        private Class.txtsubconNoConfirm txtSubconSupplier;
+        private Class.Txtcurrency txtcurrencyPrice;
+        private Class.TxtsubconNoConfirm txtSubconSupplier;
         private Win.UI.DateBox dateQuotDate;
         private Win.UI.NumericBox numL;
         private Win.UI.NumericBox numWeightofAxle;
@@ -1057,14 +1057,14 @@
         private Win.UI.Label labelCTNWeight;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtArtTkt;
-        private Class.txtunit_local txtunit_ftyUnit;
+        private Class.Txtunit_local txtunit_ftyUnit;
         private Win.UI.Button btnThread;
         private Win.UI.Label label2;
         private Win.UI.Button btnBatchApprove;
         private Win.UI.Button btnSetCardboardPads;
-        private Class.txtAccountNo txtAccountNo;
+        private Class.TxtAccountNo txtAccountNo;
         private Win.UI.CheckBox chkIsCarton;
-        private Class.comboDropDownList dropDownUnpack;
+        private Class.ComboDropDownList dropDownUnpack;
         private Win.UI.Label label3;
     }
 }

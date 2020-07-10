@@ -45,7 +45,7 @@
             this.txtSP_s = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.dateFCRDate = new Sci.Win.UI.DateRange();
             this.label4 = new Sci.Win.UI.Label();
             this.txtGarmentBookingEnd = new Sci.Win.UI.TextBox();
@@ -427,7 +427,7 @@
         private Win.UI.RadioButton radioFormB;
         private Win.UI.RadioButton radioFormA;
         private Win.UI.Button btnQuery;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.DateRange dateFCRDate;
         private Win.UI.Label label4;
         private Win.UI.TextBox txtGarmentBookingEnd;

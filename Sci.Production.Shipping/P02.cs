@@ -18,7 +18,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02
     /// </summary>
-    public partial class P02 : Sci.Win.Tems.Input2
+    public partial class P02 : Win.Tems.Input2
     {
         // 宣告Context Menu Item
         private ToolStripMenuItem bulkpl;
@@ -62,7 +62,7 @@ namespace Sci.Production.Shipping
             MyUtility.Tool.SetupCombox(this.comboTO, 2, 1, "1,SCI,2,Factory,3,Supplier,4,Brand");
             MyUtility.Tool.SetupCombox(this.cmbPayer, 2, 1, "3RD,Freight Collect by 3rd Party,CUST,Freight Collect by Customer,FTY,Freight Pre-Paid by Fty,HAND,Hand Carry");
 
-            Sci.Win.UI.Button btnSendingSchedule = new Win.UI.Button();
+            Win.UI.Button btnSendingSchedule = new Win.UI.Button();
             Point btnSendingScheduleloc = new Point(720, this.lbl_queryfor.Location.Y);
             btnSendingSchedule.Text = "FTY Regular Sending Schedule";
             btnSendingSchedule.Location = btnSendingScheduleloc;
@@ -149,7 +149,7 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Import from FOC PL# (Garment FOC)
         private void ImportFromFOCPL()
         {
-            Sci.Production.Shipping.P02_ImportFromFOCPackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromFOCPackingList(this.CurrentMaintain);
+            P02_ImportFromFOCPackingList callFOCPLForm = new P02_ImportFromFOCPackingList(this.CurrentMaintain);
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callFOCPLForm.ShowDialog(this);
             this.RenewData();
@@ -161,7 +161,7 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Import Bulk PL#
         private void ImportBulkPL()
         {
-            Sci.Production.Shipping.P02_ImportFromBulkPackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromBulkPackingList(this.CurrentMaintain);
+            P02_ImportFromBulkPackingList callFOCPLForm = new P02_ImportFromBulkPackingList(this.CurrentMaintain);
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callFOCPLForm.ShowDialog(this);
             this.RenewData();
@@ -173,7 +173,7 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Import from FOC PL# (Garment FOC)
         private void ImportFromSamplePL()
         {
-            Sci.Production.Shipping.P02_ImportFromSamplePackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromSamplePackingList(this.CurrentMaintain);
+            P02_ImportFromSamplePackingList callFOCPLForm = new P02_ImportFromSamplePackingList(this.CurrentMaintain);
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callFOCPLForm.ShowDialog(this);
             this.RenewData();
@@ -185,7 +185,7 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Import from purchase (Material)
         private void ImportFromPurchase()
         {
-            Sci.Production.Shipping.P02_ImportFromPO callPurchaseForm = new Sci.Production.Shipping.P02_ImportFromPO(this.CurrentMaintain);
+            P02_ImportFromPO callPurchaseForm = new P02_ImportFromPO(this.CurrentMaintain);
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callPurchaseForm.ShowDialog(this);
             this.RenewData();
@@ -196,7 +196,7 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Add by PO# item (Garment Chargeable)
         private void AddByPOItem()
         {
-            Sci.Production.Shipping.P02_AddByPOItem callPOItemForm = new Sci.Production.Shipping.P02_AddByPOItem();
+            P02_AddByPOItem callPOItemForm = new P02_AddByPOItem();
             DataRow dr = ((DataTable)this.detailgridbs.DataSource).NewRow();
             dr["ID"] = this.CurrentMaintain["ID"];
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
@@ -211,7 +211,7 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Add new Item
         private void AddNewItem()
         {
-            Sci.Production.Shipping.P02_AddNewItem callNewItemForm = new Sci.Production.Shipping.P02_AddNewItem();
+            P02_AddNewItem callNewItemForm = new P02_AddNewItem();
             DataRow dr = ((DataTable)this.detailgridbs.DataSource).NewRow();
             dr["ID"] = this.CurrentMaintain["ID"];
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
@@ -232,7 +232,7 @@ namespace Sci.Production.Shipping
             DialogResult edit_result = DialogResult.No;
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "1" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "2" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "3")
             {
-                Sci.Production.Shipping.P02_AddByPOItem callPOItemForm = new Sci.Production.Shipping.P02_AddByPOItem();
+                P02_AddByPOItem callPOItemForm = new P02_AddByPOItem();
                 if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "1")
                 {
                     callPOItemForm.Text = "International Air/Express - Import from FOC PL#";
@@ -244,14 +244,14 @@ namespace Sci.Production.Shipping
 
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "4")
             {
-                Sci.Production.Shipping.P02_EditFromPO callEditPOForm = new Sci.Production.Shipping.P02_EditFromPO();
+                P02_EditFromPO callEditPOForm = new P02_EditFromPO();
                 callEditPOForm.SetUpdate(this.CurrentDetailData);
                 edit_result = callEditPOForm.ShowDialog(this);
             }
 
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "5" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "6" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "7" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "8" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "9")
             {
-                Sci.Production.Shipping.P02_AddNewItem callNewItemForm = new Sci.Production.Shipping.P02_AddNewItem();
+                P02_AddNewItem callNewItemForm = new P02_AddNewItem();
                 callNewItemForm.SetUpdate(this.CurrentDetailData);
                 edit_result = callNewItemForm.ShowDialog(this);
             }
@@ -296,7 +296,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 {
                     if (MyUtility.Convert.GetString(dr["Status"]) == "N")
                     {
-                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Sci.Env.User.UserID));
+                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Env.User.UserID));
                     }
                     else
                     {
@@ -348,7 +348,7 @@ where ID = '{0}'", this.CurrentMaintain["ID"]);
 
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "1" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "2" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "3")
             {
-                Sci.Production.Shipping.P02_AddByPOItem callPOItemForm = new Sci.Production.Shipping.P02_AddByPOItem();
+                P02_AddByPOItem callPOItemForm = new P02_AddByPOItem();
                 if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "1")
                 {
                     callPOItemForm.Text = "International Air/Express - Import From FOC PL#";
@@ -360,14 +360,14 @@ where ID = '{0}'", this.CurrentMaintain["ID"]);
 
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "4")
             {
-                Sci.Production.Shipping.P02_EditFromPO callEditPOForm = new Sci.Production.Shipping.P02_EditFromPO();
+                P02_EditFromPO callEditPOForm = new P02_EditFromPO();
                 callEditPOForm.SetDelete(this.CurrentDetailData);
                 callEditPOForm.ShowDialog(this);
             }
 
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "5" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "6" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "7" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "8" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "9")
             {
-                Sci.Production.Shipping.P02_AddNewItem callNewItemForm = new Sci.Production.Shipping.P02_AddNewItem();
+                P02_AddNewItem callNewItemForm = new P02_AddNewItem();
                 callNewItemForm.SetDelete(this.CurrentDetailData);
                 callNewItemForm.ShowDialog(this);
             }
@@ -412,7 +412,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 {
                     if (MyUtility.Convert.GetString(dr["Status"]) == "N")
                     {
-                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Sci.Env.User.UserID));
+                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Env.User.UserID));
                     }
                     else
                     {
@@ -482,7 +482,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
 
                 rd.ReportDataSource = data;
 
-                using (var frm = new Sci.Win.Subs.ReportView(rd))
+                using (var frm = new Win.Subs.ReportView(rd))
                 {
                     frm.DirectPrint = print_flag;
                     frm.ShowDialog(this);
@@ -493,7 +493,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
         // Context Menu選擇Batch Print
         private void BatchPrint()
         {
-            Sci.Production.Shipping.P02_BatchPrint callPurchaseForm = new Sci.Production.Shipping.P02_BatchPrint(this.CurrentMaintain);
+            P02_BatchPrint callPurchaseForm = new P02_BatchPrint(this.CurrentMaintain);
             callPurchaseForm.ShowDialog(this);
         }
 
@@ -523,7 +523,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             }
             else
             {
-                this.displayStatupdate.Value = Convert.ToDateTime(this.CurrentMaintain["StatusUpdateDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                this.displayStatupdate.Value = Convert.ToDateTime(this.CurrentMaintain["StatusUpdateDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
             }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["SendDate"]))
@@ -532,7 +532,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             }
             else
             {
-                this.displaySendtoSCI.Value = Convert.ToDateTime(this.CurrentMaintain["SendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                this.displaySendtoSCI.Value = Convert.ToDateTime(this.CurrentMaintain["SendDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
             }
 
             this.btnMailto.Enabled = !this.EditMode && (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Sent" || MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Manager"])));
@@ -625,10 +625,10 @@ Order by CTNNo,Seq1,Seq2", masterID);
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings orderid = new DataGridViewGeneratorTextColumnSettings();
             orderid.CellMouseDoubleClick += (s, e) =>
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                    if (e.Button == MouseButtons.Left)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -636,21 +636,21 @@ Order by CTNNo,Seq1,Seq2", masterID);
 
                             if (MyUtility.Convert.GetString(dr["Category"]) == "1" || MyUtility.Convert.GetString(dr["Category"]) == "2" || MyUtility.Convert.GetString(dr["Category"]) == "3")
                             {
-                                Sci.Production.Shipping.P02_AddByPOItem callPOItemForm = new Sci.Production.Shipping.P02_AddByPOItem();
+                                P02_AddByPOItem callPOItemForm = new P02_AddByPOItem();
                                 callPOItemForm.SetView(dr);
                                 callPOItemForm.ShowDialog(this);
                             }
 
                             if (MyUtility.Convert.GetString(dr["Category"]) == "4")
                             {
-                                Sci.Production.Shipping.P02_EditFromPO callEditPOForm = new Sci.Production.Shipping.P02_EditFromPO();
+                                P02_EditFromPO callEditPOForm = new P02_EditFromPO();
                                 callEditPOForm.SetView(dr);
                                 callEditPOForm.ShowDialog(this);
                             }
 
                             if (MyUtility.Convert.GetString(dr["Category"]) == "5" || MyUtility.Convert.GetString(dr["Category"]) == "6" || MyUtility.Convert.GetString(dr["Category"]) == "7" || MyUtility.Convert.GetString(dr["Category"]) == "8" || MyUtility.Convert.GetString(dr["Category"]) == "9")
                             {
-                                Sci.Production.Shipping.P02_AddNewItem callNewItemForm = new Sci.Production.Shipping.P02_AddNewItem();
+                                P02_AddNewItem callNewItemForm = new P02_AddNewItem();
                                 callNewItemForm.SetView(dr);
                                 callNewItemForm.ShowDialog(this);
                             }
@@ -733,11 +733,11 @@ Order by CTNNo,Seq1,Seq2", masterID);
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
-            this.CurrentMaintain["Manager"] = MyUtility.GetValue.Lookup("Supervisor", Sci.Env.User.UserID, "Pass1", "ID");
+            this.CurrentMaintain["Handle"] = Env.User.UserID;
+            this.CurrentMaintain["Manager"] = MyUtility.GetValue.Lookup("Supervisor", Env.User.UserID, "Pass1", "ID");
             this.CurrentMaintain["NW"] = 0;
             this.CurrentMaintain["CTNNW"] = 0;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.txtCarrier.ReadOnly = true; // 因為Key Down事件，如果按Delete or Backspace按鍵會真的將字元給移除，如果跳出視窗後按Cancel的話，資料會不正確，所以就把此欄位設定為ReadOnly
             this.txtCarrierbyCustomer.ReadOnly = true;
             this.txtCarrierbyFty.ReadOnly = true;
@@ -746,7 +746,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (!( MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" ||
+            if (!(MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" ||
                    MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Sent" ||
                    MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved"))
             {
@@ -1010,7 +1010,6 @@ outer apply (
                         this.CurrentMaintain["IsSpecialSending"] = false;
                     }
                 }
-
             }
             else
             {
@@ -1021,7 +1020,7 @@ outer apply (
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "HC", "Express", Convert.ToDateTime(this.CurrentMaintain["ShipDate"]), 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(Env.User.Keyword + "HC", "Express", Convert.ToDateTime(this.CurrentMaintain["ShipDate"]), 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -1050,7 +1049,7 @@ outer apply (
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            Sci.Production.Shipping.P02_Print callPurchaseForm = new Sci.Production.Shipping.P02_Print(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            P02_Print callPurchaseForm = new P02_Print(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callPurchaseForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -1073,16 +1072,16 @@ outer apply (
             }
 
             string sqlCmd = string.Empty;
-            Sci.Win.Tools.SelectItem item;
+            SelectItem item;
             if (MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "1")
             {
                 sqlCmd = "select ID from Factory WITH (NOLOCK) where Junk = 0 and ExpressGroup <> ''";
-                item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", this.txtFrom.Text);
+                item = new SelectItem(sqlCmd, "10", this.txtFrom.Text);
             }
             else
             {
                 sqlCmd = "select ID,NameEN from Brand WITH (NOLOCK) where Junk = 0";
-                item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,50", this.txtFrom.Text);
+                item = new SelectItem(sqlCmd, "10,50", this.txtFrom.Text);
             }
 
             DialogResult returnResult = item.ShowDialog();
@@ -1204,11 +1203,11 @@ outer apply (
             }
 
             string sqlCmd = string.Empty;
-            Sci.Win.Tools.SelectItem item;
+            SelectItem item;
             if (this.CurrentMaintain["ToTag"].ToString() == "2")
             {
                 sqlCmd = "select ID from SCIFty WITH (NOLOCK) where Junk = 0 AND ExpressGroup <> ''";
-                item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", this.txtTO.Text);
+                item = new SelectItem(sqlCmd, "10", this.txtTO.Text);
             }
             else
             {
@@ -1221,12 +1220,12 @@ and not exists(select 1 from SCIFty where id=s.id )
 select ID,AbbCH = Abb,AbbEN = Abb 
 from LocalSupp WITH (NOLOCK) where Junk = 0
 and IsFactory=0";
-                    item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,20,20", this.txtTO.Text);
+                    item = new SelectItem(sqlCmd, "8,20,20", this.txtTO.Text);
                 }
                 else
                 {
                     sqlCmd = "select ID,NameEN,CountryID from Brand WITH (NOLOCK) where Junk = 0";
-                    item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,20,0", this.txtTO.Text);
+                    item = new SelectItem(sqlCmd, "8,20,0", this.txtTO.Text);
                 }
             }
 
@@ -1472,7 +1471,7 @@ where FromTag='{fromTag}'
 and ToTag='{toTag}' 
 and (FromInclude like'%{fromCountry}%' or FromInclude = '')
 and (ToInclude like'%{toCountry}%' or ToInclude = '')";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,8,10,20", this.txtCarrier.Text);
+            SelectItem item = new SelectItem(sqlCmd, "8,8,10,20", this.txtCarrier.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -1492,7 +1491,7 @@ and (ToInclude like'%{toCountry}%' or ToInclude = '')";
             {
                 for (int i = 0; i < this.txtBLNo.Text.Trim().Length; i++)
                 {
-                    var asc = ASCIIEncoding.ASCII.GetBytes(this.txtBLNo.Text.Substring(i, 1));
+                    var asc = Encoding.ASCII.GetBytes(this.txtBLNo.Text.Substring(i, 1));
                     if (!((asc[0] >= 48 && asc[0] <= 57) || (asc[0] >= 65 && asc[0] <= 90)))
                     {
                         this.CurrentMaintain["BLNo"] = string.Empty;
@@ -1547,7 +1546,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 {
                     if (MyUtility.Convert.GetString(dr["Status"]) == "N")
                     {
-                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Sci.Env.User.UserID));
+                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Env.User.UserID));
                     }
                     else
                     {
@@ -1564,11 +1563,11 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 }
             }
 
-                Sci.Production.Shipping.P02_CTNDimensionAndWeight callNextForm = new Sci.Production.Shipping.P02_CTNDimensionAndWeight(
+            P02_CTNDimensionAndWeight callNextForm = new P02_CTNDimensionAndWeight(
 (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" || MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Sent") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Manager"]))), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null);
-                callNextForm.ShowDialog(this);
-                this.RenewData();
-                this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            callNextForm.ShowDialog(this);
+            this.RenewData();
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
         }
 
         /// <inheritdoc/>
@@ -1588,7 +1587,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
             }
 
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Send > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1602,7 +1601,7 @@ from Express
 where ID = '{1}';
 
 update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -1624,7 +1623,7 @@ from Express
 where ID = '{1}';
 
 update Express set Status = 'New', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -1650,7 +1649,7 @@ update Express set Status = 'New', StatusUpdateDate = GETDATE(), EditName = '{0}
             }
 
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Junk > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1664,7 +1663,7 @@ from Express
 where ID = '{1}';
 
 update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             updateCmds.Add(string.Format("update PackingList set pulloutdate=null where ExpressID = '{0}' and Type = 'F'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             updateCmds.Add(string.Format("update PackingList set ExpressID = '' where ExpressID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
@@ -1733,7 +1732,7 @@ update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0
             }
 
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Approve > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1746,7 +1745,7 @@ from Express
 where ID = '{1}';
 
 update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("d") + "'";
@@ -1770,7 +1769,7 @@ update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName =
                 return;
             }
 
-                string sqlchk = $@"
+            string sqlchk = $@"
 select PackingListID = concat('FOC PL : ',ed.PackingListID)
 from Express_Detail ed
 inner join PackingList pl on pl.ID = ed.PackingListID and pl.Type = 'F'
@@ -1799,7 +1798,7 @@ where ed.ID = '{this.CurrentMaintain["ID"]}' and p.Status in ('Confirmed','Locke
             }
 
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unapprove > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1814,7 +1813,7 @@ from Express
 where ID = '{1}';
 
 update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             updateCmds.Add(string.Format("update PackingList set pulloutdate=null where ExpressID = '{0}' and Type = 'F'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
@@ -1848,7 +1847,7 @@ update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0
                     MyUtility.Convert.GetString(this.CurrentMaintain["ToSite"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "3" ? "-" + MyUtility.Convert.GetString(this.displayTO.Value) : string.Empty,
                     MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                    MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)),
+                    MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ShipDate"]).ToString(string.Format("{0}", Env.Cfg.DateStringFormat)),
                     MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Junk" ? " -Cancel" : string.Empty);
 
                 StringBuilder content = new StringBuilder();
@@ -1869,10 +1868,10 @@ When first applicant's team leader approval, anyone can not do any modification.
                     MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "1" ? MyUtility.Convert.GetString(this.CurrentMaintain["FromSite"]) : MyUtility.Convert.GetString(this.displayFrom.Value),
                     MyUtility.Convert.GetString(this.CurrentMaintain["ToSite"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "3" ? "-" + MyUtility.Convert.GetString(this.displayTO.Value) : string.Empty,
-                    MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
+                    MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ShipDate"]).ToString(string.Format("{0}", Env.Cfg.DateStringFormat))));
                 #endregion
 
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, string.Empty, content.ToString(), false, false);
+                var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject, string.Empty, content.ToString(), false, false);
                 email.ShowDialog(this);
             }
         }
@@ -1980,7 +1979,7 @@ from FreightCollectByCustomer
 where BrandID='{this.txtTO.Text}'
 and Dest='{this.CurrentMaintain["Dest"]}'
 ";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,10", this.txtCarrier.Text);
+            SelectItem item = new SelectItem(sqlCmd, "10,10", this.txtCarrier.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -2008,7 +2007,7 @@ and Dest='{this.CurrentMaintain["Dest"]}'
         private void CarrierbyFtyPopup()
         {
             string sqlCmd = @"select id,Abb from LocalSupp with(nolock) where Junk = 0";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,15", this.txtCarrier.Text);
+            SelectItem item = new SelectItem(sqlCmd, "10,15", this.txtCarrier.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

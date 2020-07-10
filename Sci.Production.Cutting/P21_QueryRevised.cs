@@ -11,11 +11,11 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P21_QueryRevised : Sci.Win.Forms.Base
+    public partial class P21_QueryRevised : Win.Forms.Base
     {
         public P21_QueryRevised()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void OnFormLoaded()
@@ -39,17 +39,18 @@ namespace Sci.Production.Cutting
             #region 事件
             setSeq1.CellValidating += (s, e) =>
             {
-                DataRow selectedRow = gridP21Query.GetDataRow(e.RowIndex);
+                DataRow selectedRow = this.gridP21Query.GetDataRow(e.RowIndex);
                 string oldValue = selectedRow["Seq1"].ToString();
                 string newValue = e.FormattedValue.ToString();
                 string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
 
-                //沒有異動
+                // 沒有異動
                 if (oldValue.Equals(newValue) || e.RowIndex == -1)
                 {
                     return;
                 }
-                //輸入空，才清空這些欄位，因此if else不能跟前面放一起
+
+                // 輸入空，才清空這些欄位，因此if else不能跟前面放一起
                 if (MyUtility.Check.Empty(newValue))
                 {
                     selectedRow["Seq1"] = string.Empty;
@@ -59,7 +60,7 @@ namespace Sci.Production.Cutting
                 }
                 else
                 {
-                    //異動or不存在：清空Roll#欄位、Dyelot、Yardage資料
+                    // 異動or不存在：清空Roll#欄位、Dyelot、Yardage資料
                     selectedRow["Roll"] = string.Empty;
                     selectedRow["Dyelot"] = string.Empty;
                     selectedRow["Yardage"] = DBNull.Value;
@@ -69,17 +70,18 @@ namespace Sci.Production.Cutting
 
             setSeq2.CellValidating += (s, e) =>
             {
-                DataRow selectedRow = gridP21Query.GetDataRow(e.RowIndex);
+                DataRow selectedRow = this.gridP21Query.GetDataRow(e.RowIndex);
                 string oldValue = selectedRow["Seq2"].ToString();
                 string newValue = e.FormattedValue.ToString();
                 string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
 
-                //沒有異動
+                // 沒有異動
                 if (oldValue.Equals(newValue) || e.RowIndex == -1)
                 {
                     return;
                 }
-                //輸入空，才清空這些欄位，因此if else不能跟前面放一起
+
+                // 輸入空，才清空這些欄位，因此if else不能跟前面放一起
                 if (MyUtility.Check.Empty(newValue))
                 {
                     selectedRow["Seq2"] = string.Empty;
@@ -89,7 +91,7 @@ namespace Sci.Production.Cutting
                 }
                 else
                 {
-                    //異動or不存在：清空Roll#欄位、Dyelot、Yardage資料
+                    // 異動or不存在：清空Roll#欄位、Dyelot、Yardage資料
                     selectedRow["Roll"] = string.Empty;
                     selectedRow["Dyelot"] = string.Empty;
                     selectedRow["Yardage"] = DBNull.Value;
@@ -99,18 +101,19 @@ namespace Sci.Production.Cutting
 
             setRoll.CellValidating += (s, e) =>
             {
-                DataRow selectedRow = gridP21Query.GetDataRow(e.RowIndex);
+                DataRow selectedRow = this.gridP21Query.GetDataRow(e.RowIndex);
                 string oldValue = selectedRow["Roll"].ToString();
                 string newValue = e.FormattedValue.ToString();
                 string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
                 string dyelot = selectedRow["Dyelot"].ToString();
 
-                //沒有異動，修改Roll時，Dyelot不為空才驗證
+                // 沒有異動，修改Roll時，Dyelot不為空才驗證
                 if (oldValue.Equals(newValue) || e.RowIndex == -1 || MyUtility.Check.Empty(dyelot))
                 {
                     return;
                 }
-                //不允許空白，用舊的填回去
+
+                // 不允許空白，用舊的填回去
                 if (MyUtility.Check.Empty(newValue))
                 {
                     selectedRow["Roll"] = oldValue;
@@ -122,18 +125,19 @@ namespace Sci.Production.Cutting
 
             setDyelot.CellValidating += (s, e) =>
             {
-                DataRow selectedRow = gridP21Query.GetDataRow(e.RowIndex);
+                DataRow selectedRow = this.gridP21Query.GetDataRow(e.RowIndex);
                 string oldValue = selectedRow["Dyelot"].ToString();
                 string newValue = e.FormattedValue.ToString();
                 string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
                 string Roll = selectedRow["Roll"].ToString();
 
-                //沒有異動
+                // 沒有異動
                 if (oldValue.Equals(newValue) || e.RowIndex == -1 || MyUtility.Check.Empty(Roll))
                 {
                     return;
                 }
-                //不允許空白，用舊的填回去
+
+                // 不允許空白，用舊的填回去
                 if (MyUtility.Check.Empty(newValue))
                 {
                     selectedRow["Dyelot"] = oldValue;
@@ -144,10 +148,9 @@ namespace Sci.Production.Cutting
             };
             #endregion
 
-
             #region Grid 設定
-            Helper.Controls.Grid.Generator(this.gridP21Query)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.Helper.Controls.Grid.Generator(this.gridP21Query)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("Factory", header: "Factory", iseditingreadonly: true, width: Widths.AnsiChars(7))
                 .Text("EstCutCell", header: "Est.CutCell", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("CuttingSpNO", header: "Cutting SP#", iseditingreadonly: true, width: Widths.AnsiChars(15))
@@ -165,19 +168,19 @@ namespace Sci.Production.Cutting
                 .DateTime("EditDate", header: "EditDate", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 ;
 
-            //MaxLength 設定
+            // MaxLength 設定
             cbb_Seq1.MaxLength = 3;
             cbb_Seq2.MaxLength = 2;
             cbb_Roll.MaxLength = 8;
             cbb_Dyelot.MaxLength = 8;
-            //底色設定
+
+            // 底色設定
             this.gridP21Query.Columns["SEQ1"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridP21Query.Columns["SEQ2"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridP21Query.Columns["Roll"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridP21Query.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridP21Query.Columns["Yardage"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
-
 
             for (int i = 0; i < this.gridP21Query.Columns.Count; i++)
             {
@@ -187,14 +190,14 @@ namespace Sci.Production.Cutting
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            Query();
+            this.Query();
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
             #region 變數宣告
 
-            gridP21Query.ValidateControl();
+            this.gridP21Query.ValidateControl();
             DataRow[] errorArr;
             DialogResult dResult;
             DualResult returnResult;
@@ -204,10 +207,13 @@ namespace Sci.Production.Cutting
             StringBuilder updateCmd = new StringBuilder();
             #endregion
 
-            DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
-                       
+            DataTable gridData = (DataTable)this.listControlBindingSource1.DataSource;
+
             #region 檢查空、詢問視窗
-            if (MyUtility.Check.Empty(gridData) || gridData.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(gridData) || gridData.Rows.Count == 0)
+            {
+                return;
+            }
 
             selectedRow = gridData.Select("Selected = 1");
             if (selectedRow.Length == 0)
@@ -217,7 +223,10 @@ namespace Sci.Production.Cutting
             }
 
             dResult = MyUtility.Msg.QuestionBox("Do you want to update it?");
-            if (dResult == DialogResult.No) return;
+            if (dResult == DialogResult.No)
+            {
+                return;
+            }
 
             currentTable = selectedRow.CopyToDataTable();
 
@@ -226,7 +235,7 @@ namespace Sci.Production.Cutting
                                                            MyUtility.Check.Empty(o["Seq2"]) ||
                                                            MyUtility.Check.Empty(o["Roll"]) ||
                                                            MyUtility.Check.Empty(o["Dyelot"]) || MyUtility.Check.Empty(o["Yardage"])).ToArray();
-        
+
             if (errorArr.Length > 0)
             {
                 MyUtility.Msg.WarningBox("<Seq1>,<Seq2>, <Roll#>, <Dyelot>, <Yardage> can not be empty or 0 ! ");
@@ -234,10 +243,10 @@ namespace Sci.Production.Cutting
             }
             #endregion
 
-            //取tableSchema
+            // 取tableSchema
             returnResult = DBProxy.Current.GetTableSchema(null, "CuttingOutputFabricRecord", out tableSchema);
 
-            //開始UPDATE
+            // 開始UPDATE
             using (TransactionScope _transactionscope = new TransactionScope())
             {
                 try
@@ -257,8 +266,7 @@ namespace Sci.Production.Cutting
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
 
-
-                    //將更新的資料從畫面上去掉
+                    // 將更新的資料從畫面上去掉
                     foreach (DataRow item in selectedRow)
                     {
                         gridData.Rows.Remove(item);
@@ -267,11 +275,10 @@ namespace Sci.Production.Cutting
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
-            
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
@@ -284,10 +291,13 @@ namespace Sci.Production.Cutting
             DataTable currentTable;
             #endregion
 
-            DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
+            DataTable gridData = (DataTable)this.listControlBindingSource1.DataSource;
 
             #region 檢查勾選、確認對話框
-            if (MyUtility.Check.Empty(gridData) || gridData.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(gridData) || gridData.Rows.Count == 0)
+            {
+                return;
+            }
 
             selectedRow = gridData.Select("Selected = 1");
             if (selectedRow.Length == 0)
@@ -299,14 +309,17 @@ namespace Sci.Production.Cutting
             currentTable = selectedRow.CopyToDataTable();
 
             dResult = MyUtility.Msg.QuestionBox("Do you want to delete it?");
-            if (dResult == DialogResult.No) return;
+            if (dResult == DialogResult.No)
+            {
+                return;
+            }
 
             #endregion
 
-            //取tableSchema
+            // 取tableSchema
             returnResult = DBProxy.Current.GetTableSchema(null, "CuttingOutputFabricRecord", out tableSchema);
 
-            //開始Delete
+            // 開始Delete
             using (TransactionScope _transactionscope = new TransactionScope())
             {
                 try
@@ -322,39 +335,33 @@ namespace Sci.Production.Cutting
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
 
-                    Query();
+                    this.Query();
                 }
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
         }
 
-
         //---自行定義---
-
         private void Query()
         {
-
             #region 參數宣告
             DataTable dt;
             DualResult result;
-            DateTime? cutOutput_s = dateCutOutput.Value1 ?? null;
-            DateTime? cutOutput_e = dateCutOutput.Value2 ?? null;
-            string cutRefNo_s = txtCutRefNo_s.Text;
-            string cutRefNo_e = txtCutRefNo_e.Text;
-            string factory = txtfactory.Text;
-            string cutCell_s = txtCutCell_s.Text;
-            string cutCell_e = txtCutCell_e.Text;
-            string spNo = txtSpNo.Text;
+            DateTime? cutOutput_s = this.dateCutOutput.Value1 ?? null;
+            DateTime? cutOutput_e = this.dateCutOutput.Value2 ?? null;
+            string cutRefNo_s = this.txtCutRefNo_s.Text;
+            string cutRefNo_e = this.txtCutRefNo_e.Text;
+            string factory = this.txtfactory.Text;
+            string cutCell_s = this.txtCutCell_s.Text;
+            string cutCell_e = this.txtCutCell_e.Text;
+            string spNo = this.txtSpNo.Text;
             string outerApplyWhere = string.Empty;
             #endregion
-
-
-
 
             #region 組SQL
 
@@ -392,7 +399,7 @@ namespace Sci.Production.Cutting
 								SELECT TOP 1 ID,FactoryID,CutCellid FROM WorkOrder WHERE CutRef=cofr.CutRef AND MDivisionId = cofr.MDivisionId
                                                                                          {outerApplyWhere}
 							)WorkOrder
-                            WHERE cofr.MDivisionId='{Sci.Env.User.Keyword}'
+                            WHERE cofr.MDivisionId='{Env.User.Keyword}'
                             ");
             #endregion
 
@@ -402,36 +409,42 @@ namespace Sci.Production.Cutting
             {
                 sqlCmd.Append(Environment.NewLine + $" And C.cDate >= '{cutOutput_s.Value.ToShortDateString()}'");
             }
+
             if (!MyUtility.Check.Empty(cutOutput_e))
             {
                 sqlCmd.Append(Environment.NewLine + $" And C.cDate <= '{cutOutput_e.Value.ToShortDateString()}'");
             }
+
             if (!MyUtility.Check.Empty(cutCell_s))
             {
                 sqlCmd.Append(Environment.NewLine + $" And w.CutCellid >= '{cutCell_s}'");
             }
+
             if (!MyUtility.Check.Empty(cutCell_e))
             {
                 sqlCmd.Append(Environment.NewLine + $" And w.CutCellid <= '{cutCell_e}'");
             }
+
             if (!MyUtility.Check.Empty(cutRefNo_s))
             {
                 sqlCmd.Append(Environment.NewLine + $" And cofr.CutRef >= '{cutRefNo_s}'");
             }
+
             if (!MyUtility.Check.Empty(cutRefNo_e))
             {
                 sqlCmd.Append(Environment.NewLine + $" And cofr.CutRef <= '{cutRefNo_e}'");
             }
+
             if (!MyUtility.Check.Empty(factory))
             {
                 sqlCmd.Append(Environment.NewLine + $" And W.FactoryID = '{factory}'");
             }
+
             if (!MyUtility.Check.Empty(spNo))
             {
                 sqlCmd.Append(Environment.NewLine + $" And W.ID = '{spNo}'");
             }
             #endregion
-
 
             sqlCmd.Append(Environment.NewLine + @" GROUP BY WorkOrder.FactoryID ,WorkOrder.CutCellid,WorkOrder.ID,cofr.CutRef,cofr.SEQ1, cofr.SEQ2 
                                                    , cofr.Roll,cofr.Dyelot,cofr.Yardage,addInfo.IdAndName, cofr.AddDate
@@ -442,18 +455,17 @@ namespace Sci.Production.Cutting
 
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
+
             this.HideWaitMessage();
 
-            listControlBindingSource1.DataSource = dt;
+            this.listControlBindingSource1.DataSource = dt;
             if (dt == null || dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
             }
-
         }
-        
     }
 }

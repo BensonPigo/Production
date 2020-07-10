@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.PublicPrg
 {
     public static partial class ListToDataTable
     {
-
         public static DataTable ToDataTable<T>(List<T> items)
         {
             var tb = new DataTable(typeof(T).Name);
@@ -35,6 +33,7 @@ namespace Sci.Production.PublicPrg
 
             return tb;
         }
+
         /// <summary>
         /// Determine of specified type is nullable
         /// </summary>

@@ -37,8 +37,8 @@
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.labelShipper = new Sci.Win.UI.Label();
             this.comboShipper = new Sci.Win.UI.ComboBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.lbSCIDelivery = new Sci.Win.UI.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
@@ -239,11 +239,11 @@
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelCategory;
         private Win.UI.DateRange dateBuyerDelivery;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.Label labelShipper;
         private Win.UI.ComboBox comboShipper;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboCategory;
         private Win.UI.Label lbSCIDelivery;
         private Win.UI.DateRange dateSCIDelivery;
     }

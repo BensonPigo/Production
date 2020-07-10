@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
@@ -13,7 +10,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Sewing
 {
-    public partial class R09 : Sci.Win.Tems.PrintForm
+    public partial class R09 : Win.Tems.PrintForm
     {
         public R09(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -48,6 +45,7 @@ namespace Sci.Production.Sewing
             {
                 where += "\r\n" + $"and o.FtyGroup='{this.txtfactory1.Text}'";
             }
+
             if (!MyUtility.Check.Empty(this.txtSP1.Text) || !MyUtility.Check.Empty(this.txtSP2.Text))
             {
                 if (!MyUtility.Check.Empty(this.txtSP1.Text) && !MyUtility.Check.Empty(this.txtSP2.Text))
@@ -136,12 +134,12 @@ drop table #tmp
             this.SetCount(this.printData.Rows.Count);
 
             string excelFile = "Sewing_R09";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + excelFile + ".xltx"); // 開excelapp
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + excelFile + ".xltx"); // 開excelapp
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, excelFile + ".xltx", 1, false, null, excelApp, false, null, false);
 
             #region Save Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelFile);
-            Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.ActiveWorkbook;
+            string strExcelName = Class.MicrosoftFile.GetName(excelFile);
+            Excel.Workbook workbook = excelApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
 
             excelApp.Visible = true;

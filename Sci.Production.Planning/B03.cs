@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -14,7 +13,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// B03
     /// </summary>
-    public partial class B03 : Sci.Win.Tems.Input6
+    public partial class B03 : Win.Tems.Input6
     {
         private DataTable style_artwork;
 
@@ -50,7 +49,7 @@ namespace Sci.Production.Planning
             }
 
             DataRow dr = this.gridArtworkType.GetDataRow<DataRow>(this.gridArtworkType.GetSelectedRowIndex());
-            var frm = new Sci.Production.Planning.B03_Copy(dr);
+            var frm = new B03_Copy(dr);
             frm.ShowDialog(this);
             this.RenewData();
             return true;
@@ -139,12 +138,12 @@ namespace Sci.Production.Planning
         protected override void OnDetailGridSetup()
         {
             #region Supplier 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             ts4.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem item;
+                    Win.Tools.SelectItem item;
                     string sqlcmd;
 
                     sqlcmd = @"
@@ -153,7 +152,7 @@ from LocalSupp l WITH (NOLOCK)
 WHERE l.Junk=0  AND l.IsFactory = 0
 order by ID
 ";
-                    item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,15,5", null);
+                    item = new Win.Tools.SelectItem(sqlcmd, "10,15,5", null);
                     item.Size = new System.Drawing.Size(480, 500);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -259,7 +258,7 @@ order by ID
 INNER JOIN LocalSupp S WITH (NOLOCK) ON S.ID = A.LocalSuppId Where a.styleUkey = {0}
 ORDER BY UKEY
 ", masterID);
-            string countryID = MyUtility.GetValue.Lookup($@"select CountryID from MDivision where id = '{Sci.Env.User.Keyword}'");
+            string countryID = MyUtility.GetValue.Lookup($@"select CountryID from MDivision where id = '{Env.User.Keyword}'");
             string sqlcmd = $@"
 select
 	 sa.[StyleUkey]

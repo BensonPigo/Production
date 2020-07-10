@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Xml.Linq;
@@ -16,20 +12,20 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Centralized
 {
-    public partial class R05 : Sci.Win.Tems.PrintForm
+    public partial class R05 : Win.Tems.PrintForm
     {
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.numYear.Value = MyUtility.Convert.GetDecimal(DateTime.Now.Year);
-            this.comboCentralizedM1.SetDefalutIndex(Sci.Env.User.Keyword);
-            this.comboCentralizedFactory1.SetDefalutIndex(Sci.Env.User.Factory, true);
+            this.comboCentralizedM1.SetDefalutIndex(Env.User.Keyword);
+            this.comboCentralizedFactory1.SetDefalutIndex(Env.User.Factory, true);
 
             MyUtility.Tool.SetupCombox(this.cmbDate, 2, 1, "1,SCI Delivery Date,2,Buyer Delivery Date");
             this.cmbDate.SelectedValue = "1";
             this.comboFtyZone.IsIncludeSampleRoom = false;
-            this.comboFtyZone.setDataSourceAllFty();
+            this.comboFtyZone.SetDataSourceAllFty();
         }
 
         private int Year;
@@ -78,7 +74,7 @@ namespace Sci.Production.Centralized
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
             this.dtAllData = null;
@@ -422,7 +418,7 @@ drop table #tmpBaseOrderID,#tmpBaseByOrderID,#tmpBaseTransOrderID,#tmpBaseStep1,
 
             if (this.dtAllData == null || this.dtAllData[0].Rows.Count == 0)
             {
-                return Result.F("Data not found!");
+                return Ict.Result.F("Data not found!");
             }
 
             var allDetail = this.dtAllData[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["FtyZone"]));
@@ -582,7 +578,7 @@ drop table #tmp
             }
 
             DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -599,10 +595,10 @@ drop table #tmp
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Centralized_R05.xltx";
-            Microsoft.Office.Interop.Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
-            //excelApp.Visible = true;
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
+            // excelApp.Visible = true;
+            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
             if (this.Date == "1")
             {
                 worksheet.Cells[3, 1] = "SCI delivery";
@@ -611,6 +607,7 @@ drop table #tmp
             {
                 worksheet.Cells[3, 1] = "Buyer delivery";
             }
+
             // 複製分頁
             Excel.Worksheet worksheet1 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
             Excel.Worksheet newSummarySheet;

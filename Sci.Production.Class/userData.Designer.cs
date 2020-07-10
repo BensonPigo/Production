@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class userData
+    partial class UserData
     {
         /// <summary>
         /// Required designer variable.

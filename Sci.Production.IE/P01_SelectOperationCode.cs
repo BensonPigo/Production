@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
@@ -14,7 +11,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// P01_SelectOperationCode
     /// </summary>
-    public partial class P01_SelectOperationCode : Sci.Win.Subs.Base
+    public partial class P01_SelectOperationCode : Win.Subs.Base
     {
         private DataTable gridData;
 
@@ -49,7 +46,7 @@ namespace Sci.Production.IE
         /// </summary>
         protected override void OnFormLoaded()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings s1 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings s1 = new DataGridViewGeneratorTextColumnSettings();
             base.OnFormLoaded();
             this.gridDetail.IsEditingReadOnly = true;
             this.gridDetail.DataSource = this.listControlBindingSource1;
@@ -62,7 +59,7 @@ namespace Sci.Production.IE
                     foreach (DataGridViewRow datarow in selectRows)
                     {
                         this._P01SelectOperationCode = ((DataRowView)datarow.DataBoundItem).Row;
-                        this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+                        this.DialogResult = DialogResult.Cancel;
                     }
                 }
             };
@@ -145,7 +142,7 @@ namespace Sci.Production.IE
                 this._P01SelectOperationCode = ((DataRowView)datarow.DataBoundItem).Row;
             }
 
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
     }
 }

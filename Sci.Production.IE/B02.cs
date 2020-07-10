@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.IE
@@ -11,7 +6,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_B02
     /// </summary>
-    public partial class B02 : Sci.Win.Tems.Input1
+    public partial class B02 : Win.Tems.Input1
     {
         /// <summary>
         /// B02
@@ -56,7 +51,7 @@ namespace Sci.Production.IE
         {
             base.ClickNewAfter();
             this.CurrentMaintain["EffectiveDate"] = DateTime.Today;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
         }
 
         /// <summary>

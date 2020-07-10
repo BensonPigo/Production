@@ -49,9 +49,9 @@
             this.dateBDelivery = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.comboRFIDProcessLocation = new Sci.Production.Class.comboRFIDProcessLocation();
-            this.txtsubprocess = new Sci.Production.Class.txtsubprocess();
-            this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
+            this.comboRFIDProcessLocation = new Sci.Production.Class.ComboRFIDProcessLocation();
+            this.txtsubprocess = new Sci.Production.Class.Txtsubprocess();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             this.dateSewInLine = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
@@ -434,14 +434,14 @@
         private System.Windows.Forms.TextBox txtCutRefStart;
         private System.Windows.Forms.TextBox txtCutRefEnd;
         private Win.UI.Label labelFactory;
-        private Class.comboFactory comboFactory;
-        private Class.txtsubprocess txtsubprocess;
+        private Class.ComboFactory comboFactory;
+        private Class.Txtsubprocess txtsubprocess;
         private Win.UI.Label lbBundleScanDate;
         private Win.UI.DateRange dateBundleScanDate;
         private Win.UI.Label lbEstCuttingDate;
         private Win.UI.DateRange dateEstCutDate;
         private Win.UI.Label label1;
-        private Class.comboRFIDProcessLocation comboRFIDProcessLocation;
+        private Class.ComboRFIDProcessLocation comboRFIDProcessLocation;
         private Win.UI.DateRange dateBDelivery;
         private Win.UI.Label label2;
         private Win.UI.Label label3;

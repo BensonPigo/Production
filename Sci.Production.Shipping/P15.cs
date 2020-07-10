@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P15 : Sci.Win.Tems.Input6
+    public partial class P15 : Win.Tems.Input6
     {
         public P15(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -15,7 +15,6 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
             this.DefaultFilter = "ID = MainExportID  AND AddDate > DATEADD(Year,-2,GETDATE())";
             this.detailgrid.AllowUserToOrderColumns = true;
-
         }
 
         protected override void OnDetailEntered()
@@ -164,7 +163,6 @@ and Junk = 0
                 this.disPaEta.Text = dtHeader.Rows[0]["Port_ETA"].ToString();
                 this.disWaEta.Text = dtHeader.Rows[0]["Whse_ETA"].ToString();
                 this.disShipMode.Text = dtHeader.Rows[0]["FormStatus"].ToString();
-
             }
 
             // BLNO 的相關資訊
@@ -228,10 +226,10 @@ order by e.ID
 
         protected override void OnDetailGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings colContainers = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings colContainers = new DataGridViewGeneratorTextColumnSettings();
             colContainers.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     if (e.RowIndex != -1 && this.CurrentDetailData["ContainerNo"].Empty() == false)
                     {

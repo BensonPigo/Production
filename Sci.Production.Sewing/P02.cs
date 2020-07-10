@@ -14,16 +14,15 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// P02
     /// </summary>
-    public partial class P02 : Sci.Win.Tems.Input6
+    public partial class P02 : Win.Tems.Input6
     {
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings orderID = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings qaqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings orderID = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings qaqty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings inlineqty = new DataGridViewGeneratorNumericColumnSettings();
 
         private DateTime? SewingMonthlyLockDate;
         private decimal systemTMS = 0;
         private decimal? oldttlqaqty;
-        private decimal? oldManHour;
 
         /// <summary>
         /// P02
@@ -33,7 +32,7 @@ namespace Sci.Production.Sewing
               : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "' and Category = 'M'";
+            this.DefaultFilter = "FactoryID = '" + Env.User.Factory + "' and Category = 'M'";
             DataRow sysData;
             if (MyUtility.Check.Seek("select StdTMS from System WITH (NOLOCK) ", out sysData))
             {
@@ -95,7 +94,7 @@ where sd.ID = '{0}'",
             #region Right click & Validating
             this.orderID.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (this.EditMode)
                     {
@@ -114,9 +113,9 @@ inner join Factory f on mo.factoryid = f.ID
 where   mo.Junk = 0 
         and mo.FTYGroup = '{0}'
         and f.IsProduceFty = 1",
-                                Sci.Env.User.Factory);
+                                Env.User.Factory);
 
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,13,15,5,10", dr["OrderID"].ToString(), "ID,MockupID,Style,Season,Brand");
+                            SelectItem item = new SelectItem(sqlCmd, "15,13,15,5,10", dr["OrderID"].ToString(), "ID,MockupID,Style,Season,Brand");
                             item.Size = new System.Drawing.Size(700, 600);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -130,7 +129,7 @@ where   mo.Junk = 0
                                     e.EditingControl.Text = item.GetSelectedString();
 
                                     // sql參數
-                                    System.Data.SqlClient.SqlParameter sp1e = new System.Data.SqlClient.SqlParameter("@factoryid", Sci.Env.User.Factory);
+                                    System.Data.SqlClient.SqlParameter sp1e = new System.Data.SqlClient.SqlParameter("@factoryid", Env.User.Factory);
                                     System.Data.SqlClient.SqlParameter sp2e = new System.Data.SqlClient.SqlParameter("@id", e.EditingControl.Text);
 
                                     IList<System.Data.SqlClient.SqlParameter> cmdse = new List<System.Data.SqlClient.SqlParameter>();
@@ -195,7 +194,7 @@ where   mo.Junk = 0
                     if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["OrderID"]))
                     {
                         // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", Sci.Env.User.Factory);
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", Env.User.Factory);
                         System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@id", MyUtility.Convert.GetString(e.FormattedValue));
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -350,14 +349,14 @@ where   mo.Junk = 0
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Category"] = "M";
             this.CurrentMaintain["OutputDate"] = DateTime.Today.AddDays(-1).ToString("d");
             this.CurrentMaintain["Shift"] = "D";
             this.CurrentMaintain["Team"] = "A";
             this.CurrentMaintain["WorkHour"] = 0;
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
         }
 
         /// <inheritdoc/>
@@ -496,7 +495,6 @@ where   mo.Junk = 0
             }
             #endregion
 
-
             #region 若status = Sent ，表身[QA Qty]總和與[Manhours]必為相同
 
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Sent"))
@@ -519,7 +517,7 @@ where   mo.Junk = 0
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Sci.Env.User.Factory, "Factory", "ID") + "MM", "SewingOutput", DateTime.Today, 3, "Id", null);
+                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Env.User.Factory, "Factory", "ID") + "MM", "SewingOutput", DateTime.Today, 3, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -695,9 +693,9 @@ where   mo.Junk = 0
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Sewing_RVS", true);
+            Win.UI.SelectReason callReason = new Win.UI.SelectReason("Sewing_RVS", true);
             DialogResult dResult = callReason.ShowDialog(this);
-            if (dResult == System.Windows.Forms.DialogResult.OK)
+            if (dResult == DialogResult.OK)
             {
                 string insertCmd = string.Format(
                     @"insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
@@ -708,12 +706,12 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                     "New",
                     callReason.ReturnReason,
                     callReason.ReturnRemark,
-                    Sci.Env.User.UserID);
+                    Env.User.UserID);
 
                 string updateCmd = $@"
 update SewingOutput 
 set LockDate = null, Status = 'New'
-, EditDate = GetDate(), EditName = '{Sci.Env.User.UserID}'
+, EditDate = GetDate(), EditName = '{Env.User.UserID}'
 where ID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'";
 
                 using (TransactionScope transactionScope = new TransactionScope())
@@ -746,10 +744,10 @@ where ID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'";
 
         private void BtnReqUnlock_Click(object sender, EventArgs e)
         {
-            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Sewing_RVS");
+            Win.UI.SelectReason callReason = new Win.UI.SelectReason("Sewing_RVS");
             DialogResult dResult = callReason.ShowDialog(this);
 
-            if (dResult == System.Windows.Forms.DialogResult.OK)
+            if (dResult == DialogResult.OK)
             {
                 string toAddress = MyUtility.GetValue.Lookup($@"
 
@@ -778,7 +776,7 @@ WHERE ID = 'SCIMIS'
 ");
 
                 #region 填寫Mail需要的資料
-                string ccAddress = "";
+                string ccAddress = string.Empty;
                 string subject = "Unlock Sewing(Mockup)";
                 string od = string.Empty;
 
@@ -802,7 +800,7 @@ Remark : {callReason.ReturnRemark}
                 #endregion
 
                 // 塞進MailTo物件
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
+                var email = new MailTo(Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
 
                 // email畫面關閉後額外塞入CC人員
                 email.SendingBefore += this.Email_SendingBefore;
@@ -813,7 +811,7 @@ Remark : {callReason.ReturnRemark}
                     // 寄信成功後寫入SewingOutput_DailyUnlock
                     string sqlcmd = $@"
 INSERT INTO SewingOutput_DailyUnlock (SewingOutputID ,ReasonID ,Remark ,RequestDate ,RequestName)
-values('{this.CurrentMaintain["ID"]}' ,'{callReason.ReturnReason}' ,'{callReason.ReturnRemark}' ,getdate() ,'{Sci.Env.User.UserID}')";
+values('{this.CurrentMaintain["ID"]}' ,'{callReason.ReturnReason}' ,'{callReason.ReturnRemark}' ,getdate() ,'{Env.User.UserID}')";
 
                     DualResult rs = DBProxy.Current.Execute("Production", sqlcmd);
                     if (!rs)
@@ -827,8 +825,8 @@ values('{this.CurrentMaintain["ID"]}' ,'{callReason.ReturnReason}' ,'{callReason
         /// <summary>
         /// email畫面關閉後額外塞入CC人員
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
         private void Email_SendingBefore(object sender, MailTo.SendMailBeforeArg e)
         {
             e.Mail.CC.Add("planning@sportscity.com.tw");
@@ -858,7 +856,7 @@ INNER JOIN MockupOrder mo ON mo.ID = sd.OrderId
 where 1=1
     and s.OutputDate < = CAST (GETDATE() AS DATE) 
     and s.LockDate is null 
-    and s.FactoryID  = '{Sci.Env.User.Factory}'
+    and s.FactoryID  = '{Env.User.Factory}'
 ";
             if (!MyUtility.Check.Seek(sqlcmdChk))
             {
@@ -874,7 +872,7 @@ where 1=1
             string sqlcmd = $@"
 update  s 
 set s.LockDate = CONVERT(date, GETDATE()) , s.Status='Sent'
-, s.editname='{Sci.Env.User.UserID}' 
+, s.editname='{Env.User.UserID}' 
 , s.editdate=getdate()
 FROM SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON sd.ID = s.ID
@@ -882,7 +880,7 @@ INNER JOIN MockupOrder mo ON mo.ID = sd.OrderId
 where 1=1
     and s.OutputDate < = CAST (GETDATE() AS DATE) 
     and s.LockDate is null 
-    and s.FactoryID  = '{Sci.Env.User.Factory}'
+    and s.FactoryID  = '{Env.User.Factory}'
 ";
 
             using (TransactionScope scope = new TransactionScope())
@@ -900,9 +898,9 @@ where 1=1
                 scope.Complete();
             }
 
-            if (MyUtility.Check.Seek($@"select 1 from Factory where type !='S' and id = '{Sci.Env.User.Factory}'"))
+            if (MyUtility.Check.Seek($@"select 1 from Factory where type !='S' and id = '{Env.User.Factory}'"))
             {
-                Sci.Production.Sewing.P01.SendMail();
+                P01.SendMail();
             }
         }
 
@@ -916,7 +914,6 @@ where 1=1
                 MyUtility.Msg.WarningBox("You have no permission.");
                 return;
             }
-
 
             if (MyUtility.Msg.QuestionBox("Unlock sewing data?") == DialogResult.No)
             {
@@ -945,14 +942,14 @@ ORDER by Ukey DESC
 
 --Recall 一律是從Sent改回New
 INSERT INTO SewingOutput_History (ID ,HisType ,OldValue ,NewValue ,ReasonID ,Remark ,AddName ,AddDate)
-VALUES ('{this.CurrentMaintain["ID"]}','Status' ,'Sent' ,'New' ,isnull(@reasonID,''),isnull(@remark,''),'{Sci.Env.User.UserID}' ,GETDATE())
+VALUES ('{this.CurrentMaintain["ID"]}','Status' ,'Sent' ,'New' ,isnull(@reasonID,''),isnull(@remark,''),'{Env.User.UserID}' ,GETDATE())
 
 Update SewingOutput_DailyUnlock SET 
-UnLockDate = GETDATE() ,UnLockName= '{Sci.Env.User.UserID}'
+UnLockDate = GETDATE() ,UnLockName= '{Env.User.UserID}'
 where ukey=@ukey
 
 UPDATE SewingOutput SET Status='New', LockDate = NULL 
-, editname='{Sci.Env.User.UserID}' 
+, editname='{Env.User.UserID}' 
 , editdate=getdate()
 WHERE ID = '{this.CurrentMaintain["ID"]}' 
 ";
@@ -974,6 +971,5 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
 
             MyUtility.Msg.InfoBox("Unlock data successfully!");
         }
-
     }
 }

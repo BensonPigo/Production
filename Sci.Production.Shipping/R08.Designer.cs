@@ -48,9 +48,9 @@
             this.checkOnlyFOC = new Sci.Win.UI.CheckBox();
             this.lbPulloutDate = new Sci.Win.UI.Label();
             this.datePulloutDate = new Sci.Win.UI.DateRange();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.txtCustcd = new Sci.Production.Class.txtcustcd();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtCustcd = new Sci.Production.Class.Txtcustcd();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -400,12 +400,12 @@
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.DateRange dateCutOffDate;
-        private Class.txtbrand txtbrand;
-        private Class.txtcustcd txtCustcd;
+        private Class.Txtbrand txtbrand;
+        private Class.Txtcustcd txtCustcd;
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.CheckBox checkOnlyPrintTheIrregularData;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboCategory;
         private Win.UI.CheckBox checkExcludeLocalOrder;
         private Win.UI.CheckBox checkExcludeFOC;
         private Win.UI.CheckBox checkOnlyFOC;

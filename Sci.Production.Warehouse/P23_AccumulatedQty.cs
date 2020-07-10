@@ -1,32 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
 
-
 namespace Sci.Production.Warehouse
 {
-    public partial class P23_AccumulatedQty : Sci.Win.Subs.Base
+    public partial class P23_AccumulatedQty : Win.Subs.Base
     {
-        public Sci.Win.Tems.Base P23;
+        public Win.Tems.Base P23;
         protected DataRow dr;
+
         public P23_AccumulatedQty(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
+            this.InitializeComponent();
+            this.dr = data;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             StringBuilder selectCommand1 = new StringBuilder();
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
 ;with cte
 as (
 select pd.id as poid, pd.seq1,pd.seq2,st.ToStockType,pd.Qty,pd.ShipQty,pd.StockQty,pd.InputQty,pd.OutputQty
@@ -71,27 +68,32 @@ select sum(qty) accu_qty from (
 					and s2.ToPOID = m.poid and s2.ToSeq1 = m.seq1 and s2.ToSeq2 = m.seq2 and s1.Id !='{0}'
 	)xx
 ) xxx
-", dr["id"],dr["mdivisionid"]));
+", this.dr["id"], this.dr["mdivisionid"]));
 
             DataTable selectDataTable1;
-            P23.ShowWaitMessage("Data Loading...");
+            this.P23.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
-            
-            if (selectResult1 == false)
-            { ShowErr(selectCommand1.ToString(), selectResult1); }
-            P23.HideWaitMessage();
-            //selectDataTable1.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - trans_qty");
-            bindingSource1.DataSource = selectDataTable1;
 
-            //設定Grid1的顯示欄位
+            if (selectResult1 == false)
+            {
+                this.ShowErr(selectCommand1.ToString(), selectResult1);
+            }
+
+            this.P23.HideWaitMessage();
+
+            // selectDataTable1.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - trans_qty");
+            this.bindingSource1.DataSource = selectDataTable1;
+
+            // 設定Grid1的顯示欄位
             this.gridAccumulatedQty.IsEditingReadOnly = true;
-            this.gridAccumulatedQty.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
+            this.gridAccumulatedQty.DataSource = this.bindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
                  .Numeric("poqty", header: "PO Qty", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2)
-                 //.Numeric("inputqty", header: "Input Qty", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2)
+
+                 // .Numeric("inputqty", header: "Input Qty", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2)
                  .Numeric("taipei_qty", header: "Taipei Output", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2)
                  .Numeric("accu_qty", header: "Accu. Qty", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2)
                  .Numeric("trans_qty", header: "Transfer Qty", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2)

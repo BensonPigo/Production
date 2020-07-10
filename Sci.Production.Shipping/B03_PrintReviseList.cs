@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
@@ -15,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B03_PrintReviseList
     /// </summary>
-    public partial class B03_PrintReviseList : Sci.Win.Tems.PrintForm
+    public partial class B03_PrintReviseList : Win.Tems.PrintForm
     {
         private string reviseDate1;
         private string reviseDate2;
@@ -39,7 +33,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlCmd = string.Format(
                 @"with tmpCode
@@ -85,7 +79,7 @@ order by l.EditDate,l.ID",
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -100,7 +94,7 @@ order by l.EditDate,l.ID",
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_B03_PrintReviseList.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_B03_PrintReviseList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -130,7 +124,7 @@ order by l.EditDate,l.ID",
             excel.Cells.EntireRow.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_B03_PrintReviseList");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_B03_PrintReviseList");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

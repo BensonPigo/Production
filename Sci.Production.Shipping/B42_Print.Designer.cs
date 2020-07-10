@@ -40,7 +40,7 @@
             this.radioEachConsumption = new Sci.Win.UI.RadioButton();
             this.radioFormForCustomSystem = new Sci.Win.UI.RadioButton();
             this.lbContractNo = new Sci.Win.UI.Label();
-            this.txtCustomsContract1 = new Sci.Production.Class.txtCustomsContract();
+            this.txtCustomsContract1 = new Sci.Production.Class.TxtCustomsContract();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -255,6 +255,6 @@
         private Win.UI.RadioButton radioEachConsumption;
         private Win.UI.RadioButton radioFormForCustomSystem;
         private Win.UI.Label lbContractNo;
-        private Class.txtCustomsContract txtCustomsContract1;
+        private Class.TxtCustomsContract txtCustomsContract1;
     }
 }

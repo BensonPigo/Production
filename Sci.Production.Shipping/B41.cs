@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
-using Ict;
 using Sci.Data;
 
 namespace Sci.Production.Shipping
@@ -14,7 +10,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B41
     /// </summary>
-    public partial class B41 : Sci.Win.Tems.Input1
+    public partial class B41 : Win.Tems.Input1
     {
         private string editName;
         private DateTime? editDate;
@@ -49,7 +45,7 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            this.CurrentMaintain["NLCodeEditName"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["NLCodeEditName"] = Env.User.UserID;
             this.CurrentMaintain["NLCodeEditDate"] = DateTime.Now;
             if (MyUtility.Check.Empty(this.txtNLCode.Text))
             {
@@ -85,7 +81,7 @@ namespace Sci.Production.Shipping
         // NL Code
         private void TxtNLCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 @"select NLCode,HSCode,UnitID
 from VNContract_Detail WITH (NOLOCK) 
 where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )

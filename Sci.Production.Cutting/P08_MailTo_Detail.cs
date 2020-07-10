@@ -5,7 +5,7 @@ namespace Sci.Production.Cutting
     /// <summary>
     /// P08_MailTo_Detail
     /// </summary>
-    public partial class P08_MailTo_Detail : Sci.Win.Subs.Input6A
+    public partial class P08_MailTo_Detail : Win.Subs.Input6A
     {
         /// <summary>
         /// P08_MailTo_Detail

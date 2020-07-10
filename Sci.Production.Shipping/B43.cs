@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
@@ -15,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B43
     /// </summary>
-    public partial class B43 : Sci.Win.Tems.Input6
+    public partial class B43 : Win.Tems.Input6
     {
         /// <summary>
         /// B43
@@ -244,7 +241,7 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
             base.ClickConfirm();
             string updateCmds = string.Format(
                 "update VNContract set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
@@ -262,7 +259,7 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
 
             string updateCmds = string.Format(
                 "update VNContract set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
@@ -331,7 +328,7 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
                     newRow["WrongUnit"] = 1;
                 }
 
-                newRow["AddName"] = Sci.Env.User.UserID;
+                newRow["AddName"] = Env.User.UserID;
                 newRow["AddDate"] = DateTime.Now;
                 excelDataTable.Rows.Add(newRow);
             }
@@ -359,9 +356,9 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
         // Add New NL Code
         private void BtnAddNewNLCode_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.B43_AddNLCode callNextForm = new Sci.Production.Shipping.B43_AddNLCode(this.CurrentMaintain);
+            B43_AddNLCode callNextForm = new B43_AddNLCode(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 this.RenewData();
             }

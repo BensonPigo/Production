@@ -1,13 +1,7 @@
 ﻿using Sci.Data;
 using Sci.Win.Tems;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using System.Data.SqlClient;

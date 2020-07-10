@@ -1,68 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Sci.Data;
-using Sci.Win.UI;
 using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class txttpeuser : Sci.Win.UI._UserControl
+    /// <summary>
+    /// Txt TPE user
+    /// </summary>
+    public partial class Txttpeuser : Win.UI._UserControl
     {
-        public txttpeuser()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txttpeuser"/> class.
+        /// </summary>
+        public Txttpeuser()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
-        {
-            get { return this.displayBox1; }
-        }
+        /// <inheritdoc/>
+        public Win.UI.DisplayBox DisplayBox1 { get; private set; }
 
-        public Sci.Win.UI.DisplayBox DisplayBox2
-        {
-            get { return this.displayBox2; }
-        }
+        /// <inheritdoc/>
+        public Win.UI.DisplayBox DisplayBox2 { get; private set; }
 
+        /// <inheritdoc/>
         [Bindable(true)]
         public string DisplayBox1Binding
         {
-            set { this.displayBox1.Text = value; }
-            get { return this.displayBox1.Text; }
+            get { return this.DisplayBox1.Text; }
+            set { this.DisplayBox1.Text = value; }
         }
 
+        /// <inheritdoc/>
         [Bindable(true)]
         public string DisplayBox2Binding
         {
-            set { this.displayBox2.Text = value; }
-            get { return this.displayBox2.Text; }
+            get { return this.DisplayBox2.Text; }
+            set { this.DisplayBox2.Text = value; }
         }
 
-        private void displayBox1_TextChanged(object sender, EventArgs e)
+        private void DisplayBox1_TextChanged(object sender, EventArgs e)
         {
-            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 WITH (NOLOCK) Where id='{0}'", this.displayBox1.Text.ToString());
+            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 WITH (NOLOCK) Where id='{0}'", this.DisplayBox1.Text.ToString());
             DataRow dr;
             if (MyUtility.Check.Seek(selectSql, out dr, connectionName: "Production"))
             {
-                this.displayBox2.Text = MyUtility.Check.Empty(dr["extNo"]) ? "" : dr["Name"].ToString();
+                this.DisplayBox2.Text = MyUtility.Check.Empty(dr["extNo"]) ? string.Empty : dr["Name"].ToString();
                 if (!MyUtility.Check.Empty(dr["extNo"]))
                 {
-                    this.displayBox2.Text = this.displayBox2.Text + " #" + dr["extNo"].ToString();
+                    this.DisplayBox2.Text = this.DisplayBox2.Text + " #" + dr["extNo"].ToString();
                 }
             }
             else
             {
-                this.displayBox2.Text = "";
+                this.DisplayBox2.Text = string.Empty;
             }
         }
 
-        private void displayBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void DisplayBox1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             string sql;
             List<SqlParameter> sqlpar = new List<SqlParameter>();
@@ -73,14 +71,18 @@ namespace Sci.Production.Class
 		                    Mail = email
                     from Production.dbo.TPEPass1 WITH (NOLOCK) 
                     where id = @id";
-            sqlpar.Add(new SqlParameter("@id", displayBox1.Text.ToString()));
+            sqlpar.Add(new SqlParameter("@id", this.DisplayBox1.Text.ToString()));
 
-            userData ud = new userData(sql, sqlpar);
+            UserData ud = new UserData(sql, sqlpar);
 
-            if (ud.errMsg == null)
+            if (ud.ErrMsg == null)
+            {
                 ud.ShowDialog();
+            }
             else
-                MyUtility.Msg.ErrorBox(ud.errMsg);
+            {
+                MyUtility.Msg.ErrorBox(ud.ErrMsg);
+            }
         }
     }
 }

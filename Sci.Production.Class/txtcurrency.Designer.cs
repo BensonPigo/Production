@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtcurrency
+    partial class Txtcurrency
     {
         /// <summary> 
         /// 設計工具所需的變數。

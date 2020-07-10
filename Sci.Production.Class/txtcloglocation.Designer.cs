@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtcloglocation
+    partial class Txtcloglocation
     {
         /// <summary> 
         /// 設計工具所需的變數。

@@ -1,14 +1,7 @@
 ﻿using Ict;
-using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Thread
@@ -16,7 +9,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// P02_QtyBreakdownByColorway
     /// </summary>
-    public partial class P02_QtyBreakdownByColorway : Sci.Win.Subs.Base
+    public partial class P02_QtyBreakdownByColorway : Win.Subs.Base
     {
         private DataRow P02CurrentMaintain = null;
 

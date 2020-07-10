@@ -40,7 +40,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.txtWKNo = new Sci.Win.UI.TextBox();
-            this.txtShippingReason1 = new Sci.Production.Class.txtShippingReason();
+            this.txtShippingReason1 = new Sci.Production.Class.TxtShippingReason();
             this.btnDownloadexcel = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -339,7 +339,7 @@
         private Win.UI.TextBox txtWKNo;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Class.txtShippingReason txtShippingReason1;
+        private Class.TxtShippingReason txtShippingReason1;
         private Win.UI.Button btnDownloadexcel;
     }
 }

@@ -2,24 +2,18 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
-    public partial class P01_Artwork : Sci.Win.Subs.Base
+    public partial class P01_Artwork : Win.Subs.Base
     {
         private string Order_ArtworkId;
-        public P01_Artwork(string ID)
+
+        public P01_Artwork(string iD)
         {
             this.InitializeComponent();
-            this.Order_ArtworkId = ID;
+            this.Order_ArtworkId = iD;
         }
 
         protected override void OnFormLoaded()
@@ -65,10 +59,10 @@ ORDER BY ArtworkTypeID,Article";
 
             foreach (DataRow gridData in artworkUnit.Rows)
             {
-                gridData["CreateBy"] = gridData["AddName"].ToString() + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-                if (gridData["EditDate"] != System.DBNull.Value)
+                gridData["CreateBy"] = gridData["AddName"].ToString() + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
+                if (gridData["EditDate"] != DBNull.Value)
                 {
-                    gridData["EditBy"] = gridData["EditName"].ToString() + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                    gridData["EditBy"] = gridData["EditName"].ToString() + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                 }
 
                 DataRow[] findrow = artworkUnit.Select(string.Format("ArtworkTypeID = '{0}'", gridData["ArtworkTypeID"].ToString()));
@@ -225,9 +219,9 @@ drop table #baseArtworkOrderQty,#comboBySP
             // 一組key對應的只會有一組 PatternCode
             DataTable value = dtComboResults[0];
 
-            //開始畫表格
+            // 開始畫表格
 
-            //前三欄是固定的
+            // 前三欄是固定的
             DataTable dt = new DataTable();
             dt.Columns.Add("SP#", typeof(string));
             dt.Columns.Add("Article", typeof(string));
@@ -238,25 +232,25 @@ drop table #baseArtworkOrderQty,#comboBySP
                .Text("Article", header: "Article", width: Widths.AnsiChars(10))
                .Text("Order Qty", header: "Order Qty", width: Widths.AnsiChars(10));
 
-            //設定"有幾個"head
-            if (head.Rows.Count>0)
+            // 設定"有幾個"head
+            if (head.Rows.Count > 0)
             {
                 foreach (DataRow item in head.Rows)
                 {
-                    //標投的文字內容，拿Key值來填
+                    // 標投的文字內容，拿Key值來填
                     dt.Columns.Add(item["ArtworkTypeID"].ToString() + item["ArtworkID"].ToString(), typeof(string));
                     this.Helper.Controls.Grid.Generator(this.CombBySPgrid)
                        .Text(item["ArtworkTypeID"].ToString() + item["ArtworkID"].ToString(), header: item["ArtworkTypeID"].ToString() + Environment.NewLine + item["ArtworkID"].ToString(), width: Widths.AnsiChars(10));
                 }
             }
 
-            //依據id開始填row
+            // 依據id開始填row
             foreach (DataRow leftitem in Left.Rows)
             {
                 DataRow row;
                 row = dt.NewRow();
 
-                //前面是固定的
+                // 前面是固定的
                 row["SP#"] = leftitem["ID"].ToString();
                 row["Article"] = leftitem["Article"].ToString();
                 row["Order Qty"] = leftitem["OrderQty"].ToString();
@@ -265,23 +259,24 @@ drop table #baseArtworkOrderQty,#comboBySP
                 {
                     foreach (DataRow valueitem in value.Rows)
                     {
-                        //開始填入PatternCode
-                        //必須對應ID、Article、OrderQty
-                        if (valueitem["ID"].ToString()== leftitem["ID"].ToString() && 
-                            valueitem["Article"].ToString() == leftitem["Article"].ToString()
-                            )
+                        // 開始填入PatternCode
+                        // 必須對應ID、Article、OrderQty
+                        if (valueitem["ID"].ToString() == leftitem["ID"].ToString() &&
+                            valueitem["Article"].ToString() == leftitem["Article"].ToString())
                         {
                             row[valueitem["ArtworkTypeID"].ToString() + valueitem["ArtworkID"].ToString()] = valueitem["PatternCode"].ToString();
                         }
                     }
                 }
+
                 dt.Rows.Add(row);
             }
 
             this.CombBySPSource.DataSource = dt;
             this.CombBySPgrid.IsEditingReadOnly = true;
             this.CombBySPgrid.DataSource = this.CombBySPSource;
-            //凍結前三欄
+
+            // 凍結前三欄
             this.CombBySPgrid.Columns[0].Frozen = true;
             this.CombBySPgrid.Columns[1].Frozen = true;
             this.CombBySPgrid.Columns[2].Frozen = true;

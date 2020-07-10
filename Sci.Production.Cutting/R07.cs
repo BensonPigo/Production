@@ -1,21 +1,15 @@
 ﻿using Ict;
-using Microsoft.Office.Core;
 using Sci.Data;
-using Sci.Utility.Excel;
 using Sci.Win;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
-    public partial class R07 : Sci.Win.Tems.PrintForm
+    public partial class R07 : Win.Tems.PrintForm
     {
         private DataTable[] printData;
         private string Mdivision;
@@ -27,27 +21,26 @@ namespace Sci.Production.Cutting
         private string CutCell1;
         private string CutCell2;
         private string CuttingSP;
-        private decimal? WorkHoursDay ;
-
+        private decimal? WorkHoursDay;
 
         public R07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override bool ValidateInput()
         {
-            this.Mdivision = txtMdivision1.Text;
-            this.Factory = txtfactory1.Text;
-            this.EstCutDate1 = dateEstCutDate.Value1;
-            this.EstCutDate2 = dateEstCutDate.Value2;
-            this.SpreadingNo1 = txtSpreadingNo1.Text;
-            this.SpreadingNo2 = txtSpreadingNo2.Text;
-            this.CutCell1 = txtCell1.Text;
-            this.CutCell2 = txtCell2.Text;
-            this.CuttingSP = txtCuttingSp.Text;
-            this.WorkHoursDay = numWorkHourDay.Value;
+            this.Mdivision = this.txtMdivision1.Text;
+            this.Factory = this.txtfactory1.Text;
+            this.EstCutDate1 = this.dateEstCutDate.Value1;
+            this.EstCutDate2 = this.dateEstCutDate.Value2;
+            this.SpreadingNo1 = this.txtSpreadingNo1.Text;
+            this.SpreadingNo2 = this.txtSpreadingNo2.Text;
+            this.CutCell1 = this.txtCell1.Text;
+            this.CutCell2 = this.txtCell2.Text;
+            this.CuttingSP = this.txtCuttingSp.Text;
+            this.WorkHoursDay = this.numWorkHourDay.Value;
             return base.ValidateInput();
         }
 
@@ -60,34 +53,42 @@ namespace Sci.Production.Cutting
             {
                 where += $" and w.MDivisionId = '{this.Mdivision}' ";
             }
+
             if (!MyUtility.Check.Empty(this.Factory))
             {
                 where += $" and w.FactoryID = '{this.Factory}' ";
             }
+
             if (!MyUtility.Check.Empty(this.EstCutDate1))
             {
                 where += $" and w.EstCutDate >= '{((DateTime)this.EstCutDate1).ToString("yyyy/MM/dd")}' ";
             }
+
             if (!MyUtility.Check.Empty(this.EstCutDate2))
             {
                 where += $" and w.EstCutDate <=  '{((DateTime)this.EstCutDate2).ToString("yyyy/MM/dd")}' ";
             }
+
             if (!MyUtility.Check.Empty(this.SpreadingNo1))
             {
                 where += $" and w.SpreadingNoID >= '{this.SpreadingNo1}' ";
             }
+
             if (!MyUtility.Check.Empty(this.SpreadingNo2))
             {
                 where += $" and w.SpreadingNoID <= '{this.SpreadingNo2}' ";
             }
+
             if (!MyUtility.Check.Empty(this.CutCell1))
             {
                 where += $" and w.CutCellid >= '{this.CutCell1}' ";
             }
+
             if (!MyUtility.Check.Empty(this.CutCell2))
             {
                 where += $" and w.CutCellid <= '{this.CutCell2}' ";
             }
+
             if (!MyUtility.Check.Empty(this.CuttingSP))
             {
                 where += $" and w.ID = '{this.CuttingSP}' ";
@@ -362,39 +363,41 @@ order by d.CutCellid
 
 drop table #tmp2a,#tmp2,#tmp3,#detail,#tmp2a2
 ";
-            DBProxy.Current.DefaultTimeout = 900;  //加長時間為15分鐘，避免timeout
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out printData);
+            DBProxy.Current.DefaultTimeout = 900;  // 加長時間為15分鐘，避免timeout
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.printData);
             if (!result)
             {
-                return Result.F(result.ToString());
+                return Ict.Result.F(result.ToString());
             }
-            DBProxy.Current.DefaultTimeout = 300;  //恢復時間為5分鐘
-            return Result.True;
+
+            DBProxy.Current.DefaultTimeout = 300;  // 恢復時間為5分鐘
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.ShowWaitMessage("Excel Processing...");
-            SetCount(printData[0].Rows.Count);
-            if (printData[0].Rows.Count <= 0)
+            this.SetCount(this.printData[0].Rows.Count);
+            if (this.printData[0].Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+
             string excelName = "Cutting_R07";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
-            printData[0].Columns.Remove("MDivisionid");
-            MyUtility.Excel.CopyToXls(printData[0], "", $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            this.printData[0].Columns.Remove("MDivisionid");
+            MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
             excelApp.DisplayAlerts = false;
-            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[2]; // 取得工作表       
-            DataTable sodt = printData[4];
-            DataTable codt = printData[5];
+            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[2]; // 取得工作表
+            DataTable sodt = this.printData[4];
+            DataTable codt = this.printData[5];
             int s = sodt.Rows.Count;
 
-            worksheet.Cells[1, 2] = printData[1].Rows[0][0];
+            worksheet.Cells[1, 2] = this.printData[1].Rows[0][0];
             worksheet.Cells[2, 2] = DateTime.Now;
-            worksheet.Cells[1, 6] = printData[2].Rows[0][0];
-            worksheet.Cells[2, 6] = printData[3].Rows[0][0];
+            worksheet.Cells[1, 6] = this.printData[2].Rows[0][0];
+            worksheet.Cells[2, 6] = this.printData[3].Rows[0][0];
             string sCol = MyUtility.Excel.ConvertNumericToExcelColumn(s + 1);
             string cCol = MyUtility.Excel.ConvertNumericToExcelColumn(codt.Rows.Count + 1);
             worksheet.Range[$"B4:{sCol}11"].Borders.Weight = 2; // 設定全框線
@@ -413,6 +416,7 @@ drop table #tmp2a,#tmp2,#tmp3,#detail,#tmp2a2
                 worksheet.Cells[10, i + 2] = $"=({col}9/{col}6)";
                 worksheet.Cells[11, i + 2] = $"={col}9-{col}6";
             }
+
             col = col.EqualString(string.Empty) ? "A" : col;
             worksheet.get_Range("A3", col + "3").Merge(false);
 
@@ -433,16 +437,18 @@ drop table #tmp2a,#tmp2,#tmp3,#detail,#tmp2a2
                 worksheet.Cells[24, i + 2] = $"=({col}23/{col}18)";
                 worksheet.Cells[25, i + 2] = $"={col}23-{col}18";
             }
+
             col = col.EqualString(string.Empty) ? "A" : col;
             worksheet.get_Range("A14", col + "14").Merge(false);
             #endregion
             #region sheet Balancing Chart
-            worksheet = excelApp.ActiveWorkbook.Worksheets[3]; // 取得工作表            
+            worksheet = excelApp.ActiveWorkbook.Worksheets[3]; // 取得工作表
 
             for (int i = 0; i < s + codt.Rows.Count - 2; i++)
             {
                 worksheet.Rows[i + 3, Type.Missing].Insert(Excel.XlDirection.xlDown);
             }
+
             for (int i = 0; i < s; i++)
             {
                 col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
@@ -450,6 +456,7 @@ drop table #tmp2a,#tmp2,#tmp3,#detail,#tmp2a2
                 worksheet.Cells[i + 2, 2] = $"='Capacity Forecast Summary'!{col}8";
                 worksheet.Cells[i + 2, 4] = $"='Capacity Forecast Summary'!{col}10";
             }
+
             for (int i = 0; i < codt.Rows.Count; i++)
             {
                 col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
@@ -458,10 +465,10 @@ drop table #tmp2a,#tmp2,#tmp3,#detail,#tmp2a2
                 worksheet.Cells[i + s + 2, 4] = $"='Capacity Forecast Summary'!{col}24";
             }
 
-            worksheet.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden; // 隱藏第3頁sheet
+            worksheet.Visible = Excel.XlSheetVisibility.xlSheetHidden; // 隱藏第3頁sheet
 
             #endregion
-            worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表   
+            worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
             worksheet.Columns.AutoFit();
             #region 釋放上面開啟過excel物件
             string strExcelName = Class.MicrosoftFile.GetName(excelName);
@@ -470,8 +477,15 @@ drop table #tmp2a,#tmp2,#tmp3,#detail,#tmp2a2
             workbook.Close();
             excelApp.Quit();
 
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);
-            if (excelApp != null) Marshal.FinalReleaseComObject(excelApp);
+            if (worksheet != null)
+            {
+                Marshal.FinalReleaseComObject(worksheet);
+            }
+
+            if (excelApp != null)
+            {
+                Marshal.FinalReleaseComObject(excelApp);
+            }
             #endregion
 
             this.HideWaitMessage();

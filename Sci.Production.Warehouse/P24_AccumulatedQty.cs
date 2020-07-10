@@ -1,32 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
 
-
 namespace Sci.Production.Warehouse
 {
-    public partial class P24_AccumulatedQty : Sci.Win.Subs.Base
+    public partial class P24_AccumulatedQty : Win.Subs.Base
     {
-        public Sci.Win.Tems.Base P24;
+        public Win.Tems.Base P24;
         protected DataRow dr;
+
         public P24_AccumulatedQty(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
+            this.InitializeComponent();
+            this.dr = data;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             StringBuilder selectCommand1 = new StringBuilder();
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
 ;with group_detail as(
     select 	d.FromPOID
            	,d.fromseq1
@@ -62,23 +59,25 @@ INNER join (
             inner join dbo.Factory WITH (NOLOCK) on i.FactoryID = factory.ID
 	  ) on I.InventoryPOID = d.FromPOID and i.InventorySeq1 = d.FromSeq1 and i.InventorySeq2 = d.FromSeq2 and  i.Type='5'
 where factory.MDivisionID='{1}'
-group by d.FromPOID,d.fromseq1,d.fromseq2,p.StockUnit,d.scrap_qty, p.POUnit", dr["id"], Sci.Env.User.Keyword));
+group by d.FromPOID,d.fromseq1,d.fromseq2,p.StockUnit,d.scrap_qty, p.POUnit", this.dr["id"], Env.User.Keyword));
 
             DataTable selectDataTable1;
-            P24.ShowWaitMessage("Data Loading...");
+            this.P24.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
 
             if (selectResult1 == false)
-            { ShowErr(selectCommand1.ToString(), selectResult1); }
+            {
+                this.ShowErr(selectCommand1.ToString(), selectResult1);
+            }
 
-            P24.HideWaitMessage();
+            this.P24.HideWaitMessage();
 
-            bindingSource1.DataSource = selectDataTable1;
+            this.bindingSource1.DataSource = selectDataTable1;
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridAccumulatedQty.IsEditingReadOnly = true;
-            this.gridAccumulatedQty.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
+            this.gridAccumulatedQty.DataSource = this.bindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
                  .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("fromseq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("fromseq2", header: "Seq2", width: Widths.AnsiChars(3))

@@ -1,35 +1,26 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
-using System.Transactions;
-using Sci.Win.Tools;
-
 
 namespace Sci.Production.Quality
 {
-    public partial class P01_PhysicalInspection_PointRecord : Sci.Win.Subs.Base
+    public partial class P01_PhysicalInspection_PointRecord : Win.Subs.Base
     {
         private DataTable defRecord;
         private string def_num;
         private DataRow def_dr;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_Points;
+
         public P01_PhysicalInspection_PointRecord(DataRow data_dr, string n_column, bool edit)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             string defect_str = data_dr["def" + n_column].ToString();
             string[] defect = defect_str.Split(new char[] { '/' });
-            def_num = n_column;
-            def_dr = data_dr;
-            DBProxy.Current.Select(null, "Select ID,Type,DescriptionEN,0 as points From FabricDefect WITH (NOLOCK) ", out defRecord);
+            this.def_num = n_column;
+            this.def_dr = data_dr;
+            DBProxy.Current.Select(null, "Select ID,Type,DescriptionEN,0 as points From FabricDefect WITH (NOLOCK) ", out this.defRecord);
             string defid;
             int point;
             if (!MyUtility.Check.Empty(defect_str))
@@ -41,48 +32,59 @@ namespace Sci.Production.Quality
                     {
                         continue;
                     }
+
                     // 第一碼為ID,第二碼為Points
                     defid = dr.Substring(0, 1);
                     point = MyUtility.Convert.GetInt(dr.Substring(1));
-                    DataRow[] Ary = defRecord.Select(string.Format("ID = '{0}'", defid));
+                    DataRow[] Ary = this.defRecord.Select(string.Format("ID = '{0}'", defid));
                     if (Ary.Length > 0)
                     {
                         Ary[0]["Points"] = point;
                     }
                 }
             }
-            gridPhysicalInspection.DataSource = defRecord;
-            gridPhysicalInspection.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(gridPhysicalInspection)
+
+            this.gridPhysicalInspection.DataSource = this.defRecord;
+            this.gridPhysicalInspection.IsEditingReadOnly = false;
+            this.Helper.Controls.Grid.Generator(this.gridPhysicalInspection)
             .Text("ID", header: "Code", width: Widths.AnsiChars(1), iseditingreadonly: true)
             .Text("Type", header: "Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("DescriptionEN", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Numeric("Points", header: "Points", width: Widths.AnsiChars(4), integer_places: 4).Get(out col_Points);
-            GridEditing(edit);
-
+            .Numeric("Points", header: "Points", width: Widths.AnsiChars(4), integer_places: 4).Get(out this.col_Points);
+            this.GridEditing(edit);
         }
+
         private void GridEditing(bool isEditing)
         {
-            col_Points.IsEditingReadOnly = !isEditing;
+            this.col_Points.IsEditingReadOnly = !isEditing;
         }
-        private void btnOK_Click(object sender, EventArgs e) //OK
+
+        private void btnOK_Click(object sender, EventArgs e) // OK
         {
-            gridPhysicalInspection.ValidateControl();
-            int totalPoint = MyUtility.Convert.GetInt(defRecord.Compute("Sum(Points)", ""));
+            this.gridPhysicalInspection.ValidateControl();
+            int totalPoint = MyUtility.Convert.GetInt(this.defRecord.Compute("Sum(Points)", string.Empty));
             if (totalPoint > 20)
             {
                 MyUtility.Msg.WarningBox("According Standard of Inspection, the max. of points per yard is 4,\nso total points can not over 20");
                 return;
             }
-            string def = "";
-            DataRow[] Ary = defRecord.Select("Points<>0");
+
+            string def = string.Empty;
+            DataRow[] Ary = this.defRecord.Select("Points<>0");
             foreach (DataRow dr in Ary)
             {
-                if (def == "") def = dr["ID"].ToString() + dr["Points"].ToString();
-                else def = def + "/" + dr["ID"].ToString() + dr["Points"].ToString();
+                if (def == string.Empty)
+                {
+                    def = dr["ID"].ToString() + dr["Points"].ToString();
+                }
+                else
+                {
+                    def = def + "/" + dr["ID"].ToString() + dr["Points"].ToString();
+                }
             }
-            def_dr["def" + def_num] = def; //填入DefectRecord
-            def_dr["Point" + def_num] = totalPoint;
+
+            this.def_dr["def" + this.def_num] = def; // 填入DefectRecord
+            this.def_dr["Point" + this.def_num] = totalPoint;
             this.Dispose();
         }
     }

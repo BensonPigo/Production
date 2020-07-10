@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtmultifactory
+    partial class Txtmultifactory
     {
         /// <summary> 
         /// 設計工具所需的變數。

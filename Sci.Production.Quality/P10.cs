@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Sci.Win.Tems;
 using Ict.Win;
 using Sci.Win.Tools;
 using Sci.Data;
@@ -15,30 +11,31 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
-    public partial class P10 : Sci.Win.Tems.Input6
+    public partial class P10 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string Factory = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string Factory = Env.User.Keyword;
         private int ReportNoCount = 0;
         ToolStripMenuItem edit;
 
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            this.detailgrid.ContextMenuStrip = detailgridmenus;
+            this.InitializeComponent();
+            this.detailgrid.ContextMenuStrip = this.detailgridmenus;
         }
 
         protected override void OnFormLoaded()
         {
-            detailgridmenus.Items.Clear();//清空原有的Menu Item
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => EditThisDetail()).Get(out edit);
+            this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => this.EditThisDetail()).Get(out this.edit);
 
             base.OnFormLoaded();
         }
+
         private void EditThisDetail()
         {
-            if (CurrentDetailData==null)
+            if (this.CurrentDetailData == null)
             {
                 MyUtility.Msg.WarningBox("No Detail Data!");
                 return;
@@ -53,16 +50,18 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            Sci.Production.Quality.P10_Detail callNewDetailForm = new P10_Detail(this.EditMode, this.CurrentMaintain, this.CurrentDetailData);
+            P10_Detail callNewDetailForm = new P10_Detail(this.EditMode, this.CurrentMaintain, this.CurrentDetailData);
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
-            OnDetailEntered();
+            this.OnDetailEntered();
         }
+
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
-            string cmd = string.Format(@"
+            string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
+            string cmd = string.Format(
+                @"
 select  sd.id,
         sd.No,
         sd.ReportNo,
@@ -91,35 +90,35 @@ where sd.id='{0}' order by sd.No
             {
                 return;
             }
-            
+
             DualResult result;
             DateTime sendDate = DateTime.Now;
-            string sqlcmd = string.Format(@"update SampleGarmentTest_Detail set Sender ='{0}',SendDate=@sendate where id='{1}' and No = '{2}';
-                                           update SampleGarmentTest set ReleasedDate = @sendate where  id='{1}';", loginID, CurrentMaintain["ID"], CurrentDetailData["No"]);
+            string sqlcmd = string.Format(
+                @"update SampleGarmentTest_Detail set Sender ='{0}',SendDate=@sendate where id='{1}' and No = '{2}';
+                                           update SampleGarmentTest set ReleasedDate = @sendate where  id='{1}';", this.loginID, this.CurrentMaintain["ID"], this.CurrentDetailData["No"]);
             List<SqlParameter> listSendate = new List<SqlParameter>() { new SqlParameter("@sendate", sendDate) };
-           result = DBProxy.Current.Execute(null, sqlcmd, listSendate);
+            result = DBProxy.Current.Execute(null, sqlcmd, listSendate);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("ErrorMsg: " + result);
                 return;
             }
-            this.CurrentDetailData["Sender"] = loginID;
+
+            this.CurrentDetailData["Sender"] = this.loginID;
             this.CurrentDetailData["SendDate"] = sendDate;
             this.CurrentMaintain["ReleasedDate"] = sendDate;
-            
-            Send_Mail();
+
+            this.Send_Mail();
         }
 
         private void Send_Mail()
         {
-
-            string mailto = "";
+            string mailto = string.Empty;
             string mailcc = Env.User.MailAddress;
-            string subject = "Sample Garment Test - Style #:" + displayBoxStyle.Text + ", Season :" + displayBoxSeason.Text;
-            string content = "Sample Garment Test - Style #:" + displayBoxStyle.Text + ", Season :" + displayBoxSeason.Text + " had been sent, please receive and confirm";
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailcc, subject, null, content.ToString(), false, true);
+            string subject = "Sample Garment Test - Style #:" + this.displayBoxStyle.Text + ", Season :" + this.displayBoxSeason.Text;
+            string content = "Sample Garment Test - Style #:" + this.displayBoxStyle.Text + ", Season :" + this.displayBoxSeason.Text + " had been sent, please receive and confirm";
+            var email = new MailTo(Env.Cfg.MailFrom, mailto, mailcc, subject, null, content.ToString(), false, true);
             email.ShowDialog(this);
-
         }
 
         private void btnReceive(object sender, EventArgs e)
@@ -128,6 +127,7 @@ where sd.id='{0}' order by sd.No
             {
                 return;
             }
+
             DateTime receivedDate = DateTime.Now;
             DateTime deadLine;
             DualResult result;
@@ -140,12 +140,14 @@ where sd.id='{0}' order by sd.No
             {
                 deadLine = receivedDate.AddDays(3);
             }
-            string sqlcmd = string.Format(@"update SampleGarmentTest_Detail set Receiver ='{0}',ReceivedDate=@receivedDate where id='{1}'  and No = '{2}';
-                                            update SampleGarmentTest set ReceivedDate = @receivedDate,Deadline = @deadLine where  id='{1}';", loginID, CurrentMaintain["ID"], CurrentDetailData["No"]);
+
+            string sqlcmd = string.Format(
+                @"update SampleGarmentTest_Detail set Receiver ='{0}',ReceivedDate=@receivedDate where id='{1}'  and No = '{2}';
+                                            update SampleGarmentTest set ReceivedDate = @receivedDate,Deadline = @deadLine where  id='{1}';", this.loginID, this.CurrentMaintain["ID"], this.CurrentDetailData["No"]);
             List<SqlParameter> sqlpar = new List<SqlParameter>()
             {
-                new SqlParameter("@receivedDate", receivedDate) ,
-                new SqlParameter("@deadLine", deadLine)
+                new SqlParameter("@receivedDate", receivedDate),
+                new SqlParameter("@deadLine", deadLine),
             };
             result = DBProxy.Current.Execute(null, sqlcmd, sqlpar);
             if (!result)
@@ -153,11 +155,11 @@ where sd.id='{0}' order by sd.No
                 MyUtility.Msg.WarningBox("ErrorMsg: " + result);
                 return;
             }
-            this.CurrentDetailData["Receiver"] = loginID;
+
+            this.CurrentDetailData["Receiver"] = this.loginID;
             this.CurrentDetailData["ReceivedDate"] = receivedDate;
             this.CurrentMaintain["ReceivedDate"] = receivedDate;
             this.CurrentMaintain["Deadline"] = deadLine;
-            
         }
 
         protected override void OnDetailGridSetup()
@@ -182,15 +184,14 @@ where sd.id='{0}' order by sd.No
             #region inspDateCell
             inspDateCell.CellValidating += (s, e) =>
             {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
 
-                dr["EditName"] = loginID;
+                dr["EditName"] = this.loginID;
                 dr["EditDate"] = DateTime.Now;
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
                     dr["inspdate"] = e.FormattedValue;
                 }
-
             };
             #endregion
 
@@ -198,12 +199,20 @@ where sd.id='{0}' order by sd.No
 
             inspectorCell.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr_showname;
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                     string scalecmd = @"select t.id,p.name from Technician t  WITH (NOLOCK) inner join Pass1 p WITH (NOLOCK) on t.id = p.id where t.SampleGarmentWash = 1 and p.Resign is null";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Technician"].ToString());
                     DialogResult result = item1.ShowDialog();
@@ -211,7 +220,8 @@ where sd.id='{0}' order by sd.No
                     {
                         return;
                     }
-                    dr["Technician"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+
+                    dr["Technician"] = item1.GetSelectedString(); // 將選取selectitem value帶入GridView
                     if (MyUtility.Check.Seek(string.Format(@"select * from view_ShowName where id ='{0}'", item1.GetSelectedString()), out dr_showname))
                     {
                         dr["TechnicianName"] = dr_showname["Name_Extno"];
@@ -220,24 +230,36 @@ where sd.id='{0}' order by sd.No
             };
             inspectorCell.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return
-                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return               
+                if (!this.EditMode)
+                {
+                    return; // 非編輯模式
+                }
 
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return; // 沒資料 return
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 DataRow dr_cmd;
                 DataRow dr_showname;
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    dr["Technician"] = "";
-                    dr["TechnicianName"] = "";
+                    dr["Technician"] = string.Empty;
+                    dr["TechnicianName"] = string.Empty;
                     return; // 沒資料 return
                 }
+
                 string cmd = string.Format(@"select t.id,p.name from Technician t  WITH (NOLOCK) inner join Pass1 p WITH (NOLOCK) on t.id = p.id where t.SampleGarmentWash = 1 and t.id='{0}' and p.Resign is null", e.FormattedValue);
 
                 if (MyUtility.Check.Seek(cmd, out dr_cmd))
                 {
-                    dr["EditName"] = loginID;
+                    dr["EditName"] = this.loginID;
                     dr["EditDate"] = DateTime.Now;
                     dr["Technician"] = e.FormattedValue;
                     if (MyUtility.Check.Seek(string.Format(@"select * from view_ShowName where id ='{0}'", e.FormattedValue), out dr_showname))
@@ -247,21 +269,22 @@ where sd.id='{0}' order by sd.No
                 }
                 else
                 {
-                    dr["EditName"] = loginID;
+                    dr["EditName"] = this.loginID;
                     dr["EditDate"] = DateTime.Now;
-                    dr["Technician"] = "";
-                    dr["TechnicianName"] = "";
+                    dr["Technician"] = string.Empty;
+                    dr["TechnicianName"] = string.Empty;
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Technician: {0}> not found!!!", e.FormattedValue));
                     return;
                 }
-                CurrentDetailData.EndEdit();
+
+                this.CurrentDetailData.EndEdit();
                 this.update_detailgrid_CellValidated(e.RowIndex);
             };
             #endregion
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("No", header: "No", integer_places: 8, decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(8))
             .Text("ReportNo", header: "ReportNo", width: Widths.AnsiChars(15))
             .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell)
@@ -269,14 +292,14 @@ where sd.id='{0}' order by sd.No
             .Text("Technician", header: "Technician", width: Widths.AnsiChars(10), settings: inspectorCell)
             .Text("TechnicianName", header: "Technician Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Remark", header: "Comments", width: Widths.AnsiChars(10), settings: CommentsCell)
-            .Button("Send", null, header: "Send", width: Widths.AnsiChars(5), onclick: btnSend)
+            .Button("Send", null, header: "Send", width: Widths.AnsiChars(5), onclick: this.btnSend)
             .Text("Sender", header: "Sender", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("SendDate", header: "Send Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Button("Receive", null, header: "Receive", width: Widths.AnsiChars(5), onclick: btnReceive)
+            .Button("Receive", null, header: "Receive", width: Widths.AnsiChars(5), onclick: this.btnReceive)
             .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Date("ReceivedDate", header: "Receive Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("MRName", header: "MR Name", width: Widths.AnsiChars(25), iseditingreadonly: true)// addName + addDate
-            .Text("LastEditName", header: "Last Edit Name", width: Widths.AnsiChars(25), iseditingreadonly: true);//editName + editDate
+            .Text("MRName", header: "MR Name", width: Widths.AnsiChars(25), iseditingreadonly: true) // addName + addDate
+            .Text("LastEditName", header: "Last Edit Name", width: Widths.AnsiChars(25), iseditingreadonly: true); // editName + editDate
         }
 
         void update_detailgrid_CellValidated(int RowIndex)
@@ -284,38 +307,35 @@ where sd.id='{0}' order by sd.No
             this.detailgrid.InvalidateRow(RowIndex);
         }
 
-
-
         protected override void OnDetailGridInsert(int index = 1)
         {
             base.OnDetailGridInsert(index);
-            DataTable dt = (DataTable)detailgridbs.DataSource;
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
             int MaxNo;
             if (dt.Rows.Count == 0)
             {
                 MaxNo = 0;
                 base.OnDetailGridInsert(0);
-                CurrentDetailData["No"] = MaxNo + 1;
+                this.CurrentDetailData["No"] = MaxNo + 1;
             }
             else
             {
-                MaxNo = Convert.ToInt32(dt.Compute("Max(No)", ""));
-                CurrentDetailData["No"] = MaxNo + 1;
+                MaxNo = Convert.ToInt32(dt.Compute("Max(No)", string.Empty));
+                this.CurrentDetailData["No"] = MaxNo + 1;
 
-         
-                string tmpId = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "GM", "SampleGarmentTest_Detail", DateTime.Today, 2, "ReportNo", null);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "GM", "SampleGarmentTest_Detail", DateTime.Today, 2, "ReportNo", null);
                 string head = tmpId.Substring(0, 9);
-                int seq= Convert.ToInt32(tmpId.Substring(9,4));
+                int seq = Convert.ToInt32(tmpId.Substring(9, 4));
 
-               tmpId = head + string.Format("{0:0000}", seq+ ReportNoCount);
+                tmpId = head + string.Format("{0:0000}", seq + this.ReportNoCount);
 
-                CurrentDetailData["ReportNo"] = tmpId;
-                ReportNoCount++;
+                this.CurrentDetailData["ReportNo"] = tmpId;
+                this.ReportNoCount++;
+            }
 
-            } 
-            CurrentDetailData["Result"] = "";
-            CurrentDetailData["Remark"] = "";
+            this.CurrentDetailData["Result"] = string.Empty;
+            this.CurrentDetailData["Remark"] = string.Empty;
         }
 
         protected override bool ClickSaveBefore()
@@ -323,78 +343,79 @@ where sd.id='{0}' order by sd.No
             DataTable detail_dt = (DataTable)this.detailgridbs.DataSource;
             if (detail_dt.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Count() > 0)
             {
-                //更新表頭 ReceiveDate,ReleasedDate ,Deadline,InspDate,Result
-                //ReceivedDate
+                // 更新表頭 ReceiveDate,ReleasedDate ,Deadline,InspDate,Result
+                // ReceivedDate
                 var receivedDate = detail_dt.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Where(s => !MyUtility.Check.Empty(s["ReceivedDate"])).Select(s => s["ReceivedDate"]).Max();
-                CurrentMaintain["ReceivedDate"] = receivedDate == null ? DBNull.Value : receivedDate;
+                this.CurrentMaintain["ReceivedDate"] = receivedDate == null ? DBNull.Value : receivedDate;
 
-                //ReleasedDate
+                // ReleasedDate
                 var releasedDate = detail_dt.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Where(s => !MyUtility.Check.Empty(s["SendDate"])).Select(s => s["SendDate"]).Max();
-                CurrentMaintain["ReleasedDate"] = releasedDate == null ? DBNull.Value : releasedDate;
+                this.CurrentMaintain["ReleasedDate"] = releasedDate == null ? DBNull.Value : releasedDate;
 
-                //Deadline
-                if (MyUtility.Check.Empty(CurrentMaintain["ReceivedDate"]))
+                // Deadline
+                if (MyUtility.Check.Empty(this.CurrentMaintain["ReceivedDate"]))
                 {
                     this.CurrentMaintain["Deadline"] = DBNull.Value;
                 }
                 else
                 {
-                    DayOfWeek dayWeek = ((DateTime)CurrentMaintain["ReceivedDate"]).DayOfWeek;
+                    DayOfWeek dayWeek = ((DateTime)this.CurrentMaintain["ReceivedDate"]).DayOfWeek;
                     if (dayWeek == DayOfWeek.Thursday || dayWeek == DayOfWeek.Friday || dayWeek == DayOfWeek.Saturday)
                     {
-                        this.CurrentMaintain["Deadline"] = ((DateTime)CurrentMaintain["ReceivedDate"]).AddDays(4);
+                        this.CurrentMaintain["Deadline"] = ((DateTime)this.CurrentMaintain["ReceivedDate"]).AddDays(4);
                     }
                     else
                     {
-                        this.CurrentMaintain["Deadline"] = ((DateTime)CurrentMaintain["ReceivedDate"]).AddDays(3);
+                        this.CurrentMaintain["Deadline"] = ((DateTime)this.CurrentMaintain["ReceivedDate"]).AddDays(3);
                     }
                 }
 
-                //InspDate
+                // InspDate
                 var inspDate = detail_dt.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Where(s => !MyUtility.Check.Empty(s["InspDate"])).Select(s => s["InspDate"]).Max();
-                CurrentMaintain["InspDate"] = inspDate == null ? DBNull.Value : inspDate;
+                this.CurrentMaintain["InspDate"] = inspDate == null ? DBNull.Value : inspDate;
 
-                //Result
+                // Result
                 int fail_cnt = detail_dt.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Where(s => s["Result"].Equals("Fail")).Count();
                 int pass_cnt = detail_dt.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Where(s => s["Result"].Equals("Pass")).Count();
                 if (fail_cnt == 0 && pass_cnt == 0)
                 {
-                    CurrentMaintain["Result"] = string.Empty;
+                    this.CurrentMaintain["Result"] = string.Empty;
                 }
                 else if (fail_cnt > 0)
                 {
-                    CurrentMaintain["Result"] = "Fail";
+                    this.CurrentMaintain["Result"] = "Fail";
                 }
                 else
                 {
-                    CurrentMaintain["Result"] = "Pass";
+                    this.CurrentMaintain["Result"] = "Pass";
                 }
-
             }
             else
             {
-                CurrentMaintain["ReceivedDate"] = DBNull.Value;
-                CurrentMaintain["ReleasedDate"] = DBNull.Value;
+                this.CurrentMaintain["ReceivedDate"] = DBNull.Value;
+                this.CurrentMaintain["ReleasedDate"] = DBNull.Value;
                 this.CurrentMaintain["Deadline"] = DBNull.Value;
-                CurrentMaintain["InspDate"] = DBNull.Value;
-                CurrentMaintain["Result"] = string.Empty;
+                this.CurrentMaintain["InspDate"] = DBNull.Value;
+                this.CurrentMaintain["Result"] = string.Empty;
             }
-            ReportNoCount = 0;
+
+            this.ReportNoCount = 0;
 
             return base.ClickSaveBefore();
         }
 
-
-
         protected override DualResult ClickSave()
         {
             DualResult upResult = new DualResult(true);
-            string update_cmd = "";
+            string update_cmd = string.Empty;
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    if (!MyUtility.Check.Empty(dr["senddate", DataRowVersion.Original])) return new DualResult(false, "SendDate is existed, can not delete.", "Warning");
+                    if (!MyUtility.Check.Empty(dr["senddate", DataRowVersion.Original]))
+                    {
+                        return new DualResult(false, "SendDate is existed, can not delete.", "Warning");
+                    }
 
                     List<SqlParameter> spamDet = new List<SqlParameter>();
                     update_cmd = @"
@@ -403,7 +424,6 @@ where sd.id='{0}' order by sd.No
                     spamDet.Add(new SqlParameter("@no", dr["NO", DataRowVersion.Original]));
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
                 }
-
             }
 
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
@@ -423,10 +443,11 @@ Delete SampleGarmentTest_Detail_Appearance where id = '{this.CurrentMaintain["ID
                     {
                         dr["Status"] = "New";
                     }
+
                     if (!MyUtility.Check.Seek($"select 1 from SampleGarmentTest_Detail_Shrinkage with(nolock) where id = '{this.CurrentMaintain["ID"]}' and NO = '{dr["NO"]}'"))
                     {
                         List<SqlParameter> spam = new List<SqlParameter>();
-                        spam.Add(new SqlParameter("@ID", CurrentMaintain["ID"]));
+                        spam.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"]));
                         spam.Add(new SqlParameter("@NO", dr["NO"]));
                         string insertShrinkage = $@"
 select sl.Location
@@ -506,41 +527,41 @@ values (@ID,@NO,'Appearance of garment after wash',8)
                 }
             }
 
-            DataTable dt = (DataTable)detailgridbs.DataSource;
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
             if (dt.Rows.Count > 0)
             {
-                string maxNo = dt.Compute("MAX(NO)", "").ToString();
+                string maxNo = dt.Compute("MAX(NO)", string.Empty).ToString();
                 string where = string.Format("NO='{0}'", maxNo);
 
-                if (dt.Select(where).Count()>0)
+                if (dt.Select(where).Count() > 0)
                 {
                     DataRow DetailRow = dt.Select(where)[0];
-                    CurrentMaintain["Result"] = DetailRow["Result"];
-                    CurrentMaintain["Inspdate"] = DetailRow["Inspdate"];
-                    CurrentMaintain["Remark"] = DetailRow["remark"];
+                    this.CurrentMaintain["Result"] = DetailRow["Result"];
+                    this.CurrentMaintain["Inspdate"] = DetailRow["Inspdate"];
+                    this.CurrentMaintain["Remark"] = DetailRow["remark"];
                 }
 
-                if (string.IsNullOrEmpty(CurrentMaintain["AddDate"].ToString()) && dt.Select("NO='1'").Count() > 0)
+                if (string.IsNullOrEmpty(this.CurrentMaintain["AddDate"].ToString()) && dt.Select("NO='1'").Count() > 0)
                 {
                     DataRow DetailRow = dt.Select(where)[0];
-                    CurrentMaintain["AddDate"] = DetailRow["AddDate"];
-                    CurrentMaintain["AddName"] = DetailRow["AddName"];
+                    this.CurrentMaintain["AddDate"] = DetailRow["AddDate"];
+                    this.CurrentMaintain["AddName"] = DetailRow["AddName"];
                 }
             }
             else
             {
-                CurrentMaintain["Result"] = "";
-                CurrentMaintain["Inspdate"] = DBNull.Value;
-                CurrentMaintain["Remark"] = "";
+                this.CurrentMaintain["Result"] = string.Empty;
+                this.CurrentMaintain["Inspdate"] = DBNull.Value;
+                this.CurrentMaintain["Remark"] = string.Empty;
             }
-            
+
             return base.ClickSave();
         }
 
         protected override void OnEditModeChanged()
         {
-            ReportNoCount = 0;
+            this.ReportNoCount = 0;
             base.OnEditModeChanged();
         }
     }

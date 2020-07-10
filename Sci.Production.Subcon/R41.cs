@@ -1,31 +1,41 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R41 : Sci.Win.Tems.PrintForm
+    public partial class R41 : Win.Tems.PrintForm
     {
-        DataTable printData;
-        string SubProcess, SP, M, Factory, CutRef1, CutRef2;
+        string SubProcess;
+        string SP;
+        string M;
+        string Factory;
+        string CutRef1;
+        string CutRef2;
         string processLocation;
-        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2, dateEstCutDate1, dateEstCutDate2, dateBDelivery1, dateBDelivery2, dateSewInLine1, dateSewInLine2;
+        DateTime? dateBundle1;
+        DateTime? dateBundle2;
+        DateTime? dateBundleScanDate1;
+        DateTime? dateBundleScanDate2;
+        DateTime? dateEstCutDate1;
+        DateTime? dateEstCutDate2;
+        DateTime? dateBDelivery1;
+        DateTime? dateBDelivery2;
+        DateTime? dateSewInLine1;
+        DateTime? dateSewInLine2;
+
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            comboload();
-            this.comboFactory.setDataSource();
-            this.comboRFIDProcessLocation.setDataSource();
+            this.InitializeComponent();
+            this.comboload();
+            this.comboFactory.SetDataSource();
+            this.comboRFIDProcessLocation.SetDataSource();
             this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
@@ -39,48 +49,52 @@ namespace Sci.Production.Subcon
                 this.comboM.DataSource = dtM;
                 this.comboM.DisplayMember = "ID";
             }
-            else { ShowErr(Result); }
+            else
+            {
+                this.ShowErr(Result);
+            }
         }
 
         #region ToExcel3步驟
+
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            SubProcess = this.txtsubprocess.Text;
-            SP = this.txtSPNo.Text;
-            M = this.comboM.Text;
-            Factory = this.comboFactory.Text;
-            CutRef1 = this.txtCutRefStart.Text;
-            CutRef2 = this.txtCutRefEnd.Text;
-            dateBundle1 = this.dateBundleCDate.Value1;
-            dateBundle2 = this.dateBundleCDate.Value2;
-            dateBundleScanDate1 = this.dateBundleScanDate.Value1;
-            dateBundleScanDate2 = this.dateBundleScanDate.Value2;
-            dateEstCutDate1 = this.dateEstCutDate.Value1;
-            dateEstCutDate2 = this.dateEstCutDate.Value2;
-            dateBDelivery1 = this.dateBDelivery.Value1;
-            dateBDelivery2 = this.dateBDelivery.Value2;
-            dateSewInLine1 = this.dateSewInLine.Value1;
-            dateSewInLine2 = this.dateSewInLine.Value2;
+            this.SubProcess = this.txtsubprocess.Text;
+            this.SP = this.txtSPNo.Text;
+            this.M = this.comboM.Text;
+            this.Factory = this.comboFactory.Text;
+            this.CutRef1 = this.txtCutRefStart.Text;
+            this.CutRef2 = this.txtCutRefEnd.Text;
+            this.dateBundle1 = this.dateBundleCDate.Value1;
+            this.dateBundle2 = this.dateBundleCDate.Value2;
+            this.dateBundleScanDate1 = this.dateBundleScanDate.Value1;
+            this.dateBundleScanDate2 = this.dateBundleScanDate.Value2;
+            this.dateEstCutDate1 = this.dateEstCutDate.Value1;
+            this.dateEstCutDate2 = this.dateEstCutDate.Value2;
+            this.dateBDelivery1 = this.dateBDelivery.Value1;
+            this.dateBDelivery2 = this.dateBDelivery.Value2;
+            this.dateSewInLine1 = this.dateSewInLine.Value1;
+            this.dateSewInLine2 = this.dateSewInLine.Value2;
             this.processLocation = this.comboRFIDProcessLocation.Text;
-            if (MyUtility.Check.Empty(CutRef1) && MyUtility.Check.Empty(CutRef2) &&
-                MyUtility.Check.Empty(SP) &&
-                MyUtility.Check.Empty(dateEstCutDate.Value1) && MyUtility.Check.Empty(dateEstCutDate.Value2) &&
-                MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2) &&
-                MyUtility.Check.Empty(dateBundleScanDate.Value1) && MyUtility.Check.Empty(dateBundleScanDate.Value2) &&
-                MyUtility.Check.Empty(dateSewInLine.Value1) && MyUtility.Check.Empty(dateSewInLine.Value2)
-                )
+            if (MyUtility.Check.Empty(this.CutRef1) && MyUtility.Check.Empty(this.CutRef2) &&
+                MyUtility.Check.Empty(this.SP) &&
+                MyUtility.Check.Empty(this.dateEstCutDate.Value1) && MyUtility.Check.Empty(this.dateEstCutDate.Value2) &&
+                MyUtility.Check.Empty(this.dateBundleCDate.Value1) && MyUtility.Check.Empty(this.dateBundleCDate.Value2) &&
+                MyUtility.Check.Empty(this.dateBundleScanDate.Value1) && MyUtility.Check.Empty(this.dateBundleScanDate.Value2) &&
+                MyUtility.Check.Empty(this.dateSewInLine.Value1) && MyUtility.Check.Empty(this.dateSewInLine.Value2))
             {
                 MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Est. Cutting Date][Bundle CDate][Bundle Scan Date],[Sewing Inline] cannot all empty !!");
                 return false;
             }
+
             return base.ValidateInput();
         }
 
-        //非同步讀取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        // 非同步讀取資料
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -89,58 +103,67 @@ namespace Sci.Production.Subcon
             #region Append畫面上的條件
             StringBuilder sqlWhere = new StringBuilder();
             StringBuilder sqlWhereFirstQuery = new StringBuilder();
-            String joinWorkOrder = "";
-            if (!MyUtility.Check.Empty(SubProcess))
+            string joinWorkOrder = string.Empty;
+            if (!MyUtility.Check.Empty(this.SubProcess))
             {
-                sqlWhere.Append($@" and s.id in ('{SubProcess.Replace(",", "','")}') ");
+                sqlWhere.Append($@" and s.id in ('{this.SubProcess.Replace(",", "','")}') ");
             }
-            if (!MyUtility.Check.Empty(CutRef1))
+
+            if (!MyUtility.Check.Empty(this.CutRef1))
             {
                 joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
-                sqlWhereFirstQuery.Append(string.Format(@" and w.CutRef >= '{0}' ", CutRef1));
+                sqlWhereFirstQuery.Append(string.Format(@" and w.CutRef >= '{0}' ", this.CutRef1));
             }
-            if (!MyUtility.Check.Empty(CutRef2))
+
+            if (!MyUtility.Check.Empty(this.CutRef2))
             {
                 joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
-                sqlWhereFirstQuery.Append(string.Format(@" and w.CutRef <= '{0}' ", CutRef2));
+                sqlWhereFirstQuery.Append(string.Format(@" and w.CutRef <= '{0}' ", this.CutRef2));
             }
-            if (!MyUtility.Check.Empty(SP))
+
+            if (!MyUtility.Check.Empty(this.SP))
             {
-                sqlWhereFirstQuery.Append(string.Format(@" and b.Orderid = '{0}'", SP));
+                sqlWhereFirstQuery.Append(string.Format(@" and b.Orderid = '{0}'", this.SP));
             }
-            if (!MyUtility.Check.Empty(dateBundle1))
+
+            if (!MyUtility.Check.Empty(this.dateBundle1))
             {
-                sqlWhereFirstQuery.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateBundle2))
+
+            if (!MyUtility.Check.Empty(this.dateBundle2))
             {
-                sqlWhereFirstQuery.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(this.dateBundle2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateBundleScanDate1) && !MyUtility.Check.Empty(dateBundleScanDate2))
+
+            if (!MyUtility.Check.Empty(this.dateBundleScanDate1) && !MyUtility.Check.Empty(this.dateBundleScanDate2))
             {
-                sqlWhere.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(dateBundleScanDate1).ToString("d"), Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
-                sqlWhereFirstQuery.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(dateBundleScanDate1).ToString("d"), Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
+                sqlWhere.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(this.dateBundleScanDate1).ToString("d"), Convert.ToDateTime(this.dateBundleScanDate2).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(this.dateBundleScanDate1).ToString("d"), Convert.ToDateTime(this.dateBundleScanDate2).ToString("d")));
             }
             else
             {
-                if (!MyUtility.Check.Empty(dateBundleScanDate1))
+                if (!MyUtility.Check.Empty(this.dateBundleScanDate1))
                 {
-                    sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(dateBundleScanDate1).ToString("d")));
-                    sqlWhereFirstQuery.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(dateBundleScanDate1).ToString("d")));
+                    sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(this.dateBundleScanDate1).ToString("d")));
+                    sqlWhereFirstQuery.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(this.dateBundleScanDate1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateBundleScanDate2))
+
+                if (!MyUtility.Check.Empty(this.dateBundleScanDate2))
                 {
-                    sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
-                    sqlWhereFirstQuery.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
+                    sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(this.dateBundleScanDate2).ToString("d")));
+                    sqlWhereFirstQuery.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(this.dateBundleScanDate2).ToString("d")));
                 }
-            } 
-            if (!MyUtility.Check.Empty(M))
-            {
-                sqlWhereFirstQuery.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
             }
-            if (!MyUtility.Check.Empty(Factory))
+
+            if (!MyUtility.Check.Empty(this.M))
             {
-                sqlWhereFirstQuery.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
+                sqlWhereFirstQuery.Append(string.Format(@" and b.MDivisionid = '{0}'", this.M));
+            }
+
+            if (!MyUtility.Check.Empty(this.Factory))
+            {
+                sqlWhereFirstQuery.Append(string.Format(@" and o.FtyGroup = '{0}'", this.Factory));
             }
 
             if (this.processLocation != "ALL")
@@ -149,35 +172,39 @@ namespace Sci.Production.Subcon
                 sqlWhereFirstQuery.Append(string.Format(@" and isnull(bio.RFIDProcessLocationID,'') = '{0}'", this.processLocation));
             }
 
-            if (!MyUtility.Check.Empty(dateBDelivery1))
+            if (!MyUtility.Check.Empty(this.dateBDelivery1))
             {
-                sqlWhereFirstQuery.Append(string.Format(@" and o.BuyerDelivery >= convert(date,'{0}')", Convert.ToDateTime(dateBDelivery1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(dateBDelivery2))
-            {
-                sqlWhereFirstQuery.Append(string.Format(@" and o.BuyerDelivery <= convert(date,'{0}')", Convert.ToDateTime(dateBDelivery2).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and o.BuyerDelivery >= convert(date,'{0}')", Convert.ToDateTime(this.dateBDelivery1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(dateSewInLine1))
+            if (!MyUtility.Check.Empty(this.dateBDelivery2))
             {
-                sqlWhereFirstQuery.Append(string.Format(@" and o.SewInLine >= convert(date,'{0}')", Convert.ToDateTime(dateSewInLine1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(dateSewInLine2))
-            {
-                sqlWhereFirstQuery.Append(string.Format(@" and o.SewInLine <= convert(date,'{0}')", Convert.ToDateTime(dateSewInLine2).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and o.BuyerDelivery <= convert(date,'{0}')", Convert.ToDateTime(this.dateBDelivery2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(dateEstCutDate1))
+            if (!MyUtility.Check.Empty(this.dateSewInLine1))
+            {
+                sqlWhereFirstQuery.Append(string.Format(@" and o.SewInLine >= convert(date,'{0}')", Convert.ToDateTime(this.dateSewInLine1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateSewInLine2))
+            {
+                sqlWhereFirstQuery.Append(string.Format(@" and o.SewInLine <= convert(date,'{0}')", Convert.ToDateTime(this.dateSewInLine2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateEstCutDate1))
             {
                 joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
-                sqlWhereFirstQuery.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(this.dateEstCutDate1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateEstCutDate2))
+
+            if (!MyUtility.Check.Empty(this.dateEstCutDate2))
             {
                 joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
-                sqlWhereFirstQuery.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate2).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(this.dateEstCutDate2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateEstCutDate1) || !MyUtility.Check.Empty(dateEstCutDate2))
+
+            if (!MyUtility.Check.Empty(this.dateEstCutDate1) || !MyUtility.Check.Empty(this.dateEstCutDate2))
             {
                 sqlWhereFirstQuery.Append(@" and w.CutRef <> '' ");
             }
@@ -438,18 +465,19 @@ drop table #tmp_Workorder
 ";
 
             #endregion
-            
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx"); //預先開啟excel app
 
-            //勿動!! 超過這個數字，DY的電腦會跑不動
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx"); // 預先開啟excel app
+
+            // 勿動!! 超過這個數字，DY的電腦會跑不動
             int excelMaxrow = 1000000;
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
-            Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[2]);
+            Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
+            Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[2];
             worksheet1.Copy(worksheetn);
 
             int sheet = 1;
-            //因為一次載入太多筆資料到DataTable 會造成程式佔用大量記憶體，改為每1萬筆載入一次並貼在excel上
+
+            // 因為一次載入太多筆資料到DataTable 會造成程式佔用大量記憶體，改為每1萬筆載入一次並貼在excel上
             #region 分段抓取資料填入excel
             this.ShowLoadingText($"Data Loading , please wait …");
             DataTable tmpDatas = new DataTable();
@@ -480,28 +508,30 @@ drop table #tmp_Workorder
                         if (loadCounts % eachCopy == 0)
                         {
                             this.ShowLoadingText($"Data Loading – {loadCounts} , please wait …");
-                            MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R41_Bundle tracking list (RFID).xltx", loadCounts2 - (eachCopy-1), false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
+                            MyUtility.Excel.CopyToXls(tmpDatas, string.Empty, "Subcon_R41_Bundle tracking list (RFID).xltx", loadCounts2 - (eachCopy - 1), false, null, objApp, wSheet: objApp.Sheets[sheet]); // 將datatable copy to excel
 
                             this.DataTableClearAll(tmpDatas);
                             for (int i = 0; i < reader.FieldCount; i++)
                             {
                                 tmpDatas.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
                             }
+
                             if (loadCounts % excelMaxrow == 0)
                             {
-                                Microsoft.Office.Interop.Excel.Worksheet worksheetA = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 1]);
-                                Microsoft.Office.Interop.Excel.Worksheet worksheetB = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 2]);
+                                Microsoft.Office.Interop.Excel.Worksheet worksheetA = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 1];
+                                Microsoft.Office.Interop.Excel.Worksheet worksheetB = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 2];
                                 worksheetA.Copy(worksheetB);
                                 sheet++;
                                 loadCounts2 = 0;
                             }
 
-                            //loadCounts2 += eachPast;
+                            // loadCounts2 += eachPast;
                         }
                     }
+
                     if (loadCounts > 0)
                     {
-                        MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R41_Bundle tracking list (RFID).xltx", loadCounts2 - (loadCounts2 % eachCopy) + 1, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
+                        MyUtility.Excel.CopyToXls(tmpDatas, string.Empty, "Subcon_R41_Bundle tracking list (RFID).xltx", loadCounts2 - (loadCounts2 % eachCopy) + 1, false, null, objApp, wSheet: objApp.Sheets[sheet]); // 將datatable copy to excel
                         this.DataTableClearAll(tmpDatas);
                     }
                     else
@@ -512,7 +542,8 @@ drop table #tmp_Workorder
                     }
                 }
             }
-            SetCount((long)loadCounts);
+
+            this.SetCount((long)loadCounts);
             objApp.DisplayAlerts = false;
             ((Microsoft.Office.Interop.Excel.Worksheet)objApp.Sheets[sheet + 1]).Delete();
             ((Microsoft.Office.Interop.Excel.Worksheet)objApp.Sheets[1]).Select();
@@ -520,21 +551,22 @@ drop table #tmp_Workorder
             this.HideLoadingText();
             #endregion
 
-
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R41_Bundle tracking list (RFID)");
+            string strExcelName = Class.MicrosoftFile.GetName("Subcon_R41_Bundle tracking list (RFID)");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();
-            Marshal.ReleaseComObject(objApp);          //釋放objApp
+            Marshal.ReleaseComObject(objApp);          // 釋放objApp
             Marshal.ReleaseComObject(workbook);
-            //printData.Clear();
-            //printData.Dispose();
+
+            // printData.Clear();
+            // printData.Dispose();
             strExcelName.OpenFile();
-            #endregion             
+            #endregion
             return true;
         }
+
         #endregion
         private void DataTableClearAll(DataTable target)
         {

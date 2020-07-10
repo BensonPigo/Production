@@ -1,79 +1,68 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
-using Sci.Win.UI;
 using Ict;
-using Sci.Win.Tools;
-using Sci.Win;
-using Ict.Win;
-using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class txtLocalTPESuppNoConfirm : Sci.Win.UI._UserControl
+    /// <summary>
+    /// TxtLocalTPESuppNoConfirm
+    /// </summary>
+    public partial class TxtLocalTPESuppNoConfirm : Win.UI._UserControl
     {
-        private bool isIncludeJunk;
-        public txtLocalTPESuppNoConfirm()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtLocalTPESuppNoConfirm"/> class.
+        /// </summary>
+        public TxtLocalTPESuppNoConfirm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Is Include Junk
+        /// </summary>
         [Category("Custom Properties")]
-        public bool IsIncludeJunk
-        {
-            set { this.isIncludeJunk = value; }
-            get { return this.isIncludeJunk; }
-        }
+        public bool IsIncludeJunk { get; set; }
 
-        public Sci.Win.UI.TextBox TextBox1
-        {
-            get { return this.textBox1; }
-        }
+        /// <inheritdoc/>
+        public Win.UI.TextBox TextBox1 { get; private set; }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
-        {
-            get { return this.displayBox1; }
-        }
+        /// <inheritdoc/>
+        public Win.UI.DisplayBox DisplayBox1 { get; private set; }
 
+        /// <inheritdoc/>
         [Bindable(true)]
         public string TextBox1Binding
         {
-            set { this.textBox1.Text = value; }
-            get { return textBox1.Text; }
+            get { return this.TextBox1.Text; }
+            set { this.TextBox1.Text = value; }
         }
 
+        /// <inheritdoc/>
         [Bindable(true)]
         public string DisplayBox1Binding
         {
-            set { this.displayBox1.Text = value; }
-            get { return this.displayBox1.Text; }
+            get { return this.DisplayBox1.Text; }
+            set { this.DisplayBox1.Text = value; }
         }
 
-
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void TextBox1_Validating(object sender, CancelEventArgs e)
         {
             // base.OnValidating(e);
-            string textValue = this.textBox1.Text.Trim();
-            if (textValue == this.textBox1.OldValue)
+            string textValue = this.TextBox1.Text.Trim();
+            if (textValue == this.TextBox1.OldValue)
             {
                 return;
             }
+
             if (!string.IsNullOrWhiteSpace(textValue))
             {
-                string Sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'  union all select Junk from Supp WITH (NOLOCK) where ID = '{0}' ", textValue);
-                if (!MyUtility.Check.Seek(Sql, "Production"))
+                string sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'  union all select Junk from Supp WITH (NOLOCK) where ID = '{0}' ", textValue);
+                if (!MyUtility.Check.Seek(sql, "Production"))
                 {
-                    this.textBox1.Text = "";
+                    this.TextBox1.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Supplier: {0} > not found!!!", textValue));
                     return;
@@ -82,52 +71,59 @@ namespace Sci.Production.Class
                 {
                     if (!this.IsIncludeJunk)
                     {
-                        string lookupresult = MyUtility.GetValue.Lookup(Sql, "Production");
+                        string lookupresult = MyUtility.GetValue.Lookup(sql, "Production");
                         if (lookupresult == "True")
                         {
-                            this.textBox1.Text = "";
+                            this.TextBox1.Text = string.Empty;
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox(string.Format("< Supplier: {0} > not found!!!", textValue));
                             return;
                         }
                     }
-                    string sql_cmd = $"select Abb from LocalSupp WITH (NOLOCK) where  Junk =  0  and ID = '{this.textBox1.Text.ToString()}'   union all select [Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0 and ID = '{this.textBox1.Text.ToString()}' ";
-                    this.displayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, "Production");
+
+                    string sql_cmd = $"select Abb from LocalSupp WITH (NOLOCK) where  Junk =  0  and ID = '{this.TextBox1.Text.ToString()}'   union all select [Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0 and ID = '{this.TextBox1.Text.ToString()}' ";
+                    this.DisplayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, "Production");
                 }
             }
+
             this.ValidateControl();
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void TextBox1_TextChanged(object sender, EventArgs e)
         {
-            string sql_cmd = $"select Abb from LocalSupp WITH (NOLOCK) where  Junk =  0  and ID = '{this.textBox1.Text.ToString()}'   union all select [Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0 and ID = '{this.textBox1.Text.ToString()}' ";
-            this.displayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, "Production");
+            string sql_cmd = $"select Abb from LocalSupp WITH (NOLOCK) where  Junk =  0  and ID = '{this.TextBox1.Text.ToString()}'   union all select [Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0 and ID = '{this.TextBox1.Text.ToString()}' ";
+            this.DisplayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, "Production");
         }
 
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TextBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
+            if (myForm.EditMode == false || this.TextBox1.ReadOnly == true)
+            {
+                return;
+            }
+
             string selectCommand;
             selectCommand = "select ID,Abb,Name from LocalSupp WITH (NOLOCK)  union all select ID,[Name] = NameEN,[Abb] = AbbEN from Supp WITH (NOLOCK) order by ID";
-            if (!IsIncludeJunk)
+            if (!this.IsIncludeJunk)
             {
                 selectCommand = "select ID,Abb,Name from LocalSupp WITH (NOLOCK) where  Junk =  0  union all select ID,[Name] = NameEN,[Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0  order by ID";
             }
+
             DataTable tbSelect;
             DBProxy.Current.Select("Production", selectCommand, out tbSelect);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbSelect, "ID,Abb,Name", "9,13,40", this.Text, false, ",", "ID,Abb,Name");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbSelect, "ID,Abb,Name", "9,13,40", this.Text, false, ",", "ID,Abb,Name");
             item.Size = new System.Drawing.Size(690, 555);
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
-            this.textBox1.Text = item.GetSelectedString();
-            this.textBox1.ValidateControl();
-            string sql_cmd = $"select Abb from LocalSupp WITH (NOLOCK) where  Junk =  0  and ID = '{this.textBox1.Text.ToString()}'   union all select [Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0 and ID = '{this.textBox1.Text.ToString()}' ";
-            this.displayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, "Production");
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
 
-
+            this.TextBox1.Text = item.GetSelectedString();
+            this.TextBox1.ValidateControl();
+            string sql_cmd = $"select Abb from LocalSupp WITH (NOLOCK) where  Junk =  0  and ID = '{this.TextBox1.Text.ToString()}'   union all select [Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0 and ID = '{this.TextBox1.Text.ToString()}' ";
+            this.DisplayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, "Production");
         }
     }
-   
-    
 }

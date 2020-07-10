@@ -1,68 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P60_Import : Sci.Win.Subs.Base
+    public partial class P60_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
-        //bool flag;
+
+        // bool flag;
        // string poType;
         protected DataTable dtArtwork;
 
         public P60_Import(DataRow master, DataTable detail)
         {
-            InitializeComponent();
-            dr_master = master;
-            dt_detail = detail;
+            this.InitializeComponent();
+            this.dr_master = master;
+            this.dt_detail = detail;
         }
 
-        //Find Now Button
+        // Find Now Button
         private void btnFindNow_Click(object sender, EventArgs e)
         {
             DateTime? issueDate1, issueDate2;
             DateTime? DeliveryDate1, DeliveryDate2;
-            String localpoid = this.txtLocalPO.Text;
-            issueDate1 = datePOIssueDate.Value1;
-            issueDate2 = datePOIssueDate.Value2;
-            DeliveryDate1 = dateRangeBuyerDelivery.Value1;
-            DeliveryDate2 = dateRangeBuyerDelivery.Value2;
-            String spno1 = txtSPNoStart.Text;
-            String spno2 = txtSPNoEnd.Text;
-            String category = txtartworktype_ftyCategory.Text;
+            string localpoid = this.txtLocalPO.Text;
+            issueDate1 = this.datePOIssueDate.Value1;
+            issueDate2 = this.datePOIssueDate.Value2;
+            DeliveryDate1 = this.dateRangeBuyerDelivery.Value1;
+            DeliveryDate2 = this.dateRangeBuyerDelivery.Value2;
+            string spno1 = this.txtSPNoStart.Text;
+            string spno2 = this.txtSPNoEnd.Text;
+            string category = this.txtartworktype_ftyCategory.Text;
 
             if (MyUtility.Check.Empty(localpoid) && MyUtility.Check.Empty(spno1) && MyUtility.Check.Empty(spno2) && MyUtility.Check.Empty(issueDate1) && MyUtility.Check.Empty(DeliveryDate1))
             {
                 MyUtility.Msg.WarningBox("< Local Po# > < SP# > < Issue Date > < Buyer Delivery > can't be empty at the same time!!");
-                txtLocalPO.Focus();
+                this.txtLocalPO.Focus();
                 return;
             }
 
             if (!MyUtility.Check.Empty(spno1) && MyUtility.Check.Empty(spno2))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                txtSPNoEnd.Focus();
+                this.txtSPNoEnd.Focus();
                 return;
             }
+
             if (MyUtility.Check.Empty(spno1) && !MyUtility.Check.Empty(spno2))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                txtSPNoStart.Focus();
+                this.txtSPNoStart.Focus();
                 return;
             }
-            // 建立可以符合回傳的Cursor
 
+            // 建立可以符合回傳的Cursor
             #region -- sql parameters declare --
             System.Data.SqlClient.SqlParameter sp_localpoid = new System.Data.SqlClient.SqlParameter();
             sp_localpoid.ParameterName = "@localpoid";
@@ -79,7 +78,8 @@ namespace Sci.Production.Warehouse
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             #endregion
 
-            string strSQLCmd = string.Format(@"
+            string strSQLCmd = string.Format(
+                @"
 select  1 as selected 
         , '' id
         , a.id as LocalPoId
@@ -102,7 +102,7 @@ inner join dbo.LocalPO_Detail b WITH (NOLOCK) on b.id = a.Id
 left JOIN dbo.Orders o  WITH (NOLOCK) on o.ID = b.OrderId
 Where b.Qty - b.InQty >0
     and a.status = 'Approved' 
-    and a.LocalSuppID = '{0}'", dr_master["localsuppid"]);
+    and a.LocalSuppID = '{0}'", this.dr_master["localsuppid"]);
 
             if (!MyUtility.Check.Empty(localpoid))
             {
@@ -113,15 +113,18 @@ Where b.Qty - b.InQty >0
 
             if (!MyUtility.Check.Empty(issueDate1))
             {
-                strSQLCmd += string.Format(@" and a.issuedate between '{0}' and '{1}'",
-                Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d"));
+                strSQLCmd += string.Format(
+                    @" and a.issuedate between '{0}' and '{1}'",
+                    Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d"));
             }
 
             if (!MyUtility.Check.Empty(DeliveryDate1))
             {
-                strSQLCmd += string.Format(@" and o.BuyerDelivery between '{0}' and '{1}'",
-                Convert.ToDateTime(DeliveryDate1).ToString("d"), Convert.ToDateTime(DeliveryDate2).ToString("d"));
+                strSQLCmd += string.Format(
+                    @" and o.BuyerDelivery between '{0}' and '{1}'",
+                    Convert.ToDateTime(DeliveryDate1).ToString("d"), Convert.ToDateTime(DeliveryDate2).ToString("d"));
             }
+
             if (!MyUtility.Check.Empty(spno1))
             {
                 strSQLCmd += " and b.orderid >= @spno1 and b.orderid <= @spno2";
@@ -130,6 +133,7 @@ Where b.Qty - b.InQty >0
                 cmds.Add(sp_spno1);
                 cmds.Add(sp_spno2);
             }
+
             if (!MyUtility.Check.Empty(category))
             {
                 strSQLCmd += " and a.category = @category";
@@ -137,14 +141,20 @@ Where b.Qty - b.InQty >0
                 cmds.Add(sp_category);
             }
 
-            Ict.DualResult result;
-            if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out dtArtwork))
+            DualResult result;
+            if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out this.dtArtwork))
             {
-                if (dtArtwork.Rows.Count == 0)
-                { MyUtility.Msg.WarningBox("Data not found!!"); }
-                detailBS.DataSource = dtArtwork;
+                if (this.dtArtwork.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+
+                this.detailBS.DataSource = this.dtArtwork;
             }
-            else { ShowErr(strSQLCmd, result); }               
+            else
+            {
+                this.ShowErr(strSQLCmd, result);
+            }
         }
 
         protected override void OnFormLoaded()
@@ -152,28 +162,28 @@ Where b.Qty - b.InQty >0
             base.OnFormLoaded();
             #region -- QTY 不可超過 On Road --
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.IsSupportNegative = true;
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow dr = gridImport.GetDataRow(gridImport.GetSelectedRowIndex());
+                    DataRow dr = this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex());
                     if (decimal.Parse(e.FormattedValue.ToString()) > decimal.Parse(dr["onRoad"].ToString()))
                     {
                          e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Qty can't be over on road qty!!");
+                         MyUtility.Msg.WarningBox("Qty can't be over on road qty!!");
                     }
                 }
             };
-            #endregion 
+            #endregion
             #region Location Setting
-            Ict.Win.DataGridViewGeneratorTextColumnSettings locationSet = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings locationSet = new DataGridViewGeneratorTextColumnSettings();
             locationSet.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                    DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
                     dr["Location"] = e.FormattedValue;
                     string sqlcmd = @"
 select * 
@@ -188,12 +198,12 @@ where	Junk != 1
                     List<string> trueLocation = new List<string>();
                     foreach (string location in getLocation)
                     {
-                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !location.EqualString(string.Empty))
                         {
                             selectId &= false;
                             errLocation.Add(location);
                         }
-                        else if (!(location.EqualString("")))
+                        else if (!location.EqualString(string.Empty))
                         {
                             trueLocation.Add(location);
                         }
@@ -202,16 +212,16 @@ where	Junk != 1
                     if (!selectId)
                     {
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
-
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errLocation.ToArray()) + "  Data not found !!", "Data not found");
                     }
+
                     trueLocation.Sort();
-                    dr["Location"] = string.Join(",", (trueLocation).ToArray());
-                    //去除錯誤的Location將正確的Location填回
+                    dr["Location"] = string.Join(",", trueLocation.ToArray());
 
-                    dr["selected"] = (!String.IsNullOrEmpty(dr["Location"].ToString())) ? 1 : 0;
+                    // 去除錯誤的Location將正確的Location填回
+                    dr["selected"] = (!string.IsNullOrEmpty(dr["Location"].ToString())) ? 1 : 0;
 
-                    gridImport.RefreshEdit();
+                    this.gridImport.RefreshEdit();
                 }
             };
 
@@ -219,20 +229,24 @@ where	Junk != 1
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    DataRow currentrow = gridImport.GetDataRow(gridImport.GetSelectedRowIndex());
-                    Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("B", currentrow["location"].ToString());
+                    DataRow currentrow = this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex());
+                    Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("B", currentrow["location"].ToString());
                     DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     currentrow["location"] = item.GetSelectedString();
                     currentrow.EndEdit();
                 }
             };
-            #endregion 
+            #endregion
 
-            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridImport.DataSource = detailBS;
-            Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+            this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = this.detailBS;
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("LocalPoId", header: "Local PO#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("OrderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
@@ -242,15 +256,15 @@ where	Junk != 1
                 .Numeric("poqty", header: "PO Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6))
                 .Text("unitid", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
                 .Numeric("price", header: "PO Price", decimal_places: 4, integer_places: 8, iseditingreadonly: true, width: Widths.AnsiChars(6))
-                .Numeric("onRoad", header: "On Road", decimal_places: 2, integer_places: 6, iseditingreadonly: true, width: Widths.AnsiChars(6))                
+                .Numeric("onRoad", header: "On Road", decimal_places: 2, integer_places: 6, iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Numeric("Qty", header: "Qty", decimal_places: 2, integer_places: 6, settings: ns, width: Widths.AnsiChars(6))
                 .Text("location", header: "Location", width: Widths.AnsiChars(20), settings: locationSet)
-                .Text("remark", header: "Remark", width:Widths.AnsiChars(20))
+                .Text("remark", header: "Remark", width: Widths.AnsiChars(20))
                ;
 
-            gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
-            gridImport.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
-            gridImport.Columns["location"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["location"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -260,11 +274,13 @@ where	Junk != 1
 
         private void btnImport_Click(object sender, EventArgs e)
         {
+            this.gridImport.ValidateControl();
 
-            gridImport.ValidateControl();
-
-            DataTable dtGridBS1 = (DataTable)detailBS.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
+            DataTable dtGridBS1 = (DataTable)this.detailBS.DataSource;
+            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0)
+            {
+                return;
+            }
 
             DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
             if (dr2.Length == 0)
@@ -274,7 +290,7 @@ where	Junk != 1
             }
 
             dr2 = dtGridBS1.Select("qty = 0 and Selected = 1");
-            if (dr2.Length > 0 )
+            if (dr2.Length > 0)
             {
                 MyUtility.Msg.WarningBox("Qty of selected row can't be zero!", "Warning");
                 return;
@@ -283,8 +299,9 @@ where	Junk != 1
             dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format("localpoid = '{0}' and localpo_detailUkey = {1} "
-                    , tmp["localpoid"].ToString(), tmp["localpo_detailUkey"].ToString()));
+                DataRow[] findrow = this.dt_detail.Select(string.Format(
+                    "localpoid = '{0}' and localpo_detailUkey = {1} ",
+                    tmp["localpoid"].ToString(), tmp["localpo_detailUkey"].ToString()));
 
                 if (findrow.Length > 0)
                 {
@@ -296,14 +313,13 @@ where	Junk != 1
                 }
                 else
                 {
-                    tmp["id"] = dr_master["id"];
+                    tmp["id"] = this.dr_master["id"];
                     tmp.AcceptChanges();
                     tmp.SetAdded();
-                    dt_detail.ImportRow(tmp);
+                    this.dt_detail.ImportRow(tmp);
                 }
             }
 
-            
             this.Close();
         }
     }

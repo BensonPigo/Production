@@ -2,11 +2,8 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Linq;
 using System.Data.SqlClient;
@@ -16,7 +13,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// Thread_B06
     /// </summary>
-    public partial class Thread_B06 : Sci.Win.Tems.QueryForm
+    public partial class Thread_B06 : Win.Tems.QueryForm
     {
         /// <summary>
         /// Thread_B06
@@ -209,7 +206,7 @@ namespace Sci.Production.Centralized
             #endregion
             #region Save
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
-            listSqlParameter.Add(new SqlParameter("@UserName", Sci.Env.User.UserName));
+            listSqlParameter.Add(new SqlParameter("@UserName", Env.User.UserName));
 
             string strUpdateTable = @"
 delete tas
@@ -242,12 +239,12 @@ when not matched then
             DBProxy.Current.OpenConnection(this.ConnectionName, out sqlConn);
             DualResult result = MyUtility.Tool.ProcessWithDatatable(
                 (DataTable)this.bindingSource1.DataSource,
-                                                                        null,
-                                                                        strUpdateTable,
-                                                                        out dtResult,
-                                                                        paramters: listSqlParameter,
-                                                                        conn: sqlConn);
-                if (result == false)
+                null,
+                strUpdateTable,
+                out dtResult,
+                paramters: listSqlParameter,
+                conn: sqlConn);
+            if (result == false)
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;

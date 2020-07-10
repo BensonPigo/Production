@@ -51,17 +51,17 @@
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelCustCD = new Sci.Win.UI.Label();
             this.comboOrderBy = new Sci.Win.UI.ComboBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtCustCD = new Sci.Production.Class.txtcustcd();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtCustCD = new Sci.Production.Class.Txtcustcd();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.label1 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.lbSewingInline = new Sci.Win.UI.Label();
             this.dateSewingInline = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtStyle = new Sci.Production.Class.txtstyle();
+            this.txtStyle = new Sci.Production.Class.Txtstyle();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
@@ -411,7 +411,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -519,8 +519,8 @@
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.Size = new System.Drawing.Size(186, 23);
             this.txtStyle.TabIndex = 8;
-            this.txtStyle.tarBrand = null;
-            this.txtStyle.tarSeason = null;
+            this.txtStyle.TarBrand = null;
+            this.txtStyle.TarSeason = null;
             // 
             // chkIncludeCancelOrder
             // 
@@ -636,27 +636,27 @@
         private Win.UI.Label labelCutOffDate;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label labelBuyerDelivery;
-        private Class.txtMdivision txtMdivision;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label labelM;
         private Win.UI.Label labelFactory;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labelCategory;
         private Win.UI.CheckBox checkIncludeArtowkData;
         private Win.UI.DateRange datePlanDate;
         private Win.UI.Label labelPlanDate;
         private Win.UI.Label labelOrderBy;
-        private Class.txtcustcd txtCustCD;
-        private Class.txtbrand txtbrand;
+        private Class.Txtcustcd txtCustCD;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelCustCD;
         private Win.UI.ComboBox comboOrderBy;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboCategory;
         private Win.UI.Label label1;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.Label lbSewingInline;
         private Win.UI.DateRange dateSewingInline;
         private Win.UI.Label label2;
-        private Class.txtstyle txtStyle;
+        private Class.Txtstyle txtStyle;
         private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

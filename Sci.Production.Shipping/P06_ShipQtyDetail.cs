@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Ict.Win;
-using Ict;
-using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// P06_ShipQtyDetail
     /// </summary>
-    public partial class P06_ShipQtyDetail : Sci.Win.Subs.Input8A
+    public partial class P06_ShipQtyDetail : Win.Subs.Input8A
     {
         /// <summary>
         /// P06_ShipQtyDetail

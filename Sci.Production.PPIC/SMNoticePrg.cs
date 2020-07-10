@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using Ict;
 using Sci.Data;
-using Sci.Production.Class;
 using Sci.Utility;
 using Sci.Win.UI;
 
@@ -21,7 +18,7 @@ namespace Sci.Production.Class.Commons
     /// </summary>
     public static class SMNoticePrg
     {
-        private static object MissingType = System.Type.Missing;
+        private static object MissingType = Type.Missing;
 
         #region QueryFors setup
 
@@ -54,7 +51,7 @@ namespace Sci.Production.Class.Commons
         /// <param name="queryfors">ComboBox</param>
         /// <param name="showErr"><![CDATA[Func<Ict.DualResult, bool>]]></param>
         /// <param name="reloadDatas"><![CDATA[Func<Ict.DualResult>]]></param>
-        public static void SetupQueryFors_SMNoticeStatus(SMNoticeCategoryEnum sMNoticeCategory, Sci.Win.Tems.Input1 form, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas)
+        public static void SetupQueryFors_SMNoticeStatus(SMNoticeCategoryEnum sMNoticeCategory, Win.Tems.Input1 form, ComboBox queryfors, Func<DualResult, bool> showErr, Func<DualResult> reloadDatas)
         {
             var resetDefaultWhere = new Action(() =>
             {
@@ -138,7 +135,7 @@ Exists (
         /// <param name="queryfors">ComboBox</param>
         /// <param name="showErr"><![CDATA[Func<Ict.DualResult, bool>]]></param>
         /// <param name="reloadDatas"><![CDATA[Func<Ict.DualResult>]]></param>
-        public static void SetupQueryFors_Pattern(Sci.Win.Tems.Input1 form, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas)
+        public static void SetupQueryFors_Pattern(Win.Tems.Input1 form, ComboBox queryfors, Func<DualResult, bool> showErr, Func<DualResult> reloadDatas)
         {
             var resetDefaultWhere = new Action(() =>
             {
@@ -186,7 +183,7 @@ Exists (
         /// <param name="queryfors">ComboBox</param>
         /// <param name="showErr"><![CDATA[Func<Ict.DualResult, bool>]]></param>
         /// <param name="reloadDatas"><![CDATA[Func<Ict.DualResult>]]></param>
-        public static void SetupQueryFors_Marker(Sci.Win.Tems.Input1 form, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas)
+        public static void SetupQueryFors_Marker(Win.Tems.Input1 form, ComboBox queryfors, Func<DualResult, bool> showErr, Func<DualResult> reloadDatas)
         {
             var resetDefaultWhere = new Action(() =>
             {
@@ -235,7 +232,7 @@ Exists (
         /// <param name="showErr"><![CDATA[Func<Ict.DualResult, bool>]]></param>
         /// <param name="reloadDatas"><![CDATA[Func<Ict.DualResult>]]></param>
         /// <param name="resetDefaultWhere">Action</param>
-        private static void SharedQueryForsSetup(string dropdownType, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas, Action resetDefaultWhere)
+        private static void SharedQueryForsSetup(string dropdownType, ComboBox queryfors, Func<DualResult, bool> showErr, Func<DualResult> reloadDatas, Action resetDefaultWhere)
         {
             using (var drQueryFor = DBProxy.Current.SelectEx("SELECT ID, Name FROM DropDownList Where Type = '" + dropdownType + "' ORDER BY ID"))
             {
@@ -501,7 +498,7 @@ Exists (
             /// <summary>
             /// Order
             /// </summary>
-            Order
+            Order,
         }
 
         /// <summary>
@@ -512,7 +509,7 @@ Exists (
         public static void PrintSMNotice(string iD, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
             // var xltFolder = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
-            var xltFolder = Sci.Env.Cfg.XltPathDir;
+            var xltFolder = Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "PPIC_Pattern-P01_PrintSMnotice.xlt");
 
             if (System.IO.File.Exists(xltPath) == false)
@@ -533,7 +530,7 @@ Exists (
 #if DEBUG
                 app.Visible = true;
 #endif
-                var mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
+                var mainSheet = book.Worksheets[1] as MsExcel.Worksheet;
 
                 var pageHBreakList = new List<int>(); // 換頁符號的水平插入點，基本上P2的時候換一次，之後的TrimCard每頁換一次
 
@@ -560,6 +557,7 @@ Exists (
                 pageHBreakList.Add(rowPosition);
                 PrintSMNoticeBlock10(mainSheet, iD, ref rowPosition, enuType); // Block10: formal table for sign
                 PrintSMNoticeBlock11(mainSheet, iD, ref rowPosition, pageHBreakList, enuType); // Block11: FabricColor TrimCard
+
                 // 把分業符號整理好，自動產生的移除，加入指定位置的分頁設定
                 // mainSheet.PageSetup.PrintArea = "$A$1:$AC$" + rowPosition;
                 // while (mainSheet.VPageBreaks.Count > 0)
@@ -578,8 +576,8 @@ Exists (
                 mainSheet.Protect("SCIMIS919", Type.Missing, Type.Missing, Type.Missing, Type.Missing, true, true, true);
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Pattern-P01_PrintSMnotice");
-                Microsoft.Office.Interop.Excel.Workbook workbook = app.ActiveWorkbook;
+                string strExcelName = MicrosoftFile.GetName("PPIC_Pattern-P01_PrintSMnotice");
+                MsExcel.Workbook workbook = app.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 app.Quit();
@@ -594,9 +592,9 @@ Exists (
                 Marshal.ReleaseComObject(app);
                 book = null;
                 app = null;
-                System.GC.Collect();
-                System.GC.WaitForPendingFinalizers();
-                System.GC.Collect();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
             }
 
             // MyUtility.Msg.InfoBox("print complete");
@@ -2232,7 +2230,7 @@ Where o.ID = @ID
         /// <param name="smID">string</param>
         public static void PrintSMNoticeDevTrimCard(string smID)
         {
-            var xltFolder = Sci.Env.Cfg.XltPathDir;
+            var xltFolder = Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "Pattern-P01_PrintDev.xlt");
             if (System.IO.File.Exists(xltPath) == false)
             {
@@ -2252,7 +2250,7 @@ Where o.ID = @ID
 #if DEBUG
                 app.Visible = true;
 #endif
-                var mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
+                var mainSheet = book.Worksheets[1] as MsExcel.Worksheet;
                 int rowPosition = 1; // 各責任區域輪流使用
                 if (PrintSMNoticeDevTrimCardBlock1(mainSheet, smID, ref rowPosition) == false)
                 {
@@ -2277,9 +2275,9 @@ Where o.ID = @ID
                 Marshal.ReleaseComObject(app);
                 book = null;
                 app = null;
-                System.GC.Collect();
-                System.GC.WaitForPendingFinalizers();
-                System.GC.Collect();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
             }
 
             MyUtility.Msg.InfoBox("print complete");
@@ -2469,7 +2467,7 @@ order by x.tp, x.PNO
         public static void PrintGarmentList(long uKey, string savePath = null)
         {
             var directlyOpenExportReport = savePath == null;
-            var xltFolder = Sci.Env.Cfg.XltPathDir;
+            var xltFolder = Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "Pattern-P02.Garment List-Print.xlt");
             var bmpFolder = System.IO.Path.Combine(xltFolder, "BMP");
             if (System.IO.File.Exists(xltPath) == false)
@@ -2493,7 +2491,7 @@ order by x.tp, x.PNO
 #if DEBUG
                 app.Visible = true;
 #endif
-                mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
+                mainSheet = book.Worksheets[1] as MsExcel.Worksheet;
 
                 int rowPosition = 1; // 各責任區域輪流使用
                 PrintGarmentListBlock1(mainSheet, uKey, ref rowPosition); // Block1: Header - Pattern
@@ -2501,6 +2499,7 @@ order by x.tp, x.PNO
                 PrintGarmentListBlock2(mainSheet, uKey, ref rowPosition, out articleCount); // Block2: Garment List
                 PrintGarmentListBlock3(mainSheet, uKey, ref rowPosition, articleCount, bmpFolder); // Block3: Cutting Piece
                 PrintGarmentListBlock4(mainSheet, uKey, ref rowPosition, articleCount); // Block4: Remark
+
                 // mainSheet.UsedRange.Rows.AutoFit();
                 mainSheet.Cells[1, 1].Select();
                 mainSheet.Protect(Env.User.UserPassword);
@@ -2544,9 +2543,9 @@ order by x.tp, x.PNO
                 Marshal.ReleaseComObject(app);
                 book = null;
                 app = null;
-                System.GC.Collect();
-                System.GC.WaitForPendingFinalizers();
-                System.GC.Collect();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
             }
 
             if (directlyOpenExportReport)
@@ -2630,9 +2629,9 @@ Where p.UKey = @UKey";
 
                 // line6
                 var sizeRoundText = string.Format("Size Round#: {0}", row.Field<string>("SizeRound"));
-                using (var img = new System.Drawing.Bitmap(1000, 1000))
-                using (var gra = System.Drawing.Graphics.FromImage(img))
-                using (var fnt = new System.Drawing.Font("Arial", 10f))
+                using (var img = new Bitmap(1000, 1000))
+                using (var gra = Graphics.FromImage(img))
+                using (var fnt = new Font("Arial", 10f))
                 {
                     sheet.GetRange("A6").WrapText = true;
                     sheet.GetRange("A6").SetValue(sizeRoundText);
@@ -2852,9 +2851,9 @@ Order by (
                     // 關於第三區塊的WorkSheet
                     var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("B3") as MsExcel.Worksheet;
                     var articleCellWidth = Convert.ToInt32(Math.Floor((double)thisSheet.GetRange(3, 2, 9, 2).Width * 1.3333));
-                    using (var img = new System.Drawing.Bitmap(1000, 1000))
-                    using (var gra = System.Drawing.Graphics.FromImage(img))
-                    using (var fnt = new System.Drawing.Font("Arial", 10f))
+                    using (var img = new Bitmap(1000, 1000))
+                    using (var gra = Graphics.FromImage(img))
+                    using (var fnt = new Font("Arial", 10f))
                     {
                         try
                         {
@@ -2987,9 +2986,9 @@ Where p.UKey = @UKey
                 try
                 {
                     var remarkCellWidth = Convert.ToInt32((double)thisSheet.GetRange(1, 2, 9, 2).Width * 1.2);
-                    using (var img = new System.Drawing.Bitmap(1000, 1000))
-                    using (var gra = System.Drawing.Graphics.FromImage(img))
-                    using (var fnt = new System.Drawing.Font("Arial", 10f))
+                    using (var img = new Bitmap(1000, 1000))
+                    using (var gra = Graphics.FromImage(img))
+                    using (var fnt = new Font("Arial", 10f))
                     {
                         thisSheet.GetRange("A2").Value = row.Field<string>("HisRemark");
                         var heightOfRemark = gra.MeasureString(row.Field<string>("HisRemark") ?? string.Empty, fnt, remarkCellWidth).Height / 1.2;

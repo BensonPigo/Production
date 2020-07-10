@@ -3,25 +3,22 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P30_BatchApprove : Sci.Win.Forms.Base
+    public partial class P30_BatchApprove : Win.Forms.Base
     {
         Action delegateAct;
-        DataTable LocalPOs, LocalPO_Details;
+        DataTable LocalPOs;
+        DataTable LocalPO_Details;
 
         public P30_BatchApprove(Action reload)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
             this.delegateAct = reload;
         }
@@ -31,8 +28,8 @@ namespace Sci.Production.Subcon
             base.OnFormLoaded();
 
             this.gridHead.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.gridHead)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false)//.Get(out col_chk)
+            this.Helper.Controls.Grid.Generator(this.gridHead)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false) // .Get(out col_chk)
                 .Text("ID", header: "PO#", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Factory", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Date("IssueDate", header: "Issue Date", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -45,7 +42,7 @@ namespace Sci.Production.Subcon
                 ;
 
             this.gridBody.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.gridBody)
+            this.Helper.Controls.Grid.Generator(this.gridBody)
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Style", header: "Style", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -58,24 +55,22 @@ namespace Sci.Production.Subcon
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 ;
 
-
             for (int i = 0; i < this.gridHead.Columns.Count; i++)
             {
                 this.gridHead.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
-
 
             for (int i = 0; i < this.gridBody.Columns.Count; i++)
             {
                 this.gridBody.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
 
-            Query();
+            this.Query();
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            Query();
+            this.Query();
         }
 
         private void btnApprove_Click(object sender, EventArgs e)
@@ -83,21 +78,21 @@ namespace Sci.Production.Subcon
             string sqlCmd = string.Empty;
             DualResult result;
 
-            if (LocalPOs == null || this.LocalPOs.Rows.Count == 0)
+            if (this.LocalPOs == null || this.LocalPOs.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Please select data first.");
                 return;
             }
 
-            if (LocalPOs.AsEnumerable().Where(o => (int)o["Selected"] == 1).Count() == 0)
+            if (this.LocalPOs.AsEnumerable().Where(o => (int)o["Selected"] == 1).Count() == 0)
             {
                 MyUtility.Msg.WarningBox("Please select data first.");
                 return;
             }
 
-            //取得勾選資料並檢查，得到確定是Locked的資料
-            DataTable SelectedList = LocalPOs.AsEnumerable().Where(o => (int)o["Selected"] == 1).CopyToDataTable();
-            DataTable RealLockedList = CheckSelectedData(SelectedList);
+            // 取得勾選資料並檢查，得到確定是Locked的資料
+            DataTable SelectedList = this.LocalPOs.AsEnumerable().Where(o => (int)o["Selected"] == 1).CopyToDataTable();
+            DataTable RealLockedList = this.CheckSelectedData(SelectedList);
 
             if (RealLockedList.Rows.Count == 0)
             {
@@ -116,25 +111,24 @@ namespace Sci.Production.Subcon
                     if (!(result = DBProxy.Current.Execute(null, sqlCmd)))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlCmd, result);
+                        this.ShowErr(sqlCmd, result);
                         return;
                     }
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
 
-                    Query();
+                    this.Query();
                     this.delegateAct();
                     MyUtility.Msg.InfoBox("Sucessful");
                 }
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
-
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -150,18 +144,17 @@ namespace Sci.Production.Subcon
 
             try
             {
-                //取得Locked資料
-                if (LocalPOs == null || this.LocalPOs.Rows.Count == 0)
+                // 取得Locked資料
+                if (this.LocalPOs == null || this.LocalPOs.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("No Data!");
                     return;
                 }
 
-
                 this.ShowWaitMessage("Data Loading...");
 
-                //取得勾選資料並檢查，得到確定是Locked的資料
-                DataTable RealLockedList = CheckSelectedData(LocalPOs);
+                // 取得勾選資料並檢查，得到確定是Locked的資料
+                DataTable RealLockedList = this.CheckSelectedData(this.LocalPOs);
 
                 List<string> IdList = RealLockedList.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
 
@@ -244,9 +237,8 @@ namespace Sci.Production.Subcon
                 result = DBProxy.Current.Select(null, sqlCmd, out PrictData);
                 if (!result)
                 {
-                    ShowErr(result);
+                    this.ShowErr(result);
                 }
-
 
                 MyUtility.Excel.CopyToXls(PrictData, string.Empty, "Subcon_P30_LockList.xltx", 1);
 
@@ -254,12 +246,10 @@ namespace Sci.Production.Subcon
             }
             catch (Exception ex)
             {
-                ShowErr(ex);
+                this.ShowErr(ex);
             }
-
-
         }
-        
+
         #region 自訂事件
 
         private void Query()
@@ -313,56 +303,56 @@ namespace Sci.Production.Subcon
 
             try
             {
-
-                 if (!SQL.Selects("", sqlCmd, out LocalPOs_And_Details))
+                 if (!SQL.Selects(string.Empty, sqlCmd, out LocalPOs_And_Details))
                 {
                     MyUtility.Msg.WarningBox(sqlCmd, "Query error!!");
                     return;
                 }
 
-                if (LocalPOs_And_Details.Tables.Count == 0)
+                 if (LocalPOs_And_Details.Tables.Count == 0)
                 {
                     return;
                 }
 
-                //將Table從DataSet切分出來
-                LocalPOs = LocalPOs_And_Details.Tables[0];
-                LocalPOs.TableName = "Master";
+                // 將Table從DataSet切分出來
+                 this.LocalPOs = LocalPOs_And_Details.Tables[0];
+                 this.LocalPOs.TableName = "Master";
 
-                LocalPO_Details = LocalPOs_And_Details.Tables[1];
-                LocalPO_Details.TableName = "Detail";
+                 this.LocalPO_Details = LocalPOs_And_Details.Tables[1];
+                 this.LocalPO_Details.TableName = "Detail";
 
-                //建立Relation，連動兩個Grid
-                DataRelation relation = new DataRelation("LocalPORelation"
-                                                         , new DataColumn[] { LocalPOs.Columns["ID"] }
-                                                         , new DataColumn[] { LocalPO_Details.Columns["ID"] });
+                // 建立Relation，連動兩個Grid
+                 DataRelation relation = new DataRelation(
+                     "LocalPORelation",
+                     new DataColumn[] { this.LocalPOs.Columns["ID"] },
+                     new DataColumn[] { this.LocalPO_Details.Columns["ID"] });
 
-                LocalPOs_And_Details.Relations.Add(relation);
+                 LocalPOs_And_Details.Relations.Add(relation);
 
-                //DataSource必須Reset
-                if (listControlBindingSource_Master.DataSource != null)
+                // DataSource必須Reset
+                 if (this.listControlBindingSource_Master.DataSource != null)
                 {
-                    listControlBindingSource_Master.DataSource = null;
-                }
-                if (listControlBindingSource_Detail.DataSource != null)
-                {
-                    listControlBindingSource_Detail.DataSource = null;
+                    this.listControlBindingSource_Master.DataSource = null;
                 }
 
-                listControlBindingSource_Master.DataSource = LocalPOs_And_Details;
-                listControlBindingSource_Master.DataMember = "Master";
+                 if (this.listControlBindingSource_Detail.DataSource != null)
+                {
+                    this.listControlBindingSource_Detail.DataSource = null;
+                }
 
-                listControlBindingSource_Detail.DataSource = listControlBindingSource_Master;
-                listControlBindingSource_Detail.DataMember = "LocalPORelation";
+                 this.listControlBindingSource_Master.DataSource = LocalPOs_And_Details;
+                 this.listControlBindingSource_Master.DataMember = "Master";
 
-                this.gridHead.AutoResizeColumns();
-                this.gridBody.AutoResizeColumns();
+                 this.listControlBindingSource_Detail.DataSource = this.listControlBindingSource_Master;
+                 this.listControlBindingSource_Detail.DataMember = "LocalPORelation";
+
+                 this.gridHead.AutoResizeColumns();
+                 this.gridBody.AutoResizeColumns();
             }
             catch (Exception ex)
             {
-                ShowErr(ex);
+                this.ShowErr(ex);
             }
-
         }
 
         private DataTable CheckSelectedData(DataTable SelectedList)
@@ -374,13 +364,14 @@ namespace Sci.Production.Subcon
 
             sqlCmd = $" SELECT ID FROm LocalPO WHERE Status='Locked' AND ID IN ('{IdList.JoinToString("','")}')";
 
-            //Form並不是最新的狀態，避免Form上的Status與DB歧異，因此回去撈出真正Locked的LocalPO
+            // Form並不是最新的狀態，避免Form上的Status與DB歧異，因此回去撈出真正Locked的LocalPO
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out RealLockedList);
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return null;
             }
+
             return RealLockedList;
         }
         #endregion

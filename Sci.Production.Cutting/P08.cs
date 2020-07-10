@@ -18,12 +18,13 @@ namespace Sci.Production.Cutting
 {
     public partial class P08 : Win.Tems.Input6
     {
-        string fileNameExt, pathName;
+        string fileNameExt;
+        string pathName;
 
         public P08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
         }
 
@@ -33,7 +34,8 @@ namespace Sci.Production.Cutting
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Visible = false;
             DataTable queryDT;
-            string querySql = string.Format(@"
+            string querySql = string.Format(
+                @"
 select '' FTYGroup
 
 union 
@@ -41,19 +43,20 @@ select distinct FTYGroup
 from Factory 
 where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
-            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
-            queryfors.SelectedIndex = 0;
-            queryfors.SelectedIndexChanged += (s, e) =>
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
+            this.queryfors.SelectedIndex = 0;
+            this.queryfors.SelectedIndexChanged += (s, e) =>
             {
-                switch (queryfors.SelectedIndex)
+                switch (this.queryfors.SelectedIndex)
                 {
                     case 0:
-                        this.DefaultWhere = "";
+                        this.DefaultWhere = string.Empty;
                         break;
                     default:
-                        this.DefaultWhere = string.Format("FactoryID='{0}'", queryfors.SelectedValue);
+                        this.DefaultWhere = string.Format("FactoryID='{0}'", this.queryfors.SelectedValue);
                         break;
                 }
+
                 this.ReloadDatas();
             };
         }
@@ -61,7 +64,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("FabricCombo", header: "Fab Combo", width: Widths.Auto(), iseditingreadonly: true)
             .Text("MarkerName", header: "Mark Name", width: Widths.Auto(), iseditingreadonly: true)
             .Text("SEQ1", header: "SEQ1", width: Widths.Auto(), iseditingreadonly: true)
@@ -85,7 +88,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
 
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Status"].ToString() == "Confirmed")
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("The record status is confimed, you can not modify.");
                 return false;
@@ -96,15 +99,15 @@ where MDivisionID = '{0}'", Env.User.Keyword);
 
         protected override bool ClickNew()
         {
-            detailgrid.ValidateControl();
+            this.detailgrid.ValidateControl();
             var frm = new P08_Import();
             DialogResult dr = frm.ShowDialog(this);
             this.ReloadDatas();
             if (dr == DialogResult.OK)
             {
                 var topID = frm.importedIDs[0];
-                int newDataIdx = gridbs.Find("ID", topID);
-                gridbs.Position = newDataIdx;
+                int newDataIdx = this.gridbs.Find("ID", topID);
+                this.gridbs.Position = newDataIdx;
             }
 
             return true;
@@ -116,13 +119,12 @@ where MDivisionID = '{0}'", Env.User.Keyword);
 
             #region 存在 Issue 不可 Uncomfirm
             DataTable dt;
-            string Query = string.Format("Select 1 from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", CurrentMaintain["ID"]);
+            string Query = string.Format("Select 1 from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", this.CurrentMaintain["ID"]);
             DualResult result = DBProxy.Current.Select(null, Query, out dt);
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
-
             }
 
             if (dt.Rows.Count != 0)
@@ -136,7 +138,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
 
             if (!(result = DBProxy.Current.Execute(null, updSql)))
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
         }
@@ -152,7 +154,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                 return;
             }
 
-            if (this.DetailDatas.AsEnumerable().Where(w=> MyUtility.Check.Empty(w["Dyelot"]) || MyUtility.Check.Empty(w["ReleaseQty"])).Any())
+            if (this.DetailDatas.AsEnumerable().Where(w => MyUtility.Check.Empty(w["Dyelot"]) || MyUtility.Check.Empty(w["ReleaseQty"])).Any())
             {
                 MyUtility.Msg.WarningBox("Dyelot or Release Qty can't empty!");
                 return;
@@ -164,7 +166,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             DualResult result = DBProxy.Current.Execute(null, updSql);
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
         }
@@ -188,6 +190,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             #endregion
 
             #region 檢查表身 Grid 要有資料, Release Qty 要大於 0
+
             // Grid 要有資料
             if (this.DetailDatas.Count == 0)
             {
@@ -210,7 +213,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                     FabricCombo = g["FabricCombo"].ToString(),
                     MarkerName = g["MarkerName"].ToString(),
                     ColorID = g["ColorID"].ToString(),
-                    Qty = MyUtility.Convert.GetDecimal(g["Qty"])
+                    Qty = MyUtility.Convert.GetDecimal(g["Qty"]),
                 })
                 .Select(s => new
                 {
@@ -218,7 +221,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                     s.Key.MarkerName,
                     s.Key.ColorID,
                     s.Key.Qty,
-                    ReleaseQty = s.Sum(i => MyUtility.Convert.GetDecimal(i["ReleaseQty"]))
+                    ReleaseQty = s.Sum(i => MyUtility.Convert.GetDecimal(i["ReleaseQty"])),
                 });
             if (x.Where(w => w.ReleaseQty > w.Qty).Any())
             {
@@ -232,7 +235,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
 
         protected override bool ClickDeleteBefore()
         {
-            if (CurrentMaintain["Status"].ToString() == "Confirmed")
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("The record status is confimed, you can not delete.");
                 return false;
@@ -244,13 +247,13 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.btnSendMail.Enabled = CurrentMaintain["Status"].ToString() != "New";
+            this.btnSendMail.Enabled = this.CurrentMaintain["Status"].ToString() != "New";
             this.detailgrid.AutoResizeColumns();
         }
 
         private bool ToExcel(bool excelVisivle)
         {
-            if (MyUtility.Check.Empty(CurrentDetailData))
+            if (MyUtility.Check.Empty(this.CurrentDetailData))
             {
                 MyUtility.Msg.InfoBox("No any data.");
                 return false;
@@ -319,8 +322,8 @@ where c.id = @CT
             }
 
             string filename = "Cutting_P08.xltx";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + filename); //預先開啟excel app
-            bool isexcelWrite = MyUtility.Excel.CopyToXls(excelTb, String.Empty, filename, 5, showExcel: false, excelApp: excelApp);
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + filename); // 預先開啟excel app
+            bool isexcelWrite = MyUtility.Excel.CopyToXls(excelTb, string.Empty, filename, 5, showExcel: false, excelApp: excelApp);
 
             if (!isexcelWrite)
             {
@@ -331,15 +334,15 @@ where c.id = @CT
 
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
             worksheet.Cells[1, 1] = this.CurrentMaintain["FactoryID"];
-            worksheet.Cells[3, 2] = dateCuttingDate.Text;
-            worksheet.Cells[3, 6] = CurrentMaintain["CuttingID"];
+            worksheet.Cells[3, 2] = this.dateCuttingDate.Text;
+            worksheet.Cells[3, 6] = this.CurrentMaintain["CuttingID"];
             worksheet.Cells[3, 13] = PublicPrg.Prgs.GetAddOrEditBy(Env.User.UserID);
             worksheet.Rows.AutoFit();
-            pathName = MicrosoftFile.GetName("Cutting_Tape_Plan");
+            this.pathName = MicrosoftFile.GetName("Cutting_Tape_Plan");
             Excel.Workbook workbook = excelApp.Workbooks[1];
-            workbook.SaveAs(pathName);
+            workbook.SaveAs(this.pathName);
             excelApp.Visible = excelVisivle; // 此excel物件直接顯示，再次產生的excel物件會在不同視窗
-            fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
+            this.fileNameExt = this.pathName.Substring(this.pathName.LastIndexOf("\\") + 1);
 
             if (!excelVisivle)
             {
@@ -366,16 +369,16 @@ where c.id = @CT
                 string mailto = seekdr["ToAddress"].ToString();
                 string cc = seekdr["ccAddress"].ToString();
                 string content = seekdr["content"].ToString();
-                string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">BulkMarkerRequest#:" + CurrentMaintain["ID"].ToString(); 
-                var email = new MailTo(mailFrom, mailto, cc, subject + "-" + fileNameExt, pathName, content, false, true);
+                string subject = "<" + this.CurrentMaintain["mDivisionid"].ToString() + ">BulkMarkerRequest#:" + this.CurrentMaintain["ID"].ToString();
+                var email = new MailTo(mailFrom, mailto, cc, subject + "-" + this.fileNameExt, this.pathName, content, false, true);
                 DialogResult dialogResult = email.ShowDialog(this);
                 if (dialogResult == DialogResult.OK)
                 {
-                    string sql = $"Update MarkerReq set sendDate = getdate() where id ='{CurrentMaintain["ID"]}'";
+                    string sql = $"Update MarkerReq set sendDate = getdate() where id ='{this.CurrentMaintain["ID"]}'";
                     DualResult result;
                     if (!(result = DBProxy.Current.Execute(null, sql)))
                     {
-                        ShowErr(result);
+                        this.ShowErr(result);
                     }
                     else
                     {
@@ -387,7 +390,7 @@ where c.id = @CT
 
             try
             {
-                File.Delete(pathName);
+                File.Delete(this.pathName);
             }
             catch (IOException ex)
             {

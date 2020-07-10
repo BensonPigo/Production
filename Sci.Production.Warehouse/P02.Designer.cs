@@ -73,8 +73,8 @@
             this.txtLocateSP = new Sci.Win.UI.TextBox();
             this.label23 = new Sci.Win.UI.Label();
             this.btnFind = new Sci.Win.UI.Button();
-            this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
+            this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
+            this.txtSeq1 = new Sci.Production.Class.TxtSeq();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -752,8 +752,8 @@
             this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq1.Location = new System.Drawing.Point(213, 252);
             this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Seq1 = "";
+            this.txtSeq1.Seq2 = "";
             this.txtSeq1.Size = new System.Drawing.Size(61, 23);
             this.txtSeq1.TabIndex = 1;
             // 
@@ -806,7 +806,7 @@
         private Win.UI.DateBox dateArriveWHDate;
         private Win.UI.DateBox dateArrivePortDate;
         private Win.UI.DateBox datePLRcvDate;
-        private Class.txttpeuser txttpeuserHandle;
+        private Class.Txttpeuser txttpeuserHandle;
         private Win.UI.Label labelDoxRcvDate;
         private Win.UI.Label labelArriveWHDate;
         private Win.UI.Label labelArrivePortDate;
@@ -842,6 +842,6 @@
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelETA;
         private Win.UI.Label labelWKNo;
-        private Class.txtSeq txtSeq1;
+        private Class.TxtSeq txtSeq1;
     }
 }

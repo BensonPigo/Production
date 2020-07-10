@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
@@ -14,9 +13,9 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P41
     /// </summary>
-    public partial class P41 : Sci.Win.Tems.Input6
+    public partial class P41 : Win.Tems.Input6
     {
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings customsp = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings customsp = new DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// /P41
@@ -44,7 +43,7 @@ namespace Sci.Production.Shipping
                 {
                     if (this.EditMode)
                     {
-                        if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                        if (e.Button == MouseButtons.Right)
                         {
                             if (e.RowIndex != -1)
                             {
@@ -66,7 +65,7 @@ order by c.CustomSP",
                                     MyUtility.Convert.GetString(dr["Article"]),
                                     MyUtility.Convert.GetString(dr["SizeCode"]));
 
-                                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,10", dr["CustomSP"].ToString().Trim());
+                                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,10", dr["CustomSP"].ToString().Trim());
                                 DialogResult returnResult = item.ShowDialog();
                                 if (returnResult == DialogResult.Cancel)
                                 {
@@ -219,6 +218,7 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
                 MyUtility.Msg.WarningBox("This record already junked, can't edit!!");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
@@ -297,7 +297,7 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
             // Get ID
             if (this.IsDetailInserting)
             {
-                string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "ED", "VNExportDeclaration", Convert.ToDateTime(this.CurrentMaintain["CDate"]), 2, "ID", null);
+                string newID = MyUtility.GetValue.GetID(Env.User.Keyword + "ED", "VNExportDeclaration", Convert.ToDateTime(this.CurrentMaintain["CDate"]), 2, "ID", null);
                 if (MyUtility.Check.Empty(newID))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -313,7 +313,7 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            Sci.Production.Shipping.P41_Print callPurchaseForm = new Sci.Production.Shipping.P41_Print();
+            P41_Print callPurchaseForm = new P41_Print();
             callPurchaseForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -329,7 +329,7 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
             }
 
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Junk > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -353,7 +353,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty-{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
             }
 
-            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Junked' where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Junked' where ID = '{1}';", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -432,7 +432,7 @@ isnull((select sum(ExportQty) as ExportQty from VNExportDeclaration_Detail WITH 
             if (qty != "0")
             {
                 DialogResult buttonResult = MyUtility.Msg.WarningBox("Declaration Qty is not equal to Garment Booking Qty. Are you sure you want to < Confirm > this data?", "Warning", MessageBoxButtons.YesNo);
-                if (buttonResult == System.Windows.Forms.DialogResult.No)
+                if (buttonResult == DialogResult.No)
                 {
                     return;
                 }
@@ -457,7 +457,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty+{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
             }
 
-            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}';", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -490,7 +490,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty-{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
             }
 
-            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}';", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -504,7 +504,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         private void TxtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = string.Format("select ID from VNContract WITH (NOLOCK) where StartDate <= {0} and EndDate >= {0} and Status = 'Confirmed'", MyUtility.Check.Empty(this.CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(this.CurrentMaintain["CDate"]).ToString("d") + "'");
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -542,7 +542,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         // Port of Export
         private void TxtPortofExport_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from VNExportPort WITH (NOLOCK) where Junk = 0", "10,50", this.Text, false, ",", headercaptions: "Code,Name");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name from VNExportPort WITH (NOLOCK) where Junk = 0", "10,50", this.Text, false, ",", headercaptions: "Code,Name");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

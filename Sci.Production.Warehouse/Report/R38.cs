@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using Ict;
@@ -13,64 +10,70 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R38 : Sci.Win.Tems.PrintForm
+    public partial class R38 : Win.Tems.PrintForm
     {
-        string strSp1, strSp2, strM, strFty, strStockType, strLockStatus;
+        string strSp1;
+        string strSp2;
+        string strM;
+        string strFty;
+        string strStockType;
+        string strLockStatus;
         DataTable dataTable;
-
 
         private void label1_Click(object sender, EventArgs e)
         {
-
         }
 
         public R38(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
-            Dictionary<string, string> stocktype_source = new Dictionary<string, string> {
-                {"ALL","*" },
-                {"Bulk","B" },
-                {"Inventory","I" },
-                {"Scrap","O" }  };
-            comboStockType.DataSource = new BindingSource(stocktype_source, null);
-            comboStockType.DisplayMember = "Key";
-            comboStockType.ValueMember = "Value";
+            Dictionary<string, string> stocktype_source = new Dictionary<string, string>
+            {
+                { "ALL", "*" },
+                { "Bulk", "B" },
+                { "Inventory", "I" },
+                { "Scrap", "O" },
+            };
+            this.comboStockType.DataSource = new BindingSource(stocktype_source, null);
+            this.comboStockType.DisplayMember = "Key";
+            this.comboStockType.ValueMember = "Value";
 
-            comboStockType.SelectedIndex = 0;
+            this.comboStockType.SelectedIndex = 0;
 
-            //Status下拉選單 
-            Dictionary<string, string> status_source = new Dictionary<string, string> {
-                {"ALL","*" },
-                {"Lock","1" },
-                {"UnLock","0" },};
+            // Status下拉選單
+            Dictionary<string, string> status_source = new Dictionary<string, string>
+            {
+                { "ALL", "*" },
+                { "Lock", "1" },
+                { "UnLock", "0" },
+            };
 
-            comboStatus.DataSource = new BindingSource(status_source, null);
-            comboStatus.DisplayMember = "Key";
-            comboStatus.ValueMember = "Value";
-            comboStatus.SelectedIndex = 0;
+            this.comboStatus.DataSource = new BindingSource(status_source, null);
+            this.comboStatus.DisplayMember = "Key";
+            this.comboStatus.ValueMember = "Value";
+            this.comboStatus.SelectedIndex = 0;
 
-            txtMdivision.Text = Env.User.Keyword;
+            this.txtMdivision.Text = Env.User.Keyword;
         }
 
         protected override bool ValidateInput()
         {
-
-            strSp1 = txtSPNoStart.Text.Trim();
-            strSp2 = txtSPNoEnd.Text.Trim();
-            strM = txtMdivision.Text.Trim();
-            strFty = txtfactory.Text.Trim();
-            strStockType = comboStockType.SelectedValue.ToString().Trim();
-            strLockStatus = comboStatus.SelectedValue.ToString().Trim();
+            this.strSp1 = this.txtSPNoStart.Text.Trim();
+            this.strSp2 = this.txtSPNoEnd.Text.Trim();
+            this.strM = this.txtMdivision.Text.Trim();
+            this.strFty = this.txtfactory.Text.Trim();
+            this.strStockType = this.comboStockType.SelectedValue.ToString().Trim();
+            this.strLockStatus = this.comboStatus.SelectedValue.ToString().Trim();
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            if (MyUtility.Check.Empty(txtSPNoStart.Text.Trim()) || MyUtility.Check.Empty(txtSPNoEnd.Text.Trim()))
+            if (MyUtility.Check.Empty(this.txtSPNoStart.Text.Trim()) || MyUtility.Check.Empty(this.txtSPNoEnd.Text.Trim()))
             {
-                return  new DualResult(false, "<SP#> can't be empty!!");
+                return new DualResult(false, "<SP#> can't be empty!!");
             }
 
             #region Set SQL Command & SQLParameter
@@ -117,80 +120,89 @@ select	fi.POID
 
             /*--- SP# ---*/
 
-            if (!strSp1.Empty())
+            if (!this.strSp1.Empty())
             {
-                //只有 sp1 輸入資料
-                listPar.Add(new SqlParameter("@SP1", strSp1));
+                // 只有 sp1 輸入資料
+                listPar.Add(new SqlParameter("@SP1", this.strSp1));
                 listWhere.Add(" (fi.POID like @SP1+'%' or fi.POID >= @SP1)  ");
             }
-            if (!strSp2.Empty())
+
+            if (!this.strSp2.Empty())
             {
-                //只有 sp2 輸入資料
-                listPar.Add(new SqlParameter("@SP2", strSp2));
+                // 只有 sp2 輸入資料
+                listPar.Add(new SqlParameter("@SP2", this.strSp2));
                 listWhere.Add(" (fi.POID like @SP2+'%' or fi.POID <= @SP2) ");
             }
 
             /*--- M ---*/
-            if (!strM.Empty())
+            if (!this.strM.Empty())
             {
-                listPar.Add(new SqlParameter("@M", strM));
+                listPar.Add(new SqlParameter("@M", this.strM));
                 listWhere.Add(" o.MDivisionID = @M ");
             }
 
             /*--- factory ---*/
-            if (!strFty.Empty())
+            if (!this.strFty.Empty())
             {
-                listPar.Add(new SqlParameter("@Fty", strFty));
+                listPar.Add(new SqlParameter("@Fty", this.strFty));
                 listWhere.Add(" o.FactoryID = @Fty ");
             }
 
             /*--- stock type ---*/
-            if (!strStockType.Equals("*"))
+            if (!this.strStockType.Equals("*"))
             {
-                listPar.Add(new SqlParameter("@stocktype", strStockType));
+                listPar.Add(new SqlParameter("@stocktype", this.strStockType));
                 listWhere.Add(" fi.StockType  = @stocktype ");
             }
 
             /*--- Lock status ---*/
-            if (!strLockStatus.Equals("*"))
+            if (!this.strLockStatus.Equals("*"))
             {
-                listPar.Add(new SqlParameter("@LockStatus", strLockStatus));
+                listPar.Add(new SqlParameter("@LockStatus", this.strLockStatus));
                 listWhere.Add(" fi.Lock  = @LockStatus ");
             }
 
             if (listWhere.Count > 0)
+            {
                 strSql += "where" + listWhere.JoinToString("and");
-            #endregion 
+            }
+            #endregion
             #region SQL Data Loading...
-            DualResult result = DBProxy.Current.Select(null, strSql, listPar, out dataTable);
+            DualResult result = DBProxy.Current.Select(null, strSql, listPar, out this.dataTable);
             #endregion
 
-            if (result) return Result.True;
-            else return new DualResult(false, "Query data fail\r\n" + result.ToString());
+            if (result)
+            {
+                return Ict.Result.True;
+            }
+            else
+            {
+                return new DualResult(false, "Query data fail\r\n" + result.ToString());
+            }
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (dataTable != null && dataTable.Rows.Count > 0)
+            if (this.dataTable != null && this.dataTable.Rows.Count > 0)
             {
-                this.SetCount(dataTable.Rows.Count);
+                this.SetCount(this.dataTable.Rows.Count);
                 this.ShowWaitMessage("Excel Processing...");
 
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R38.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(dataTable, null, "Warehouse_R38.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R38.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.dataTable, null, "Warehouse_R38.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
                 Excel.Worksheet worksheet = objApp.Sheets[1];
                 worksheet.Rows.AutoFit();
                 worksheet.Columns.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R38");
+                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R38");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
                 Marshal.ReleaseComObject(worksheet);
 
                 strExcelName.OpenFile();
-                #endregion 
+                #endregion
                 this.HideWaitMessage();
             }
             else
@@ -198,8 +210,8 @@ select	fi.POID
                 this.SetCount(0);
                 MyUtility.Msg.InfoBox("Data not found!!");
             }
+
             return true;
         }
-
     }
 }

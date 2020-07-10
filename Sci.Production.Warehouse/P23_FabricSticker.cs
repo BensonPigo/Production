@@ -4,25 +4,21 @@ using Sci.Data;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P23_FabricSticker : Sci.Win.Subs.Base
+    public partial class P23_FabricSticker : Win.Subs.Base
     {
         private object strSubTransferID;
 
         public P23_FabricSticker(object strSubTransferID)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.strSubTransferID = strSubTransferID;
             this.grid1.IsEditingReadOnly = false;
         }
@@ -42,7 +38,8 @@ namespace Sci.Production.Warehouse
                 .Text("Dyelot", header: "Dyelot", iseditingreadonly: true)
                 .Text("FromLocation", header: "From Location",  iseditingreadonly: true, width: Widths.AnsiChars(18));
 
-            for (int i = 0; i < this.grid1.Columns.Count; i++) {
+            for (int i = 0; i < this.grid1.Columns.Count; i++)
+            {
                 this.grid1.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
             #endregion
@@ -96,7 +93,8 @@ order by RowNo";
             DualResult result;
             DataTable dtPrint = (DataTable)this.listControlBindingSource.DataSource;
             if (dtPrint != null
-                && dtPrint.AsEnumerable().Any(row => Convert.ToBoolean(row["Sel"]))){
+                && dtPrint.AsEnumerable().Any(row => Convert.ToBoolean(row["Sel"])))
+                {
                 #region Print
                 dtPrint = dtPrint.AsEnumerable().Where(row => Convert.ToBoolean(row["Sel"])).CopyToDataTable();
 
@@ -128,7 +126,7 @@ order by NewRowNo";
                     Color = row["Color"].ToString().Trim(),
                     StockUnit = row["StockUnit"].ToString().Trim(),
                     Qty = Convert.ToDouble(row["Qty"]),
-                    FromLocation= row["FromLocation"].ToString().Trim()
+                    FromLocation = row["FromLocation"].ToString().Trim(),
                 }).ToList();
 
                 ReportDefinition report = new ReportDefinition();
@@ -150,8 +148,8 @@ order by NewRowNo";
                 report.ReportResource = reportresource;
 
                 // 開啟 report view
-                var frm = new Sci.Win.Subs.ReportView(report);
-                frm.MdiParent = MdiParent;
+                var frm = new Win.Subs.ReportView(report);
+                frm.MdiParent = this.MdiParent;
                 frm.Show();
                 #endregion
             }

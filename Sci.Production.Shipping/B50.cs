@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// B50
     /// </summary>
-    public partial class B50 : Sci.Win.Tems.Input1
+    public partial class B50 : Win.Tems.Input1
     {
         /// <summary>
         /// B50

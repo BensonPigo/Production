@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -14,10 +13,10 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P03
     /// </summary>
-    public partial class P03 : Sci.Win.Tems.QueryForm
+    public partial class P03 : Win.Tems.QueryForm
     {
-        private Ict.Win.DataGridViewGeneratorDateColumnSettings rcvDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings ftyRemark = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings rcvDate = new DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings ftyRemark = new DataGridViewGeneratorTextColumnSettings();
         private bool needSave = false;
         private bool alreadySave = false;
         private DataTable gridData;
@@ -94,7 +93,7 @@ namespace Sci.Production.PPIC
             if (this.needSave && !this.alreadySave)
             {
                 DialogResult buttonResult = MyUtility.Msg.QuestionBox("Do you want to save data?", "Confirm", MessageBoxButtons.OKCancel);
-                if (buttonResult == System.Windows.Forms.DialogResult.OK)
+                if (buttonResult == DialogResult.OK)
                 {
                     if (!this.SaveData())
                     {
@@ -121,7 +120,7 @@ iif(sp.IsPF = 1,'Y','N') as CPF
 from Style_ProductionKits sp WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
 where sp.ReceiveDate is null and sp.SendDate is not null and ReasonID=''
-and sp.ProductionKitsGroup='{Sci.Env.User.Keyword}'
+and sp.ProductionKitsGroup='{Env.User.Keyword}'
 ");
 
             if (!MyUtility.Check.Empty(this.txtStyleNo.Text))
@@ -139,7 +138,7 @@ and sp.ProductionKitsGroup='{Sci.Env.User.Keyword}'
                sqlCmd.Append(string.Format(" and sp.SendDate = '{0}'", Convert.ToDateTime(this.dateSendDate.Value).ToString("d")));
             }
 
-             sqlCmd.Append(@" order by FactoryID, StyleID");
+            sqlCmd.Append(@" order by FactoryID, StyleID");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
 
@@ -195,7 +194,7 @@ and sp.ProductionKitsGroup='{Sci.Env.User.Keyword}'
                     cmds.Append(string.Format(@"update Style_ProductionKits set ReceiveDate = {0}, FtyRemark = '{1}'", MyUtility.Check.Empty(dr["ReceiveDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReceiveDate"]).ToString("d") + "'", dr["FtyRemark"].ToString()));
                     if (!MyUtility.Check.Empty(dr["ReceiveDate"]))
                     {
-                        cmds.Append(string.Format(@", FtyHandle = '{0}', FtyLastDate = GETDATE()", Sci.Env.User.UserID));
+                        cmds.Append(string.Format(@", FtyHandle = '{0}', FtyLastDate = GETDATE()", Env.User.UserID));
                     }
 
                     cmds.Append(string.Format(" where Ukey = {0}", dr["UKey"].ToString()));
@@ -228,7 +227,7 @@ and sp.ProductionKitsGroup='{Sci.Env.User.Keyword}'
         private void BtnViewDetail_Click(object sender, EventArgs e)
         {
             this.gridProductionKitsConfirm.ValidateControl();
-            Sci.Production.PPIC.P03_Detail doForm = new Sci.Production.PPIC.P03_Detail();
+            P03_Detail doForm = new P03_Detail();
             doForm.Set(false, ((DataTable)this.listControlBindingSource1.DataSource).ToList(), this.gridProductionKitsConfirm.GetDataRow(this.gridProductionKitsConfirm.GetSelectedRowIndex()));
             doForm.ShowDialog(this);
         }

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
@@ -14,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P10_UpdatePulloutDate
     /// </summary>
-    public partial class P10_UpdatePulloutDate : Sci.Win.Subs.Base
+    public partial class P10_UpdatePulloutDate : Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_pulldate;
@@ -101,7 +99,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
         {
             if (!MyUtility.Check.Empty(this.datePulloutDate.Value) && this.datePulloutDate.OldValue != this.datePulloutDate.Value)
             {
-                if (this.CheckPullout((DateTime)MyUtility.Convert.GetDate(this.datePulloutDate.Value), MyUtility.Convert.GetString(Sci.Env.User.Keyword)))
+                if (this.CheckPullout((DateTime)MyUtility.Convert.GetDate(this.datePulloutDate.Value), MyUtility.Convert.GetString(Env.User.Keyword)))
                 {
                     this.PulloutMsg(null, (DateTime)MyUtility.Convert.GetDate(this.datePulloutDate.Value));
                     this.datePulloutDate.Value = null;
@@ -195,7 +193,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
                 }
             }
 
-            updateCmds.Add($"UPDATE ShipPlan Set EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'");
+            updateCmds.Add($"UPDATE ShipPlan Set EditDate=GETDATE(),EditName='{Env.User.UserID}'");
 
             DualResult result;
             if (updateCmds.Count != 0)

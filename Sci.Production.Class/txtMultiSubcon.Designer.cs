@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtMultiSubcon
+    partial class TxtMultiSubcon
     {
         /// <summary>
         /// 設計工具所需的變數。

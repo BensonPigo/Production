@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿using System.Data;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
@@ -13,7 +8,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_BatchPrint
     /// </summary>
-    public partial class P02_BatchPrint : Sci.Win.Tems.PrintForm
+    public partial class P02_BatchPrint : Win.Tems.PrintForm
     {
         private string receiver;
         private string incharge;
@@ -37,7 +32,7 @@ namespace Sci.Production.Shipping
         private void TxtReceiver_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = string.Format("select distinct Receiver from Express_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ID"]));
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", this.txtReceiver.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20", this.txtReceiver.Text, false, ",");
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -90,7 +85,7 @@ Order by CTNNo,Seq1,seq2", MyUtility.Convert.GetString(this.masterData["ID"]),
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("from", (MyUtility.Convert.GetString(this.masterData["FromTag"]) == "1" ? "Factory" : "Brand") + "(" + MyUtility.Convert.GetString(this.masterData["FromSite"]) + ")"));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("to", (MyUtility.Convert.GetString(this.masterData["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(this.masterData["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(this.masterData["ToTag"]) == "3" ? "Supplier" : "Brand") + "(" + MyUtility.Convert.GetString(this.masterData["ToSite"]) + ")"));
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

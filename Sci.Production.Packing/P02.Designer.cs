@@ -56,7 +56,7 @@
             this.btnSpecialInstruction = new Sci.Win.UI.Button();
             this.btnCartonDimension = new Sci.Win.UI.Button();
             this.btnSwitchToPackingList = new Sci.Win.UI.Button();
-            this.txtshipmode = new Sci.Production.Class.txtshipmode();
+            this.txtshipmode = new Sci.Production.Class.Txtshipmode();
             this.labelFactory = new Sci.Win.UI.Label();
             this.displayFactory = new Sci.Win.UI.DisplayBox();
             this.btnSwitchToPLByArticle = new Sci.Win.UI.Button();
@@ -687,7 +687,7 @@
 
         #endregion
 
-        private Class.txtshipmode txtshipmode;
+        private Class.Txtshipmode txtshipmode;
         private Win.UI.Button btnSwitchToPackingList;
         private Win.UI.Button btnCartonDimension;
         private Win.UI.Button btnSpecialInstruction;

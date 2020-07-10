@@ -4,48 +4,46 @@ using Sci.Data;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 using System.Linq;
 
 namespace Sci.Production.Quality
 {
-    public partial class P03_Heat : Sci.Win.Subs.Input4
+    public partial class P03_Heat : Win.Subs.Input4
     {
-        private string loginID = Sci.Env.User.UserID;
+        private string loginID = Env.User.UserID;
         private DataRow maindr;
         private string ID;
 
         public P03_Heat(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
-            InitializeComponent();
-            maindr = mainDr;
-            ID = id.Trim();
-            
+            this.InitializeComponent();
+            this.maindr = mainDr;
+            this.ID = id.Trim();
         }
 
-        //編輯事件觸發     
+        // 編輯事件觸發
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
-            button_enable();
+            this.button_enable();
         }
-   
-        //設定表頭資料
+
+        // 設定表頭資料
         protected override DualResult OnRequery()
         {
-            mainDBQuery();//重新query maindr
-            button_enable();
-            //表頭 資料設定           
-            this.save.Enabled = !MyUtility.Convert.GetBool(maindr["HeatEncode"]);
-           
+            this.mainDBQuery(); // 重新query maindr
+            this.button_enable();
+
+            // 表頭 資料設定
+            this.save.Enabled = !MyUtility.Convert.GetBool(this.maindr["HeatEncode"]);
+
             string fir_cmd = string.Format(
 @"select distinct 
     a.Poid,a.ArriveQty,a.Refno,a.SCIRefno,
@@ -64,40 +62,49 @@ left join PO_Supp_Detail d WITH (NOLOCK) on d.ID=a.POID and a.SEQ1=d.SEQ1 and a.
 left join FIR_Laboratory e WITH (NOLOCK) on a.ID=e.ID
 left join PO_Supp f WITH (NOLOCK) on d.ID=f.ID and d.SEQ1=f.SEQ1
 left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
-where a.ID='{0}'"
-                , ID);
+where a.ID='{0}'",
+this.ID);
             DataRow fir_dr;
             if (MyUtility.Check.Seek(fir_cmd, out fir_dr))
             {
-                txtSP.Text = fir_dr["Poid"].ToString();
-                txtSEQ.Text = fir_dr["SEQ"].ToString();
-                txtArriveQty.Text = fir_dr["ArriveQty"].ToString();
-                txtWkno.Text = fir_dr["exportid"].ToString();
-                dateArriveWHDate.Value = MyUtility.Convert.GetDate(fir_dr["WhseArrival"]);
-                txtStyle.Text = fir_dr["styleid"].ToString();
-                txtBrand.Text = fir_dr["Brandid"].ToString();
-                txtsupplierSupp.TextBox1.Text = fir_dr["SuppID"].ToString();
-                txtSCIRefno.Text = fir_dr["Scirefno"].ToString();
-                txtBrandRefno.Text = fir_dr["Refno"].ToString();
-                txtColor.Text = fir_dr["colorid"].ToString();
-                dateLastInspectionDate.Value = MyUtility.Convert.GetDate(fir_dr["HeatDate"]);
-                txtResult.Text = fir_dr["Heat"].ToString();
-                checkNA.Value = fir_dr["nonHeat"].ToString();
-                editDescription.Text = fir_dr["DescDetail"].ToString();
-                txtHeatInspector.Text = fir_dr["HeatInspector"].ToString();
+                this.txtSP.Text = fir_dr["Poid"].ToString();
+                this.txtSEQ.Text = fir_dr["SEQ"].ToString();
+                this.txtArriveQty.Text = fir_dr["ArriveQty"].ToString();
+                this.txtWkno.Text = fir_dr["exportid"].ToString();
+                this.dateArriveWHDate.Value = MyUtility.Convert.GetDate(fir_dr["WhseArrival"]);
+                this.txtStyle.Text = fir_dr["styleid"].ToString();
+                this.txtBrand.Text = fir_dr["Brandid"].ToString();
+                this.txtsupplierSupp.TextBox1.Text = fir_dr["SuppID"].ToString();
+                this.txtSCIRefno.Text = fir_dr["Scirefno"].ToString();
+                this.txtBrandRefno.Text = fir_dr["Refno"].ToString();
+                this.txtColor.Text = fir_dr["colorid"].ToString();
+                this.dateLastInspectionDate.Value = MyUtility.Convert.GetDate(fir_dr["HeatDate"]);
+                this.txtResult.Text = fir_dr["Heat"].ToString();
+                this.checkNA.Value = fir_dr["nonHeat"].ToString();
+                this.editDescription.Text = fir_dr["DescDetail"].ToString();
+                this.txtHeatInspector.Text = fir_dr["HeatInspector"].ToString();
             }
             else
             {
-                txtSP.Text = ""; txtSEQ.Text = ""; txtArriveQty.Text = ""; txtWkno.Text = ""; dateArriveWHDate.Text = ""; txtStyle.Text = ""; txtBrand.Text = "";
-                txtsupplierSupp.Text = ""; txtSCIRefno.Text = ""; txtBrandRefno.Text = ""; txtColor.Text = ""; editDescription.Text = "";
-                txtHeatInspector.Text = "";
+                this.txtSP.Text = string.Empty;
+                this.txtSEQ.Text = string.Empty;
+                this.txtArriveQty.Text = string.Empty;
+                this.txtWkno.Text = string.Empty;
+                this.dateArriveWHDate.Text = string.Empty;
+                this.txtStyle.Text = string.Empty;
+                this.txtBrand.Text = string.Empty;
+                this.txtsupplierSupp.Text = string.Empty;
+                this.txtSCIRefno.Text = string.Empty;
+                this.txtBrandRefno.Text = string.Empty;
+                this.txtColor.Text = string.Empty;
+                this.editDescription.Text = string.Empty;
+                this.txtHeatInspector.Text = string.Empty;
             }
-
 
             return base.OnRequery();
         }
 
-        //Grid View DataTable 新增欄位資料供撈取顯示
+        // Grid View DataTable 新增欄位資料供撈取顯示
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -109,26 +116,27 @@ where a.ID='{0}'"
             datas.Columns.Add("Horizontal_Average", typeof(decimal));
             datas.Columns.Add("Vertical_Average", typeof(decimal));
             datas.Columns.Add("Last update", typeof(string));
-            decimal avgHorizontal = 0; decimal avgVertical = 0;
+            decimal avgHorizontal = 0;
+            decimal avgVertical = 0;
             int i = 0;
-                     
+
             foreach (DataRow dr in datas.Rows)
             {
                 dr["Name"] = MyUtility.GetValue.Lookup("Name_Extno", dr["Inspector"].ToString(), "View_ShowName", "ID");
                 dr["NewKey"] = i;
-                dr["poid"] = maindr["poid"];
-                dr["SEQ1"] = maindr["SEQ1"];
-                dr["SEQ2"] = maindr["SEQ2"];
+                dr["poid"] = this.maindr["poid"];
+                dr["SEQ1"] = this.maindr["SEQ1"];
+                dr["SEQ2"] = this.maindr["SEQ2"];
                 if (datas.Rows[i].IsNull("HorizontalTest1") || datas.Rows[i].IsNull("HorizontalTest2") || datas.Rows[i].IsNull("HorizontalTest3"))
                 {
                     avgHorizontal = 0;
                 }
                 else
                 {
-
-                    avgHorizontal = ((decimal)datas.Rows[i]["HorizontalTest1"] + (decimal)datas.Rows[i]["HorizontalTest2"] + (decimal)datas.Rows[i]["HorizontalTest3"]) / 3;                    
-                    dr["Horizontal_Average"] =  Math.Round(avgHorizontal, 2);
+                    avgHorizontal = ((decimal)datas.Rows[i]["HorizontalTest1"] + (decimal)datas.Rows[i]["HorizontalTest2"] + (decimal)datas.Rows[i]["HorizontalTest3"]) / 3;
+                    dr["Horizontal_Average"] = Math.Round(avgHorizontal, 2);
                 }
+
                 if (datas.Rows[i].IsNull("VerticalTest1") || datas.Rows[i].IsNull("VerticalTest2") || datas.Rows[i].IsNull("VerticalTest3"))
                 {
                     avgVertical = 0;
@@ -136,19 +144,18 @@ where a.ID='{0}'"
                 else
                 {
                     avgVertical = ((decimal)datas.Rows[i]["VerticalTest1"] + (decimal)datas.Rows[i]["VerticalTest2"] + (decimal)datas.Rows[i]["VerticalTest3"]) / 3;
-                    dr["Vertical_Average"] =Math.Round(avgVertical,2);
+                    dr["Vertical_Average"] = Math.Round(avgVertical, 2);
                 }
-                
+
                 string name = MyUtility.Check.Empty(datas.Rows[i]["EditName"].ToString()) ? MyUtility.GetValue.Lookup("Name_Extno", datas.Rows[i]["AddName"].ToString(), "View_ShowName", "ID") :
                   MyUtility.GetValue.Lookup("Name_Extno", datas.Rows[i]["EditName"].ToString(), "View_ShowName", "ID");
                 string Date = MyUtility.Check.Empty(datas.Rows[i]["EditDate"].ToString()) ? datas.Rows[i]["AddDate"].ToString() : datas.Rows[i]["EditDate"].ToString();
                 dr["Last update"] = name + " - " + Date;
                 i++;
             }
-
         }
 
-        //GridView 設定
+        // GridView 設定
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
@@ -162,20 +169,26 @@ where a.ID='{0}'"
             DataGridViewGeneratorNumericColumnSettings VirTest3Cell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings DyelotCell = new DataGridViewGeneratorTextColumnSettings();
 
-
-
             DataGridViewGeneratorTextColumnSettings LabTechCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResultCell = PublicPrg.Prgs.cellResult.GetGridCell();
 
             #region 設定GridMouse Click 事件
 
             Rollcell.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.RowIndex == -1)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string selectedDyelot = dr["Dyelot"].ToString();
 
                     string sqlcmd = string.Empty;
@@ -184,19 +197,19 @@ where a.ID='{0}'"
                     {
                         sqlcmd = $@" Select roll,dyelot 
                                         from dbo.View_AllReceivingDetail WITH (NOLOCK) 
-                                        Where id='{maindr["Receivingid"]}'
-                                                and poid ='{maindr["Poid"]}' 
-                                                and seq1 = '{maindr["seq1"]}' 
-                                                and seq2 ='{maindr["seq2"]}'";
+                                        Where id='{this.maindr["Receivingid"]}'
+                                                and poid ='{this.maindr["Poid"]}' 
+                                                and seq1 = '{this.maindr["seq1"]}' 
+                                                and seq2 ='{this.maindr["seq2"]}'";
                     }
                     else
                     {
                         sqlcmd = $@" Select roll,dyelot 
                                         from dbo.View_AllReceivingDetail WITH (NOLOCK) 
-                                        Where id='{maindr["Receivingid"]}'
-                                                and poid ='{maindr["Poid"]}' 
-                                                and seq1 = '{maindr["seq1"]}' 
-                                                and seq2 ='{maindr["seq2"]}'
+                                        Where id='{this.maindr["Receivingid"]}'
+                                                and poid ='{this.maindr["Poid"]}' 
+                                                and seq1 = '{this.maindr["seq1"]}' 
+                                                and seq2 ='{this.maindr["seq2"]}'
                                                 AND Dyelot='{selectedDyelot}'";
                     }
 
@@ -206,6 +219,7 @@ where a.ID='{0}'"
                     {
                         return;
                     }
+
                     dr["Roll"] = item.GetSelecteds()[0]["Roll"].ToString();
                     dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString();
                 }
@@ -213,11 +227,19 @@ where a.ID='{0}'"
 
             DyelotCell.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.RowIndex == -1)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string selectedRoll = dr["Roll"].ToString();
 
                     string sqlcmd = string.Empty;
@@ -225,19 +247,19 @@ where a.ID='{0}'"
                     {
                         sqlcmd = $@" Select roll,dyelot 
                                         from dbo.View_AllReceivingDetail WITH (NOLOCK) 
-                                        Where id='{maindr["Receivingid"]}'
-                                                and poid ='{maindr["Poid"]}' 
-                                                and seq1 = '{maindr["seq1"]}' 
-                                                and seq2 ='{maindr["seq2"]}'";
+                                        Where id='{this.maindr["Receivingid"]}'
+                                                and poid ='{this.maindr["Poid"]}' 
+                                                and seq1 = '{this.maindr["seq1"]}' 
+                                                and seq2 ='{this.maindr["seq2"]}'";
                     }
                     else
                     {
                         sqlcmd = $@" Select roll,dyelot 
                                         from dbo.View_AllReceivingDetail WITH (NOLOCK) 
-                                        Where id='{maindr["Receivingid"]}'
-                                                and poid ='{maindr["Poid"]}' 
-                                                and seq1 = '{maindr["seq1"]}' 
-                                                and seq2 ='{maindr["seq2"]}'
+                                        Where id='{this.maindr["Receivingid"]}'
+                                                and poid ='{this.maindr["Poid"]}' 
+                                                and seq1 = '{this.maindr["seq1"]}' 
+                                                and seq2 ='{this.maindr["seq2"]}'
                                                 AND Roll='{selectedRoll}'";
                     }
 
@@ -247,17 +269,26 @@ where a.ID='{0}'"
                     {
                         return;
                     }
+
                     dr["Roll"] = item.GetSelecteds()[0]["Roll"].ToString();
                     dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString();
                 }
             };
             LabTechCell.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.RowIndex == -1)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
 
                     string sqlCmd = $@"select DISTINCT Inspector,b.name from FIR_Laboratory_Heat a WITH (NOLOCK) 
                                          INNER join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID
@@ -268,7 +299,8 @@ where a.ID='{0}'"
                     {
                         return;
                     }
-                    dr["Inspector"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+
+                    dr["Inspector"] = item1.GetSelectedString(); // 將選取selectitem value帶入GridView
                     dr["Name"] = item1.GetSelecteds()[0]["Name"];
                 }
             };
@@ -277,24 +309,40 @@ where a.ID='{0}'"
             #region 設定Grid Valid事件
             Rollcell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Roll"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return 
-                if (oldvalue.Equals(newvalue)) return;
-                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+                if (!this.EditMode)
                 {
-                    dr["Roll"] = "";
-                    dr["Dyelot"] = "";
-                    return;
-                }
-                if (dr.RowState != DataRowState.Added)
-                {
-                    if (oldvalue == newvalue) return;
+                    return; // 非編輯模式
                 }
 
-                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from dbo.View_AllReceivingDetail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (oldvalue.Equals(newvalue))
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                {
+                    dr["Roll"] = string.Empty;
+                    dr["Dyelot"] = string.Empty;
+                    return;
+                }
+
+                if (dr.RowState != DataRowState.Added)
+                {
+                    if (oldvalue == newvalue)
+                    {
+                        return;
+                    }
+                }
+
+                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from dbo.View_AllReceivingDetail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", this.maindr["Receivingid"], this.maindr["Poid"], this.maindr["seq1"], this.maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -304,8 +352,9 @@ where a.ID='{0}'"
                 }
                 else
                 {
-                    dr["Roll"] = "";
-                    //dr["Dyelot"] = "";
+                    dr["Roll"] = string.Empty;
+
+                    // dr["Dyelot"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
@@ -315,24 +364,40 @@ where a.ID='{0}'"
 
             DyelotCell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Dyelot"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return 
-                if (oldvalue.Equals(newvalue)) return;
-                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+                if (!this.EditMode)
                 {
-                    dr["Roll"] = "";
-                    dr["Dyelot"] = "";
-                    return;
-                }
-                if (dr.RowState != DataRowState.Added)
-                {
-                    if (oldvalue == newvalue) return;
+                    return; // 非編輯模式
                 }
 
-                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from dbo.View_AllReceivingDetail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and Dyelot='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (oldvalue.Equals(newvalue))
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                {
+                    dr["Roll"] = string.Empty;
+                    dr["Dyelot"] = string.Empty;
+                    return;
+                }
+
+                if (dr.RowState != DataRowState.Added)
+                {
+                    if (oldvalue == newvalue)
+                    {
+                        return;
+                    }
+                }
+
+                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from dbo.View_AllReceivingDetail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and Dyelot='{4}'", this.maindr["Receivingid"], this.maindr["Poid"], this.maindr["seq1"], this.maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -342,8 +407,8 @@ where a.ID='{0}'"
                 }
                 else
                 {
-                    //dr["Roll"] = "";
-                    dr["Dyelot"] = "";
+                    // dr["Roll"] = "";
+                    dr["Dyelot"] = string.Empty;
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Dyelot: {0}> data not found!", e.FormattedValue));
@@ -352,14 +417,15 @@ where a.ID='{0}'"
             };
             orlHorCell.CellValidating += (s, e) =>
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalOriginal"]))
                     {
-                        if (MyUtility.Convert.GetDecimal(e.FormattedValue)==0)
+                        if (MyUtility.Convert.GetDecimal(e.FormattedValue) == 0)
                         {
                             dr["HorizontalOriginal"] = dr["HorizontalOriginal"];
                             return;
                         }
+
                         if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                         {
                             MyUtility.Msg.InfoBox("<Original Horizontal > cannot over than 100 !");
@@ -370,20 +436,20 @@ where a.ID='{0}'"
                             dr["HorizontalOriginal"] = e.FormattedValue;
                         }
                     }
-                    if (MyUtility.Convert.GetDecimal(e.FormattedValue)!=0)
+
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) != 0)
                     {
-                        CalHorRate(dr);
+                        this.CalHorRate(dr);
                     }
                     else
                     {
                         dr["HorizontalRate"] = 0;
                         return;
                     }
-                   
                 };
             orlVirCell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
 
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalOriginal"]))
                 {
@@ -392,6 +458,7 @@ where a.ID='{0}'"
                         dr["VerticalOriginal"] = dr["VerticalOriginal"];
                         return;
                     }
+
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<VerticalOriginal > cannot over than 100 !");
@@ -402,20 +469,20 @@ where a.ID='{0}'"
                         dr["VerticalOriginal"] = e.FormattedValue;
                     }
                 }
-                if (MyUtility.Convert.GetDecimal(e.FormattedValue)!=0)
+
+                if (MyUtility.Convert.GetDecimal(e.FormattedValue) != 0)
                 {
-                    CalVerRate(dr);
+                    this.CalVerRate(dr);
                 }
                 else
                 {
                     dr["VerticalRate"] = 0;
                     return;
                 }
-            
             };
             HorTest1Cell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest1"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
@@ -428,11 +495,12 @@ where a.ID='{0}'"
                         dr["HorizontalTest1"] = e.FormattedValue;
                     }
                 }
-                CalHorRate(dr);
+
+                this.CalHorRate(dr);
             };
             HorTest2Cell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest2"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
@@ -443,13 +511,14 @@ where a.ID='{0}'"
                     else
                     {
                         dr["HorizontalTest2"] = e.FormattedValue;
-                    }                   
+                    }
                 }
-                CalHorRate(dr);
+
+                this.CalHorRate(dr);
             };
             HorTest3Cell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest3"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
@@ -462,69 +531,81 @@ where a.ID='{0}'"
                         dr["HorizontalTest3"] = e.FormattedValue;
                     }
                 }
-                CalHorRate(dr);
-            };  
+
+                this.CalHorRate(dr);
+            };
             VirTest1Cell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalTest1"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<Vertical 1> cannot over than 100 !");
                         dr["VerticalTest1"] = MyUtility.Convert.GetDecimal(dr["VerticalTest1"]);
-
                     }
                     else
                     {
                         dr["VerticalTest1"] = e.FormattedValue;
                     }
                 }
-                CalVerRate(dr);
+
+                this.CalVerRate(dr);
             };
             VirTest2Cell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalTest2"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<Vertical 2> cannot over than 100 !");
                         dr["VerticalTest2"] = MyUtility.Convert.GetDecimal(dr["VerticalTest2"]);
-
                     }
                     else
                     {
                         dr["VerticalTest2"] = e.FormattedValue;
                     }
                 }
-                CalVerRate(dr);
-            };           
+
+                this.CalVerRate(dr);
+            };
             VirTest3Cell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalTest3"]))
-                {       
+                {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<Vertical 3> cannot over than 100 !");
                         dr["VerticalTest3"] = MyUtility.Convert.GetDecimal(dr["VerticalTest3"]);
-
                     }
                     else
                     {
                         dr["VerticalTest3"] = e.FormattedValue;
                     }
                 }
-                CalVerRate(dr);
+
+                this.CalVerRate(dr);
             };
             LabTechCell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return
-                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
-                
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return; // 非編輯模式
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return; // 沒資料 return
+                }
+
                 string sqlCmd = $"SELECT ID,Name FROM Pass1 WHERE ID='{e.FormattedValue}'";
                 DataRow userDt;
 
@@ -544,16 +625,16 @@ where a.ID='{0}'"
             };
             #endregion
 
-            Helper.Controls.Grid.Generator(this.grid)
+            this.Helper.Controls.Grid.Generator(this.grid)
               .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
               .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), settings: DyelotCell)
               .Numeric("HorizontalOriginal", header: "Original Horizontal", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings: orlHorCell)
-              .Numeric("VerticalOriginal", header: "Original Vertical", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings:orlVirCell)
-              .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell,iseditingreadonly:true)
+              .Numeric("VerticalOriginal", header: "Original Vertical", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings: orlVirCell)
+              .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell, iseditingreadonly: true)
               .Numeric("HorizontalTest1", header: "Horizontal 1", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings: HorTest1Cell)
               .Numeric("HorizontalTest2", header: "Horizontal 2", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings: HorTest2Cell)
               .Numeric("HorizontalTest3", header: "Horizontal 3", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings: HorTest3Cell)
-              .Numeric("Horizontal_Average", header: "Horizontal_Average", width: Widths.AnsiChars(8), integer_places:10, decimal_places: 2, iseditingreadonly: true)                
+              .Numeric("Horizontal_Average", header: "Horizontal_Average", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
               .Numeric("HorizontalRate", header: "Horizontal Shrinkage rate", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
               .Numeric("VerticalTest1", header: "Vertical 1", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings: VirTest1Cell)
               .Numeric("VerticalTest2", header: "Vertical 2", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings: VirTest2Cell)
@@ -566,52 +647,51 @@ where a.ID='{0}'"
               .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
               .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
 
-
             #region 可編輯欄位變色
-            grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["HorizontalOriginal"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["VerticalOriginal"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["HorizontalOriginal"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["VerticalOriginal"].DefaultCellStyle.BackColor = Color.Pink;
 
+            this.grid.Columns["HorizontalTest1"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["HorizontalTest2"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["HorizontalTest3"].DefaultCellStyle.BackColor = Color.Pink;
 
-            grid.Columns["HorizontalTest1"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["HorizontalTest2"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["HorizontalTest3"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["VerticalTest1"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["VerticalTest2"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["VerticalTest3"].DefaultCellStyle.BackColor = Color.Pink;
 
-            grid.Columns["VerticalTest1"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["VerticalTest2"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["VerticalTest3"].DefaultCellStyle.BackColor = Color.Pink;
-            
-            grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
             return true;
         }
 
         protected override void OnInsert()
         {
-            DataTable dt = (DataTable)gridbs.DataSource;
+            DataTable dt = (DataTable)this.gridbs.DataSource;
 
-            int Maxi = MyUtility.Convert.GetInt(dt.Compute("Max(NewKey)", ""));
+            int Maxi = MyUtility.Convert.GetInt(dt.Compute("Max(NewKey)", string.Empty));
             base.OnInsert();
 
-            DataRow selectDr = ((DataRowView)grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)this.grid.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr["Inspdate"] = DateTime.Now.ToShortDateString();
-            selectDr["Inspector"] = loginID;
-            selectDr["Name"] = MyUtility.GetValue.Lookup("Name", loginID, "Pass1", "ID");
+            selectDr["Inspector"] = this.loginID;
+            selectDr["Name"] = MyUtility.GetValue.Lookup("Name", this.loginID, "Pass1", "ID");
             selectDr["NewKey"] = Maxi + 1;
-            selectDr["poid"] = maindr["poid"];
-            selectDr["SEQ1"] = maindr["SEQ1"];
-            selectDr["SEQ2"] = maindr["SEQ2"];
+            selectDr["poid"] = this.maindr["poid"];
+            selectDr["SEQ1"] = this.maindr["SEQ1"];
+            selectDr["SEQ2"] = this.maindr["SEQ2"];
         }
 
-        //判斷Grid View有無空白
+        // 判斷Grid View有無空白
         protected override bool OnSaveBefore()
         {
-            DataTable gridTb = (DataTable)gridbs.DataSource;
+            DataTable gridTb = (DataTable)this.gridbs.DataSource;
             DataTable afterDT = new DataTable();
-            //將刪除資料過的grid 重新丟進新datatable 並將資料以完全刪除來做判斷! 
+
+            // 將刪除資料過的grid 重新丟進新datatable 並將資料以完全刪除來做判斷!
             afterDT.Merge(gridTb, true);
             afterDT.AcceptChanges();
 
@@ -624,7 +704,7 @@ where a.ID='{0}'"
             else
             {
                 foreach (DataRow dr in afterDT.Rows)
-                {                    
+                {
                     DataRow[] drArray = afterDT.Select(string.Format("Roll='{0}' and Dyelot = '{1}'", MyUtility.Convert.GetString(dr["Roll"]), MyUtility.Convert.GetString(dr["Dyelot"])));
                     if (drArray.Length > 1)
                     {
@@ -633,56 +713,67 @@ where a.ID='{0}'"
                     }
                 }
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["VerticalOriginal"])))
             {
                  MyUtility.Msg.WarningBox("<Original Vertical> can not be empty.");
-                return false;
-            } 
+                 return false;
+            }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["HorizontalOriginal"])))
             {
                 MyUtility.Msg.WarningBox("<Original Horizontal> can not be empty.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["HorizontalTest1"])))
             {
                 MyUtility.Msg.WarningBox("<Horizontal 1 > can not be empty.");
                 return false;
-            }    
+            }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["HorizontalTest2"])))
             {
                 MyUtility.Msg.WarningBox("<Horizontal 2> can not be empty.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["HorizontalTest3"])))
             {
                 MyUtility.Msg.WarningBox("<Horizontal 3> can not be empty.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["VerticalTest1"])))
             {
                 MyUtility.Msg.WarningBox("<Vertical 1> can not be empty.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["VerticalTest2"])))
             {
                 MyUtility.Msg.WarningBox("<Vertical 2> can not be empty.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["VerticalTest3"])))
             {
                 MyUtility.Msg.WarningBox("<Vertical 3> can not be empty.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["Result"])))
             {
                 MyUtility.Msg.WarningBox("<Result> can not be empty.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["Inspdate"])))
             {
                 MyUtility.Msg.WarningBox("<Insection Date> can not be empty.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["inspector"])))
             {
                 MyUtility.Msg.WarningBox("<Lab Tech> can not be empty.");
@@ -696,8 +787,8 @@ where a.ID='{0}'"
         protected override DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
-            string update_cmd = "";
-            
+            string update_cmd = string.Empty;
+
             foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
@@ -705,26 +796,38 @@ where a.ID='{0}'"
                     List<SqlParameter> spamDet = new List<SqlParameter>();
                     update_cmd = "Delete From FIR_Laboratory_Heat Where id =@id and roll=@roll";
                     spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
-                    spamDet.Add(new SqlParameter("@roll", dr["roll", DataRowVersion.Original])); 
+                    spamDet.Add(new SqlParameter("@roll", dr["roll", DataRowVersion.Original]));
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
-                    if (!upResult) { return upResult; }
+                    if (!upResult)
+                    {
+                        return upResult;
+                    }
+
                     continue;
                 }
+
                 string inspdate;
-                if (MyUtility.Check.Empty(dr["InspDate"])) inspdate = ""; //判斷Inspect Date
-                else inspdate = Convert.ToDateTime(dr["InspDate"]).ToShortDateString();
+                if (MyUtility.Check.Empty(dr["InspDate"]))
+                {
+                    inspdate = string.Empty; // 判斷Inspect Date
+                }
+                else
+                {
+                    inspdate = Convert.ToDateTime(dr["InspDate"]).ToShortDateString();
+                }
+
                 DateTime Today = DateTime.Now;
                 if (dr.RowState == DataRowState.Added)
                 {
                     List<SqlParameter> spamAdd = new List<SqlParameter>();
-                     update_cmd =
+                    update_cmd =
                         @"insert into FIR_Laboratory_Heat
                        (ID,roll,Dyelot,Inspdate,Inspector,Result,Remark,AddDate,AddName,HorizontalRate,HorizontalOriginal,
                         HorizontalTest1,HorizontalTest2,HorizontalTest3,VerticalRate,VerticalOriginal,VerticalTest1,VerticalTest2,VerticalTest3)
                        values
                         (@ID,@roll,@Dyelot,@Inspdate,@Inspector,@Result,@Remark,@AddDate,@AddName,@HorizontalRate,@HorizontalOriginal,
                         @HorizontalTest1,@HorizontalTest2,@HorizontalTest3,@VerticalRate,@VerticalOriginal,@VerticalTest1,@VerticalTest2,@VerticalTest3)";
-                    spamAdd.Add(new SqlParameter("@id", maindr["ID"]));
+                    spamAdd.Add(new SqlParameter("@id", this.maindr["ID"]));
                     spamAdd.Add(new SqlParameter("@roll", dr["Roll"]));
                     spamAdd.Add(new SqlParameter("@Dyelot", dr["Dyelot"]));
                     spamAdd.Add(new SqlParameter("@Inspdate", inspdate.Replace("/", "-")));
@@ -732,7 +835,7 @@ where a.ID='{0}'"
                     spamAdd.Add(new SqlParameter("@Result", dr["Result"]));
                     spamAdd.Add(new SqlParameter("@Remark", dr["Remark"]));
                     spamAdd.Add(new SqlParameter("@AddDate", Today));
-                    spamAdd.Add(new SqlParameter("@AddName", loginID));
+                    spamAdd.Add(new SqlParameter("@AddName", this.loginID));
                     spamAdd.Add(new SqlParameter("@HorizontalRate", dr["HorizontalRate"]));
                     spamAdd.Add(new SqlParameter("@HorizontalOriginal", dr["HorizontalOriginal"]));
                     spamAdd.Add(new SqlParameter("@HorizontalTest1", dr["HorizontalTest1"]));
@@ -744,11 +847,15 @@ where a.ID='{0}'"
                     spamAdd.Add(new SqlParameter("@VerticalTest2", dr["VerticalTest2"]));
                     spamAdd.Add(new SqlParameter("@VerticalTest3", dr["VerticalTest3"]));
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamAdd);
-                    if (!upResult) { return upResult; }
+                    if (!upResult)
+                    {
+                        return upResult;
+                    }
                 }
+
                 if (dr.RowState == DataRowState.Modified)
                 {
-                    List<SqlParameter> spamUpd = new List<SqlParameter>();                    
+                    List<SqlParameter> spamUpd = new List<SqlParameter>();
                     update_cmd =
                     @"update FIR_Laboratory_Heat 
                     set ID=@id,roll=@roll,Dyelot=@Dyelot,Inspdate=@Inspdate,Inspector=@Inspector,
@@ -761,12 +868,12 @@ where a.ID='{0}'"
                     spamUpd.Add(new SqlParameter("@id", dr["ID"]));
                     spamUpd.Add(new SqlParameter("@roll", dr["Roll"]));
                     spamUpd.Add(new SqlParameter("@Dyelot", dr["Dyelot"]));
-                    spamUpd.Add(new SqlParameter("@Inspdate", inspdate.Replace("/","-")));
+                    spamUpd.Add(new SqlParameter("@Inspdate", inspdate.Replace("/", "-")));
                     spamUpd.Add(new SqlParameter("@Inspector", dr["Inspector"]));
                     spamUpd.Add(new SqlParameter("@Result", dr["Result"]));
                     spamUpd.Add(new SqlParameter("@Remark", dr["Remark"]));
                     spamUpd.Add(new SqlParameter("@EditDate", Today));
-                    spamUpd.Add(new SqlParameter("@EditName", loginID));
+                    spamUpd.Add(new SqlParameter("@EditName", this.loginID));
                     spamUpd.Add(new SqlParameter("@HorizontalRate", dr["HorizontalRate"]));
                     spamUpd.Add(new SqlParameter("@HorizontalOriginal", dr["HorizontalOriginal"]));
                     spamUpd.Add(new SqlParameter("@HorizontalTest1", dr["HorizontalTest1"]));
@@ -777,32 +884,36 @@ where a.ID='{0}'"
                     spamUpd.Add(new SqlParameter("@VerticalTest1", dr["VerticalTest1"]));
                     spamUpd.Add(new SqlParameter("@VerticalTest2", dr["VerticalTest2"]));
                     spamUpd.Add(new SqlParameter("@VerticalTest3", dr["VerticalTest3"]));
-                    spamUpd.Add(new SqlParameter("@sid", maindr["ID"]));
+                    spamUpd.Add(new SqlParameter("@sid", this.maindr["ID"]));
                     spamUpd.Add(new SqlParameter("@DyelotOrl", dr["Dyelot", DataRowVersion.Original]));
 
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamUpd);
-                    if (!upResult) { return upResult; }
+                    if (!upResult)
+                    {
+                        return upResult;
+                    }
                 }
             }
+
             return upResult;
         }
 
         private void btnEncode_Click(object sender, EventArgs e)
         {
-            string updatesql = "";
-
-            if (!MyUtility.Convert.GetBool(maindr["HeatEncode"]))
+            string updatesql = string.Empty;
+            if (!MyUtility.Convert.GetBool(this.maindr["HeatEncode"]))
             {
-                if (!MyUtility.Convert.GetBool(maindr["nonHeat"]))//判斷有勾選可Encode
+                // 判斷有勾選可Encode
+                if (!MyUtility.Convert.GetBool(this.maindr["nonHeat"]))
                 {
-                    //至少檢驗一卷 並且出現在Fir_Continuity.Roll
+                    // 至少檢驗一卷 並且出現在Fir_Continuity.Roll
                     DataTable rolldt;
                     string cmd = string.Format(
                         @"Select roll from dbo.View_AllReceivingDetail a WITH (NOLOCK) where 
                         a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
                         and exists 
-                        (Select distinct dyelot from FIR_Laboratory_Heat b WITH (NOLOCK) where b.id='{1}' and a.roll = b.roll)"
-                        , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
+                        (Select distinct dyelot from FIR_Laboratory_Heat b WITH (NOLOCK) where b.id='{1}' and a.roll = b.roll)",
+                        this.maindr["receivingid"], this.maindr["id"], this.maindr["POID"], this.maindr["seq1"], this.maindr["seq2"]);
                     DualResult dResult;
                     if (dResult = DBProxy.Current.Select(null, cmd, out rolldt))
                     {
@@ -814,13 +925,16 @@ where a.ID='{0}'"
                     }
                 }
                 #region 判斷Heat Result
-                DataTable gridDt = (DataTable)gridbs.DataSource;
+                DataTable gridDt = (DataTable)this.gridbs.DataSource;
                 DataRow[] ResultAry = gridDt.Select("Result='Fail'");
                 string result = "Pass";
-                if (ResultAry.Length > 0) result = "Fail";
+                if (ResultAry.Length > 0)
+                {
+                    result = "Fail";
+                }
                 #endregion
                 #region 判斷表身最晚時間
-                DataTable dt = (DataTable)gridbs.DataSource;
+                DataTable dt = (DataTable)this.gridbs.DataSource;
 
                 if (dt.Rows.Count != 0)
                 {
@@ -828,33 +942,35 @@ where a.ID='{0}'"
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
                         DateTime newDate = Convert.ToDateTime(dt.Rows[i]["inspDate"]);
-                        //代表newDate 比  lastDate還晚 就取代lastDate
+
+                        // 代表newDate 比  lastDate還晚 就取代lastDate
                         if (DateTime.Compare(newDate, lastDate) > 0)
                         {
                             lastDate = newDate;
                         }
                     }
+
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set HeatDate = '{0}',HeatEncode = 1,Heat='{1}',HeatInspector = '{3}' where id ='{2}'", lastDate.ToShortDateString(), result, maindr["ID"], Sci.Env.User.UserID);
+                    @"Update Fir_Laboratory set HeatDate = '{0}',HeatEncode = 1,Heat='{1}',HeatInspector = '{3}' where id ='{2}'", lastDate.ToShortDateString(), result, this.maindr["ID"], Env.User.UserID);
                 }
                 else
                 {
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set HeatEncode = 1,Heat='{0}', HeatInspector = '{2}' where id ='{1}'", result, maindr["ID"], Sci.Env.User.UserID);
+                    @"Update Fir_Laboratory set HeatEncode = 1,Heat='{0}', HeatInspector = '{2}' where id ='{1}'", result, this.maindr["ID"], Env.User.UserID);
                 }
                 #endregion
 
                 }
-            
-            else//Amend
-            {                       
+            else// Amend
+            {
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir_Laboratory set HeatDate = null,HeatEncode= 0,Heat = '',HeatInspector = '' where id ='{0}'", maindr["ID"]);
+                @"Update Fir_Laboratory set HeatDate = null,HeatEncode= 0,Heat = '',HeatInspector = '' where id ='{0}'", this.maindr["ID"]);
 
                // updatesql = updatesql + string.Format(@"update FIR_Laboratory_Heat set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
                 #endregion
             }
+
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -866,6 +982,7 @@ where a.ID='{0}'"
                         _transactionscope.Dispose();
                         return;
                     }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
@@ -873,44 +990,48 @@ where a.ID='{0}'"
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
             #region Over All Result 寫入
-            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Lab(maindr["ID"]);
-            maindr["Result"] = returnstr[0];
+            string[] returnstr = PublicPrg.Prgs.GetOverallResult_Lab(this.maindr["ID"]);
+            this.maindr["Result"] = returnstr[0];
             string cmdResult = @"update Fir_Laboratory set Result=@Result where id=@id";
             List<SqlParameter> spam = new List<SqlParameter>();
             spam.Add(new SqlParameter("@Result", returnstr[0]));
-            spam.Add(new SqlParameter("@id", maindr["ID"]));
+            spam.Add(new SqlParameter("@id", this.maindr["ID"]));
             DBProxy.Current.Execute(null, cmdResult, spam);
-            //更新PO.FIRLabInspPercent
-            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIRLab','{maindr["POID"]}'")))
+
+            // 更新PO.FIRLabInspPercent
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIRLab','{this.maindr["POID"]}'")))
             {
-                ShowErr(upResult);
+                this.ShowErr(upResult);
                 return;
             }
             #endregion
 
-            OnRequery();
+            this.OnRequery();
         }
 
-        //編輯權限設定
+        // 編輯權限設定
         private void button_enable()
         {
-            //return;
-            if (maindr == null) return;
-            btnEncode.Enabled = this.CanEdit && !this.EditMode;
-            btnEncode.Text = MyUtility.Convert.GetBool(maindr["HeatEncode"]) ? "Amend" : "Encode";
-            this.btnToExcel.Enabled =  !this.EditMode;
+            // return;
+            if (this.maindr == null)
+            {
+                return;
+            }
+
+            this.btnEncode.Enabled = this.CanEdit && !this.EditMode;
+            this.btnEncode.Text = MyUtility.Convert.GetBool(this.maindr["HeatEncode"]) ? "Amend" : "Encode";
+            this.btnToExcel.Enabled = !this.EditMode;
             this.txtsupplierSupp.TextBox1.ReadOnly = true;
         }
 
-        //maindr where id,poid重新query 
+        // maindr where id,poid重新query
         private void mainDBQuery()
         {
-            
             string cmd = @"select a.id,a.poid,(a.SEQ1+a.SEQ2) as seq,a.SEQ1,a.SEQ2,a.ReceivingID,Refno,a.SCIRefno,
                 b.CrockingEncode,b.HeatEncode,b.WashEncode,
                 ArriveQty,
@@ -927,22 +1048,23 @@ where a.ID='{0}'"
 				left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 				Where a.poid=@poid  and a.id=@id order by a.seq1,a.seq2,Refno ";
             List<SqlParameter> spam = new List<SqlParameter>();
-            spam.Add(new SqlParameter("@id", ID));
-            spam.Add(new SqlParameter("@poid", maindr["poid"]));
-            if (!MyUtility.Check.Seek(cmd,spam,out maindr))
+            spam.Add(new SqlParameter("@id", this.ID));
+            spam.Add(new SqlParameter("@poid", this.maindr["poid"]));
+            if (!MyUtility.Check.Seek(cmd, spam, out this.maindr))
             {
-                MyUtility.Msg.WarningBox("Data is empty");            
+                MyUtility.Msg.WarningBox("Data is empty");
             }
-          
         }
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            DataTable dt = (DataTable)gridbs.DataSource;
-            string[] columnNames = new string[] 
-            { "Roll", "Dyelot", "HorizontalOriginal", "VerticalOriginal", "Result", "HorizontalTest1", "HorizontalTest2", "HorizontalTest3", "Horizontal_Average","Horizontalrate",
-                "VerticalTest1","VerticalTest2","VerticalTest3","Vertical_Average","VerticalRate","InspDate", "Inspector", "Inspector", "Remark", "Last update" };
-            var ret = Array.CreateInstance(typeof(object), dt.Rows.Count, grid.Columns.Count) as object[,];
+            DataTable dt = (DataTable)this.gridbs.DataSource;
+            string[] columnNames = new string[]
+            {
+                "Roll", "Dyelot", "HorizontalOriginal", "VerticalOriginal", "Result", "HorizontalTest1", "HorizontalTest2", "HorizontalTest3", "Horizontal_Average", "Horizontalrate",
+                "VerticalTest1", "VerticalTest2", "VerticalTest3", "Vertical_Average", "VerticalRate", "InspDate", "Inspector", "Inspector", "Remark", "Last update",
+            };
+            var ret = Array.CreateInstance(typeof(object), dt.Rows.Count, this.grid.Columns.Count) as object[,];
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 DataRow row = dt.Rows[i];
@@ -951,44 +1073,52 @@ where a.ID='{0}'"
                     ret[i, j] = row[columnNames[j]];
                 }
             }
-            if (dt.Rows.Count==0)
+
+            if (dt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return;
             }
-            // 撈seasonID 
+
+            // 撈seasonID
             DataTable dtSeason;
             string SeasonID;
             DBProxy.Current.Select("Production", string.Format(
-            "select C.SeasonID from FIR_Laboratory_Heat a WITH (NOLOCK) left join FIR_Laboratory b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C WITH (NOLOCK) ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason);
-            if (dtSeason.Rows.Count == 0) { SeasonID = ""; }
-            else { SeasonID = dtSeason.Rows[0]["SeasonID"].ToString(); }
-          
+            "select C.SeasonID from FIR_Laboratory_Heat a WITH (NOLOCK) left join FIR_Laboratory b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C WITH (NOLOCK) ON B.POID=C.ID where a.ID='{0}'", this.maindr["ID"]), out dtSeason);
+            if (dtSeason.Rows.Count == 0)
+            {
+                SeasonID = string.Empty;
+            }
+            else
+            {
+                SeasonID = dtSeason.Rows[0]["SeasonID"].ToString();
+            }
+
             Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
 
             MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Heat_Test.xltx", headerline: 5, openfile: false, excelAppObj: excel);
-            Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表            
-            excelSheets.Cells[2, 2] = txtSP.Text.ToString();
-            excelSheets.Cells[2, 4] = txtSEQ.Text.ToString();
-            excelSheets.Cells[2, 6] = txtColor.Text.ToString();
-            excelSheets.Cells[2, 8] = txtStyle.Text.ToString();
+            Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1]; // 取得工作表
+            excelSheets.Cells[2, 2] = this.txtSP.Text.ToString();
+            excelSheets.Cells[2, 4] = this.txtSEQ.Text.ToString();
+            excelSheets.Cells[2, 6] = this.txtColor.Text.ToString();
+            excelSheets.Cells[2, 8] = this.txtStyle.Text.ToString();
             excelSheets.Cells[2, 10] = SeasonID;
-            excelSheets.Cells[3, 2] = txtSCIRefno.Text.ToString();
-            excelSheets.Cells[3, 4] = txtWkno.Text.ToString();
-            excelSheets.Cells[3, 6] = txtResult.Text.ToString();
-            excelSheets.Cells[3, 8] = dateLastInspectionDate.Value;
-            excelSheets.Cells[3, 10] = txtBrand.Text.ToString();
-            excelSheets.Cells[4, 2] = txtBrandRefno.Text.ToString();
-            excelSheets.Cells[4, 4] = txtArriveQty.Text.ToString();
-            excelSheets.Cells[4, 6] = dateArriveWHDate.Value;
-            excelSheets.Cells[4, 8] = txtsupplierSupp.DisplayBox1.Text.ToString();
-            excelSheets.Cells[4, 10] = checkNA.Value.ToString();
+            excelSheets.Cells[3, 2] = this.txtSCIRefno.Text.ToString();
+            excelSheets.Cells[3, 4] = this.txtWkno.Text.ToString();
+            excelSheets.Cells[3, 6] = this.txtResult.Text.ToString();
+            excelSheets.Cells[3, 8] = this.dateLastInspectionDate.Value;
+            excelSheets.Cells[3, 10] = this.txtBrand.Text.ToString();
+            excelSheets.Cells[4, 2] = this.txtBrandRefno.Text.ToString();
+            excelSheets.Cells[4, 4] = this.txtArriveQty.Text.ToString();
+            excelSheets.Cells[4, 6] = this.dateArriveWHDate.Value;
+            excelSheets.Cells[4, 8] = this.txtsupplierSupp.DisplayBox1.Text.ToString();
+            excelSheets.Cells[4, 10] = this.checkNA.Value.ToString();
 
-            excel.Cells.EntireColumn.AutoFit();    //自動欄寬
+            excel.Cells.EntireColumn.AutoFit();    // 自動欄寬
             excel.Cells.EntireRow.AutoFit();       ////自動欄高
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P03_Heat_Test");
+            string strExcelName = Class.MicrosoftFile.GetName("Quality_P03_Heat_Test");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -1006,7 +1136,7 @@ where a.ID='{0}'"
         {
             if (!MyUtility.Check.Empty(dr["HorizontalOriginal"]))
             {
-                decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
+                decimal newValue = ((((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3) - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
                 dr["HorizontalRate"] = Math.Round(newValue, 2);
             }
             else
@@ -1014,7 +1144,8 @@ where a.ID='{0}'"
                 dr["HorizontalRate"] = 0;
                 return;
             }
-            decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
+
+            decimal newAvgValue = ((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3;
             dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);
         }
 
@@ -1026,16 +1157,16 @@ where a.ID='{0}'"
         {
             if (!MyUtility.Check.Empty(dr["VerticalOriginal"]))
             {
-                decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
+                decimal newValue = ((((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3) - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
                 dr["VerticalRate"] = Math.Round(newValue, 2);
-
             }
             else
             {
                 dr["VerticalRate"] = 0;
                 return;
             }
-            decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
+
+            decimal newAvgValue = ((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3;
             dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
         }
     }

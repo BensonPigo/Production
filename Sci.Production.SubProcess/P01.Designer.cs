@@ -43,7 +43,7 @@
             this.labelQAOutput = new Sci.Win.UI.Label();
             this.labelDefectOutput = new Sci.Win.UI.Label();
             this.numDefectOutput = new Sci.Win.UI.NumericBox();
-            this.txtdropdownlistShift = new Sci.Production.Class.txtdropdownlist();
+            this.txtdropdownlistShift = new Sci.Production.Class.Txtdropdownlist();
             this.lbManpower = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.numManpower = new Sci.Win.UI.NumericBox();
@@ -528,7 +528,7 @@
         private Win.UI.Label labelDefectOutput;
         private Win.UI.Label labelProdQty;
         private Win.UI.Label labelQAOutput;
-        private Class.txtdropdownlist txtdropdownlistShift;
+        private Class.Txtdropdownlist txtdropdownlistShift;
         private Win.UI.Label lbManpower;
         private Win.UI.NumericBox numWHours;
         private Win.UI.NumericBox numManpower;

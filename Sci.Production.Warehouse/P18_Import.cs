@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P18_Import : Sci.Win.Subs.Base
+    public partial class P18_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -23,28 +21,29 @@ namespace Sci.Production.Warehouse
 
         public P18_Import(DataRow master, DataTable detail)
         {
-            InitializeComponent();
-            di_stocktype.Add("B", "Bulk");
-            di_stocktype.Add("I", "Inventory");
-            dr_master = master;
-            dt_detail = detail;
+            this.InitializeComponent();
+            this.di_stocktype.Add("B", "Bulk");
+            this.di_stocktype.Add("I", "Inventory");
+            this.dr_master = master;
+            this.dt_detail = detail;
             this.EditMode = true;
         }
 
-        //Button Query
+        // Button Query
         private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String transid = this.txtTransferOutID.Text.TrimEnd();
-
+            string transid = this.txtTransferOutID.Text.TrimEnd();
 
             if (string.IsNullOrWhiteSpace(transid))
             {
                 MyUtility.Msg.WarningBox("< Transaction ID# > can't be empty!!");
-                txtTransferOutID.Focus();
+                this.txtTransferOutID.Focus();
                 return;
             }
-            strSQLCmd.Append(string.Format(@"
+
+            strSQLCmd.Append(string.Format(
+                @"
 select  0 as selected
         , null as ukey
         , '' as id
@@ -63,25 +62,26 @@ select  0 as selected
 from TransferOut a WITH (NOLOCK) 
 inner join TransferOut_Detail b WITH (NOLOCK) on b.id = a.id
 inner join PO_Supp_Detail psd WITH (NOLOCK) on b.POID = psd.id and b.Seq1 = psd.Seq1 and b.Seq2 = psd.Seq2
-where a.status='Confirmed' and a.id='{0}'", transid)); // 
-
+where a.status='Confirmed' and a.id='{0}'", transid));
 
             this.ShowWaitMessage("Data Loading....");
-            Ict.DualResult result;
-            if (!(result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtImportData)))
+            DualResult result;
+            if (!(result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtImportData)))
             {
-                ShowErr(strSQLCmd.ToString(), result);
+                this.ShowErr(strSQLCmd.ToString(), result);
             }
             else
             {
-                if (dtImportData.Rows.Count == 0)
-                { MyUtility.Msg.WarningBox("Data not found!!"); }
+                if (this.dtImportData.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
 
-                listControlBindingSource1.DataSource = dtImportData;
-                dtImportData.DefaultView.Sort = "poid,seq1,seq2,dyelot,roll";
+                this.listControlBindingSource1.DataSource = this.dtImportData;
+                this.dtImportData.DefaultView.Sort = "poid,seq1,seq2,dyelot,roll";
             }
-            this.HideWaitMessage();
 
+            this.HideWaitMessage();
         }
 
         protected override void OnFormLoaded()
@@ -89,15 +89,19 @@ where a.status='Confirmed' and a.id='{0}'", transid)); //
             base.OnFormLoaded();
 
             #region Location 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    DataRow currentrow = gridImport.GetDataRow(gridImport.GetSelectedRowIndex());
-                    Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(currentrow["Stocktype"].ToString(), currentrow["Location"].ToString());
+                    DataRow currentrow = this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex());
+                    Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(currentrow["Stocktype"].ToString(), currentrow["Location"].ToString());
                     DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     currentrow["Location"] = item.GetSelectedString();
                 }
             };
@@ -105,9 +109,10 @@ where a.status='Confirmed' and a.id='{0}'", transid)); //
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                    DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
                     dr["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"
+                    string sqlcmd = string.Format(
+                        @"
 SELECT  id
         , Description
         , StockType 
@@ -122,12 +127,12 @@ WHERE   StockType='{0}'
                     List<string> trueLocation = new List<string>();
                     foreach (string location in getLocation)
                     {
-                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !location.EqualString(string.Empty))
                         {
                             selectId &= false;
                             errLocation.Add(location);
                         }
-                        else if (!(location.EqualString("")))
+                        else if (!location.EqualString(string.Empty))
                         {
                             trueLocation.Add(location);
                         }
@@ -135,26 +140,28 @@ WHERE   StockType='{0}'
 
                     if (!selectId)
                     {
-                        e.Cancel = true; 
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
-                       
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errLocation.ToArray()) + "  Data not found !!", "Data not found");
                     }
+
                     trueLocation.Sort();
-                    dr["location"] = string.Join(",", (trueLocation).ToArray());
-                    //去除錯誤的Location將正確的Location填回
+                    dr["location"] = string.Join(",", trueLocation.ToArray());
+
+                    // 去除錯誤的Location將正確的Location填回
                 }
             };
             #endregion Location 右鍵開窗
 
             #region StockType setting
-            Ict.Win.DataGridViewGeneratorComboBoxColumnSettings sk = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings sk = new DataGridViewGeneratorComboBoxColumnSettings();
             sk.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow CurrentDetailData = gridImport.GetDataRow(e.RowIndex);
+                    DataRow CurrentDetailData = this.gridImport.GetDataRow(e.RowIndex);
                     CurrentDetailData["stocktype"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"
+                    string sqlcmd = string.Format(
+                        @"
 SELECT  id
         , Description
         , StockType 
@@ -169,12 +176,12 @@ WHERE   StockType='{0}'
                     List<string> trueLocation = new List<string>();
                     foreach (string location in getLocation)
                     {
-                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !location.EqualString(string.Empty))
                         {
                             selectId &= false;
                             errLocation.Add(location);
                         }
-                        else if (!(location.EqualString("")))
+                        else if (!location.EqualString(string.Empty))
                         {
                             trueLocation.Add(location);
                         }
@@ -183,11 +190,13 @@ WHERE   StockType='{0}'
                     if (!selectId)
                     {
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");      
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errLocation.ToArray()) + "  Data not found !!", "Data not found");
                     }
+
                     trueLocation.Sort();
-                    CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());
-                    //去除錯誤的Location將正確的Location填回
+                    CurrentDetailData["location"] = string.Join(",", trueLocation.ToArray());
+
+                    // 去除錯誤的Location將正確的Location填回
                 }
             };
             #endregion
@@ -196,21 +205,21 @@ WHERE   StockType='{0}'
             Ict.Win.UI.DataGridViewTextBoxColumn txt_dyelot;
             Ict.Win.UI.DataGridViewTextBoxColumn txt_location;
 
-            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridImport.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridImport)
-            .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
-            .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
-            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
-            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out txt_roll)    //3
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false).Get(out txt_dyelot)    //4
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)    //5
-            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
-            .ComboBox("stocktype", header: "Stock Type", iseditable: true, settings : sk).Get(out cbb_stocktype)//7
-            .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false).Get(out txt_location)    //8
+            this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
+            .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 1
+            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
+            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out txt_roll) // 3
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false).Get(out txt_dyelot) // 4
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 5
+            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 6
+            .ComboBox("stocktype", header: "Stock Type", iseditable: true, settings: sk).Get(out cbb_stocktype) // 7
+            .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false).Get(out txt_location) // 8
             ;
 
-            cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
+            cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
 
@@ -227,10 +236,13 @@ WHERE   StockType='{0}'
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            listControlBindingSource1.EndEdit();
-            gridImport.ValidateControl();
-            DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
+            this.listControlBindingSource1.EndEdit();
+            this.gridImport.ValidateControl();
+            DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0)
+            {
+                return;
+            }
 
             DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
             if (dr2.Length == 0)
@@ -241,7 +253,7 @@ WHERE   StockType='{0}'
 
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
+                DataRow[] findrow = this.dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
                                                                          && row["poid"].EqualString(tmp["poid"].ToString()) && row["seq1"].EqualString(tmp["seq1"])
                                                                          && row["seq2"].EqualString(tmp["seq2"].ToString()) && row["roll"].EqualString(tmp["roll"])
                                                                          && row["dyelot"].EqualString(tmp["dyelot"]) && row["stockType"].EqualString(tmp["stockType"])).ToArray();
@@ -252,13 +264,12 @@ WHERE   StockType='{0}'
                 }
                 else
                 {
-                    tmp["id"] = dr_master["id"];
+                    tmp["id"] = this.dr_master["id"];
                     tmp.AcceptChanges();
                     tmp.SetAdded();
-                    dt_detail.ImportRow(tmp);
+                    this.dt_detail.ImportRow(tmp);
                 }
             }
-
 
             this.Close();
         }

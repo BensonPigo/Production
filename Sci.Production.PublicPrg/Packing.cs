@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using System.Windows.Forms;
 using Sci.Data;
-using Sci;
 using Ict;
-using Ict.Win;
 using System.Runtime.InteropServices;
 using System.Data.SqlClient;
 using Sci.Win.UI;
@@ -19,6 +16,7 @@ namespace Sci.Production.PublicPrg
     public static partial class Prgs
     {
         #region CreateOrderCTNData
+
         /// <summary>
         /// CreateOrderCTNData(string)
         /// </summary>
@@ -28,7 +26,8 @@ namespace Sci.Production.PublicPrg
         {
             string sqlCmd;
 
-            sqlCmd = string.Format(@"--宣告變數
+            sqlCmd = string.Format(
+                @"--宣告變數
 DECLARE @packinglistid VARCHAR(13),
 		@addname VARCHAR(10)
 SET @packinglistid = '{0}'
@@ -108,7 +107,7 @@ DEALLOCATE cursor_DeleteData
 IF @@ERROR <> 0
 	ROLLBACK TRANSACTION
 ELSE
-	COMMIT TRANSACTION", packingListID, Sci.Env.User.UserID);
+	COMMIT TRANSACTION", packingListID, Env.User.UserID);
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
@@ -121,6 +120,7 @@ ELSE
         #endregion
 
         #region CheckPulloutComplete
+
         /// <summary>
         /// CheckPulloutComplete(string,string,string,string,int)
         /// </summary>
@@ -134,7 +134,8 @@ ELSE
         {
             DataTable qty;
             DualResult result;
-            string sqlCmd = string.Format(@"with PulloutQty
+            string sqlCmd = string.Format(
+                @"with PulloutQty
 as
 (select isnull(sum(pdd.ShipQty),0) as ShipQty
  from Pullout p WITH (NOLOCK) , Pullout_Detail pd WITH (NOLOCK) , Pullout_Detail_Detail pdd WITH (NOLOCK) 
@@ -179,13 +180,14 @@ and oqd.SizeCode = '{3}'", orderID, orderShipmodeSeq, article, sizeCode);
                 }
                 else
                 {
-                    return (MyUtility.Convert.GetInt(qty.Rows[0]["OrderQty"]) >= MyUtility.Convert.GetInt(qty.Rows[0]["ShipQty"]) + packingQty);
+                    return MyUtility.Convert.GetInt(qty.Rows[0]["OrderQty"]) >= MyUtility.Convert.GetInt(qty.Rows[0]["ShipQty"]) + packingQty;
                 }
             }
         }
         #endregion
 
         #region Recaluate Carton Weight
+
         /// <summary>
         /// RecaluateCartonWeight(Datatable,DataRow)
         /// </summary>
@@ -194,13 +196,14 @@ and oqd.SizeCode = '{3}'", orderID, orderShipmodeSeq, article, sizeCode);
         /// <returns></returns>
         public static void RecaluateCartonWeight(DataTable PackingListDetaildata, DataRow PackingListData)
         {
-            if (PackingListDetaildata.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted).Count() == 0)// PackingListDetaildata.Rows.Count <= 0)
+            if (PackingListDetaildata.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted).Count() == 0) // PackingListDetaildata.Rows.Count <= 0)
             {
                 return;
             }
+
             DataTable weightData, tmpWeightData;
             DataRow[] weight;
-            string message = "";
+            string message = string.Empty;
             DualResult result;
             if (!(result = DBProxy.Current.Select(null, "select '' as BrandID, '' as StyleID, '' as SeasonID, Article, SizeCode, NW, NNW from Style_WeightData WITH (NOLOCK) where StyleUkey = ''", out weightData)))
             {
@@ -208,18 +211,21 @@ and oqd.SizeCode = '{3}'", orderID, orderShipmodeSeq, article, sizeCode);
                 return;
             }
 
-            //檢查是否所有的SizeCode都有存在Style_WeightData中
+            // 檢查是否所有的SizeCode都有存在Style_WeightData中
             foreach (DataRow dr in PackingListDetaildata.Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
+                {
                     continue;
+                }
 
                 string filter = string.Format("BrandID = '{0}' and StyleID = '{1}' and SeasonID = '{2}'", PackingListData["BrandID"].ToString(), dr["StyleID"].ToString(), dr["SeasonID"].ToString());
                 weight = weightData.Select(filter);
                 if (weight.Length == 0)
                 {
-                    //先將屬於此訂單的Style_WeightData給撈出來
-                    string sqlCmd = string.Format(@"select a.ID as StyleID,a.BrandID,a.SeasonID,isnull(b.Article,'') as Article,isnull(b.SizeCode,'') as SizeCode,isnull(b.NW,0) as NW,isnull(b.NNW,0) as NNW
+                    // 先將屬於此訂單的Style_WeightData給撈出來
+                    string sqlCmd = string.Format(
+                        @"select a.ID as StyleID,a.BrandID,a.SeasonID,isnull(b.Article,'') as Article,isnull(b.SizeCode,'') as SizeCode,isnull(b.NW,0) as NW,isnull(b.NNW,0) as NNW
 from Style a WITH (NOLOCK) 
 left join Style_WeightData b WITH (NOLOCK) on b.StyleUkey = a.Ukey
 where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].ToString(), PackingListData["BrandID"].ToString(), dr["SeasonID"].ToString());
@@ -253,7 +259,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
             if (!MyUtility.Check.Empty(message))
             {
                 DialogResult buttonResult = MyUtility.Msg.WarningBox(message + " not in Style basic data, are you sure you want to  recalculate weight?", "Warning", MessageBoxButtons.YesNo);
-                if (buttonResult == System.Windows.Forms.DialogResult.No)
+                if (buttonResult == DialogResult.No)
                 {
                     return;
                 }
@@ -265,7 +271,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
             result = DBProxy.Current.Select(null, "select CTNStartNo, NW, NNW, GW from PackingList_Detail WITH (NOLOCK) where 1=0", out tmpPacklistWeight);
             DataRow tmpPacklistRow;
 
-            string ctnNo = "";
+            string ctnNo = string.Empty;
             foreach (DataRow dr in PackingListDetaildata.Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
@@ -275,7 +281,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                 }
             }
 
-            // 依CtnStart#排序 來計算混尺碼重量 
+            // 依CtnStart#排序 來計算混尺碼重量
             if (PackingListDetaildata.Columns.Contains("tmpKey") == false)
             {
                 PackingListDetaildata.Columns.Add("tmpKey", typeof(decimal));
@@ -285,16 +291,22 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
             foreach (DataRow dr in PackingListDetaildata.Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
+                {
                     continue;
+                }
+
                 dr["tmpKey"] = tmpkey;
                 tmpkey++;
             }
+
             PackingListDetaildata.DefaultView.Sort = "CTNStartNo,CTNQty desc";
             DataTable dtSort = PackingListDetaildata.DefaultView.ToTable();
             foreach (DataRow dr in dtSort.Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
+                {
                     continue;
+                }
 
                 if (!MyUtility.Check.Empty(dr["CTNQty"]) || ctnNo != dr["CTNStartNo"].ToString())
                 {
@@ -307,6 +319,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                         tmpPacklistRow["GW"] = nw + ctnWeight;
                         tmpPacklistWeight.Rows.Add(tmpPacklistRow);
                     }
+
                     ctnNo = dr["CTNStartNo"].ToString();
                     nw = 0;
                     nnw = 0;
@@ -318,8 +331,8 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                 weight = weightData.Select(filter);
                 if (weight.Length > 0)
                 {
-                    nw = nw + MyUtility.Convert.GetDouble(weight[0]["NW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]);
-                    nnw = nnw + MyUtility.Convert.GetDouble(weight[0]["NNW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]);
+                    nw = nw + (MyUtility.Convert.GetDouble(weight[0]["NW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]));
+                    nnw = nnw + (MyUtility.Convert.GetDouble(weight[0]["NNW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]));
                     dr["NWPerPcs"] = MyUtility.Convert.GetDouble(weight[0]["NW"]);
                 }
                 else
@@ -328,8 +341,8 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                     weight = weightData.Select(filter);
                     if (weight.Length > 0)
                     {
-                        nw = nw + MyUtility.Convert.GetDouble(weight[0]["NW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]);
-                        nnw = nnw + MyUtility.Convert.GetDouble(weight[0]["NNW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]);
+                        nw = nw + (MyUtility.Convert.GetDouble(weight[0]["NW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]));
+                        nnw = nnw + (MyUtility.Convert.GetDouble(weight[0]["NNW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]));
                         dr["NWPerPcs"] = MyUtility.Convert.GetDouble(weight[0]["NW"]);
                     }
                     else
@@ -337,6 +350,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                         dr["NWPerPcs"] = 0;
                     }
                 }
+
                 PackingListDetaildata.Select($"tmpkey = {dr["tmpkey"]}")[0]["NWPerPcs"] = dr["NWPerPcs"];
             }
 
@@ -345,7 +359,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                 PackingListDetaildata.Columns.Remove("tmpKey");
             }
 
-            //最後一筆資料也要寫入
+            // 最後一筆資料也要寫入
             tmpPacklistRow = tmpPacklistWeight.NewRow();
             tmpPacklistRow["CTNStartNo"] = ctnNo;
             tmpPacklistRow["NW"] = nw;
@@ -353,13 +367,15 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
             tmpPacklistRow["GW"] = nw + ctnWeight;
             tmpPacklistWeight.Rows.Add(tmpPacklistRow);
 
-            //將整箱重量回寫回表身Grid中CTNQty> 0的資料中
+            // 將整箱重量回寫回表身Grid中CTNQty> 0的資料中
             foreach (DataRow dr in tmpPacklistWeight.Rows)
             {
                 foreach (DataRow dr1 in PackingListDetaildata.Rows)
                 {
                     if (dr1.RowState == DataRowState.Deleted)
+                    {
                         continue;
+                    }
 
                     if (dr["CTNStartNo"].ToString() == dr1["CTNStartNo"].ToString())
                     {
@@ -382,6 +398,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
         #endregion
 
         #region Check Pullout Qty can't exceed Order Qty
+
         /// <summary>
         /// CheckPulloutQtyWithOrderQty(string)
         /// </summary>
@@ -389,7 +406,8 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
         /// <returns>bool</returns>
         public static bool CheckPulloutQtyWithOrderQty(string packingListID)
         {
-            string sqlCmd = string.Format(@"select OrderID,OrderShipmodeSeq,Article,SizeCode,sum(ShipQty) as ShipQty 
+            string sqlCmd = string.Format(
+                @"select OrderID,OrderShipmodeSeq,Article,SizeCode,sum(ShipQty) as ShipQty 
 from PackingList_Detail WITH (NOLOCK) 
 where ID = '{0}'
 group by OrderID,OrderShipmodeSeq,Article,SizeCode", packingListID);
@@ -397,14 +415,15 @@ group by OrderID,OrderShipmodeSeq,Article,SizeCode", packingListID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out queryData);
             if (result)
             {
-                string errMesg = "";
+                string errMesg = string.Empty;
                 foreach (DataRow dr in queryData.Rows)
                 {
-                    if (!Prgs.CheckPulloutComplete(dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString(), MyUtility.Convert.GetInt(dr["ShipQty"])))
+                    if (!CheckPulloutComplete(dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString(), MyUtility.Convert.GetInt(dr["ShipQty"])))
                     {
                         errMesg = errMesg + "SP No.:" + dr["OrderID"].ToString() + "Color Way: " + dr["Article"].ToString() + ", Size: " + dr["SizeCode"].ToString() + "\r\n";
                     }
                 }
+
                 if (!MyUtility.Check.Empty(errMesg))
                 {
                     MyUtility.Msg.WarningBox("Pullout qty is more than order qty!\n\r" + errMesg);
@@ -416,11 +435,13 @@ group by OrderID,OrderShipmodeSeq,Article,SizeCode", packingListID);
                 MyUtility.Msg.WarningBox("Query packinglist fail!");
                 return false;
             }
+
             return true;
         }
         #endregion
 
         #region Check Packing Qty can't exceed Sewing Output Qty
+
         /// <summary>
         /// CheckPackingQtyWithSewingOutput(string)
         /// </summary>
@@ -428,7 +449,8 @@ group by OrderID,OrderShipmodeSeq,Article,SizeCode", packingListID);
         /// <returns>bool</returns>
         public static bool CheckPackingQtyWithSewingOutput(string packingListID)
         {
-            string sqlCmd = string.Format(@"with PackOrderID
+            string sqlCmd = string.Format(
+                @"with PackOrderID
 as
 (select distinct pld.OrderID
  from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) 
@@ -490,10 +512,11 @@ order by poid.OrderID,oq.Article,oq.SizeCode", packingListID);
                     {
                         if (MyUtility.Convert.GetInt(dr["PackQty"]) + MyUtility.Convert.GetInt(dr["DiffQty"]) > MyUtility.Convert.GetInt(dr["QAQty"]))
                         {
-                            errMesg.Append("SP No.:" + MyUtility.Convert.GetString(dr["OrderID"]) + "Color Way: " + MyUtility.Convert.GetString(dr["Article"]) + ", Size: " + MyUtility.Convert.GetString(dr["SizeCode"]) + ", Qty: " + MyUtility.Convert.GetString(dr["Qty"]) + ", Ship Qty: " + MyUtility.Convert.GetString(dr["PackQty"]) + ", Sewing Qty:" + MyUtility.Convert.GetString(dr["QAQty"]) + ((MyUtility.Check.Empty(dr["DiffQty"]) ? "" : ", Adj Qty:" + MyUtility.Convert.GetString(dr["DiffQty"]))) + "." + (MyUtility.Convert.GetInt(dr["PackQty"]) + MyUtility.Convert.GetInt(dr["DiffQty"]) > MyUtility.Convert.GetInt(dr["Qty"]) ? "   Pullout qty can't exceed order qty," : "") + " Pullout qty can't exceed sewing qty.\r\n");
+                            errMesg.Append("SP No.:" + MyUtility.Convert.GetString(dr["OrderID"]) + "Color Way: " + MyUtility.Convert.GetString(dr["Article"]) + ", Size: " + MyUtility.Convert.GetString(dr["SizeCode"]) + ", Qty: " + MyUtility.Convert.GetString(dr["Qty"]) + ", Ship Qty: " + MyUtility.Convert.GetString(dr["PackQty"]) + ", Sewing Qty:" + MyUtility.Convert.GetString(dr["QAQty"]) + (MyUtility.Check.Empty(dr["DiffQty"]) ? string.Empty : ", Adj Qty:" + MyUtility.Convert.GetString(dr["DiffQty"])) + "." + (MyUtility.Convert.GetInt(dr["PackQty"]) + MyUtility.Convert.GetInt(dr["DiffQty"]) > MyUtility.Convert.GetInt(dr["Qty"]) ? "   Pullout qty can't exceed order qty," : string.Empty) + " Pullout qty can't exceed sewing qty.\r\n");
                         }
                     }
                 }
+
                 if (errMesg.Length > 0)
                 {
                     MyUtility.Msg.WarningBox(errMesg.ToString());
@@ -505,11 +528,13 @@ order by poid.OrderID,oq.Article,oq.SizeCode", packingListID);
                 MyUtility.Msg.WarningBox("Query sewing fail!");
                 return false;
             }
+
             return true;
         }
         #endregion
 
         #region Query Packing List SQL Command
+
         /// <summary>
         /// QueryPackingListSQLCmd(string)
         /// </summary>
@@ -517,7 +542,8 @@ order by poid.OrderID,oq.Article,oq.SizeCode", packingListID);
         /// <returns>string</returns>
         public static string QueryPackingListSQLCmd(string packingListID)
         {
-            return string.Format(@"
+            return string.Format(
+                @"
 with AllOrderID as (
     select  Distinct OrderID
             , OrderShipmodeSeq
@@ -610,13 +636,21 @@ order by a.Seq ASC,a.CTNQty DESC", packingListID);
         {
             string where = string.Empty;
             if (!MyUtility.Check.Empty(packingListID))
+            {
                 where = $@"and p.id ='{packingListID}'";
+            }
             else if (!MyUtility.Check.Empty(INVNo))
+            {
                 where = $@"and p.INVNo ='{INVNo}'";
+            }
             else if (!MyUtility.Check.Empty(ShipPlanID))
+            {
                 where = $@"and p.ShipPlanID ='{ShipPlanID}'";
+            }
             else if (!MyUtility.Check.Empty(PulloutID))
+            {
                 where = $@"and p.PulloutID ='{PulloutID}'";
+            }
 
             string sqlCmd = $@"
 select pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,ShipQty=sum(pd.ShipQty)
@@ -672,7 +706,10 @@ where isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0) < isnull(oqd.Qty,0)
             if (!result)
             {
                 if (showmsg)
+                {
                     MyUtility.Msg.WarningBox(result.ToString());
+                }
+
                 return result;
             }
 
@@ -684,16 +721,21 @@ where isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0) < isnull(oqd.Qty,0)
 " + string.Join("\t", os);
 
                 if (showmsg)
+                {
                     MyUtility.Msg.WarningBox(msg);
+                }
 
-                return Result.F(msg);
+                return Ict.Result.F(msg);
             }
 
             result = DBProxy.Current.Select(null, sqlB, out dt);
             if (!result)
             {
                 if (showmsg)
+                {
                     MyUtility.Msg.WarningBox(result.ToString());
+                }
+
                 return result;
             }
 
@@ -705,10 +747,10 @@ where isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0) < isnull(oqd.Qty,0)
 " + string.Join("\t", os);
 
                 MyUtility.Msg.WarningBox(msg);
-                return Result.True;
+                return Ict.Result.True;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         public static bool IsCancelOrder(string orderID)
@@ -718,7 +760,7 @@ where isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0) < isnull(oqd.Qty,0)
 
         public static DualResult CompareOrderQtyPackingQty(string orderID, string plID, int curAddPlQty)
         {
-            //ISP20200981 只要訂單為 Cancel 則跳過 Packing 與訂單總量比對的判斷
+            // ISP20200981 只要訂單為 Cancel 則跳過 Packing 與訂單總量比對的判斷
             if (IsCancelOrder(orderID))
             {
                 return new DualResult(true);
@@ -764,11 +806,13 @@ select * from #tmpPL
             {
                 return new DualResult(true);
             }
+
             string plQtyListString = dtResults[1].AsEnumerable().Select(s => $"{s["ID"]} - {s["ShipQty"]}").JoinToString(Environment.NewLine);
             if (curAddPlQty > 0)
             {
                 plQtyListString += Environment.NewLine + $"{plID} - {curAddPlQty}";
             }
+
             string errorMsg = $@"
 Ttl Packing Qty ({plQty}) cannot exceed Order Qty ({orderQty}).
 Please check below packing list.
@@ -838,7 +882,8 @@ DROP TABLE #OrderList,#tmp,#TPEAdjust,#Summary
             {
                 return dualResult;
             }
-            string msgSum = "";
+
+            string msgSum = string.Empty;
             if (dtchk[0].Rows.Count > 0)
             {
                 foreach (DataRow item in dtchk[0].AsEnumerable().ToList())
@@ -847,7 +892,7 @@ DROP TABLE #OrderList,#tmp,#TPEAdjust,#Summary
                     string AllOrderQty = item["TtlOrderQty"].ToString();
                     string AllShipQty = item["TtlShipQty"].ToString();
 
-                    string msg = "";
+                    string msg = string.Empty;
                     msg += $@"
 SP# {OrderID}
 Ttl Packing Qty ({AllShipQty}) cannot exceed Order Qty ({AllOrderQty}).
@@ -863,16 +908,19 @@ Please check below packing list.
 
                         msg += msg2;
                     }
+
                     msgSum += msg;
                 }
+
                 MyUtility.Msg.WarningBox(msgSum);
-                return Result.F(msgSum);
+                return Ict.Result.F(msgSum);
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         #region Query Packing List Print out Pacging List Report Data
+
         /// <summary>
         /// QueryPackingListReportData(string,DataTable,DataTable,DataTable,DataTable,DataTable,DataTable,string)
         /// </summary>
@@ -887,7 +935,8 @@ Please check below packing list.
         {
             ctnDim = null;
             qtyBDown = null;
-            string sqlCmd = string.Format(@"
+            string sqlCmd = string.Format(
+                @"
 
     select  OrderID
             , OrderShipmodeSeq
@@ -952,7 +1001,8 @@ drop table #temp
                 return result;
             }
 
-            sqlCmd = string.Format(@"Declare @packinglistid VARCHAR(13),
+            sqlCmd = string.Format(
+                @"Declare @packinglistid VARCHAR(13),
 		@refno VARCHAR(21), 
 		@ctnstartno VARCHAR(6),
 		@firstctnno VARCHAR(6),
@@ -1037,7 +1087,8 @@ order by RefNo", PackingListID);
                 return result;
             }
 
-            sqlCmd = string.Format(@"DECLARE @packinglistid VARCHAR(13),
+            sqlCmd = string.Format(
+                @"DECLARE @packinglistid VARCHAR(13),
 		@orderid VARCHAR(13),
 		@sizecode VARCHAR(8),
 		@article VARCHAR(8),
@@ -1206,6 +1257,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
         #endregion
 
         #region Packing List data write in excel -- Packing List Report
+
         /// <summary>
         /// PackingListToExcel_PackingListReport(string,DataRow,string,DataTable,DataTable,DataTable)
         /// </summary>
@@ -1216,18 +1268,20 @@ select * from @tempQtyBDown", PackingListID, ReportType);
         /// <param name="Carton Dimension"></param>
         /// <param name="Qty B'Down"></param>
         /// <returns></returns>
-        //public static void PackingListToExcel_PackingListReport(string XltxName, DataRow PLdr, string ReportType, DataTable PrintData, DataTable CtnDim, DataTable QtyBDown)
-        //{
+        // public static void PackingListToExcel_PackingListReport(string XltxName, DataRow PLdr, string ReportType, DataTable PrintData, DataTable CtnDim, DataTable QtyBDown)
+        // {
         public static void PackingListToExcel_PackingListReport(string XltxName, DataTable PLdt, string ReportType, DataSet PrintData, DataSet CtnDim, DataSet QtyBDown)
         {
             #region Check Multiple
             bool boolMultiple = XltxName.EqualString("\\Packing_P03_PackingListReport_Multiple.xltx") ? true : false;
             #endregion
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + XltxName;
+            string strXltName = Env.Cfg.XltPathDir + XltxName;
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
+            {
                 return;
+            }
 
 #if DEBUG
             excel.Visible = true;
@@ -1249,7 +1303,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                     continue;
                 }
 
-                //防止 Sheet Name 重複
+                // 防止 Sheet Name 重複
                 bool existsSheetName = false;
                 foreach (Microsoft.Office.Interop.Excel.Worksheet existsSheet in excel.Workbooks[1].Worksheets)
                 {
@@ -1258,55 +1312,59 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                         existsSheetName = true;
                     }
                 }
+
                 DataRow[] getMinDelivery = PrintData.Tables[dr["ID"].ToString()].Select("SciDelivery = min(SciDelivery)");
-                string strSciDelivery = "";
+                string strSciDelivery = string.Empty;
                 if (getMinDelivery.Length > 0)
+                {
                     strSciDelivery = string.Format("{0:yyyy/MM/dd}", getMinDelivery[0]["SciDelivery"]);
+                }
                 #endregion
 
                 #region Column & Row Index
-                int bodyRowIndex = (boolMultiple) ? 7 : 9
-                    , bodyRowStartIndex = (boolMultiple) ? 7 : 9
-                    , bodyRowEndIndex = (boolMultiple) ? 29 : 31
-                    , titleMRow = 1, titleMColumn = 1
-                    , titlePakingListNoRow = 3, titlePakingListNoColumn = 3
-                    , titleSciDeliveryRow = 3, titleSciDeliveryColumn = (boolMultiple) ? 18 : 14
-                    , titleSPRow = 5, titleSPColumn = 1
-                    , titleStyleRow = 5, titleStyleColumn = 3
-                    , titleOrderNoRow = 5, titleOrderNoColumn = 6
-                    , titlePoNoRow = 5, titlePoNoColumn = 10
-                    , titleInvoiceRow = 5, titleInvoiceColumn = (boolMultiple) ? 1 : 13
-                    , titleCustCDRow = (boolMultiple) ? 5 : 7, titleCustCDColumn = (boolMultiple) ? 4 : 1
-                    , titleShipModeRow = (boolMultiple) ? 5 : 7, titleShipModeColumn = (boolMultiple) ? 7 : 3
-                    , titleInClogRow = (boolMultiple) ? 5 : 7, titleInClogColumn = (boolMultiple) ? 10 : 6
-                    , titleDestinationRow = (boolMultiple) ? 5 : 7, titleDestinationColumn = (boolMultiple) ? 14 : 10
-                    , titleShipmentDateRow = (boolMultiple) ? 5 : 7, titleShipmentDateColumn = (boolMultiple) ? 18 : 13
-                    , bodySPColumn = 1
-                    , bodyStyleColumn = 2
-                    , bodyOrderNoColumn = 3
-                    , bodyPoNoColumn = 4
-                    , bodyCtn1Column = (boolMultiple) ? 5 : 1
-                    , bodyCtn2Column = (boolMultiple) ? 6 : 2
-                    , bodyCtnsColumn = (boolMultiple) ? 7 : 3
-                    , bodyColorColumn = (boolMultiple) ? 8 : 4
-                    , bodySizeColumn = (boolMultiple) ? 9 : 5
-                    , bodyCustSizeColumn = (boolMultiple) ? 10 : 6
-                    , bodyPcCtnsColumn = (boolMultiple) ? 11 : 7
-                    , bodyQtyColumn = (boolMultiple) ? 12 : 8
-                    , bodyNWColumn = (boolMultiple) ? 13 : 9
-                    , bodyGWColumn = (boolMultiple) ? 14 : 10
-                    , bodyNNWColumn = (boolMultiple) ? 15 : 11
-                    , bodyNWPcsColumn = (boolMultiple) ? 16 : 12
-                    , bodyTTLNWColumn = (boolMultiple) ? 17 : 13
-                    , bodyTTLGWColumn = (boolMultiple) ? 18 : 14
-                    , bodyTTLNNWColumn = (boolMultiple) ? 19 : 15
-                    , SippingMarkBDColumn = (boolMultiple) ? 11 : 8
+                int bodyRowIndex = boolMultiple ? 7 : 9,
+                    bodyRowStartIndex = boolMultiple ? 7 : 9,
+                    bodyRowEndIndex = boolMultiple ? 29 : 31,
+                    titleMRow = 1, titleMColumn = 1,
+                    titlePakingListNoRow = 3, titlePakingListNoColumn = 3,
+                    titleSciDeliveryRow = 3, titleSciDeliveryColumn = boolMultiple ? 18 : 14,
+                    titleSPRow = 5, titleSPColumn = 1,
+                    titleStyleRow = 5, titleStyleColumn = 3,
+                    titleOrderNoRow = 5, titleOrderNoColumn = 6,
+                    titlePoNoRow = 5, titlePoNoColumn = 10,
+                    titleInvoiceRow = 5, titleInvoiceColumn = boolMultiple ? 1 : 13,
+                    titleCustCDRow = boolMultiple ? 5 : 7, titleCustCDColumn = boolMultiple ? 4 : 1,
+                    titleShipModeRow = boolMultiple ? 5 : 7, titleShipModeColumn = boolMultiple ? 7 : 3,
+                    titleInClogRow = boolMultiple ? 5 : 7, titleInClogColumn = boolMultiple ? 10 : 6,
+                    titleDestinationRow = boolMultiple ? 5 : 7, titleDestinationColumn = boolMultiple ? 14 : 10,
+                    titleShipmentDateRow = boolMultiple ? 5 : 7, titleShipmentDateColumn = boolMultiple ? 18 : 13,
+                    bodySPColumn = 1,
+                    bodyStyleColumn = 2,
+                    bodyOrderNoColumn = 3,
+                    bodyPoNoColumn = 4,
+                    bodyCtn1Column = boolMultiple ? 5 : 1,
+                    bodyCtn2Column = boolMultiple ? 6 : 2,
+                    bodyCtnsColumn = boolMultiple ? 7 : 3,
+                    bodyColorColumn = boolMultiple ? 8 : 4,
+                    bodySizeColumn = boolMultiple ? 9 : 5,
+                    bodyCustSizeColumn = boolMultiple ? 10 : 6,
+                    bodyPcCtnsColumn = boolMultiple ? 11 : 7,
+                    bodyQtyColumn = boolMultiple ? 12 : 8,
+                    bodyNWColumn = boolMultiple ? 13 : 9,
+                    bodyGWColumn = boolMultiple ? 14 : 10,
+                    bodyNNWColumn = boolMultiple ? 15 : 11,
+                    bodyNWPcsColumn = boolMultiple ? 16 : 12,
+                    bodyTTLNWColumn = boolMultiple ? 17 : 13,
+                    bodyTTLGWColumn = boolMultiple ? 18 : 14,
+                    bodyTTLNNWColumn = boolMultiple ? 19 : 15,
+                    SippingMarkBDColumn = boolMultiple ? 11 : 8
                     ;
                 #endregion
                 #region workRange
+
                 // strWorkRange 取 A8 & A10 是因為框線設定
-                string strWorkRange = (boolMultiple) ? "A8:A8" : "A10:A10"
-                        , strColumnsRange = (boolMultiple) ? "A{0}:S{0}" : "A{0}:O{0}";
+                string strWorkRange = boolMultiple ? "A8:A8" : "A10:A10",
+                        strColumnsRange = boolMultiple ? "A{0}:S{0}" : "A{0}:O{0}";
                 #endregion
 
                 worksheet = excel.ActiveWorkbook.Worksheets[cntWorkSheet];
@@ -1315,10 +1373,12 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 {
                     continue;
                 }
+
                 worksheet.Name = dr["id"].ToString();
-                string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
+                string NameEN = MyUtility.GetValue.Lookup("NameEN", Env.User.Factory, "Factory ", "id");
                 cntWorkSheet++;
                 #region Set Title
+
                 // 單筆SP 限定
                 if (!boolMultiple)
                 {
@@ -1327,6 +1387,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                     worksheet.Cells[titleOrderNoRow, titleOrderNoColumn] = MyUtility.Convert.GetString(PrintData.Tables[dr["ID"].ToString()].Rows[0]["Customize1"]);
                     worksheet.Cells[titlePoNoRow, titlePoNoColumn] = MyUtility.Convert.GetString(PrintData.Tables[dr["ID"].ToString()].Rows[0]["CustPONo"]);
                 }
+
                 worksheet.Cells[titleMRow, titleMColumn] = NameEN;
                 worksheet.Cells[titlePakingListNoRow, titlePakingListNoColumn] = MyUtility.Convert.GetString(dr["ID"]);
                 worksheet.Cells[titleSciDeliveryRow, titleSciDeliveryColumn] = strSciDelivery;
@@ -1339,7 +1400,8 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 #endregion
 
                 #region Set Body
-                //當要列印的筆數超過22筆，就要插入Row，因為範本只留22筆記錄的空間
+
+                // 當要列印的筆數超過22筆，就要插入Row，因為範本只留22筆記錄的空間
                 if (PrintData.Tables[dr["ID"].ToString()].Rows.Count > 22)
                 {
                     for (int i = 1; i <= PrintData.Tables[dr["ID"].ToString()].Rows.Count - 22; i++)
@@ -1353,8 +1415,8 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 string ctnStartNo = "XXXXXX";
                 foreach (DataRow drBody in PrintData.Tables[dr["ID"].ToString()].Rows)
                 {
-                    //因為有箱號不連續的問題，所以直接時用來源資料組好的數量，不用箱號箱減
-                    //int ctns = MyUtility.Convert.GetInt(dr["CTNEndNo"]) - MyUtility.Convert.GetInt(dr["CTNStartNo"]) + 1;
+                    // 因為有箱號不連續的問題，所以直接時用來源資料組好的數量，不用箱號箱減
+                    // int ctns = MyUtility.Convert.GetInt(dr["CTNEndNo"]) - MyUtility.Convert.GetInt(dr["CTNStartNo"]) + 1;
                     int ctns = (int)drBody["Ctns"];
                     if (ctnStartNo != MyUtility.Convert.GetString(drBody["CTNStartNo"]))
                     {
@@ -1381,19 +1443,20 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                             worksheet.Cells[bodyRowIndex, bodyCtn2Column] = MyUtility.Convert.GetString(drBody["CTNEndNo"]);
                         }
                     }
+
                     worksheet.Cells[bodyRowIndex, bodyColorColumn] = MyUtility.Convert.GetString(drBody["Article"]) + " " + MyUtility.Convert.GetString(drBody["Color"]);
                     worksheet.Cells[bodyRowIndex, bodySizeColumn] = MyUtility.Convert.GetString(drBody["SizeCode"]);
                     worksheet.Cells[bodyRowIndex, bodyCustSizeColumn] = MyUtility.Convert.GetString(drBody["SizeSpec"]);
                     worksheet.Cells[bodyRowIndex, bodyPcCtnsColumn] = MyUtility.Convert.GetString(drBody["QtyPerCTN"]);
                     worksheet.Cells[bodyRowIndex, bodyQtyColumn] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(drBody["QtyPerCTN"]) * ctns);
-                    worksheet.Cells[bodyRowIndex, bodyNWPcsColumn] = MyUtility.Check.Empty(drBody["NWPerPcs"]) ? "" : MyUtility.Convert.GetString(drBody["NWPerPcs"]);
+                    worksheet.Cells[bodyRowIndex, bodyNWPcsColumn] = MyUtility.Check.Empty(drBody["NWPerPcs"]) ? string.Empty : MyUtility.Convert.GetString(drBody["NWPerPcs"]);
 
                     ctnStartNo = MyUtility.Convert.GetString(drBody["CTNStartNo"]);
                     bodyRowIndex++;
                 }
 
-                worksheet.Range[String.Format(strColumnsRange, bodyRowIndex)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[String.Format(strColumnsRange, bodyRowIndex)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
+                worksheet.Range[string.Format(strColumnsRange, bodyRowIndex)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format(strColumnsRange, bodyRowIndex)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
                 worksheet.Cells[bodyRowIndex, 2] = "Total";
                 if (bodyRowIndex >= bodyRowStartIndex)
                 {
@@ -1403,6 +1466,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                     worksheet.Cells[bodyRowIndex, bodyTTLGWColumn] = string.Format("=SUM(INDIRECT(ADDRESS({0},{1})):INDIRECT(ADDRESS({2},{1})))", bodyRowStartIndex, bodyTTLGWColumn, MyUtility.Convert.GetString(bodyRowIndex - 1));
                     worksheet.Cells[bodyRowIndex, bodyTTLNNWColumn] = string.Format("=SUM(INDIRECT(ADDRESS({0},{1})):INDIRECT(ADDRESS({2},{1})))", bodyRowStartIndex, bodyTTLNNWColumn, MyUtility.Convert.GetString(bodyRowIndex - 1));
                 }
+
                 if (bodyRowIndex <= bodyRowEndIndex)
                 {
                     bodyRowIndex = bodyRowEndIndex;
@@ -1415,16 +1479,17 @@ select * from @tempQtyBDown", PackingListID, ReportType);
 
                 foreach (DataRow drCtn in CtnDim.Tables[dr["ID"].ToString()].Rows)
                 {
-                    ctnDimension.Append(string.Format("{0} - {1} - {2} {3}, (CTN#:{4}){5}  \r\n"
-                        , MyUtility.Convert.GetString(drCtn["RefNo"])
-                        , MyUtility.Convert.GetString(drCtn["Description"])
-                        , MyUtility.Convert.GetString(drCtn["Dimension"])
-                        , MyUtility.Convert.GetString(drCtn["CtnUnit"])
-                        , MyUtility.Check.Empty(drCtn["Ctn"]) ? "" : MyUtility.Convert.GetString(drCtn["Ctn"]).Substring(0, MyUtility.Convert.GetString(drCtn["Ctn"]).Length - 1)
-                        , ReportType == "1" ? ", ttlCBM:" + MyUtility.Convert.GetString(drCtn["TtlCBM"]) : ""));
+                    ctnDimension.Append(string.Format(
+                        "{0} - {1} - {2} {3}, (CTN#:{4}){5}  \r\n",
+                        MyUtility.Convert.GetString(drCtn["RefNo"]),
+                        MyUtility.Convert.GetString(drCtn["Description"]),
+                        MyUtility.Convert.GetString(drCtn["Dimension"]),
+                        MyUtility.Convert.GetString(drCtn["CtnUnit"]),
+                        MyUtility.Check.Empty(drCtn["Ctn"]) ? string.Empty : MyUtility.Convert.GetString(drCtn["Ctn"]).Substring(0, MyUtility.Convert.GetString(drCtn["Ctn"]).Length - 1),
+                        ReportType == "1" ? ", ttlCBM:" + MyUtility.Convert.GetString(drCtn["TtlCBM"]) : string.Empty));
                 }
 
-                string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
+                string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : string.Empty;
                 string[] cdsab = cds.Split('\r');
                 int cdsi = 0;
                 int cdsl = 150;
@@ -1439,18 +1504,19 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                         }
                     }
                 }
+
                 cdsi += cdsab.Length - 1;
                 for (int i = 1; i <= cdsi; i++)
                 {
-                    Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[bodyRowIndex, System.Type.Missing];
+                    Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[bodyRowIndex, Type.Missing];
                     rangeRowCD.RowHeight = 19.5 * (i + 1);
                     Marshal.ReleaseComObject(rangeRowCD);
-
                 }
-                worksheet.Cells[bodyRowIndex, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString() : "";
+
+                worksheet.Cells[bodyRowIndex, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString() : string.Empty;
                 #endregion
 
-                //Remarks
+                // Remarks
                 bodyRowIndex++;
                 worksheet.Cells[bodyRowIndex, 3] = MyUtility.Convert.GetString(dr["Remark"]);
 
@@ -1466,8 +1532,10 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
                         Marshal.ReleaseComObject(rngToInsert);
                     }
+
                     Marshal.ReleaseComObject(rngToCopy);
                 }
+
                 foreach (DataRow drQtyBDown in QtyBDown.Tables[dr["ID"].ToString()].Rows)
                 {
                     worksheet.Cells[bodyRowIndex, 1] = MyUtility.Convert.GetString(drQtyBDown["DataList"]);
@@ -1477,7 +1545,8 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 #endregion
 
                 #region Shipment mark
-                //Shipment mark
+
+                // Shipment mark
                 bodyRowIndex = bodyRowIndex + 3;
                 worksheet.Cells[bodyRowIndex, 1] = MyUtility.Convert.GetString(PrintData.Tables[dr["ID"].ToString()].Rows[0]["MarkFront"]);
 
@@ -1499,6 +1568,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                         Marshal.ReleaseComObject(mark);
                     }
                 }
+
                 bodyRowIndex = bodyRowIndex + add + 13;
 
                 worksheet.Cells[bodyRowIndex, 1] = MyUtility.Convert.GetString(PrintData.Tables[dr["ID"].ToString()].Rows[0]["MarkLeft"]);
@@ -1523,12 +1593,12 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 #endregion
             }
 
-            //MyUtility.Msg.WaitClear();
+            // MyUtility.Msg.WaitClear();
             excel.Columns.AutoFit();
             excel.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(boolMultiple ? "Packing_P03_PackingListReport_Multiple" : "Packing_P03_PackingGuideReport");
+            string strExcelName = Class.MicrosoftFile.GetName(boolMultiple ? "Packing_P03_PackingListReport_Multiple" : "Packing_P03_PackingGuideReport");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -1538,7 +1608,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
         }
 
         private static int formarks(string[] marks)
@@ -1553,11 +1623,13 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                     b += 1 + h;
                 }
             }
+
             return b;
         }
         #endregion
 
         #region Query Packing List Print out Pacging Guide Report Data
+
         /// <summary>
         /// QueryPackingGuideReportData(string,DataTable,DataTable,DataTable,DataTable,DataTable,DataTable,string)
         /// </summary>
@@ -1577,14 +1649,16 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             articleSizeTtlShipQty = null;
             printGroupData = null;
             clipData = null;
-            specialInstruction = MyUtility.GetValue.Lookup(string.Format(@"
+            specialInstruction = MyUtility.GetValue.Lookup(string.Format(
+                @"
 select top 1 Packing = isnull(o.Packing, '') 
 from PackingList_Detail pd WITH (NOLOCK) 
      , Orders o WITH (NOLOCK) 
 where   pd.ID = '{0}' 
         and pd.OrderID = o.ID", PackingListID));
 
-            string sqlCmd = string.Format(@"
+            string sqlCmd = string.Format(
+                @"
 select  pd.OrderID
         , StyleID = isnull(o.StyleID,'')
         , Customize1 = isnull(o.Customize1,'')
@@ -1633,7 +1707,8 @@ order by pd.Seq", PackingListID);
                 return result;
             }
 
-            sqlCmd = string.Format(@"
+            sqlCmd = string.Format(
+                @"
 Declare @packinglistid VARCHAR(13),
 		@refno VARCHAR(21), 
 		@ctnstartno VARCHAR(6),
@@ -1718,7 +1793,8 @@ order by RefNo", PackingListID);
                 return result;
             }
 
-            sqlCmd = string.Format(@"
+            sqlCmd = string.Format(
+                @"
 select  distinct Seq1 = oa.Seq 
         , Seq2 = os.Seq
         , Article = isnull(oq.Article, '')
@@ -1738,7 +1814,8 @@ where pd.ID = '{0}'", PackingListID);
                 return result;
             }
 
-            sqlCmd = string.Format(@"
+            sqlCmd = string.Format(
+                @"
 select  Article
         , SizeCode
         , TtlShipQty = sum(ShipQty) 
@@ -1751,7 +1828,8 @@ group by Article, SizeCode", PackingListID);
                 return result;
             }
 
-            sqlCmd = string.Format(@"
+            sqlCmd = string.Format(
+                @"
 select  a.*
         , TtlShipQty = (select sum(ShipQty) 
                         from PackingList_Detail WITH (NOLOCK) 
@@ -1795,7 +1873,8 @@ order by a.MinSeq", PackingListID);
                 return result;
             }
 
-            sqlCmd = string.Format(@"
+            sqlCmd = string.Format(
+                @"
 select  PKey = isnull(c.PKey,'')
         , TableName = isnull(c.TableName,'') 
         , SourceFile = isnull(c.SourceFile,'')
@@ -1813,6 +1892,7 @@ where   p.ID = '{0}'
         #endregion
 
         #region Packing List data write in excel -- Packing Guide Report
+
         /// <summary>
         /// PackingListToExcel_PackingGuideReport(string,DataTable,DataTable,DataTable,DataTable,DataTable,DataTable,DataRow,int,string)
         /// </summary>
@@ -1829,13 +1909,17 @@ where   p.ID = '{0}'
         /// <returns></returns>
         public static void PackingListToExcel_PackingGuideReport(string XltxName, DataTable PrintData, DataTable CtnDim, DataTable QtyCtn, DataTable ArticleSizeTtlShipQty, DataTable PrintGroupData, DataTable ClipData, DataRow PacklistData, int OrderQty, string SpecialInstruction, bool visRow3)
         {
-            string strXltName = Sci.Env.Cfg.XltPathDir + XltxName;
+            string strXltName = Env.Cfg.XltPathDir + XltxName;
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return;
-            //MyUtility.Msg.WaitWindows("Starting to excel...");
+            if (excel == null)
+            {
+                return;
+            }
+
+            // MyUtility.Msg.WaitWindows("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
+            string NameEN = MyUtility.GetValue.Lookup("NameEN", Env.User.Factory, "Factory ", "id");
             worksheet.Cells[1, 1] = NameEN;
             worksheet.Cells[3, 3] = MyUtility.Convert.GetString(PacklistData["ID"]);
             worksheet.Cells[3, 20] = DateTime.Today;
@@ -1867,17 +1951,19 @@ where   p.ID = '{0}'
                 if (MyUtility.Check.Empty(PrintGroupData.Rows[i]["CTNQty"]))
                 {
                     excelRow++;
-                    if (excelRow >= chk1) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
+                    if (excelRow >= chk1) // 若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
                     {
                         Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow)), Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                         Marshal.ReleaseComObject(rngToInsert);
                     }
+
                     if (article != MyUtility.Convert.GetString(PrintGroupData.Rows[i]["Article"]))
                     {
                         article = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["Article"]);
                         worksheet.Cells[excelRow, 1] = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["Article"]) + ' ' + MyUtility.Convert.GetString(PrintGroupData.Rows[i]["Color"]);
                     }
+
                     worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["SizeCode"]);
                     worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["SizeSpec"]);
                     worksheet.Cells[excelRow, 4] = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["QtyPerCTN"]);
@@ -1897,12 +1983,13 @@ where   p.ID = '{0}'
                         if (printRec == 1)
                         {
                             excelRow++;
-                            if (excelRow >= chk1) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
+                            if (excelRow >= chk1) // 若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
                             {
                                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow)), Type.Missing).EntireRow;
                                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                                 Marshal.ReleaseComObject(rngToInsert);
                             }
+
                             if (article != MyUtility.Convert.GetString(dr["Article"]) || size != MyUtility.Convert.GetString(dr["SizeCode"]) || qtyPerCTN != MyUtility.Convert.GetInt(dr["QtyPerCTN"]))
                             {
                                 worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(dr["SizeCode"]);
@@ -1911,6 +1998,7 @@ where   p.ID = '{0}'
                                 qtyPerCTN = MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
                                 worksheet.Cells[excelRow, 4] = MyUtility.Convert.GetString(dr["QtyPerCTN"]);
                             }
+
                             if (article != MyUtility.Convert.GetString(dr["Article"]))
                             {
                                 worksheet.Cells[excelRow, 1] = MyUtility.Convert.GetString(dr["Article"]) + ' ' + MyUtility.Convert.GetString(dr["Color"]);
@@ -1925,6 +2013,7 @@ where   p.ID = '{0}'
                             worksheet.Cells[excelRow, 21] = MyUtility.Convert.GetString(dr["TtlShipQty"]);
                             articleSize.Append(string.Format("{0}{1},", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"])));
                         }
+
                         seq = MyUtility.Convert.GetString(dr["Seq"]);
                         printRec++;
                         printCtnCount++;
@@ -1937,7 +2026,7 @@ where   p.ID = '{0}'
                 }
             }
 
-            //刪除多餘的Row
+            // 刪除多餘的Row
             if (excelRow >= chk2)
             {
                 Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[excelRow + 1, Type.Missing];
@@ -1959,7 +2048,7 @@ where   p.ID = '{0}'
                 }
             }
 
-            //Carton Dimension:
+            // Carton Dimension:
             excelRow++;
             StringBuilder ctnDimension = new StringBuilder();
             foreach (DataRow dr in CtnDim.Rows)
@@ -1974,7 +2063,8 @@ where   p.ID = '{0}'
                     ctnDimension.Append(string.Format("{0} -> {1} / {2}, ", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
                 }
             }
-            string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
+
+            string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : string.Empty;
             string[] cdsab = cds.Split('\r');
             int cdsi = 0;
             int cdsl = 150;
@@ -1989,17 +2079,19 @@ where   p.ID = '{0}'
                     }
                 }
             }
+
             cdsi += cdsab.Length - 1;
 
             for (int i = 1; i <= cdsi; i++)
             {
-                Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[excelRow, System.Type.Missing];
+                Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[excelRow, Type.Missing];
                 rangeRowCD.RowHeight = 19.5 * (i + 1);
                 Marshal.ReleaseComObject(rangeRowCD);
             }
-            worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
 
-            //填Remarks
+            worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : string.Empty;
+
+            // 填Remarks
             excelRow = excelRow + 2;
             worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(PacklistData["Remark"]);
             string tmp = MyUtility.Convert.GetString(SpecialInstruction);
@@ -2017,16 +2109,19 @@ where   p.ID = '{0}'
                         ctmpc += 1;
                     }
                 }
+
                 ctmpc += 1;
             }
-            //填Special Instruction
-            //先取得Special Instruction總共有幾行
+
+            // 填Special Instruction
+            // 先取得Special Instruction總共有幾行
             #region 舊寫法SpecialInstruction 有幾行資料,就多加幾行空白
             /*
              *原本寫法是SpecialInstruction 有幾行資料,就多加幾行空白
              */
-            //for (int i = 1; ; i++)
-            //{
+
+            // for (int i = 1; ; i++)
+            // {
             //    if (i > 1)
             //    {
             //        startIndex = endIndex + 2;
@@ -2038,13 +2133,13 @@ where   p.ID = '{0}'
             //    else
             //    {
 
-            //        break;
+            // break;
             //    }
-            //}
+            // }
             //
             #endregion
 
-            //調整寫法, 只需要多加兩行空白即可
+            // 調整寫法, 只需要多加兩行空白即可
             int dataRow = 2 + ctmpc;
             excelRow++;
 
@@ -2058,12 +2153,13 @@ where   p.ID = '{0}'
                     Marshal.ReleaseComObject(rngToInsert);
                 }
             }
-            //因為SpecialInstruction中有參雜=等特殊字元，在開頭加單引號強迫轉為字串避免<Exception from HRESULT: 0x800A03EC>問題發生
+
+            // 因為SpecialInstruction中有參雜=等特殊字元，在開頭加單引號強迫轉為字串避免<Exception from HRESULT: 0x800A03EC>問題發生
             worksheet.Cells[excelRow, 3] = "'" + SpecialInstruction;
 
             excelRow = excelRow + (dataRow > 2 ? dataRow - 1 : 2);
 
-            //貼圖
+            // 貼圖
             int picCount = 0;
             excelRow = excelRow + 5;
             foreach (DataRow dr in ClipData.Rows)
@@ -2072,6 +2168,7 @@ where   p.ID = '{0}'
                 {
                     break;
                 }
+
                 picCount++;
                 string excelRng = picCount % 2 == 1 ? (picCount > 2 ? string.Format("A{0}", MyUtility.Convert.GetString(excelRow + 30)) : string.Format("A{0}", MyUtility.Convert.GetString(excelRow))) : (picCount > 2 ? string.Format("K{0}", MyUtility.Convert.GetString(excelRow + 30)) : string.Format("K{0}", MyUtility.Convert.GetString(excelRow)));
                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(excelRng, Type.Missing);
@@ -2092,7 +2189,7 @@ where   p.ID = '{0}'
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P03_PackingGuideReport");
+            string strExcelName = Class.MicrosoftFile.GetName("Packing_P03_PackingGuideReport");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -2102,11 +2199,12 @@ where   p.ID = '{0}'
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
         }
         #endregion
 
         #region Packing Barcode Print
+
         /// <summary>
         /// PackingBarcodePrint(string,string,string,DataTable)
         /// </summary>
@@ -2171,6 +2269,7 @@ where pd.CTNQty > 0");
             {
                 sqlCmd.Append(string.Format(" and pd.CTNStartNo <= {0}", ctnEndNo));
             }
+
             sqlCmd.Append(" order by pd.Seq");
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printBarcodeData);
             return result;
@@ -2180,25 +2279,30 @@ where pd.CTNQty > 0");
         #region Packing MD Form Report
         public static void PackingListToExcel_PackingMDFormReport(string XltxName, DataRow masterdata, DataTable[] PrintData)
         {
-            string strXltName = Sci.Env.Cfg.XltPathDir + XltxName;
+            string strXltName = Env.Cfg.XltPathDir + XltxName;
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return;
+            if (excel == null)
+            {
+                return;
+            }
+
             decimal pageCT = 0;
 
             #region 先準備複製幾頁
             foreach (DataTable DT in PrintData)
             {
-                decimal pcount = Math.Ceiling(((decimal)DT.Rows.Count / 50));
+                decimal pcount = Math.Ceiling((decimal)DT.Rows.Count / 50);
                 pageCT += pcount;
             }
+
             if (pageCT > 1)
             {
                 for (int i = 0; i < pageCT; i++)
                 {
                     if (i > 0)
                     {
-                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[1]);
-                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1]);
+                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[1];
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1];
                         worksheet1.Copy(worksheetn);
                     }
                 }
@@ -2208,7 +2312,7 @@ where pd.CTNQty > 0");
             int page = 1;
             foreach (DataTable DT in PrintData) // by custpono
             {
-                decimal pcount = Math.Ceiling(((decimal)DT.Rows.Count / 50));
+                decimal pcount = Math.Ceiling((decimal)DT.Rows.Count / 50);
                 for (int i = 0; i < pcount; i++)
                 {
                     #region sqlcommand
@@ -2281,17 +2385,18 @@ select BuyerDelivery = stuff((
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P03_PackingMDFormReport");
+            string strExcelName = Class.MicrosoftFile.GetName("Packing_P03_PackingMDFormReport");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             excel.Quit();
             Marshal.ReleaseComObject(excel);
-            //Marshal.ReleaseComObject(worksheet);
+
+            // Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
         }
         #endregion
 
@@ -2337,8 +2442,8 @@ where pd.id = '{PackingListID}' and o.CustPONo = '{CustPONoDT.Rows[i]["CustPONo"
 group by CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo
 order by min(pd.seq)
 ");
-
             }
+
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             return result;
         }
@@ -2347,25 +2452,30 @@ order by min(pd.seq)
         #region Packing Carton Weighing Report
         public static void PackingListToExcel_PackingCartonWeighingReport(string XltxName, DataRow masterdata, DataTable[] PrintData)
         {
-            string strXltName = Sci.Env.Cfg.XltPathDir + XltxName;
+            string strXltName = Env.Cfg.XltPathDir + XltxName;
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return;
+            if (excel == null)
+            {
+                return;
+            }
+
             decimal pageCT = 0;
 
             #region 先準備複製幾頁
             foreach (DataTable DT in PrintData)
             {
-                decimal pcount = Math.Ceiling(((decimal)DT.Rows.Count / 100));
+                decimal pcount = Math.Ceiling((decimal)DT.Rows.Count / 100);
                 pageCT += pcount;
             }
+
             if (pageCT > 1)
             {
                 for (int i = 0; i < pageCT; i++)
                 {
                     if (i > 0)
                     {
-                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[1]);
-                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1]);
+                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[1];
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1];
                         worksheet1.Copy(worksheetn);
                     }
                 }
@@ -2375,7 +2485,7 @@ order by min(pd.seq)
             int page = 1;
             foreach (DataTable DT in PrintData) // by custpono
             {
-                decimal pcount = Math.Ceiling(((decimal)DT.Rows.Count / 100));
+                decimal pcount = Math.Ceiling((decimal)DT.Rows.Count / 100);
                 for (int i = 0; i < pcount; i++)
                 {
                     #region sqlcommand
@@ -2483,17 +2593,18 @@ select Kit = stuff((
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P03_PackingMDFormReport");
+            string strExcelName = Class.MicrosoftFile.GetName("Packing_P03_PackingMDFormReport");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             excel.Quit();
             Marshal.ReleaseComObject(excel);
-            //Marshal.ReleaseComObject(worksheet);
+
+            // Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
         }
         #endregion
 
@@ -2539,8 +2650,8 @@ where pd.id = '{PackingListID}' and o.CustPONo = '{CustPONoDT.Rows[i]["CustPONo"
 group by CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo
 order by min(pd.seq)
 ");
-
             }
+
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             return result;
         }
@@ -2551,7 +2662,7 @@ order by min(pd.seq)
         {
             if (type.EqualString("IsDetailInserting"))
             {
-                string sciCtnNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + string.Empty, "PackingList_Detail", DateTime.Today, 3, "SCICtnNo", null);
+                string sciCtnNo = MyUtility.GetValue.GetID(Env.User.Keyword + string.Empty, "PackingList_Detail", DateTime.Today, 3, "SCICtnNo", null);
                 string sciCtnNoleft = sciCtnNo.Substring(0, 9);
                 int sciNo = MyUtility.Convert.GetInt(sciCtnNo.Substring(9));
                 var ctnlist = dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
@@ -2565,6 +2676,7 @@ order by min(pd.seq)
                     {
                         dr["SCICtnNo"] = sciCtnNo;
                     }
+
                     sciNo++;
                     sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(6, '0');
                 }
@@ -2593,7 +2705,7 @@ order by min(pd.seq)
                     }
                 }
 
-                string sciCtnNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + string.Empty, "PackingList_Detail", DateTime.Today, 3, "SCICtnNo", null);
+                string sciCtnNo = MyUtility.GetValue.GetID(Env.User.Keyword + string.Empty, "PackingList_Detail", DateTime.Today, 3, "SCICtnNo", null);
                 string sciCtnNoleft = sciCtnNo.Substring(0, 9);
                 int sciNo = MyUtility.Convert.GetInt(sciCtnNo.Substring(9));
                 var ctnlist = dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted
@@ -2608,10 +2720,12 @@ order by min(pd.seq)
                     {
                         dr["SCICtnNo"] = sciCtnNo;
                     }
+
                     sciNo++;
                     sciCtnNo = sciCtnNoleft + sciNo.ToString().PadLeft(6, '0');
                 }
             }
+
             return true;
         }
         #endregion
@@ -2628,7 +2742,7 @@ order by min(pd.seq)
                 return false;
             }
 
-            if (!PublicPrg.Prgs.GetSCICtnNo(packinglist_detaildt, id, "IsDetailInserting"))
+            if (!GetSCICtnNo(packinglist_detaildt, id, "IsDetailInserting"))
             {
                 return false;
             }
@@ -2920,7 +3034,6 @@ where oqd.Id = '{1}'
                     {
                         detailGrid.Rows[count].DefaultCellStyle.BackColor = Color.Pink;
                     }
-
                 }
                 #endregion
 
@@ -2934,13 +3047,13 @@ where oqd.Id = '{1}'
                                   group r1 by new
                                   {
                                       SP = r1.Field<string>("OrderID"),
-                                      Seq = r1.Field<string>("OrderShipmodeSeq")
+                                      Seq = r1.Field<string>("OrderShipmodeSeq"),
                                   }
                                   into g
                                   select new
                                   {
                                       SP = g.Key.SP,
-                                      Seq = g.Key.Seq
+                                      Seq = g.Key.Seq,
                                   };
             foreach (var chk_item in check_chip_list)
             {
@@ -3040,37 +3153,39 @@ and ID != '{1}'",
 set TotalShipQty = @ttlShipQty, TotalCTNQty = @ttlCTNQty, TotalNW = @ttlNW, TotalNNW = @ttlNNW, TotalGW = @ttlGW, TotalCBM = @ttlCBM
 where ID = @INVNo";
                     #region 準備sql參數資料
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp1 = new SqlParameter();
                     sp1.ParameterName = "@ttlShipQty";
                     sp1.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["ShipQty"]) + MyUtility.Convert.GetInt(currentMaintain["ShipQty"]);
 
-                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp2 = new SqlParameter();
                     sp2.ParameterName = "@ttlCTNQty";
                     sp2.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["CTNQty"]) + MyUtility.Convert.GetInt(currentMaintain["CTNQty"]);
 
-                    System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp3 = new SqlParameter();
                     sp3.ParameterName = "@ttlNW";
                     sp3.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NW"]) + MyUtility.Convert.GetDouble(currentMaintain["NW"]), 2);
 
-                    System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp4 = new SqlParameter();
                     sp4.ParameterName = "@ttlNNW";
                     sp4.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NNW"]) + MyUtility.Convert.GetDouble(currentMaintain["NNW"]), 2);
 
-                    System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp5 = new SqlParameter();
                     sp5.ParameterName = "@ttlGW";
+
                     // ISP20181015 GW抓到小數點後3位
                     sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(currentMaintain["GW"]), 3);
 
-                    System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp6 = new SqlParameter();
                     sp6.ParameterName = "@ttlCBM";
+
                     // ISP20181015 CBM抓到小數點後4位
                     sp6.Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(currentMaintain["CBM"]);
 
-                    System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp7 = new SqlParameter();
                     sp7.ParameterName = "@INVNo";
                     sp7.Value = currentMaintain["INVNo"].ToString();
 
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                    IList<SqlParameter> cmds = new List<SqlParameter>();
                     cmds.Add(sp1);
                     cmds.Add(sp2);
                     cmds.Add(sp3);
@@ -3080,7 +3195,7 @@ where ID = @INVNo";
                     cmds.Add(sp7);
                     #endregion
 
-                    result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
+                    result = DBProxy.Current.Execute(null, updateCmd, cmds);
                     if (!result)
                     {
                         DualResult failResult = new DualResult(false, "Update Garment Booking fail!\r\n" + result.ToString());
@@ -3127,6 +3242,7 @@ where ID = '{currentMaintain["INVNo"]}'";
                 #endregion
 
             }
+
             return result;
         }
 
@@ -3141,14 +3257,14 @@ where ID = '{currentMaintain["INVNo"]}'";
                 return failResult;
             }
 
-            result = Prgs.UpdateOrdersCTN(orderData);
+            result = UpdateOrdersCTN(orderData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Update Orders CTN fail!\r\n" + result.ToString());
                 return failResult;
             }
 
-            if (!Prgs.CreateOrderCTNData(currentMaintain["ID"].ToString()))
+            if (!CreateOrderCTNData(currentMaintain["ID"].ToString()))
             {
                 DualResult failResult = new DualResult(false, "Create Order_CTN fail!\r\n" + result.ToString());
                 return failResult;

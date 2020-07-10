@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Xml.Linq;
@@ -18,7 +16,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// R04
     /// </summary>
-    public partial class R04 : Sci.Win.Tems.PrintForm
+    public partial class R04 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DataTable dtAllData;
@@ -41,14 +39,14 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
         }
 
         protected override void OnFormLoaded()
         {
             #region load combobox Location M 預設顯示登入的M
             this.comboM.SetDefalutIndex();
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             #endregion
 
             #region load combobox Factory 預設顯示空白
@@ -78,7 +76,7 @@ namespace Sci.Production.Centralized
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
             this.dtAllData = null;
@@ -358,6 +356,7 @@ declare @TTLZ nvarchar(max) =
 ,',[TTL_',ArtworkType_Unit,']=Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty),',iif(Unit='QTY','4','3'),')'
 ,iif(ArtworkType_CPU = '', '', concat(',[TTL_',ArtworkType_CPU,']=Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty),',iif(Unit='QTY','4','3'),')'))
 )from #atall for xml path(''))" : " ")}
+
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
 {(this.chk_Include_Artwork.Checked ?
@@ -512,7 +511,7 @@ EXEC sp_executesql @lastSql
             }
 
             DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -530,7 +529,7 @@ EXEC sp_executesql @lastSql
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Sewing_R04_SewingDailyOutputList.xltx";
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             if (this.show_Accumulate_output == true)
             {

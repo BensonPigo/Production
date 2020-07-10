@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
 using Sci.Production.Class;
 using Sci.Data;
-using Ict;
 
 namespace Sci.Production.Basic
 {
     /// <summary>
     /// B05
     /// </summary>
-    public partial class B05 : Sci.Win.Tems.QueryForm
+    public partial class B05 : Win.Tems.QueryForm
     {
         private int useAPS;
 
@@ -30,7 +26,7 @@ namespace Sci.Production.Basic
             this.DoubleBuffered = true;
             PropertyInfo info = this.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
             info.SetValue(this.tableLayoutPanel1, true, null);
-            this.useAPS = MyUtility.GetValue.Lookup(string.Format("select UseAPS from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Factory)).ToUpper() == "TRUE" ? 1 : 0;
+            this.useAPS = MyUtility.GetValue.Lookup(string.Format("select UseAPS from Factory WITH (NOLOCK) where ID = '{0}'", Env.User.Factory)).ToUpper() == "TRUE" ? 1 : 0;
         }
 
         /// <inheritdoc/>
@@ -50,8 +46,8 @@ namespace Sci.Production.Basic
             for (int i = 1; i <= 35; i++)
             {
                 Control[] ctlarray = this.Controls.Find("Holiday" + i.ToString(), true);
-                Sci.Production.Class.Holiday holiday = ctlarray[0] as Holiday;
-                holiday.label1.Click += new System.EventHandler(this.Lable1_Click);
+                Holiday holiday = ctlarray[0] as Holiday;
+                holiday.label1.Click += new EventHandler(this.Lable1_Click);
             }
 
             this.comboYearMonth.Text = DateTime.Today.ToString("yyyy/MM");
@@ -84,7 +80,7 @@ namespace Sci.Production.Basic
             for (int i = 1; i <= 35; i++)
             {
                 Control[] ctlarray = this.Controls.Find("Holiday" + i.ToString(), true);
-                Sci.Production.Class.Holiday holiday = ctlarray[0] as Holiday;
+                Holiday holiday = ctlarray[0] as Holiday;
                 holiday.Visible = false;
             }
 
@@ -107,12 +103,12 @@ namespace Sci.Production.Basic
                 }
 
                 Control[] ctlarray = this.Controls.Find("Holiday" + cells.ToString(), true);
-                Sci.Production.Class.Holiday holiday = ctlarray[0] as Holiday;
+                Holiday holiday = ctlarray[0] as Holiday;
                 holiday.Visible = true;
                 holiday.label1.Text = date.Day.ToString();
                 holiday.Today = date;
                 DataTable findData;
-                DBProxy.Current.Select(null, string.Format("select * from holiday WITH (NOLOCK) where HolidayDate='{0}' and FactoryID = '{1}'", date.ToString("d"), Sci.Env.User.Factory), out findData);
+                DBProxy.Current.Select(null, string.Format("select * from holiday WITH (NOLOCK) where HolidayDate='{0}' and FactoryID = '{1}'", date.ToString("d"), Env.User.Factory), out findData);
                 if (findData == null || findData.Rows.Count <= 0)
                 {
                     holiday.label2.Text = string.Empty;

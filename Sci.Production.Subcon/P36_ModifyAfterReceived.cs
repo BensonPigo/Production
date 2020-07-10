@@ -1,32 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
-using Ict.Win;
-using Sci;
 using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P36_ModifyAfterReceived : Sci.Win.Subs.Base
+    public partial class P36_ModifyAfterReceived : Win.Subs.Base
     {
         DataRow dr;
         DataTable dtData;
+
         public P36_ModifyAfterReceived(DataRow Data)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DualResult result;
-            dr = Data;
-            if (!(result = DBProxy.Current.Select(null, string.Format(@"select * from localdebit WITH (NOLOCK) where id = '{0}'", dr["id"]), out dtData)))
+            this.dr = Data;
+            if (!(result = DBProxy.Current.Select(null, string.Format(@"select * from localdebit WITH (NOLOCK) where id = '{0}'", this.dr["id"]), out this.dtData)))
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
-            mtbs.DataSource = dtData;
+
+            this.mtbs.DataSource = this.dtData;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -36,7 +31,7 @@ namespace Sci.Production.Subcon
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!MyUtility.Tool.CursorUpdateTable(dtData, "localdebit", null))
+            if (!MyUtility.Tool.CursorUpdateTable(this.dtData, "localdebit", null))
             {
                 MyUtility.Msg.WarningBox("Save failed!");
             }

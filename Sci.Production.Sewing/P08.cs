@@ -5,15 +5,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
-    public partial class P08 : Sci.Win.Tems.QueryForm
+    public partial class P08 : Win.Tems.QueryForm
     {
         private DataTable dt = new DataTable();
 
@@ -158,11 +154,11 @@ insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNSt
 values(getdate(), '{1}', '{2}', '{3}', '{4}', '{5}', getdate(), '{6}', {0}, {7})
                 ",
                 this.numericBoxDiscrepancy.Text,
-                Sci.Env.User.Keyword,
+                Env.User.Keyword,
                 dr["OrderID"],
                 dr["ID"],
                 dr["CTNStartNo"],
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 dr["SCICtnNo"],
                 dr["CartonQty"]);
 
@@ -179,7 +175,7 @@ values(getdate(), '{1}', '{2}', '{3}', '{4}', '{5}', getdate(), '{6}', {0}, {7})
 
         private void Init()
         {
-            this.txtScanCartonsBarcode.Text = string.Empty; 
+            this.txtScanCartonsBarcode.Text = string.Empty;
             this.numericBoxDiscrepancy.Text = string.Empty;
             this.displaySP.Text = string.Empty;
             this.displayPO.Text = string.Empty;

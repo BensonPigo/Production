@@ -41,14 +41,14 @@
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelM = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.comboCancel = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtClogReason = new Sci.Production.Class.txtClogReason();
-            this.comboM = new Sci.Production.Class.comboMDivision(this.components);
+            this.txtClogReason = new Sci.Production.Class.TxtClogReason();
+            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -352,13 +352,13 @@
         private Win.UI.TextBox txtSPNoEnd;
         private Win.UI.TextBox txtSPNoStart;
         private Win.UI.Label labelSPNo;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelM;
         private Win.UI.Label labelBrand;
         private Win.UI.ComboBox comboCancel;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
-        private Class.txtClogReason txtClogReason;
-        private Class.comboMDivision comboM;
+        private Class.TxtClogReason txtClogReason;
+        private Class.ComboMDivision comboM;
     }
 }

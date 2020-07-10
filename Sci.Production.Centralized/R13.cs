@@ -3,11 +3,9 @@ using Sci.Data;
 using Sci.Utility.Excel;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml.Linq;
@@ -18,7 +16,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// R13
     /// </summary>
-    internal partial class R13 : Sci.Win.Tems.PrintForm
+    internal partial class R13 : Win.Tems.PrintForm
     {
         #region --宣告物件
         private DataTable dt_All;
@@ -308,7 +306,7 @@ order by ID,OrderID";
         #endregion
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.dt_All = null;
             this.dt_Tmp = null;
@@ -425,7 +423,7 @@ order by BrandID
                     listSummary = string.Format(listSummary, string.Join(",", ftyAmt), string.Join(",", ftyList));
 
                     // 執行pivot
-                     result = DBProxy.Current.SelectByConn(conn, listSummary, out this.dt_Tmp);
+                    result = DBProxy.Current.SelectByConn(conn, listSummary, out this.dt_Tmp);
                     if (!result)
                     {
                         return result;
@@ -520,8 +518,8 @@ order by BrandID
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                   i + 1,
-                   connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {
@@ -651,7 +649,7 @@ order by FactorySort
             }
             #endregion
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -684,7 +682,7 @@ order by FactorySort
 
             #region --匯出Excel
 
-            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Centralized_R13_Transportation_Cost_Garment_Export_fee.xltx");
+            SaveXltReportCls xl = new SaveXltReportCls("Centralized_R13_Transportation_Cost_Garment_Export_fee.xltx");
             xl.BoOpenFile = true;
             SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(this.dt_All);
             xdt_All.ShowHeader = true;
@@ -699,14 +697,14 @@ order by FactorySort
                 xdt_detail_detail_All.ShowHeader = false;
                 xl.DicDatas.Add("##R13UNRLDETAIL", xdt_detail_All);
                 xl.DicDatas.Add("##R13UNRLDETAILDETAIL", xdt_detail_detail_All);
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R13_Transportation_Cost_Garment_Export_fee"));
+                xl.Save(Class.MicrosoftFile.GetName("Centralized_R13_Transportation_Cost_Garment_Export_fee"));
             }
             else
             {
                 Microsoft.Office.Interop.Excel.Application excel = xl.ExcelApp;
                 excel.Worksheets[3].Delete();
                 excel.Worksheets[2].Delete();
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R13_Transportation_Cost_Garment_Export_fee"));
+                xl.Save(Class.MicrosoftFile.GetName("Centralized_R13_Transportation_Cost_Garment_Export_fee"));
             }
             #endregion
             return true;

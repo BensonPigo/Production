@@ -3,22 +3,20 @@ using System.Collections.Generic;
 using System.Data;
 using Ict;
 using System.Windows.Forms;
-using System.Transactions;
 using Sci.Data;
 using Ict.Win;
 using System.Linq;
 
 namespace Sci.Production.Basic
 {
-    public partial class B04_BankDetail : Sci.Win.Tems.Input6
+    public partial class B04_BankDetail : Win.Tems.Input6
     {
-
         private bool _canconfirm;
         private bool _canedit;
         private string LocalSupp_Bank_ID;
-        //private ToolStripMenuItem newitem;
-        //private ToolStripMenuItem edit;
 
+        // private ToolStripMenuItem newitem;
+        // private ToolStripMenuItem edit;
         public class LocalSupp_Bank_Detail
         {
             public string AccountNo { get; set; }
@@ -46,7 +44,6 @@ namespace Sci.Production.Basic
             public string Remark { get; set; }
 
             public bool IsDefault { get; set; }
-
         }
 
         public B04_BankDetail(bool canedit, string ID, string keyvalue2, string keyvalue3, bool cancomfirmed, ToolStripMenuItem menuitem)
@@ -69,19 +66,19 @@ namespace Sci.Production.Basic
                     }
                     else
                     {
-                        //DataRow currenRow = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.CurrentRow.Index);
-                        //int currentIndex = this.detailgrid.CurrentRow.Index;
+                        // DataRow currenRow = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.CurrentRow.Index);
+                        // int currentIndex = this.detailgrid.CurrentRow.Index;
 
-                        //if (currenRow["IsDefault"] == DBNull.Value)
-                        //{
+                        // if (currenRow["IsDefault"] == DBNull.Value)
+                        // {
                         //    // 新增
                         //    this.AddNewItem();
-                        //}
-                        //else
-                        //{
+                        // }
+                        // else
+                        // {
                         //    // 修改
                         //    this.EditItem(currenRow);
-                        //}
+                        // }
 
                         // 修改
                         this.EditItem();
@@ -227,16 +224,16 @@ namespace Sci.Production.Basic
             // 按右鍵開啟選單
             #region 按右鍵開啟選單
 
-            //this.detailgrid.CellToolTipTextNeeded += (s, e) =>
-            //{
+            // this.detailgrid.CellToolTipTextNeeded += (s, e) =>
+            // {
             //    e.ToolTipText = "You can show the function form to press the right key under inquiring the state.";
 
-            //};
-            //this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
-            //this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add new Item", onclick: (s, e) => this.AddNewItem()).Get(out this.newitem);
-            //this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Item ", onclick: (s, e) => this.EditItem()).Get(out this.edit);
+            // };
+            // this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
+            // this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add new Item", onclick: (s, e) => this.AddNewItem()).Get(out this.newitem);
+            // this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Item ", onclick: (s, e) => this.EditItem()).Get(out this.edit);
 
-            //this.SetContextMenuStatus(false); // 預設先將Context ment設定為disable
+            // this.SetContextMenuStatus(false); // 預設先將Context ment設定為disable
             #endregion
 
         }
@@ -244,8 +241,8 @@ namespace Sci.Production.Basic
         // 設定Context Menu的Enable/Disable
         private void SetContextMenuStatus(bool status)
         {
-            //this.newitem.Enabled = status;
-            //this.edit.Enabled = status;
+            // this.newitem.Enabled = status;
+            // this.edit.Enabled = status;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -280,17 +277,17 @@ WHERE lb.ID='{ID}' AND lb.PKey='{PKey}'
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings CountryID = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings AccountNo = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings SWIFTCode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings AccountName = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings BankName = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings BranchCode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings BranchName = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings City = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings MidSWIFTCode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings MidBankName = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings Default = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings CountryID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings AccountNo = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings SWIFTCode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings AccountName = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings BankName = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings BranchCode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings BranchName = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings City = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings MidSWIFTCode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings MidBankName = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings Default = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             CountryID.MaxLength = 2;
             AccountNo.MaxLength = 30;
@@ -326,12 +323,15 @@ WHERE lb.ID='{ID}' AND lb.PKey='{PKey}'
 
             CountryID.CellMouseClick += (s, e) =>
             {
-                if (!this.EditMode) return;
-                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                if ( e.Button == MouseButtons.Right)
+                if (!this.EditMode)
                 {
+                    return;
+                }
 
-                    Sci.Win.Tools.SelectItem item;
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                if (e.Button == MouseButtons.Right)
+                {
+                    Win.Tools.SelectItem item;
                     string sqlcmd;
                     sqlcmd = @"
 SELECT ID,Alias
@@ -339,7 +339,7 @@ FROM Country
 order by ID
 ";
 
-                    item = new Sci.Win.Tools.SelectItem(sqlcmd, "5,10", null);
+                    item = new Win.Tools.SelectItem(sqlcmd, "5,10", null);
 
                     item.Size = new System.Drawing.Size(400, 600);
                     DialogResult result = item.ShowDialog();
@@ -347,6 +347,7 @@ order by ID
                     {
                         return;
                     }
+
                     var selectedData = item.GetSelecteds();
                     dr["CountryID"] = selectedData[0]["id"].ToString();
                     dr["Alias"] = selectedData[0]["Alias"].ToString();
@@ -355,12 +356,15 @@ order by ID
 
             CountryID.EditingMouseDown += (s, e) =>
             {
-                if (!this.EditMode) return;
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 if (e.Button == MouseButtons.Right)
                 {
-
-                    Sci.Win.Tools.SelectItem item;
+                    Win.Tools.SelectItem item;
                     string sqlcmd;
                     sqlcmd = @"
 SELECT ID,Alias
@@ -368,7 +372,7 @@ FROM Country
 order by ID
 ";
 
-                    item = new Sci.Win.Tools.SelectItem(sqlcmd, "5,10", null);
+                    item = new Win.Tools.SelectItem(sqlcmd, "5,10", null);
 
                     item.Size = new System.Drawing.Size(400, 600);
                     DialogResult result = item.ShowDialog();
@@ -376,6 +380,7 @@ order by ID
                     {
                         return;
                     }
+
                     var selectedData = item.GetSelecteds();
                     dr["CountryID"] = selectedData[0]["id"].ToString();
                     dr["Alias"] = selectedData[0]["Alias"].ToString();
@@ -384,19 +389,18 @@ order by ID
 
             Default.CellValidating += (s, e) =>
             {
-
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 dr["IsDefault"] = e.FormattedValue;
 
                 // 表頭[Pay by Check] 和表身的Default可同時被勾選 2019/10/30
-                //if (Convert.ToBoolean(dr["IsDefault"]))
-                //{
+                // if (Convert.ToBoolean(dr["IsDefault"]))
+                // {
                 //    this.CurrentMaintain["ByCheck"] = false;
-                //}
+                // }
             };
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .CheckBox("IsDefault", header: "Default", width: Widths.AnsiChars(5),settings: Default, trueValue: 1, falseValue: 0, iseditable: true)
+                .CheckBox("IsDefault", header: "Default", width: Widths.AnsiChars(5), settings: Default, trueValue: 1, falseValue: 0, iseditable: true)
                 .Text("AccountNo", header: "Account No.", width: Widths.AnsiChars(13), settings: AccountNo)
                 .Text("SWIFTCode", header: "Swift", width: Widths.AnsiChars(13), settings: SWIFTCode)
                 .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(13), settings: AccountName)
@@ -410,7 +414,6 @@ order by ID
                 .Text("MidBankName", header: "Intermediary Bank-SWIFT Code", width: Widths.AnsiChars(13), settings: MidBankName)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(13))
                 ;
-
         }
 
         protected override void OnDetailEntered()
@@ -420,6 +423,7 @@ order by ID
                 this.labelStatus.Text = this.CurrentMaintain["Status"].ToString();
                 this.txtAbb.Text = MyUtility.GetValue.Lookup($"SELECT TOP 1 Abb FROM LocalSupp WHERE ID='{this.CurrentMaintain["ID"]}'");
             }
+
             base.OnDetailEntered();
 
             if (this.EditMode)
@@ -437,8 +441,7 @@ order by ID
         {
             // 判斷[LocalSupp_Bank].Status若有一筆為NEW, 則不能新增
             if (
-                    MyUtility.Check.Seek($"SELECT * FROM LocalSupp_Bank WHERE ID='{this.LocalSupp_Bank_ID}' AND Status = 'New'")
-                )
+                    MyUtility.Check.Seek($"SELECT * FROM LocalSupp_Bank WHERE ID='{this.LocalSupp_Bank_ID}' AND Status = 'New'"))
             {
                 MyUtility.Msg.InfoBox("Still have data not yet confirm, so can't create new record!");
                 return false;
@@ -447,7 +450,6 @@ order by ID
             {
                 return base.ClickNewBefore();
             }
-
         }
 
         protected override void ClickNewAfter()
@@ -456,8 +458,6 @@ order by ID
             this.CurrentMaintain["ID"] = this.LocalSupp_Bank_ID;
             this.txtAbb.Text = MyUtility.GetValue.Lookup($"SELECT TOP 1 Abb FROM LocalSupp WHERE ID='{this.CurrentMaintain["ID"]}'");
             this.CurrentMaintain["Status"] = "New";
-
-
         }
 
         protected override bool ClickSaveBefore()
@@ -469,7 +469,6 @@ order by ID
 
             // 表頭Pay by Check打勾 = 表身Default全不勾
             // 表頭Pay by Check沒打勾 = 表身Default打勾不能超過一筆
-
             foreach (DataRow dr in dt.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted))
             {
                 if (dr["IsDefault"] == DBNull.Value)
@@ -486,8 +485,7 @@ order by ID
                         MyUtility.Check.Empty(dr["AccountName"]) ||
                         MyUtility.Check.Empty(dr["BankName"]) ||
                         MyUtility.Check.Empty(dr["CountryID"]) ||
-                        MyUtility.Check.Empty(dr["City"])
-                        )
+                        MyUtility.Check.Empty(dr["City"]))
                     {
                         hasEmpty = true;
                     }
@@ -507,13 +505,11 @@ order by ID
                         MyUtility.Check.Empty(dr["SWIFTCode"]) &&
                         MyUtility.Check.Empty(dr["MidSWIFTCode"]) &&
                         MyUtility.Check.Empty(dr["MidBankName"]) &&
-                        MyUtility.Check.Empty(dr["Remark"])
-                        )
+                        MyUtility.Check.Empty(dr["Remark"]))
                     {
                         allEmpty = true;
                     }
                 }
-
             }
 
             // 表身Deafult只可勾一筆
@@ -534,7 +530,7 @@ order by ID
 
                 if (hasEmpty || allEmpty)
                 {
-                    MyUtility.Msg.InfoBox("If default is checked, column can not be empty except [BranchCode] [BranchName] [Intermediary Bank] , [Intermediary Bank-SWIFT Code] and [Remark]." + Environment.NewLine + "If default is NOT checked, column can not be all empty."); 
+                    MyUtility.Msg.InfoBox("If default is checked, column can not be empty except [BranchCode] [BranchName] [Intermediary Bank] , [Intermediary Bank-SWIFT Code] and [Remark]." + Environment.NewLine + "If default is NOT checked, column can not be all empty.");
                     return false;
                 }
             }
@@ -542,11 +538,11 @@ order by ID
             // Pay by Check打勾
             else
             {
-                //if (allEmpty)
-                //{
+                // if (allEmpty)
+                // {
                 //    MyUtility.Msg.InfoBox("If default is checked, column can not be empty except [Intermediary Bank] , [Intermediary Bank-SWIFT Code] and [Remark]." + Environment.NewLine + "If default is NOT checked, column can not be all empty.");
                 //    return false;
-                //}
+                // }
             }
 
             return base.ClickSaveBefore();
@@ -559,8 +555,8 @@ order by ID
 
         private void chkPaybyCheck_CheckedChanged(object sender, EventArgs e)
         {
-            //if (this.detailgridbs.DataSource != null)
-            //{
+            // if (this.detailgridbs.DataSource != null)
+            // {
             //    DataTable dt = (DataTable)this.detailgridbs.DataSource;
             //    foreach (DataRow dr in dt.Rows)
             //    {
@@ -569,7 +565,7 @@ order by ID
             //            dr["IsDefault"] = false;
             //        }
             //    }
-            //}
+            // }
         }
 
         protected override void ClickConfirm()
@@ -586,18 +582,18 @@ order by ID
                     }
                 }
             }
+
             // 表頭[Pay by Check] 和表身的Default可同時被勾選 2019/10/30
-            //if (this.chkPaybyCheck.Checked || defaultCount == 1)
-            //{
+            // if (this.chkPaybyCheck.Checked || defaultCount == 1)
+            // {
             //    DBProxy.Current.Execute(null , $"UPDATE LocalSupp_Bank SET Status='Confirmed',ApproveName='{Sci.Env.User.UserID}' ,ApproveDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' AND PKey = '{this.CurrentMaintain["PKey"]}' ");
-            //}
-            //else
-            //{
+            // }
+            // else
+            // {
             //    MyUtility.Msg.InfoBox("Can not Confirm because of [Pay by Check] or any detail [Default] is checked.");
             //    return;
-            //}
-
-            DBProxy.Current.Execute(null, $"UPDATE LocalSupp_Bank SET Status='Confirmed',ApproveName='{Sci.Env.User.UserID}' ,ApproveDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' AND PKey = '{this.CurrentMaintain["PKey"]}' ");
+            // }
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp_Bank SET Status='Confirmed',ApproveName='{Env.User.UserID}' ,ApproveDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' AND PKey = '{this.CurrentMaintain["PKey"]}' ");
             base.ClickConfirm();
         }
 
@@ -662,7 +658,6 @@ WHERE lb.ID='{this.LocalSupp_Bank_ID}' AND lb.PKey='{dr["Pkey"]}'
                 DBProxy.Current.Select(null, cmd, out dtDetail);
                 this.detailgridbs.DataSource = dtDetail;
             }
-
         }
     }
 }

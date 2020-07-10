@@ -48,8 +48,8 @@ namespace Sci.Production.Packing
             this.label11 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
             this.displayBrand = new Sci.Win.UI.DisplayBox();
-            this.txtDest = new Sci.Production.Class.txtcountry();
-            this.txtcustcd = new Sci.Production.Class.txtcustcd();
+            this.txtDest = new Sci.Production.Class.Txtcountry();
+            this.txtcustcd = new Sci.Production.Class.Txtcustcd();
             this.txtSeq = new Sci.Win.UI.TextBox();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.gridNewPack = new Sci.Production.Class.MergeRowGrid();
@@ -57,7 +57,7 @@ namespace Sci.Production.Packing
             this.btnClose = new Sci.Win.UI.Button();
             this.numSelectCtnFrom = new Sci.Win.UI.NumericBox();
             this.numSelectCtnTo = new Sci.Win.UI.NumericBox();
-            this.txtshipmode = new Sci.Production.Class.txtshipmode();
+            this.txtshipmode = new Sci.Production.Class.Txtshipmode();
             this.numStartFromCtn = new Sci.Win.UI.NumericBox();
             this.btnUpdateNewCtn = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridOriPack)).BeginInit();
@@ -485,8 +485,8 @@ namespace Sci.Production.Packing
         private Win.UI.Label label11;
         private Win.UI.Label label12;
         private Win.UI.DisplayBox displayBrand;
-        private Class.txtcountry txtDest;
-        private Class.txtcustcd txtcustcd;
+        private Class.Txtcountry txtDest;
+        private Class.Txtcustcd txtcustcd;
         private Win.UI.TextBox txtSeq;
         private Win.UI.EditBox editRemark;
         private MergeRowGrid gridNewPack;
@@ -494,7 +494,7 @@ namespace Sci.Production.Packing
         private Win.UI.Button btnClose;
         private Win.UI.NumericBox numSelectCtnFrom;
         private Win.UI.NumericBox numSelectCtnTo;
-        private Class.txtshipmode txtshipmode;
+        private Class.Txtshipmode txtshipmode;
         private Win.UI.NumericBox numStartFromCtn;
         private Win.UI.Button btnUpdateNewCtn;
     }

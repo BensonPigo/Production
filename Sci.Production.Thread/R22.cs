@@ -1,23 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
 using System.Data.SqlClient;
 using Sci.Data;
-//using Excel = Microsoft.Office.Interop.Excel;
-using System.Runtime.InteropServices;
+
+// using Excel = Microsoft.Office.Interop.Excel;
 using Sci.Utility.Excel;
 
 namespace Sci.Production.Thread
 {
-    public partial class R22 : Sci.Win.Tems.PrintForm
+    public partial class R22 : Win.Tems.PrintForm
     {
         private DateTime? Date_s;
         private DateTime? Date_e;
@@ -42,7 +38,6 @@ namespace Sci.Production.Thread
 
             if (MyUtility.Check.Empty(this.dateRange.Value1) && MyUtility.Check.Empty(this.dateRange.Value2))
             {
-
                 MyUtility.Msg.WarningBox("<Date> can't be empty!");
                 return false;
             }
@@ -88,23 +83,26 @@ namespace Sci.Production.Thread
 
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            sqlWhere = string.Empty;
+            this.sqlWhere = string.Empty;
 
             if (!MyUtility.Check.Empty(this.RefNo_Start.Text))
             {
-                sqlWhere = " AND ts.Refno >= @Refno_s ";
+                this.sqlWhere = " AND ts.Refno >= @Refno_s ";
             }
+
             if (!MyUtility.Check.Empty(this.RefNo_End.Text))
             {
-                sqlWhere += " AND ts.Refno <= @RefNo_e ";
+                this.sqlWhere += " AND ts.Refno <= @RefNo_e ";
             }
+
             if (!MyUtility.Check.Empty(this.textShade.Text))
             {
-                sqlWhere += " AND ts.ThreadColorID = @Shade ";
+                this.sqlWhere += " AND ts.ThreadColorID = @Shade ";
             }
+
             if (!MyUtility.Check.Empty(this.Type))
             {
-                sqlWhere += " AND li.Category = @Type ";
+                this.sqlWhere += " AND li.Category = @Type ";
             }
 
             StringBuilder sqlCmd = new StringBuilder();
@@ -118,7 +116,7 @@ into #tmp
 from ThreadStock ts 
 left join LocalItem li on li.RefNo = ts.RefNo
 where 1=1
-{sqlWhere}
+{this.sqlWhere}
 group by ts.Refno,ts.ThreadColorID
 
 select src.Refno
@@ -216,18 +214,18 @@ drop table #tmp
 ");
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), Parameters, out this.printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), this.Parameters, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-            return Result.True;
+
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
         {
-
             if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
@@ -236,44 +234,39 @@ drop table #tmp
 
             this.SetCount(this.printData.Rows.Count);
 
-            //Note：匯出Excel的兩種方法   1.用 Microsoft.Office.Interop.Excel 、 2.用Sci.Utility.Excel
+            // Note：匯出Excel的兩種方法   1.用 Microsoft.Office.Interop.Excel 、 2.用Sci.Utility.Excel
 
+            // 第一種
+            // Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R22.xltx"); // 預先開啟excel app
+            // MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Thread_R22.xltx", 2, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
-            //第一種
-            //Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R22.xltx"); // 預先開啟excel app
-            //MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Thread_R22.xltx", 2, showExcel: false, showSaveMsg: false, excelApp: objApp);
+            // this.ShowWaitMessage("Excel Processing...");
+            // Excel.Worksheet worksheet = objApp.Sheets[1];
 
-            //this.ShowWaitMessage("Excel Processing...");
-            //Excel.Worksheet worksheet = objApp.Sheets[1];
+            // #region Save & Show Excel
+            // string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Thread_R22");
+            // objApp.ActiveWorkbook.SaveAs(strExcelName);
+            // objApp.Quit();
+            // Marshal.ReleaseComObject(objApp);
+            // Marshal.ReleaseComObject(worksheet);
 
-            //#region Save & Show Excel
-            //string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Thread_R22");
-            //objApp.ActiveWorkbook.SaveAs(strExcelName);
-            //objApp.Quit();
-            //Marshal.ReleaseComObject(objApp);
-            //Marshal.ReleaseComObject(worksheet);
-
-            //strExcelName.OpenFile();
-            //#endregion
-            //this.HideWaitMessage();
-            //return true;
+            // strExcelName.OpenFile();
+            // #endregion
+            // this.HideWaitMessage();
+            // return true;
 
             //-------------------
 
-
-            //第二種
-            //等待訊息
-
+            // 第二種
+            // 等待訊息
             this.ShowWaitMessage("Excel Processing...");
 
-            Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Thread_R22.xltx");
-            Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(printData);
+            SaveXltReportCls x1 = new SaveXltReportCls("Thread_R22.xltx");
+            SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(this.printData);
 
-            //Header範本有了，因此不用
+            // Header範本有了，因此不用
 
-
-            //## ，直接替換範本檔儲存格裡面的物件，從stering到整個DataTeble都可以替換
-
+            // ## ，直接替換範本檔儲存格裡面的物件，從stering到整個DataTeble都可以替換
             dt1.ShowHeader = false;
             x1.DicDatas.Add("##Date_start", this.Date_s.Value.ToString("yyyy-MM-dd"));
             x1.DicDatas.Add("##Date_end", this.Date_e.Value.ToString("yyyy-MM-dd"));
@@ -284,8 +277,6 @@ drop table #tmp
             this.HideWaitMessage();
 
             return true;
-
         }
-
     }
 }

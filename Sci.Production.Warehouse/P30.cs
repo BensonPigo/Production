@@ -1,11 +1,9 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Data;
 using Sci.Production.PublicForm;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -13,11 +11,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
+using Sci.Production.Class;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P30 : Sci.Win.Tems.QueryForm
+    public partial class P30 : Win.Tems.QueryForm
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
@@ -33,15 +32,15 @@ namespace Sci.Production.Warehouse
         public P30(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            comboCategory.SelectedIndex = 0;
-            comboFabricType.SelectedIndex = 0;
+            this.InitializeComponent();
+            this.comboCategory.SelectedIndex = 0;
+            this.comboFabricType.SelectedIndex = 0;
 
             #region -- Grid1 設定 --
-            this.gridComplete.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridComplete.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridComplete)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk)
+            this.gridComplete.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridComplete.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridComplete)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out this.col_chk)
                  .Text("complete", header: "Complete" + Environment.NewLine + "Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(3), iseditingreadonly: true, alignment: DataGridViewContentAlignment.MiddleCenter)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -53,22 +52,24 @@ namespace Sci.Production.Warehouse
                  .Text("TransID", header: "Trans. ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
                   ;
             #endregion
-            col_chk.CellClick += (s, e) =>
+            this.col_chk.CellClick += (s, e) =>
           {
-              if (MyUtility.Check.Empty(listControlBindingSource1.DataSource))
+              if (MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
               {
                   return;
               }
+
               DataRow thisRow = this.gridComplete.GetDataRow(this.listControlBindingSource1.Position);
-              if (null == thisRow)
+              if (thisRow == null)
               {
                   return;
               }
+
               if (e.RowIndex == -1)
               {
-                  if (((bool)this.gridComplete.Rows[0].Cells[e.ColumnIndex].Value))
+                  if ((bool)this.gridComplete.Rows[0].Cells[e.ColumnIndex].Value)
                   {
-                      foreach (DataRow dr in detail.Rows)
+                      foreach (DataRow dr in this.detail.Rows)
                       {
                           dr["selected"] = false;
                       }
@@ -76,7 +77,7 @@ namespace Sci.Production.Warehouse
               }
               else
               {
-                  if (((bool)this.gridComplete.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
+                  if ((bool)this.gridComplete.Rows[e.RowIndex].Cells[e.ColumnIndex].Value)
                   {
                       thisRow["total_qty"] = DBNull.Value;
                       foreach (DataRow dr in thisRow.GetChildRows("rel1"))
@@ -86,22 +87,24 @@ namespace Sci.Production.Warehouse
                       }
                   }
               }
+
               this.gridComplete.ValidateControl();
           };
             #region -- transfer qty valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.IsSupportNegative = true;
             ns.CellValidating += (s, e) =>
             {
-                if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)|| MyUtility.Check.Empty(listControlBindingSource2.DataSource))
+                if (MyUtility.Check.Empty(this.listControlBindingSource1.DataSource) || MyUtility.Check.Empty(this.listControlBindingSource2.DataSource))
                 {
                     return;
                 }
+
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     DataRow thisRow = this.gridComplete.GetDataRow(this.listControlBindingSource1.Position);
                     DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
-                    DataRow currentrow = gridRel.GetDataRow(gridRel.GetSelectedRowIndex());
+                    DataRow currentrow = this.gridRel.GetDataRow(this.gridRel.GetSelectedRowIndex());
                     currentrow["qty"] = e.FormattedValue;
                     currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
                     if (Convert.ToDecimal(e.FormattedValue) != 0)
@@ -114,20 +117,22 @@ namespace Sci.Production.Warehouse
                         currentrow["selected"] = false;
                         currentrow.GetParentRow("rel1")["selected"] = false;
                     }
+
                     currentrow["qty"] = e.FormattedValue;
                 }
             };
             #endregion
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = Production.Class.cellMtlLocation.GetGridCell("O");
+            DataGridViewGeneratorTextColumnSettings ts2 = TxtMtlLocation.CellMtlLocation.GetGridCell("O");
             this.gridRel.CellValueChanged += (s, e) =>
 {
-    if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)||MyUtility.Check.Empty(listControlBindingSource2.DataSource))
+    if (MyUtility.Check.Empty(this.listControlBindingSource1.DataSource) || MyUtility.Check.Empty(this.listControlBindingSource2.DataSource))
     {
         return;
     }
-    if (gridRel.Columns[e.ColumnIndex].Name == col_chk2.Name)
+
+    if (this.gridRel.Columns[e.ColumnIndex].Name == this.col_chk2.Name)
     {
-        DataRow dr = gridRel.GetDataRow(e.RowIndex);
+        DataRow dr = this.gridRel.GetDataRow(e.RowIndex);
         if (Convert.ToBoolean(dr["selected"]) == true)
         {
             if (MyUtility.Check.Seek($@"
@@ -147,6 +152,7 @@ WHERE   StockType='{dr["tostocktype"]}'
                 dr["tolocation"] = string.Empty;
             }
         }
+
         if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
         {
             dr["qty"] = dr["balanceQty"];
@@ -155,11 +161,12 @@ WHERE   StockType='{dr["tostocktype"]}'
         {
             dr["qty"] = 0;
         }
+
         dr.EndEdit();
 
         DataRow thisRow = this.gridComplete.GetDataRow(this.listControlBindingSource1.Position);
         DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
-        DataRow currentrow = gridRel.GetDataRow(gridRel.GetSelectedRowIndex());
+        DataRow currentrow = this.gridRel.GetDataRow(this.gridRel.GetSelectedRowIndex());
         currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
         currentrow.EndEdit();
     }
@@ -169,44 +176,45 @@ WHERE   StockType='{dr["tostocktype"]}'
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow dr = gridRel.GetDataRow(e.RowIndex);
+                    DataRow dr = this.gridRel.GetDataRow(e.RowIndex);
                     dr["tolocation"] = e.FormattedValue;
                     dr.EndEdit();
                 }
             };
 
             #region -- Grid2 設定 --
-            this.gridRel.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridRel.DataSource = listControlBindingSource2;
-            Helper.Controls.Grid.Generator(this.gridRel)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk2)
+            this.gridRel.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridRel.DataSource = this.listControlBindingSource2;
+            this.Helper.Controls.Grid.Generator(this.gridRel)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out this.col_chk2)
                  .Text("fromroll", header: "Roll#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Numeric("balanceQty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, settings: ns).Get(out col_Qty)
+                 .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, settings: ns).Get(out this.col_Qty)
                   .Text("fromlocation", header: "From Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: true)
-                  .Text("tolocation", header: "To Scarp" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: false, settings: ts2).Get(out col_tolocation)
+                  .Text("tolocation", header: "To Scarp" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: false, settings: ts2).Get(out this.col_tolocation)
                   ;
-            col_Qty.DefaultCellStyle.BackColor = Color.Pink;
-            col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
+            this.col_Qty.DefaultCellStyle.BackColor = Color.Pink;
+            this.col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
             #endregion
-            chp();
+            this.chp();
         }
 
         private void chp()
         {
-            if (MyUtility.Check.Empty(listControlBindingSource2.DataSource))
+            if (MyUtility.Check.Empty(this.listControlBindingSource2.DataSource))
             {
                 return;
             }
             #region selected
-            col_chk2.CellClick += (s, e) =>
+            this.col_chk2.CellClick += (s, e) =>
             {
                 DataRow thisRow = this.gridRel.GetDataRow(this.listControlBindingSource2.Position);
-                if (null == thisRow)
+                if (thisRow == null)
                 {
                     return;
                 }
+
                 if (e.RowIndex == -1)
                 {
                     if (!((bool)this.gridRel.Rows[0].Cells[e.ColumnIndex].Value))
@@ -236,11 +244,13 @@ WHERE   StockType='{dr["tostocktype"]}'
                                 thisRow.GetParentRow("rel1")["total_qty"] = DBNull.Value;
                             }
                             else
+                            {
                                 thisRow.GetParentRow("rel1")["total_qty"] = temp.Sum(row => (decimal)row["qty"]);
+                            }
                         }
-
                     }
                 }
+
                 this.gridRel.ValidateControl();
                 this.gridComplete.ValidateControl();
             };
@@ -250,27 +260,27 @@ WHERE   StockType='{dr["tostocktype"]}'
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            dataSet = null;
-            listControlBindingSource1.DataSource = null;
-            listControlBindingSource2.DataSource = null;
+            this.dataSet = null;
+            this.listControlBindingSource1.DataSource = null;
+            this.listControlBindingSource2.DataSource = null;
 
             #region Filter 表頭條件
 
-            int selectindex = comboCategory.SelectedIndex;
-            int selectindex2 = comboFabricType.SelectedIndex;
+            int selectindex = this.comboCategory.SelectedIndex;
+            int selectindex2 = this.comboFabricType.SelectedIndex;
             string strCfmDate1 = null;
             string strCfmDate2 = null;
             string strSP = this.txtSP.Text;
             string strFactory = this.txtmfactory.Text;
 
-            if (dateCfmDate.Value1 != null && dateCfmDate.Value2 != null)
+            if (this.dateCfmDate.Value1 != null && this.dateCfmDate.Value2 != null)
             {
                 strCfmDate1 = this.dateCfmDate.Text1;
                 strCfmDate2 = this.dateCfmDate.Text2;
             }
 
-            if (MyUtility.Check.Empty(strSP) && 
-                MyUtility.Check.Empty(strCfmDate1) && 
+            if (MyUtility.Check.Empty(strSP) &&
+                MyUtility.Check.Empty(strCfmDate1) &&
                 MyUtility.Check.Empty(strCfmDate2))
             {
                 MyUtility.Msg.WarningBox("<SP#> , <Cfm Date> cannot be empty!");
@@ -390,8 +400,8 @@ WHERE   StockType='{dr["tostocktype"]}'
                 sqlcmd.Append($@" 
             and o.FtyGroup = '{strFactory}'");
             }
-            
-            if (!(string.IsNullOrWhiteSpace(strCfmDate2)))
+
+            if (!string.IsNullOrWhiteSpace(strCfmDate2))
             {
                 sqlcmd.Append($@" 
             and o.CFMDate between '{strCfmDate1}' and '{strCfmDate2}'");
@@ -445,56 +455,58 @@ drop table #tmp
 ");
             this.ShowWaitMessage("Data Loading....");
 
-            if (!SQL.Selects("", sqlcmd.ToString(), out dataSet))
+            if (!SQL.Selects(string.Empty, sqlcmd.ToString(), out this.dataSet))
             {
                 MyUtility.Msg.WarningBox(sqlcmd.ToString(), "DB error!!");
                 return;
             }
-            master = dataSet.Tables[0];
-            master.TableName = "Master";
-            master.DefaultView.Sort = "poid,seq1,seq2";
-            dataSet.Tables[0].DefaultView.Sort = "poid,seq1,seq2";
 
-            detail = dataSet.Tables[1];
-            detail.TableName = "Detail";
+            this.master = this.dataSet.Tables[0];
+            this.master.TableName = "Master";
+            this.master.DefaultView.Sort = "poid,seq1,seq2";
+            this.dataSet.Tables[0].DefaultView.Sort = "poid,seq1,seq2";
 
-            DataRelation relation = new DataRelation("rel1"
-                    , new DataColumn[] { master.Columns["poid"], master.Columns["seq1"], master.Columns["seq2"] }
-                    , new DataColumn[] { detail.Columns["toPoid"], detail.Columns["toseq1"], detail.Columns["toseq2"] }
-                    );
+            this.detail = this.dataSet.Tables[1];
+            this.detail.TableName = "Detail";
 
-            dataSet.Relations.Add(relation);
-            
-            master.Columns.Add("total_qty", typeof(decimal));
-            master.Columns.Add("requestqty", typeof(decimal), "poqty - inqty - sum(child.qty)");
+            DataRelation relation = new DataRelation(
+                "rel1",
+                new DataColumn[] { this.master.Columns["poid"], this.master.Columns["seq1"], this.master.Columns["seq2"] },
+                new DataColumn[] { this.detail.Columns["toPoid"], this.detail.Columns["toseq1"], this.detail.Columns["toseq2"] });
 
-            listControlBindingSource1.DataSource = dataSet;
-            listControlBindingSource1.DataMember = "Master";
-            listControlBindingSource2.DataSource = listControlBindingSource1;
-            listControlBindingSource2.DataMember = "rel1";
+            this.dataSet.Relations.Add(relation);
 
-            if (dataSet.Tables[0].Rows.Count == 0)
+            this.master.Columns.Add("total_qty", typeof(decimal));
+            this.master.Columns.Add("requestqty", typeof(decimal), "poqty - inqty - sum(child.qty)");
+
+            this.listControlBindingSource1.DataSource = this.dataSet;
+            this.listControlBindingSource1.DataMember = "Master";
+            this.listControlBindingSource2.DataSource = this.listControlBindingSource1;
+            this.listControlBindingSource2.DataMember = "rel1";
+
+            if (this.dataSet.Tables[0].Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("NO Data!");
             }
-            btnCreate.Enabled = true;
+
+            this.btnCreate.Enabled = true;
             this.HideWaitMessage();
         }
 
         private void checkOnly_CheckedChanged(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(listControlBindingSource1.DataSource))
+            if (MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
                 return;
             }
 
-            if (checkOnly.Checked)
+            if (this.checkOnly.Checked)
             {
-                listControlBindingSource1.Filter = "complete = 'Y'";
+                this.listControlBindingSource1.Filter = "complete = 'Y'";
             }
             else
             {
-                listControlBindingSource1.Filter = "";
+                this.listControlBindingSource1.Filter = string.Empty;
             }
         }
 
@@ -505,17 +517,22 @@ drop table #tmp
 
         private void gridComplete_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-             gridRel.ValidateControl();
+             this.gridRel.ValidateControl();
         }
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(master))
+            if (MyUtility.Check.Empty(this.master))
+            {
                 return;
-            if (master.Rows.Count == 0)
-                return;
+            }
 
-            foreach (DataRow dr in master.Rows)
+            if (this.master.Rows.Count == 0)
+            {
+                return;
+            }
+
+            foreach (DataRow dr in this.master.Rows)
             {
                 if (dr["selected"].ToString().ToUpper() == "TRUE")
                 {
@@ -525,26 +542,31 @@ drop table #tmp
                         temp["qty"] = 0.00;
                         temp["selected"] = false;
                     }
+
                     dr["total_qty"] = 0.00;
                 }
 
                 if (dr["selected"].ToString() == "True" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
-                    var issued = PublicPrg.Prgs.autopick(dr, false, "I");
+                    var issued = Prgs.autopick(dr, false, "I");
                     if (issued == null)
+                    {
                         return;
+                    }
 
                     foreach (DataRow dr2 in issued)
                     {
-                        DataRow[] findrow = detail.Select(string.Format(@"FromftyInventoryUkey = {0} and topoid = '{1}'
-                                                                          and toseq1 = '{2}' and toseq2 = '{3}'"
-                            , dr2["ftyinventoryukey"], dr["poid"], dr["seq1"], dr["seq2"]));
+                        DataRow[] findrow = this.detail.Select(string.Format(
+                            @"FromftyInventoryUkey = {0} and topoid = '{1}'
+                                                                          and toseq1 = '{2}' and toseq2 = '{3}'",
+                            dr2["ftyinventoryukey"], dr["poid"], dr["seq1"], dr["seq2"]));
                         if (findrow.Length > 0)
                         {
                             findrow[0]["qty"] = dr2["qty"];
                             findrow[0]["selected"] = true;
                         }
                     }
+
                     var tempchildrows = dr.GetChildRows("rel1");
                     dr["total_qty"] = tempchildrows.Sum(row => (decimal)row["qty"]);
                     this.gridRel.ValidateControl();
@@ -555,45 +577,47 @@ drop table #tmp
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
-             if (MyUtility.Check.Empty(detail))
-            {
-                MyUtility.Msg.WarningBox("Please select data first!!");
-                return;
-            }
-  
-
-            DataRow[] findrow = detail.Select(@"selected = true and qty <> 0");
-            if (findrow.Length == 0)
+             if (MyUtility.Check.Empty(this.detail))
             {
                 MyUtility.Msg.WarningBox("Please select data first!!");
                 return;
             }
 
-            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to create data?");
-            if (dResult == DialogResult.No)
+             DataRow[] findrow = this.detail.Select(@"selected = true and qty <> 0");
+             if (findrow.Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select data first!!");
                 return;
+            }
+
+             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to create data?");
+             if (dResult == DialogResult.No)
+            {
+                return;
+            }
 
             /*
              * 依照 To POID 建立 P24
              */
-            var listPoid = findrow.Select(row => row["ToPOID"]).Distinct().ToList();
-            var tmpId = Sci.MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "PI", "SubTransfer", System.DateTime.Now, batchNumber: listPoid.Count);
-            if (MyUtility.Check.Empty(tmpId))
+             var listPoid = findrow.Select(row => row["ToPOID"]).Distinct().ToList();
+             var tmpId = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "PI", "SubTransfer", DateTime.Now, batchNumber: listPoid.Count);
+             if (MyUtility.Check.Empty(tmpId))
             {
                 MyUtility.Msg.WarningBox("Get document ID fail!!");
                 return;
             }
 
             #region 準備 insert subtransfer & subtransfer_detail 語法與 DataTable dtMaster & dtDetail
-            //insert 欄位順序必須與 dtMaster, dtDetail 一致
-            string insertMaster = @"
+
+            // insert 欄位順序必須與 dtMaster, dtDetail 一致
+             string insertMaster = @"
 insert into subtransfer
         (id      , type   , issuedate, mdivisionid, FactoryID
          , status, addname, adddate,  remark)
 select   id      , type   , issuedate, mdivisionid, FactoryID
          , status, addname, adddate,   remark
 from #tmp";
-            string insertDetail = @"
+             string insertDetail = @"
 insert into subtransfer_detail
 (ID        , FromFtyInventoryUkey, FromFactoryID, FromPOID  , FromSeq1
  , FromSeq2, FromRoll            , FromStockType, FromDyelot, ToFactoryID
@@ -605,39 +629,39 @@ from #tmp
 
 ";
 
-            DataTable dtMaster = new DataTable();
-            dtMaster.Columns.Add("Poid");
-            dtMaster.Columns.Add("id");
-            dtMaster.Columns.Add("type");
-            dtMaster.Columns.Add("issuedate");
-            dtMaster.Columns.Add("mdivisionid");
-            dtMaster.Columns.Add("FactoryID");
-            dtMaster.Columns.Add("status");
-            dtMaster.Columns.Add("addname");
-            dtMaster.Columns.Add("adddate");
-            dtMaster.Columns.Add("remark");
+             DataTable dtMaster = new DataTable();
+             dtMaster.Columns.Add("Poid");
+             dtMaster.Columns.Add("id");
+             dtMaster.Columns.Add("type");
+             dtMaster.Columns.Add("issuedate");
+             dtMaster.Columns.Add("mdivisionid");
+             dtMaster.Columns.Add("FactoryID");
+             dtMaster.Columns.Add("status");
+             dtMaster.Columns.Add("addname");
+             dtMaster.Columns.Add("adddate");
+             dtMaster.Columns.Add("remark");
 
-            DataTable dtDetail = new DataTable();
-            dtDetail.Columns.Add("ID");
-            dtDetail.Columns.Add("FromFtyInventoryUkey");
-            dtDetail.Columns.Add("FromFactoryID");
-            dtDetail.Columns.Add("FromPOID");
-            dtDetail.Columns.Add("FromSeq1");
-            dtDetail.Columns.Add("FromSeq2");
-            dtDetail.Columns.Add("FromRoll");
-            dtDetail.Columns.Add("FromStockType");
-            dtDetail.Columns.Add("FromDyelot");
-            dtDetail.Columns.Add("ToFactoryID");
-            dtDetail.Columns.Add("ToPOID");
-            dtDetail.Columns.Add("ToSeq1");
-            dtDetail.Columns.Add("ToSeq2");
-            dtDetail.Columns.Add("ToRoll");
-            dtDetail.Columns.Add("ToStockType");
-            dtDetail.Columns.Add("ToDyelot");
-            dtDetail.Columns.Add("Qty");
-            dtDetail.Columns.Add("ToLocation");
+             DataTable dtDetail = new DataTable();
+             dtDetail.Columns.Add("ID");
+             dtDetail.Columns.Add("FromFtyInventoryUkey");
+             dtDetail.Columns.Add("FromFactoryID");
+             dtDetail.Columns.Add("FromPOID");
+             dtDetail.Columns.Add("FromSeq1");
+             dtDetail.Columns.Add("FromSeq2");
+             dtDetail.Columns.Add("FromRoll");
+             dtDetail.Columns.Add("FromStockType");
+             dtDetail.Columns.Add("FromDyelot");
+             dtDetail.Columns.Add("ToFactoryID");
+             dtDetail.Columns.Add("ToPOID");
+             dtDetail.Columns.Add("ToSeq1");
+             dtDetail.Columns.Add("ToSeq2");
+             dtDetail.Columns.Add("ToRoll");
+             dtDetail.Columns.Add("ToStockType");
+             dtDetail.Columns.Add("ToDyelot");
+             dtDetail.Columns.Add("Qty");
+             dtDetail.Columns.Add("ToLocation");
 
-            for (int i = 0; i < listPoid.Count; i++)
+             for (int i = 0; i < listPoid.Count; i++)
             {
                 DataRow drNewMaster = dtMaster.NewRow();
                 drNewMaster["poid"] = listPoid[i].ToString();
@@ -645,7 +669,7 @@ from #tmp
                 drNewMaster["type"] = "E";
                 drNewMaster["issuedate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
                 drNewMaster["mdivisionid"] = Env.User.Keyword;
-                drNewMaster["FactoryID"] = Sci.Env.User.Factory;
+                drNewMaster["FactoryID"] = Env.User.Factory;
                 drNewMaster["status"] = "New";
                 drNewMaster["addname"] = Env.User.UserID;
                 drNewMaster["adddate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
@@ -653,7 +677,7 @@ from #tmp
                 dtMaster.Rows.Add(drNewMaster);
             }
 
-            foreach (DataRow item in findrow)
+             foreach (DataRow item in findrow)
             {
                 DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(item["ToPOID"])).ToArray();
                 DataRow drNewDetail = dtDetail.NewRow();
@@ -679,9 +703,9 @@ from #tmp
             }
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            DualResult result;
-            using (_transactionscope)
+             TransactionScope _transactionscope = new TransactionScope();
+             DualResult result;
+             using (_transactionscope)
             {
                 try
                 {
@@ -697,25 +721,26 @@ from #tmp
                     {
                         _transactionscope.Dispose();
                         MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
-                        return; ;
+                        return;
                     }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
-            _transactionscope = null;
+
+             _transactionscope = null;
 
             #region confirm save成功的P24單子
-            List<string> success_list = new List<string>();
-            List<string> fail_list = new List<string>();
-            foreach (DataRow dr in dtMaster.Rows)
+             List<string> success_list = new List<string>();
+             List<string> fail_list = new List<string>();
+             foreach (DataRow dr in dtMaster.Rows)
             {
                 if (Prgs.P24confirm(dr["ID"].ToString()))
                 {
@@ -727,14 +752,18 @@ from #tmp
                 }
             }
 
-            string msg = string.Empty;
-            msg += success_list.Count > 0 ? "Trans. ID" + Environment.NewLine + success_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!! and Confirm Success!!" + Environment.NewLine : string.Empty;
-            msg += fail_list.Count > 0 ? "Trans. ID" + Environment.NewLine + fail_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!, Confirm fail, please go to P24 manual Confirm" : string.Empty;
-            this.p30_msg.Show(msg);
+             string msg = string.Empty;
+             msg += success_list.Count > 0 ? "Trans. ID" + Environment.NewLine + success_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!! and Confirm Success!!" + Environment.NewLine : string.Empty;
+             msg += fail_list.Count > 0 ? "Trans. ID" + Environment.NewLine + fail_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!, Confirm fail, please go to P24 manual Confirm" : string.Empty;
+             this.p30_msg.Show(msg);
             #endregion
 
-            if (!master.Columns.Contains("TransID")) master.Columns.Add("TransID", typeof(string));
-            foreach (DataRow Alldetailrows in detail.Rows)
+             if (!this.master.Columns.Contains("TransID"))
+            {
+                this.master.Columns.Add("TransID", typeof(string));
+            }
+
+             foreach (DataRow Alldetailrows in this.detail.Rows)
             {
                 if (Alldetailrows["selected"].ToString().ToUpper() == "TRUE")
                 {
@@ -744,35 +773,39 @@ from #tmp
                 }
             }
 
-            //Create後Btn失效，需重新Qurey才能再使用。
-            btnCreate.Enabled = false;
-            this.gridRel.ValidateControl();
-            this.gridComplete.ValidateControl();
+            // Create後Btn失效，需重新Qurey才能再使用。
+             this.btnCreate.Enabled = false;
+             this.gridRel.ValidateControl();
+             this.gridComplete.ValidateControl();
         }
 
         private void btnExcel_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(master))
+            if (MyUtility.Check.Empty(this.master))
             {
                 MyUtility.Msg.WarningBox("Did not finish Inventory To Scarp");
                 return;
             }
-            if (!master.Columns.Contains("TransID"))
+
+            if (!this.master.Columns.Contains("TransID"))
             {
                 MyUtility.Msg.WarningBox("Did not finish Inventory To Scarp");
                 return;
             }
-            master.DefaultView.RowFilter = "TransID<>''";
-            if (MyUtility.Check.Empty(master))
+
+            this.master.DefaultView.RowFilter = "TransID<>''";
+            if (MyUtility.Check.Empty(this.master))
             {
                 return;
             }
-            DataTable Exceldt = master.DefaultView.ToTable();
+
+            DataTable Exceldt = this.master.DefaultView.ToTable();
             if (Exceldt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Did not finish Inventory To Scarp");
                 return;
             }
+
             // 篩選報表所顯示的欄位
             Exceldt.Columns.Remove("selected");
             Exceldt.Columns.Remove("CutInLine");
@@ -783,12 +816,9 @@ from #tmp
             Exceldt.Columns.Remove("stockseq2");
             Exceldt.Columns.Remove("qty");
 
-
-
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P30.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(Exceldt, "", "Warehouse_P30.xltx", 2, showExcel: true, showSaveMsg: true, excelApp: excelApp);      // 將datatable copy to excel
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P30.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(Exceldt, string.Empty, "Warehouse_P30.xltx", 2, showExcel: true, showSaveMsg: true, excelApp: excelApp);      // 將datatable copy to excel
             Marshal.ReleaseComObject(excelApp);
-            
         }
     }
 }

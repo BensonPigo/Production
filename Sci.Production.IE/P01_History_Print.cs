@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -15,7 +10,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P01_History_Print
     /// </summary>
-    public partial class P01_History_Print : Sci.Win.Tems.PrintForm
+    public partial class P01_History_Print : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DataTable artworkType;
@@ -67,7 +62,7 @@ namespace Sci.Production.IE
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlCmd = string.Format(
                 @"select t.ID,t.Phase,t.Version,td.Seq,td.OperationID,td.MachineTypeID,td.Mold,td.Frequency,
@@ -94,7 +89,7 @@ order by td.Seq", MyUtility.Convert.GetString(this.masterData["StyleID"]),
 
             if (this.printData.Rows.Count <= 0)
             {
-                return Result.True;
+                return Ict.Result.True;
             }
 
             string id = MyUtility.Convert.GetString(this.printData.Rows[0]["ID"]);
@@ -117,7 +112,7 @@ group by isnull(m.ArtworkTypeID,'')", id);
 select MachineTypeID+'*'+CONVERT(varchar,cnt) as Machine from (
 select td.MachineTypeID,COUNT(td.MachineTypeID) as cnt from TimeStudyHistory_Detail td WITH (NOLOCK) where td.ID = {0} and td.MachineTypeID <> '' group by MachineTypeID) a) b
 FOR XML PATH('')", id));
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -136,7 +131,7 @@ FOR XML PATH('')", id));
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P01_History_Print.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\IE_P01_History_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -236,7 +231,7 @@ FOR XML PATH('')", id));
             excel.Cells.EntireRow.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_P01_History_Print");
+            string strExcelName = Class.MicrosoftFile.GetName("IE_P01_History_Print");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

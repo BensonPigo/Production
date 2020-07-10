@@ -1,25 +1,19 @@
 ﻿using Ict.Win;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Windows.Forms;
 using Ict;
-using Sci.Win.Tems;
-using Sci.Data;
-using System.Linq;
 
 namespace Sci.Production.IE
 {
     /// <summary>
     /// B12
     /// </summary>
-    public partial class B12 : Sci.Win.Tems.Input2
+    public partial class B12 : Win.Tems.Input2
     {
         /// <summary>
         /// B12
         /// </summary>
         /// <param name="menuitem">menuitem</param>
-        /// <param name="type">type</param>
         public B12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -31,7 +25,7 @@ namespace Sci.Production.IE
         {
             string id = e.Master.Field<string>("ID");
             string sqlCmd = string.Empty;
-                sqlCmd = $@"
+            sqlCmd = $@"
 Select ID, Description,junk
 From MachineGroup
 Where MasterGroupID = '{id}' 
@@ -51,5 +45,4 @@ Where MasterGroupID = '{id}'
                 ;
         }
     }
-
 }

@@ -18,7 +18,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_MNoticePrint
     /// </summary>
-    public partial class P01_MNoticePrint : Sci.Win.Tems.PrintForm
+    public partial class P01_MNoticePrint : Win.Tems.PrintForm
     {
         private const bool Excel = true;
         private const bool PDF = false;
@@ -60,9 +60,9 @@ namespace Sci.Production.PPIC
 
             foreach (var control in this.groupBox1.Controls)
             {
-                if (control is Sci.Win.UI.RadioButton)
+                if (control is Win.UI.RadioButton)
                 {
-                    Sci.Win.UI.RadioButton rdb = (Sci.Win.UI.RadioButton)control;
+                    Win.UI.RadioButton rdb = (Win.UI.RadioButton)control;
                     rdb.CheckedChanged += this.Rd_CheckedChanged;
                 }
             }
@@ -151,7 +151,7 @@ namespace Sci.Production.PPIC
                 sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                 for (int i = 3; i <= 18; i++)
                 {
-                    sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft);
+                    sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
                     xcinfo.NumberFormate = "@";
                     xltTbl.LisColumnInfo.Add(xcinfo);
                 }
@@ -170,9 +170,9 @@ from Orders a
 LEFT JOIN Brand Br ON a.BrandID = Br.ID 
 where poid = @poid
 and (SMnorderApv is not null or MnorderApv is not null)
-order by ID"
-, new List<SqlParameter> { new SqlParameter("poid", poid) }
-, out dt);
+order by ID",
+new List<SqlParameter> { new SqlParameter("poid", poid) },
+out dt);
                 if (!getIds && dt.Rows.Count <= 0)
                 {
                     DualResult failResult = new DualResult(false, "Error:" + getIds.ToString());
@@ -214,7 +214,7 @@ order by ID"
                     int sPNoteRowHeight = msgs.Length == 0 ? 20 : msgs.Length * 20;
 
                     maxRowheight = maxRowheight < sPNoteRowHeight ? sPNoteRowHeight : maxRowheight;
-                    Microsoft.Office.Interop.Excel.Worksheet wks = wks = sxr.ExcelApp.Worksheets[2];
+                    Worksheet wks = wks = sxr.ExcelApp.Worksheets[2];
                     wks.get_Range($"A3:A3").RowHeight = maxRowheight;
 
                     sxr.DicDatas.Add(sxr.VPrefix + "Note" + idxStr, msg);
@@ -258,8 +258,8 @@ order by ID"
                     }
                 }
 
-                this.strFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice");
-                this.strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice", Sci.Production.Class.PDFFileNameExtension.PDF);
+                this.strFileName = Class.MicrosoftFile.GetName("PPIC_P01_M_Notice");
+                this.strPDFFileName = Class.MicrosoftFile.GetName("PPIC_P01_M_Notice", Class.PDFFileNameExtension.PDF);
                 sxr.AllowRangeTransferToString = false;
                 sxr.Save(this.strFileName);
                 sxr.FinishSave();
@@ -342,13 +342,13 @@ order by ID"
                     sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                     for (int i = 3; i <= 18; i++)
                     {
-                        sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft);
+                        sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
                         xcinfo.NumberFormate = "@";
                         xltTbl.LisColumnInfo.Add(xcinfo);
                     }
 
                     // 調整列高
-                    Microsoft.Office.Interop.Excel.Worksheet wks = wks = sxr.ExcelApp.Worksheets[1];
+                    Worksheet wks = wks = sxr.ExcelApp.Worksheets[1];
                     wks.get_Range($"A4:A4").RowHeight = maxRowheight;
 
                     xltTbl.Separator1 = "'- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -";
@@ -407,7 +407,7 @@ order by ID"
 
                     // Sheet3 每張SP的分隔線，只需要畫好一個，後面都是複製的
                     wks = sxr.ExcelApp.Worksheets[3];
-                    wks.get_Range($"A3:S3").Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 3;
+                    wks.get_Range($"A3:S3").Borders[XlBordersIndex.xlEdgeTop].Weight = 3;
 
                     foreach (DataRow dr in dts[10].Rows)
                     {
@@ -450,8 +450,8 @@ order by ID"
                     }
                 }
 
-                this.strFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04");
-                this.strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04", Sci.Production.Class.PDFFileNameExtension.PDF);
+                this.strFileName = Class.MicrosoftFile.GetName("PPIC_Report04");
+                this.strPDFFileName = Class.MicrosoftFile.GetName("PPIC_Report04", Class.PDFFileNameExtension.PDF);
 
                 sxr.Save(this.strFileName);
                 sxr.FinishSave();
@@ -497,13 +497,13 @@ and (SMnorderApv is not null or MnorderApv is not null)
             for (int colIdx = 3; colIdx <= this.intSizeSpecColumnCnt; colIdx++)
             {
                 // oSheet.Cells[4, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);
-                oSheet.Cells[4, colIdx].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+                oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
             }
 
             for (int colIdx = 3; colIdx <= this.intSizeSpecColumnCnt; colIdx++)
             {
                 // oSheet.Cells[4 + intSizeSpecRowCnt, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);
-                oSheet.Cells[4, colIdx].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+                oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
             }
         }
 

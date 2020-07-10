@@ -47,8 +47,8 @@
             this.displayPullOutNo = new Sci.Win.UI.DisplayBox();
             this.displayHCNo = new Sci.Win.UI.DisplayBox();
             this.btnBatchImport = new Sci.Win.UI.Button();
-            this.txtshipmode = new Sci.Production.Class.txtshipmode();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtshipmode = new Sci.Production.Class.Txtshipmode();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelConfirmed = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -495,7 +495,7 @@
         private Win.UI.Label labelShipMode;
         private Win.UI.NumericBox numTtlGW;
         private Win.UI.NumericBox numTtlCBM;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelTtlGW;
         private Win.UI.Label labelTtlCBM;
         private Win.UI.Label labelBrand;
@@ -508,7 +508,7 @@
         private Win.UI.DisplayBox displayHCNo;
         private Win.UI.DisplayBox displayPullOutNo;
         private Win.UI.DateBox datePullOutDate;
-        private Class.txtshipmode txtshipmode;
+        private Class.Txtshipmode txtshipmode;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Label labelConfirmed;
     }

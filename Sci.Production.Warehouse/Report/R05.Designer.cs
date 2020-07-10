@@ -37,8 +37,8 @@
             this.txtSP1 = new Sci.Win.UI.TextBox();
             this.label6 = new Sci.Win.UI.Label();
             this.txtSP2 = new Sci.Win.UI.TextBox();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             this.radioTransferIn = new Sci.Win.UI.RadioButton();
             this.radioTransferOut = new Sci.Win.UI.RadioButton();
             this.SuspendLayout();
@@ -239,8 +239,8 @@
         private Win.UI.TextBox txtSP1;
         private Win.UI.Label label6;
         private Win.UI.TextBox txtSP2;
-        private Class.txtMdivision txtMdivision1;
-        private Class.txtfactory txtfactory1;
+        private Class.TxtMdivision txtMdivision1;
+        private Class.Txtfactory txtfactory1;
         private Win.UI.RadioButton radioTransferIn;
         private Win.UI.RadioButton radioTransferOut;
     }

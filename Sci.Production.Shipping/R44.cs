@@ -1,14 +1,9 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
@@ -16,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R44
     /// </summary>
-    public partial class R44 : Sci.Win.Tems.PrintForm
+    public partial class R44 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DateTime? dateOnBoardDate1;
@@ -45,7 +40,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string whereP03 = string.Empty;
             string whereP04 = string.Empty;
@@ -60,8 +55,6 @@ namespace Sci.Production.Shipping
                 whereP03 += $@" and cast(e.PortArrival as date) between '{((DateTime)this.dateArrivalPortDate1).ToString("d")}' and '{((DateTime)this.dateArrivalPortDate2).ToString("d")}'";
                 whereP04 += $@" and cast(e.PortArrival as date) between '{((DateTime)this.dateArrivalPortDate1).ToString("d")}' and '{((DateTime)this.dateArrivalPortDate2).ToString("d")}'";
             }
-
-
 
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(
@@ -117,7 +110,7 @@ and (isnull(c.ID,'') ='' or isnull(c.DeclareNo,'') = '')
                 return new DualResult(false, "Query data fail\r\n" + result.ToString());
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -134,7 +127,7 @@ and (isnull(c.ID,'') ='' or isnull(c.DeclareNo,'') = '')
 
             this.ShowWaitMessage("Starting EXCEL...");
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R44_NonDeclarationReportImport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_R44_NonDeclarationReportImport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {

@@ -33,7 +33,7 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.btnQuery = new Sci.Win.UI.Button();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.labelSupplier = new Sci.Win.UI.Label();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
@@ -218,7 +218,7 @@
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
         private Win.UI.Button btnQuery;
-        private Class.txtsupplier txtsupplier;
+        private Class.Txtsupplier txtsupplier;
         private Win.UI.Label labelSupplier;
         private Win.UI.TextBox txtSPNo;
         private Win.UI.Label labelSPNo;

@@ -1,22 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Data.SqlClient;
-using Sci;
 using Sci.Data;
 using Ict;
-using Ict.Win;
 using System.Runtime.InteropServices;
-using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R18 : Sci.Win.Tems.PrintForm
+    public partial class R18 : Win.Tems.PrintForm
     {
         DataTable dt;
 
@@ -25,15 +18,15 @@ namespace Sci.Production.Warehouse
         public R18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
         }
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(txtSPNo.Text)
-                && MyUtility.Check.Empty(txtRefno.Text)
-                && MyUtility.Check.Empty(txtLocation.Text)
+            if (MyUtility.Check.Empty(this.txtSPNo.Text)
+                && MyUtility.Check.Empty(this.txtRefno.Text)
+                && MyUtility.Check.Empty(this.txtLocation.Text)
                 && MyUtility.Check.Empty(this.dateRangeBuyerDelivery.Value1)
                 && MyUtility.Check.Empty(this.dateRangeBuyerDelivery.Value2)
                 && MyUtility.Check.Empty(this.dateRangeSciDelivery.Value1)
@@ -44,44 +37,45 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            category = string.Empty;
+            this.category = string.Empty;
             if (!MyUtility.Check.Empty(this.comboCategory.Text))
             {
-                category = this.comboCategory.SelectedValue.ToString();
+                this.category = this.comboCategory.SelectedValue.ToString();
             }
+
             return base.ValidateInput();
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            SetCount(dt.Rows.Count);
-            DualResult result = Result.True;
-            if (dt.Rows.Count == 0)
+            this.SetCount(this.dt.Rows.Count);
+            DualResult result = Ict.Result.True;
+            if (this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
                 return result;
             }
 
-
-            
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R18_Material_Tracking.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R18_Material_Tracking.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R18_Material_Tracking.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_R18_Material_Tracking.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
 
             this.ShowWaitMessage("Excel Processing...");
-            Excel.Worksheet worksheet= objApp.Sheets[1];
-            for (int i = 1; i <= dt.Rows.Count; i++)
+            Excel.Worksheet worksheet = objApp.Sheets[1];
+            for (int i = 1; i <= this.dt.Rows.Count; i++)
             {
                 string str = worksheet.Cells[i + 1, 20].Value;
-                if(!MyUtility.Check.Empty(str))
+                if (!MyUtility.Check.Empty(str))
+                {
                     worksheet.Cells[i + 1, 20] = str.Trim();
+                }
             }
-                        
+
             objApp.Columns.AutoFit();
             objApp.Rows.AutoFit();
             worksheet.Columns[20].ColumnWidth = 88;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R18_Material_Tracking");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R18_Material_Tracking");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -91,31 +85,30 @@ namespace Sci.Production.Warehouse
             #endregion
             this.HideWaitMessage();
             return false;
-
         }
 
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            //return base.OnAsyncDataLoad(e);
-            string spno = txtSPNo.Text.TrimEnd();
-            string style = txtStyle.Text;
-            string refno = txtRefno.Text;
-            string location = txtLocation.Text.TrimEnd();
+            // return base.OnAsyncDataLoad(e);
+            string spno = this.txtSPNo.Text.TrimEnd();
+            string style = this.txtStyle.Text;
+            string refno = this.txtRefno.Text;
+            string location = this.txtLocation.Text.TrimEnd();
             string buyerDeliveryStart = this.dateRangeBuyerDelivery.Value1.ToString().EqualString(string.Empty) ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value1).ToString("yyyy/MM/dd");
             string buyerDeliveryEnd = this.dateRangeBuyerDelivery.Value2.ToString().EqualString(string.Empty) ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value2).ToString("yyyy/MM/dd");
             string sciDeliveryStart = this.dateRangeSciDelivery.Value1.ToString().EqualString(string.Empty) ? string.Empty : ((DateTime)this.dateRangeSciDelivery.Value1).ToString("yyyy/MM/dd");
             string sciDeliveryEnd = this.dateRangeSciDelivery.Value2.ToString().EqualString(string.Empty) ? string.Empty : ((DateTime)this.dateRangeSciDelivery.Value2).ToString("yyyy/MM/dd");
             string supplier = this.txtsupplier.TextBox1.Text;
-            string colorid = txtColor.Text;
-            string factoryid = txtfactory.Text;
-            string sizespec = txtSizeCode.Text;
-            bool chkbalance = checkBalanceQty.Checked;
-            
+            string colorid = this.txtColor.Text;
+            string factoryid = this.txtfactory.Text;
+            string sizespec = this.txtSizeCode.Text;
+            bool chkbalance = this.checkBalanceQty.Checked;
 
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             StringBuilder sqlcmd = new StringBuilder();
             #region sql command
-            sqlcmd.Append(string.Format(@"
+            sqlcmd.Append(string.Format(
+                @"
 with cte as (
     select  isnull(x.FactoryID,y.FactoryID) factoryid
             , pd.id
@@ -259,43 +252,55 @@ with cte as (
             {
                 sqlcmd.Append(string.Format(@" and pd.SizeSpec = '{0}'", sizespec));
             }
-            
+
             sqlcmd.Append(@"
 ) select * from cte where 1= 1 ");
-            if (chkbalance) sqlcmd.Append(" and balanceqty > 0");
-
-            if (!MyUtility.Check.Empty(category))
+            if (chkbalance)
             {
-                sqlcmd.Append($"and Category in ({category})");
+                sqlcmd.Append(" and balanceqty > 0");
             }
 
-            if (!MyUtility.Check.Empty(style)) sqlcmd.Append(string.Format(@" and StyleID ='{0}'", style));
-            if (!MyUtility.Check.Empty(factoryid)) sqlcmd.Append(string.Format(@" and FactoryID ='{0}'", factoryid));
+            if (!MyUtility.Check.Empty(this.category))
+            {
+                sqlcmd.Append($"and Category in ({this.category})");
+            }
+
+            if (!MyUtility.Check.Empty(style))
+            {
+                sqlcmd.Append(string.Format(@" and StyleID ='{0}'", style));
+            }
+
+            if (!MyUtility.Check.Empty(factoryid))
+            {
+                sqlcmd.Append(string.Format(@" and FactoryID ='{0}'", factoryid));
+            }
 
             #endregion
 
             try
             {
                 DBProxy.Current.DefaultTimeout = 600;
-                result = DBProxy.Current.Select(null, sqlcmd.ToString(), out dt);
+                result = DBProxy.Current.Select(null, sqlcmd.ToString(), out this.dt);
                 DBProxy.Current.DefaultTimeout = 30;
-                if (!result) return result;
+                if (!result)
+                {
+                    return result;
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+
             return result;
         }
 
         private void toexcel_Click(object sender, EventArgs e)
         {
-
         }
 
         private void R18_Load(object sender, EventArgs e)
         {
-
         }
     }
 }

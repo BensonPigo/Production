@@ -6,13 +6,10 @@ using Sci.Production.PublicPrg;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -21,7 +18,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// P03_RepackCartons
     /// </summary>
-    public partial class P03_RepackCartons : Sci.Win.Tems.QueryForm
+    public partial class P03_RepackCartons : Win.Tems.QueryForm
     {
         private DataTable dtMainDetail;
         private DataTable dtMiddleData;
@@ -89,10 +86,10 @@ namespace Sci.Production.Packing
                 .Numeric("ShipQty", header: "Qty", iseditingreadonly: true);
 
             #region seq 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
             seq.EditingMouseDown += (s, e) =>
             {
-                if (e.Button != System.Windows.Forms.MouseButtons.Right ||
+                if (e.Button != MouseButtons.Right ||
                     e.RowIndex == -1)
                 {
                     return;
@@ -106,7 +103,7 @@ namespace Sci.Production.Packing
                     return;
                 }
 
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dtOrderShipmodeSeq, "ID,Seq,BuyerDelivery,ShipmodeID,Qty", "15,4,20,20,10", string.Empty);
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(dtOrderShipmodeSeq, "ID,Seq,BuyerDelivery,ShipmodeID,Qty", "15,4,20,20,10", string.Empty);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -265,7 +262,7 @@ namespace Sci.Production.Packing
                              .Select(s => new
                              {
                                  OriCTNStartNo = s["CTNStartNo", DataRowVersion.Original],
-                                 NewCTNStartNo = s["CTNStartNo"]
+                                 NewCTNStartNo = s["CTNStartNo"],
                              }).ToList();
 
             if (!listUp.Any())
@@ -336,7 +333,7 @@ namespace Sci.Production.Packing
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dtOrderShipmodeSeq, "ID,Seq,BuyerDelivery,ShipmodeID,Qty", "15,4,20,20,10", string.Empty);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(dtOrderShipmodeSeq, "ID,Seq,BuyerDelivery,ShipmodeID,Qty", "15,4,20,20,10", string.Empty);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -386,7 +383,7 @@ where   oq.ID = '{0}'
         and o.MDivisionID = '{2}'",
                               orderID,
                               this.txtshipmode.Text,
-                              Sci.Env.User.Keyword);
+                              Env.User.Keyword);
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dtResult);
             if (!result)
@@ -436,7 +433,7 @@ where   oq.ID = '{0}'
 
             #region 產生New表頭資料 Sql
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
-            string newPackID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PL", "PackingList", DateTime.Today, 2, "Id", null);
+            string newPackID = MyUtility.GetValue.GetID(Env.User.Keyword + "PL", "PackingList", DateTime.Today, 2, "Id", null);
             if (MyUtility.Check.Empty(newPackID))
             {
                 MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -453,8 +450,8 @@ where   oq.ID = '{0}'
             }
 
             string type = "B";
-            string M = Sci.Env.User.Keyword;
-            string factoryID = Sci.Env.User.Factory;
+            string M = Env.User.Keyword;
+            string factoryID = Env.User.Factory;
             string status = "New";
             listSqlPar.Add(new SqlParameter("@EstCTNBooking", this.drMaster["EstCTNBooking"]));
             listSqlPar.Add(new SqlParameter("@EstCTNArrive", this.drMaster["EstCTNArrive"]));
@@ -560,6 +557,5 @@ where SCICtnNo = '{dr["SCICtnNo"]}'
             }
             #endregion
         }
-
     }
 }

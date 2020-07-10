@@ -3,19 +3,15 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Logistic
 {
     /// <inheritdoc/>
-    public partial class P12 : Sci.Win.Tems.QueryForm
+    public partial class P12 : Win.Tems.QueryForm
     {
         /// <inheritdoc/>
         public P12(ToolStripMenuItem menuitem)
@@ -28,7 +24,7 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_chk = new Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings col_chk = new DataGridViewGeneratorCheckBoxColumnSettings();
             col_chk.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
@@ -138,7 +134,7 @@ from PackingList pl with (nolock)
 inner join PackingList_Detail pld  with(nolock) on pl.id = pld.id
 inner join orders o WITH (NOLOCK) on o.id	= pld.orderid
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-where pl.MDivisionID = '{Sci.Env.User.Keyword}'  
+where pl.MDivisionID = '{Env.User.Keyword}'  
         and pld.ReceiveDate is not null--（Clog 從工廠端接收到紙箱的日期）   
         and pld.TransferCFADate is null--（紙箱從 Clog 轉出至 CFA 的日期 - 在途）
         and pld.CFAReturnClogDate is null--（紙箱從 CFA 轉回 Clog 的日期 - 在途）
@@ -271,7 +267,7 @@ outer apply(
     inner join PackingList_Detail pld  with(nolock) on pl.id = pld.id
     where t.packinglistID = pld.id 
           and t.CTNStartNo=pld.CTNStartNo
-          and pl.MDivisionID != '{Sci.Env.User.Keyword}'  
+          and pl.MDivisionID != '{Env.User.Keyword}'  
 ) InPackingList_DiffM
 outer apply(
     select top 1 v=1 
@@ -279,7 +275,7 @@ outer apply(
     inner join PackingList_Detail pld  with(nolock) on pl.id = pld.id
     where t.packinglistID = pld.id 
           and t.CTNStartNo=pld.CTNStartNo
-          and pl.MDivisionID = '{Sci.Env.User.Keyword}'  
+          and pl.MDivisionID = '{Env.User.Keyword}'  
 ) NotInPackingList
 outer apply(
 	select top 1 v='' 
@@ -309,7 +305,7 @@ outer apply(
 	left join Country c WITH (NOLOCK) on o.Dest = c.ID
 	where t.packinglistID = pld.id 
             and t.CTNStartNo=pld.CTNStartNo
-            and pl.MDivisionID = '{Sci.Env.User.Keyword}'  
+            and pl.MDivisionID = '{Env.User.Keyword}'  
 )e
 
 drop table #FindPL;
@@ -397,7 +393,7 @@ drop table #FindPL;
 
             string sqlupdate = $@"
 update pld set
-    pld.ClogPulloutName='{Sci.Env.User.UserID}',
+    pld.ClogPulloutName='{Env.User.UserID}',
 	pld.ClogPulloutDate=getdate(),
 	pld.PulloutTransport = t.PulloutTransport,
 	pld.PulloutTransportNo = t.PulloutTransportNo

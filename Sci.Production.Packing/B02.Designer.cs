@@ -36,7 +36,7 @@
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
             this.txtCTNRefno = new Sci.Win.UI.TextBox();
             this.numFromRight = new Sci.Win.UI.NumericBox();
             this.numFromBottom = new Sci.Win.UI.NumericBox();
@@ -430,7 +430,7 @@
         private Win.UI.NumericBox numFromBottom;
         private Win.UI.NumericBox numFromRight;
         private Win.UI.TextBox txtCTNRefno;
-        private Class.txtbrand txtbrand1;
+        private Class.Txtbrand txtbrand1;
         private Win.UI.ComboBox cmbSide;
         private Win.UI.DisplayBox displayFileName;
         private Win.UI.PictureBox pictureBox1;

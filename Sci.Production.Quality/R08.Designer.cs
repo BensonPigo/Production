@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtmulituser = new Sci.Production.Class.txtmulituser();
+            this.txtmulituser = new Sci.Production.Class.Txtmulituser();
             this.radioSummery = new Sci.Win.UI.RadioButton();
             this.radioDetail = new Sci.Win.UI.RadioButton();
             this.labReportType = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
             this.dateInspectionDate = new Sci.Win.UI.DateRange();
             this.label9 = new Sci.Win.UI.Label();
@@ -307,12 +307,12 @@
         private Win.UI.DateRange dateInspectionDate;
         private Win.UI.Label label9;
         private Win.UI.Label label10;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelBrand;
         private Win.UI.RadioButton radioSummery;
         private Win.UI.RadioButton radioDetail;
         private Win.UI.Label labReportType;
-        private Class.txtmulituser txtmulituser;
+        private Class.Txtmulituser txtmulituser;
         private Win.UI.Label lbRefno;
         private Win.UI.TextBox txtRefno2;
         private Win.UI.Label label1;

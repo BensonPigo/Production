@@ -31,7 +31,7 @@
             this.btnToExcel = new Sci.Win.UI.Button();
             this.editDescription = new Sci.Win.UI.EditBox();
             this.labelDescription = new Sci.Win.UI.Label();
-            this.txtsupplierSupp = new Sci.Production.Class.txtsupplier();
+            this.txtsupplierSupp = new Sci.Production.Class.Txtsupplier();
             this.dateLastInspectionDate = new Sci.Win.UI.DateBox();
             this.dateArriveWHDate = new Sci.Win.UI.DateBox();
             this.checkNA = new Sci.Win.UI.CheckBox();
@@ -566,7 +566,7 @@
         private Win.UI.Button btnToExcel;
         private Win.UI.EditBox editDescription;
         private Win.UI.Label labelDescription;
-        private Class.txtsupplier txtsupplierSupp;
+        private Class.Txtsupplier txtsupplierSupp;
         private Win.UI.DateBox dateLastInspectionDate;
         private Win.UI.DateBox dateArriveWHDate;
         private Win.UI.CheckBox checkNA;

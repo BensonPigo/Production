@@ -4,22 +4,19 @@ using Sci.Data;
 using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P05_ReqQtyList : Sci.Win.Subs.Base
+    public partial class P05_ReqQtyList : Win.Subs.Base
     {
         protected DataRow dr;
+
         public P05_ReqQtyList(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
+            this.InitializeComponent();
+            this.dr = data;
         }
 
         protected override void OnFormLoaded()
@@ -33,11 +30,11 @@ select a.Status
 ,a.Handle
 from ArtworkReq_Detail AD, ArtworkReq A
 where AD.ID = A.ID 
-and ad.OrderID ='{dr["orderID"]}'
-and ad.ArtworkID = '{dr["ArtworkID"]}'
-and ad.PatternCode = '{dr["PatternCode"]}'
-and ad.PatternDesc = '{dr["PatternDesc"]}'
-and a.ID != '{dr["id"]}'
+and ad.OrderID ='{this.dr["orderID"]}'
+and ad.ArtworkID = '{this.dr["ArtworkID"]}'
+and ad.PatternCode = '{this.dr["PatternCode"]}'
+and ad.PatternDesc = '{this.dr["PatternDesc"]}'
+and a.ID != '{this.dr["id"]}'
 and a.status != 'Closed'
 union 
 select a.Status
@@ -47,24 +44,30 @@ select a.Status
 ,a.Handle
 from ArtworkPO_Detail AD, ArtworkPO A
 where AD.ID = A.ID 
-and ad.OrderID ='{dr["orderID"]}'
-and ad.PatternCode = '{dr["PatternCode"]}'
+and ad.OrderID ='{this.dr["orderID"]}'
+and ad.PatternCode = '{this.dr["PatternCode"]}'
 and ad.ArtworkReqID=''
 
 ";
 
-                                
             DataTable selectDataTable1;
 
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
-            if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
+            if (selectResult1 == false)
+            {
+                this.ShowErr(selectCommand1, selectResult1);
+            }
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_handle = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_handle = new DataGridViewGeneratorTextColumnSettings();
             col_handle.CellMouseDoubleClick += (s, e) =>
              {
                  DataRow dr = this.gridReqList.GetDataRow<DataRow>(e.RowIndex);
-                 if (null == dr) return;
-                 Sci.Production.Class.Commons.UserPrg.GetName(dr["Handle"], Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+                 if (dr == null)
+                 {
+                     return;
+                 }
+
+                 Class.Commons.UserPrg.GetName(dr["Handle"], Class.Commons.UserPrg.NameType.NameAndExt);
 
                  string sql;
                  List<SqlParameter> sqlpar = new List<SqlParameter>();
@@ -77,20 +80,24 @@ and ad.ArtworkReqID=''
                     where id = @id";
                  sqlpar.Add(new SqlParameter("@id", dr["Handle"]));
 
-                 userData ud = new userData(sql, sqlpar);
+                 UserData ud = new UserData(sql, sqlpar);
 
-                 if (ud.errMsg == null)
+                 if (ud.ErrMsg == null)
+                 {
                      ud.ShowDialog();
+                 }
                  else
-                     MyUtility.Msg.ErrorBox(ud.errMsg);
+                 {
+                     MyUtility.Msg.ErrorBox(ud.ErrMsg);
+                 }
              };
 
-            bindingSource1.DataSource = selectDataTable1;
+            this.bindingSource1.DataSource = selectDataTable1;
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridReqList.IsEditingReadOnly = true;
-            this.gridReqList.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.gridReqList)
+            this.gridReqList.DataSource = this.bindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridReqList)
                  .Text("Status", header: "Status", width: Widths.AnsiChars(10))
                  .Text("ID", header: "Req #", width: Widths.AnsiChars(16))
                  .Numeric("ReqQty", header: "Req Qty", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 0)

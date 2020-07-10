@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
@@ -14,15 +13,9 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R14
     /// </summary>
-    public partial class R14 : Sci.Win.Tems.PrintForm
+    public partial class R14 : Win.Tems.PrintForm
     {
-        private int selectindex = 0;
-        private string factory;
-        private string mdivision;
-        private DateTime? sewingDate1;
-        private DateTime? sewingDate2;
         private DataTable[] printData;
-        private DataTable dtDateList;
         private StringBuilder condition = new StringBuilder();
         private StringBuilder datelist = new StringBuilder();
         List<SqlParameter> listPar = new List<SqlParameter>();
@@ -167,7 +160,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlCmd = string.Empty;
 
@@ -242,7 +235,7 @@ outer apply(select [Result] = CASE	WHEN ed.PODD is null or ed.ActFCRDate is null
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -276,8 +269,8 @@ outer apply(select [Result] = CASE	WHEN ed.PODD is null or ed.ActFCRDate is null
             objSheet.Visible = Excel.XlSheetVisibility.xlSheetHidden;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R14");
-            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            string strExcelName = Class.MicrosoftFile.GetName("Planning_R14");
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();

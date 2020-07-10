@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P11_copytocutref : Sci.Win.Subs.Base
+    public partial class P11_copytocutref : Win.Subs.Base
     {
         public string copycutref;
+
         public P11_copytocutref()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -23,12 +18,13 @@ namespace Sci.Production.Cutting
 
         private void btnCopy_Click(object sender, EventArgs e)
         {
-            copycutref = txtCutRef.Text;
-            if (MyUtility.Check.Empty(copycutref))
+            this.copycutref = this.txtCutRef.Text;
+            if (MyUtility.Check.Empty(this.copycutref))
             {
                 MyUtility.Msg.WarningBox("CutRef# can not empty!");
                 return;
             }
+
             this.Close();
         }
     }

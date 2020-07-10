@@ -1,24 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
-using System.Net.Http;
-using System.Net;
-using Newtonsoft.Json;
 
 namespace Sci.Production.Sewing
 {
     /// <summary>
     /// R01
     /// </summary>
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         private DateTime? _date;
         private string _factory;
@@ -28,6 +22,7 @@ namespace Sci.Production.Sewing
         private DataTable _ttlData;
         private DataTable _subprocessData;
         private List<APIData> dataMode = new List<APIData>();
+
         /// <summary>
         /// R01
         /// </summary>
@@ -40,7 +35,7 @@ namespace Sci.Production.Sewing
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.dateDate.Value = DateTime.Today.AddDays(-1);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.comboTeam.SelectedIndex = 0;
         }
 
@@ -74,7 +69,9 @@ namespace Sci.Production.Sewing
                     and OutputDate = cast('{0}' as date)
                     and Status in('','NEW')
                     and FactoryID = '{1}'
-            ", Convert.ToDateTime(this.dateDate.Value).ToString("d"), this.comboFactory.Text);
+            ",
+            Convert.ToDateTime(this.dateDate.Value).ToString("d"),
+            this.comboFactory.Text);
             DualResult result = DBProxy.Current.Select(null, sql, out dt);
             if (!result)
             {
@@ -87,7 +84,13 @@ namespace Sci.Production.Sewing
                 errMsg += MyUtility.Check.Empty(errMsg) ? "Please lock data first! \r\n" : "\r\n";
                 errMsg += string.Format(
                     "Date:{0},Factory: {1}, Line#: {2}, Team:{3}, Shift:{4}, SubconOut-Fty:{5}, SubconOut_Contract#:{6}.",
-                    Convert.ToDateTime(dr["OutputDate"].ToString()).ToString("d"), dr["FactoryID"], dr["SewingLineID"], dr["Team"], dr["Shift"], dr["SubconOutFty"], dr["SubConOutContractNumber"]);
+                    Convert.ToDateTime(dr["OutputDate"].ToString()).ToString("d"),
+                    dr["FactoryID"],
+                    dr["SewingLineID"],
+                    dr["Team"],
+                    dr["Shift"],
+                    dr["SubconOutFty"],
+                    dr["SubConOutContractNumber"]);
             }
 
             if (!MyUtility.Check.Empty(errMsg))
@@ -103,7 +106,7 @@ namespace Sci.Production.Sewing
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組撈Data SQL
@@ -595,7 +598,7 @@ order by ArtworkTypeID"),
             #endregion
 
             this._factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", this._factory));
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -611,7 +614,7 @@ order by ArtworkTypeID"),
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Sewing_R01_DailyCMPReport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Sewing_R01_DailyCMPReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -856,9 +859,9 @@ order by ArtworkTypeID"),
                 }
             }
             #region Direct Manpower(From PAMS)
-            if (Sci.Env.User.Keyword.EqualString("CM1") ||
-                Sci.Env.User.Keyword.EqualString("CM2") ||
-                Sci.Env.User.Keyword.EqualString("CM3"))
+            if (Env.User.Keyword.EqualString("CM1") ||
+                Env.User.Keyword.EqualString("CM2") ||
+                Env.User.Keyword.EqualString("CM3"))
             {
                 worksheet.Cells[insertRow, 5] = 0;
                 worksheet.Cells[insertRow, 7] = 0;
@@ -866,7 +869,7 @@ order by ArtworkTypeID"),
             else
             {
                 this.dataMode = new List<APIData>();
-                GetApiData.GetAPIData(string.Empty,this._factory, (DateTime)this.dateDate.Value, (DateTime)this.dateDate.Value, out this.dataMode);
+                GetApiData.GetAPIData(string.Empty, this._factory, (DateTime)this.dateDate.Value, (DateTime)this.dateDate.Value, out this.dataMode);
                 if (this.dataMode != null)
                 {
                     worksheet.Cells[insertRow, 5] = this.dataMode[0].SewTtlManpower;
@@ -893,7 +896,7 @@ order by ArtworkTypeID"),
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Sewing_R01_DailyCMPReport");
+            string strExcelName = Class.MicrosoftFile.GetName("Sewing_R01_DailyCMPReport");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

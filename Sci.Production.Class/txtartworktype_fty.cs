@@ -1,65 +1,74 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 using Sci.Win.UI;
-using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtartworktype_fty : Sci.Win.UI.TextBox
+    /// <summary>
+    /// Txtartworktype_fty
+    /// </summary>
+    public partial class Txtartworktype_fty : Win.UI.TextBox
     {
-        private string m_type = string.Empty;
-        private string m_subprocess = string.Empty;
-
+        /// <summary>
+        /// Classify 值需用單引號包起來；逗點分格。例如：'I','A','S'或單一個值'P'
+        /// </summary>
         [Category("Custom Properties")]
         [Description("Classify 值需用單引號包起來；逗點分格。例如：'I','A','S'或單一個值'P'")]
-        public string cClassify
-        {
-            set { this.m_type = value; }
-            get { return this.m_type; }
-        }
+        public string CClassify { get; set; } = string.Empty;
 
+        /// <summary>
+        /// IsSubprocess 填Y或不填
+        /// </summary>
         [Category("Custom Properties")]
         [Description("IsSubprocess 填Y或不填")]
-        public string cSubprocess
+        public string CSubprocess { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtartworktype_fty"/> class.
+        /// </summary>
+        public Txtartworktype_fty()
         {
-            set { this.m_subprocess = value; }
-            get { return this.m_subprocess; }
+            this.Size = new System.Drawing.Size(140, 23);
         }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "Where Junk = 0";
             string sqlCmd = string.Empty;
 
-            if (!string.IsNullOrWhiteSpace(cClassify))
+            if (!string.IsNullOrWhiteSpace(this.CClassify))
             {
-                sqlWhere = sqlWhere + " And Classify in (" + this.cClassify + ")";
-            };
+                sqlWhere = sqlWhere + " And Classify in (" + this.CClassify + ")";
+            }
 
-            if (!string.IsNullOrWhiteSpace(cSubprocess))
+            if (!string.IsNullOrWhiteSpace(this.CSubprocess))
             {
-                if (this.cSubprocess == "Y")
-                { sqlWhere = sqlWhere + " And IsSubprocess =1 "; }
+                if (this.CSubprocess == "Y")
+                {
+                    sqlWhere = sqlWhere + " And IsSubprocess =1 ";
+                }
                 else
-                { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
-            };
+                {
+                    sqlWhere = sqlWhere + " And IsSubprocess =0 ";
+                }
+            }
+
             sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere + " order by Seq";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
             item.Size = new System.Drawing.Size(435, 510);
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
             this.ValidateText();
             base.OnPopUp(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -67,38 +76,36 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-
                 string sqlWhere = string.Format("Where Junk = 0 and id='{0}'", str);
                 string sqlCmd = string.Empty;
 
-                if (!string.IsNullOrWhiteSpace(cClassify))
+                if (!string.IsNullOrWhiteSpace(this.CClassify))
                 {
-                    sqlWhere = sqlWhere + " And Classify in (" + this.cClassify + ")";
-                };
+                    sqlWhere = sqlWhere + " And Classify in (" + this.CClassify + ")";
+                }
 
-                if (!string.IsNullOrWhiteSpace(cSubprocess))
+                if (!string.IsNullOrWhiteSpace(this.CSubprocess))
                 {
-                    if (this.cSubprocess == "Y")
-                    { sqlWhere = sqlWhere + " And IsSubprocess =1 "; }
+                    if (this.CSubprocess == "Y")
+                    {
+                        sqlWhere = sqlWhere + " And IsSubprocess =1 ";
+                    }
                     else
-                    { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
-                };
+                    {
+                        sqlWhere = sqlWhere + " And IsSubprocess =0 ";
+                    }
+                }
+
                 sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere;
 
                 if (MyUtility.Check.Seek(sqlCmd) == false)
                 {
-                    this.Text = "";
-                    e.Cancel = true; 
+                    this.Text = string.Empty;
+                    e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Artworktype : {0} > not found!!!", str));
                     return;
                 }
             }
-
-        }
-
-        public txtartworktype_fty()
-        {
-            this.Size = new System.Drawing.Size(140, 23);
         }
     }
 }

@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using Sci.Data;
-using Sci;
 using Ict;
-using Ict.Win;
 using System.Data.SqlClient;
 using Sci.Win.UI;
 
@@ -16,6 +13,7 @@ namespace Sci.Production.PublicPrg
     public static partial class Prgs
     {
         #region ReCalculateExpress
+
         /// <summary>
         /// ReCalculateExpress(string)
         /// </summary>
@@ -27,7 +25,6 @@ namespace Sci.Production.PublicPrg
 @"update Express set NW = (select SUM(NW) from Express_Detail where ID = '{0}'),
 CTNQty = (select COUNT(distinct CTNNo) from Express_Detail where ID = '{0}')
 where ID = '{0}'", expressID);
-
         }
         #endregion
 
@@ -38,15 +35,19 @@ where ID = '{0}'", expressID);
             string sqlFA = string.Empty;
             string whereSciRefno = MyUtility.Check.Empty(sciRefno) ? string.Empty : " and f.SciRefno = @SciRefno";
             string whereNLCode = MyUtility.Check.Empty(nlCode) ? string.Empty : " and f.NLCode = @NLCode";
-            //string whereUsageUnit = MyUtility.Check.Empty(usageUnit) ? string.Empty : " and f.UsageUnit = @usageUnit";
+
+            // string whereUsageUnit = MyUtility.Check.Empty(usageUnit) ? string.Empty : " and f.UsageUnit = @usageUnit";
             DataRow drNLCode = null;
             string inputUsageQty = MyUtility.Check.Empty(usageQty) ? "0" : usageQty;
-            List<SqlParameter> parGetNLCode = new List<SqlParameter>() {    new SqlParameter("@Refno", refno),
-                                                                            new SqlParameter("@inputUsageQty", usageQty),
-                                                                            new SqlParameter("@BrandID", brandID),
-                                                                            new SqlParameter("@SciRefno", sciRefno),
-                                                                            new SqlParameter("@NLCode", nlCode),
-                                                                            new SqlParameter("@usageUnit", usageUnit)};
+            List<SqlParameter> parGetNLCode = new List<SqlParameter>()
+            {
+                new SqlParameter("@Refno", refno),
+                new SqlParameter("@inputUsageQty", usageQty),
+                new SqlParameter("@BrandID", brandID),
+                new SqlParameter("@SciRefno", sciRefno),
+                new SqlParameter("@NLCode", nlCode),
+                new SqlParameter("@usageUnit", usageUnit),
+            };
             string fabricType = type;
 
             if (fabricType == "F")
@@ -146,6 +147,7 @@ select  Misc.NLCode,
 from  SciMachine_Misc Misc with (nolock) 
 where Ltrim(Misc.ID)  = @Refno";
             }
+
             bool isNLCodeExists = false;
             if (fabricType == "F" || fabricType == "A")
             {
@@ -170,7 +172,6 @@ where Ltrim(Misc.ID)  = @Refno";
             {
                 return null;
             }
-
         }
         #endregion
 
@@ -181,7 +182,7 @@ where Ltrim(Misc.ID)  = @Refno";
 
         #region P02 檢查狀態是否為Approved/Junk
         public static bool checkP02Status(string HCNo)
-        {  // 該單Approved / Junk都不允許調整資料
+        { // 該單Approved / Junk都不允許調整資料
             if (MyUtility.Check.Seek($@"select 1 from Express where id='{HCNo}' and status in ('Junk','Approved')"))
             {
                 MyUtility.Msg.WarningBox($@"HC# {HCNo} already Approved or Junked, 
@@ -194,7 +195,6 @@ please check again.");
             }
         }
 
-
         #endregion
 
         #region B42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
@@ -205,19 +205,20 @@ please check again.");
                                    .GroupBy(y => new { y.Key.ID, y.Key.NLCode })
                                    .Select(z => new { z.Key.ID, z.Key.NLCode, duplicateData = z.ToList() })
                                    .Where(x => x.duplicateData.Count > 1) // 抓出ID,NLCode相同，但HSCode,UnitID不同的資料
+
                                                                           // 回串原本的detail datatable抓出明細資料
-                                   .Join(checkList,
-                                            dupData => new { dupData.ID, dupData.NLCode },
-                                            drDetail => new { ID = drDetail["ID"], NLCode = drDetail["NLCode"] },
-                                            (dupData, drDetail) => new
+                                   .Join(
+                                       checkList,
+                                       dupData => new { dupData.ID, dupData.NLCode },
+                                       drDetail => new { ID = drDetail["ID"], NLCode = drDetail["NLCode"] },
+                                       (dupData, drDetail) => new
                                             {
                                                 dupData.ID,
                                                 dupData.NLCode,
                                                 Refno = drDetail["Refno"],
                                                 HSCode = drDetail["HSCode"],
-                                                UnitID = drDetail["UnitID"]
+                                                UnitID = drDetail["UnitID"],
                                             });
-
 
             if (listDupNLCodeData.Any())
             {
@@ -226,6 +227,7 @@ please check again.");
                 {
                     dtDuplicate.ColumnsStringAdd("ID");
                 }
+
                 dtDuplicate.ColumnsStringAdd("NLCode");
                 dtDuplicate.ColumnsStringAdd("Refno");
                 dtDuplicate.ColumnsStringAdd("HSCode");
@@ -238,6 +240,7 @@ please check again.");
                     {
                         newDr["ID"] = item.ID;
                     }
+
                     newDr["NLCode"] = item.NLCode;
                     newDr["Refno"] = item.Refno;
                     newDr["HSCode"] = item.HSCode;
@@ -252,6 +255,7 @@ please check again.");
                 msgGridForm.ShowDialog();
                 return false;
             }
+
             return true;
         }
         #endregion
@@ -269,6 +273,7 @@ please check again.");
             public string Article;
             public string ContractID;
         }
+
         public static DualResult GetVNConsumption_Detail_Detail(ParGetVNConsumption_Detail_Detail sqlPar, out DataTable dataTable)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -1206,7 +1211,7 @@ and exists (select 1 from orders where id = pd.OrderID and Junk = 1)
             string msgCancel = string.Empty;
             if (dtCancel.Rows.Count > 0)
             {
-                errmsg = $@"SP# {dtCancel.Rows[0]["OrderID"]} is cancel order cannot include in the GB/Ship Plan/Pullout Report.";                
+                errmsg = $@"SP# {dtCancel.Rows[0]["OrderID"]} is cancel order cannot include in the GB/Ship Plan/Pullout Report.";
                 return errmsg;
             }
 

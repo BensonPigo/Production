@@ -4,22 +4,20 @@ using Sci.Data;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 using System.Linq;
-using System.Collections;       //file使用Hashtable時，必須引入這個命名空間
+using System.Collections;       // file使用Hashtable時，必須引入這個命名空間
 
 namespace Sci.Production.Quality
 {
-    public partial class P03_Wash : Sci.Win.Subs.Input4
+    public partial class P03_Wash : Win.Subs.Input4
     {
-        private string loginID = Sci.Env.User.UserID;
+        private string loginID = Env.User.UserID;
         private DataRow maindr;
         private string ID;
         private Hashtable ht = new Hashtable();
@@ -27,32 +25,31 @@ namespace Sci.Production.Quality
         public P03_Wash(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
-            InitializeComponent();
-            maindr = mainDr;
-            ID = id.Trim();
-            //抓取當下.exe執行位置路徑
-            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\");
-            ht.Add("Picture1", path + "QA_Skewness1.png");
-            ht.Add("Picture2", path + "QA_Skewness2.png");
- 
+            this.InitializeComponent();
+            this.maindr = mainDr;
+            this.ID = id.Trim();
 
+            // 抓取當下.exe執行位置路徑
+            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\");
+            this.ht.Add("Picture1", path + "QA_Skewness1.png");
+            this.ht.Add("Picture2", path + "QA_Skewness2.png");
         }
 
-        //編輯事件觸發     
+        // 編輯事件觸發
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
-            button_enable();
+            this.button_enable();
         }
 
-        //設定表頭資料
+        // 設定表頭資料
         protected override DualResult OnRequery()
         {
-            mainDBQuery();//重新query maindr
-            button_enable();
+            this.mainDBQuery(); // 重新query maindr
+            this.button_enable();
 
-            //表頭 資料設定           
-            this.save.Enabled = !MyUtility.Convert.GetBool(maindr["WashEncode"]);
+            // 表頭 資料設定
+            this.save.Enabled = !MyUtility.Convert.GetBool(this.maindr["WashEncode"]);
 
             string fir_cmd = string.Format(
 @"select distinct 
@@ -72,26 +69,26 @@ left join PO_Supp_Detail d WITH (NOLOCK) on d.ID=a.POID and a.SEQ1=d.SEQ1 and a.
 left join FIR_Laboratory e WITH (NOLOCK) on a.ID=e.ID
 left join PO_Supp f WITH (NOLOCK) on d.ID=f.ID and d.SEQ1=f.SEQ1
 left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
-where a.ID='{0}'"
-                , ID);
+where a.ID='{0}'",
+this.ID);
             DataRow fir_dr;
             if (MyUtility.Check.Seek(fir_cmd, out fir_dr))
             {
-                txtSP.Text = fir_dr["Poid"].ToString();
-                txtSEQ.Text = fir_dr["SEQ"].ToString();
-                txtArriveQty.Text = fir_dr["ArriveQty"].ToString();
-                txtWkno.Text = fir_dr["exportid"].ToString();
-                dateArriveWHDate.Value = MyUtility.Convert.GetDate(fir_dr["WhseArrival"]);
-                txtStyle.Text = fir_dr["styleid"].ToString();
-                txtBrand.Text = fir_dr["Brandid"].ToString();
-                txtsupplierSupp.TextBox1.Text = fir_dr["SuppID"].ToString();
-                txtSCIRefno.Text = fir_dr["Scirefno"].ToString();
-                txtBrandRefno.Text = fir_dr["Refno"].ToString();
-                txtColor.Text = fir_dr["colorid"].ToString();
-                dateLastInspectionDate.Value = MyUtility.Convert.GetDate(fir_dr["WashDate"]);
-                txtResult.Text = fir_dr["Wash"].ToString();
-                checkNA.Value = fir_dr["nonWash"].ToString();
-                editDescription.Text = fir_dr["DescDetail"].ToString();
+                this.txtSP.Text = fir_dr["Poid"].ToString();
+                this.txtSEQ.Text = fir_dr["SEQ"].ToString();
+                this.txtArriveQty.Text = fir_dr["ArriveQty"].ToString();
+                this.txtWkno.Text = fir_dr["exportid"].ToString();
+                this.dateArriveWHDate.Value = MyUtility.Convert.GetDate(fir_dr["WhseArrival"]);
+                this.txtStyle.Text = fir_dr["styleid"].ToString();
+                this.txtBrand.Text = fir_dr["Brandid"].ToString();
+                this.txtsupplierSupp.TextBox1.Text = fir_dr["SuppID"].ToString();
+                this.txtSCIRefno.Text = fir_dr["Scirefno"].ToString();
+                this.txtBrandRefno.Text = fir_dr["Refno"].ToString();
+                this.txtColor.Text = fir_dr["colorid"].ToString();
+                this.dateLastInspectionDate.Value = MyUtility.Convert.GetDate(fir_dr["WashDate"]);
+                this.txtResult.Text = fir_dr["Wash"].ToString();
+                this.checkNA.Value = fir_dr["nonWash"].ToString();
+                this.editDescription.Text = fir_dr["DescDetail"].ToString();
                 this.radioPanel1.Value = fir_dr["SkewnessOptionID"].ToString();
                 this.txtWashInspector.Text = fir_dr["WashInspector"].ToString();
                 if (fir_dr["SkewnessOptionID"].ToString() == "1")
@@ -105,22 +102,31 @@ where a.ID='{0}'"
                     this.radioOption2.Checked = true;
                 }
 
-                pictureBox1.ImageLocation = this.radioPanel1.Value.ToString() == "1" ? ht["Picture1"].ToString() : ht["Picture2"].ToString(); ;
-
+                this.pictureBox1.ImageLocation = this.radioPanel1.Value.ToString() == "1" ? this.ht["Picture1"].ToString() : this.ht["Picture2"].ToString();
             }
             else
             {
-                txtSP.Text = ""; txtSEQ.Text = ""; txtArriveQty.Text = ""; txtWkno.Text = ""; dateArriveWHDate.Text = ""; txtStyle.Text = ""; txtBrand.Text = "";
-                txtsupplierSupp.Text = ""; txtSCIRefno.Text = ""; txtBrandRefno.Text = ""; txtColor.Text = ""; editDescription.Text = "";
-                txtWashInspector.Text = "";
+                this.txtSP.Text = string.Empty;
+                this.txtSEQ.Text = string.Empty;
+                this.txtArriveQty.Text = string.Empty;
+                this.txtWkno.Text = string.Empty;
+                this.dateArriveWHDate.Text = string.Empty;
+                this.txtStyle.Text = string.Empty;
+                this.txtBrand.Text = string.Empty;
+                this.txtsupplierSupp.Text = string.Empty;
+                this.txtSCIRefno.Text = string.Empty;
+                this.txtBrandRefno.Text = string.Empty;
+                this.txtColor.Text = string.Empty;
+                this.editDescription.Text = string.Empty;
+                this.txtWashInspector.Text = string.Empty;
             }
 
-            GridView_Visable();
-           
+            this.GridView_Visable();
+
             return base.OnRequery();
         }
 
-        //Grid View DataTable 新增欄位資料供撈取顯示
+        // Grid View DataTable 新增欄位資料供撈取顯示
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -132,26 +138,27 @@ where a.ID='{0}'"
             datas.Columns.Add("Horizontal_Average", typeof(decimal));
             datas.Columns.Add("Vertical_Average", typeof(decimal));
             datas.Columns.Add("Last update", typeof(string));
-            decimal avgHorizontal = 0; decimal avgVertical = 0;
+            decimal avgHorizontal = 0;
+            decimal avgVertical = 0;
             int i = 0;
 
             foreach (DataRow dr in datas.Rows)
             {
                 dr["Name"] = MyUtility.GetValue.Lookup("Name_Extno", dr["Inspector"].ToString(), "View_ShowName", "ID");
                 dr["NewKey"] = i;
-                dr["poid"] = maindr["poid"];
-                dr["SEQ1"] = maindr["SEQ1"];
-                dr["SEQ2"] = maindr["SEQ2"];
+                dr["poid"] = this.maindr["poid"];
+                dr["SEQ1"] = this.maindr["SEQ1"];
+                dr["SEQ2"] = this.maindr["SEQ2"];
                 if (datas.Rows[i].IsNull("HorizontalTest1") || datas.Rows[i].IsNull("HorizontalTest2") || datas.Rows[i].IsNull("HorizontalTest3"))
                 {
                     avgHorizontal = 0;
                 }
                 else
                 {
-
                     avgHorizontal = ((decimal)datas.Rows[i]["HorizontalTest1"] + (decimal)datas.Rows[i]["HorizontalTest2"] + (decimal)datas.Rows[i]["HorizontalTest3"]) / 3;
                     dr["Horizontal_Average"] = Math.Round(avgHorizontal, 2);
                 }
+
                 if (datas.Rows[i].IsNull("VerticalTest1") || datas.Rows[i].IsNull("VerticalTest2") || datas.Rows[i].IsNull("VerticalTest3"))
                 {
                     avgVertical = 0;
@@ -168,10 +175,9 @@ where a.ID='{0}'"
                 dr["Last update"] = name + " - " + Date;
                 i++;
             }
-
         }
 
-        //GridView 設定
+        // GridView 設定
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
@@ -190,16 +196,24 @@ where a.ID='{0}'"
             DataGridViewGeneratorTextColumnSettings DyelotCell = new DataGridViewGeneratorTextColumnSettings();
 
             DataGridViewGeneratorTextColumnSettings LabTechCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResultCell = PublicPrg.Prgs.cellResult.GetGridCell();
 
             #region 設定GridMouse Click 事件
             Rollcell.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.RowIndex == -1)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string selectedDyelot = dr["Dyelot"].ToString();
 
                     string sqlcmd = string.Empty;
@@ -208,19 +222,19 @@ where a.ID='{0}'"
                     {
                         sqlcmd = $@" Select roll,dyelot 
                                         from dbo.View_AllReceivingDetail WITH (NOLOCK) 
-                                        Where id='{maindr["Receivingid"]}'
-                                                and poid ='{maindr["Poid"]}' 
-                                                and seq1 = '{maindr["seq1"]}' 
-                                                and seq2 ='{maindr["seq2"]}'";
+                                        Where id='{this.maindr["Receivingid"]}'
+                                                and poid ='{this.maindr["Poid"]}' 
+                                                and seq1 = '{this.maindr["seq1"]}' 
+                                                and seq2 ='{this.maindr["seq2"]}'";
                     }
                     else
                     {
                         sqlcmd = $@" Select roll,dyelot 
                                         from dbo.View_AllReceivingDetail WITH (NOLOCK) 
-                                        Where id='{maindr["Receivingid"]}'
-                                                and poid ='{maindr["Poid"]}' 
-                                                and seq1 = '{maindr["seq1"]}' 
-                                                and seq2 ='{maindr["seq2"]}'
+                                        Where id='{this.maindr["Receivingid"]}'
+                                                and poid ='{this.maindr["Poid"]}' 
+                                                and seq1 = '{this.maindr["seq1"]}' 
+                                                and seq2 ='{this.maindr["seq2"]}'
                                                 AND Dyelot='{selectedDyelot}'";
                     }
 
@@ -230,6 +244,7 @@ where a.ID='{0}'"
                     {
                         return;
                     }
+
                     dr["Roll"] = item.GetSelecteds()[0]["Roll"].ToString();
                     dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString();
                 }
@@ -237,11 +252,19 @@ where a.ID='{0}'"
 
             DyelotCell.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.RowIndex == -1)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string selectedRoll = dr["Roll"].ToString();
 
                     string sqlcmd = string.Empty;
@@ -249,19 +272,19 @@ where a.ID='{0}'"
                     {
                         sqlcmd = $@" Select roll,dyelot 
                                         from dbo.View_AllReceivingDetail WITH (NOLOCK) 
-                                        Where id='{maindr["Receivingid"]}'
-                                                and poid ='{maindr["Poid"]}' 
-                                                and seq1 = '{maindr["seq1"]}' 
-                                                and seq2 ='{maindr["seq2"]}'";
+                                        Where id='{this.maindr["Receivingid"]}'
+                                                and poid ='{this.maindr["Poid"]}' 
+                                                and seq1 = '{this.maindr["seq1"]}' 
+                                                and seq2 ='{this.maindr["seq2"]}'";
                     }
                     else
                     {
                         sqlcmd = $@" Select roll,dyelot 
                                         from dbo.View_AllReceivingDetail WITH (NOLOCK) 
-                                        Where id='{maindr["Receivingid"]}'
-                                                and poid ='{maindr["Poid"]}' 
-                                                and seq1 = '{maindr["seq1"]}' 
-                                                and seq2 ='{maindr["seq2"]}'
+                                        Where id='{this.maindr["Receivingid"]}'
+                                                and poid ='{this.maindr["Poid"]}' 
+                                                and seq1 = '{this.maindr["seq1"]}' 
+                                                and seq2 ='{this.maindr["seq2"]}'
                                                 AND Roll='{selectedRoll}'";
                     }
 
@@ -271,6 +294,7 @@ where a.ID='{0}'"
                     {
                         return;
                     }
+
                     dr["Roll"] = item.GetSelecteds()[0]["Roll"].ToString();
                     dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString();
                 }
@@ -278,12 +302,21 @@ where a.ID='{0}'"
 
             LabTechCell.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.RowIndex == -1)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
-                    //string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) where Resign is null";
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
+
+                    // string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) where Resign is null";
                     string sqlCmd = $@"select DISTINCT Inspector,b.name from FIR_Laboratory_Wash a WITH (NOLOCK) 
                                          INNER join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID
                                          ";
@@ -293,7 +326,8 @@ where a.ID='{0}'"
                     {
                         return;
                     }
-                    dr["Inspector"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+
+                    dr["Inspector"] = item1.GetSelectedString(); // 將選取selectitem value帶入GridView
                     dr["Name"] = item1.GetSelecteds()[0]["Name"];
                 }
             };
@@ -302,24 +336,40 @@ where a.ID='{0}'"
             #region 設定Grid Valid事件
             Rollcell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Roll"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return 
-                if (oldvalue.Equals(newvalue)) return;
-                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+                if (!this.EditMode)
                 {
-                    dr["Roll"] = "";
-                    dr["Dyelot"] = "";
-                    return;
-                }
-                if (dr.RowState != DataRowState.Added)
-                {
-                    if (oldvalue == newvalue) return;
+                    return; // 非編輯模式
                 }
 
-                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from dbo.View_AllReceivingDetail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (oldvalue.Equals(newvalue))
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                {
+                    dr["Roll"] = string.Empty;
+                    dr["Dyelot"] = string.Empty;
+                    return;
+                }
+
+                if (dr.RowState != DataRowState.Added)
+                {
+                    if (oldvalue == newvalue)
+                    {
+                        return;
+                    }
+                }
+
+                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from dbo.View_AllReceivingDetail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", this.maindr["Receivingid"], this.maindr["Poid"], this.maindr["seq1"], this.maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -329,8 +379,9 @@ where a.ID='{0}'"
                 }
                 else
                 {
-                    dr["Roll"] = "";
-                    //dr["Dyelot"] = "";
+                    dr["Roll"] = string.Empty;
+
+                    // dr["Dyelot"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
@@ -340,24 +391,40 @@ where a.ID='{0}'"
 
             DyelotCell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Dyelot"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return 
-                if (oldvalue.Equals(newvalue)) return;
-                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+                if (!this.EditMode)
                 {
-                    dr["Roll"] = "";
-                    dr["Dyelot"] = "";
-                    return;
-                }
-                if (dr.RowState != DataRowState.Added)
-                {
-                    if (oldvalue == newvalue) return;
+                    return; // 非編輯模式
                 }
 
-                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from dbo.View_AllReceivingDetail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and Dyelot='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (oldvalue.Equals(newvalue))
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                {
+                    dr["Roll"] = string.Empty;
+                    dr["Dyelot"] = string.Empty;
+                    return;
+                }
+
+                if (dr.RowState != DataRowState.Added)
+                {
+                    if (oldvalue == newvalue)
+                    {
+                        return;
+                    }
+                }
+
+                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from dbo.View_AllReceivingDetail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and Dyelot='{4}'", this.maindr["Receivingid"], this.maindr["Poid"], this.maindr["seq1"], this.maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -367,8 +434,8 @@ where a.ID='{0}'"
                 }
                 else
                 {
-                    //dr["Roll"] = "";
-                    dr["Dyelot"] = "";
+                    // dr["Roll"] = "";
+                    dr["Dyelot"] = string.Empty;
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Dyelot: {0}> data not found!", e.FormattedValue));
@@ -378,8 +445,12 @@ where a.ID='{0}'"
 
             orlHorCell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalOriginal"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) == 0)
@@ -387,6 +458,7 @@ where a.ID='{0}'"
                         dr["HorizontalOriginal"] = dr["HorizontalOriginal"];
                         return;
                     }
+
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<Original Horizontal > cannot over than 100 !");
@@ -396,23 +468,26 @@ where a.ID='{0}'"
                     {
                         dr["HorizontalOriginal"] = e.FormattedValue;
                     }
-
                 }
+
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != 0)
-                {                    
-                    CalHorRate(dr);
+                {
+                    this.CalHorRate(dr);
                 }
                 else
                 {
                     dr["HorizontalRate"] = 0;
                     return;
                 }
-
             };
             orlVirCell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
 
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalOriginal"]))
                 {
@@ -421,6 +496,7 @@ where a.ID='{0}'"
                         dr["VerticalOriginal"] = MyUtility.Convert.GetDecimal(dr["VerticalOriginal"]);
                         return;
                     }
+
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<VerticalOriginal > cannot over than 100 !");
@@ -430,23 +506,26 @@ where a.ID='{0}'"
                     {
                         dr["VerticalOriginal"] = e.FormattedValue;
                     }
-
                 }
+
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != 0)
                 {
-                    CalVerRate(dr);
+                    this.CalVerRate(dr);
                 }
                 else
                 {
                     dr["VerticalRate"] = 0;
                     return;
                 }
-
             };
             HorTest1Cell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest1"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
@@ -458,14 +537,18 @@ where a.ID='{0}'"
                     {
                         dr["HorizontalTest1"] = e.FormattedValue;
                     }
-
                 }
-                CalHorRate(dr);               
+
+                this.CalHorRate(dr);
             };
             HorTest2Cell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest2"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
@@ -477,14 +560,18 @@ where a.ID='{0}'"
                     {
                         dr["HorizontalTest2"] = e.FormattedValue;
                     }
-
                 }
-                CalHorRate(dr);               
+
+                this.CalHorRate(dr);
             };
             HorTest3Cell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest3"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
@@ -497,14 +584,18 @@ where a.ID='{0}'"
                         dr["HorizontalTest3"] = e.FormattedValue;
                     }
                 }
-                CalHorRate(dr);
-            };
 
+                this.CalHorRate(dr);
+            };
 
             VirTest1Cell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalTest1"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
@@ -517,53 +608,64 @@ where a.ID='{0}'"
                         dr["VerticalTest1"] = e.FormattedValue;
                     }
                 }
-                CalVerRate(dr);
-               
+
+                this.CalVerRate(dr);
             };
             VirTest2Cell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalTest2"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<Vertical 2> cannot over than 100 !");
                         dr["VerticalTest2"] = MyUtility.Convert.GetDecimal(dr["VerticalTest2"]);
-
                     }
                     else
                     {
                         dr["VerticalTest2"] = e.FormattedValue;
                     }
                 }
-                CalVerRate(dr);
+
+                this.CalVerRate(dr);
             };
             VirTest3Cell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalTest3"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<Vertical 3> cannot over than 100 !");
                         dr["VerticalTest3"] = MyUtility.Convert.GetDecimal(dr["VerticalTest3"]);
-
                     }
                     else
                     {
                         dr["VerticalTest3"] = e.FormattedValue;
                     }
-
                 }
-                CalVerRate(dr);
+
+                this.CalVerRate(dr);
             };
 
             SkeTest1Cell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
@@ -577,74 +679,102 @@ where a.ID='{0}'"
                         dr["SkewnessTest1"] = e.FormattedValue;
                     }
                 }
-                CalSkeValue(dr);
+
+                this.CalSkeValue(dr);
             };
 
             SkeTest2Cell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<Skewness 2> cannot over than 100 !");
                         dr["SkewnessTest2"] = MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]);
-
                     }
                     else
                     {
                         dr["SkewnessTest2"] = e.FormattedValue;
                     }
                 }
-                CalSkeValue(dr);
+
+                this.CalSkeValue(dr);
             };
             SkeTest3Cell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SkewnessTest3"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<Skewness 3> cannot over than 100 !");
                         dr["SkewnessTest3"] = MyUtility.Convert.GetDecimal(dr["SkewnessTest3"]);
-
                     }
                     else
                     {
                         dr["SkewnessTest3"] = e.FormattedValue;
                     }
                 }
-                CalSkeValue(dr);
+
+                this.CalSkeValue(dr);
             };
             SkeTest4Cell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SkewnessTest4"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<Skewness 4> cannot over than 100 !");
                         dr["SkewnessTest4"] = MyUtility.Convert.GetDecimal(dr["SkewnessTest4"]);
-
                     }
                     else
                     {
                         dr["SkewnessTest4"] = e.FormattedValue;
                     }
                 }
-                CalSkeValue(dr);
+
+                this.CalSkeValue(dr);
             };
 
             LabTechCell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return
-                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return; // 非編輯模式
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return; // 沒資料 return
+                }
 
                 string sqlCmd = $"SELECT ID,Name FROM Pass1 WHERE ID='{e.FormattedValue}'";
                 DataRow userDt;
@@ -665,7 +795,7 @@ where a.ID='{0}'"
             };
             #endregion
 
-            Helper.Controls.Grid.Generator(this.grid)
+            this.Helper.Controls.Grid.Generator(this.grid)
               .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
               .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), settings: DyelotCell)
               .Numeric("HorizontalOriginal", header: "Original Horizontal", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: orlHorCell)
@@ -681,11 +811,13 @@ where a.ID='{0}'"
               .Numeric("VerticalTest3", header: "Vertical 3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: VirTest3Cell)
               .Numeric("Vertical_Average", header: "Vertical Average", width: Widths.AnsiChars(6), integer_places: 2, decimal_places: 2, iseditingreadonly: true)
               .Numeric("VerticalRate", header: "Vertical Shrinkage Rate", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
+
                 // 注意,SkewnessTest Header Name 會隨Option變動的,Function =GridView_Visable()
               .Numeric("SkewnessTest1", header: "SkewnessTest1", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest1Cell)
               .Numeric("SkewnessTest2", header: "SkewnessTest2", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest2Cell)
               .Numeric("SkewnessTest3", header: "SkewnessTest3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest3Cell)
               .Numeric("SkewnessTest4", header: "SkewnessTest4", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest4Cell)
+
               // ********end**************
               .Numeric("SkewnessRate", header: "Skewness Rate", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
               .Date("InspDate", header: "Test Date", width: Widths.AnsiChars(10))
@@ -694,33 +826,31 @@ where a.ID='{0}'"
               .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
               .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
 
-
             #region 可編輯欄位變色
-            grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["HorizontalOriginal"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["VerticalOriginal"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["HorizontalOriginal"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["VerticalOriginal"].DefaultCellStyle.BackColor = Color.Pink;
 
+            this.grid.Columns["HorizontalTest1"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["HorizontalTest2"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["HorizontalTest3"].DefaultCellStyle.BackColor = Color.Pink;
 
-            grid.Columns["HorizontalTest1"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["HorizontalTest2"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["HorizontalTest3"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["VerticalTest1"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["VerticalTest2"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["VerticalTest3"].DefaultCellStyle.BackColor = Color.Pink;
 
-            grid.Columns["VerticalTest1"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["VerticalTest2"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["VerticalTest3"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["SkewnessTest1"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["SkewnessTest2"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["SkewnessTest3"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["SkewnessTest4"].DefaultCellStyle.BackColor = Color.Pink;
 
-            grid.Columns["SkewnessTest1"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["SkewnessTest2"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["SkewnessTest3"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["SkewnessTest4"].DefaultCellStyle.BackColor = Color.Pink;
-
-            grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
-            GridView_Visable();
+            this.GridView_Visable();
             return true;
         }
 
@@ -728,46 +858,47 @@ where a.ID='{0}'"
         {
             if (this.radioOption1.Checked)
             {
-                grid.Columns[15].HeaderText = "AC";
-                grid.Columns[16].HeaderText = "BD";
-                grid.Columns[17].Visible = false;
-                grid.Columns[18].Visible = false;
+                this.grid.Columns[15].HeaderText = "AC";
+                this.grid.Columns[16].HeaderText = "BD";
+                this.grid.Columns[17].Visible = false;
+                this.grid.Columns[18].Visible = false;
             }
             else
             {
-                grid.Columns[15].HeaderText = "AA’";
-                grid.Columns[16].HeaderText = "DD’";
-                grid.Columns[17].HeaderText = "AB";
-                grid.Columns[18].HeaderText = "CD";
-                grid.Columns[17].Visible = true;
-                grid.Columns[18].Visible = true;
+                this.grid.Columns[15].HeaderText = "AA’";
+                this.grid.Columns[16].HeaderText = "DD’";
+                this.grid.Columns[17].HeaderText = "AB";
+                this.grid.Columns[18].HeaderText = "CD";
+                this.grid.Columns[17].Visible = true;
+                this.grid.Columns[18].Visible = true;
             }
         }
 
         protected override void OnInsert()
         {
-            DataTable dt = (DataTable)gridbs.DataSource;
+            DataTable dt = (DataTable)this.gridbs.DataSource;
 
-            int Maxi = MyUtility.Convert.GetInt(dt.Compute("Max(NewKey)", ""));
+            int Maxi = MyUtility.Convert.GetInt(dt.Compute("Max(NewKey)", string.Empty));
             base.OnInsert();
 
-            DataRow selectDr = ((DataRowView)grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)this.grid.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr["Inspdate"] = DateTime.Now.ToShortDateString();
-            selectDr["Inspector"] = loginID;
-            selectDr["Name"] = MyUtility.GetValue.Lookup("Name", loginID, "Pass1", "ID");
+            selectDr["Inspector"] = this.loginID;
+            selectDr["Name"] = MyUtility.GetValue.Lookup("Name", this.loginID, "Pass1", "ID");
             selectDr["NewKey"] = Maxi + 1;
-            selectDr["poid"] = maindr["poid"];
-            selectDr["SEQ1"] = maindr["SEQ1"];
-            selectDr["SEQ2"] = maindr["SEQ2"];
+            selectDr["poid"] = this.maindr["poid"];
+            selectDr["SEQ1"] = this.maindr["SEQ1"];
+            selectDr["SEQ2"] = this.maindr["SEQ2"];
         }
 
-        //判斷Grid View有無空白
+        // 判斷Grid View有無空白
         protected override bool OnSaveBefore()
         {
-            DataTable gridTb = (DataTable)gridbs.DataSource;
+            DataTable gridTb = (DataTable)this.gridbs.DataSource;
 
             DataTable afterDT = new DataTable();
-            //將將刪除資料過的grid 重新丟進新datatable 並將資料完全刪除來做判斷! 
+
+            // 將將刪除資料過的grid 重新丟進新datatable 並將資料完全刪除來做判斷!
             afterDT.Merge(gridTb, true);
             afterDT.AcceptChanges();
 
@@ -789,56 +920,67 @@ where a.ID='{0}'"
                     }
                 }
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["VerticalOriginal"])))
             {
                 MyUtility.Msg.WarningBox("<Original Vertical> can not be 0");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["HorizontalOriginal"])))
             {
                 MyUtility.Msg.WarningBox("<Original Horizontal> can not be 0");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["HorizontalOriginal"])))
             {
                 MyUtility.Msg.WarningBox("<Horizontal 1 > can not be 0.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["HorizontalTest2"])))
             {
                 MyUtility.Msg.WarningBox("<Horizontal 2> can not be 0.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["HorizontalTest3"])))
             {
                 MyUtility.Msg.WarningBox("<Horizontal 3> can not be 0.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["VerticalTest1"])))
             {
                 MyUtility.Msg.WarningBox("<Vertical 1> can not be 0.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["VerticalTest2"])))
             {
                 MyUtility.Msg.WarningBox("<Vertical 2> can not be 0.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["VerticalTest3"])))
             {
                 MyUtility.Msg.WarningBox("<Vertical 3> can not be 0.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["Result"])))
             {
                 MyUtility.Msg.WarningBox("<Result> can not be empty.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["Inspdate"])))
             {
                 MyUtility.Msg.WarningBox("<Insection Date> can not be empty.");
                 return false;
             }
+
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["inspector"])))
             {
                 MyUtility.Msg.WarningBox("<Lab Tech> can not be empty.");
@@ -852,7 +994,7 @@ where a.ID='{0}'"
         protected override DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
-            string update_cmd = "";
+            string update_cmd = string.Empty;
 
             foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
             {
@@ -863,12 +1005,24 @@ where a.ID='{0}'"
                     spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
                     spamDet.Add(new SqlParameter("@roll", dr["roll", DataRowVersion.Original]));
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
-                    if (!upResult) { return upResult; }
+                    if (!upResult)
+                    {
+                        return upResult;
+                    }
+
                     continue;
                 }
+
                 string inspdate;
-                if (MyUtility.Check.Empty(dr["InspDate"])) inspdate = ""; //判斷Inspect Date                
-                else inspdate = string.Format("{0:yyyy-MM-dd}", dr["InspDate"]);
+                if (MyUtility.Check.Empty(dr["InspDate"]))
+                {
+                    inspdate = string.Empty; // 判斷Inspect Date
+                }
+                else
+                {
+                    inspdate = string.Format("{0:yyyy-MM-dd}", dr["InspDate"]);
+                }
+
                 DateTime Today = DateTime.Now;
                 if (dr.RowState == DataRowState.Added)
                 {
@@ -881,7 +1035,7 @@ where a.ID='{0}'"
                        values
                         (@ID,@roll,@Dyelot,@Inspdate,@Inspector,@Result,@Remark,@AddDate,@AddName,@HorizontalRate,@HorizontalOriginal,
                         @HorizontalTest1,@HorizontalTest2,@HorizontalTest3,@VerticalRate,@VerticalOriginal,@VerticalTest1,@VerticalTest2,@VerticalTest3,@SkewnessTest1,@SkewnessTest2,@SkewnessTest3,@SkewnessTest4,@SkewnessRate)";
-                    spamAdd.Add(new SqlParameter("@id", maindr["ID"]));
+                    spamAdd.Add(new SqlParameter("@id", this.maindr["ID"]));
                     spamAdd.Add(new SqlParameter("@roll", dr["Roll"]));
                     spamAdd.Add(new SqlParameter("@Dyelot", dr["Dyelot"]));
                     spamAdd.Add(new SqlParameter("@Inspdate", inspdate));
@@ -889,7 +1043,7 @@ where a.ID='{0}'"
                     spamAdd.Add(new SqlParameter("@Result", dr["Result"]));
                     spamAdd.Add(new SqlParameter("@Remark", dr["Remark"]));
                     spamAdd.Add(new SqlParameter("@AddDate", Today));
-                    spamAdd.Add(new SqlParameter("@AddName", loginID));
+                    spamAdd.Add(new SqlParameter("@AddName", this.loginID));
                     spamAdd.Add(new SqlParameter("@HorizontalRate", dr["HorizontalRate"]));
                     spamAdd.Add(new SqlParameter("@HorizontalOriginal", dr["HorizontalOriginal"]));
                     spamAdd.Add(new SqlParameter("@HorizontalTest1", dr["HorizontalTest1"]));
@@ -906,8 +1060,12 @@ where a.ID='{0}'"
                     spamAdd.Add(new SqlParameter("@SkewnessTest4", dr["SkewnessTest4"]));
                     spamAdd.Add(new SqlParameter("@SkewnessRate", dr["SkewnessRate"]));
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamAdd);
-                    if (!upResult) { return upResult; }
+                    if (!upResult)
+                    {
+                        return upResult;
+                    }
                 }
+
                 if (dr.RowState == DataRowState.Modified)
                 {
                     List<SqlParameter> spamUpd = new List<SqlParameter>();
@@ -931,7 +1089,7 @@ where a.ID='{0}'"
                     spamUpd.Add(new SqlParameter("@Result", dr["Result"]));
                     spamUpd.Add(new SqlParameter("@Remark", dr["Remark"]));
                     spamUpd.Add(new SqlParameter("@EditDate", Today));
-                    spamUpd.Add(new SqlParameter("@EditName", loginID));
+                    spamUpd.Add(new SqlParameter("@EditName", this.loginID));
                     spamUpd.Add(new SqlParameter("@HorizontalRate", dr["HorizontalRate"]));
                     spamUpd.Add(new SqlParameter("@HorizontalOriginal", dr["HorizontalOriginal"]));
                     spamUpd.Add(new SqlParameter("@HorizontalTest1", dr["HorizontalTest1"]));
@@ -947,37 +1105,49 @@ where a.ID='{0}'"
                     spamUpd.Add(new SqlParameter("@SkewnessTest3", dr["SkewnessTest3"]));
                     spamUpd.Add(new SqlParameter("@SkewnessTest4", dr["SkewnessTest4"]));
                     spamUpd.Add(new SqlParameter("@SkewnessRate", dr["SkewnessRate"]));
-                    spamUpd.Add(new SqlParameter("@sid", maindr["ID"]));
+                    spamUpd.Add(new SqlParameter("@sid", this.maindr["ID"]));
                     spamUpd.Add(new SqlParameter("@RollBefore", dr["Roll", DataRowVersion.Original]));
 
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamUpd);
-                    if (!upResult) { return upResult; }
+                    if (!upResult)
+                    {
+                        return upResult;
+                    }
                 }
+
                 List<SqlParameter> spamOption = new List<SqlParameter>();
                 string updateOptionID =
                 @"update FIR_Laboratory
                 set SkewnessOptionID=@OptionID
                 where id=@ID";
-                spamOption.Add(new SqlParameter("@id", ID));
+                spamOption.Add(new SqlParameter("@id", this.ID));
                 spamOption.Add(new SqlParameter("@OptionID", this.radioPanel1.Value));
                 upResult = DBProxy.Current.Execute(null, updateOptionID, spamOption);
-                if (!upResult) { return upResult; }
+                if (!upResult)
+                {
+                    return upResult;
+                }
             }
+
             return upResult;
         }
 
-        //編輯權限設定
+        // 編輯權限設定
         private void button_enable()
         {
-            if (maindr == null) return;
-            btnEncode.Enabled = this.CanEdit && !this.EditMode;           
-            btnEncode.Text = MyUtility.Convert.GetBool(maindr["WashEncode"]) ? "Amend" : "Encode";
-            btnToExcel.Enabled = !this.EditMode;
+            if (this.maindr == null)
+            {
+                return;
+            }
+
+            this.btnEncode.Enabled = this.CanEdit && !this.EditMode;
+            this.btnEncode.Text = MyUtility.Convert.GetBool(this.maindr["WashEncode"]) ? "Amend" : "Encode";
+            this.btnToExcel.Enabled = !this.EditMode;
             this.radioPanel1.ReadOnly = !this.EditMode;
             this.txtsupplierSupp.TextBox1.ReadOnly = true;
         }
 
-        //maindr where id,poid重新query 
+        // maindr where id,poid重新query
         private void mainDBQuery()
         {
             string cmd = @"select a.id,a.poid,(a.SEQ1+a.SEQ2) as seq,a.SEQ1,a.SEQ2,a.ReceivingID,Refno,a.SCIRefno,
@@ -996,31 +1166,30 @@ where a.ID='{0}'"
 				left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 				Where a.poid=@poid  and a.id=@id order by a.seq1,a.seq2,Refno ";
             List<SqlParameter> spam = new List<SqlParameter>();
-            spam.Add(new SqlParameter("@id", ID));
-            spam.Add(new SqlParameter("@poid", maindr["poid"]));
-            if (!MyUtility.Check.Seek(cmd, spam, out maindr))
+            spam.Add(new SqlParameter("@id", this.ID));
+            spam.Add(new SqlParameter("@poid", this.maindr["poid"]));
+            if (!MyUtility.Check.Seek(cmd, spam, out this.maindr))
             {
                 MyUtility.Msg.WarningBox("Data is empty");
             }
-
         }
 
         private void btnEncode_Click(object sender, EventArgs e)
         {
-            string updatesql = "";
-
-            if (!MyUtility.Convert.GetBool(maindr["WashEncode"]))
+            string updatesql = string.Empty;
+            if (!MyUtility.Convert.GetBool(this.maindr["WashEncode"]))
             {
-                if (!MyUtility.Convert.GetBool(maindr["nonWash"]))//判斷有勾選可Encode
+                // 判斷有勾選可Encode
+                if (!MyUtility.Convert.GetBool(this.maindr["nonWash"]))
                 {
-                    //至少檢驗一卷 並且出現在Fir_Continuity.Roll
+                    // 至少檢驗一卷 並且出現在Fir_Continuity.Roll
                     DataTable rolldt;
                     string cmd = string.Format(
                         @"Select roll from dbo.View_AllReceivingDetail a WITH (NOLOCK) where 
                         a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
                         and exists 
-                        (Select distinct dyelot from FIR_Laboratory_Wash b WITH (NOLOCK) where b.id='{1}' and a.roll = b.roll)"
-                        , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
+                        (Select distinct dyelot from FIR_Laboratory_Wash b WITH (NOLOCK) where b.id='{1}' and a.roll = b.roll)",
+                        this.maindr["receivingid"], this.maindr["id"], this.maindr["POID"], this.maindr["seq1"], this.maindr["seq2"]);
                     DualResult dResult;
                     if (dResult = DBProxy.Current.Select(null, cmd, out rolldt))
                     {
@@ -1032,46 +1201,51 @@ where a.ID='{0}'"
                     }
                 }
                 #region 判斷Wash Result
-                DataTable gridDt = (DataTable)gridbs.DataSource;
+                DataTable gridDt = (DataTable)this.gridbs.DataSource;
                 DataRow[] ResultAry = gridDt.Select("Result='Fail'");
                 string result = "Pass";
-                if (ResultAry.Length > 0) result = "Fail";
+                if (ResultAry.Length > 0)
+                {
+                    result = "Fail";
+                }
                 #endregion
                 #region 判斷表身最晚時間
-                DataTable dt = (DataTable)gridbs.DataSource;
-                
+                DataTable dt = (DataTable)this.gridbs.DataSource;
+
                 if (dt.Rows.Count != 0)
                 {
                     DateTime lastDate = Convert.ToDateTime(dt.Rows[0]["inspDate"]);
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
                         DateTime newDate = Convert.ToDateTime(dt.Rows[i]["inspDate"]);
-                        //代表newDate 比  lastDate還晚 就取代lastDate
+
+                        // 代表newDate 比  lastDate還晚 就取代lastDate
                         if (DateTime.Compare(newDate, lastDate) > 0)
                         {
                             lastDate = newDate;
                         }
                     }
+
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set WashDate = '{2}',WashEncode = 1,Wash='{0}',WashInspector = '{3}' where id ='{1}'", result, maindr["ID"], lastDate.ToShortDateString(), Sci.Env.User.UserID);
+                    @"Update Fir_Laboratory set WashDate = '{2}',WashEncode = 1,Wash='{0}',WashInspector = '{3}' where id ='{1}'", result, this.maindr["ID"], lastDate.ToShortDateString(), Env.User.UserID);
                 }
                 else
                 {
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set WashEncode = 1,Wash='{0}',WashInspector='{2}' where id ='{1}'", result, maindr["ID"], Sci.Env.User.UserID);
+                    @"Update Fir_Laboratory set WashEncode = 1,Wash='{0}',WashInspector='{2}' where id ='{1}'", result, this.maindr["ID"], Env.User.UserID);
                 }
                 #endregion
             }
-
-            else//Amend
+            else// Amend
             {
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir_Laboratory set WashDate = null,WashEncode= 0,Wash = '', WashInspector='' where id ='{0}'", maindr["ID"]);
+                @"Update Fir_Laboratory set WashDate = null,WashEncode= 0,Wash = '', WashInspector='' where id ='{0}'", this.maindr["ID"]);
 
                 // updatesql = updatesql + string.Format(@"update FIR_Laboratory_Wash set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
                 #endregion
             }
+
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -1083,7 +1257,7 @@ where a.ID='{0}'"
                         _transactionscope.Dispose();
                         return;
                     }
-                  
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
@@ -1091,36 +1265,39 @@ where a.ID='{0}'"
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
             #region Over All Result 寫入
-            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Lab(maindr["ID"]);
-            maindr["Result"] = returnstr[0];
+            string[] returnstr = PublicPrg.Prgs.GetOverallResult_Lab(this.maindr["ID"]);
+            this.maindr["Result"] = returnstr[0];
             string cmdResult = @"update Fir_Laboratory set Result=@Result where id=@id";
             List<SqlParameter> spam = new List<SqlParameter>();
             spam.Add(new SqlParameter("@Result", returnstr[0]));
-            spam.Add(new SqlParameter("@id", maindr["ID"]));
+            spam.Add(new SqlParameter("@id", this.maindr["ID"]));
             DBProxy.Current.Execute(null, cmdResult, spam);
-            //更新PO.FIRLabInspPercent
-            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIRLab','{maindr["POID"]}'")))
+
+            // 更新PO.FIRLabInspPercent
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIRLab','{this.maindr["POID"]}'")))
             {
-                ShowErr(upResult);
+                this.ShowErr(upResult);
                 return;
             }
             #endregion
 
-            OnRequery();
+            this.OnRequery();
         }
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            DataTable dt = (DataTable)gridbs.DataSource;
-            string[] columnNames = new string[] 
-            { "Roll", "Dyelot", "HorizontalOriginal", "VerticalOriginal", "Result", "HorizontalTest1", "HorizontalTest2", "HorizontalTest3", "Vertical_Average","Horizontalrate",
-                "VerticalTest1","VerticalTest2","VerticalTest3","Vertical_Average","VerticalRate","SkewnessTest1","SkewnessTest2","SkewnessRate","InspDate", "Inspector", "Inspector", "Remark", "Last update" };
-            var ret = Array.CreateInstance(typeof(object), dt.Rows.Count, grid.Columns.Count) as object[,];
+            DataTable dt = (DataTable)this.gridbs.DataSource;
+            string[] columnNames = new string[]
+            {
+                "Roll", "Dyelot", "HorizontalOriginal", "VerticalOriginal", "Result", "HorizontalTest1", "HorizontalTest2", "HorizontalTest3", "Vertical_Average", "Horizontalrate",
+                "VerticalTest1", "VerticalTest2", "VerticalTest3", "Vertical_Average", "VerticalRate", "SkewnessTest1", "SkewnessTest2", "SkewnessRate", "InspDate", "Inspector", "Inspector", "Remark", "Last update",
+            };
+            var ret = Array.CreateInstance(typeof(object), dt.Rows.Count, this.grid.Columns.Count) as object[,];
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 DataRow row = dt.Rows[i];
@@ -1129,50 +1306,58 @@ where a.ID='{0}'"
                     ret[i, j] = row[columnNames[j]];
                 }
             }
+
             if (dt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return;
             }
-            //撈seasonID
+
+            // 撈seasonID
             DataTable dtSeason;
             string SeasonID;
             DBProxy.Current.Select("Production", string.Format(
-            "select C.SeasonID from FIR_Laboratory_Wash a WITH (NOLOCK) left join FIR_Laboratory b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C WITH (NOLOCK) ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason);
-            if (dtSeason.Rows.Count == 0) { SeasonID = ""; }
-            else { SeasonID = dtSeason.Rows[0]["SeasonID"].ToString(); }
+            "select C.SeasonID from FIR_Laboratory_Wash a WITH (NOLOCK) left join FIR_Laboratory b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C WITH (NOLOCK) ON B.POID=C.ID where a.ID='{0}'", this.maindr["ID"]), out dtSeason);
+            if (dtSeason.Rows.Count == 0)
+            {
+                SeasonID = string.Empty;
+            }
+            else
+            {
+                SeasonID = dtSeason.Rows[0]["SeasonID"].ToString();
+            }
 
             Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
             MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Wash_Test.xltx", headerline: 5, openfile: false, excelAppObj: excel);
-            Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表            
-            excelSheets.Cells[2, 2] = txtSP.Text.ToString();
-            excelSheets.Cells[2, 4] = txtSEQ.Text.ToString();
-            excelSheets.Cells[2, 6] = txtColor.Text.ToString();
-            excelSheets.Cells[2, 8] = txtStyle.Text.ToString();
+            Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1]; // 取得工作表
+            excelSheets.Cells[2, 2] = this.txtSP.Text.ToString();
+            excelSheets.Cells[2, 4] = this.txtSEQ.Text.ToString();
+            excelSheets.Cells[2, 6] = this.txtColor.Text.ToString();
+            excelSheets.Cells[2, 8] = this.txtStyle.Text.ToString();
             excelSheets.Cells[2, 10] = SeasonID;
-            excelSheets.Cells[3, 2] = txtSCIRefno.Text.ToString();
-            excelSheets.Cells[3, 4] = txtWkno.Text.ToString();
-            excelSheets.Cells[3, 6] = txtResult.Text.ToString();
-            excelSheets.Cells[3, 8] = dateLastInspectionDate.Value;
-            excelSheets.Cells[3, 10] = txtBrand.Text.ToString();
-            excelSheets.Cells[4, 2] = txtBrandRefno.Text.ToString();
-            excelSheets.Cells[4, 4] = txtArriveQty.Text.ToString();
-            excelSheets.Cells[4, 6] = dateArriveWHDate.Value;
-            excelSheets.Cells[4, 8] = txtsupplierSupp.DisplayBox1.Text.ToString();
-            excelSheets.Cells[4, 10] = checkNA.Value.ToString();
+            excelSheets.Cells[3, 2] = this.txtSCIRefno.Text.ToString();
+            excelSheets.Cells[3, 4] = this.txtWkno.Text.ToString();
+            excelSheets.Cells[3, 6] = this.txtResult.Text.ToString();
+            excelSheets.Cells[3, 8] = this.dateLastInspectionDate.Value;
+            excelSheets.Cells[3, 10] = this.txtBrand.Text.ToString();
+            excelSheets.Cells[4, 2] = this.txtBrandRefno.Text.ToString();
+            excelSheets.Cells[4, 4] = this.txtArriveQty.Text.ToString();
+            excelSheets.Cells[4, 6] = this.dateArriveWHDate.Value;
+            excelSheets.Cells[4, 8] = this.txtsupplierSupp.DisplayBox1.Text.ToString();
+            excelSheets.Cells[4, 10] = this.checkNA.Value.ToString();
 
-            excel.Cells.EntireColumn.AutoFit();    //自動欄寬
+            excel.Cells.EntireColumn.AutoFit();    // 自動欄寬
             excel.Cells.EntireRow.AutoFit();       ////自動欄高
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P03_Wash_Test");
+            string strExcelName = Class.MicrosoftFile.GetName("Quality_P03_Wash_Test");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
             Marshal.ReleaseComObject(excelSheets);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
         }
 
         /// <summary>
@@ -1181,12 +1366,16 @@ where a.ID='{0}'"
         /// <param name="dr">current dataRow</param>
         private void CalSkeValue(DataRow dr)
         {
-            if (!EditMode) return;
+            if (!this.EditMode)
+            {
+                return;
+            }
+
             if (this.radioOption1.Checked && (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value))
             {
                 if (MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]) != 0)
                 {
-                    decimal SkewnessRate = ((Math.Abs((decimal)dr["SkewnessTest1"] - (decimal)dr["SkewnessTest2"])) / ((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"])) * 2 * 100;
+                    decimal SkewnessRate = (Math.Abs((decimal)dr["SkewnessTest1"] - (decimal)dr["SkewnessTest2"]) / ((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"])) * 2 * 100;
                     dr["SkewnessRate"] = Math.Round(SkewnessRate, 2);
                 }
                 else
@@ -1195,11 +1384,12 @@ where a.ID='{0}'"
                     return;
                 }
             }
+
             if (this.radioOption2.Checked && (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value && dr["SkewnessTest3"] != DBNull.Value && dr["SkewnessTest4"] != DBNull.Value))
             {
                 if (MyUtility.Convert.GetDecimal(dr["SkewnessTest3"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest4"]) != 0)
                 {
-                    decimal SkewnessRate = ((Math.Abs((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"])) / ((decimal)dr["SkewnessTest3"] + (decimal)dr["SkewnessTest4"])) * 100;
+                    decimal SkewnessRate = (Math.Abs((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"]) / ((decimal)dr["SkewnessTest3"] + (decimal)dr["SkewnessTest4"])) * 100;
                     dr["SkewnessRate"] = Math.Round(SkewnessRate, 2);
                 }
                 else
@@ -1216,18 +1406,23 @@ where a.ID='{0}'"
         /// <param name="dr">current dataRow</param>
         private void CalHorRate(DataRow dr)
         {
-            if (!EditMode) return;
+            if (!this.EditMode)
+            {
+                return;
+            }
+
             if (!MyUtility.Check.Empty(dr["HorizontalOriginal"]))
             {
-                decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
-                dr["HorizontalRate"] = Math.Round(newValue, 2);                
+                decimal newValue = ((((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3) - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
+                dr["HorizontalRate"] = Math.Round(newValue, 2);
             }
             else
             {
                 dr["HorizontalRate"] = 0;
                 return;
             }
-            decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
+
+            decimal newAvgValue = ((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3;
             dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);
         }
 
@@ -1237,41 +1432,45 @@ where a.ID='{0}'"
         /// <param name="dr">current dataRow</param>
         private void CalVerRate(DataRow dr)
         {
-            if (!EditMode) return;
+            if (!this.EditMode)
+            {
+                return;
+            }
+
             if (!MyUtility.Check.Empty(dr["VerticalOriginal"]))
             {
-                decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
+                decimal newValue = ((((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3) - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
                 dr["VerticalRate"] = Math.Round(newValue, 2);
-                
             }
             else
             {
                 dr["VerticalRate"] = 0;
                 return;
             }
-            decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
+
+            decimal newAvgValue = ((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3;
             dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
         }
 
         private void radioPanel1_ValueChanged(object sender, EventArgs e)
         {
-            if (this.radioPanel1.Value.ToString()=="1")
+            if (this.radioPanel1.Value.ToString() == "1")
             {
-                pictureBox1.ImageLocation = ht["Picture1"].ToString();
+                this.pictureBox1.ImageLocation = this.ht["Picture1"].ToString();
             }
             else
             {
-                pictureBox1.ImageLocation = ht["Picture2"].ToString();
+                this.pictureBox1.ImageLocation = this.ht["Picture2"].ToString();
             }
-            GridView_Visable();
+
+            this.GridView_Visable();
             if (!((DataTable)this.gridbs.DataSource).Empty() && ((DataTable)this.gridbs.DataSource).Rows.Count > 0)
             {
                 foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
                 {
-                    CalSkeValue(dr);
+                    this.CalSkeValue(dr);
                 }
             }
-           
         }
     }
 }

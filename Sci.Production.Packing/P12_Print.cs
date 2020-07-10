@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 
 namespace Sci.Production.Packing
@@ -13,7 +9,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P12_Print
     /// </summary>
-    public partial class P12_Print : Sci.Win.Tems.PrintForm
+    public partial class P12_Print : Win.Tems.PrintForm
     {
         private DataTable gridData;
         private string delDate1;
@@ -58,7 +54,7 @@ namespace Sci.Production.Packing
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder filter = new StringBuilder();
             if (!MyUtility.Check.Empty(this.delDate1))
@@ -87,7 +83,7 @@ namespace Sci.Production.Packing
             }
 
             this.printData = this.gridData.Select(string.Format("{0}", filter.ToString().Substring(0, filter.ToString().Length - 5)));
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -103,7 +99,7 @@ namespace Sci.Production.Packing
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P12_Print.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Packing_P12_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -153,7 +149,7 @@ namespace Sci.Production.Packing
                 counter++;
             }
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P12_Print");
+            string strExcelName = Class.MicrosoftFile.GetName("Packing_P12_Print");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

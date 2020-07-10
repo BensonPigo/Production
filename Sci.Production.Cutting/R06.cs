@@ -2,23 +2,20 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
-    public partial class R06 : Sci.Win.Tems.PrintForm
+    public partial class R06 : Win.Tems.PrintForm
     {
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private string dateRangeReady1;
@@ -35,11 +32,12 @@ namespace Sci.Production.Cutting
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateReady))
+            if (MyUtility.Check.Empty(this.dateReady))
             {
                 MyUtility.Msg.WarningBox("ReadyDay must enter!");
                 return false;
             }
+
             this.dateRangeReady1 = MyUtility.Check.Empty(this.dateReady.Value1) ? string.Empty : ((DateTime)this.dateReady.Value1).ToString("yyyy/MM/dd");
             this.dateRangeReady2 = MyUtility.Check.Empty(this.dateReady.Value2) ? string.Empty : ((DateTime)this.dateReady.Value2).ToString("yyyy/MM/dd");
             this.M = this.txtMdivision.Text;
@@ -49,14 +47,13 @@ namespace Sci.Production.Cutting
             this.DeliveryGap = this.numDateDeliveryGap.Text;
             this.CutGapDay = this.numDateCutGapDay.Text;
             this.CutGapTime = this.txtDateCutGapTime.Text;
-            this.boolexHoliday = chkHoliday.Checked;
+            this.boolexHoliday = this.chkHoliday.Checked;
 
             return true;
         }
 
-
-        //非同步讀取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        // 非同步讀取資料
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlcmd = string.Empty;
             string sqlwhere = string.Empty;
@@ -64,10 +61,12 @@ namespace Sci.Production.Cutting
             {
                 sqlwhere += $" and o.MDivisionID = '{this.M}' ";
             }
+
             if (!MyUtility.Check.Empty(this.F))
             {
                 sqlwhere += $" and o.FtyGroup = '{this.F}' ";
             }
+
             if (!MyUtility.Check.Empty(this.Brand))
             {
                 sqlwhere += $" and o.BrandID = '{this.Brand}' ";
@@ -346,36 +345,38 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
 
 ";
             DBProxy.Current.DefaultTimeout = 2700;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.dt);
             DBProxy.Current.DefaultTimeout = 300;
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-            dt[0].Columns.Remove("MDivisionID");
 
-            return Result.True;
+            this.dt[0].Columns.Remove("MDivisionID");
+
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(dt[0].Rows.Count);
+            this.SetCount(this.dt[0].Rows.Count);
 
-            if (dt[0].Rows.Count <= 0)
+            if (this.dt[0].Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+
             string filename = "Cutting_R06 Ready date.xltx";
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(dt[0], "", filename, 1, false, null, objApp,wSheet: objApp.Sheets[1]);      // 將datatable copy to excel
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.dt[0], string.Empty, filename, 1, false, null, objApp, wSheet: objApp.Sheets[1]);      // 將datatable copy to excel
             Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            
-            for (int i = 0; i < dt[0].Rows.Count; i++)
+
+            for (int i = 0; i < this.dt[0].Rows.Count; i++)
             {
-                if (MyUtility.Convert.GetString(dt[0].Rows[i]["CuttingStatus"]).EqualString("Y"))
+                if (MyUtility.Convert.GetString(this.dt[0].Rows[i]["CuttingStatus"]).EqualString("Y"))
                 {
                     worksheet.get_Range($"A{i + 2}", $"T{i + 2}").Interior.Color = Color.FromArgb(0, 176, 80);
                 }
@@ -385,48 +386,49 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
                 }
             }
 
-            worksheet.Range[$"A2:T{dt[0].Rows.Count + 1}"].Borders.Weight = 2; // 設定全框線
+            worksheet.Range[$"A2:T{this.dt[0].Rows.Count + 1}"].Borders.Weight = 2; // 設定全框線
 
-            List<string> Ms = new List<string>();            
-            foreach (DataRow dr in dt[1].Rows)
+            List<string> Ms = new List<string>();
+            foreach (DataRow dr in this.dt[1].Rows)
             {
                 Ms.Add(MyUtility.Convert.GetString(dr["MDivisionID"]));
             }
+
             string M = string.Join(" & ", Ms);
             worksheet.Name = M + " Cutting RD";
 
             #region sheet2
             worksheet = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表
             int row = 1;
-            foreach (DataRow dr in dt[1].Rows)
+            foreach (DataRow dr in this.dt[1].Rows)
             {
                 string m = MyUtility.Convert.GetString(dr["MDivisionID"]);
                 worksheet.get_Range("A" + row, "B" + row).Merge(false);
                 worksheet.Cells[row, 1] = m;
-                worksheet.get_Range("A" + row, "B" + (row + 1)).Font.Bold = true;//指定粗體
-                worksheet.get_Range("A" + row, "B" + (row + 1)).Font.Size = 10;//字型大小
-                worksheet.get_Range("A" + row, "B" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());
+                worksheet.get_Range("A" + row, "B" + (row + 1)).Font.Bold = true; // 指定粗體
+                worksheet.get_Range("A" + row, "B" + (row + 1)).Font.Size = 10; // 字型大小
+                worksheet.get_Range("A" + row, "B" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, Color.Black.ToArgb());
                 worksheet.get_Range("A" + row, "B" + row).Interior.Color = Color.FromArgb(217, 217, 217);
                 row++;
                 worksheet.get_Range("A" + row, "B" + row).Borders.Weight = 2;
-                worksheet.get_Range("A" + row, "B" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());
+                worksheet.get_Range("A" + row, "B" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, Color.Black.ToArgb());
                 worksheet.get_Range("A" + row, "B" + row).Interior.Color = Color.FromArgb(102, 255, 255);
 
                 worksheet.Cells[row, 1] = "Factory";
                 worksheet.Cells[row, 2] = "No. of PO's for Cutting Ready Date";
                 int s1 = row + 1;
-                DataTable p2 = dt[2].Select($"MDivisionID = '{m}'").CopyToDataTable();
+                DataTable p2 = this.dt[2].Select($"MDivisionID = '{m}'").CopyToDataTable();
                 p2.Columns.Remove("MDivisionID");
-                MyUtility.Excel.CopyToXls(p2, "", filename, row, false, null, objApp, wSheet: objApp.Sheets[2]);
+                MyUtility.Excel.CopyToXls(p2, string.Empty, filename, row, false, null, objApp, wSheet: objApp.Sheets[2]);
                 worksheet.get_Range("A" + (row + 1), "B" + (row + p2.Rows.Count)).Borders.Weight = 2;
-                worksheet.get_Range("A" + (row + 1), "B" + (row + p2.Rows.Count)).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());
+                worksheet.get_Range("A" + (row + 1), "B" + (row + p2.Rows.Count)).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, Color.Black.ToArgb());
                 row += p2.Rows.Count + 1;
                 int s2 = row - 1;
                 worksheet.Cells[row, 1] = "Grand Total";
                 worksheet.Cells[row, 2] = $"=SUM(B{s1}:B{s2})";
-                worksheet.get_Range("A" + row, "B" + row ).Font.Bold = true;//指定粗體
+                worksheet.get_Range("A" + row, "B" + row).Font.Bold = true; // 指定粗體
                 worksheet.get_Range("A" + row, "B" + row).Borders.Weight = 2;
-                worksheet.get_Range("A" + row, "B" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());
+                worksheet.get_Range("A" + row, "B" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, Color.Black.ToArgb());
                 worksheet.get_Range("A" + row, "B" + row).Interior.Color = Color.FromArgb(255, 230, 153);
 
                 row += 2;
@@ -436,14 +438,14 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
 
             #region sheet3
             worksheet = objApp.ActiveWorkbook.Worksheets[3];   // 取得工作表
-           row = 1;
-            foreach (DataRow dr in dt[1].Rows)
+            row = 1;
+            foreach (DataRow dr in this.dt[1].Rows)
             {
                 string m = MyUtility.Convert.GetString(dr["MDivisionID"]);
-                DataTable p3 = dt[3].Select($"MDivisionID = '{m}'").CopyToDataTable();
+                DataTable p3 = this.dt[3].Select($"MDivisionID = '{m}'").CopyToDataTable();
                 p3.Columns.Remove("MDivisionID");
-                MyUtility.Excel.CopyToXls(p3, "", filename, row, false, null, objApp, wSheet: objApp.Sheets[3]);
-                worksheet.get_Range("A" + (row + 1), "E" + (row + p3.Rows.Count + 1)).Font.Bold = true;//指定粗體
+                MyUtility.Excel.CopyToXls(p3, string.Empty, filename, row, false, null, objApp, wSheet: objApp.Sheets[3]);
+                worksheet.get_Range("A" + (row + 1), "E" + (row + p3.Rows.Count + 1)).Font.Bold = true; // 指定粗體
                 int s1 = row + 1;
                 row += p3.Rows.Count + 1;
                 int s2 = row - 1;
@@ -453,7 +455,7 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
                 worksheet.Cells[row, 4] = $"=SUM(D{s1}:D{s2})";
                 worksheet.Cells[row, 5] = $"=C{row}/B{row}";
                 worksheet.get_Range("A" + s1, "E" + row).Borders.Weight = 2;
-                worksheet.get_Range("A" + s1, "E" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());
+                worksheet.get_Range("A" + s1, "E" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, Color.Black.ToArgb());
                 worksheet.get_Range("A" + row, "E" + row).Interior.Color = Color.FromArgb(255, 230, 153);
 
                 row += 1;
@@ -464,13 +466,13 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(filename);
-            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            string strExcelName = Class.MicrosoftFile.GetName(filename);
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();
-            Marshal.ReleaseComObject(worksheet);    //釋放sheet
-            Marshal.ReleaseComObject(objApp);          //釋放objApp
+            Marshal.ReleaseComObject(worksheet);    // 釋放sheet
+            Marshal.ReleaseComObject(objApp);          // 釋放objApp
             Marshal.ReleaseComObject(workbook);
             #endregion
 

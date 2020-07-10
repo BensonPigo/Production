@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Ict;
 using System.Data.SqlClient;
@@ -14,46 +12,55 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P11_AutoPick : Sci.Win.Subs.Base
+    public partial class P11_AutoPick : Win.Subs.Base
     {
         StringBuilder sbSizecode;
-        string poid, issueid, cutplanid, orderid;
-        public DataTable BOA, BOA_Orderlist, BOA_PO, BOA_PO_Size, dtIssueBreakDown;
+        string poid;
+        string issueid;
+        string cutplanid;
+        string orderid;
+        public DataTable BOA;
+        public DataTable BOA_Orderlist;
+        public DataTable BOA_PO;
+        public DataTable BOA_PO_Size;
+        public DataTable dtIssueBreakDown;
         bool combo;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
+
         public P11_AutoPick(string _issueid, string _poid, string _cutplanid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo)
         {
-            InitializeComponent();
-            poid = _poid;
-            issueid = _issueid;
-            cutplanid = _cutplanid;
-            orderid = _orderid;
-            dtIssueBreakDown = _dtIssueBreakDown;
-            sbSizecode = _sbSizecode;
-            combo = _combo;
-            this.Text += string.Format(" ({0})", poid);
-
+            this.InitializeComponent();
+            this.poid = _poid;
+            this.issueid = _issueid;
+            this.cutplanid = _cutplanid;
+            this.orderid = _orderid;
+            this.dtIssueBreakDown = _dtIssueBreakDown;
+            this.sbSizecode = _sbSizecode;
+            this.combo = _combo;
+            this.Text += string.Format(" ({0})", this.poid);
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            if (dtIssueBreakDown == null)
+            if (this.dtIssueBreakDown == null)
             {
                 MyUtility.Msg.WarningBox("IssueBreakdown data no data!", "Warning");
                 this.Close();
                 return;
             }
 
-            Decimal sum = 0;
-            foreach (DataRow dr in dtIssueBreakDown.Rows)
+            decimal sum = 0;
+            foreach (DataRow dr in this.dtIssueBreakDown.Rows)
             {
-                foreach (DataColumn dc in dtIssueBreakDown.Columns)
+                foreach (DataColumn dc in this.dtIssueBreakDown.Columns)
                 {
-                    if (Object.ReferenceEquals(sum.GetType(), dr[dc].GetType()))
-                        sum += (Decimal)dr[dc];
+                    if (ReferenceEquals(sum.GetType(), dr[dc].GetType()))
+                    {
+                        sum += (decimal)dr[dc];
+                    }
                 }
             }
 
@@ -64,20 +71,23 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
-            //POPrg.BOAExpend(poid, "0", 1, out BOA, out BOA_Orderlist);
+            // POPrg.BOAExpend(poid, "0", 1, out BOA, out BOA_Orderlist);
             SqlConnection sqlConnection = null;
-            //  SqlCommand sqlCmd = null;
+
+            // SqlCommand sqlCmd = null;
             DataSet dataSet = new DataSet();
+
             // SqlDataAdapter sqlDataAdapter = null;
             DataTable[] result = null;
 
-            BOA = null;
-            BOA_Orderlist = null;
-            BOA_PO = null;
-            BOA_PO_Size = null;
+            this.BOA = null;
+            this.BOA_Orderlist = null;
+            this.BOA_PO = null;
+            this.BOA_PO_Size = null;
 
             string sqlcmd;
-            sqlcmd = string.Format(@";
+            sqlcmd = string.Format(
+                @";
 ;WITH UNPIVOT_1 AS (
     SELECT * 
     FROM #tmp
@@ -428,46 +438,53 @@ left join cte on cte.SizeCode = z.SizeCode
                  and cte.poid = z.poid 
                  and cte.seq1 = z.seq1 
                  and cte.seq2 = z.seq2
-order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)
-                             , issueid
-                             , orderid
-                             , poid
-                             , 0
-                             , 1
-                             , Env.User.UserID
-                             , "Sewing"
-                             , Env.User.Keyword);//.Replace("[", "[_")
+order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1),
+                this.issueid,
+                this.orderid,
+                this.poid,
+                0,
+                1,
+                Env.User.UserID,
+                "Sewing",
+                Env.User.Keyword); // .Replace("[", "[_")
+
             // 呼叫procedure，取得BOA展開結果
             try
             {
-                //SqlConnection conn;
+                // SqlConnection conn;
                 DBProxy.Current.OpenConnection(null, out sqlConnection);
-                //DataTable source = null, a = null; ;
-                string aaa = sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1).Replace("[", "").Replace("]", "");//.Replace("[", "").Replace("]", "")
-                var RESULT = MyUtility.Tool.ProcessWithDatatable(dtIssueBreakDown, "OrderID,Article," + aaa, sqlcmd, out result, "#tmp", conn: sqlConnection);
 
-                if (!RESULT) ShowErr(RESULT);
-                if (!RESULT) return;
+                // DataTable source = null, a = null; ;
+                string aaa = this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1).Replace("[", string.Empty).Replace("]", string.Empty); // .Replace("[", "").Replace("]", "")
+                var RESULT = MyUtility.Tool.ProcessWithDatatable(this.dtIssueBreakDown, "OrderID,Article," + aaa, sqlcmd, out result, "#tmp", conn: sqlConnection);
 
+                if (!RESULT)
+                {
+                    this.ShowErr(RESULT);
+                }
+
+                if (!RESULT)
+                {
+                    return;
+                }
 
                 if (result.Length > 0)
                 {
                     dataSet.Tables.AddRange(result);
-                    BOA = result[0];
-                    BOA_Orderlist = result[1];
-                    BOA_PO = result[2];
-                    BOA_PO.DefaultView.Sort = "poid,seq1,seq2";
-                    BOA_PO_Size = result[3];
-                    BOA_PO.ColumnsStringAdd("Output");
+                    this.BOA = result[0];
+                    this.BOA_Orderlist = result[1];
+                    this.BOA_PO = result[2];
+                    this.BOA_PO.DefaultView.Sort = "poid,seq1,seq2";
+                    this.BOA_PO_Size = result[3];
+                    this.BOA_PO.ColumnsStringAdd("Output");
 
-                    DataRelation relation = new DataRelation("rel1"
-                    , new DataColumn[] { BOA_PO.Columns["Poid"], BOA_PO.Columns["seq1"], BOA_PO.Columns["seq2"] }
-                    , new DataColumn[] { BOA_PO_Size.Columns["Poid"], BOA_PO_Size.Columns["seq1"], BOA_PO_Size.Columns["seq2"] }
-                    );
+                    DataRelation relation = new DataRelation(
+                        "rel1",
+                        new DataColumn[] { this.BOA_PO.Columns["Poid"], this.BOA_PO.Columns["seq1"], this.BOA_PO.Columns["seq2"] },
+                        new DataColumn[] { this.BOA_PO_Size.Columns["Poid"], this.BOA_PO_Size.Columns["seq1"], this.BOA_PO_Size.Columns["seq2"] });
                     dataSet.Relations.Add(relation);
 
-
-                    foreach (DataRow dr in BOA_PO.Rows)
+                    foreach (DataRow dr in this.BOA_PO.Rows)
                     {
                         dr["ColorID"] = dr["ColorMultipleID"];
                         DataTable tmp = new DataTable();
@@ -482,11 +499,11 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                         var drs = dr.GetChildRows(relation);
                         if (drs.Count() > 0)
                         {
-                            //Qty 在這邊計算原因：細項中每一個 SizeCode 的數量都有做四捨五入
-                            //若在組 SQL 時就先將數量做加總，四捨五入後的結果會有差異
+                            // Qty 在這邊計算原因：細項中每一個 SizeCode 的數量都有做四捨五入
+                            // 若在組 SQL 時就先將數量做加總，四捨五入後的結果會有差異
                             #region 計算每一個項的 Output & Qty
-                            var Output = "";
-                            Decimal TotalQty = 0;
+                            var Output = string.Empty;
+                            decimal TotalQty = 0;
                             foreach (DataRow dr2 in drs)
                             {
                                 if (Convert.ToDecimal(dr2["qty"]) != 0)
@@ -494,11 +511,13 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                                     Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
                                     TotalQty += Convert.ToDecimal(dr2["qty"]);
                                 }
+
                                 tmp.ImportRow(dr2);
                             }
+
                             dr["Output"] = Output;
                             dr["Qty"] = Math.Round(TotalQty, 2);
-                            #endregion 
+                            #endregion
                         }
 
                         /*
@@ -516,14 +535,17 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                         {
                             dr["Selected"] = 1;
                         }
-                        else {
-                            //沒有default 打勾的話output要清掉因為在BOA裡面 所以會被帶出來可是實際上我不需要這些物料 所以不用計算
-                            dr["Output"] = "";
+                        else
+                        {
+                            // 沒有default 打勾的話output要清掉因為在BOA裡面 所以會被帶出來可是實際上我不需要這些物料 所以不用計算
+                            dr["Output"] = string.Empty;
                             dr["Qty"] = 0;
-                            //連同detail資料也顯示0
+
+                            // 連同detail資料也顯示0
                             if (tmp.Rows.Count > 0 && Convert.ToDouble(dr["qty"]) > 0)
                             {
-                                foreach (DataRow tmp_dr in tmp.Rows) {
+                                foreach (DataRow tmp_dr in tmp.Rows)
+                                {
                                     tmp_dr["qty"] = 0;
                                 }
                             }
@@ -531,22 +553,21 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
 
                         if (tmp.Rows.Count > 0)
                         {
-                            dictionaryDatas.Add(dr, tmp);
+                            this.dictionaryDatas.Add(dr, tmp);
                         }
                         else
                         {
-                            dictionaryDatas.Add(dr, new DataTable());
+                            this.dictionaryDatas.Add(dr, new DataTable());
                         }
                     }
-                    BOA_PO.Columns.Remove("ColorMultipleID");
-                    var tmp2 = dictionaryDatas.Count;
-                }
 
+                    this.BOA_PO.Columns.Remove("ColorMultipleID");
+                    var tmp2 = this.dictionaryDatas.Count;
+                }
             }
             catch (Exception ex)
             {
                 MyUtility.Msg.ErrorBox(ex.GetBaseException().ToString(), "Error");
-
             }
             finally
             {
@@ -554,42 +575,60 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                 sqlConnection.Close();
             }
 
-            this.listControlBindingSource1.DataSource = BOA_PO;
-            this.gridAutoPick.DataSource = listControlBindingSource1;
+            this.listControlBindingSource1.DataSource = this.BOA_PO;
+            this.gridAutoPick.DataSource = this.listControlBindingSource1;
 
             this.gridAutoPick.AutoResizeColumns();
 
             #region --Pick Qty 開窗--
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
             ns.CellMouseDoubleClick += (s, e) =>
             {
-                BOA_PO.AcceptChanges();//先做初始設定，再透過Detail來控制UNDO OR SAVE
+                this.BOA_PO.AcceptChanges(); // 先做初始設定，再透過Detail來控制UNDO OR SAVE
                 var dr = this.gridAutoPick.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P11_AutoPick_Detail(combo, poid, orderid, BOA_PO, e.RowIndex, e.ColumnIndex, this);
+                if (dr == null)
+                {
+                    return;
+                }
 
-                dictionaryDatasAcceptChanges();
+                var frm = new P11_AutoPick_Detail(this.combo, this.poid, this.orderid, this.BOA_PO, e.RowIndex, e.ColumnIndex, this);
+
+                this.dictionaryDatasAcceptChanges();
 
                 DialogResult DResult = frm.ShowDialog(this);
             };
             #endregion
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
                 var dr = this.gridAutoPick.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
-                if (Convert.ToDecimal(e.FormattedValue) == Convert.ToDecimal(dr["qty"])) return;
+                if (dr == null)
+                {
+                    return;
+                }
+
+                if (Convert.ToDecimal(e.FormattedValue) == Convert.ToDecimal(dr["qty"]))
+                {
+                    return;
+                }
+
                 dr["qty"] = e.FormattedValue;
-                if (Convert.ToDecimal(dr["qty"]) > 0 && Convert.ToDecimal(dr["Balanceqty"]) >= Convert.ToDecimal(dr["qty"])) dr["Selected"] = 1;
-                else dr["Selected"] = 0;
+                if (Convert.ToDecimal(dr["qty"]) > 0 && Convert.ToDecimal(dr["Balanceqty"]) >= Convert.ToDecimal(dr["qty"]))
+                {
+                    dr["Selected"] = 1;
+                }
+                else
+                {
+                    dr["Selected"] = 0;
+                }
             };
 
             #region --設定Grid1的顯示欄位--
 
-            this.gridAutoPick.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridAutoPick.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridAutoPick)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+            this.gridAutoPick.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridAutoPick.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridAutoPick)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4), iseditingreadonly: true)
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -609,8 +648,8 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                   .Text("usageqty", header: "Usage Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .Text("usageunit", header: "Usage Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  ;
-            gridAutoPick.Columns["qty"].Frozen = true;  //Qty
-            gridAutoPick.Columns["Output"].DefaultCellStyle.BackColor = Color.Pink;   //Qty
+            this.gridAutoPick.Columns["qty"].Frozen = true;  // Qty
+            this.gridAutoPick.Columns["Output"].DefaultCellStyle.BackColor = Color.Pink;   // Qty
             #endregion
 
         }
@@ -621,8 +660,8 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
             DataRow dr = target;
             if (tmpDt != null)
             {
-                var Output = "";
-                Decimal SumQTY = 0;
+                var Output = string.Empty;
+                decimal SumQTY = 0;
                 foreach (DataRow dr2 in tmpDt.ToList())
                 {
                     if (Convert.ToDecimal(dr2["qty"]) != 0)
@@ -631,12 +670,19 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                         SumQTY += Convert.ToDecimal(dr2["qty"]);
                     }
                 }
+
                 dr["Output"] = Output;
                 dr["qty"] = Math.Round(SumQTY, 2);
             }
-            if (Convert.ToDecimal(dr["qty"]) > 0) dr["Selected"] = 1;
-            else dr["Selected"] = 0;
 
+            if (Convert.ToDecimal(dr["qty"]) > 0)
+            {
+                dr["Selected"] = 1;
+            }
+            else
+            {
+                dr["Selected"] = 0;
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -646,14 +692,15 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
 
         private void btnPick_Click(object sender, EventArgs e)
         {
-            gridAutoPick.ValidateControl();
-            DataRow[] dr2 = BOA_PO.Select("Selected = 1");
+            this.gridAutoPick.ValidateControl();
+            DataRow[] dr2 = this.BOA_PO.Select("Selected = 1");
             if (dr2.Length == 0)
             {
                 MyUtility.Msg.InfoBox("Please select rows first!", "Warnning");
                 return;
             }
-            DialogResult = System.Windows.Forms.DialogResult.OK;
+
+            this.DialogResult = DialogResult.OK;
         }
 
         public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp")
@@ -668,10 +715,15 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
             {
                 sb.Append(string.Format("create table #{0} (", temptablename));
             }
+
             string[] cols = tmp_columns.Split(',');
             for (int i = 0; i < cols.Length; i++)
             {
-                if (MyUtility.Check.Empty(cols[i])) continue;
+                if (MyUtility.Check.Empty(cols[i]))
+                {
+                    continue;
+                }
+
                 switch (Type.GetTypeCode(source.Columns[cols[i]].DataType))
                 {
                     case TypeCode.Boolean:
@@ -704,18 +756,28 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                     default:
                         break;
                 }
-                if (i < cols.Length - 1) { sb.Append(","); }
+
+                if (i < cols.Length - 1)
+                {
+                    sb.Append(",");
+                }
             }
+
             sb.Append(")");
 
-            System.Data.SqlClient.SqlConnection conn;
+            SqlConnection conn;
             DBProxy.Current.OpenConnection(null, out conn);
 
             try
             {
                 DualResult result2 = DBProxy.Current.ExecuteByConn(conn, sb.ToString());
-                if (!result2) { MyUtility.Msg.ShowException(null, result2); return; }
-                using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
+                if (!result2)
+                {
+                    MyUtility.Msg.ShowException(null, result2);
+                    return;
+                }
+
+                using (SqlBulkCopy bulkcopy = new SqlBulkCopy(conn))
                 {
                     bulkcopy.BulkCopyTimeout = 60;
                     if (temptablename.TrimStart().StartsWith("#"))
@@ -731,12 +793,17 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                     {
                         bulkcopy.ColumnMappings.Add(cols[i], cols[i]);
                     }
+
                     bulkcopy.WriteToServer(source);
                     bulkcopy.Close();
                 }
-                result2 = DBProxy.Current.SelectByConn(conn, sqlcmd, out result);
-                if (!result2) { MyUtility.Msg.ShowException(null, result2); return; }
 
+                result2 = DBProxy.Current.SelectByConn(conn, sqlcmd, out result);
+                if (!result2)
+                {
+                    MyUtility.Msg.ShowException(null, result2);
+                    return;
+                }
             }
             catch (Exception ex)
             {
@@ -750,7 +817,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
 
         public DataTable getAutoDetailDataTable(int RowIndex)
         {
-            DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(RowIndex)];
+            DataTable tmpDt = this.dictionaryDatas[this.gridAutoPick.GetDataRow(RowIndex)];
             return tmpDt;
         }
 
@@ -768,32 +835,35 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
 
         public void dictionaryDatasRejectChanges()
         {
-            var d = dictionaryDatas.AsEnumerable().ToList();
+            var d = this.dictionaryDatas.AsEnumerable().ToList();
             for (int i = 0; i < d.Count; i++)
             {
                 d[i].Value.RejectChanges();
             }
+
             return;
             ////批次RejectChanges
-            //foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
-            //{
+            // foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
+            // {
             //    item.Value.RejectChanges();
-            //}
+            // }
         }
 
         public void dictionaryDatasAcceptChanges()
         {
-            //批次RejectChanges
-            var d = dictionaryDatas.AsEnumerable().ToList();
+            // 批次RejectChanges
+            var d = this.dictionaryDatas.AsEnumerable().ToList();
             for (int i = 0; i < d.Count; i++)
             {
                 d[i].Value.AcceptChanges();
             }
+
             return;
-            //foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
-            //{
+
+            // foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
+            // {
             //    item.Value.AcceptChanges();
-            //}
+            // }
         }
     }
 }

@@ -2,10 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Transactions;
@@ -16,7 +13,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P15
     /// </summary>
-    public partial class P15 : Sci.Win.Tems.QueryForm
+    public partial class P15 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable gridData;
@@ -127,7 +124,7 @@ from (
     left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = pd.OrderID 
                                                     and oq.Seq = pd.OrderShipmodeSeq
     where t.TransferSlipNo <> ''
-    and t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+    and t.MDivisionID = '{0}'", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {

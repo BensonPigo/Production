@@ -13,7 +13,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R19
     /// </summary>
-    public partial class R19 : Sci.Win.Tems.PrintForm
+    public partial class R19 : Win.Tems.PrintForm
     {
         private DataTable PrintTable;
         private string eta_s;
@@ -186,7 +186,7 @@ ORDER BY e.FactoryID, e.ID
 
             this.ShowWaitMessage("Excel processing...");
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Shipping_R19.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Shipping_R19.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.PrintTable, string.Empty, "Shipping_R19.xltx", 1, false, null, objApp); // 將datatable copy to excel
 
             #region Save & Show Excel

@@ -1,21 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// P05_AirPrePaidList
     /// </summary>
-    public partial class P05_AirPrePaidList : Sci.Win.Subs.Base
+    public partial class P05_AirPrePaidList : Win.Subs.Base
     {
         private string gmtBookingID;
         private DualResult result;

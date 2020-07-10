@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
@@ -13,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_AddByPOItem
     /// </summary>
-    public partial class P02_AddByPOItem : Sci.Win.Subs.Input2A
+    public partial class P02_AddByPOItem : Win.Subs.Input2A
     {
         /// <summary>
         /// P02_AddByPOItem
@@ -228,11 +227,12 @@ GROUP BY pd.OrderID ,o.StyleUnit,pd.ShipQty ,TtlShipQty.Value ,p.GW
                             this.CurrentData["UnitID"] = dr["UnitID"].ToString();
                             this.CurrentData["Category"] = dr["Category"].ToString();
                             this.comboCategory.SelectedValue = Convert.ToInt32(dr["Category"]);
-                            // ISP20191885 移除自動計算後帶入
-                            //this.CurrentData["CTNNo"] = dr["CTNNo"].ToString();
-                            //this.CurrentData["Qty"] = Convert.ToInt32(dr["TtlQty"]);
 
-                            //this.CurrentData["NW"] = Convert.ToDecimal(dr["NW"]);
+                            // ISP20191885 移除自動計算後帶入
+                            // this.CurrentData["CTNNo"] = dr["CTNNo"].ToString();
+                            // this.CurrentData["Qty"] = Convert.ToInt32(dr["TtlQty"]);
+
+                            // this.CurrentData["NW"] = Convert.ToDecimal(dr["NW"]);
                         }
                     }
                 }
@@ -368,7 +368,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                 }
 
                 this.CurrentData["Seq1"] = seq["Seq1"];
-                this.CurrentData["InCharge"] = Sci.Env.User.UserID;
+                this.CurrentData["InCharge"] = Env.User.UserID;
             }
 
             return true;
@@ -377,7 +377,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
         /// <inheritdoc/>
         protected override DualResult OnSavePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
+            DualResult result = DBProxy.Current.Execute(null, Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
@@ -393,7 +393,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnDeleteBefore()
@@ -458,20 +458,20 @@ WHERE ID='{this.CurrentData["PackingListID"]}' AND @count <= 1
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
         protected override DualResult OnDeletePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
+            DualResult result = DBProxy.Current.Execute(null, Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

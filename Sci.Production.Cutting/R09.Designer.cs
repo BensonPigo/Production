@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.labFactory = new Sci.Win.UI.Label();
             this.labM = new Sci.Win.UI.Label();
             this.dateEstCutDate = new Sci.Win.UI.DateRange();
@@ -271,8 +271,8 @@
 
         #endregion
 
-        private Class.txtfactory txtfactory;
-        private Class.txtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label labFactory;
         private Win.UI.Label labM;
         private Win.UI.DateRange dateEstCutDate;

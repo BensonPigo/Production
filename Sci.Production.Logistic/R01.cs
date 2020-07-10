@@ -12,7 +12,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_R01
     /// </summary>
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         private DateTime? buyerDelivery1;
         private DateTime? buyerDelivery2;
@@ -49,7 +49,7 @@ namespace Sci.Production.Logistic
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Sci.Production.Logistic
         /// </summary>
         /// <param name="e">Win.ReportEventArgs</param>
         /// <returns>Result</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             string chkWhere = string.Empty;
@@ -386,7 +386,7 @@ drop table #tmp,#tmp2
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -400,7 +400,7 @@ drop table #tmp,#tmp2
             this.SetCount(this.printData.Rows.Count);
 
             // 檢查是否擁有Clog R01的Confirm 權限
-            bool canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P01. Clog Master List", "CanConfirm");
+            bool canConfrim = Prgs.GetAuthority(Env.User.UserID, "P01. Clog Master List", "CanConfirm");
 
             if (this.printData.Rows.Count <= 0)
             {
@@ -409,7 +409,7 @@ drop table #tmp,#tmp2
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Logistic_R01_CartonStatusReport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Logistic_R01_CartonStatusReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -426,7 +426,7 @@ drop table #tmp,#tmp2
                 this.mDivision,
                 this.brand);
 
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R01_CartonStatusReport.xltx", 3, false, null, excel);// 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R01_CartonStatusReport.xltx", 3, false, null, excel); // 將datatable copy to excel
 
             ////此欄位只有 Clog R01 擁有 Confirm 權限的使用者可以『看到』，其餘的則移除該欄位。
             if (!canConfrim)
@@ -439,7 +439,7 @@ drop table #tmp,#tmp2
             this.CreateCustomizedExcel(ref worksheet);
 
             #region Save & show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_R01_CartonStatusReport");
+            string strExcelName = Class.MicrosoftFile.GetName("Logistic_R01_CartonStatusReport");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -453,6 +453,5 @@ drop table #tmp,#tmp2
             this.HideWaitMessage();
             return true;
         }
-
     }
 }

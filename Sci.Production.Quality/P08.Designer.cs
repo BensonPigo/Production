@@ -42,7 +42,7 @@
             this.labelDyelot = new Sci.Win.UI.Label();
             this.labelRef = new Sci.Win.UI.Label();
             this.txtRef = new Sci.Win.UI.TextBox();
-            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.txtSeq = new Sci.Production.Class.TxtSeq();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.txtWK = new Sci.Win.UI.TextBox();
             this.lblSP = new Sci.Win.UI.Label();
@@ -186,8 +186,8 @@
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq.Location = new System.Drawing.Point(445, 38);
             this.txtSeq.Name = "txtSeq";
-            this.txtSeq.seq1 = "";
-            this.txtSeq.seq2 = "";
+            this.txtSeq.Seq1 = "";
+            this.txtSeq.Seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 24;
             // 
@@ -437,7 +437,7 @@
         private Win.UI.Label labelDyelot;
         private Win.UI.Label labelRef;
         private Win.UI.TextBox txtRef;
-        private Class.txtSeq txtSeq;
+        private Class.TxtSeq txtSeq;
         private Win.UI.TextBox txtSP;
         private Win.UI.TextBox txtWK;
         private Win.UI.Label lblSP;

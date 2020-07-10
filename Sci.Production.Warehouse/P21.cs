@@ -5,39 +5,37 @@ using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P21 : Sci.Win.Tems.QueryForm
+    public partial class P21 : Win.Tems.QueryForm
     {
         DataTable dtReceiving = new DataTable();
+
         public P21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("", "All");
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
+            comboBox1_RowSource.Add(string.Empty, "All");
             comboBox1_RowSource.Add("F", "Fabric");
             comboBox1_RowSource.Add("A", "Accessory");
-            cmbMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
-            cmbMaterialType.ValueMember = "Key";
-            cmbMaterialType.DisplayMember = "Value";
+            this.cmbMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
+            this.cmbMaterialType.ValueMember = "Key";
+            this.cmbMaterialType.DisplayMember = "Value";
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings cellActWeight = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings cellActWeight = new DataGridViewGeneratorNumericColumnSettings();
             cellActWeight.CellValidating += (s, e) =>
             {
                 DataRow curDr = this.gridReceiving.GetDataRow(e.RowIndex);
@@ -45,6 +43,7 @@ namespace Sci.Production.Warehouse
                 {
                     return;
                 }
+
                 curDr["Differential"] = (decimal)e.FormattedValue - (decimal)curDr["Weight"];
                 curDr["ActualWeight"] = e.FormattedValue;
                 curDr.EndEdit();
@@ -54,7 +53,7 @@ namespace Sci.Production.Warehouse
                 this.gridReceiving.RefreshEdit();
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings cellLocation = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings cellLocation = new DataGridViewGeneratorTextColumnSettings();
             cellLocation.CellMouseDoubleClick += (s, e) =>
             {
                 this.GridLocationCellPop(e.RowIndex);
@@ -76,11 +75,11 @@ namespace Sci.Production.Warehouse
                     curDr["Location"] = string.Empty;
                     this.selectModify(e.RowIndex);
                     return;
-                }               
-               
+                }
+
                 string[] locationList = e.FormattedValue.ToString().Split(',');
-                
-                string notLocationExistsList = locationList.Where(a => !PublicPrg.Prgs.CheckLocationExists(curDr["StockType"].ToString(), a)).JoinToString(",");
+
+                string notLocationExistsList = locationList.Where(a => !Prgs.CheckLocationExists(curDr["StockType"].ToString(), a)).JoinToString(",");
 
                 if (!MyUtility.Check.Empty(notLocationExistsList))
                 {
@@ -98,25 +97,26 @@ namespace Sci.Production.Warehouse
                 this.gridReceiving.RefreshEdit();
             };
 
-            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_Select = new DataGridViewGeneratorCheckBoxColumnSettings();
-            col_Select.CellValidating += (s, e) => 
+            DataGridViewGeneratorCheckBoxColumnSettings col_Select = new DataGridViewGeneratorCheckBoxColumnSettings();
+            col_Select.CellValidating += (s, e) =>
             {
-                DataRow dr = gridReceiving.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridReceiving.GetDataRow(e.RowIndex);
                 bool isCheck = MyUtility.Convert.GetBool(e.FormattedValue);
                 dr["select"] = isCheck;
                 dr.EndEdit();
                 DataTable dt = (DataTable)this.gridReceiving.DataSource;
                 if (dt != null || dt.Rows.Count > 0)
                 {
-                    int cnt = MyUtility.Convert.GetInt(dt.Compute("count(select)", "select = 1"));//+ (isCheck ? 1 : -1);
+                    int cnt = MyUtility.Convert.GetInt(dt.Compute("count(select)", "select = 1")); // + (isCheck ? 1 : -1);
                     this.numSelectCnt.Value = cnt;
                 }
             };
 
-            Helper.Controls.Grid.Generator(this.gridReceiving)
-                 .CheckBox("select", header: "", trueValue: 1, falseValue: 0,settings: col_Select)
+            this.Helper.Controls.Grid.Generator(this.gridReceiving)
+                 .CheckBox("select", header: string.Empty, trueValue: 1, falseValue: 0, settings: col_Select)
                  .Text("ExportID", header: "WK#", width: Widths.AnsiChars(14), iseditingreadonly: true)
-                 //.Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
+
+                 // .Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("Seq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -162,13 +162,14 @@ namespace Sci.Production.Warehouse
         private void GridLocationCellPop(int rowIndex)
         {
             DataRow curDr = this.gridReceiving.GetDataRow(rowIndex);
-            SelectItem2 selectItem2 = PublicPrg.Prgs.SelectLocation(curDr["StockType"].ToString());
+            SelectItem2 selectItem2 = Prgs.SelectLocation(curDr["StockType"].ToString());
             selectItem2.ShowDialog();
             if (selectItem2.DialogResult == DialogResult.OK)
             {
                 curDr["Location"] = selectItem2.GetSelecteds().Select(s => s["ID"].ToString()).JoinToString(",");
                 this.gridReceiving.Rows[rowIndex].Cells["Location"].Value = curDr["Location"];
             }
+
             curDr.EndEdit();
         }
 
@@ -177,15 +178,15 @@ namespace Sci.Production.Warehouse
             string sqlWhere = string.Empty;
             string sqlWhere2 = string.Empty;
 
-            if (!txtSeq.checkSeq1Empty() && txtSeq.checkSeq2Empty())
+            if (!this.txtSeq.CheckSeq1Empty() && this.txtSeq.CheckSeq2Empty())
             {
-                sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}'";
-                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.seq1}'";
+                sqlWhere += $" and rd.seq1 = '{this.txtSeq.Seq1}'";
+                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.Seq1}'";
             }
-            else if (!txtSeq.checkEmpty(showErrMsg: false))
+            else if (!this.txtSeq.CheckEmpty(showErrMsg: false))
             {
-                sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}' and rd.seq2 = '{this.txtSeq.seq2}'";
-                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.seq1}' and td.seq2 = '{this.txtSeq.seq2}'";
+                sqlWhere += $" and rd.seq1 = '{this.txtSeq.Seq1}' and rd.seq2 = '{this.txtSeq.Seq2}'";
+                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.Seq1}' and td.seq2 = '{this.txtSeq.Seq2}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtRef.Text))
@@ -454,14 +455,15 @@ DROP TABLE #tmpStockType
             }
 
             // 排除Location沒有修改的資料
-            DataRow[] drArryExistRemark = dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
+            DataRow[] drArryExistRemark = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
                                                                              && !MyUtility.Check.Empty(x.Field<string>("Remark"))
                                                                              && !x.Field<string>("Location").EqualString(x.Field<string>("OldLocation"))).ToArray();
-            DataRow[] drArryNotExistRemark = dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
+            DataRow[] drArryNotExistRemark = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
                                                                              && MyUtility.Check.Empty(x.Field<string>("Remark"))
                                                                              && !x.Field<string>("Location").EqualString(x.Field<string>("OldLocation"))).ToArray();
-            DataRow[] drArryActualWeight = dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
-                                                                             && x.Field<decimal>("ActualWeight") != x.Field<decimal>("OldActualWeight")).ToArray();                
+            DataRow[] drArryActualWeight = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
+                                                                             && x.Field<decimal>("ActualWeight") != x.Field<decimal>("OldActualWeight")).ToArray();
+
             // Remark沒資料則統一合併後寫入P26 同ID，排除Location沒有修改的資料
             var selectedReceivingSummary = drArryNotExistRemark
                                         .Where(s => s["Location"].ToString() != s["OldLocation"].ToString())
@@ -474,7 +476,7 @@ DROP TABLE #tmpStockType
                                             Dyelot = s["Dyelot"].ToString(),
                                             StockType = s["StockType"].ToString(),
                                             FtyInventoryQty = (decimal)s["FtyInventoryQty"],
-                                            FtyInventoryUkey = (Int64)s["FtyInventoryUkey"]
+                                            FtyInventoryUkey = (long)s["FtyInventoryUkey"],
                                         })
                                         .Select(s => new
                                         {
@@ -487,13 +489,13 @@ DROP TABLE #tmpStockType
                                             s.Key.FtyInventoryQty,
                                             s.Key.FtyInventoryUkey,
                                             Location = s.Select(d => d["Location"].ToString()).Distinct().JoinToString(","),
-                                            OldLocation = s.Select(d => d["OldLocation"].ToString()).Distinct().JoinToString(",")
+                                            OldLocation = s.Select(d => d["OldLocation"].ToString()).Distinct().JoinToString(","),
                                         });
 
-            int cntID = ((selectedReceivingSummary.Count() >= 1) ? 1 : 0) + drArryExistRemark.Length; //產生表頭數
+            int cntID = ((selectedReceivingSummary.Count() >= 1) ? 1 : 0) + drArryExistRemark.Length; // 產生表頭數
 
             string sqlInsertLocationTrans = string.Empty;
-            List<string> id_list = MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "LH", "LocationTrans", batchNumber: cntID, sequenceMode: 2); // 批次產生ID
+            List<string> id_list = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "LH", "LocationTrans", batchNumber: cntID, sequenceMode: 2); // 批次產生ID
             int idcnt = 0;
 
             if (id_list.Count == 0 && drArryActualWeight.Length == 0)
@@ -502,12 +504,12 @@ DROP TABLE #tmpStockType
                 return;
             }
 
-            if (id_list.Count > 0 )
+            if (id_list.Count > 0)
             {
                 // Remark有資料要分開寫入到P26 不同ID
                 foreach (var item in drArryExistRemark)
                 {
-                    if (item["Remark"].ToString().Length >= (60 - 19))  // 預設要填入---Create from P21.，因此要扣掉這個文字長度
+                    if (item["Remark"].ToString().Length >= (60 - 19)) // 預設要填入---Create from P21.，因此要扣掉這個文字長度
                     {
                         MyUtility.Msg.WarningBox("Remark is too long!");
                         return;
@@ -554,7 +556,6 @@ Insert into LocationTrans_Detail(   ID,
 ";
                     idcnt++;
                 }
-
 
                 if (selectedReceivingSummary.Any())
                 {
@@ -610,7 +611,7 @@ Insert into LocationTrans_Detail(   ID,
             string sqlUpdateReceiving_Detail = string.Empty;
             foreach (var updateItem in drArryActualWeight)
             {
-                if (updateItem["ReceivingSource"].ToString()== "Receiving")
+                if (updateItem["ReceivingSource"].ToString() == "Receiving")
                 {
                     sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {updateItem["ActualWeight"]}
                                                     where   ID = '{updateItem["ID"]}' and
@@ -621,6 +622,7 @@ Insert into LocationTrans_Detail(   ID,
                                                             Dyelot = '{updateItem["Dyelot"]}'
 ";
                 }
+
                 if (updateItem["ReceivingSource"].ToString() == "TransferIn")
                 {
                     sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set Weight  = {updateItem["ActualWeight"]}
@@ -687,7 +689,6 @@ Insert into LocationTrans_Detail(   ID,
             this.gridReceiving.CurrentCell = this.gridReceiving[currentColumnIndexInt, currentRowIndexInt];
             this.gridReceiving.FirstDisplayedScrollingRowIndex = currentRowIndexInt;
             MyUtility.Msg.InfoBox("Complete");
-
         }
 
         /// <summary>
@@ -714,7 +715,7 @@ Insert into LocationTrans_Detail(   ID,
 
             // 判斷Location 有變更資料就自動勾選
             string oldvalue = dr["OldLocation"].ToString();
-            string newvalue = dr["Location"].ToString();            
+            string newvalue = dr["Location"].ToString();
             if (!oldvalue.Equals(newvalue))
             {
                 chg_Location = true;

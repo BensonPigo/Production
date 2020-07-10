@@ -14,7 +14,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P02_ImportFromBarCode
     /// </summary>
-    public partial class P02_ImportFromBarCode : Sci.Win.Subs.Base
+    public partial class P02_ImportFromBarCode : Win.Subs.Base
     {
         private IList<P02_FileInfo> filelists = new List<P02_FileInfo>();
         private DataTable grid2Data;
@@ -214,7 +214,7 @@ namespace Sci.Production.Logistic
                                 dr1["CTNStartNo"] = sl[2].Substring(13);
 
                                 // dr1["MDivisionID"] = sl[2].Substring(0, 3);
-                                dr1["MDivisionID"] = Sci.Env.User.Keyword;
+                                dr1["MDivisionID"] = Env.User.Keyword;
                                 dr1["InsertData"] = 1;
                                 string sqlCmd = string.Format(
                                     @"select OrderID, TransferToClogID, ClogReceiveID 
@@ -319,7 +319,7 @@ namespace Sci.Production.Logistic
             }
 
             string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
+            DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
             SaveFileDialog dlg = new SaveFileDialog();
             dlg.RestoreDirectory = true;
             dlg.InitialDirectory = myDocumentsPath;     // 指定"我的文件"路徑
@@ -328,7 +328,7 @@ namespace Sci.Production.Logistic
 
             // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
             // Get the selected file name and CopyToXls
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
+            if (dlg.ShowDialog() == DialogResult.OK && dlg.FileName != null)
             {
                 // Open document
                 bool result = MyUtility.Excel.CopyToXls(excelTable, dlg.FileName, xltfile: "Logistic_P02_ImportFromBarCode.xltx", headerRow: 1);
@@ -405,7 +405,7 @@ namespace Sci.Production.Logistic
 
                             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
                             sp4.ParameterName = "@addName";
-                            sp4.Value = Sci.Env.User.UserID;
+                            sp4.Value = Env.User.UserID;
 
                             System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
                             sp5.ParameterName = "@addDate";
@@ -423,7 +423,7 @@ namespace Sci.Production.Logistic
                             cmds.Add(sp5);
                             cmds.Add(sp6);
                             #endregion
-                            DualResult result1 = Sci.Data.DBProxy.Current.Execute(null, sqlInsertMaster, cmds);
+                            DualResult result1 = DBProxy.Current.Execute(null, sqlInsertMaster, cmds);
 
                             #region 宣告Detail sql參數
                             IList<System.Data.SqlClient.SqlParameter> detailcmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -467,10 +467,10 @@ namespace Sci.Production.Logistic
                                     detail4.Value = dr1["OrderId"].ToString().Trim();
                                     detail5.Value = dr1["CTNStartNo"].ToString().Trim();
                                     detail6.Value = dr1["ClogLocationId"].ToString().Trim();
-                                    detail7.Value = Sci.Env.User.UserID;
+                                    detail7.Value = Env.User.UserID;
                                     detail8.Value = DateTime.Now;
                                     #endregion
-                                    DualResult result2 = Sci.Data.DBProxy.Current.Execute(null, sqlInsertDetail, detailcmds);
+                                    DualResult result2 = DBProxy.Current.Execute(null, sqlInsertDetail, detailcmds);
 
                                     if (!result2)
                                     {
@@ -578,11 +578,11 @@ namespace Sci.Production.Logistic
         {
             if (this.btnCancel.Text == "Cancel")
             {
-                this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+                this.DialogResult = DialogResult.Cancel;
             }
             else
             {
-                this.DialogResult = System.Windows.Forms.DialogResult.OK;
+                this.DialogResult = DialogResult.OK;
             }
 
             this.Close();

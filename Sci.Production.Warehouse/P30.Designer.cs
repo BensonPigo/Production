@@ -43,10 +43,10 @@
             this.dateCfmDate = new Sci.Win.UI.DateRange();
             this.labelFabricType = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.comboFabricType = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.comboFabricType = new Sci.Production.Class.ComboDropDownList(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridComplete = new Sci.Win.UI.Grid();
             this.gridRel = new Sci.Win.UI.Grid();
@@ -380,13 +380,13 @@
         private Win.UI.DateRange dateCfmDate;
         private Win.UI.Label labelFabricType;
         private Win.UI.Label labelCategory;
-        private Class.txtfactory txtmfactory;
+        private Class.Txtfactory txtmfactory;
         private Win.UI.Panel panel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private Win.UI.Grid gridComplete;
         private Win.UI.Grid gridRel;
-        private Class.comboDropDownList comboFabricType;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboFabricType;
+        private Class.ComboDropDownList comboCategory;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
     }

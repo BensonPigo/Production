@@ -34,9 +34,9 @@
             this.lbToolType = new Sci.Win.UI.Label();
             this.comboToolType = new Sci.Win.UI.ComboBox();
             this.dateInlineDate = new Sci.Win.UI.DateRange();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.comboVersion = new Sci.Win.UI.ComboBox();
             this.lbVersion = new Sci.Win.UI.Label();
             this.lbInlineDate = new Sci.Win.UI.Label();
@@ -135,7 +135,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -165,8 +165,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 3;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // comboVersion
             // 
@@ -254,9 +254,9 @@
         private Win.UI.Label lbToolType;
         private Win.UI.ComboBox comboToolType;
         private Win.UI.DateRange dateInlineDate;
-        private Class.txtfactory txtfactory;
-        private Class.txtseason txtseason;
-        private Class.txtstyle txtstyle;
+        private Class.Txtfactory txtfactory;
+        private Class.Txtseason txtseason;
+        private Class.Txtstyle txtstyle;
         private Win.UI.ComboBox comboVersion;
         private Win.UI.Label lbVersion;
         private Win.UI.Label lbInlineDate;

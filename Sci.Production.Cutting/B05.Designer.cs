@@ -35,8 +35,8 @@
             this.labelID = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtCell1 = new Sci.Production.Class.txtCell();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.txtCell1 = new Sci.Production.Class.TxtCell();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -206,8 +206,8 @@
         private Win.UI.TextBox txtID;
         private Win.UI.Label labelID;
         private Win.UI.Label label2;
-        private Class.txtCell txtCell1;
+        private Class.TxtCell txtCell1;
         private Win.UI.Label label1;
-        private Class.txtMdivision txtMdivision1;
+        private Class.TxtMdivision txtMdivision1;
     }
 }

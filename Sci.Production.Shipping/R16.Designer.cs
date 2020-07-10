@@ -39,13 +39,13 @@
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.labCustCD = new Sci.Win.UI.Label();
             this.labDestination = new Sci.Win.UI.Label();
-            this.comboshipmode = new Sci.Production.Class.txtshipmode();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.txtcountry = new Sci.Production.Class.txtcountry();
-            this.txtcustcd = new Sci.Production.Class.txtcustcd();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtbuyer = new Sci.Production.Class.txtbuyer();
+            this.comboshipmode = new Sci.Production.Class.Txtshipmode();
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtcountry = new Sci.Production.Class.Txtcountry();
+            this.txtcustcd = new Sci.Production.Class.Txtcustcd();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtbuyer = new Sci.Production.Class.Txtbuyer();
             this.txtShipper = new Sci.Win.UI.TextBox();
             this.chkcancelOrder = new Sci.Win.UI.CheckBox();
             this.chkFOC = new Sci.Win.UI.CheckBox();
@@ -221,7 +221,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -363,15 +363,15 @@
         private Win.UI.Label labFactory;
         private Win.UI.Label labelBuyerDelivery;
         private Win.UI.DateRange dateBuyerDelivery;
-        private Class.txtbuyer txtbuyer;
-        private Class.txtbrand txtbrand;
-        private Class.txtfactory txtfactory;
+        private Class.Txtbuyer txtbuyer;
+        private Class.Txtbrand txtbrand;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labCustCD;
-        private Class.txtcustcd txtcustcd;
+        private Class.Txtcustcd txtcustcd;
         private Win.UI.Label labDestination;
-        private Class.txtcountry txtcountry;
-        private Class.comboDropDownList comboCategory;
-        private Class.txtshipmode comboshipmode;
+        private Class.Txtcountry txtcountry;
+        private Class.ComboDropDownList comboCategory;
+        private Class.Txtshipmode comboshipmode;
         private Win.UI.TextBox txtShipper;
         private Win.UI.CheckBox chkcancelOrder;
         private Win.UI.CheckBox chkFOC;

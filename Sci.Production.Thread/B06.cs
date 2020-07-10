@@ -1,22 +1,15 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Linq;
-using System.Data.SqlClient;
 
 namespace Sci.Production.Thread
 {
     /// <summary>
     /// B06
     /// </summary>
-    public partial class B06 : Sci.Win.Tems.QueryForm
+    public partial class B06 : Win.Tems.QueryForm
     {
         /// <summary>
         /// B06

@@ -1,24 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Ict.Win;
-using Sci;
 using Sci.Data;
-
 
 namespace Sci.Production.Subcon
 {
-    public partial class B01 : Sci.Win.Tems.Input1
+    public partial class B01 : Win.Tems.Input1
     {
         public B01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable dt = new DataTable();
             dt.Columns.Add("Value");
 
@@ -34,7 +29,6 @@ namespace Sci.Production.Subcon
             this.comboCartonDimension.DisplayMember = "Value";
             this.comboCartonDimension.ValueMember = "Value";
 
-
             DataTable dt2 = new DataTable();
             DBProxy.Current.Select(null, @"
 SELECT  [Text]=Name, [Value]= CASE WHEN Name = 'Manual' THEN 0
@@ -47,36 +41,33 @@ WHERE Type='Pms_LocalItem_UnPack'
             this.dropDownUnpack.DataSource = dt2;
             this.dropDownUnpack.DisplayMember = "Text";
             this.dropDownUnpack.ValueMember = "Value";
-
         }
 
-        //
         protected override void ClickNewAfter()
         {
-            
             base.ClickNewAfter();
-            groupbox_status_control();
-        }
-        
-        //copy前清空id
-        protected override void ClickCopyAfter()
-        {
-            CurrentMaintain["Refno"] = DBNull.Value;
-            CurrentMaintain["localsuppid"] = DBNull.Value;
-            CurrentMaintain["price"] = DBNull.Value;
-            CurrentMaintain["quotdate"] = DBNull.Value;
-            CurrentMaintain["currencyid"] = DBNull.Value;
-            CurrentMaintain["Status"] = "New";
-            txtRefno.Focus();
-            txtartworktype_ftyCategory.ValidateControl();
+            this.groupbox_status_control();
         }
 
-        //編輯狀態限制
+        // copy前清空id
+        protected override void ClickCopyAfter()
+        {
+            this.CurrentMaintain["Refno"] = DBNull.Value;
+            this.CurrentMaintain["localsuppid"] = DBNull.Value;
+            this.CurrentMaintain["price"] = DBNull.Value;
+            this.CurrentMaintain["quotdate"] = DBNull.Value;
+            this.CurrentMaintain["currencyid"] = DBNull.Value;
+            this.CurrentMaintain["Status"] = "New";
+            this.txtRefno.Focus();
+            this.txtartworktype_ftyCategory.ValidateControl();
+        }
+
+        // 編輯狀態限制
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtRefno.ReadOnly = true;
-            this.txtSubconSupplier.TextBox1.ReadOnly=true;
+            this.txtSubconSupplier.TextBox1.ReadOnly = true;
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Locked"))
             {
                 this.txtDescription.ReadOnly = true;
@@ -85,64 +76,68 @@ WHERE Type='Pms_LocalItem_UnPack'
             }
         }
 
-        //存檔前檢查
+        // 存檔前檢查
         protected override bool ClickSaveBefore()
         {
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["refno"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["refno"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Refno > can not be empty!");
                 this.txtRefno.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Category"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Category"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Category > can not be empty!");
                 this.txtartworktype_ftyCategory.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Unitid"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Unitid"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Unit > can not be empty!");
                 this.txtunit_ftyUnit.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["description"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["description"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 this.txtDescription.Focus();
                 return false;
             }
 
-            if (CurrentMaintain["Category"].ToString().IndexOf("CARTON")>=0)
+            if (this.CurrentMaintain["Category"].ToString().IndexOf("CARTON") >= 0)
             {
-                if (CurrentMaintain["CtnLength"]==DBNull.Value || (decimal)CurrentMaintain["CtnLength"]==0)
+                if (this.CurrentMaintain["CtnLength"] == DBNull.Value || (decimal)this.CurrentMaintain["CtnLength"] == 0)
                 {
                     MyUtility.Msg.WarningBox("< CtnLength > can not be empty!");
                     this.numL.Focus();
                     return false;
                 }
-                if (CurrentMaintain["CtnWidth"]==DBNull.Value || (decimal)CurrentMaintain["CtnWidth"] ==0)
+
+                if (this.CurrentMaintain["CtnWidth"] == DBNull.Value || (decimal)this.CurrentMaintain["CtnWidth"] == 0)
                 {
                     MyUtility.Msg.WarningBox("< CtnWidth > can not be empty!");
                     this.numW.Focus();
                     return false;
                 }
-                if (CurrentMaintain["CtnHeight"]==DBNull.Value || (decimal)CurrentMaintain["CtnHeight"] ==0)
+
+                if (this.CurrentMaintain["CtnHeight"] == DBNull.Value || (decimal)this.CurrentMaintain["CtnHeight"] == 0)
                 {
                     MyUtility.Msg.WarningBox("< CtnHeight > can not be empty!");
                     this.numH.Focus();
                     return false;
                 }
-                if (string.IsNullOrWhiteSpace(CurrentMaintain["CtnUnit"].ToString()))
+
+                if (string.IsNullOrWhiteSpace(this.CurrentMaintain["CtnUnit"].ToString()))
                 {
                     MyUtility.Msg.WarningBox("< CtnUnit > can not be empty!");
                     this.comboCartonDimension.Focus();
                     return false;
                 }
-                if (CurrentMaintain["CBM"]==DBNull.Value || (decimal)CurrentMaintain["CBM"] ==0)
+
+                if (this.CurrentMaintain["CBM"] == DBNull.Value || (decimal)this.CurrentMaintain["CBM"] == 0)
                 {
                     MyUtility.Msg.WarningBox("< CBM > can not be empty!");
                     this.numCBM.Focus();
@@ -150,33 +145,37 @@ WHERE Type='Pms_LocalItem_UnPack'
                 }
             }
 
-            if (CurrentMaintain["Category"].ToString().IndexOf("THREAD") >=0)
+            if (this.CurrentMaintain["Category"].ToString().IndexOf("THREAD") >= 0)
             {
-                if (CurrentMaintain["MeterToCone"]==DBNull.Value || (decimal)CurrentMaintain["MeterToCone"] ==0)
+                if (this.CurrentMaintain["MeterToCone"] == DBNull.Value || (decimal)this.CurrentMaintain["MeterToCone"] == 0)
                 {
                     MyUtility.Msg.WarningBox("< MeterToCone > can not be empty!");
                     this.numCone.Focus();
                     return false;
                 }
-                if (string.IsNullOrWhiteSpace(CurrentMaintain["ThreadTypeID"].ToString()))
+
+                if (string.IsNullOrWhiteSpace(this.CurrentMaintain["ThreadTypeID"].ToString()))
                 {
                     MyUtility.Msg.WarningBox("< Thread Type > can not be empty!");
                     this.txtThreadType.Focus();
                     return false;
                 }
-                if (CurrentMaintain["ThreadTex"]==DBNull.Value || (decimal)CurrentMaintain["ThreadTex"] ==0)
+
+                if (this.CurrentMaintain["ThreadTex"] == DBNull.Value || (decimal)this.CurrentMaintain["ThreadTex"] == 0)
                 {
                     MyUtility.Msg.WarningBox("< ThreadTex > can not be empty!");
                     this.numThreadTex.Focus();
                     return false;
                 }
-                if (CurrentMaintain["Weight"]==DBNull.Value || (decimal)CurrentMaintain["Weight"]  ==0)
+
+                if (this.CurrentMaintain["Weight"] == DBNull.Value || (decimal)this.CurrentMaintain["Weight"] == 0)
                 {
                     MyUtility.Msg.WarningBox("< Weight > can not be empty!");
                     this.numWeightGW.Focus();
                     return false;
                 }
-                if (CurrentMaintain["AxleWeight"]==DBNull.Value || (decimal)CurrentMaintain["AxleWeight"] == 0)
+
+                if (this.CurrentMaintain["AxleWeight"] == DBNull.Value || (decimal)this.CurrentMaintain["AxleWeight"] == 0)
                 {
                     MyUtility.Msg.WarningBox("< AxleWeight > can not be empty!");
                     this.numWeightofAxle.Focus();
@@ -196,6 +195,7 @@ WHERE Type='Pms_LocalItem_UnPack'
                 this.ShowErr(result);
                 return;
             }
+
             base.ClickClose();
         }
 
@@ -208,44 +208,55 @@ WHERE Type='Pms_LocalItem_UnPack'
                 this.ShowErr(result);
                 return;
             }
+
             base.ClickUnclose();
         }
 
-        //算CBM
+        // 算CBM
         private void getCBM()
         {
-            if (CurrentMaintain == null) return;
-            if (CurrentMaintain["Category"].ToString().IndexOf("THREAD") >= 0) return;
-            //if (string.IsNullOrWhiteSpace(CurrentMaintain["CtnLength"].ToString()) 
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            if (this.CurrentMaintain["Category"].ToString().IndexOf("THREAD") >= 0)
+            {
+                return;
+            }
+
+            // if (string.IsNullOrWhiteSpace(CurrentMaintain["CtnLength"].ToString())
             //    || string.IsNullOrWhiteSpace(CurrentMaintain["CtnWidth"].ToString())
             //    || string.IsNullOrWhiteSpace(CurrentMaintain["CtnHeight"].ToString()))
-            //{
+            // {
             //    return;
-            //}
-            if (comboCartonDimension.SelectedIndex != -1)
+            // }
+            if (this.comboCartonDimension.SelectedIndex != -1)
             {
                 if (this.comboCartonDimension.SelectedValue.ToString() == "Inch")
                 {
-                    double i = double.Parse(numL.Text.ToString()) *
-                        double.Parse(numW.Text.ToString()) *
-                        double.Parse(numH.Text.ToString()) * 0.00001639;
+                    double i = double.Parse(this.numL.Text.ToString()) *
+                        double.Parse(this.numW.Text.ToString()) *
+                        double.Parse(this.numH.Text.ToString()) * 0.00001639;
+
                    // numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
-                   CurrentMaintain["CBM"] = MyUtility.Math.Round(i, 4).ToString();
-                    //this.numericBox3.Text = Math.Round(i, 4).ToString();
+                    this.CurrentMaintain["CBM"] = MyUtility.Math.Round(i, 4).ToString();
+
+                    // this.numericBox3.Text = Math.Round(i, 4).ToString();
                 }
                 else
                 {
-                    double i = double.Parse(numL.Text.ToString()) *
-                        double.Parse(numW.Text.ToString()) *
-                        double.Parse(numH.Text.ToString()) / 1000000000;
-                    CurrentMaintain["CBM"] = MyUtility.Math.Round(i, 4).ToString();
-                   // numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
+                    double i = double.Parse(this.numL.Text.ToString()) *
+                        double.Parse(this.numW.Text.ToString()) *
+                        double.Parse(this.numH.Text.ToString()) / 1000000000;
+                    this.CurrentMaintain["CBM"] = MyUtility.Math.Round(i, 4).ToString();
 
+                   // numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
                 }
             }
         }
 
-        //改變artworktype時，控制可輸入的欄位
+        // 改變artworktype時，控制可輸入的欄位
         private void txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
         {
             if (MyUtility.Convert.GetString(this.CurrentMaintain["category"]).EqualString("Carton"))
@@ -258,31 +269,35 @@ WHERE Type='Pms_LocalItem_UnPack'
                 this.chkIsCarton.Enabled = false;
                 this.dropDownUnpack.ReadOnly = true;
             }
+
             this.dropDownUnpack.SelectedValue = 0;
             this.CurrentMaintain["Unpack"] = 0;
         }
 
         private void W_H_L_Validated(object sender, EventArgs e)
         {
-            
-            getCBM();
+            this.getCBM();
         }
 
         private void btnQuotationRecord_Click(object sender, EventArgs e)
         {
-            var dr = CurrentMaintain; if (null == dr) return;
-            var frm = new Sci.Production.Subcon.B01_Quotation( this.IsSupportEdit, dr, this.Perm.Confirm);
+            var dr = this.CurrentMaintain;
+            if (dr == null)
+            {
+                return;
+            }
+
+            var frm = new B01_Quotation(this.IsSupportEdit, dr, this.Perm.Confirm);
             frm.ShowDialog(this);
             this.RenewData();
-
         }
 
-        //按鈕變色
+        // 按鈕變色
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
 
-            string sqlcmd = "select refno from localitem_quot WITH (NOLOCK) where refno = '" + CurrentMaintain["refno"].ToString() + "';";
+            string sqlcmd = "select refno from localitem_quot WITH (NOLOCK) where refno = '" + this.CurrentMaintain["refno"].ToString() + "';";
             if (MyUtility.Check.Seek(sqlcmd, "Production"))
             {
                 this.btnQuotationRecord.ForeColor = Color.Blue;
@@ -292,8 +307,8 @@ WHERE Type='Pms_LocalItem_UnPack'
                 this.btnQuotationRecord.ForeColor = Color.Black;
             }
 
-            sqlcmd = "select refno from localap_detail WITH (NOLOCK) where refno = '" + CurrentMaintain["refno"].ToString() + "';";
-             if (MyUtility.Check.Seek(sqlcmd, "Production"))
+            sqlcmd = "select refno from localap_detail WITH (NOLOCK) where refno = '" + this.CurrentMaintain["refno"].ToString() + "';";
+            if (MyUtility.Check.Seek(sqlcmd, "Production"))
             {
                 this.btnPaymentHistory.ForeColor = Color.Blue;
             }
@@ -302,7 +317,7 @@ WHERE Type='Pms_LocalItem_UnPack'
                 this.btnPaymentHistory.ForeColor = Color.Black;
             }
 
-            if (CurrentMaintain["Category"].ToString().ToUpper()== "SP_THREAD" || CurrentMaintain["Category"].ToString().ToUpper() == "EMB_THREAD")
+            if (this.CurrentMaintain["Category"].ToString().ToUpper() == "SP_THREAD" || this.CurrentMaintain["Category"].ToString().ToUpper() == "EMB_THREAD")
             {
                 this.btnThread.Visible = true;
             }
@@ -344,86 +359,100 @@ WHERE Type='Pms_LocalItem_UnPack'
                 this.btnSetCardboardPads.Visible = false;
                 this.chkIsCarton.Enabled = false;
             }
-
         }
 
         private void btnPaymentHistory_Click(object sender, EventArgs e)
         {
-            var dr = CurrentMaintain; if (null == dr) return;
-            var frm = new Sci.Production.Subcon.B01_History(dr);
+            var dr = this.CurrentMaintain;
+            if (dr == null)
+            {
+                return;
+            }
+
+            var frm = new B01_History(dr);
             frm.ShowDialog(this);
             this.RenewData();
         }
 
-        private void groupbox_status_control() {
-            CurrentMaintain["category"] = txtartworktype_ftyCategory.Text;
+        private void groupbox_status_control()
+        {
+            this.CurrentMaintain["category"] = this.txtartworktype_ftyCategory.Text;
             switch (this.txtartworktype_ftyCategory.Text.Trim())
             {
                 case "CARTON":
                     this.groupBox1.Enabled = true;
                     this.groupBox2.Enabled = false;
-                    CurrentMaintain["MeterToCone"] = DBNull.Value;
-                    CurrentMaintain["ThreadTypeID"] = DBNull.Value;
-                    CurrentMaintain["ThreadTex"] = DBNull.Value;
-                    CurrentMaintain["Weight"] = DBNull.Value;
-                    CurrentMaintain["AxleWeight"] = DBNull.Value;
-                    CurrentMaintain["Status"] = "New";
+                    this.CurrentMaintain["MeterToCone"] = DBNull.Value;
+                    this.CurrentMaintain["ThreadTypeID"] = DBNull.Value;
+                    this.CurrentMaintain["ThreadTex"] = DBNull.Value;
+                    this.CurrentMaintain["Weight"] = DBNull.Value;
+                    this.CurrentMaintain["AxleWeight"] = DBNull.Value;
+                    this.CurrentMaintain["Status"] = "New";
 
-                    CurrentMaintain["CtnLength"] = CurrentMaintain["CtnLength"] == DBNull.Value ? 0 : CurrentMaintain["CtnLength"];
-                    CurrentMaintain["CtnWidth"] = CurrentMaintain["CtnWidth"] == DBNull.Value ? 0 : CurrentMaintain["CtnWidth"];
-                    CurrentMaintain["CtnHeight"] = CurrentMaintain["CtnHeight"] == DBNull.Value ? 0 : CurrentMaintain["CtnHeight"];
+                    this.CurrentMaintain["CtnLength"] = this.CurrentMaintain["CtnLength"] == DBNull.Value ? 0 : this.CurrentMaintain["CtnLength"];
+                    this.CurrentMaintain["CtnWidth"] = this.CurrentMaintain["CtnWidth"] == DBNull.Value ? 0 : this.CurrentMaintain["CtnWidth"];
+                    this.CurrentMaintain["CtnHeight"] = this.CurrentMaintain["CtnHeight"] == DBNull.Value ? 0 : this.CurrentMaintain["CtnHeight"];
 
-                    if (comboCartonDimension.SelectedIndex == -1)
+                    if (this.comboCartonDimension.SelectedIndex == -1)
                     {
-                        comboCartonDimension.SelectedIndex = 0;
-                        CurrentMaintain["CtnUnit"] = comboCartonDimension.SelectedValue;
+                        this.comboCartonDimension.SelectedIndex = 0;
+                        this.CurrentMaintain["CtnUnit"] = this.comboCartonDimension.SelectedValue;
                     }
+
                     break;
                 case "EMB_THREAD":
                 case "SP_THREAD":
                     this.groupBox1.Enabled = false;
                     this.groupBox2.Enabled = true;
-                    CurrentMaintain["CtnLength"] = DBNull.Value;
-                    CurrentMaintain["CtnWidth"] = DBNull.Value;
-                    CurrentMaintain["CtnHeight"] = DBNull.Value;
-                    CurrentMaintain["CtnUnit"] = DBNull.Value;
-                    CurrentMaintain["CBM"] = DBNull.Value;
-                    CurrentMaintain["CTNWeight"] = DBNull.Value;
+                    this.CurrentMaintain["CtnLength"] = DBNull.Value;
+                    this.CurrentMaintain["CtnWidth"] = DBNull.Value;
+                    this.CurrentMaintain["CtnHeight"] = DBNull.Value;
+                    this.CurrentMaintain["CtnUnit"] = DBNull.Value;
+                    this.CurrentMaintain["CBM"] = DBNull.Value;
+                    this.CurrentMaintain["CTNWeight"] = DBNull.Value;
                     break;
                 default:
                     this.groupBox1.Enabled = false;
                     this.groupBox2.Enabled = false;
-                    CurrentMaintain["MeterToCone"] = DBNull.Value;
-                    CurrentMaintain["ThreadTypeID"] = DBNull.Value;
-                    CurrentMaintain["ThreadTex"] = DBNull.Value;
-                    CurrentMaintain["Weight"] = DBNull.Value;
-                    CurrentMaintain["AxleWeight"] = DBNull.Value;
-                    CurrentMaintain["CtnLength"] = DBNull.Value;
-                    CurrentMaintain["CtnWidth"] = DBNull.Value;
-                    CurrentMaintain["CtnHeight"] = DBNull.Value;
-                    CurrentMaintain["CtnUnit"] = DBNull.Value;
-                    CurrentMaintain["CBM"] = DBNull.Value;
+                    this.CurrentMaintain["MeterToCone"] = DBNull.Value;
+                    this.CurrentMaintain["ThreadTypeID"] = DBNull.Value;
+                    this.CurrentMaintain["ThreadTex"] = DBNull.Value;
+                    this.CurrentMaintain["Weight"] = DBNull.Value;
+                    this.CurrentMaintain["AxleWeight"] = DBNull.Value;
+                    this.CurrentMaintain["CtnLength"] = DBNull.Value;
+                    this.CurrentMaintain["CtnWidth"] = DBNull.Value;
+                    this.CurrentMaintain["CtnHeight"] = DBNull.Value;
+                    this.CurrentMaintain["CtnUnit"] = DBNull.Value;
+                    this.CurrentMaintain["CBM"] = DBNull.Value;
                     break;
             }
         }
 
         private void txtartworktype_ftyCategory_Validating(object sender, CancelEventArgs e)
         {
-            groupbox_status_control();
+            this.groupbox_status_control();
         }
 
-        //[Thread Type]右鍵開窗
+        // [Thread Type]右鍵開窗
         private void txtThreadType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false || txtThreadType.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from ThreadType WITH (NOLOCK) WHERE Junk=0", "20", this.txtThreadType.Text);
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
+            if (myForm.EditMode == false || this.txtThreadType.ReadOnly == true)
+            {
+                return;
+            }
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID from ThreadType WITH (NOLOCK) WHERE Junk=0", "20", this.txtThreadType.Text);
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtThreadType.Text = item.GetSelectedString();
         }
 
-        //[Thread Type]檢核
+        // [Thread Type]檢核
         private void txtThreadType_Validating(object sender, CancelEventArgs e)
         {
             string textValue = this.txtThreadType.Text;
@@ -431,7 +460,7 @@ WHERE Type='Pms_LocalItem_UnPack'
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select ID from ThreadType WITH (NOLOCK) WHERE Junk=0 and id = '{0}'", textValue)))
                 {
-                    this.txtThreadType.Text = "";
+                    this.txtThreadType.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Thread Type: {0} > not found !!", textValue));
                     return;
@@ -440,28 +469,31 @@ WHERE Type='Pms_LocalItem_UnPack'
         }
 
         // 計算cbm相關欄位的valid事件
-        
         private void comboCartonDimension_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
-            if (CurrentMaintain != null && comboCartonDimension.SelectedValue != null) {
-                CurrentMaintain["CtnUnit"] = comboCartonDimension.SelectedValue.ToString();
+            if (this.CurrentMaintain != null && this.comboCartonDimension.SelectedValue != null)
+            {
+                this.CurrentMaintain["CtnUnit"] = this.comboCartonDimension.SelectedValue.ToString();
             }
+
             if (string.IsNullOrWhiteSpace(this.numL.Text)
-           || string.IsNullOrWhiteSpace(numW.Text)
-           || string.IsNullOrWhiteSpace(numH.Text))
+           || string.IsNullOrWhiteSpace(this.numW.Text)
+           || string.IsNullOrWhiteSpace(this.numH.Text))
             {
                 return;
             }
-            getCBM();
+
+            this.getCBM();
         }
 
         private void btnThread_Click(object sender, EventArgs e)
         {
-            var callfrm = new B01_ThreadColorPrice(true, CurrentMaintain["Refno"].ToString(),string.Empty,string.Empty);
+            var callfrm = new B01_ThreadColorPrice(true, this.CurrentMaintain["Refno"].ToString(), string.Empty, string.Empty);
             callfrm.ShowDialog();
         }
+
         Form batchapprove;
+
         private void btnBatchApprove_Click(object sender, EventArgs e)
         {
             if (!this.Perm.Confirm)
@@ -470,21 +502,20 @@ WHERE Type='Pms_LocalItem_UnPack'
                 return;
             }
 
-            if (batchapprove == null || batchapprove.IsDisposed)
+            if (this.batchapprove == null || this.batchapprove.IsDisposed)
             {
-                batchapprove = new Sci.Production.Subcon.B01_BatchApprove(reload);
-                batchapprove.Show();
+                this.batchapprove = new B01_BatchApprove(this.reload);
+                this.batchapprove.Show();
             }
             else
             {
-                batchapprove.Activate();
+                this.batchapprove.Activate();
             }
-
         }
 
         private void btnSetCardboardPads_Click(object sender, EventArgs e)
         {
-            Form form = new Sci.Production.Subcon.B01_SetCardBoarsPads(this.CurrentMaintain);
+            Form form = new B01_SetCardBoarsPads(this.CurrentMaintain);
             form.ShowDialog(this);
             this.OnDetailEntered();
             this.RenewData();
@@ -493,15 +524,19 @@ WHERE Type='Pms_LocalItem_UnPack'
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
-            if (EditMode)
+            if (this.EditMode)
             {
                 if (this.btnSetCardboardPads != null)
+                {
                     this.btnSetCardboardPads.Enabled = false;
+                }
             }
             else
             {
                 if (this.btnSetCardboardPads != null)
+                {
                     this.btnSetCardboardPads.Enabled = true;
+                }
             }
         }
 
@@ -513,9 +548,9 @@ WHERE Type='Pms_LocalItem_UnPack'
 
         private void B01_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (batchapprove != null)
+            if (this.batchapprove != null)
             {
-                batchapprove.Dispose();
+                this.batchapprove.Dispose();
             }
         }
 
@@ -555,6 +590,7 @@ WHERE Type='Pms_LocalItem_UnPack'
                         this.DefaultWhere = string.Empty;
                         break;
                 }
+
                 this.ReloadDatas();
             };
         }

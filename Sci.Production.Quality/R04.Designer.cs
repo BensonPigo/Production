@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.comboM = new Sci.Win.UI.ComboBox();
             this.labelM = new Sci.Win.UI.Label();
             this.checkOutstandingOnly = new Sci.Win.UI.CheckBox();
@@ -241,7 +241,7 @@
         private Win.UI.Label labelCategory;
         private Win.UI.ComboBox comboM;
         private Win.UI.Label labelM;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboCategory;
         private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

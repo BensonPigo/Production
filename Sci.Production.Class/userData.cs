@@ -1,54 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
-using Sci;
 using Sci.Data;
 using Ict;
-using Ict.Win;
-using Sci.Win;
 
 namespace Sci.Production.Class
 {
-    public partial class userData : Form
+    /// <summary>
+    /// UserData
+    /// </summary>
+    public partial class UserData : Form
     {
         private string sql;
         private List<SqlParameter> sqlPar;
         private DataTable dt;
-        public string errMsg { set; get; }
 
-        public userData(string sql, List<SqlParameter> sqlPar)
+        /// <summary>
+        /// Err Msg
+        /// </summary>
+        public string ErrMsg { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserData"/> class.
+        /// </summary>
+        /// <param name="sql">sqlCmd</param>
+        /// <param name="sqlPar">SqlParameter</param>
+        public UserData(string sql, List<SqlParameter> sqlPar)
         {
-            errMsg = null;
+            this.ErrMsg = null;
             this.sql = sql;
             this.sqlPar = sqlPar;
-            InitializeComponent();
+            this.InitializeComponent();
 
             DualResult result;
-            if (result = DBProxy.Current.Select(null, sql, sqlPar, out dt))
+            if (result = DBProxy.Current.Select(null, sql, sqlPar, out this.dt))
             {
-                if (dt != null && dt.Rows.Count > 0)
+                if (this.dt != null && this.dt.Rows.Count > 0)
                 {
-                    DataRow dr = dt.Rows[0];
-                    displayBox1.Text = (dr["id"] != null) ? dr["id"].ToString() : "";
-                    displayBox2.Text = (dr["name"] != null) ? dr["name"].ToString() : "";
-                    displayBox3.Text = (dr["ext"] != null) ? dr["ext"].ToString() : "";
-                    displayBox4.Text = (dr["mail"] != null) ? dr["mail"].ToString() : "";
+                    DataRow dr = this.dt.Rows[0];
+                    this.displayBox1.Text = (dr["id"] != null) ? dr["id"].ToString() : string.Empty;
+                    this.displayBox2.Text = (dr["name"] != null) ? dr["name"].ToString() : string.Empty;
+                    this.displayBox3.Text = (dr["ext"] != null) ? dr["ext"].ToString() : string.Empty;
+                    this.displayBox4.Text = (dr["mail"] != null) ? dr["mail"].ToString() : string.Empty;
                 }
                 else
                 {
-                    errMsg = "Data not found!";
+                    this.ErrMsg = "Data not found!";
                 }
             }
             else
             {
-                errMsg = "Sql connection fail!\r\n" + result.ToString();
+                this.ErrMsg = "Sql connection fail!\r\n" + result.ToString();
             }
         }
     }

@@ -1,24 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
+﻿using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Sci.Win.UI;
 using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtshipmode : Sci.Win.UI.ComboBox
+    /// <summary>
+    /// Txtshipmode
+    /// </summary>
+    public partial class Txtshipmode : Win.UI.ComboBox
     {
         private string useFunction;
+
+        /// <summary>
+        /// ShipMode.UseFunction
+        /// </summary>
         [Category("Custom Properties")]
         public string UseFunction
         {
-            set 
+            get
+            {
+                return this.useFunction;
+            }
+
+            set
             {
                 this.useFunction = value;
                 if (!Env.DesignTime)
@@ -30,22 +34,25 @@ namespace Sci.Production.Class
                     }
                     else
                     {
-                        sqlCMD = string.Format("select ID='',UseFunction='' union all select ID,UseFunction from ShipMode WITH (NOLOCK) where UseFunction like '%{0}%'", useFunction.Trim());
+                        sqlCMD = string.Format("select ID='',UseFunction='' union all select ID,UseFunction from ShipMode WITH (NOLOCK) where UseFunction like '%{0}%'", this.useFunction.Trim());
                     }
+
                     Ict.DualResult cbResult;
-                    DataTable ShipModeTable = new DataTable();
-                    if (cbResult = DBProxy.Current.Select(null, sqlCMD, out ShipModeTable))
+                    DataTable shipModeTable = new DataTable();
+                    if (cbResult = DBProxy.Current.Select(null, sqlCMD, out shipModeTable))
                     {
-                        this.DataSource = ShipModeTable;
+                        this.DataSource = shipModeTable;
                         this.DisplayMember = "ID";
                         this.ValueMember = "ID";
                     }
                 }
             }
-            get { return this.useFunction; }
         }
 
-        public txtshipmode()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtshipmode"/> class.
+        /// </summary>
+        public Txtshipmode()
         {
             this.Size = new System.Drawing.Size(80, 24);
         }

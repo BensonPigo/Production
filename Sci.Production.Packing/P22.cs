@@ -2,11 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Packing
@@ -14,7 +10,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// P22
     /// </summary>
-    public partial class P22 : Sci.Win.Tems.QueryForm
+    public partial class P22 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P22

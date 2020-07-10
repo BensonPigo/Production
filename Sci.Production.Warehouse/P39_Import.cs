@@ -7,13 +7,11 @@ using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P39_Import : Sci.Win.Subs.Base
+    public partial class P39_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -22,23 +20,24 @@ namespace Sci.Production.Warehouse
 
         public P39_Import(DataRow master, DataTable detail)
         {
-            InitializeComponent();
-            dr_master = master;
-            dt_detail = detail;
+            this.InitializeComponent();
+            this.dr_master = master;
+            this.dt_detail = detail;
         }
-        //Find Now Button
+
+        // Find Now Button
         private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.txtSP.Text.TrimEnd();
-            String refno = this.txtRef.Text.TrimEnd();
-            String color = this.txtColor.Text.TrimEnd();
-            String location = this.txtLocation.Text.TrimEnd();
+            string sp = this.txtSP.Text.TrimEnd();
+            string refno = this.txtRef.Text.TrimEnd();
+            string color = this.txtColor.Text.TrimEnd();
+            string location = this.txtLocation.Text.TrimEnd();
 
             if (string.IsNullOrWhiteSpace(sp))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                txtSP.Focus();
+                this.txtSP.Focus();
                 return;
             }
             else
@@ -65,53 +64,82 @@ where 1=1"));
 
                 #region sql搜尋條件
                 if (!MyUtility.Check.Empty(sp))
+                {
                     strSQLCmd.Append(string.Format(@" and LI.OrderID = '{0}' ", sp));
+                }
+
                 if (!MyUtility.Check.Empty(refno))
+                {
                     strSQLCmd.Append(string.Format(@" and LI.Refno = '{0}' ", refno));
+                }
+
                 if (!MyUtility.Check.Empty(color))
+                {
                     strSQLCmd.Append(string.Format(@" and LI.ThreadColorID = '{0}' ", color));
+                }
+
                 if (!MyUtility.Check.Empty(location))
+                {
                     strSQLCmd.Append(string.Format(@" and '{0}' in (select data from dbo.SplitString(LI.ALocation,','))", location));
+                }
                 #endregion
 
                 this.ShowWaitMessage("Data Loading....");
-                Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtInventory))
+                DualResult result;
+                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtInventory))
                 {
-                    if (dtInventory.Rows.Count == 0) MyUtility.Msg.WarningBox("Data not found!!");
-                    listControlBindingSource1.DataSource = dtInventory;
+                    if (this.dtInventory.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!!");
+                    }
+
+                    this.listControlBindingSource1.DataSource = this.dtInventory;
                 }
-                else { ShowErr(strSQLCmd.ToString(), result); }
+                else
+                {
+                    this.ShowErr(strSQLCmd.ToString(), result);
+                }
+
                 this.HideWaitMessage();
             }
         }
-        //Form Load
+
+        // Form Load
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             #region -- Reason Combox --
             string selectCommand = @"select Name idname,id from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND junk = 0";
-            Ict.DualResult returnResult;
+            DualResult returnResult;
             DataTable dropDownListTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
             {
-                comboReason.DataSource = dropDownListTable;
-                comboReason.DisplayMember = "IDName";
-                comboReason.ValueMember = "ID";
+                this.comboReason.DataSource = dropDownListTable;
+                this.comboReason.DisplayMember = "IDName";
+                this.comboReason.ValueMember = "ID";
             }
             #endregion
             #region -- Current Qty Valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) return; if (e.RowIndex == -1) return;
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
                 decimal CurrentQty = MyUtility.Convert.GetDecimal(e.FormattedValue);
-                gridImport.GetDataRow(e.RowIndex)["QtyAfter"] = CurrentQty;
-                gridImport.GetDataRow(e.RowIndex)["AdjustLocalqty"] = CurrentQty - MyUtility.Convert.GetDecimal(gridImport.GetDataRow(e.RowIndex)["QtyBefore"]);
+                this.gridImport.GetDataRow(e.RowIndex)["QtyAfter"] = CurrentQty;
+                this.gridImport.GetDataRow(e.RowIndex)["AdjustLocalqty"] = CurrentQty - MyUtility.Convert.GetDecimal(this.gridImport.GetDataRow(e.RowIndex)["QtyBefore"]);
             };
             #endregion
             #region -- Reason ID 右鍵開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -121,33 +149,43 @@ where 1=1"));
                     DualResult result2 = DBProxy.Current.Select(null, sqlcmd, out poitems);
                     if (!result2)
                     {
-                        ShowErr(sqlcmd, result2);
+                        this.ShowErr(sqlcmd, result2);
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(poitems, "ID,Name", "5,150"
-                        , gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"].ToString(), "ID,Name");
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(poitems, "ID,Name", "5,150",
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"].ToString(), "ID,Name");
                     DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) return;
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     IList<DataRow> x = item.GetSelecteds();
-                    gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["ReasonId"] = x[0]["id"];
-                    gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reason_nm"] = x[0]["name"];
+                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ReasonId"] = x[0]["id"];
+                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = x[0]["name"];
                 }
             };
             ts.CellValidating += (s, e) =>
             {
                 DataRow dr;
-                if (!this.EditMode) return;
-                if (String.Compare(e.FormattedValue.ToString(), gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"].ToString()) != 0)
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (string.Compare(e.FormattedValue.ToString(), this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"].ToString()) != 0)
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"] = "";
-                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reason_nm"] = "";
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"] = string.Empty;
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = string.Empty;
                     }
                     else
                     {
-                        if (!MyUtility.Check.Seek(string.Format(@"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
+                        if (!MyUtility.Check.Seek(
+                            string.Format(
+                            @"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
 and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                         {
                             e.Cancel = true;
@@ -156,8 +194,8 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                         }
                         else
                         {
-                            gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"] = e.FormattedValue;
-                            gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reason_nm"] = dr["name"];
+                            this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"] = e.FormattedValue;
+                            this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = dr["name"];
                         }
                     }
                 }
@@ -165,20 +203,20 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             #endregion
 
             #region -- 欄位設定 --
-            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridImport.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
-                .Text("PoId", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14)) //1
-                .Text("Refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(18)) //2
-                .Text("Color", header: "Color", iseditingreadonly: true, width: Widths.AnsiChars(8)) //3
-                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) //4
-                .Numeric("QtyBefore", header: "Original Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //5
-                .Numeric("QtyAfter", header: "Current Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  //6
-                .Numeric("AdjustLocalqty", header: "Adjust Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6))  //7
-                .Text("ALocation", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(6))      //8
-                .Text("reasonid", header: "Reason ID", settings: ts, width: Widths.AnsiChars(6))    //9
-                .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))      //10
+            this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
+                .Text("PoId", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14)) // 1
+                .Text("Refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(18)) // 2
+                .Text("Color", header: "Color", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 3
+                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 4
+                .Numeric("QtyBefore", header: "Original Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 5
+                .Numeric("QtyAfter", header: "Current Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6)) // 6
+                .Numeric("AdjustLocalqty", header: "Adjust Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 7
+                .Text("ALocation", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 8
+                .Text("reasonid", header: "Reason ID", settings: ts, width: Widths.AnsiChars(6)) // 9
+                .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 10
                ;
             #endregion
             #region 可編輯欄位的顏色
@@ -186,12 +224,16 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             this.gridImport.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
         }
-        //Import
+
+        // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            gridImport.ValidateControl();
-            DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
+            this.gridImport.ValidateControl();
+            DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0)
+            {
+                return;
+            }
 
             DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
             if (dr2.Length == 0)
@@ -217,7 +259,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             dr2 = dtGridBS1.Select("Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format("PoId = '{0}' and Refno = '{1}' and Color = '{2}' ", tmp["PoId"], tmp["Refno"], tmp["Color"]));
+                DataRow[] findrow = this.dt_detail.Select(string.Format("PoId = '{0}' and Refno = '{1}' and Color = '{2}' ", tmp["PoId"], tmp["Refno"], tmp["Color"]));
 
                 if (findrow.Length > 0)
                 {
@@ -232,34 +274,46 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                 }
                 else
                 {
-                    tmp["id"] = dr_master["id"];
+                    tmp["id"] = this.dr_master["id"];
                     tmp.AcceptChanges();
                     tmp.SetAdded();
-                    dt_detail.ImportRow(tmp);
+                    this.dt_detail.ImportRow(tmp);
                 }
             }
+
             this.Close();
-        }          
-        //Update All
+        }
+
+        // Update All
         private void btnUpdateAll_Click(object sender, EventArgs e)
         {
-            string reasonid = comboReason.SelectedValue.ToString();
-            gridImport.ValidateControl();
+            string reasonid = this.comboReason.SelectedValue.ToString();
+            this.gridImport.ValidateControl();
 
-            if (dtInventory == null || dtInventory.Rows.Count == 0) return;
-            DataRow[] drfound = dtInventory.Select("selected = 1");
+            if (this.dtInventory == null || this.dtInventory.Rows.Count == 0)
+            {
+                return;
+            }
+
+            DataRow[] drfound = this.dtInventory.Select("selected = 1");
 
             foreach (var item in drfound)
             {
                 item["ReasonId"] = reasonid;
-                item["reason_nm"] = comboReason.Text;
+                item["reason_nm"] = this.comboReason.Text;
             }
         }
 
         private void txtLocation_Validating(object sender, CancelEventArgs e)
         {
-            if (txtLocation.Text.ToString() == "") return;
-            if (!MyUtility.Check.Seek(string.Format(@"
+            if (this.txtLocation.Text.ToString() == string.Empty)
+            {
+                return;
+            }
+
+            if (!MyUtility.Check.Seek(
+                string.Format(
+                @"
 select 1 
 where exists(
     select * 
@@ -267,27 +321,38 @@ where exists(
     where   StockType='B' 
             and id = '{0}'
             and junk != '1'
-)", txtLocation.Text), null))
+)", this.txtLocation.Text), null))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
             }
         }
-        //Location  右鍵
+
+        // Location  右鍵
         private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            if (!this.EditMode) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+                string.Format(@"
 select  id
         , [Description] 
 from    dbo.MtlLocation WITH (NOLOCK) 
 where   StockType='B'
-        and junk != '1'"), "13,50", txtLocation.Text, "ID,Desc");
+        and junk != '1'"), "13,50", this.txtLocation.Text, "ID,Desc");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            txtLocation.Text = item.GetSelectedString();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtLocation.Text = item.GetSelectedString();
         }
-        //Close
+
+        // Close
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();

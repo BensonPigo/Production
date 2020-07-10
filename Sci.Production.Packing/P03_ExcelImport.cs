@@ -1,12 +1,8 @@
 ﻿using Ict.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Packing
@@ -14,7 +10,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P03_ExcelImport
     /// </summary>
-    public partial class P03_ExcelImport : Sci.Win.Subs.Base
+    public partial class P03_ExcelImport : Win.Subs.Base
     {
         private DataRow P03_CurrentMaintain;
         private DataTable grid2Data = new DataTable();
@@ -317,16 +313,16 @@ namespace Sci.Production.Packing
 
                                 newRow["StyleID"] = MyUtility.GetValue.Lookup(string.Format(
                                     "select StyleID from Orders where ID = '{0}' and Category = 'B' and BrandID = '{1}' and Dest = '{2}' and CustCDID = '{3}'",
-                                                                                                newRow["OrderID"].ToString(),
-                                                                                                this.P03_CurrentMaintain["BrandID"].ToString(),
-                                                                                                this.P03_CurrentMaintain["Dest"].ToString(),
-                                                                                                this.P03_CurrentMaintain["CustCDID"].ToString()));
+                                    newRow["OrderID"].ToString(),
+                                    this.P03_CurrentMaintain["BrandID"].ToString(),
+                                    this.P03_CurrentMaintain["Dest"].ToString(),
+                                    this.P03_CurrentMaintain["CustCDID"].ToString()));
                                 newRow["CustPONo"] = MyUtility.GetValue.Lookup(string.Format(
                                     "select CustPoNo from Orders where ID = '{0}' and Category = 'B' and BrandID = '{1}' and Dest = '{2}' and CustCDID = '{3}'",
-                                                                                                newRow["OrderID"].ToString(),
-                                                                                                this.P03_CurrentMaintain["BrandID"].ToString(),
-                                                                                                this.P03_CurrentMaintain["Dest"].ToString(),
-                                                                                                this.P03_CurrentMaintain["CustCDID"].ToString()));
+                                    newRow["OrderID"].ToString(),
+                                    this.P03_CurrentMaintain["BrandID"].ToString(),
+                                    this.P03_CurrentMaintain["Dest"].ToString(),
+                                    this.P03_CurrentMaintain["CustCDID"].ToString()));
                                 #endregion
 
                                 newRow["CTNStartNo"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C");
@@ -343,7 +339,7 @@ namespace Sci.Production.Packing
 
                                 newRow["Description"] = MyUtility.GetValue.Lookup(string.Format(
                                     "select Description,CtnWeight from LocalItem WITH (NOLOCK) where RefNo = '{0}'",
-                                                                                                newRow["RefNo"].ToString()));
+                                    newRow["RefNo"].ToString()));
                                 #endregion
 
                                 newRow["Article"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C");
@@ -358,8 +354,8 @@ namespace Sci.Production.Packing
 
                                 newRow["Color"] = MyUtility.GetValue.Lookup(string.Format(
                                     @"select ColorID from View_OrderFAColor where ID = '{0}' and Article = '{1}'",
-                                                                                                newRow["OrderID"].ToString(),
-                                                                                                newRow["Article"]));
+                                    newRow["OrderID"].ToString(),
+                                    newRow["Article"]));
                                 #endregion
 
                                 newRow["SizeCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
@@ -490,7 +486,7 @@ namespace Sci.Production.Packing
             }
 
             MyUtility.Msg.InfoBox("Import complete.	");
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
     }
 }

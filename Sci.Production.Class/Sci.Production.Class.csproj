@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>Sci.Production.Class.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>Sci.Production.Class.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -40,7 +42,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>Sci.Production.Class.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -49,59 +51,64 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>Sci.Production.Class.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AutoClosingMessageBox.cs" />
-    <Compile Include="comboCentralizedFactory.cs">
+    <Compile Include="CartonRefnoCommon.cs" />
+    <Compile Include="CellDropDownList.cs" />
+    <Compile Include="CellTextDropDownList.cs" />
+    <Compile Include="ComboCentralizedFactory.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="comboCentralizedFactory.Designer.cs">
-      <DependentUpon>comboCentralizedFactory.cs</DependentUpon>
+    <Compile Include="ComboCentralizedFactory.Designer.cs">
+      <DependentUpon>ComboCentralizedFactory.cs</DependentUpon>
     </Compile>
-    <Compile Include="comboCentralizedZone.cs">
+    <Compile Include="ComboCentralizedZone.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="comboCentralizedZone.Designer.cs">
-      <DependentUpon>comboCentralizedZone.cs</DependentUpon>
+    <Compile Include="ComboCentralizedZone.Designer.cs">
+      <DependentUpon>ComboCentralizedZone.cs</DependentUpon>
     </Compile>
-    <Compile Include="comboCentralizedM.cs">
+    <Compile Include="ComboCentralizedM.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="comboCentralizedM.Designer.cs">
-      <DependentUpon>comboCentralizedM.cs</DependentUpon>
+    <Compile Include="ComboCentralizedM.Designer.cs">
+      <DependentUpon>ComboCentralizedM.cs</DependentUpon>
     </Compile>
-    <Compile Include="comboDropDownList.cs">
+    <Compile Include="ComboDropDownList.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="comboDropDownList.Designer.cs">
-      <DependentUpon>comboDropDownList.cs</DependentUpon>
+    <Compile Include="ComboDropDownList.Designer.cs">
+      <DependentUpon>ComboDropDownList.cs</DependentUpon>
     </Compile>
-    <Compile Include="comboFtyZone.cs">
+    <Compile Include="ComboFtyZone.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="comboFtyZone.Designer.cs">
-      <DependentUpon>comboFtyZone.cs</DependentUpon>
+    <Compile Include="ComboFtyZone.Designer.cs">
+      <DependentUpon>ComboFtyZone.cs</DependentUpon>
     </Compile>
-    <Compile Include="comboFactory.cs">
+    <Compile Include="ComboFactory.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="comboFactory.Designer.cs">
-      <DependentUpon>comboFactory.cs</DependentUpon>
+    <Compile Include="ComboFactory.Designer.cs">
+      <DependentUpon>ComboFactory.cs</DependentUpon>
     </Compile>
-    <Compile Include="comboMDivision.cs">
+    <Compile Include="ComboMDivision.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="comboMDivision.Designer.cs">
-      <DependentUpon>comboMDivision.cs</DependentUpon>
+    <Compile Include="ComboMDivision.Designer.cs">
+      <DependentUpon>ComboMDivision.cs</DependentUpon>
     </Compile>
-    <Compile Include="comboRFIDProcessLocation.cs">
+    <Compile Include="ComboRFIDProcessLocation.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="comboRFIDProcessLocation.Designer.cs">
-      <DependentUpon>comboRFIDProcessLocation.cs</DependentUpon>
+    <Compile Include="ComboRFIDProcessLocation.Designer.cs">
+      <DependentUpon>ComboRFIDProcessLocation.cs</DependentUpon>
     </Compile>
+    <Compile Include="Command\User.cs" />
     <Compile Include="Command\UserPrg.cs" />
+    <Compile Include="ExcelFileNameExtension.cs" />
     <Compile Include="MergeRowGrid.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -117,6 +124,7 @@
     <Compile Include="numericUpDownRate.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="PDFFileNameExtension.cs" />
     <Compile Include="PictureSubPage.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,428 +134,432 @@
     <Compile Include="ProductionGridExts.cs" />
     <Compile Include="ProductionEnv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="txtartworktype_fty.cs">
+    <Compile Include="Txtartworktype_fty.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtartworktype_fty.Designer.cs">
-      <DependentUpon>txtartworktype_fty.cs</DependentUpon>
+    <Compile Include="Txtartworktype_fty.Designer.cs">
+      <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtbrand.cs">
+    <Compile Include="Txtbrand.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtbrand.Designer.cs">
-      <DependentUpon>txtbrand.cs</DependentUpon>
+    <Compile Include="Txtbrand.Designer.cs">
+      <DependentUpon>Txtbrand.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtbuyer.cs">
+    <Compile Include="Txtbuyer.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtbuyer.Designer.cs">
-      <DependentUpon>txtbuyer.cs</DependentUpon>
+    <Compile Include="Txtbuyer.Designer.cs">
+      <DependentUpon>Txtbuyer.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtcdcode.cs">
+    <Compile Include="Txtcdcode.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtcdcode.Designer.cs">
-      <DependentUpon>txtcdcode.cs</DependentUpon>
+    <Compile Include="Txtcdcode.Designer.cs">
+      <DependentUpon>Txtcdcode.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtCentralizedmulitM.cs">
+    <Compile Include="TxtCentralizedmulitM.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtCentralizedmulitM.Designer.cs">
-      <DependentUpon>txtCentralizedmulitM.cs</DependentUpon>
+    <Compile Include="TxtCentralizedmulitM.Designer.cs">
+      <DependentUpon>TxtCentralizedmulitM.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtCentralizedmulitFactory.cs">
+    <Compile Include="TxtCentralizedmulitFactory.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtCentralizedmulitFactory.Designer.cs">
-      <DependentUpon>txtCentralizedmulitFactory.cs</DependentUpon>
+    <Compile Include="TxtCentralizedmulitFactory.Designer.cs">
+      <DependentUpon>TxtCentralizedmulitFactory.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtCFALocation.cs">
+    <Compile Include="TxtCFALocation.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtCFALocation.Designer.cs">
-      <DependentUpon>txtCFALocation.cs</DependentUpon>
+    <Compile Include="TxtCFALocation.Designer.cs">
+      <DependentUpon>TxtCFALocation.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtClogReason.cs">
+    <Compile Include="TxtClogReason.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtClogReason.designer.cs">
-      <DependentUpon>txtClogReason.cs</DependentUpon>
+    <Compile Include="TxtClogReason.designer.cs">
+      <DependentUpon>TxtClogReason.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtLocalSuppNoConfirm.cs">
+    <Compile Include="TxtDropDownList1.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TxtLocalSuppNoConfirm.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtLocalSuppNoConfirm.Designer.cs">
-      <DependentUpon>txtLocalSuppNoConfirm.cs</DependentUpon>
+    <Compile Include="TxtLocalSuppNoConfirm.Designer.cs">
+      <DependentUpon>TxtLocalSuppNoConfirm.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtLocalTPESuppNoConfirm.cs">
+    <Compile Include="TxtLocalTPESuppNoConfirm.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtLocalTPESuppNoConfirm.Designer.cs">
-      <DependentUpon>txtLocalTPESuppNoConfirm.cs</DependentUpon>
+    <Compile Include="TxtLocalTPESuppNoConfirm.Designer.cs">
+      <DependentUpon>TxtLocalTPESuppNoConfirm.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtMachineGroup.cs">
+    <Compile Include="TxtMachineGroup.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtMachineGroup.designer.cs">
-      <DependentUpon>txtMachineGroup.cs</DependentUpon>
+    <Compile Include="TxtMachineGroup.designer.cs">
+      <DependentUpon>TxtMachineGroup.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtCustomsContract.cs">
+    <Compile Include="TxtCustomsContract.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtCustomsContract.Designer.cs">
-      <DependentUpon>txtCustomsContract.cs</DependentUpon>
+    <Compile Include="TxtCustomsContract.Designer.cs">
+      <DependentUpon>TxtCustomsContract.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtmultiSeason.cs">
+    <Compile Include="TxtmultiSeason.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtmultiSeason.Designer.cs">
-      <DependentUpon>txtmultiSeason.cs</DependentUpon>
+    <Compile Include="TxtmultiSeason.Designer.cs">
+      <DependentUpon>TxtmultiSeason.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtMultiSubconNoConfirm.cs">
+    <Compile Include="TxtMultiSubconNoConfirm.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtMultiSubconNoConfirm.Designer.cs">
-      <DependentUpon>txtMultiSubconNoConfirm.cs</DependentUpon>
+    <Compile Include="TxtMultiSubconNoConfirm.Designer.cs">
+      <DependentUpon>TxtMultiSubconNoConfirm.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtShippingReason.cs">
+    <Compile Include="TxtShippingReason.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtShippingReason.Designer.cs">
-      <DependentUpon>txtShippingReason.cs</DependentUpon>
+    <Compile Include="TxtShippingReason.Designer.cs">
+      <DependentUpon>TxtShippingReason.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtCuttingMachineID.cs">
+    <Compile Include="TxtCuttingMachineID.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtCuttingMachineID.Designer.cs">
-      <DependentUpon>txtCuttingMachineID.cs</DependentUpon>
+    <Compile Include="TxtCuttingMachineID.Designer.cs">
+      <DependentUpon>TxtCuttingMachineID.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtLocalPurchaseItem.cs">
+    <Compile Include="TxtLocalPurchaseItem.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtLocalPurchaseItem.designer.cs">
-      <DependentUpon>txtLocalPurchaseItem.cs</DependentUpon>
+    <Compile Include="TxtLocalPurchaseItem.designer.cs">
+      <DependentUpon>TxtLocalPurchaseItem.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtSpreadingNo.cs">
+    <Compile Include="TxtSpreadingNo.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtSpreadingNo.Designer.cs">
-      <DependentUpon>txtSpreadingNo.cs</DependentUpon>
+    <Compile Include="TxtSpreadingNo.Designer.cs">
+      <DependentUpon>TxtSpreadingNo.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtcell.cs">
+    <Compile Include="Txtcell.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtcell.Designer.cs">
-      <DependentUpon>txtcell.cs</DependentUpon>
+    <Compile Include="Txtcell.Designer.cs">
+      <DependentUpon>Txtcell.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtcloglocation.cs">
+    <Compile Include="Txtcloglocation.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtcloglocation.Designer.cs">
-      <DependentUpon>txtcloglocation.cs</DependentUpon>
+    <Compile Include="Txtcloglocation.Designer.cs">
+      <DependentUpon>Txtcloglocation.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtcountry.cs">
+    <Compile Include="Txtcountry.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtcountry.Designer.cs">
-      <DependentUpon>txtcountry.cs</DependentUpon>
+    <Compile Include="Txtcountry.Designer.cs">
+      <DependentUpon>Txtcountry.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtcurrency.cs">
+    <Compile Include="Txtcurrency.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtcurrency.Designer.cs">
-      <DependentUpon>txtcurrency.cs</DependentUpon>
+    <Compile Include="Txtcurrency.Designer.cs">
+      <DependentUpon>Txtcurrency.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtcustcd.cs">
+    <Compile Include="Txtcustcd.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtcustcd.Designer.cs">
-      <DependentUpon>txtcustcd.cs</DependentUpon>
+    <Compile Include="Txtcustcd.Designer.cs">
+      <DependentUpon>Txtcustcd.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtcutReason.cs">
+    <Compile Include="TxtcutReason.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtcutReason.Designer.cs">
-      <DependentUpon>txtcutReason.cs</DependentUpon>
+    <Compile Include="TxtcutReason.Designer.cs">
+      <DependentUpon>TxtcutReason.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtdepartment.cs">
+    <Compile Include="Txtdepartment.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtdepartment.Designer.cs">
-      <DependentUpon>txtdepartment.cs</DependentUpon>
+    <Compile Include="Txtdepartment.Designer.cs">
+      <DependentUpon>Txtdepartment.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtdropdownlist.cs">
+    <Compile Include="Txtdropdownlist.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtdropdownlist.Designer.cs">
-      <DependentUpon>txtdropdownlist.cs</DependentUpon>
+    <Compile Include="Txtdropdownlist.Designer.cs">
+      <DependentUpon>Txtdropdownlist.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtfactory.cs">
+    <Compile Include="Txtfactory.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtfactory.Designer.cs">
-      <DependentUpon>txtfactory.cs</DependentUpon>
+    <Compile Include="Txtfactory.Designer.cs">
+      <DependentUpon>Txtfactory.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtlocalitem.cs">
+    <Compile Include="Txtlocalitem.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtlocalitem.Designer.cs">
-      <DependentUpon>txtlocalitem.cs</DependentUpon>
+    <Compile Include="Txtlocalitem.Designer.cs">
+      <DependentUpon>Txtlocalitem.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtLocalTPESupp.cs">
+    <Compile Include="TxtLocalTPESupp.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtLocalTPESupp.Designer.cs">
-      <DependentUpon>txtLocalTPESupp.cs</DependentUpon>
+    <Compile Include="TxtLocalTPESupp.Designer.cs">
+      <DependentUpon>TxtLocalTPESupp.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtLocalSupp.cs">
+    <Compile Include="TxtLocalSupp.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtLocalSupp.Designer.cs">
-      <DependentUpon>txtLocalSupp.cs</DependentUpon>
+    <Compile Include="TxtLocalSupp.Designer.cs">
+      <DependentUpon>TxtLocalSupp.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtMtlLocation.cs">
+    <Compile Include="TxtMtlLocation.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtMtlLocation.Designer.cs">
-      <DependentUpon>txtMtlLocation.cs</DependentUpon>
+    <Compile Include="TxtMtlLocation.Designer.cs">
+      <DependentUpon>TxtMtlLocation.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtmulituser.cs">
+    <Compile Include="Txtmulituser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtmulituser.designer.cs">
-      <DependentUpon>txtmulituser.cs</DependentUpon>
+    <Compile Include="Txtmulituser.designer.cs">
+      <DependentUpon>Txtmulituser.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtmultifactory.cs">
+    <Compile Include="Txtmultifactory.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtmultifactory.Designer.cs">
-      <DependentUpon>txtmultifactory.cs</DependentUpon>
+    <Compile Include="Txtmultifactory.Designer.cs">
+      <DependentUpon>Txtmultifactory.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtMultiSubcon.cs">
+    <Compile Include="TxtMultiSubcon.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtMultiSubcon.Designer.cs">
-      <DependentUpon>txtMultiSubcon.cs</DependentUpon>
+    <Compile Include="TxtMultiSubcon.Designer.cs">
+      <DependentUpon>TxtMultiSubcon.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtpaytermar.cs">
+    <Compile Include="Txtpaytermar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtpaytermar.Designer.cs">
-      <DependentUpon>txtpaytermar.cs</DependentUpon>
+    <Compile Include="Txtpaytermar.Designer.cs">
+      <DependentUpon>Txtpaytermar.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtpayterm_fty.cs">
+    <Compile Include="Txtpayterm_fty.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtpayterm_fty.Designer.cs">
-      <DependentUpon>txtpayterm_fty.cs</DependentUpon>
+    <Compile Include="Txtpayterm_fty.Designer.cs">
+      <DependentUpon>Txtpayterm_fty.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtprogram.cs">
+    <Compile Include="Txtprogram.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtprogram.designer.cs">
-      <DependentUpon>txtprogram.cs</DependentUpon>
+    <Compile Include="Txtprogram.designer.cs">
+      <DependentUpon>Txtprogram.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtseason.cs">
+    <Compile Include="Txtseason.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtseason.Designer.cs">
-      <DependentUpon>txtseason.cs</DependentUpon>
+    <Compile Include="Txtseason.Designer.cs">
+      <DependentUpon>Txtseason.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtSeq.cs">
+    <Compile Include="TxtSeq.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtSeq.Designer.cs">
-      <DependentUpon>txtSeq.cs</DependentUpon>
+    <Compile Include="TxtSeq.Designer.cs">
+      <DependentUpon>TxtSeq.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtsewingline.cs">
+    <Compile Include="Txtsewingline.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtsewingline.Designer.cs">
-      <DependentUpon>txtsewingline.cs</DependentUpon>
+    <Compile Include="Txtsewingline.Designer.cs">
+      <DependentUpon>Txtsewingline.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtSewingScheduleLine.cs">
+    <Compile Include="TxtSewingScheduleLine.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtSewingScheduleLine.Designer.cs">
-      <DependentUpon>txtSewingScheduleLine.cs</DependentUpon>
+    <Compile Include="TxtSewingScheduleLine.Designer.cs">
+      <DependentUpon>TxtSewingScheduleLine.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtshipmode.cs">
+    <Compile Include="Txtshipmode.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtshipmode.Designer.cs">
-      <DependentUpon>txtshipmode.cs</DependentUpon>
+    <Compile Include="Txtshipmode.Designer.cs">
+      <DependentUpon>Txtshipmode.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtshipterm.cs">
+    <Compile Include="Txtshipterm.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtshipterm.Designer.cs">
-      <DependentUpon>txtshipterm.cs</DependentUpon>
+    <Compile Include="Txtshipterm.Designer.cs">
+      <DependentUpon>Txtshipterm.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtstyle.cs">
+    <Compile Include="Txtstyle.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtstyle.Designer.cs">
-      <DependentUpon>txtstyle.cs</DependentUpon>
+    <Compile Include="Txtstyle.Designer.cs">
+      <DependentUpon>Txtstyle.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtsubconNoConfirm.cs">
+    <Compile Include="TxtsubconNoConfirm.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtsubconNoConfirm.Designer.cs">
-      <DependentUpon>txtsubconNoConfirm.cs</DependentUpon>
+    <Compile Include="TxtsubconNoConfirm.Designer.cs">
+      <DependentUpon>TxtsubconNoConfirm.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtSubconReason.cs">
+    <Compile Include="TxtSubconReason.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtSubconReason.designer.cs">
-      <DependentUpon>txtSubconReason.cs</DependentUpon>
+    <Compile Include="TxtSubconReason.designer.cs">
+      <DependentUpon>TxtSubconReason.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtsubprocess.cs">
+    <Compile Include="Txtsubprocess.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtsubprocess.Designer.cs">
-      <DependentUpon>txtsubprocess.cs</DependentUpon>
+    <Compile Include="Txtsubprocess.Designer.cs">
+      <DependentUpon>Txtsubprocess.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtsupplier.cs">
+    <Compile Include="Txtsupplier.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtsupplier.Designer.cs">
-      <DependentUpon>txtsupplier.cs</DependentUpon>
+    <Compile Include="Txtsupplier.Designer.cs">
+      <DependentUpon>Txtsupplier.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtthreadcomb.cs">
+    <Compile Include="Txtthreadcomb.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtthreadcomb.designer.cs">
-      <DependentUpon>txtthreadcomb.cs</DependentUpon>
+    <Compile Include="Txtthreadcomb.designer.cs">
+      <DependentUpon>Txtthreadcomb.cs</DependentUpon>
     </Compile>
-    <Compile Include="txttpeuser.cs">
+    <Compile Include="Txttpeuser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txttpeuser.Designer.cs">
-      <DependentUpon>txttpeuser.cs</DependentUpon>
+    <Compile Include="Txttpeuser.Designer.cs">
+      <DependentUpon>Txttpeuser.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtunit.cs">
+    <Compile Include="Txtunit.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtunit.Designer.cs">
-      <DependentUpon>txtunit.cs</DependentUpon>
+    <Compile Include="Txtunit.Designer.cs">
+      <DependentUpon>Txtunit.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtunit_local.cs">
+    <Compile Include="Txtunit_local.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtunit_local.Designer.cs">
-      <DependentUpon>txtunit_local.cs</DependentUpon>
+    <Compile Include="Txtunit_local.Designer.cs">
+      <DependentUpon>Txtunit_local.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtunit_fty.cs">
+    <Compile Include="Txtunit_fty.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtunit_fty.Designer.cs">
-      <DependentUpon>txtunit_fty.cs</DependentUpon>
+    <Compile Include="Txtunit_fty.Designer.cs">
+      <DependentUpon>Txtunit_fty.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtTechnician.cs">
+    <Compile Include="TxtTechnician.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtTechnician.Designer.cs">
-      <DependentUpon>txtTechnician.cs</DependentUpon>
+    <Compile Include="TxtTechnician.Designer.cs">
+      <DependentUpon>TxtTechnician.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtuser.cs">
+    <Compile Include="Txtuser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtuser.Designer.cs">
-      <DependentUpon>txtuser.cs</DependentUpon>
+    <Compile Include="Txtuser.Designer.cs">
+      <DependentUpon>Txtuser.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtwhseReason.cs">
+    <Compile Include="TxtwhseReason.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtwhseReason.Designer.cs">
-      <DependentUpon>txtwhseReason.cs</DependentUpon>
+    <Compile Include="TxtwhseReason.Designer.cs">
+      <DependentUpon>TxtwhseReason.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtwhseRefundAction.cs">
+    <Compile Include="TxtwhseRefundAction.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtwhseRefundAction.Designer.cs">
-      <DependentUpon>txtwhseRefundAction.cs</DependentUpon>
+    <Compile Include="TxtwhseRefundAction.Designer.cs">
+      <DependentUpon>TxtwhseRefundAction.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtscifactory.cs">
+    <Compile Include="Txtscifactory.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtscifactory.Designer.cs">
-      <DependentUpon>txtscifactory.cs</DependentUpon>
+    <Compile Include="Txtscifactory.Designer.cs">
+      <DependentUpon>Txtscifactory.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtmachinetype.cs">
+    <Compile Include="Txtmachinetype.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtmachinetype.designer.cs">
-      <DependentUpon>txtmachinetype.cs</DependentUpon>
+    <Compile Include="Txtmachinetype.designer.cs">
+      <DependentUpon>Txtmachinetype.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtToMdivision.cs">
+    <Compile Include="TxtToMdivision.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtToMdivision.Designer.cs">
-      <DependentUpon>txtToMdivision.cs</DependentUpon>
+    <Compile Include="TxtToMdivision.Designer.cs">
+      <DependentUpon>TxtToMdivision.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtthreadlocation.cs">
+    <Compile Include="Txtthreadlocation.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtthreadlocation.Designer.cs">
-      <DependentUpon>txtthreadlocation.cs</DependentUpon>
+    <Compile Include="Txtthreadlocation.Designer.cs">
+      <DependentUpon>Txtthreadlocation.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtthreadcolor.cs">
+    <Compile Include="Txtthreadcolor.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtthreadcolor.designer.cs">
-      <DependentUpon>txtthreadcolor.cs</DependentUpon>
+    <Compile Include="Txtthreadcolor.designer.cs">
+      <DependentUpon>Txtthreadcolor.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtMdivision.cs">
+    <Compile Include="TxtMdivision.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtMdivision.Designer.cs">
-      <DependentUpon>txtMdivision.cs</DependentUpon>
+    <Compile Include="TxtMdivision.Designer.cs">
+      <DependentUpon>TxtMdivision.cs</DependentUpon>
     </Compile>
-    <Compile Include="txttpeuser_canedit.cs">
+    <Compile Include="Txttpeuser_canedit.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txttpeuser_canedit.Designer.cs">
-      <DependentUpon>txttpeuser_canedit.cs</DependentUpon>
+    <Compile Include="Txttpeuser_canedit.Designer.cs">
+      <DependentUpon>Txttpeuser_canedit.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtFinanceEnReason.cs">
+    <Compile Include="TxtFinanceEnReason.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtFinanceEnReason.Designer.cs">
-      <DependentUpon>txtFinanceEnReason.cs</DependentUpon>
+    <Compile Include="TxtFinanceEnReason.Designer.cs">
+      <DependentUpon>TxtFinanceEnReason.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtReason.cs">
+    <Compile Include="TxtReason.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtReason.Designer.cs">
-      <DependentUpon>txtReason.cs</DependentUpon>
+    <Compile Include="TxtReason.Designer.cs">
+      <DependentUpon>TxtReason.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtAccountNo.cs">
+    <Compile Include="TxtAccountNo.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtAccountNo.Designer.cs">
-      <DependentUpon>txtAccountNo.cs</DependentUpon>
+    <Compile Include="TxtAccountNo.Designer.cs">
+      <DependentUpon>TxtAccountNo.cs</DependentUpon>
     </Compile>
-    <Compile Include="userData.cs">
+    <Compile Include="UserData.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="userData.Designer.cs">
-      <DependentUpon>userData.cs</DependentUpon>
+    <Compile Include="UserData.Designer.cs">
+      <DependentUpon>UserData.cs</DependentUpon>
     </Compile>
     <Compile Include="UserESignature.cs" />
     <Compile Include="VFPColors.cs" />
-    <Compile Include="txtFromMdivision.cs">
+    <Compile Include="TxtFromMdivision.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtFromMdivision.Designer.cs">
-      <DependentUpon>txtFromMdivision.cs</DependentUpon>
+    <Compile Include="TxtFromMdivision.Designer.cs">
+      <DependentUpon>TxtFromMdivision.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtCentralizedFactory.cs">
+    <Compile Include="TxtCentralizedFactory.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="txtCentralizedFactory.Designer.cs">
-      <DependentUpon>txtCentralizedFactory.cs</DependentUpon>
+    <Compile Include="TxtCentralizedFactory.Designer.cs">
+      <DependentUpon>TxtCentralizedFactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="WordFileeNameExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1502.1000, Culture=neutral, processorArchitecture=MSIL">
@@ -622,11 +634,11 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="comboFtyZone.resx">
-      <DependentUpon>comboFtyZone.cs</DependentUpon>
+    <EmbeddedResource Include="ComboFtyZone.resx">
+      <DependentUpon>ComboFtyZone.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="comboFactory.resx">
-      <DependentUpon>comboFactory.cs</DependentUpon>
+    <EmbeddedResource Include="ComboFactory.resx">
+      <DependentUpon>ComboFactory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Holiday.resx">
       <DependentUpon>Holiday.cs</DependentUpon>
@@ -634,99 +646,107 @@
     <EmbeddedResource Include="PictureSubPage.resx">
       <DependentUpon>PictureSubPage.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtClogReason.resx">
-      <DependentUpon>txtClogReason.cs</DependentUpon>
+    <EmbeddedResource Include="TxtClogReason.resx">
+      <DependentUpon>TxtClogReason.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtcountry.resx">
-      <DependentUpon>txtcountry.cs</DependentUpon>
+    <EmbeddedResource Include="Txtcountry.resx">
+      <DependentUpon>Txtcountry.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtLocalSuppNoConfirm.resx">
-      <DependentUpon>txtLocalSuppNoConfirm.cs</DependentUpon>
+    <EmbeddedResource Include="TxtLocalSuppNoConfirm.resx">
+      <DependentUpon>TxtLocalSuppNoConfirm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtLocalTPESuppNoConfirm.resx">
-      <DependentUpon>txtLocalTPESuppNoConfirm.cs</DependentUpon>
+    <EmbeddedResource Include="TxtLocalTPESuppNoConfirm.resx">
+      <DependentUpon>TxtLocalTPESuppNoConfirm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtMultiSubconNoConfirm.resx">
-      <DependentUpon>txtMultiSubconNoConfirm.cs</DependentUpon>
+    <EmbeddedResource Include="TxtMultiSubconNoConfirm.resx">
+      <DependentUpon>TxtMultiSubconNoConfirm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtShippingReason.resx">
-      <DependentUpon>txtShippingReason.cs</DependentUpon>
+    <EmbeddedResource Include="TxtShippingReason.resx">
+      <DependentUpon>TxtShippingReason.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtcutReason.resx">
-      <DependentUpon>txtcutReason.cs</DependentUpon>
+    <EmbeddedResource Include="TxtcutReason.resx">
+      <DependentUpon>TxtcutReason.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtLocalTPESupp.resx">
-      <DependentUpon>txtLocalTPESupp.cs</DependentUpon>
+    <EmbeddedResource Include="TxtLocalTPESupp.resx">
+      <DependentUpon>TxtLocalTPESupp.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtLocalSupp.resx">
-      <DependentUpon>txtLocalSupp.cs</DependentUpon>
+    <EmbeddedResource Include="TxtLocalSupp.resx">
+      <DependentUpon>TxtLocalSupp.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtMtlLocation.resx">
-      <DependentUpon>txtMtlLocation.cs</DependentUpon>
+    <EmbeddedResource Include="TxtMtlLocation.resx">
+      <DependentUpon>TxtMtlLocation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtmulituser.resx">
-      <DependentUpon>txtmulituser.cs</DependentUpon>
+    <EmbeddedResource Include="Txtmulituser.resx">
+      <DependentUpon>Txtmulituser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtMultiSubcon.resx">
-      <DependentUpon>txtMultiSubcon.cs</DependentUpon>
+    <EmbeddedResource Include="TxtMultiSubcon.resx">
+      <DependentUpon>TxtMultiSubcon.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtpaytermar.resx">
-      <DependentUpon>txtpaytermar.cs</DependentUpon>
+    <EmbeddedResource Include="Txtpaytermar.resx">
+      <DependentUpon>Txtpaytermar.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtpayterm_fty.resx">
-      <DependentUpon>txtpayterm_fty.cs</DependentUpon>
+    <EmbeddedResource Include="Txtpayterm_fty.resx">
+      <DependentUpon>Txtpayterm_fty.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtSeq.resx">
-      <DependentUpon>txtSeq.cs</DependentUpon>
+    <EmbeddedResource Include="TxtSeq.resx">
+      <DependentUpon>TxtSeq.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtsubconNoConfirm.resx">
-      <DependentUpon>txtsubconNoConfirm.cs</DependentUpon>
+    <EmbeddedResource Include="TxtsubconNoConfirm.resx">
+      <DependentUpon>TxtsubconNoConfirm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtSubconReason.resx">
-      <DependentUpon>txtSubconReason.cs</DependentUpon>
+    <EmbeddedResource Include="TxtSubconReason.resx">
+      <DependentUpon>TxtSubconReason.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtsubprocess.resx">
-      <DependentUpon>txtsubprocess.cs</DependentUpon>
+    <EmbeddedResource Include="Txtsubprocess.resx">
+      <DependentUpon>Txtsubprocess.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtsupplier.resx">
-      <DependentUpon>txtsupplier.cs</DependentUpon>
+    <EmbeddedResource Include="Txtsupplier.resx">
+      <DependentUpon>Txtsupplier.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="txttpeuser.resx">
-      <DependentUpon>txttpeuser.cs</DependentUpon>
+    <EmbeddedResource Include="Txttpeuser.resx">
+      <DependentUpon>Txttpeuser.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtunit.resx">
-      <DependentUpon>txtunit.cs</DependentUpon>
+    <EmbeddedResource Include="Txtunit.resx">
+      <DependentUpon>Txtunit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtTechnician.resx">
-      <DependentUpon>txtTechnician.cs</DependentUpon>
+    <EmbeddedResource Include="TxtTechnician.resx">
+      <DependentUpon>TxtTechnician.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtuser.resx">
-      <DependentUpon>txtuser.cs</DependentUpon>
+    <EmbeddedResource Include="Txtuser.resx">
+      <DependentUpon>Txtuser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtwhseReason.resx">
-      <DependentUpon>txtwhseReason.cs</DependentUpon>
+    <EmbeddedResource Include="TxtwhseReason.resx">
+      <DependentUpon>TxtwhseReason.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtwhseRefundAction.resx">
-      <DependentUpon>txtwhseRefundAction.cs</DependentUpon>
+    <EmbeddedResource Include="TxtwhseRefundAction.resx">
+      <DependentUpon>TxtwhseRefundAction.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txttpeuser_canedit.resx">
-      <DependentUpon>txttpeuser_canedit.cs</DependentUpon>
+    <EmbeddedResource Include="Txttpeuser_canedit.resx">
+      <DependentUpon>Txttpeuser_canedit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtAccountNo.resx">
-      <DependentUpon>txtAccountNo.cs</DependentUpon>
+    <EmbeddedResource Include="TxtAccountNo.resx">
+      <DependentUpon>TxtAccountNo.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="userData.resx">
-      <DependentUpon>userData.cs</DependentUpon>
+    <EmbeddedResource Include="UserData.resx">
+      <DependentUpon>UserData.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Sci.Production.Class.ruleset" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

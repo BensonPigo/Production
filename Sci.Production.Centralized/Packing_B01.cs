@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci;
 using Sci.Data;
 
 namespace Sci.Production.Centralized
@@ -15,7 +8,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// Packing_B01
     /// </summary>
-    public partial class Packing_B01 : Sci.Win.Tems.Input1
+    public partial class Packing_B01 : Win.Tems.Input1
     {
         /// <summary>
         /// Packing_B01

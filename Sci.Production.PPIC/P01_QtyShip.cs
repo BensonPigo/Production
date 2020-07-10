@@ -10,7 +10,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_QtyShip
     /// </summary>
-    public partial class P01_QtyShip : Sci.Win.Subs.Base
+    public partial class P01_QtyShip : Win.Subs.Base
     {
         private DataTable grid1Data;
         private DataTable grid2Data;  // 存Qty資料

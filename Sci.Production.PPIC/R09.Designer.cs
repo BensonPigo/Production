@@ -34,8 +34,8 @@
             this.labelFactory = new Sci.Win.UI.Label();
             this.dateUpdate = new Sci.Win.UI.DateRange();
             this.textSP = new Sci.Win.UI.TextBox();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -111,7 +111,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = false;
+            this.txtfactory.BoolFtyGroupList = false;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IssupportJunk = true;
@@ -158,8 +158,8 @@
         private Win.UI.Label labelM;
         private Win.UI.Label labelFactory;
         private Win.UI.TextBox textSP;
-        private Class.txtMdivision txtMdivision;
-        private Class.txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
         private Win.UI.DateRange dateUpdate;
     }
 }

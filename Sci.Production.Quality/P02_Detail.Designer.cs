@@ -62,8 +62,8 @@
             this.dateInspectDate = new Sci.Win.UI.DateBox();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
-            this.txtInspector = new Sci.Production.Class.txtuser();
+            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
+            this.txtInspector = new Sci.Production.Class.Txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -564,11 +564,11 @@
         private Win.UI.ComboBox comboResult;
         private Win.UI.EditBox editDefect;
         private Win.UI.Panel panel1;
-        private Class.txtsupplier txtsupplier;
+        private Class.Txtsupplier txtsupplier;
         private Win.UI.DateBox dateInspectDate;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnEdit;
-        private Class.txtuser txtInspector;
+        private Class.Txtuser txtInspector;
 
     }
 }

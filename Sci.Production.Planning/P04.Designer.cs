@@ -46,7 +46,7 @@
             this.dateArtworkInLine = new Sci.Win.UI.DateBox();
             this.btnCheckData = new Sci.Win.UI.Button();
             this.comboInHouseOSP = new Sci.Win.UI.ComboBox();
-            this.txtsubconLocalSuppid = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtsubconLocalSuppid = new Sci.Production.Class.TxtsubconNoConfirm();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.pictureBox2 = new Sci.Win.UI.PictureBox();
@@ -55,7 +55,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
             this.labelArtworkType = new Sci.Win.UI.Label();
             this.comboArtworkType = new Sci.Win.UI.ComboBox();
             this.label16 = new Sci.Win.UI.Label();
@@ -66,13 +66,13 @@
             this.dateInlineDate = new Sci.Win.UI.DateRange();
             this.labelInlineDate = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.labelOSPInHouse = new Sci.Win.UI.Label();
             this.comboOSPInHouse = new Sci.Win.UI.ComboBox();
             this.labelSupplier = new Sci.Win.UI.Label();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.labelSeason = new Sci.Win.UI.Label();
-            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtseason = new Sci.Production.Class.Txtseason();
             this.labelStyle = new Sci.Win.UI.Label();
             this.gridSupplier = new Sci.Win.UI.Grid();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
@@ -840,10 +840,10 @@
         private Win.UI.CheckBox checkInLine;
         private Win.UI.ComboBox comboOSPInHouse;
         private Win.UI.Label labelSupplier;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
         private Win.UI.Label labelSeason;
-        private Class.txtseason txtseason;
-        private Class.txtstyle txtstyle;
+        private Class.Txtseason txtseason;
+        private Class.Txtstyle txtstyle;
         private Win.UI.Label labelStyle;
         private Win.UI.Button btnUpdateInline;
         private Win.UI.Grid gridSupplier;
@@ -852,7 +852,7 @@
         private Win.UI.Label labelFilterEmpty;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.ComboBox comboInHouseOSP;
-        private Class.txtsubconNoConfirm txtsubconLocalSuppid;
+        private Class.TxtsubconNoConfirm txtsubconLocalSuppid;
         private Win.UI.Button btnCheckData;
         private Win.UI.NumericBox numWorkHours;
         private Win.UI.NumericBox numEfficiency;
@@ -872,6 +872,6 @@
         private Win.UI.NumericBox numCheckedQty;
         private Win.UI.Label labelArtworkType;
         private Win.UI.ComboBox comboArtworkType;
-        private Class.txtfactory txtmfactory;
+        private Class.Txtfactory txtmfactory;
     }
 }

@@ -32,10 +32,10 @@
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelFabricType = new Sci.Win.UI.Label();
             this.labelWKNoETA = new Sci.Win.UI.Label();
-            this.txtdropdownlistOrderType = new Sci.Production.Class.txtdropdownlist();
+            this.txtdropdownlistOrderType = new Sci.Production.Class.Txtdropdownlist();
             this.labelOrderType = new Sci.Win.UI.Label();
             this.comboFabricType = new System.Windows.Forms.ComboBox();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -169,9 +169,9 @@
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelFabricType;
         private Win.UI.Label labelWKNoETA;
-        private Class.txtdropdownlist txtdropdownlistOrderType;
+        private Class.Txtdropdownlist txtdropdownlistOrderType;
         private Win.UI.Label labelOrderType;
         private System.Windows.Forms.ComboBox comboFabricType;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
     }
 }

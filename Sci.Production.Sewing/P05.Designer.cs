@@ -44,9 +44,9 @@
             this.numericTtlCPU = new Sci.Win.UI.NumericBox();
             this.dateBoxApvDate = new Sci.Win.UI.DateBox();
             this.txtRemark = new Sci.Win.UI.TextBox();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txtSubConOutFty = new Sci.Production.Class.txtsubconNoConfirm();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.txtuser1 = new Sci.Production.Class.Txtuser();
+            this.txtSubConOutFty = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -333,9 +333,9 @@
             this.txtSubConOutFty.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubConOutFty", true));
             this.txtSubConOutFty.DisplayBox1Binding = "";
             this.txtSubConOutFty.IsIncludeJunk = false;
-            this.txtSubConOutFty.isMisc = false;
-            this.txtSubConOutFty.isShipping = false;
-            this.txtSubConOutFty.isSubcon = false;
+            this.txtSubConOutFty.IsMisc = false;
+            this.txtSubConOutFty.IsShipping = false;
+            this.txtSubConOutFty.IsSubcon = false;
             this.txtSubConOutFty.Location = new System.Drawing.Point(128, 10);
             this.txtSubConOutFty.Name = "txtSubConOutFty";
             this.txtSubConOutFty.Size = new System.Drawing.Size(252, 23);
@@ -403,13 +403,13 @@
         private Win.UI.Label label1;
         private Win.UI.Label label10;
         private Win.UI.TextBox txtContractnumber;
-        private Class.txtsubconNoConfirm txtSubConOutFty;
+        private Class.TxtsubconNoConfirm txtSubConOutFty;
         private Win.UI.TextBox txtRemark;
         private Win.UI.DateBox dateBoxApvDate;
-        private Class.txtuser txtuser1;
+        private Class.Txtuser txtuser1;
         private Win.UI.NumericBox numericTtlCPU;
         private Win.UI.NumericBox numericTtlQty;
         private Win.UI.DateBox dateIssuedate;
-        private Class.txtMdivision txtMdivision1;
+        private Class.TxtMdivision txtMdivision1;
     }
 }

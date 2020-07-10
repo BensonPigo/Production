@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
@@ -15,7 +10,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P04_Print
     /// </summary>
-    public partial class P04_Print : Sci.Win.Tems.PrintForm
+    public partial class P04_Print : Win.Tems.PrintForm
     {
         private DataRow masterData;
         private string reportType;
@@ -76,7 +71,7 @@ namespace Sci.Production.Packing
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             if (this.reportType == "1")
             {
@@ -171,7 +166,7 @@ order by RefNo", MyUtility.Convert.GetString(this.masterData["ID"]));
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -183,7 +178,7 @@ order by RefNo", MyUtility.Convert.GetString(this.masterData["ID"]));
         {
             if (this.reportType == "1")
             {
-                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P04_PackingListReport.xltx";
+                string strXltName = Env.Cfg.XltPathDir + "\\Packing_P04_PackingListReport.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null)
                 {
@@ -274,7 +269,7 @@ order by RefNo", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(this.masterData["Remark"]);
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P04_PackingListReport");
+                string strExcelName = Class.MicrosoftFile.GetName("Packing_P04_PackingListReport");
                 Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();

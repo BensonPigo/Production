@@ -1,32 +1,25 @@
 ﻿using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Sci;
-using Sci.Win;
 using Sci.Win.Tools;
 using Ict;
-using Ict.Data;
-using Sci.Production.Class;
-using Sci.Production.PublicPrg;
-using System.Collections;
 using System.Transactions;
+using Sci.Production.Class;
 
 namespace Sci.Production.Thread
 {
     /// <summary>
     /// P01_Detail
     /// </summary>
-    public partial class P01_Detail : Sci.Win.Subs.Base
+    public partial class P01_Detail : Win.Subs.Base
     {
         private DataRow detail;
         private DataRow master;
-        private string loginID = Sci.Env.User.UserID;
+        private string loginID = Env.User.UserID;
         private string styleUkey;
         private string combdetail_id;
         private DataTable gridTable;
@@ -55,8 +48,8 @@ namespace Sci.Production.Thread
             this.combdetail_id = detailrow["id"].ToString();
             string n = MyUtility.GetValue.Lookup(string.Format(@"select name from pass1 where id ='{0}'", MyUtility.Convert.GetString(masterrow["ThreadEditname"])));
             this.displayBoxEdit.Text = MyUtility.Convert.GetString(masterrow["ThreadEditname"]) + "-" + n + " " + (MyUtility.Convert.GetString(masterrow["ThreadEditdate"]) == string.Empty ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(masterrow["ThreadEditdate"])).ToString("yyyy/MM/dd HH:mm:ss"));
-            this.btnEdit.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
-            this.btnEdit.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
+            this.btnEdit.Enabled = PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
+            this.btnEdit.Visible = PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
 
             // 建立Gird
             this.GenerateGrid();
@@ -130,7 +123,7 @@ namespace Sci.Production.Thread
             #endregion
 
             #region Grid header,Column  Gerenator建立 可用Setting
-            DataGridViewGeneratorTextColumnSettings refno_col = celllocalitem.GetGridCell("THREAD", null);
+            DataGridViewGeneratorTextColumnSettings refno_col = Txtlocalitem.Celllocalitem.GetGridCell("THREAD", null);
             DataGridViewGeneratorTextColumnSettings threadcolor_col = new DataGridViewGeneratorTextColumnSettings();
             threadcolor_col.EditingMouseDown += (s, e) =>
             {
@@ -344,7 +337,7 @@ where id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
                     this.masterRow["id"].ToString(),
                     this.masterRow["BrandID"].ToString(),
                     this.masterRow["SeasonID"].ToString(),
-                    Sci.Env.User.UserID,
+                    Env.User.UserID,
                     DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
                 DualResult result;

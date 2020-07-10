@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 using Ict;
 
@@ -14,7 +9,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P05_Print
     /// </summary>
-    public partial class P05_Print : Sci.Win.Tems.PrintForm
+    public partial class P05_Print : Win.Tems.PrintForm
     {
         private DataTable gridData;
         private string readyDate1;
@@ -44,10 +39,10 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.printData = this.gridData.Select(string.Format("{0}{1}", MyUtility.Check.Empty(this.readyDate1) ? "1 = 1" : "ReadyDate >= '" + this.readyDate1 + "'", MyUtility.Check.Empty(this.readyDate2) ? string.Empty : " and ReadyDate <= '" + this.readyDate2 + "'"));
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -59,21 +54,21 @@ namespace Sci.Production.PPIC
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P05_Print.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            string strXltName = Env.Cfg.XltPathDir + "\\PPIC_P05_Print.xltx";
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsStart = 2;
             #region Header
             string factoryName = MyUtility.GetValue.Lookup(string.Format(
                 @"
 select  NameEN
 from Factory
-where ID = '{0}'", Sci.Env.User.Factory));
+where ID = '{0}'", Env.User.Factory));
             worksheet.PageSetup.LeftHeader = string.Format("\n\nUp to SCI Delivery : {0}      Ready Date : {1} ~ {2}", this.strUp2SCIDelivery, this.readyDate1, this.readyDate2);
             worksheet.PageSetup.CenterHeader = string.Format("{0}\nProduction Schedule", factoryName);
             #endregion
@@ -113,8 +108,8 @@ where ID = '{0}'", Sci.Env.User.Factory));
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P05_Print");
-            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_P05_Print");
+            Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             excel.Quit();

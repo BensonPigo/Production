@@ -41,7 +41,7 @@
             this.comboFilter = new Sci.Win.UI.ComboBox();
             this.labelFilter = new Sci.Win.UI.Label();
             this.btnUpdateAllLocation = new Sci.Win.UI.Button();
-            this.txtcloglocationLocationNo = new Sci.Production.Class.txtcloglocation();
+            this.txtcloglocationLocationNo = new Sci.Production.Class.Txtcloglocation();
             this.labelLocationNo = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.label7 = new Sci.Win.UI.Label();
@@ -556,7 +556,7 @@
         private Win.UI.ComboBox comboFilter;
         private Win.UI.Label labelFilter;
         private Win.UI.Button btnUpdateAllLocation;
-        private Class.txtcloglocation txtcloglocationLocationNo;
+        private Class.Txtcloglocation txtcloglocationLocationNo;
         private Win.UI.Label labelLocationNo;
         private Win.UI.Button btnQuery;
         private Win.UI.Label label7;

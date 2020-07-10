@@ -10,7 +10,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P03_BatchReturn
     /// </summary>
-    public partial class P03_BatchReturn : Sci.Win.Subs.Base
+    public partial class P03_BatchReturn : Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private int allRecord = 0;

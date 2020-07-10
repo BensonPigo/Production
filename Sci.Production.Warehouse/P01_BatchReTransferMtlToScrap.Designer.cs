@@ -37,10 +37,10 @@
             this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
             this.lblFtyInventoryLockHint = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
             this.labelPullOutDate = new Sci.Win.UI.Label();
@@ -171,13 +171,13 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 5;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
-            this.txtmfactory.boolFtyGroupList = true;
+            this.txtmfactory.BoolFtyGroupList = true;
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtmfactory.IsProduceFty = false;
@@ -397,10 +397,10 @@
         private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelBuyerDelivery;
         private Win.UI.Label labelSPNo;
-        private Class.txtstyle txtstyle;
-        private Class.txtfactory txtmfactory;
+        private Class.Txtstyle txtstyle;
+        private Class.Txtfactory txtmfactory;
         private Win.UI.Label labelFactory;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelStyle;
         private Win.UI.Label labelPullOutDate;

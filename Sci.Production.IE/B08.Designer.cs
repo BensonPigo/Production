@@ -42,8 +42,8 @@
             this.dateResigned = new Sci.Win.UI.DateBox();
             this.labelM = new Sci.Win.UI.Label();
             this.displayM = new Sci.Win.UI.DisplayBox();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
-            this.txtsewingline = new Sci.Production.Class.txtsewingline();
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
+            this.txtsewingline = new Sci.Production.Class.Txtsewingline();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -250,7 +250,7 @@
             // 
             this.txtsewingline.BackColor = System.Drawing.Color.White;
             this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewingline.factoryobjectName = this.txtmfactory;
+            this.txtsewingline.FactoryobjectName = this.txtmfactory;
             this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewingline.Location = new System.Drawing.Point(479, 132);
             this.txtsewingline.Name = "txtsewingline";
@@ -295,9 +295,9 @@
         private Win.UI.Label labelNickName;
         private Win.UI.Label labelEmployee;
         private Win.UI.Label labelFactory;
-        private Class.txtsewingline txtsewingline;
+        private Class.Txtsewingline txtsewingline;
         private Win.UI.DisplayBox displayM;
         private Win.UI.Label labelM;
-        private Class.txtfactory txtmfactory;
+        private Class.Txtfactory txtmfactory;
     }
 }

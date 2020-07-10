@@ -40,7 +40,7 @@
             this.dateDelivery = new Sci.Win.UI.DateRange();
             this.labelDelivery = new Sci.Win.UI.Label();
             this.dateSDPDate = new Sci.Win.UI.DateRange();
-            this.txtmultifactoryFactory = new Sci.Production.Class.txtmultifactory();
+            this.txtmultifactoryFactory = new Sci.Production.Class.Txtmultifactory();
             this.labelSDPDate = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
@@ -335,7 +335,7 @@
         private Win.UI.DateRange dateDelivery;
         private Win.UI.Label labelDelivery;
         private Win.UI.DateRange dateSDPDate;
-        private Class.txtmultifactory txtmultifactoryFactory;
+        private Class.Txtmultifactory txtmultifactoryFactory;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnImport;
         private Win.UI.Label label1;

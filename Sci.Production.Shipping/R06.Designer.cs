@@ -39,7 +39,7 @@
             this.txtBLNoStart = new Sci.Win.UI.TextBox();
             this.txtBLNoEnd = new Sci.Win.UI.TextBox();
             this.comboM = new Sci.Win.UI.ComboBox();
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtSubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.comboOrderby = new Sci.Win.UI.ComboBox();
             this.label7 = new Sci.Win.UI.Label();
             this.labelReportType = new Sci.Win.UI.Label();
@@ -207,9 +207,9 @@
             // 
             this.txtSubconSupplier.DisplayBox1Binding = "";
             this.txtSubconSupplier.IsIncludeJunk = true;
-            this.txtSubconSupplier.isMisc = false;
-            this.txtSubconSupplier.isShipping = false;
-            this.txtSubconSupplier.isSubcon = false;
+            this.txtSubconSupplier.IsMisc = false;
+            this.txtSubconSupplier.IsShipping = false;
+            this.txtSubconSupplier.IsSubcon = false;
             this.txtSubconSupplier.Location = new System.Drawing.Point(106, 221);
             this.txtSubconSupplier.Name = "txtSubconSupplier";
             this.txtSubconSupplier.Size = new System.Drawing.Size(170, 23);
@@ -430,7 +430,7 @@
         private Win.UI.TextBox txtBLNoStart;
         private Win.UI.TextBox txtBLNoEnd;
         private Win.UI.ComboBox comboM;
-        private Class.txtsubconNoConfirm txtSubconSupplier;
+        private Class.TxtsubconNoConfirm txtSubconSupplier;
         private Win.UI.ComboBox comboOrderby;
         private Win.UI.Label label7;
         private Win.UI.Label labelReportType;

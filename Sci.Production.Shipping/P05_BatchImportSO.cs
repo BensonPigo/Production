@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P05_BatchImportSO : Sci.Win.Subs.Base
+    public partial class P05_BatchImportSO : Win.Subs.Base
     {
         public P05_BatchImportSO()
         {
@@ -18,8 +18,7 @@ namespace Sci.Production.Shipping
             DataTable shipperID;
             DBProxy.Current.Select(null, "select '' as ShipperID union all SELECT DISTINCT [ShipperID]=Shipper FROM GMTBooking WITH (NOLOCK) ", out shipperID);
             MyUtility.Tool.SetupCombox(this.comboShipper, 1, shipperID);
-            this.comboShipper.Text = Sci.Env.User.Keyword;
-
+            this.comboShipper.Text = Env.User.Keyword;
         }
 
         protected override void OnFormLoaded()
@@ -29,7 +28,10 @@ namespace Sci.Production.Shipping
             DataGridViewGeneratorTextColumnSettings setTerminal = new DataGridViewGeneratorTextColumnSettings();
             setTerminal.EditingMouseDown += (s, e) =>
             {
-                if (this.grid.DataSource == null) return;
+                if (this.grid.DataSource == null)
+                {
+                    return;
+                }
 
                 if (e.Button == MouseButtons.Right)
                 {
@@ -54,35 +56,35 @@ from  ForwarderWhse fw
 ";
                     DBProxy.Current.Select(null, sqlcmd, out dt);
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", string.Empty);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", string.Empty);
 
                     DialogResult result1 = item.ShowDialog();
                     if (result1 == DialogResult.Cancel)
                     {
                         return;
                     }
+
                     IList<DataRow> dr = item.GetSelecteds();
                     cuttentDr["ForwarderWhse_DetailUKey_ForShow"] = item.GetSelectedString();
                     cuttentDr["ForwarderWhse_DetailUKey"] = dr[0]["Ukey"];
                     cuttentDr.EndEdit();
                 }
-
             };
 
-//            setTerminal.CellValidating += (s, e) =>
+// setTerminal.CellValidating += (s, e) =>
 //            {
 //                DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
 
-//                if (!MyUtility.Check.Empty(e.FormattedValue))
+// if (!MyUtility.Check.Empty(e.FormattedValue))
 //                {
 //                    DataTable dt;
 //                    string sqlCmd = $@"
-//select fwd.WhseNo,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
-//where fw.ID = fwd.ID
-//and fwd.whseno = '{e.FormattedValue}'
-//order by fwd.WhseNo";
+// select fwd.WhseNo,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK)
+// where fw.ID = fwd.ID
+// and fwd.whseno = '{e.FormattedValue}'
+// order by fwd.WhseNo";
 
-//                    DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
+// DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
 //                    if (result)
 //                    {
 //                        if (dt.Rows.Count >= 1)
@@ -100,7 +102,6 @@ from  ForwarderWhse fw
 //                    }
 //                }
 //            };
-
             this.grid.IsEditingReadOnly = false;
             this.grid.DataSource = this.listControlBindingSource1;
 
@@ -179,11 +180,10 @@ VALUES (
     ,'SOCFMDate'
     ,'{(firstCFM ? string.Empty : "CFM")}'
     ,'Un CFM'
-    ,'{Sci.Env.User.UserID}'
+    ,'{Env.User.UserID}'
     ,GETDATE()
 )
 " + Environment.NewLine + Environment.NewLine);
-
             }
             #endregion
 
@@ -212,15 +212,13 @@ VALUES (
                 transactionScope.Dispose();
                 this.QueryData();
             }
-
         }
 
         private void QueryData()
         {
-
             DataTable dt;
             string sqlCmd = string.Empty;
-            Ict.DualResult result;
+            DualResult result;
 
             sqlCmd = $@"
 

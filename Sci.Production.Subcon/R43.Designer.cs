@@ -36,7 +36,7 @@
             this.labelBundleReceiveDate = new Sci.Win.UI.Label();
             this.dateBundleReceiveDate = new Sci.Win.UI.DateRange();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -170,6 +170,6 @@
         private Win.UI.Label labelBundleReceiveDate;
         private Win.UI.DateRange dateBundleReceiveDate;
         private Win.UI.Label labelFactory;
-        private Class.comboFactory comboFactory;
+        private Class.ComboFactory comboFactory;
     }
 }

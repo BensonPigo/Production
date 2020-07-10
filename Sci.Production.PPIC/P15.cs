@@ -2,13 +2,10 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
@@ -16,13 +13,14 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P15
     /// </summary>
-    public partial class P15 : Sci.Win.Tems.QueryForm
+    public partial class P15 : Win.Tems.QueryForm
     {
         private Color red = Color.FromArgb(255, 179, 179);
         private Color yelow = Color.FromArgb(255, 255, 184);
         private Color green = Color.FromArgb(204, 255, 204);
         private Color gray = Color.FromArgb(224, 224, 224);
         private DataTable dt_result = new DataTable();
+
         /// <summary>
         /// P15
         /// </summary>
@@ -53,7 +51,7 @@ namespace Sci.Production.PPIC
             this.displayBoxFinish.BackColor = this.gray;
 
             #region NO. 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts_id = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts_id = new DataGridViewGeneratorTextColumnSettings();
             ts_id.CellMouseDoubleClick += (s, e) =>
             {
                 if (this.checkBoxRotate.Checked)
@@ -84,7 +82,7 @@ namespace Sci.Production.PPIC
             #endregion
 
             #region issueLackID開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts_issueid = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts_issueid = new DataGridViewGeneratorTextColumnSettings();
             ts_issueid.CellMouseDoubleClick += (s, e) =>
             {
                 if (this.checkBoxRotate.Checked)
@@ -100,7 +98,7 @@ namespace Sci.Production.PPIC
 
                 if (!this.checkBoxRotate.Checked)
                 {
-                    string fullpath = System.Windows.Forms.Application.StartupPath + ".\\Sci.Production.Warehouse.dll";
+                    string fullpath = Application.StartupPath + ".\\Sci.Production.Warehouse.dll";
                     var assemblys = Assembly.LoadFile(fullpath);
                     var types = assemblys.GetTypes().ToList();
                     var myClass = types.Where(x => x.FullName == (dr["FabricType"].Equals("Fabric") ? "Sci.Production.Warehouse.P16" : "Sci.Production.Warehouse.P15")).First();
@@ -218,7 +216,7 @@ where l.status <> 'New' ";
 
             DualResult result = DBProxy.Current.Select(null, query_sql, out this.dt_result);
             if (result)
-            { 
+            {
                 this.detailbs.DataSource = null;
                 this.detailbs.DataSource = this.dt_result;
             }

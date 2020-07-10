@@ -5,14 +5,13 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Quality
 {
     /// <summary>
     /// Quality_P25
     /// </summary>
-    public partial class P25 : Sci.Win.Tems.QueryForm
+    public partial class P25 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P25
@@ -26,7 +25,6 @@ namespace Sci.Production.Quality
 
         private DataTable gridData;
         private string selectDataTable_DefaultView_Sort = string.Empty;
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         /// <summary>
         /// OnFormLoaded()
@@ -134,7 +132,7 @@ from (
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = cr.SCICtnNo 
     where   cr.MDivisionID = '{0}'
-", Sci.Env.User.Keyword));
+", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.dateReceiveDate.Value1))
             {

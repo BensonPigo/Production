@@ -2,19 +2,16 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R37 : Sci.Win.Tems.PrintForm
+    public partial class R37 : Win.Tems.PrintForm
     {
-        string ReportType;
+        string reportType;
         List<SqlParameter> list;
         DataTable dtList; string cmd;
         DataTable dt; string cmdDt;
@@ -24,120 +21,134 @@ namespace Sci.Production.Subcon
         string DebitNo1; string DebitNo2;
         string handle; string smr;
         string fac; string Pay;
+
         public R37(ToolStripMenuItem menuitem)
-            : base(menuitem) 
+            : base(menuitem)
          {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable factory = null;
-            string sqlcmd = (@"select DISTINCT BrandID FROM DBO.Debit WITH (NOLOCK) ");
-            DBProxy.Current.Select("", sqlcmd, out factory);
-            factory.Rows.Add(new string[] { "" });
+            string sqlcmd = @"select DISTINCT BrandID FROM DBO.Debit WITH (NOLOCK) ";
+            DBProxy.Current.Select(string.Empty, sqlcmd, out factory);
+            factory.Rows.Add(new string[] { string.Empty });
             factory.DefaultView.Sort = "BrandID";
             this.comboFactory.DataSource = factory;
             this.comboFactory.ValueMember = "BrandID";
             this.comboFactory.DisplayMember = "BrandID";
             this.comboFactory.SelectedIndex = 0;
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.comboPaymentSettled.SelectedIndex = 0;
             this.comboReportType.SelectedIndex = 0;
-            print.Enabled = false;
+            this.print.Enabled = false;
         }
 
         protected override bool ValidateInput()
         {
+            this.DebDate1 = this.dateDebitDate.Value1;
+            this.DebDate2 = this.dateDebitDate.Value2;
+            this.ConDate1 = this.dateConfirmDate.Value1;
+            this.ConDate2 = this.dateConfirmDate.Value2;
+            this.SettDate1 = this.dateSettledDate.Value1;
+            this.SettDate2 = this.dateSettledDate.Value2;
+            this.DebitNo1 = this.txtDebitNoStart.Text.ToString();
+            this.DebitNo2 = this.txtDebitNoEnd.Text.ToString();
+            this.handle = this.txttpeuser_caneditHandle.TextBox1.Text;
+            this.smr = this.txttpeuser_caneditSMR.TextBox1.Text;
+            this.fac = this.comboFactory.Text.ToString();
+            this.Pay = this.comboPaymentSettled.SelectedItem.ToString();
 
-            DebDate1 = dateDebitDate.Value1;
-            DebDate2 = dateDebitDate.Value2;
-            ConDate1 = dateConfirmDate.Value1;
-            ConDate2 = dateConfirmDate.Value2;
-            SettDate1 = dateSettledDate.Value1;
-            SettDate2 = dateSettledDate.Value2;
-            DebitNo1 = txtDebitNoStart.Text.ToString();
-            DebitNo2 = txtDebitNoEnd.Text.ToString();
-            handle = txttpeuser_caneditHandle.TextBox1.Text;
-            smr = txttpeuser_caneditSMR.TextBox1.Text;
-            fac = comboFactory.Text.ToString();
-            Pay = comboPaymentSettled.SelectedItem.ToString();
+            this.reportType = this.comboReportType.Text;
 
-            ReportType = this.comboReportType.Text;
-
-            list = new List<SqlParameter>();
-            string sqlWhere = ""; string sqlHaving = "";
+            this.list = new List<SqlParameter>();
+            string sqlWhere = string.Empty;
+            string sqlHaving = string.Empty;
             List<string> sqlWheres = new List<string>();
-            
+
             #region --組WHERE--
-            
+
             if (!this.dateDebitDate.Value1.Empty())
             {
                 sqlWheres.Add("a.Issuedate >= @DebDate1");
-                list.Add(new SqlParameter("@DebDate1", DebDate1));
+                this.list.Add(new SqlParameter("@DebDate1", this.DebDate1));
             }
+
             if (!this.dateDebitDate.Value2.Empty())
             {
                 sqlWheres.Add("a.Issuedate <= @DebDate2");
-                list.Add(new SqlParameter("@DebDate2", DebDate2.Value.AddDays(1).AddSeconds(-1)));
+                this.list.Add(new SqlParameter("@DebDate2", this.DebDate2.Value.AddDays(1).AddSeconds(-1)));
             }
+
             if (!this.dateConfirmDate.Value1.Empty())
             {
                 sqlWheres.Add("a.cfmdate >= @ConDate1");
-                list.Add(new SqlParameter("@ConDate1", ConDate1));
+                this.list.Add(new SqlParameter("@ConDate1", this.ConDate1));
             }
+
             if (!this.dateConfirmDate.Value2.Empty())
             {
                 sqlWheres.Add("a.cfmdate <= @ConDate2");
-                list.Add(new SqlParameter("@ConDate2", ConDate2.Value.AddDays(1).AddSeconds(-1)));
+                this.list.Add(new SqlParameter("@ConDate2", this.ConDate2.Value.AddDays(1).AddSeconds(-1)));
             }
+
             if (!this.txtDebitNoStart.Text.Empty())
             {
                 sqlWheres.Add("a.Id between @DebNo1 and @DebNo2");
-                list.Add(new SqlParameter("@DebNo1", DebitNo1));
-                list.Add(new SqlParameter("@DebNo2", DebitNo2));
-            } if (!this.txttpeuser_caneditHandle.TextBox1.Text.Empty())
+                this.list.Add(new SqlParameter("@DebNo1", this.DebitNo1));
+                this.list.Add(new SqlParameter("@DebNo2", this.DebitNo2));
+            }
+
+            if (!this.txttpeuser_caneditHandle.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.handle = @handle");
-                list.Add(new SqlParameter("@handle", handle));
-            } if (!this.txttpeuser_caneditSMR.TextBox1.Text.Empty())
+                this.list.Add(new SqlParameter("@handle", this.handle));
+            }
+
+            if (!this.txttpeuser_caneditSMR.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.smr = @smr");
-                list.Add(new SqlParameter("@smr", smr));
+                this.list.Add(new SqlParameter("@smr", this.smr));
             }
+
             if (!this.comboFactory.Text.ToString().Empty())
             {
                 sqlWheres.Add("a.BrandID  = @factory");
-                list.Add(new SqlParameter("@factory", fac));
+                this.list.Add(new SqlParameter("@factory", this.fac));
             }
+
             if (this.comboPaymentSettled.Text == "Settled")
             {
-                //sqlWheres.Add("ISNULL(IsSettled.Val , 0) = 1");
+                // sqlWheres.Add("ISNULL(IsSettled.Val , 0) = 1");
                 sqlWheres.Add(" a.Settled = 'Y' ");
             }
+
             if (this.comboPaymentSettled.Text == "Not Settled")
             {
-                //sqlWheres.Add("ISNULL(IsSettled.Val , 0) = 0");
+                // sqlWheres.Add("ISNULL(IsSettled.Val , 0) = 0");
                 sqlWheres.Add(" a.Settled = '' ");
             }
+
             if (!this.dateSettledDate.Value1.Empty())
             {
                 sqlHaving += $@" AND IIF(a.IsSubcon=1,
 					IIF(ISNULL(IsSettled.Val , 0) = 1,MaxVoucherDate.VoucherDate,NULL), 
 					a.SettleDate
 				) >= @SettledDate1 ";
-                list.Add(new SqlParameter("@SettledDate1", SettDate1));
+                this.list.Add(new SqlParameter("@SettledDate1", this.SettDate1));
             }
+
             if (!this.dateSettledDate.Value2.Empty())
             {
                 sqlHaving += $@" AND IIF(a.IsSubcon=1,
 					IIF(ISNULL(IsSettled.Val , 0) = 1,MaxVoucherDate.VoucherDate,NULL), 
 					a.SettleDate
 				) <= @SettledDate2";
-                list.Add(new SqlParameter("@SettledDate2", SettDate2.Value.AddDays(1).AddSeconds(-1)));
+                this.list.Add(new SqlParameter("@SettledDate2", this.SettDate2.Value.AddDays(1).AddSeconds(-1)));
             }
             #endregion
 
             sqlWhere = string.Join(" and ", sqlWheres);
 
             #region --撈List資料--
-            cmd = string.Format(@"
+            this.cmd = string.Format(@"
 SELECT distinct a.ID
 , [Subcon DBC]=Iif(a.IsSubcon=1,'Y','N')
 ,a.Issuedate
@@ -222,7 +233,7 @@ where a.type='F' and
             #endregion
 
             #region --撈Detail List資料--
-            cmdDt = string.Format(@"
+            this.cmdDt = string.Format(@"
 SELECT distinct a.ID
 , [Subcon DBC]=Iif(a.IsSubcon=1,'Y','N')
 ,a.Issuedate
@@ -313,100 +324,103 @@ where a.type='F' and " + sqlWhere + ' ' + sqlHaving);
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
 
-            switch (ReportType)
+            switch (this.reportType)
             {
                 case "List":
-                    res = DBProxy.Current.Select("", cmd, list, out dtList);
+                    res = DBProxy.Current.Select(string.Empty, this.cmd, this.list, out this.dtList);
                     break;
                 case "Detail List":
-                    res = DBProxy.Current.Select("", cmdDt, list, out dt);
+                    res = DBProxy.Current.Select(string.Empty, this.cmdDt, this.list, out this.dt);
                     break;
                 default:
-                    res = DBProxy.Current.Select("", cmd, list, out dtList); //預設
+                    res = DBProxy.Current.Select(string.Empty, this.cmd, this.list, out this.dtList); // 預設
                     break;
             }
 
             return res;
         }
-       
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            switch (ReportType)
+            switch (this.reportType)
             {
                 case "List":
-                    if (dtList == null || dtList.Rows.Count == 0)
+                    if (this.dtList == null || this.dtList.Rows.Count == 0)
                     {
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }
+
                     break;
                 case "Detail List":
-                    if (dt == null || dt.Rows.Count == 0)
+                    if (this.dt == null || this.dt.Rows.Count == 0)
                     {
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }
+
                     break;
                 default:
-                    if (dtList == null || dtList.Rows.Count == 0) //預設
+                    if (this.dtList == null || this.dtList.Rows.Count == 0) // 預設
                     {
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }
+
                     break;
             }
 
             if ("List".EqualString(this.comboReportType.Text))
             {
-                string d1 = (MyUtility.Check.Empty(DebDate1)) ? "" : Convert.ToDateTime(DebDate1).ToString("yyyy/MM/dd");
-                string d2 = (MyUtility.Check.Empty(DebDate2)) ? "" : Convert.ToDateTime(DebDate2).ToString("yyyy/MM/dd");
-                string d3 = (MyUtility.Check.Empty(ConDate1)) ? "" : Convert.ToDateTime(ConDate1).ToString("yyyy/MM/dd");
-                string d4 = (MyUtility.Check.Empty(ConDate2)) ? "" : Convert.ToDateTime(ConDate2).ToString("yyyy/MM/dd");
-                string d5 = (MyUtility.Check.Empty(SettDate1)) ? "" : Convert.ToDateTime(SettDate1).ToString("yyyy/MM/dd");
-                string d6 = (MyUtility.Check.Empty(SettDate2)) ? "" : Convert.ToDateTime(SettDate2).ToString("yyyy/MM/dd");
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R37_List.xltx");
+                string d1 = MyUtility.Check.Empty(this.DebDate1) ? string.Empty : Convert.ToDateTime(this.DebDate1).ToString("yyyy/MM/dd");
+                string d2 = MyUtility.Check.Empty(this.DebDate2) ? string.Empty : Convert.ToDateTime(this.DebDate2).ToString("yyyy/MM/dd");
+                string d3 = MyUtility.Check.Empty(this.ConDate1) ? string.Empty : Convert.ToDateTime(this.ConDate1).ToString("yyyy/MM/dd");
+                string d4 = MyUtility.Check.Empty(this.ConDate2) ? string.Empty : Convert.ToDateTime(this.ConDate2).ToString("yyyy/MM/dd");
+                string d5 = MyUtility.Check.Empty(this.SettDate1) ? string.Empty : Convert.ToDateTime(this.SettDate1).ToString("yyyy/MM/dd");
+                string d6 = MyUtility.Check.Empty(this.SettDate2) ? string.Empty : Convert.ToDateTime(this.SettDate2).ToString("yyyy/MM/dd");
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R37_List.xltx");
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
                 objSheets.Cells[2, 2] = d1 + " ~ " + d2;
                 objSheets.Cells[2, 4] = d3 + " ~ " + d4;
                 objSheets.Cells[2, 7] = d5 + " ~ " + d6;
-                objSheets.Cells[2, 9] = DebitNo1 + " ~ " + DebitNo2;
-                objSheets.Cells[2, 11] = handle;
-                objSheets.Cells[2, 13] = smr;
-                objSheets.Cells[2, 17] = fac;
-                objSheets.Cells[2, 19] = Pay;
-                MyUtility.Excel.CopyToXls(dtList, "", "Subcon_R37_List.xltx", 3, true, null, objApp);
+                objSheets.Cells[2, 9] = this.DebitNo1 + " ~ " + this.DebitNo2;
+                objSheets.Cells[2, 11] = this.handle;
+                objSheets.Cells[2, 13] = this.smr;
+                objSheets.Cells[2, 17] = this.fac;
+                objSheets.Cells[2, 19] = this.Pay;
+                MyUtility.Excel.CopyToXls(this.dtList, string.Empty, "Subcon_R37_List.xltx", 3, true, null, objApp);
 
                 Marshal.ReleaseComObject(objSheets);
                 return true;
             }
             else if ("Detail List".EqualString(this.comboReportType.Text))
             {
-                string d1 = (MyUtility.Check.Empty(DebDate1)) ? "" : Convert.ToDateTime(DebDate1).ToString("yyyy/MM/dd");
-                string d2 = (MyUtility.Check.Empty(DebDate2)) ? "" : Convert.ToDateTime(DebDate2).ToString("yyyy/MM/dd");
-                string d3 = (MyUtility.Check.Empty(ConDate1)) ? "" : Convert.ToDateTime(ConDate1).ToString("yyyy/MM/dd");
-                string d4 = (MyUtility.Check.Empty(ConDate2)) ? "" : Convert.ToDateTime(ConDate2).ToString("yyyy/MM/dd");
-                string d5 = (MyUtility.Check.Empty(SettDate1)) ? "" : Convert.ToDateTime(SettDate1).ToString("yyyy/MM/dd");
-                string d6 = (MyUtility.Check.Empty(SettDate2)) ? "" : Convert.ToDateTime(SettDate2).ToString("yyyy/MM/dd");
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R37_DetailList.xltx");
+                string d1 = MyUtility.Check.Empty(this.DebDate1) ? string.Empty : Convert.ToDateTime(this.DebDate1).ToString("yyyy/MM/dd");
+                string d2 = MyUtility.Check.Empty(this.DebDate2) ? string.Empty : Convert.ToDateTime(this.DebDate2).ToString("yyyy/MM/dd");
+                string d3 = MyUtility.Check.Empty(this.ConDate1) ? string.Empty : Convert.ToDateTime(this.ConDate1).ToString("yyyy/MM/dd");
+                string d4 = MyUtility.Check.Empty(this.ConDate2) ? string.Empty : Convert.ToDateTime(this.ConDate2).ToString("yyyy/MM/dd");
+                string d5 = MyUtility.Check.Empty(this.SettDate1) ? string.Empty : Convert.ToDateTime(this.SettDate1).ToString("yyyy/MM/dd");
+                string d6 = MyUtility.Check.Empty(this.SettDate2) ? string.Empty : Convert.ToDateTime(this.SettDate2).ToString("yyyy/MM/dd");
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R37_DetailList.xltx");
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
                 objSheets.Cells[2, 2] = d1 + " ~ " + d2;
                 objSheets.Cells[2, 4] = d3 + " ~ " + d4;
                 objSheets.Cells[2, 7] = d5 + " ~ " + d6;
-                objSheets.Cells[2, 9] = DebitNo1 + " ~ " + DebitNo2;
-                objSheets.Cells[2, 11] = handle;
-                objSheets.Cells[2, 13] = smr;
-                objSheets.Cells[2, 17] = fac;
-                objSheets.Cells[2, 19] = Pay;
-                MyUtility.Excel.CopyToXls(dt, "", "Subcon_R37_DetailList.xltx", 3, true, null, objApp);
+                objSheets.Cells[2, 9] = this.DebitNo1 + " ~ " + this.DebitNo2;
+                objSheets.Cells[2, 11] = this.handle;
+                objSheets.Cells[2, 13] = this.smr;
+                objSheets.Cells[2, 17] = this.fac;
+                objSheets.Cells[2, 19] = this.Pay;
+                MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Subcon_R37_DetailList.xltx", 3, true, null, objApp);
 
                 Marshal.ReleaseComObject(objSheets);
                 return true;
             }
-            
+
             return true;
         }
     }

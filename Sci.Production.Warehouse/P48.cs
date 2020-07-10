@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P48 : Sci.Win.Tems.QueryForm
+    public partial class P48 : Win.Tems.QueryForm
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable dtInventory;
@@ -22,7 +22,7 @@ namespace Sci.Production.Warehouse
         public P48(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         // Query
@@ -34,7 +34,7 @@ namespace Sci.Production.Warehouse
             string factory = this.txtfactory.Text.TrimEnd();
             string refno = this.txtRef.Text.TrimEnd();
             string location = this.txtLocation.Text.TrimEnd();
-            string fabrictype = txtdropdownlistFabricType.SelectedValue.ToString();
+            string fabrictype = this.txtdropdownlistFabricType.SelectedValue.ToString();
             string strCategory = this.comboCategory.SelectedValue.ToString();
             string brand = this.txtbrand.Text;
             string season = this.txtseason.Text;
@@ -46,13 +46,13 @@ namespace Sci.Production.Warehouse
                 && string.IsNullOrWhiteSpace(season))
             {
                 MyUtility.Msg.WarningBox("< Season > < SP# > < Ref# > < Location > can't be empty!!");
-                txtSPNo1.Focus();
+                this.txtSPNo1.Focus();
                 return;
             }
-
             else
             {
-                strSQLCmd.Append(string.Format(@"
+                strSQLCmd.Append(string.Format(
+                    @"
 select  0 as selected 
         , '' id
         , c.PoId
@@ -87,23 +87,26 @@ left join Orders o WITH (NOLOCK) on o.id=a.id
 Where   c.lock = 0 
         and c.inqty-c.outqty + c.adjustqty > 0
         and f.mdivisionid = '{0}'        
-        ", Sci.Env.User.Keyword));
+        ", Env.User.Keyword));
 
                 if (!MyUtility.Check.Empty(sp1))
                 {
-                    strSQLCmd.Append(string.Format(@" 
+                    strSQLCmd.Append(string.Format(
+                        @" 
         and a.id >= '{0}'  ", sp1));
                 }
 
                 if (!MyUtility.Check.Empty(sp2))
                 {
-                    strSQLCmd.Append(string.Format(@" 
+                    strSQLCmd.Append(string.Format(
+                        @" 
         and a.id <= '{0}'  ", sp2));
                 }
 
                 if (!MyUtility.Check.Empty(refno))
                 {
-                    strSQLCmd.Append(string.Format(@" 
+                    strSQLCmd.Append(string.Format(
+                        @" 
         and a.refno = '{0}' ", refno));
                 }
 
@@ -114,19 +117,22 @@ Where   c.lock = 0
 
                 if (!MyUtility.Check.Empty(brand))
                 {
-                    strSQLCmd.Append(string.Format(@" 
+                    strSQLCmd.Append(string.Format(
+                        @" 
         and o.BrandID = '{0}' ", brand));
                 }
 
                 if (!MyUtility.Check.Empty(season))
                 {
-                    strSQLCmd.Append(string.Format(@" 
+                    strSQLCmd.Append(string.Format(
+                        @" 
         and o.SeasonID = '{0}' ", season));
                 }
 
                 if (!MyUtility.Check.Empty(location))
                 {
-                    strSQLCmd.Append(string.Format(@" 
+                    strSQLCmd.Append(string.Format(
+                        @" 
         and c.ukey in ( select ukey 
                         from dbo.ftyinventory_detail WITH (NOLOCK) 
                         where mtllocationid = '{0}') ", location));
@@ -148,25 +154,32 @@ Where   c.lock = 0
 
                 strSQLCmd.Append($@" and o.Category in ({strCategory})");
 
-
                 this.ShowWaitMessage("Data Loading....");
-                Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtInventory))
+                DualResult result;
+                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtInventory))
                 {
-                    if (dtInventory.Rows.Count == 0)
-                    { MyUtility.Msg.WarningBox("Data not found!!"); }
+                    if (this.dtInventory.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!!");
+                    }
                     else
                     {
-                        dtInventory.Columns.Add("adjustqty", typeof(decimal));
-                        dtInventory.Columns["adjustqty"].Expression = "qtybefore-qtyafter";
-                        dtInventory.DefaultView.Sort = "poid,seq1,seq2,roll,dyelot";
+                        this.dtInventory.Columns.Add("adjustqty", typeof(decimal));
+                        this.dtInventory.Columns["adjustqty"].Expression = "qtybefore-qtyafter";
+                        this.dtInventory.DefaultView.Sort = "poid,seq1,seq2,roll,dyelot";
                     }
-                    listControlBindingSource1.DataSource = dtInventory;
+
+                    this.listControlBindingSource1.DataSource = this.dtInventory;
                 }
-                else { ShowErr(strSQLCmd.ToString(), result); }
+                else
+                {
+                    this.ShowErr(strSQLCmd.ToString(), result);
+                }
+
                 this.HideWaitMessage();
             }
-            btnImport.Enabled = true;
+
+            this.btnImport.Enabled = true;
             this.HideWaitMessage();
         }
 
@@ -176,22 +189,22 @@ Where   c.lock = 0
             base.OnFormLoaded();
             #region -- Reason Combox --
             string selectCommand = @"select Name idname,id from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Remove' AND junk = 0";
-            Ict.DualResult returnResult;
+            DualResult returnResult;
             DataTable dropDownListTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
             {
-                comboReason.DataSource = dropDownListTable;
-                comboReason.DisplayMember = "IDName";
-                comboReason.ValueMember = "ID";
+                this.comboReason.DataSource = dropDownListTable;
+                this.comboReason.DisplayMember = "IDName";
+                this.comboReason.ValueMember = "ID";
             }
             #endregion
             #region -- Current Qty Valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                    DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
 
                     if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) <= 0)
                     {
@@ -207,51 +220,62 @@ Where   c.lock = 0
             };
             #endregion
             #region -- Reason ID 右鍵開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataTable poitems;
-                    string sqlcmd = "";
+                    string sqlcmd = string.Empty;
                     IList<DataRow> x;
 
                     sqlcmd = @"select id, Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Remove' AND junk = 0";
                     DualResult result2 = DBProxy.Current.Select(null, sqlcmd, out poitems);
                     if (!result2)
                     {
-                        ShowErr(sqlcmd, result2);
+                        this.ShowErr(sqlcmd, result2);
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(poitems
-                        , "ID,Name"
-                        , "5,150"
-                        , gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"].ToString()
-                        , "ID,Name");
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+                        poitems,
+                        "ID,Name",
+                        "5,150",
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"].ToString(),
+                        "ID,Name");
                     item.Width = 600;
                     DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     x = item.GetSelecteds();
 
-                    gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"] = x[0]["id"];
-                    gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reason_nm"] = x[0]["name"];
+                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"] = x[0]["id"];
+                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = x[0]["name"];
                 }
             };
             ts.CellValidating += (s, e) =>
             {
                 DataRow dr;
-                if (!this.EditMode) return;
-                if (String.Compare(e.FormattedValue.ToString(), gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"].ToString()) != 0)
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (string.Compare(e.FormattedValue.ToString(), this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"].ToString()) != 0)
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"] = "";
-                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reason_nm"] = "";
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"] = string.Empty;
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = string.Empty;
                     }
                     else
                     {
-                        if (!MyUtility.Check.Seek(string.Format(@"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
+                        if (!MyUtility.Check.Seek(
+                            string.Format(
+                            @"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
 and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
                         {
                             e.Cancel = true;
@@ -260,18 +284,18 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
                         }
                         else
                         {
-                            gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"] = e.FormattedValue;
-                            gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reason_nm"] = dr["name"];
+                            this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"] = e.FormattedValue;
+                            this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = dr["name"];
                         }
                     }
                 }
             };
             #endregion
 
-            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridImport.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+            this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14))
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Text("OrderTypeID", header: "Order Type", iseditingreadonly: true, width: Widths.AnsiChars(13))
@@ -305,24 +329,34 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
         // Update All
         private void btnUpdateAll_Click(object sender, EventArgs e)
         {
-            string reasonid = comboReason.SelectedValue.ToString();
-            gridImport.ValidateControl();
+            string reasonid = this.comboReason.SelectedValue.ToString();
+            this.gridImport.ValidateControl();
 
-            if (dtInventory == null || dtInventory.Rows.Count == 0) return;
-            DataRow[] drfound = dtInventory.Select("selected = 1");
+            if (this.dtInventory == null || this.dtInventory.Rows.Count == 0)
+            {
+                return;
+            }
+
+            DataRow[] drfound = this.dtInventory.Select("selected = 1");
 
             foreach (var item in drfound)
             {
                 item["reasonid"] = reasonid;
-                item["reason_nm"] = comboReason.Text;
+                item["reason_nm"] = this.comboReason.Text;
             }
         }
 
         // Location Valid
         private void txtLocation_Validating(object sender, CancelEventArgs e)
         {
-            if (txtLocation.Text.ToString() == "") return;
-            if (!MyUtility.Check.Seek(string.Format(@"
+            if (this.txtLocation.Text.ToString() == string.Empty)
+            {
+                return;
+            }
+
+            if (!MyUtility.Check.Seek(
+                string.Format(
+                @"
 select 1 
 where exists(
     select * 
@@ -330,7 +364,7 @@ where exists(
     where   StockType='O' 
             and id = '{0}'
             and junk != '1'
-)", txtLocation.Text), null))
+)", this.txtLocation.Text), null))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
@@ -340,27 +374,37 @@ where exists(
         // Location 右鍵
         private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            if (!this.EditMode) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+                string.Format(@"
 select  id
         , [Description] 
 from    dbo.MtlLocation WITH (NOLOCK) 
 where   StockType='O'
-        and junk != '1'"), "10,40", txtLocation.Text, "ID,Desc");
+        and junk != '1'"), "10,40", this.txtLocation.Text, "ID,Desc");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            txtLocation.Text = item.GetSelectedString();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtLocation.Text = item.GetSelectedString();
         }
 
         // Create Batch
         private void btnImport_Click(object sender, EventArgs e)
         {
-            gridImport.ValidateControl();
-            DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
+            this.gridImport.ValidateControl();
+            DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0)
             {
                 return;
             }
+
             DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
             if (dr2.Length == 0)
             {
@@ -378,7 +422,7 @@ where   StockType='O'
             dr2 = dtGridBS1.Select("reasonid = '' and Selected = 1");
             DataTable warningTB = new DataTable();
             if (dr2.Length > 0)
-            {                               
+            {
                 warningTB.Columns.Add("SpNo");
                 warningTB.Columns.Add("SEQ");
                 warningTB.Columns.Add("Roll");
@@ -390,6 +434,7 @@ where   StockType='O'
                     drNoReason["Roll"] = drReason["Roll"].ToString();
                     warningTB.Rows.Add(drNoReason);
                 }
+
                 if (warningTB.Rows.Count > 0)
                 {
                     var m = MyUtility.Msg.ShowMsgGrid(warningTB, "These SP#'s Reason ID cannot be empty!", "Warning");
@@ -400,22 +445,23 @@ where   StockType='O'
                     m.text_Find.Width = 150;
                     m.btn_Find.Location = new Point(170, 6);
 
-                    m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
+                    m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
                     return;
                 }
             }
 
             #region Batch Create
 
-            // *依照POID 批次建立P45 ID 
+            // *依照POID 批次建立P45 ID
             dr2 = dtGridBS1.Select("adjustqty <> 0 and Selected = 1");
             var listPoid = dr2.Select(row => row["Poid"]).Distinct().ToList();
-            var tmpId = MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "AM", "Adjust", System.DateTime.Now, batchNumber: listPoid.Count);
+            var tmpId = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "AM", "Adjust", DateTime.Now, batchNumber: listPoid.Count);
             if (MyUtility.Check.Empty(tmpId))
             {
                 MyUtility.Msg.WarningBox("Get document id fail!");
                 return;
             }
+
             this.ShowWaitMessage("Data Creating....");
             #region insert Table
 
@@ -465,9 +511,9 @@ from #tmp";
                 drNewMaster["poid"] = listPoid[i].ToString();
                 drNewMaster["id"] = tmpId[i].ToString();
                 drNewMaster["type"] = "R";
-                drNewMaster["issuedate"] = DateTime.Now.ToString("yyyy/MM/dd") ;
+                drNewMaster["issuedate"] = DateTime.Now.ToString("yyyy/MM/dd");
                 drNewMaster["mdivisionid"] = Env.User.Keyword;
-                drNewMaster["FactoryID"] = Sci.Env.User.Factory;
+                drNewMaster["FactoryID"] = Env.User.Factory;
                 drNewMaster["status"] = "New";
                 drNewMaster["addname"] = Env.User.UserID;
                 drNewMaster["adddate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
@@ -515,48 +561,52 @@ from #tmp";
                     {
                         _transactionscope.Dispose();
                         MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
-                        return; ;
+                        return;
                     }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
+
             _transactionscope = null;
             #endregion
 
             // Create後Btn失效，需重新Qurey才能再使用。
-            btnImport.Enabled = false;
+            this.btnImport.Enabled = false;
 
-            #region Confirmed 
+            #region Confirmed
             if (tmpId.Count < 1)
             {
                 return;
             }
+
             for (int i = 0; i < listPoid.Count; i++)
             {
                 DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP("", "dbo.usp_RemoveScrapById", new List<SqlParameter> { new SqlParameter("@ID", tmpId[i].ToString()) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", new List<SqlParameter> { new SqlParameter("@ID", tmpId[i].ToString()) }, out dts);
                 if (!res)
                 {
-                    DataRow[] drfound = dtInventory.Select(string.Format("poid='{0}' and selected=1", listPoid[i].ToString()));
+                    DataRow[] drfound = this.dtInventory.Select(string.Format("poid='{0}' and selected=1", listPoid[i].ToString()));
                     foreach (var item in drfound)
                     {
                         item["CreateStatus"] = string.Format("{0} Confirmed Fail! ", tmpId[i].ToString()) + res.ToString();
                     }
                 }
+
                 if (dts.Length > 0)
                 {
                     foreach (DataRow drs in dts[0].Rows)
                     {
                         if (MyUtility.Convert.GetDecimal(drs["q"]) < 0)
                         {
-                            DataRow[] drfail = dtInventory.Select(string.Format(@"poid='{0}' and seq1='{1}' and seq2='{2}'", drs["POID"].ToString(), drs["seq1"].ToString(), drs["seq2"].ToString()));
+                            DataRow[] drfail = this.dtInventory.Select(string.Format(@"poid='{0}' and seq1='{1}' and seq2='{2}'", drs["POID"].ToString(), drs["seq1"].ToString(), drs["seq2"].ToString()));
                             foreach (var item in drfail)
                             {
                                 item["CreateStatus"] = string.Format(
@@ -568,8 +618,7 @@ from #tmp";
                 }
                 else
                 {
-
-                    DataRow[] drfound = dtInventory.Select(string.Format("poid='{0}' and selected=1", listPoid[i].ToString()));
+                    DataRow[] drfound = this.dtInventory.Select(string.Format("poid='{0}' and selected=1", listPoid[i].ToString()));
                     foreach (var item in drfound)
                     {
                         item["CreateStatus"] = string.Format("{0} Create and Confirm Success ", tmpId[i].ToString());
@@ -578,23 +627,24 @@ from #tmp";
             }
             #endregion
             MyUtility.Msg.InfoBox("Create Successful.");
-            //DataTable dtCreate = new DataTable();
-            //dtCreate.Columns.Add("ID");
-            //for (int i = 0; i < listPoid.Count; i++)
-            //{
+
+            // DataTable dtCreate = new DataTable();
+            // dtCreate.Columns.Add("ID");
+            // for (int i = 0; i < listPoid.Count; i++)
+            // {
             //    DataRow drCreate = dtCreate.NewRow();
             //    drCreate["ID"] = tmpId[i].ToString();
             //    dtCreate.Rows.Add(drCreate);
-            //}
-            //if (dtCreate.Rows.Count > 0)
-            //{
+            // }
+            // if (dtCreate.Rows.Count > 0)
+            // {
             //    var m = MyUtility.Msg.ShowMsgGrid(dtCreate, "These Adjust ID have been created.", "Create Successful.");
             //    m.Width = 400;
             //    m.grid1.Columns[0].Width = 150;
             //    m.text_Find.Width = 150;
             //    m.btn_Find.Location = new Point(170, 6);
             //    m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
-            //}
+            // }
             #endregion
             this.HideWaitMessage();
         }

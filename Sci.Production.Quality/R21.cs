@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -13,50 +9,57 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Quality
 {
-    public partial class R21 : Sci.Win.Tems.PrintForm
+    public partial class R21 : Win.Tems.PrintForm
     {
-        DateTime? cdate1,cdate2,bdate1,bdate2;
-        string factory, id1, id2, brand;
-        DataTable SummaryData,DetailData;
+        DateTime? cdate1;
+        DateTime? cdate2;
+        DateTime? bdate1;
+        DateTime? bdate2;
+        string factory;
+        string id1;
+        string id2;
+        string brand;
+        DataTable SummaryData;
+        DataTable DetailData;
 
         public R21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
-            factory.Rows.Add(new string[] { "" });
+            factory.Rows.Add(new string[] { string.Empty });
             factory.DefaultView.Sort = "FTYGroup";
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.Text = Env.User.Factory;
             this.radioSummary.Checked = true;
-
         }
 
         // 驗證輸入條件 必須要有
         protected override bool ValidateInput()
         {
-            if (radioSummary.Checked==false && radiobyDetail.Checked==false)
+            if (this.radioSummary.Checked == false && this.radiobyDetail.Checked == false)
             {
                 MyUtility.Msg.InfoBox("<Format> you have to choice one!  ");
                 return false;
             }
-            id1 = txtSPStart.Text;
-            id2 = txtSPEnd.Text;
-            cdate1 = dateAuditDateStart.Value;
-            cdate2 = dateAuditDateEnd.Value;
-            bdate1 = dateBuyerDeliveryStart.Value;
-            bdate2 = dateBuyerDeliveryEnd.Value;
-            factory = comboFactory.Text;
-            brand = txtBrand.Text;
+
+            this.id1 = this.txtSPStart.Text;
+            this.id2 = this.txtSPEnd.Text;
+            this.cdate1 = this.dateAuditDateStart.Value;
+            this.cdate2 = this.dateAuditDateEnd.Value;
+            this.bdate1 = this.dateBuyerDeliveryStart.Value;
+            this.bdate2 = this.dateBuyerDeliveryEnd.Value;
+            this.factory = this.comboFactory.Text;
+            this.brand = this.txtBrand.Text;
             return base.ValidateInput();
         }
 
         // 非同步資料 必須要有
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd_Summary = new StringBuilder();
-            if (radioSummary.Checked)
+            if (this.radioSummary.Checked)
             {
                 #region 組撈Summary Data SQL
                 sqlCmd_Summary.Append(@"
@@ -104,40 +107,47 @@ inner join dbo.orders c WITH (NOLOCK)
 INNEr JOIN Country ct ON ct.ID=c.Dest
 on c.id = a.OrderID
 where a.Status = 'Confirmed'");
-                if (!MyUtility.Check.Empty(id1))
+                if (!MyUtility.Check.Empty(this.id1))
                 {
-                    sqlCmd_Summary.Append(string.Format("and a.OrderID >= '{0}'", id1));
-                }
-                if (!MyUtility.Check.Empty(id2))
-                {
-                    sqlCmd_Summary.Append(string.Format(" and a.OrderID <= '{0}'", id2));
-                }
-                if (!MyUtility.Check.Empty(cdate1))
-                {
-                    sqlCmd_Summary.Append(string.Format(" and a.cDate >= '{0}'", Convert.ToDateTime(cdate1).ToShortDateString()));
-                }
-                if (!MyUtility.Check.Empty(cdate2))
-                {
-                    sqlCmd_Summary.Append(string.Format(" and a.cDate <= '{0}'", Convert.ToDateTime(cdate2).ToShortDateString()));
-                }
-                if (!MyUtility.Check.Empty(bdate1))
-                {
-                    sqlCmd_Summary.Append(string.Format(" and c.BuyerDelivery >= '{0}'", Convert.ToDateTime(bdate1).ToShortDateString()));
-                }
-                if (!MyUtility.Check.Empty(bdate2))
-                {
-                    sqlCmd_Summary.Append(string.Format(" and c.BuyerDelivery <= '{0}'", Convert.ToDateTime(bdate2).ToShortDateString()));
-                }
-                if (!MyUtility.Check.Empty(factory))
-                {
-                    sqlCmd_Summary.Append(string.Format(" and a.FactoryID = '{0}'", factory));
-                }
-                if (!MyUtility.Check.Empty(brand))
-                {
-                    sqlCmd_Summary.Append(string.Format(" and c.brandID = '{0}'", brand));
+                    sqlCmd_Summary.Append(string.Format("and a.OrderID >= '{0}'", this.id1));
                 }
 
-                DualResult result = DBProxy.Current.Select(null, sqlCmd_Summary.ToString(), out SummaryData);
+                if (!MyUtility.Check.Empty(this.id2))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and a.OrderID <= '{0}'", this.id2));
+                }
+
+                if (!MyUtility.Check.Empty(this.cdate1))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and a.cDate >= '{0}'", Convert.ToDateTime(this.cdate1).ToShortDateString()));
+                }
+
+                if (!MyUtility.Check.Empty(this.cdate2))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and a.cDate <= '{0}'", Convert.ToDateTime(this.cdate2).ToShortDateString()));
+                }
+
+                if (!MyUtility.Check.Empty(this.bdate1))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and c.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.bdate1).ToShortDateString()));
+                }
+
+                if (!MyUtility.Check.Empty(this.bdate2))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and c.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.bdate2).ToShortDateString()));
+                }
+
+                if (!MyUtility.Check.Empty(this.factory))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and a.FactoryID = '{0}'", this.factory));
+                }
+
+                if (!MyUtility.Check.Empty(this.brand))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and c.brandID = '{0}'", this.brand));
+                }
+
+                DualResult result = DBProxy.Current.Select(null, sqlCmd_Summary.ToString(), out this.SummaryData);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -204,75 +214,80 @@ ON ct.ID=c.Dest
 outer apply(select Description from dbo.GarmentDefectCode a where a.id=b.GarmentDefectCodeID) as gd
 outer apply(select description from dbo.cfaarea a where a.id=b.CFAAreaID) as ar
 where a.Status = 'Confirmed'");
-                if (!MyUtility.Check.Empty(id1))
+                if (!MyUtility.Check.Empty(this.id1))
                 {
-                    sqlCmd_Detail.Append(string.Format("and a.OrderID >= '{0}'", id1));
-                }
-                if (!MyUtility.Check.Empty(id2))
-                {
-                    sqlCmd_Detail.Append(string.Format(" and a.OrderID <= '{0}'", id2));
-                }
-                if (!MyUtility.Check.Empty(cdate1))
-                {
-                    sqlCmd_Detail.Append(string.Format(" and a.cDate >= '{0}'", Convert.ToDateTime(cdate1).ToShortDateString()));
-                }
-                if (!MyUtility.Check.Empty(cdate2))
-                {
-                    sqlCmd_Detail.Append(string.Format(" and a.cDate <= '{0}'", Convert.ToDateTime(cdate2).ToShortDateString()));
-                }
-                if (!MyUtility.Check.Empty(bdate1))
-                {
-                    sqlCmd_Detail.Append(string.Format(" and c.BuyerDelivery >= '{0}'", Convert.ToDateTime(bdate1).ToShortDateString()));
-                }
-                if (!MyUtility.Check.Empty(bdate2))
-                {
-                    sqlCmd_Detail.Append(string.Format(" and c.BuyerDelivery <= '{0}'", Convert.ToDateTime(bdate2).ToShortDateString()));
-                }
-                if (!MyUtility.Check.Empty(factory))
-                {
-                    sqlCmd_Detail.Append(string.Format(" and a.FactoryID = '{0}'", factory));
-                }
-                if (!MyUtility.Check.Empty(brand))
-                {
-                    sqlCmd_Detail.Append(string.Format(" and c.brandID = '{0}'", brand));
+                    sqlCmd_Detail.Append(string.Format("and a.OrderID >= '{0}'", this.id1));
                 }
 
-                DualResult result1 = DBProxy.Current.Select(null, sqlCmd_Detail.ToString(), out DetailData);
+                if (!MyUtility.Check.Empty(this.id2))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and a.OrderID <= '{0}'", this.id2));
+                }
+
+                if (!MyUtility.Check.Empty(this.cdate1))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and a.cDate >= '{0}'", Convert.ToDateTime(this.cdate1).ToShortDateString()));
+                }
+
+                if (!MyUtility.Check.Empty(this.cdate2))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and a.cDate <= '{0}'", Convert.ToDateTime(this.cdate2).ToShortDateString()));
+                }
+
+                if (!MyUtility.Check.Empty(this.bdate1))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and c.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.bdate1).ToShortDateString()));
+                }
+
+                if (!MyUtility.Check.Empty(this.bdate2))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and c.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.bdate2).ToShortDateString()));
+                }
+
+                if (!MyUtility.Check.Empty(this.factory))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and a.FactoryID = '{0}'", this.factory));
+                }
+
+                if (!MyUtility.Check.Empty(this.brand))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and c.brandID = '{0}'", this.brand));
+                }
+
+                DualResult result1 = DBProxy.Current.Select(null, sqlCmd_Detail.ToString(), out this.DetailData);
                 if (!result1)
                 {
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result1.ToString());
                     return failResult;
-
                 }
                 #endregion
             }
-            
-         
-            return Result.True;
+
+            return Ict.Result.True;
         }
 
         // 產生Excel 必須要有
         protected override bool OnToExcel(Win.ReportDefinition report)
-        {   
+        {
             this.ShowWaitMessage("Starting Excel");
-            if (radioSummary.Checked)
+            if (this.radioSummary.Checked)
             {
                 // 顯示筆數於PrintForm上Count欄位
-                SetCount(SummaryData.Rows.Count);
-                if (SummaryData.Rows.Count <= 0)
+                this.SetCount(this.SummaryData.Rows.Count);
+                if (this.SummaryData.Rows.Count <= 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                     return false;
                 }
 
-                Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_Summary.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(SummaryData, "", "Quality_R21_CFA_InlineReport_Summary.xltx", 2, false, null, excel);            
+                Excel._Application excel = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_Summary.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.SummaryData, string.Empty, "Quality_R21_CFA_InlineReport_Summary.xltx", 2, false, null, excel);
 
                 excel.Cells.EntireColumn.AutoFit();
                 excel.Cells.EntireRow.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R21_CFA_InlineReport_Summary");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R21_CFA_InlineReport_Summary");
                 excel.ActiveWorkbook.SaveAs(strExcelName);
                 excel.Quit();
                 Marshal.ReleaseComObject(excel);
@@ -280,33 +295,34 @@ where a.Status = 'Confirmed'");
                 strExcelName.OpenFile();
                 #endregion
             }
-            if (radiobyDetail.Checked)
+
+            if (this.radiobyDetail.Checked)
             {
                 // 顯示筆數於PrintForm上Count欄位
-                SetCount(DetailData.Rows.Count);
-                if (DetailData.Rows.Count <= 0)
+                this.SetCount(this.DetailData.Rows.Count);
+                if (this.DetailData.Rows.Count <= 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                     return false;
-                }         
-                //Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx"); //預先開啟excel app
-               // MyUtility.Excel.CopyToXls(DetailData,"", "Quality_R21_CFA_InlineReport_detail.xltx", 2, false, null, excel);
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx"); 
-                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx", objApp);
-                com.WriteTable(DetailData, 3);
+                }
 
-               
+                // Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx"); //預先開啟excel app
+               // MyUtility.Excel.CopyToXls(DetailData,"", "Quality_R21_CFA_InlineReport_detail.xltx", 2, false, null, excel);
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx");
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx", objApp);
+                com.WriteTable(this.DetailData, 3);
+
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R21_CFA_InlineReport_detail");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R21_CFA_InlineReport_detail");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
                 strExcelName.OpenFile();
-                #endregion 
+                #endregion
             }
-            
+
             this.HideWaitMessage();
             return true;
         }
-    }    
+    }
 }

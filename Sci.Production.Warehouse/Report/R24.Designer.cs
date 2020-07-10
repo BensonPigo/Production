@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.labelIssueDate = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.dateIssueDate = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
@@ -149,10 +149,10 @@
         #endregion
 
         private Win.UI.Label labelIssueDate;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelM;
-        private Class.txtMdivision txtMdivision;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.DateRange dateIssueDate;
     }
 }

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
@@ -15,7 +10,7 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// P01_BatchRecall
     /// </summary>
-    public partial class P02_BatchRecall : Sci.Win.Tems.QueryForm
+    public partial class P02_BatchRecall : Win.Tems.QueryForm
     {
         /// <inheritdoc/>
         public P02_BatchRecall()
@@ -94,7 +89,7 @@ OUTER APPLY (
 )sodd
 WHERE 1=1
     AND so.Status = 'Sent' 
-    AND so.FactoryID = '{Sci.Env.User.Factory}'
+    AND so.FactoryID = '{Env.User.Factory}'
     AND sod.Ukey = sodd.Ukey
     {where}
 ORDER BY sod.ukey desc,so.LockDate,so.SewingLineID,so.Team,so.Shift
@@ -132,18 +127,18 @@ ORDER BY sod.ukey desc,so.LockDate,so.SewingLineID,so.Team,so.Shift
             DataTable dt = query.CopyToDataTable();
             string sqlcmd = $@"
 insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-select t.id ,'Status' ,'Sent' ,'New' ,sod.ReasonID ,sod.Remark ,'{Sci.Env.User.UserID}' ,GETDATE()
+select t.id ,'Status' ,'Sent' ,'New' ,sod.ReasonID ,sod.Remark ,'{Env.User.UserID}' ,GETDATE()
 from #tmp t
 inner join SewingOutput_DailyUnlock  sod 
 on t.id = sod.SewingOutputID AND sod.UnLockDate is null
 
 UPDATE sod SET
-UnLockDate = getdate() ,UnLockName= '{Sci.Env.User.UserID}'
+UnLockDate = getdate() ,UnLockName= '{Env.User.UserID}'
 FROM SewingOutput_DailyUnlock sod
 WHERE sod.SewingOutputID IN (select id from #tmp) AND sod.UnLockDate IS NULL
 
 UPDATE s SET Status='New', LockDate = null 
-, s.editname='{Sci.Env.User.UserID}' 
+, s.editname='{Env.User.UserID}' 
 , s.editdate=getdate()
 FROM SewingOutput s WHERE ID IN (SELECT ID FROM #tmp)
 ";

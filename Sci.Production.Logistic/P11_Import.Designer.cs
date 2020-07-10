@@ -44,7 +44,7 @@
             this.textSP_To = new Sci.Win.UI.TextBox();
             this.textPackID = new Sci.Win.UI.TextBox();
             this.textCTN = new Sci.Win.UI.TextBox();
-            this.txtcloglocation = new Sci.Production.Class.txtcloglocation();
+            this.txtcloglocation = new Sci.Production.Class.Txtcloglocation();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.SuspendLayout();
             // 
@@ -281,6 +281,6 @@
         private Win.UI.TextBox textSP_To;
         private Win.UI.TextBox textPackID;
         private Win.UI.TextBox textCTN;
-        private Class.txtcloglocation txtcloglocation;
+        private Class.Txtcloglocation txtcloglocation;
     }
 }

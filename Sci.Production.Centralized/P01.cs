@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Xml.Linq;
@@ -19,12 +16,12 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// P01
     /// </summary>
-    public partial class P01 : Sci.Win.Tems.QueryForm
+    public partial class P01 : Win.Tems.QueryForm
     {
         private DataTable detailDt;
         private DataTable byMDt;
         private DataTable byBrandDt;
-        private Sci.Win.MatrixHelper _matrix;
+        private Win.MatrixHelper _matrix;
 
         /// <summary>
         /// P01
@@ -502,7 +499,7 @@ from (
             }
 
             this.grid1.DataSource = this.listControlBindingSource1;
-            this._matrix = new Sci.Win.MatrixHelper(this, this.grid1, this.listControlBindingSource1);
+            this._matrix = new Win.MatrixHelper(this, this.grid1, this.listControlBindingSource1);
             this._matrix.XMap.Name = "BuyerDelivery";
             this._matrix.YMap.Name = displayBy;
             this._matrix
@@ -531,7 +528,7 @@ from (
 ", displayBy);
             MyUtility.Tool.ProcessWithDatatable(matrixDataDt, string.Empty, strX, out dtX);
             MyUtility.Tool.ProcessWithDatatable(matrixDataDt, string.Empty, strY, out dtY);
-             this._matrix.Clear();
+            this._matrix.Clear();
             try
             {
                 this._matrix.Sets(matrixDataDt, dtX, dtY);

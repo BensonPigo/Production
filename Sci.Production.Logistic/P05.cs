@@ -15,7 +15,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P05
     /// </summary>
-    public partial class P05 : Sci.Win.Tems.QueryForm
+    public partial class P05 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P05
@@ -152,7 +152,7 @@ SELECT DISTINCT
 INTO #MainTable
 from  #tmp_NoRepeat cr WITH (NOLOCK) 
 LEFT JOIN PackingList_Detail pd  on pd.ID = cr.PackingListID and pd.CTNStartNo = cr.CTNStartNo 
-WHERE       cr.MDivisionID = '{Sci.Env.User.Keyword}'
+WHERE       cr.MDivisionID = '{Env.User.Keyword}'
 ");
 
             if (!MyUtility.Check.Empty(this.dateReceiveDate.Value1))
@@ -168,7 +168,6 @@ WHERE       cr.MDivisionID = '{Sci.Env.User.Keyword}'
                     @" 
             and cr.ReceiveDate <= '{0}'", Convert.ToDateTime(this.dateReceiveDate.Value2).ToString("d")));
             }
-
 
             sqlCmd.Append(
                 @"
@@ -305,16 +304,16 @@ DROP TABLE  #tmp_NoRepeat,#MainTable
             printDT.Columns.Remove("Selected");
             printDT.Columns.Remove("rn");
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P05.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Logistic_P05.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(printDT, string.Empty, "Logistic_P05.xltx", 4, false, null, objApp); // 將datatable copy to excel
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             int r = printDT.Rows.Count;
-            objSheets.get_Range(string.Format("A5:V{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            objSheets.get_Range(string.Format("A5:V{0}", r + 4)).Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-            objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
+            objSheets.Cells[2, 2] = Env.User.Keyword;
             DataRow dr;
-            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Sci.Env.User.Factory), out dr, null);
+            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Env.User.Factory), out dr, null);
 
             if (dr != null)
             {
@@ -341,8 +340,8 @@ DROP TABLE  #tmp_NoRepeat,#MainTable
             objSheets.get_Range("A1").RowHeight = 45;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_P05");
-            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            string strExcelName = Class.MicrosoftFile.GetName("Logistic_P05");
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();
@@ -404,7 +403,7 @@ group by a.orderid,o.CustPONo", out dtPrint);
             }
 
             Excel.Application objApp = new Excel.Application();
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Logistic_P05_ToDR.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Logistic_P05_ToDR.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             com.WriteTable(dtPrint, 2);
             worksheet.get_Range($"A2:D{MyUtility.Convert.GetString(1 + dtPrint.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
@@ -412,7 +411,6 @@ group by a.orderid,o.CustPONo", out dtPrint);
             objApp.Visible = true;
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);
-
         }
     }
 }

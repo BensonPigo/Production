@@ -1,21 +1,16 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Win.Tems;
 using Sci.Win.Tools;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class P40 : Sci.Win.Tems.Input6
+    public partial class P40 : Win.Tems.Input6
     {
         protected DataRow lastADIDASComplain;
         protected DataTable lastADIDASComplain_Detail;
@@ -23,19 +18,22 @@ namespace Sci.Production.Quality
         protected Color yellow = Color.FromArgb(255, 198, 10);
         protected Color displayDefaultBack = Color.FromArgb(183, 227, 255);
 
-        private string[] compareColumns = { "SalesID", "SalesName", "Article", "ArticleName",
-                                            "ProductionDate", "DefectMainID", "DefectSubID","OrderID","SuppID","Refno" };
+        private string[] compareColumns =
+        {
+            "SalesID", "SalesName", "Article", "ArticleName",
+            "ProductionDate", "DefectMainID", "DefectSubID", "OrderID", "SuppID", "Refno",
+        };
 
         public P40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.btnHistory.Visible = true;
         }
 
         public P40()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.isShowHistory = true;
         }
 
@@ -59,16 +57,16 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
             version = (select max(version) from ADIDASComplain_History 
                                     where ID = '{this.CurrentMaintain["ID"].ToString()}' {whereVersion})";
 
-            
             bool hasOldData = MyUtility.Check.Seek(sqlGetLastADIDASComplain, out this.lastADIDASComplain);
             DualResult result = DBProxy.Current.Select(null, sqlGetLastADIDASComplain_Detail, out this.lastADIDASComplain_Detail);
             if (!result)
             {
                 this.ShowErr(result);
             }
+
             this.panelHistoryHint.Visible = hasOldData;
-            this.displayAGCCode.BackColor = displayDefaultBack;
-            this.displayFactoryName.BackColor = displayDefaultBack;
+            this.displayAGCCode.BackColor = this.displayDefaultBack;
+            this.displayFactoryName.BackColor = this.displayDefaultBack;
             if (hasOldData)
             {
                 this.btnHistory.Enabled = true;
@@ -86,7 +84,10 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
 
         protected override void SetDetailEditByAndCreateBy(DataRow data)
         {
-            if (null == data) return;
+            if (data == null)
+            {
+                return;
+            }
 
             string tpeApvDate = MyUtility.Check.Empty(this.CurrentMaintain["TPEApvDate"]) ? string.Empty : MyUtility.Convert.GetDate(this.CurrentMaintain["TPEApvDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
             string ftyApvDate = MyUtility.Check.Empty(this.CurrentMaintain["FtyApvDate"]) ? string.Empty : MyUtility.Convert.GetDate(this.CurrentMaintain["FtyApvDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
@@ -139,6 +140,7 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
                 this.ShowErr(result);
                 return;
             }
+
             MyUtility.Msg.InfoBox("Confirmed success!");
         }
 
@@ -151,13 +153,13 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
                 this.ShowErr(result);
                 return;
             }
+
             MyUtility.Msg.InfoBox("UnConfirmed success!");
-            
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
+            string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmd = string.Format(
 @"
 select 
@@ -198,17 +200,26 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 {
                     return;
                 }
+
                 var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 string suppID = e.FormattedValue.ToString();
-                if (MyUtility.Check.Empty(suppID)) return;
-                if (suppID == dr["SuppID"].ToString()) return;
+                if (MyUtility.Check.Empty(suppID))
+                {
+                    return;
+                }
+
+                if (suppID == dr["SuppID"].ToString())
+                {
+                    return;
+                }
+
                 if (suppID == "N/A")
                 {
                     dr["SuppID"] = suppID;
                 }
                 else
                 {
-                    string sqlGetSupplier = GetSupplierSql(suppID);
+                    string sqlGetSupplier = this.GetSupplierSql(suppID);
                     bool isExistsSupp = MyUtility.Check.Seek(sqlGetSupplier);
                     if (!isExistsSupp)
                     {
@@ -216,8 +227,10 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                         MyUtility.Msg.WarningBox($"<Supplier>{suppID} not exists");
                         return;
                     }
+
                     dr["SuppID"] = suppID;
                 }
+
                 dr.EndEdit();
             };
 
@@ -227,7 +240,8 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 {
                     return;
                 }
-                string sqlGetSupplier = GetSupplierSql(string.Empty, true);
+
+                string sqlGetSupplier = this.GetSupplierSql(string.Empty, true);
                 SelectItem selectItem = new SelectItem(sqlGetSupplier, string.Empty, string.Empty);
 
                 DialogResult dialogResult = selectItem.ShowDialog();
@@ -245,10 +259,18 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 {
                     return;
                 }
+
                 var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 string refno = e.FormattedValue.ToString();
-                if (MyUtility.Check.Empty(refno)) return;
-                if (refno == dr["Refno"].ToString()) return;
+                if (MyUtility.Check.Empty(refno))
+                {
+                    return;
+                }
+
+                if (refno == dr["Refno"].ToString())
+                {
+                    return;
+                }
 
                 if (refno == "N/A")
                 {
@@ -256,7 +278,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 }
                 else
                 {
-                    string sqlGetRefno = GetRefnoSql(refno);
+                    string sqlGetRefno = this.GetRefnoSql(refno);
                     bool isExistsRefno = MyUtility.Check.Seek(sqlGetRefno);
                     if (!isExistsRefno)
                     {
@@ -264,8 +286,10 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                         MyUtility.Msg.WarningBox($"<Refno>{refno} not exists");
                         return;
                     }
+
                     dr["Refno"] = refno;
                 }
+
                 dr.EndEdit();
             };
 
@@ -275,7 +299,8 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 {
                     return;
                 }
-                string sqlGetRefno = GetRefnoSql(string.Empty,true);
+
+                string sqlGetRefno = this.GetRefnoSql(string.Empty, true);
                 SelectItem selectItem = new SelectItem(sqlGetRefno, string.Empty, string.Empty);
 
                 DialogResult dialogResult = selectItem.ShowDialog();
@@ -289,8 +314,16 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
 
             textSuppID.CellMouseDoubleClick = (s, e) =>
             {
-                if (!this.EditMode) return;
-                if (e.RowIndex == -1) return;
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
                 if (e.Button == MouseButtons.Left)
                 {
                     this.CurrentDetailData["SuppID"] = @"N/A";
@@ -299,8 +332,16 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
             };
             textRefno.CellMouseDoubleClick = (s, e) =>
             {
-                if (!this.EditMode) return;
-                if (e.RowIndex == -1) return;
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
                 if (e.Button == MouseButtons.Left)
                 {
                     this.CurrentDetailData["Refno"] = @"N/A";
@@ -310,12 +351,20 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
 
             responsibility.EditingMouseDown += (s, e) =>
             {
-                if (!this.EditMode) return;
-                if (e.RowIndex == -1) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
                 {
                     string sqlcmd = @"select distinct responsibility from ADIDASComplainDefect_Detail";
-                    SelectItem item1 = new SelectItem(sqlcmd, "", this.CurrentDetailData["responsibility"].ToString());
+                    SelectItem item1 = new SelectItem(sqlcmd, string.Empty, this.CurrentDetailData["responsibility"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -328,10 +377,18 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
             };
             responsibility.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) return;
-                if (e.RowIndex == -1) return;
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
                 string sqlcmd = $@"select 1 from ADIDASComplainDefect_Detail where responsibility = '{e.FormattedValue}'";
-                if(!MyUtility.Check.Seek(sqlcmd))
+                if (!MyUtility.Check.Seek(sqlcmd))
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                     this.CurrentDetailData["responsibility"] = string.Empty;
@@ -340,11 +397,12 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 {
                     this.CurrentDetailData["responsibility"] = e.FormattedValue;
                 }
+
                 this.CurrentDetailData.EndEdit();
             };
             #endregion
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("SalesID", header: "Sales Org. ID", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("SalesName", header: "Sales Org. Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Article", header: "Article ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -356,7 +414,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SuppID", header: "Supplier", width: Widths.AnsiChars(6), settings: textSuppID, iseditingreadonly: this.isShowHistory)
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), settings: textRefno, iseditingreadonly: this.isShowHistory)
-                .Text("Responsibility", header: "Responsibility", width: Widths.AnsiChars(20),settings: responsibility, iseditingreadonly: this.isShowHistory)
+                .Text("Responsibility", header: "Responsibility", width: Widths.AnsiChars(20), settings: responsibility, iseditingreadonly: this.isShowHistory)
 
                 .CheckBox("IsEM", header: "IsEM");
 
@@ -383,7 +441,7 @@ WHERE o.ID='{this.CurrentDetailData["OrderID"]}' {whereRefno}
             return sqlGetRefno;
         }
 
-        private string GetSupplierSql(string suppID,bool IsRightClick=false)
+        private string GetSupplierSql(string suppID, bool IsRightClick = false)
         {
             string whereSuppID = IsRightClick ? string.Empty : $"  AND p.SuppID='{suppID}' ";
             string sqlGetSupplier = $@"
@@ -405,12 +463,12 @@ WHERE o.ID='{this.CurrentDetailData["OrderID"]}' {whereSuppID}
         {
             if (this.lastADIDASComplain["AGCCode"].ToString() != this.CurrentMaintain["AGCCode"].ToString())
             {
-                this.displayAGCCode.BackColor = yellow;
+                this.displayAGCCode.BackColor = this.yellow;
             }
 
             if (this.lastADIDASComplain["FactoryName"].ToString() != this.CurrentMaintain["FactoryName"].ToString())
             {
-                this.displayFactoryName.BackColor = yellow;
+                this.displayFactoryName.BackColor = this.yellow;
             }
 
             var lastADIDASComplain_Detail_qry = this.lastADIDASComplain_Detail.AsEnumerable();
@@ -435,13 +493,13 @@ WHERE o.ID='{this.CurrentDetailData["OrderID"]}' {whereSuppID}
                     switch (colName)
                     {
                         case "DefectMainID":
-                            curGridRow.Cells["MainDefect"].Style.BackColor = yellow;
+                            curGridRow.Cells["MainDefect"].Style.BackColor = this.yellow;
                             break;
                         case "DefectSubID":
-                            curGridRow.Cells["SubDefect"].Style.BackColor = yellow;
+                            curGridRow.Cells["SubDefect"].Style.BackColor = this.yellow;
                             break;
                         default:
-                            curGridRow.Cells[colName].Style.BackColor = yellow;
+                            curGridRow.Cells[colName].Style.BackColor = this.yellow;
                             break;
                     }
                 }

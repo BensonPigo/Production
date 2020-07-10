@@ -33,13 +33,13 @@
             this.labelFabricType = new Sci.Win.UI.Label();
             this.labelShift = new Sci.Win.UI.Label();
             this.comboFabricType = new System.Windows.Forms.ComboBox();
-            this.txtdropdownlistShift = new Sci.Production.Class.txtdropdownlist();
+            this.txtdropdownlistShift = new Sci.Production.Class.Txtdropdownlist();
             this.dateApproveDate = new Sci.Win.UI.DateRange();
             this.labelApproveDate = new Sci.Win.UI.Label();
             this.labelIssueDate = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -216,12 +216,12 @@
         private Win.UI.Label labelFabricType;
         private Win.UI.Label labelShift;
         private System.Windows.Forms.ComboBox comboFabricType;
-        private Class.txtdropdownlist txtdropdownlistShift;
+        private Class.Txtdropdownlist txtdropdownlistShift;
         private Win.UI.DateRange dateApproveDate;
         private Win.UI.Label labelApproveDate;
         private Win.UI.Label labelIssueDate;
         private Win.UI.Label labelM;
-        private Class.txtMdivision txtMdivision;
-        private Class.txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
     }
 }

@@ -1,13 +1,10 @@
 ﻿using Ict;
 using Sci.Data;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -16,7 +13,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// R21
     /// </summary>
-    public partial class R21 : Sci.Win.Tems.PrintForm
+    public partial class R21 : Win.Tems.PrintForm
     {
         private string RefN1; private string RefN2; private string sha; private string TYPE; private string Thread; private string LOC1; private string LOC2;
         private List<SqlParameter> lis;
@@ -120,7 +117,7 @@ namespace Sci.Production.Thread
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
             res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);
@@ -144,7 +141,7 @@ namespace Sci.Production.Thread
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.dt.Rows.Count);
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R21.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Thread_R21.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Thread_R21.xltx", 2, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             this.ShowWaitMessage("Excel Processing...");
@@ -153,7 +150,7 @@ namespace Sci.Production.Thread
             worksheet.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Thread_R21");
+            string strExcelName = Class.MicrosoftFile.GetName("Thread_R21");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -172,7 +169,7 @@ namespace Sci.Production.Thread
                                     (select LocalItem.Description from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Description]
                                from dbo.ThreadStock  WITH (NOLOCK) 
                                order by Refno";
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -189,7 +186,7 @@ namespace Sci.Production.Thread
                                     (select LocalItem.Description from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Description]
                                from dbo.ThreadStock WITH (NOLOCK) 
                                order by Refno";
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -256,7 +253,7 @@ where Refno = '{0}'",
                                         (select tc.Description from dbo.ThreadColor tc where tc.id = ThreadStock.ThreadColorID) [Color_desc] 
                                from ThreadStock WITH (NOLOCK) 
                                order by threadcolorid ";
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "13, 13", null, "Shade, Color desc");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "13, 13", null, "Shade, Color desc");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -298,7 +295,7 @@ where threadcolorid ='{0}'",
                                from dbo.ThreadStock ts WITH (NOLOCK) 
                                inner join dbo.LocalItem l WITH (NOLOCK) on l.refno = ts.Refno
                                order by l.category";
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20", null, "Type");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20", null, "Type");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -338,7 +335,7 @@ where l.category ='{0}'",
                                from dbo.LocalItem l WITH (NOLOCK) 
                                inner join  dbo.ThreadStock ts WITH (NOLOCK) on l.refno = ts.refno
                                order by l.ThreadTypeID ";
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "35", null, "Thread Item");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "35", null, "Thread Item");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -378,7 +375,7 @@ where l.ThreadTypeID='{0}'",
                                     (select distinct Description from dbo.ThreadLocation WITH (NOLOCK) where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
                                from dbo.ThreadStock  WITH (NOLOCK) 
                                order by ThreadlocationID";
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -420,7 +417,7 @@ where ThreadlocationID='{0}'",
                                     (select distinct Description from dbo.ThreadLocation WITH (NOLOCK) where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
                                from dbo.ThreadStock WITH (NOLOCK) 
                                order by ThreadlocationID";
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

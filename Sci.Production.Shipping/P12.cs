@@ -2,18 +2,13 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P12 : Sci.Win.Tems.QueryForm
+    public partial class P12 : Win.Tems.QueryForm
     {
         public P12(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -86,6 +81,7 @@ namespace Sci.Production.Shipping
             {
                 where += $@" and o.FtyGroup ='{this.txtfactory.Text}'";
             }
+
             where += this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             #endregion
             string sqlcmd = $@"
@@ -185,7 +181,7 @@ OUTER APPLY(
 	SELECT Value=dbo.GetFocStockByOrder(o.ID)
 )FocStockQty
 
-where   o.MDivisionID = '{Sci.Env.User.Keyword}'
+where   o.MDivisionID = '{Env.User.Keyword}'
         AND o.FOCQty > 0  --訂單有 FOC 數量
         AND FocStockQty.Value > 0  -- FOC 還有未出貨的數量
 	    AND ISNULL(ChargeablePullout.Qty,0) = (o.Qty - o.FOCQty)  --Chargeable 必須『全數』出貨
@@ -284,7 +280,7 @@ SP# : {string.Join(",", idList)}";
             {
                 string insertOrderFinished = $@"
 insert Order_Finish(ID,FOCQty,AddName,AddDate)
-select OrderID,FinishedFOCStockinQty ,'{Sci.Env.User.UserID}',getdate()
+select OrderID,FinishedFOCStockinQty ,'{Env.User.UserID}',getdate()
 from #tmp
 ";
                 result = MyUtility.Tool.ProcessWithDatatable(dt2, string.Empty, insertOrderFinished, out odt);

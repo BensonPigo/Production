@@ -2,115 +2,117 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         DateTime? DateSCIStart; DateTime? DateSCIEnd;
         DateTime? DateSewStart; DateTime? DateSewEnd;
         DateTime? DateEstStart; DateTime? DateEstEnd;
-        string Category; string Sea; string Brand; string Factory; 
+        string Category; string Sea; string Brand; string Factory;
         List<SqlParameter> lis; DualResult res;
         DataTable dt; string cmd;
 
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
-            factory.Rows.Add(new string[] { "" });
+            factory.Rows.Add(new string[] { string.Empty });
             factory.DefaultView.Sort = "FTYGroup";
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.Text = Sci.Env.User.Factory;
-            print.Enabled = false;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.Text = Env.User.Factory;
+            this.print.Enabled = false;
         }
 
         protected override bool ValidateInput()
         {
             bool date_SCI_Empty = !this.dateSCIDelivery.HasValue, date_Sewing_Empty = !this.dateSewingInLineDate.HasValue, date_Est_Empty = !this.dateEstCuttingDate.HasValue,
-                txtSeason_Empty = this.txtSeason.Text.Empty(), txtBrand_Empty = this.txtBrand.Text.Empty(),  Cate_comboBox_Empty = this.comboCategory.Text.Empty(),comboFactory_Empty = this.comboFactory.Text.Empty();
+                txtSeason_Empty = this.txtSeason.Text.Empty(), txtBrand_Empty = this.txtBrand.Text.Empty(),  Cate_comboBox_Empty = this.comboCategory.Text.Empty(), comboFactory_Empty = this.comboFactory.Text.Empty();
             if (date_SCI_Empty && date_Sewing_Empty && date_Est_Empty && txtSeason_Empty && txtBrand_Empty)
             {
-                dateSCIDelivery.Focus();
+                this.dateSCIDelivery.Focus();
                 MyUtility.Msg.ErrorBox("Please select 'SCI Delivery' or 'Sewing in-line Date' or 'Est. Cutting Date' or 'Season' or 'Brand' at least one field entry");
                 return false;
             }
 
-            DateSCIStart = dateSCIDelivery.Value1;
-            DateSCIEnd = dateSCIDelivery.Value2;
-            DateSewStart = dateSewingInLineDate.Value1;
-            DateSewEnd = dateSewingInLineDate.Value2;
-            DateEstStart = dateEstCuttingDate.Value1;
-            DateEstEnd = dateEstCuttingDate.Value2;
-            Sea = txtSeason.Text;
-            Brand = txtBrand.Text;
-            Category = comboCategory.Text;
-            Factory = comboFactory.Text;
-            lis = new List<SqlParameter>();
-            string sqlWhere = "";
-           
+            this.DateSCIStart = this.dateSCIDelivery.Value1;
+            this.DateSCIEnd = this.dateSCIDelivery.Value2;
+            this.DateSewStart = this.dateSewingInLineDate.Value1;
+            this.DateSewEnd = this.dateSewingInLineDate.Value2;
+            this.DateEstStart = this.dateEstCuttingDate.Value1;
+            this.DateEstEnd = this.dateEstCuttingDate.Value2;
+            this.Sea = this.txtSeason.Text;
+            this.Brand = this.txtBrand.Text;
+            this.Category = this.comboCategory.Text;
+            this.Factory = this.comboFactory.Text;
+            this.lis = new List<SqlParameter>();
+            string sqlWhere = string.Empty;
+
             List<string> sqlWheres = new List<string>();
             #region --組WHERE--
             if (!this.dateSCIDelivery.Value1.Empty())
             {
                 sqlWheres.Add("SciDelivery >= @SCIDate1");
-                lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
+                this.lis.Add(new SqlParameter("@SCIDate1", this.DateSCIStart));
             }
+
             if (!this.dateSCIDelivery.Value2.Empty())
             {
                 sqlWheres.Add("SciDelivery <= @SCIDate2");
-                lis.Add(new SqlParameter("@SCIDate2", DateSCIEnd));
+                this.lis.Add(new SqlParameter("@SCIDate2", this.DateSCIEnd));
             }
 
             if (!this.dateSewingInLineDate.Value1.Empty())
             {
                 sqlWheres.Add("SewInLine >= @SewDate1");
-                lis.Add(new SqlParameter("@SewDate1", DateSewStart));
+                this.lis.Add(new SqlParameter("@SewDate1", this.DateSewStart));
             }
+
             if (!this.dateSewingInLineDate.Value2.Empty())
             {
                 sqlWheres.Add("SewInLine <= @SewDate2");
-                lis.Add(new SqlParameter("@SewDate2", DateSewEnd));
+                this.lis.Add(new SqlParameter("@SewDate2", this.DateSewEnd));
             }
 
             if (!this.dateEstCuttingDate.Value1.Empty())
             {
                 sqlWheres.Add("CutInLine >= @Est1");
-                lis.Add(new SqlParameter("@Est1", DateEstStart));
+                this.lis.Add(new SqlParameter("@Est1", this.DateEstStart));
             }
+
             if (!this.dateEstCuttingDate.Value2.Empty())
             {
                 sqlWheres.Add("CutInLine <= @Est2");
-                lis.Add(new SqlParameter("@Est2", DateEstEnd));
+                this.lis.Add(new SqlParameter("@Est2", this.DateEstEnd));
             }
 
             if (!this.txtSeason.Text.Empty())
             {
                 sqlWheres.Add("SeasonID = @Sea");
-                lis.Add(new SqlParameter("@Sea", Sea));
-            } 
+                this.lis.Add(new SqlParameter("@Sea", this.Sea));
+            }
+
             if (!this.txtBrand.Text.Empty())
             {
                 sqlWheres.Add("BrandID = @Brand");
-                lis.Add(new SqlParameter("@Brand", Brand));
+                this.lis.Add(new SqlParameter("@Brand", this.Brand));
             }
+
             if (!MyUtility.Check.Empty(this.comboCategory.Text))
             {
                 sqlWheres.Add($"Category in ({this.comboCategory.SelectedValue})");
             }
+
             if (!this.comboFactory.SelectedValue.Empty())
                 {
                     sqlWheres.Add("Factoryid = @Factory");
-                    lis.Add(new SqlParameter("@Factory", Factory));
+                    this.lis.Add(new SqlParameter("@Factory", this.Factory));
                 }
               #endregion
             sqlWhere = string.Join(" and ", sqlWheres);
@@ -122,7 +124,7 @@ namespace Sci.Production.Quality
             sqlWhere += this.chkIncludeCancelOrder.Checked ? string.Empty : " and orders.Junk = 0 ";
             #region --撈ListExcel資料--
 
-            cmd = string.Format(@" 
+            this.cmd = string.Format(@" 
             with rawdata as 
             (
             select distinct poid from dbo.orders WITH (NOLOCK) 
@@ -171,29 +173,30 @@ namespace Sci.Production.Quality
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-         
-            res = DBProxy.Current.Select("", cmd, lis, out dt);
-            if (!res)
+            this.res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);
+            if (!this.res)
             {
-                return res;
+                return this.res;
             }
-            return res;
+
+            return this.res;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(dt.Rows.Count);
-            if (dt == null || dt.Rows.Count == 0)
+            this.SetCount(this.dt.Rows.Count);
+            if (this.dt == null || this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R03.xltx"); //預先開啟excel app                         
-            MyUtility.Excel.CopyToXls(dt, "", "Quality_R03.xltx", 2, true, null, objApp);      // 將datatable copy to excel
-            return res;
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R03.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Quality_R03.xltx", 2, true, null, objApp);      // 將datatable copy to excel
+            return this.res;
         }
     }
 }

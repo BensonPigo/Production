@@ -7,7 +7,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P01
     /// </summary>
-    public partial class P01 : Sci.Win.Tems.Input1
+    public partial class P01 : Win.Tems.Input1
     {
         /// <summary>
         /// P01
@@ -19,7 +19,7 @@ namespace Sci.Production.Packing
         {
             this.InitializeComponent();
             this.Text = type == "1" ? "P01. Packing Master List" : "P011. Packing Master List (History)";
-            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is null", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is not null", Sci.Env.User.Keyword);
+            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is null", Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is not null", Env.User.Keyword);
             this.txtcountryDestination.TextBox1.ReadOnly = true;
             this.txtcountryDestination.TextBox1.IsSupportEditMode = false;
             this.txtuserLocalMR.TextBox1.ReadOnly = true;
@@ -58,49 +58,49 @@ namespace Sci.Production.Packing
         // b'down
         private void Btnbdown_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_QtyCTN callNextForm = new Sci.Production.PPIC.P01_QtyCTN(this.CurrentMaintain);
+            PPIC.P01_QtyCTN callNextForm = new PPIC.P01_QtyCTN(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Quantity breakdown
         private void BtnQuantityBreakdown_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(this.displayPOcombo.Value));
+            PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(this.displayPOcombo.Value));
             callNextForm.ShowDialog(this);
         }
 
         // Packing method
         private void BtnPackingMethod_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(this.CurrentMaintain["Packing"].ToString(), "Packing method", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(this.CurrentMaintain["Packing"].ToString(), "Packing method", false, null);
             callNextForm.ShowDialog(this);
         }
 
         // Carton Status
         private void BtnCartonStatus_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_CTNStatus callNextForm = new Sci.Production.PPIC.P01_CTNStatus(this.CurrentMaintain["ID"].ToString(), false);
+            PPIC.P01_CTNStatus callNextForm = new PPIC.P01_CTNStatus(this.CurrentMaintain["ID"].ToString(), false);
             callNextForm.ShowDialog(this);
         }
 
         // Material import
         private void BtnMaterialImport_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_MTLImport callNextForm = new Sci.Production.PPIC.P01_MTLImport(this.CurrentMaintain);
+            PPIC.P01_MTLImport callNextForm = new PPIC.P01_MTLImport(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Carton Booking
         private void BtnCartonBooking_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P01_CTNData callNextForm = new Sci.Production.Packing.P01_CTNData(this.CurrentMaintain);
+            P01_CTNData callNextForm = new P01_CTNData(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Overrun garment record
         private void BtnOverrunGarmentRecord_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P01_OverrunGMTRecord callNextForm = new Sci.Production.Packing.P01_OverrunGMTRecord(this.CurrentMaintain["ID"].ToString());
+            P01_OverrunGMTRecord callNextForm = new P01_OverrunGMTRecord(this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
         }
     }

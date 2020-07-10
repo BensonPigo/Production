@@ -44,11 +44,11 @@
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.labelStyle = new Sci.Win.UI.Label();
             this.chkType = new Sci.Win.UI.CheckBox();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.comboFtyZone = new Sci.Production.Class.comboFtyZone(this.components);
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.comboDropDownListCategory = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.comboFtyZone = new Sci.Production.Class.ComboFtyZone(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -250,8 +250,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 104;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // comboDropDownListCategory
             // 
@@ -374,13 +374,13 @@
         private Win.UI.DateRange dateSewingOutputDate;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.DateRange dateSCIDelivery;
-        private Class.txtseason txtseason;
-        private Class.txtbrand txtbrand;
+        private Class.Txtseason txtseason;
+        private Class.Txtbrand txtbrand;
         private Win.UI.ComboBox comboFactory;
-        private Class.comboDropDownList comboDropDownListCategory;
+        private Class.ComboDropDownList comboDropDownListCategory;
         private Win.UI.Label labelStyle;
-        private Class.txtstyle txtstyle;
+        private Class.Txtstyle txtstyle;
         private Win.UI.CheckBox chkType;
-        private Class.comboFtyZone comboFtyZone;
+        private Class.ComboFtyZone comboFtyZone;
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -8,21 +7,19 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
 using Sci.Production.PublicPrg;
-using System.Linq;
 
 namespace Sci.Production.PPIC
 {
     /// <summary>
     /// P05
     /// </summary>
-    public partial class P05 : Sci.Win.Tems.QueryForm
+    public partial class P05 : Win.Tems.QueryForm
     {
         private DataTable gridData;
-        private Ict.Win.DataGridViewGeneratorDateColumnSettings readyDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
-        private Ict.Win.DataGridViewGeneratorDateColumnSettings estPulloutDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
-        private Ict.Win.DataGridViewGeneratorComboBoxColumnSettings outReasonSet = new Ict.Win.DataGridViewGeneratorComboBoxColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings readyDate = new DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings estPulloutDate = new DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorComboBoxColumnSettings outReasonSet = new DataGridViewGeneratorComboBoxColumnSettings();
 
         /// <summary>
         /// P05
@@ -31,7 +28,7 @@ namespace Sci.Production.PPIC
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            this.EditMode = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Production Schedule", "CanEdit");
+            this.EditMode = Prgs.GetAuthority(Env.User.UserID, "P05. Production Schedule", "CanEdit");
 
             // EditMode = false;
             this.InitializeComponent();
@@ -335,7 +332,7 @@ with tempData as (
             and o.PulloutComplete = 0
             and oq.Qty > 0
             and o.FtyGroup = '{0}'
-            and o.Finished = 0 ", Sci.Env.User.Factory));
+            and o.Finished = 0 ", Env.User.Factory));
             if (!MyUtility.Check.Empty(this.dateUptoSCIDelivery.Value))
             {
                 sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.dateUptoSCIDelivery.Value).ToString("d")));
@@ -422,14 +419,14 @@ Order by tempData.Id");
                                 , EditName = '{5}'
                                 , EditDate = GETDATE() 
                         where ID = '{6}' and Seq = '{7}'",
-                        MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
-                        MyUtility.Check.Empty(dr["ReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReadyDate"]).ToString("d") + "'",
-                        dr["ProdRemark"].ToString(),
-                        dr["OutReason"].ToString(),
-                        dr["OutRemark"].ToString(),
-                        Sci.Env.User.UserID,
-                        dr["ID"].ToString(),
-                        dr["Seq"].ToString()));
+                            MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
+                            MyUtility.Check.Empty(dr["ReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReadyDate"]).ToString("d") + "'",
+                            dr["ProdRemark"].ToString(),
+                            dr["OutReason"].ToString(),
+                            dr["OutRemark"].ToString(),
+                            Env.User.UserID,
+                            dr["ID"].ToString(),
+                            dr["Seq"].ToString()));
                         allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
 
                         // 若Outstanding Reason或Outstanding Remark有值，則更新OutstandingInCharge
@@ -437,7 +434,7 @@ Order by tempData.Id");
                         {
                             sql = string.Format(
                                 "update Order_QtyShip set OutstandingInCharge='{0}' where ID = '{1}' and Seq = '{2}' ",
-                                Sci.Env.User.UserID,
+                                Env.User.UserID,
                                 dr["ID"].ToString(),
                                 dr["Seq"].ToString());
                             updateCmds.Add(sql);
@@ -496,10 +493,10 @@ Order by tempData.Id");
                                 , EditName = '{1}'
                                 , EditDate = GETDATE() 
                         where ID = '{2}' and Seq = '{3}'",
-                        MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
-                        Sci.Env.User.UserID,
-                        dr["ID"].ToString(),
-                        dr["Seq"].ToString()));
+                            MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
+                            Env.User.UserID,
+                            dr["ID"].ToString(),
+                            dr["Seq"].ToString()));
                         allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
                     }
                 }
@@ -525,7 +522,7 @@ Order by tempData.Id");
                     {
                         updateCmds.Add(string.Format(
                             "update Orders set  EditName= '{0}', PulloutDate = {1} where ID = '{2}'",
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
                             dr["Id"].ToString()));
                     }
@@ -555,7 +552,7 @@ Order by tempData.Id");
                 return;
             }
 
-            Sci.Production.PPIC.P05_Print callNextForm = new Sci.Production.PPIC.P05_Print((DataTable)this.listControlBindingSource1.DataSource, MyUtility.Check.Empty(this.dateUptoSCIDelivery.Value) ? string.Empty : Convert.ToDateTime(this.dateUptoSCIDelivery.Value).ToString("d"));
+            P05_Print callNextForm = new P05_Print((DataTable)this.listControlBindingSource1.DataSource, MyUtility.Check.Empty(this.dateUptoSCIDelivery.Value) ? string.Empty : Convert.ToDateTime(this.dateUptoSCIDelivery.Value).ToString("d"));
             callNextForm.ShowDialog(this);
         }
 

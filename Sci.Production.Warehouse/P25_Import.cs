@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P25_Import : Sci.Win.Subs.Base
+    public partial class P25_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -23,25 +19,24 @@ namespace Sci.Production.Warehouse
 
         public P25_Import(DataRow master, DataTable detail)
         {
-            InitializeComponent();
-            dr_master = master;
-            dt_detail = detail;
-            this.txtSPNo.Text = dr_master["id"].ToString();
+            this.InitializeComponent();
+            this.dr_master = master;
+            this.dt_detail = detail;
+            this.txtSPNo.Text = this.dr_master["id"].ToString();
         }
 
-        //Find Now Button
+        // Find Now Button
         private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.txtSPNo.Text.TrimEnd();
+            string sp = this.txtSPNo.Text.TrimEnd();
 
             if (string.IsNullOrWhiteSpace(sp))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                txtSPNo.Focus();
+                this.txtSPNo.Focus();
                 return;
             }
-
             else
             {
                 // 建立可以符合回傳的Cursor
@@ -53,7 +48,8 @@ namespace Sci.Production.Warehouse
                     where = " AND c.lock = 0 ";
                 }
 
-                strSQLCmd.Append(string.Format(@"
+                strSQLCmd.Append(string.Format(
+                    @"
 select  selected = 0 
         , id = '' 
         , FromFtyinventoryUkey = c.ukey 
@@ -91,7 +87,7 @@ Where  1=1
 {1}
         and c.InQty-c.OutQty+c.AdjustQty > 0 
         and c.stocktype = 'B'
-        and Factory.MDivisionID = '{0}'", Sci.Env.User.Keyword, where));
+        and Factory.MDivisionID = '{0}'", Env.User.Keyword, where));
                 #endregion
 
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -113,62 +109,70 @@ Where  1=1
                     cmds.Add(sp1);
                 }
 
-                seq1.Value = txtSeq.seq1;
-                seq2.Value = txtSeq.seq2;
+                seq1.Value = this.txtSeq.Seq1;
+                seq2.Value = this.txtSeq.Seq2;
                 cmds.Add(seq1);
                 cmds.Add(seq2);
-                if (!txtSeq.checkSeq1Empty())
+                if (!this.txtSeq.CheckSeq1Empty())
                 {
                     strSQLCmd.Append(@" 
         and a.seq1 = @seq1");
                 }
-                if (!txtSeq.checkSeq2Empty())
+
+                if (!this.txtSeq.CheckSeq2Empty())
                 {
                     strSQLCmd.Append(@" 
         and a.seq2 = @seq2");
                 }
 
                 this.ShowWaitMessage("Data Loading....");
-                Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out dtScrap))
+                DualResult result;
+                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out this.dtScrap))
                 {
-                    if (dtScrap.Rows.Count == 0)
-                    { MyUtility.Msg.WarningBox("Data not found!!"); }
+                    if (this.dtScrap.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!!");
+                    }
                     else
                     {
-                        dtScrap.DefaultView.Sort = "fromseq1,fromseq2,fromlocation,fromdyelot";
+                        this.dtScrap.DefaultView.Sort = "fromseq1,fromseq2,fromlocation,fromdyelot";
                     }
-                    listControlBindingSource1.DataSource = dtScrap;
+
+                    this.listControlBindingSource1.DataSource = this.dtScrap;
                 }
-                else { ShowErr(strSQLCmd.ToString(), result); }
+                else
+                {
+                    this.ShowErr(strSQLCmd.ToString(), result);
+                }
+
                 this.HideWaitMessage();
             }
         }
 
-        //Form Load
+        // Form Load
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             #region -- Transfer Qty Valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
-                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["selected"] = true;
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["selected"] = true;
                     }
                 };
             #endregion
 
-            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridImport.DataSource = listControlBindingSource1;
+            this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = this.listControlBindingSource1;
 
             this.gridImport.CellValueChanged += (s, e) =>
             {
-                if (gridImport.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (this.gridImport.Columns[e.ColumnIndex].Name == this.col_chk.Name)
                 {
-                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                    DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["balance"];
@@ -177,38 +181,42 @@ Where  1=1
                     {
                         dr["qty"] = 0;
                     }
+
                     dr.EndEdit();
                 }
             };
 
-            Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
-                .Text("frompoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14)) //1
-                .Text("fromseq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-                .Text("fromroll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
-                .Text("fromdyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) //4
-                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) //5
-                .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //6
-                .Numeric("balance", header: "Bulk" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //7
-                .Numeric("Qty", header: "Scrap" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  //8
-                .Text("fromlocation", header: "From Location", width: Widths.AnsiChars(30), iseditingreadonly: true)    //9
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
+                .Text("frompoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14)) // 1
+                .Text("fromseq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 2
+                .Text("fromroll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 3
+                .Text("fromdyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 4
+                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 5
+                .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 6
+                .Numeric("balance", header: "Bulk" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 7
+                .Numeric("Qty", header: "Scrap" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6)) // 8
+                .Text("fromlocation", header: "From Location", width: Widths.AnsiChars(30), iseditingreadonly: true) // 9
                ;
 
             this.gridImport.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        //Close
+        // Close
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        //Import
+        // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            gridImport.ValidateControl();
-            DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
+            this.gridImport.ValidateControl();
+            DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0)
+            {
+                return;
+            }
 
             DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
             if (dr2.Length == 0)
@@ -227,7 +235,7 @@ Where  1=1
             dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["fromftyinventoryukey"].EqualString(tmp["fromftyinventoryukey"])
+                DataRow[] findrow = this.dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["fromftyinventoryukey"].EqualString(tmp["fromftyinventoryukey"])
                                                         && row["topoid"].EqualString(tmp["topoid"].ToString()) && row["toseq1"].EqualString(tmp["toseq1"])
                                                         && row["toseq2"].EqualString(tmp["toseq2"].ToString()) && row["toroll"].EqualString(tmp["toroll"])
                                                         && row["todyelot"].EqualString(tmp["todyelot"]) && row["tostocktype"].EqualString(tmp["tostocktype"])).ToArray();
@@ -237,13 +245,12 @@ Where  1=1
                 }
                 else
                 {
-                    tmp["id"] = dr_master["id"];
+                    tmp["id"] = this.dr_master["id"];
                     tmp.AcceptChanges();
                     tmp.SetAdded();
-                    dt_detail.ImportRow(tmp);
+                    this.dt_detail.ImportRow(tmp);
                 }
             }
-
 
             this.Close();
         }

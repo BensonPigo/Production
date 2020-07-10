@@ -8,7 +8,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P02_CartonSummary
     /// </summary>
-    public partial class P02_CartonSummary : Sci.Win.Subs.Base
+    public partial class P02_CartonSummary : Win.Subs.Base
     {
         private string orderID;
 

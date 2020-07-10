@@ -37,8 +37,8 @@
             this.dateOutputDateEnd = new Sci.Win.UI.DateBox();
             this.comboExchangeRate = new Sci.Win.UI.ComboBox();
             this.checkIncludeLocalOrder = new Sci.Win.UI.CheckBox();
-            this.txtCentralizedFactory1 = new Sci.Production.Class.txtCentralizedFactory();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
+            this.txtCentralizedFactory1 = new Sci.Production.Class.TxtCentralizedFactory();
+            this.txtcountry1 = new Sci.Production.Class.Txtcountry();
             this.SuspendLayout();
             // 
             // print
@@ -207,7 +207,7 @@
         //private Class.TxtCountry txtCountryID;
         private Win.UI.ComboBox comboExchangeRate;
         private Win.UI.CheckBox checkIncludeLocalOrder;
-        private Production.Class.txtCentralizedFactory txtCentralizedFactory1;
-        private Production.Class.txtcountry txtcountry1;
+        private Production.Class.TxtCentralizedFactory txtCentralizedFactory1;
+        private Production.Class.Txtcountry txtcountry1;
     }
 }

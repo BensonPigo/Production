@@ -8,7 +8,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P01_CTNData
     /// </summary>
-    public partial class P01_CTNData : Sci.Win.Subs.Base
+    public partial class P01_CTNData : Win.Subs.Base
     {
         private DataRow masterData;
 

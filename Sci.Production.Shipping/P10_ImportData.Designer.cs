@@ -37,10 +37,10 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
-            this.txtSubconForwarder = new Sci.Production.Class.txtsubconNoConfirm();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtSubconForwarder = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
-            this.txtshipmode = new Sci.Production.Class.txtshipmode();
+            this.txtshipmode = new Sci.Production.Class.Txtshipmode();
             this.labelShipMode = new Sci.Win.UI.Label();
             this.dateCutoffDate = new Sci.Win.UI.DateBox();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
@@ -171,9 +171,9 @@
             // 
             this.txtSubconForwarder.DisplayBox1Binding = "";
             this.txtSubconForwarder.IsIncludeJunk = false;
-            this.txtSubconForwarder.isMisc = false;
-            this.txtSubconForwarder.isShipping = false;
-            this.txtSubconForwarder.isSubcon = false;
+            this.txtSubconForwarder.IsMisc = false;
+            this.txtSubconForwarder.IsShipping = false;
+            this.txtSubconForwarder.IsSubcon = false;
             this.txtSubconForwarder.Location = new System.Drawing.Point(81, 67);
             this.txtSubconForwarder.Name = "txtSubconForwarder";
             this.txtSubconForwarder.Size = new System.Drawing.Size(170, 23);
@@ -482,7 +482,7 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
-        private Class.txtshipmode txtshipmode;
+        private Class.Txtshipmode txtshipmode;
         private Win.UI.Label labelShipMode;
         private Win.UI.DateBox dateCutoffDate;
         private Win.UI.DateRange dateBuyerDelivery;
@@ -500,8 +500,8 @@
         private Win.UI.Button btnQuery;
         private Win.UI.TextBox txtSPNo;
         private Win.UI.Label labelSPNo;
-        private Class.txtsubconNoConfirm txtSubconForwarder;
-        private Class.txtbrand txtbrand;
+        private Class.TxtsubconNoConfirm txtSubconForwarder;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelBrand;
         private Win.UI.Grid grid2;
         private Win.UI.ListControlBindingSource listControlBindingSource2;

@@ -1,106 +1,106 @@
 ﻿using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using Sci.Utility.Excel;
 using Ict;
-using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R36 : Sci.Win.Tems.PrintForm
+    public partial class R36 : Win.Tems.PrintForm
     {
-        string ReportType;
+        string reportType;
         List<SqlParameter> ParameterList;
-        DataTable dt; string cmd;
-        DateTime? debitdate1;DateTime? debitdate2;
-        DateTime? aprdate1 ; DateTime? aprdate2;
-        string SDNo1; string SDNo2;
+        DataTable dt;
+        string cmd;
+        DateTime? debitdate1;
+        DateTime? debitdate2;
+        DateTime? aprdate1;
+        DateTime? aprdate2;
+        string SDNo1;
+        string SDNo2;
         string Supplier;
-        string handle ;
-        string smr ;
+        string handle;
+        string smr;
         string status;
         string factoryid;
-        DateTime? amtrevisedate1;DateTime? amtrevisedate2;
-        DateTime? ReceiveDate1 ;DateTime? ReceiveDate2 ;     
+        DateTime? amtrevisedate1; DateTime? amtrevisedate2;
+        DateTime? ReceiveDate1; DateTime? ReceiveDate2;
         DataTable dtSummary; string cmdSummary;
         DataTable dtDetail; string cmdDetail;
         DataTable dtSchedule; string cmdSchedule;
         DateTime? SettledDate1; DateTime? SettledDate2;
         string payment;
+
         public R36(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.Text = Env.User.Factory;
             this.comboReportType.SelectedIndex = 0;
             this.comboStatus.SelectedIndex = 0;
             this.comboPaymentSettled.SelectedIndex = 0;
             this.comboOrderBy.SelectedIndex = 0;
-            print.Enabled = false;
+            this.print.Enabled = false;
         }
 
         protected override bool ValidateInput()
         {
-            bool dateRange1_Empty = !this.dateDebitDate.HasValue
-                , dateRange2_Empty = !this.dateApprovedDate.HasValue
-                , dateRange3_Empty = !this.dateSettledDate.HasValue
-                , textbox1_Empty = this.txtSDNoStart.Text.Empty()
-                , textbox2_Empty = this.txtSDNoEnd.Text.Empty()
-                , txtLocalSupp1_Empty =this.txtLocalSuppSupplier.TextBox1.Text.Empty()
-                , txtuser1_Empty = this.txtuserHandle.TextBox1.Text.Empty()
-                , txtuser2_Empty = this.txtuserSMR.TextBox1.Text.Empty()
-                , comboBox5_Empty = this.comboFactory.Text.Empty()
-                , comboBox2_Empty = this.comboStatus.Text.Empty()
-                , comboBox3_Empty = this.comboPaymentSettled.Text.Empty()
-                , dateRange4_Empty = !this.dateAmtRevised.HasValue
-                , dateRange5_Empty = !this.dateReceiveddate.HasValue;
+            bool dateRange1_Empty = !this.dateDebitDate.HasValue,
+                dateRange2_Empty = !this.dateApprovedDate.HasValue,
+                dateRange3_Empty = !this.dateSettledDate.HasValue,
+                textbox1_Empty = this.txtSDNoStart.Text.Empty(),
+                textbox2_Empty = this.txtSDNoEnd.Text.Empty(),
+                txtLocalSupp1_Empty = this.txtLocalSuppSupplier.TextBox1.Text.Empty(),
+                txtuser1_Empty = this.txtuserHandle.TextBox1.Text.Empty(),
+                txtuser2_Empty = this.txtuserSMR.TextBox1.Text.Empty(),
+                comboBox5_Empty = this.comboFactory.Text.Empty(),
+                comboBox2_Empty = this.comboStatus.Text.Empty(),
+                comboBox3_Empty = this.comboPaymentSettled.Text.Empty(),
+                dateRange4_Empty = !this.dateAmtRevised.HasValue,
+                dateRange5_Empty = !this.dateReceiveddate.HasValue;
 
             if (dateRange1_Empty && dateRange2_Empty && dateRange3_Empty && textbox1_Empty && textbox2_Empty && txtLocalSupp1_Empty && txtuser1_Empty && txtuser2_Empty && comboBox5_Empty && comboBox2_Empty && comboBox3_Empty
                && dateRange4_Empty && dateRange5_Empty)
             {
                 MyUtility.Msg.ErrorBox("Please select at least one field entry");
 
-                txtSDNoStart.Focus();
+                this.txtSDNoStart.Focus();
 
                 return false;
             }
 
-            debitdate1 = dateDebitDate.Value1;
-            debitdate2 = dateDebitDate.Value2;
-            aprdate1 = dateApprovedDate.Value1;
-            aprdate2 = dateApprovedDate.Value2;
-            SDNo1= txtSDNoStart.Text.ToString();
-            SDNo2 = txtSDNoEnd.Text.ToString();
-            Supplier = txtLocalSuppSupplier.TextBox1.Text;
-            handle = txtuserHandle.TextBox1.Text;
-            smr = txtuserSMR.TextBox1.Text;
-            status = comboStatus.SelectedItem.ToString();
-            factoryid = comboFactory.Text.ToString();
-            amtrevisedate1 = dateAmtRevised.Value1;
-            amtrevisedate2 = dateAmtRevised.Value2;
-            ReceiveDate1 = dateReceiveddate.Value1;
-            ReceiveDate2 = dateReceiveddate.Value2;
-            SettledDate1 = dateSettledDate.Value1;
-            SettledDate2 = dateSettledDate.Value2;
-            payment = comboPaymentSettled.SelectedItem.ToString();
+            this.debitdate1 = this.dateDebitDate.Value1;
+            this.debitdate2 = this.dateDebitDate.Value2;
+            this.aprdate1 = this.dateApprovedDate.Value1;
+            this.aprdate2 = this.dateApprovedDate.Value2;
+            this.SDNo1 = this.txtSDNoStart.Text.ToString();
+            this.SDNo2 = this.txtSDNoEnd.Text.ToString();
+            this.Supplier = this.txtLocalSuppSupplier.TextBox1.Text;
+            this.handle = this.txtuserHandle.TextBox1.Text;
+            this.smr = this.txtuserSMR.TextBox1.Text;
+            this.status = this.comboStatus.SelectedItem.ToString();
+            this.factoryid = this.comboFactory.Text.ToString();
+            this.amtrevisedate1 = this.dateAmtRevised.Value1;
+            this.amtrevisedate2 = this.dateAmtRevised.Value2;
+            this.ReceiveDate1 = this.dateReceiveddate.Value1;
+            this.ReceiveDate2 = this.dateReceiveddate.Value2;
+            this.SettledDate1 = this.dateSettledDate.Value1;
+            this.SettledDate2 = this.dateSettledDate.Value2;
+            this.payment = this.comboPaymentSettled.SelectedItem.ToString();
 
-            ReportType = this.comboReportType.Text;
+            this.reportType = this.comboReportType.Text;
 
+            this.ParameterList = new List<SqlParameter>();
 
-            ParameterList = new List<SqlParameter>();
-
-            string sqlWhere = "";
-            string sqlSettledDate = "";
-            string order = "";
+            string sqlWhere = string.Empty;
+            string sqlSettledDate = string.Empty;
+            string order = string.Empty;
             List<string> sqlWheres = new List<string>();
             List<string> sqlWheresSettledDate = new List<string>();
 
@@ -108,135 +108,152 @@ namespace Sci.Production.Subcon
             if (!this.txtSDNoStart.Text.Empty())
             {
                 sqlWheres.Add("a.Id between @SDNo1 and @SDNo2");
-                ParameterList.Add(new SqlParameter("@SDNo1", SDNo1));
-                ParameterList.Add(new SqlParameter("@SDNo2", SDNo2));
-            } 
+                this.ParameterList.Add(new SqlParameter("@SDNo1", this.SDNo1));
+                this.ParameterList.Add(new SqlParameter("@SDNo2", this.SDNo2));
+            }
+
             if (!this.dateDebitDate.Value1.Empty())
             {
                 sqlWheres.Add("a.Issuedate >= @debitdate1");
-                ParameterList.Add(new SqlParameter("@debitdate1", debitdate1));
+                this.ParameterList.Add(new SqlParameter("@debitdate1", this.debitdate1));
             }
+
             if (!this.dateDebitDate.Value2.Empty())
             {
                 sqlWheres.Add("a.Issuedate <= @debitdate2");
-                ParameterList.Add(new SqlParameter("@debitdate2", debitdate2.Value.AddDays(1).AddSeconds(-1)));
+                this.ParameterList.Add(new SqlParameter("@debitdate2", this.debitdate2.Value.AddDays(1).AddSeconds(-1)));
             }
+
             if (!this.dateApprovedDate.Value1.Empty())
             {
                 sqlWheres.Add("a.CfmDate >= @aprdate1");
-                ParameterList.Add(new SqlParameter("@aprdate1", aprdate1));
+                this.ParameterList.Add(new SqlParameter("@aprdate1", this.aprdate1));
             }
+
             if (!this.dateApprovedDate.Value2.Empty())
             {
                 sqlWheres.Add("a.CfmDate <= @aprdate2");
-                ParameterList.Add(new SqlParameter("@aprdate2", aprdate2.Value.AddDays(1).AddSeconds(-1)));
+                this.ParameterList.Add(new SqlParameter("@aprdate2", this.aprdate2.Value.AddDays(1).AddSeconds(-1)));
             }
+
             if (!this.txtLocalSuppSupplier.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.localsuppid = @localsuppid");
-                ParameterList.Add(new SqlParameter("@localsuppid", Supplier));
+                this.ParameterList.Add(new SqlParameter("@localsuppid", this.Supplier));
             }
+
             if (!this.txtuserHandle.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.handle = @handle");
-                ParameterList.Add(new SqlParameter("@handle", handle));
+                this.ParameterList.Add(new SqlParameter("@handle", this.handle));
             }
+
             if (!this.txtuserSMR.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.smr = @smr");
-                ParameterList.Add(new SqlParameter("@smr", smr));
+                this.ParameterList.Add(new SqlParameter("@smr", this.smr));
             }
+
             if (!this.factoryid.Empty())
             {
                 sqlWheres.Add("a.factoryid = @factoryid");
-                ParameterList.Add(new SqlParameter("@factoryid", factoryid));
+                this.ParameterList.Add(new SqlParameter("@factoryid", this.factoryid));
             }
+
             if (!this.comboStatus.SelectedItem.ToString().Empty())
             {
                 sqlWheres.Add("a.Status = @status");
-                ParameterList.Add(new SqlParameter("@status", status));
-            } 
+                this.ParameterList.Add(new SqlParameter("@status", this.status));
+            }
+
             if (!this.dateAmtRevised.Value1.Empty())
             {
                 sqlWheres.Add("a.amtrevisedate >= @amtrevisedate1");
-                ParameterList.Add(new SqlParameter("@amtrevisedate1", amtrevisedate1));
+                this.ParameterList.Add(new SqlParameter("@amtrevisedate1", this.amtrevisedate1));
             }
+
             if (!this.dateAmtRevised.Value2.Empty())
             {
                 sqlWheres.Add("a.amtrevisedate <= @amtrevisedate2");
-                ParameterList.Add(new SqlParameter("@amtrevisedate2", amtrevisedate2.Value.AddDays(1).AddSeconds(-1)));
+                this.ParameterList.Add(new SqlParameter("@amtrevisedate2", this.amtrevisedate2.Value.AddDays(1).AddSeconds(-1)));
             }
+
             if (!this.dateReceiveddate.Value1.Empty())
             {
                 sqlWheres.Add("a.ReceiveDate >= @ReceiveDate1");
-                ParameterList.Add(new SqlParameter("@ReceiveDate1", ReceiveDate1));
+                this.ParameterList.Add(new SqlParameter("@ReceiveDate1", this.ReceiveDate1));
             }
+
             if (!this.dateReceiveddate.Value2.Empty())
             {
                 sqlWheres.Add("a.ReceiveDate <= @ReceiveDate2");
-                ParameterList.Add(new SqlParameter("@ReceiveDate2", ReceiveDate2.Value.AddDays(1).AddSeconds(-1)));
-            } 
+                this.ParameterList.Add(new SqlParameter("@ReceiveDate2", this.ReceiveDate2.Value.AddDays(1).AddSeconds(-1)));
+            }
 
-            //int needSettleData = 0;
-
+            // int needSettleData = 0;
             if (!this.dateSettledDate.Value1.Empty())
             {
                 sqlWheres.Add("MaxVoucherDate.VoucherDate >= @SettledDate1");
-                ParameterList.Add(new SqlParameter("@SettledDate1", SettledDate1));
-                //needSettleData = 1;
+                this.ParameterList.Add(new SqlParameter("@SettledDate1", this.SettledDate1));
+
+                // needSettleData = 1;
             }
+
             if (!this.dateSettledDate.Value2.Empty())
             {
                 sqlWheres.Add("MaxVoucherDate.VoucherDate <= @SettledDate2");
-                ParameterList.Add(new SqlParameter("@SettledDate2", SettledDate2.Value.AddDays(1).AddSeconds(-1)));
-                //needSettleData = 1;
-            } 
+                this.ParameterList.Add(new SqlParameter("@SettledDate2", this.SettledDate2.Value.AddDays(1).AddSeconds(-1)));
+
+                // needSettleData = 1;
+            }
+
             if (this.comboPaymentSettled.Text == "Settled")
             {
-                //sqlWheres.Add(" (a.Amount+a.Tax) = Settled.Amount ");
-                //ParameterList.Add(new SqlParameter("@payment", payment));
-                //needSettleData = 1;
+                // sqlWheres.Add(" (a.Amount+a.Tax) = Settled.Amount ");
+                // ParameterList.Add(new SqlParameter("@payment", payment));
+                // needSettleData = 1;
                 sqlWheres.Add(" d.Settled = 'Y' ");
             }
+
             if (this.comboPaymentSettled.Text == "Not Settled")
             {
-                //sqlWheres.Add(" (a.Amount+a.Tax) <> Settled.Amount");
-                //ParameterList.Add(new SqlParameter("@payment", payment));
-                //needSettleData = 0;
+                // sqlWheres.Add(" (a.Amount+a.Tax) <> Settled.Amount");
+                // ParameterList.Add(new SqlParameter("@payment", payment));
+                // needSettleData = 0;
                 sqlWheres.Add(" d.Settled = '' ");
             }
+
             if (this.comboPaymentSettled.Text == " ")
             {
-                //needSettleData = 1;
+                // needSettleData = 1;
             }
-          
-            //ParameterList.Add(new SqlParameter("@NeedSettleData", needSettleData));
 
+            // ParameterList.Add(new SqlParameter("@NeedSettleData", needSettleData));
             if (this.comboOrderBy.Text == "By Handle")
             {
-                order="order by  a.handle";
-            }    
+                order = "order by  a.handle";
+            }
             else if (this.comboOrderBy.Text == "By Supp")
             {
-                order="order by  a.localsuppid";
+                order = "order by  a.localsuppid";
             }
             else if (this.comboOrderBy.Text == "By SD")
             {
-                order="order by  a.id";
+                order = "order by  a.id";
             }
             #endregion
 
             sqlWhere = string.Join(" and ", sqlWheres);
-            //sqlSettledDate = string.Join(" AND ", sqlWheresSettledDate);
 
+            // sqlSettledDate = string.Join(" AND ", sqlWheresSettledDate);
             if (!sqlWhere.Empty())
             {
                 sqlWhere = " where " + sqlWhere;
             }
 
             #region --撈ListExcel資料--
-            
-           cmd= string.Format(@"
+
+            this.cmd = string.Format(@"
 select 
 	a.ID
 	, vs1.Name_Extno as Handle
@@ -302,18 +319,18 @@ OUTER APPLY(
 	WHERE ds.ID=a.ID and ds.VoucherID <> '' AND v.VoucherDate IS NOT NULL
 )Settled
 
-" + Environment.NewLine 
-+ sqlWhere 
-+ Environment.NewLine 
-+ order 
-+ Environment.NewLine 
+" + Environment.NewLine
++ sqlWhere
++ Environment.NewLine
++ order
++ Environment.NewLine
 + @"SELECT DISTINCT * FROM #TEMP
 DROP TABLE #TEMP
 ");
             #endregion
 
             #region --撈SummaryExcel資料--
-           cmdSummary = string.Format(@"
+            this.cmdSummary = string.Format(@"
 select a.ID
 ,a.Status
 ,a.issuedate
@@ -398,7 +415,7 @@ OUTER APPLY(
 	WHERE ds.ID=a.ID and ds.VoucherID <> '' AND v2.VoucherDate IS NOT NULL
 )Settled
 "
-+ Environment.NewLine 
++ Environment.NewLine
 + sqlWhere
 + Environment.NewLine
 + sqlSettledDate
@@ -412,7 +429,7 @@ DROP TABLE #TEMP
             #endregion
 
             #region --撈DetailExcel資料--
-            cmdDetail = string.Format(@"
+            this.cmdDetail = string.Format(@"
 select a.ID
 ,a.Status
 ,a.issuedate
@@ -506,7 +523,7 @@ DROP TABLE #TEMP
             #endregion
 
             #region --撈ScheduleExcel資料--
-            cmdSchedule = string.Format(@"
+            this.cmdSchedule = string.Format(@"
 select a.ID
 ,a.Status
 ,a.issuedate
@@ -599,175 +616,176 @@ OUTER APPLY(
 
             return base.ValidateInput();
         }
-        
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
-            switch (ReportType)
+            switch (this.reportType)
             {
                 case "Debit Note List":
-                    res = DBProxy.Current.Select("", cmd, ParameterList, out dt);
+                    res = DBProxy.Current.Select(string.Empty, this.cmd, this.ParameterList, out this.dt);
                     break;
                 case "Summary":
-                    res = DBProxy.Current.Select("", cmdSummary, ParameterList, out dtSummary);
+                    res = DBProxy.Current.Select(string.Empty, this.cmdSummary, this.ParameterList, out this.dtSummary);
                     break;
                 case "Detail":
-                    res = DBProxy.Current.Select("", cmdDetail, ParameterList, out dtDetail);
+                    res = DBProxy.Current.Select(string.Empty, this.cmdDetail, this.ParameterList, out this.dtDetail);
                     break;
                 case "Debit Schedule Detail":
-                    res = DBProxy.Current.Select("", cmdSchedule, ParameterList, out dtSchedule);
+                    res = DBProxy.Current.Select(string.Empty, this.cmdSchedule, this.ParameterList, out this.dtSchedule);
                     break;
                 default:
-                    res = DBProxy.Current.Select("", cmd, ParameterList, out dt); //預設
-                    break;
-            }           
-      
-            return res;
-        }
-       
-        protected override bool OnToExcel(Win.ReportDefinition report)
-        {
-            switch (ReportType)
-            {
-                case "Debit Note List":
-                    if (dt == null || dt.Rows.Count == 0)
-                    {
-                        MyUtility.Msg.ErrorBox("Data not found");
-                        return false;
-                    }
-                    break;
-                case "Summary":
-                    if (dtSummary == null || dtSummary.Rows.Count == 0)
-                    {
-                        MyUtility.Msg.ErrorBox("Data not found");
-                        return false;
-                    }
-                    break;
-                case "Detail":
-                    if (dtDetail == null || dtDetail.Rows.Count == 0)
-                    {
-                        MyUtility.Msg.ErrorBox("Data not found");
-                        return false;
-                    }
-                    break;
-                case "Debit Schedule Detail":
-                    if (dtSchedule == null || dtSchedule.Rows.Count == 0)
-                    {
-                        MyUtility.Msg.ErrorBox("Data not found");
-                        return false;
-                    }
-                    break;
-                default:
-                    if (dt == null || dt.Rows.Count == 0) //預設
-                    {
-                        MyUtility.Msg.ErrorBox("Data not found");
-                        return false;
-                    }
+                    res = DBProxy.Current.Select(string.Empty, this.cmd, this.ParameterList, out this.dt); // 預設
                     break;
             }
 
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+            return res;
+        }
+
+        protected override bool OnToExcel(Win.ReportDefinition report)
+        {
+            switch (this.reportType)
+            {
+                case "Debit Note List":
+                    if (this.dt == null || this.dt.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
+
+                    break;
+                case "Summary":
+                    if (this.dtSummary == null || this.dtSummary.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
+
+                    break;
+                case "Detail":
+                    if (this.dtDetail == null || this.dtDetail.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
+
+                    break;
+                case "Debit Schedule Detail":
+                    if (this.dtSchedule == null || this.dtSchedule.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
+
+                    break;
+                default:
+                    if (this.dt == null || this.dt.Rows.Count == 0) // 預設
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
+
+                    break;
+            }
+
+            var saveDialog = MyExcelPrg.GetSaveFileDialog(MyExcelPrg.Filter_Excel);
 
             if ("Debit Note List".EqualString(this.comboReportType.Text))
             {
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNote(LocalSupplier).xltx");
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dt);
+                SaveXltReportCls x1 = new SaveXltReportCls("Subcon_R36_DebitNote(LocalSupplier).xltx");
+                SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(this.dt);
                 dt1.BoAutoFitRow = true;
                 x1.DicDatas.Add("##SD", dt1);
                 dt1.ShowHeader = false;
                 x1.Save();
                 return true;
             }
-
             else if ("Summary".EqualString(this.comboReportType.Text))
             {
-                
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier).xltx");
-                string d1 = (MyUtility.Check.Empty(debitdate1)) ? "" : Convert.ToDateTime(debitdate1).ToString("yyyy/MM/dd");
-                string d2 = (MyUtility.Check.Empty(debitdate2)) ? "" : Convert.ToDateTime(debitdate2).ToString("yyyy/MM/dd");
-                string d3 = (MyUtility.Check.Empty(aprdate1)) ? "" : Convert.ToDateTime(aprdate1).ToString("yyyy/MM/dd");
-                string d4 = (MyUtility.Check.Empty(aprdate2)) ? "" : Convert.ToDateTime(aprdate2).ToString("yyyy/MM/dd");
-                string d5 = (MyUtility.Check.Empty(SettledDate1)) ? "" : Convert.ToDateTime(SettledDate1).ToString("yyyy/MM/dd");
-                string d6 = (MyUtility.Check.Empty(SettledDate2)) ? "" : Convert.ToDateTime(SettledDate2).ToString("yyyy/MM/dd");
-               
+                SaveXltReportCls x1 = new SaveXltReportCls("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier).xltx");
+                string d1 = MyUtility.Check.Empty(this.debitdate1) ? string.Empty : Convert.ToDateTime(this.debitdate1).ToString("yyyy/MM/dd");
+                string d2 = MyUtility.Check.Empty(this.debitdate2) ? string.Empty : Convert.ToDateTime(this.debitdate2).ToString("yyyy/MM/dd");
+                string d3 = MyUtility.Check.Empty(this.aprdate1) ? string.Empty : Convert.ToDateTime(this.aprdate1).ToString("yyyy/MM/dd");
+                string d4 = MyUtility.Check.Empty(this.aprdate2) ? string.Empty : Convert.ToDateTime(this.aprdate2).ToString("yyyy/MM/dd");
+                string d5 = MyUtility.Check.Empty(this.SettledDate1) ? string.Empty : Convert.ToDateTime(this.SettledDate1).ToString("yyyy/MM/dd");
+                string d6 = MyUtility.Check.Empty(this.SettledDate2) ? string.Empty : Convert.ToDateTime(this.SettledDate2).ToString("yyyy/MM/dd");
+
                 x1.DicDatas.Add("##DebiteDate", d1 + "~" + d2);
                 x1.DicDatas.Add("##ApprovedDate", d3 + "~" + d4);
                 x1.DicDatas.Add("##SettledDate", d5 + "~" + d6);
-                x1.DicDatas.Add("##SDNO", SDNo1 + "~" + SDNo2);
-                x1.DicDatas.Add("##Supplier", Supplier);
-                x1.DicDatas.Add("##Handle", handle);
-                x1.DicDatas.Add("##SMR", smr);
-                x1.DicDatas.Add("##FACTORY", factoryid);
-                x1.DicDatas.Add("##Status", status);
-                x1.DicDatas.Add("##PaymentSettled", payment);
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dtSummary1 = new SaveXltReportCls.XltRptTable(dtSummary);
+                x1.DicDatas.Add("##SDNO", this.SDNo1 + "~" + this.SDNo2);
+                x1.DicDatas.Add("##Supplier", this.Supplier);
+                x1.DicDatas.Add("##Handle", this.handle);
+                x1.DicDatas.Add("##SMR", this.smr);
+                x1.DicDatas.Add("##FACTORY", this.factoryid);
+                x1.DicDatas.Add("##Status", this.status);
+                x1.DicDatas.Add("##PaymentSettled", this.payment);
+                SaveXltReportCls.XltRptTable dtSummary1 = new SaveXltReportCls.XltRptTable(this.dtSummary);
                 dtSummary1.BoAutoFitColumn = true;
                 x1.DicDatas.Add("##SD", dtSummary1);
                 dtSummary1.ShowHeader = false;
 
-                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier)"));
+                x1.Save(Class.MicrosoftFile.GetName("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier)"));
                 return true;
             }
-
             else if ("Detail".EqualString(this.comboReportType.Text))
             {
-                
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNoteDetail(LocalSupplier).xltx");
-                string d1 = (MyUtility.Check.Empty(debitdate1)) ? "" : Convert.ToDateTime(debitdate1).ToString("yyyy/MM/dd");
-                string d2 = (MyUtility.Check.Empty(debitdate2)) ? "" : Convert.ToDateTime(debitdate2).ToString("yyyy/MM/dd");
-                string d3 = (MyUtility.Check.Empty(aprdate1)) ? "" : Convert.ToDateTime(aprdate1).ToString("yyyy/MM/dd");
-                string d4 = (MyUtility.Check.Empty(aprdate2)) ? "" : Convert.ToDateTime(aprdate2).ToString("yyyy/MM/dd");
-                string d5 = (MyUtility.Check.Empty(SettledDate1)) ? "" : Convert.ToDateTime(SettledDate1).ToString("yyyy/MM/dd");
-                string d6 = (MyUtility.Check.Empty(SettledDate2)) ? "" : Convert.ToDateTime(SettledDate2).ToString("yyyy/MM/dd");
+                SaveXltReportCls x1 = new SaveXltReportCls("Subcon_R36_DebitNoteDetail(LocalSupplier).xltx");
+                string d1 = MyUtility.Check.Empty(this.debitdate1) ? string.Empty : Convert.ToDateTime(this.debitdate1).ToString("yyyy/MM/dd");
+                string d2 = MyUtility.Check.Empty(this.debitdate2) ? string.Empty : Convert.ToDateTime(this.debitdate2).ToString("yyyy/MM/dd");
+                string d3 = MyUtility.Check.Empty(this.aprdate1) ? string.Empty : Convert.ToDateTime(this.aprdate1).ToString("yyyy/MM/dd");
+                string d4 = MyUtility.Check.Empty(this.aprdate2) ? string.Empty : Convert.ToDateTime(this.aprdate2).ToString("yyyy/MM/dd");
+                string d5 = MyUtility.Check.Empty(this.SettledDate1) ? string.Empty : Convert.ToDateTime(this.SettledDate1).ToString("yyyy/MM/dd");
+                string d6 = MyUtility.Check.Empty(this.SettledDate2) ? string.Empty : Convert.ToDateTime(this.SettledDate2).ToString("yyyy/MM/dd");
                 x1.DicDatas.Add("##DebiteDate", d1 + "~" + d2);
                 x1.DicDatas.Add("##ApprovedDate", d3 + "~" + d4);
                 x1.DicDatas.Add("##SettledDate", d5 + "~" + d6);
-                x1.DicDatas.Add("##SDNO", SDNo1 + "~" + SDNo2);
-                x1.DicDatas.Add("##Supplier", Supplier);
-                x1.DicDatas.Add("##Handle", handle);
-                x1.DicDatas.Add("##SMR", smr);
-                x1.DicDatas.Add("##FACTORY", factoryid);
-                x1.DicDatas.Add("##Status", status);
-                x1.DicDatas.Add("##PaymentSettled", payment);
-                //SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtDetail);
-                //xdt.boAutoFitColumn = true;
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dtDetail1 = new SaveXltReportCls.XltRptTable(dtDetail);
+                x1.DicDatas.Add("##SDNO", this.SDNo1 + "~" + this.SDNo2);
+                x1.DicDatas.Add("##Supplier", this.Supplier);
+                x1.DicDatas.Add("##Handle", this.handle);
+                x1.DicDatas.Add("##SMR", this.smr);
+                x1.DicDatas.Add("##FACTORY", this.factoryid);
+                x1.DicDatas.Add("##Status", this.status);
+                x1.DicDatas.Add("##PaymentSettled", this.payment);
+
+                // SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtDetail);
+                // xdt.boAutoFitColumn = true;
+                SaveXltReportCls.XltRptTable dtDetail1 = new SaveXltReportCls.XltRptTable(this.dtDetail);
                 dtDetail1.BoAutoFitColumn = true;
                 x1.DicDatas.Add("##SD", dtDetail1);
                 dtDetail1.ShowHeader = false;
 
-                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitNoteDetail(LocalSupplier)"));
+                x1.Save(Class.MicrosoftFile.GetName("Subcon_R36_DebitNoteDetail(LocalSupplier)"));
                 return true;
             }
-
             else if ("Debit Schedule Detail".EqualString(this.comboReportType.Text))
             {
-               
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitScheduleDetail(LocalSupplier).xltx");
-                string d1 = (MyUtility.Check.Empty(debitdate1)) ? "" : Convert.ToDateTime(debitdate1).ToString("yyyy/MM/dd");
-                string d2 = (MyUtility.Check.Empty(debitdate2)) ? "" : Convert.ToDateTime(debitdate2).ToString("yyyy/MM/dd");
-                string d3 = (MyUtility.Check.Empty(aprdate1)) ? "" : Convert.ToDateTime(aprdate1).ToString("yyyy/MM/dd");
-                string d4 = (MyUtility.Check.Empty(aprdate2)) ? "" : Convert.ToDateTime(aprdate2).ToString("yyyy/MM/dd");
-                string d5 = (MyUtility.Check.Empty(SettledDate1)) ? "" : Convert.ToDateTime(SettledDate1).ToString("yyyy/MM/dd");
-                string d6 = (MyUtility.Check.Empty(SettledDate2)) ? "" : Convert.ToDateTime(SettledDate2).ToString("yyyy/MM/dd");
+                SaveXltReportCls x1 = new SaveXltReportCls("Subcon_R36_DebitScheduleDetail(LocalSupplier).xltx");
+                string d1 = MyUtility.Check.Empty(this.debitdate1) ? string.Empty : Convert.ToDateTime(this.debitdate1).ToString("yyyy/MM/dd");
+                string d2 = MyUtility.Check.Empty(this.debitdate2) ? string.Empty : Convert.ToDateTime(this.debitdate2).ToString("yyyy/MM/dd");
+                string d3 = MyUtility.Check.Empty(this.aprdate1) ? string.Empty : Convert.ToDateTime(this.aprdate1).ToString("yyyy/MM/dd");
+                string d4 = MyUtility.Check.Empty(this.aprdate2) ? string.Empty : Convert.ToDateTime(this.aprdate2).ToString("yyyy/MM/dd");
+                string d5 = MyUtility.Check.Empty(this.SettledDate1) ? string.Empty : Convert.ToDateTime(this.SettledDate1).ToString("yyyy/MM/dd");
+                string d6 = MyUtility.Check.Empty(this.SettledDate2) ? string.Empty : Convert.ToDateTime(this.SettledDate2).ToString("yyyy/MM/dd");
                 x1.DicDatas.Add("##DebiteDate", d1 + "~" + d2);
                 x1.DicDatas.Add("##ApprovedDate", d3 + "~" + d4);
                 x1.DicDatas.Add("##SettledDate", d5 + "~" + d6);
-                x1.DicDatas.Add("##SDNO", SDNo1 + "~" + SDNo2);
-                x1.DicDatas.Add("##Supplier", Supplier);
-                x1.DicDatas.Add("##Handle", handle);
-                x1.DicDatas.Add("##SMR", smr);
-                x1.DicDatas.Add("##FACTORY", factoryid);
-                x1.DicDatas.Add("##Status", status);
-                x1.DicDatas.Add("##PaymentSettled", payment);
-                //SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtSchedule);
-                //xdt.boAutoFitColumn = true;
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dtSchedule1 = new SaveXltReportCls.XltRptTable(dtSchedule);
+                x1.DicDatas.Add("##SDNO", this.SDNo1 + "~" + this.SDNo2);
+                x1.DicDatas.Add("##Supplier", this.Supplier);
+                x1.DicDatas.Add("##Handle", this.handle);
+                x1.DicDatas.Add("##SMR", this.smr);
+                x1.DicDatas.Add("##FACTORY", this.factoryid);
+                x1.DicDatas.Add("##Status", this.status);
+                x1.DicDatas.Add("##PaymentSettled", this.payment);
+
+                // SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtSchedule);
+                // xdt.boAutoFitColumn = true;
+                SaveXltReportCls.XltRptTable dtSchedule1 = new SaveXltReportCls.XltRptTable(this.dtSchedule);
                 dtSchedule1.BoAutoFitColumn = true;
                 x1.DicDatas.Add("##SD", dtSchedule1);
                 dtSchedule1.ShowHeader = false;
 
-                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitScheduleDetail(LocalSupplier)"));
+                x1.Save(Class.MicrosoftFile.GetName("Subcon_R36_DebitScheduleDetail(LocalSupplier)"));
                 return true;
             }
 

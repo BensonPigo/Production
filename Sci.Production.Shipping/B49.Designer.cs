@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtSubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.label17 = new Sci.Win.UI.Label();
             this.label16 = new Sci.Win.UI.Label();
             this.numKGPcs = new Sci.Win.UI.NumericBox();
@@ -48,7 +48,7 @@
             this.labWidth = new Sci.Win.UI.Label();
             this.labLength = new Sci.Win.UI.Label();
             this.dispModel = new Sci.Win.UI.DisplayBox();
-            this.txtunit_fty = new Sci.Production.Class.txtunit_fty();
+            this.txtunit_fty = new Sci.Production.Class.Txtunit_fty();
             this.dispType = new Sci.Win.UI.DisplayBox();
             this.editDescription = new Sci.Win.UI.EditBox();
             this.txtCustomerCode = new Sci.Win.UI.TextBox();
@@ -468,7 +468,7 @@
         }
 
         #endregion
-        private Class.txtsubconNoConfirm txtSubconSupplier;
+        private Class.TxtsubconNoConfirm txtSubconSupplier;
         private Win.UI.Label label17;
         private Win.UI.Label label16;
         private Win.UI.NumericBox numKGPcs;
@@ -489,7 +489,7 @@
         private Win.UI.Label labLength;
         private Win.UI.Label labWidth;
         private Win.UI.DisplayBox dispType;
-        private Class.txtunit_fty txtunit_fty;
+        private Class.Txtunit_fty txtunit_fty;
         private Win.UI.EditBox editDescription;
         private Win.UI.TextBox txtCustomerCode;
         private Win.UI.DisplayBox dispCustomerUnit;

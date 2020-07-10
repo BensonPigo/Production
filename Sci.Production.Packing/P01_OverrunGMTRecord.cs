@@ -8,7 +8,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P01_OverrunGMTRecord
     /// </summary>
-    public partial class P01_OverrunGMTRecord : Sci.Win.Subs.Base
+    public partial class P01_OverrunGMTRecord : Win.Subs.Base
     {
         private string orderID;
 

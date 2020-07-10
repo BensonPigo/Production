@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
@@ -11,9 +7,10 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// B06
     /// </summary>
-    public partial class B06 : Sci.Win.Tems.Input1
+    public partial class B06 : Win.Tems.Input1
     {
         private string useAPS;
+
         /// <summary>
         /// B06
         /// </summary>
@@ -21,8 +18,9 @@ namespace Sci.Production.PPIC
         public B06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            string sqlCommand = "select UseAPS from factory WITH (NOLOCK) where ID = '" + Sci.Env.User.Factory + "'";
+            string sqlCommand = "select UseAPS from factory WITH (NOLOCK) where ID = '" + Env.User.Factory + "'";
             this.useAPS = MyUtility.GetValue.Lookup(sqlCommand, null);
+
             // string sqlCommand2 = "select IsSampleRoom from factory where ID = '" + Sci.Env.User.Factory + "'";
             // string IsSampleRoom = MyUtility.GetValue.Lookup(sqlCommand2, null);
             // if (IsSampleRoom == "False")
@@ -40,15 +38,15 @@ namespace Sci.Production.PPIC
                 this.IsSupportNew = false;
             }
 
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
-            this.txtCellNo.MDivisionID = Sci.Env.User.Keyword;
+            this.DefaultFilter = "FactoryID = '" + Env.User.Factory + "'";
+            this.txtCellNo.MDivisionID = Env.User.Keyword;
         }
 
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
         }
 
         /// <inheritdoc/>

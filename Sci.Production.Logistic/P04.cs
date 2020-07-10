@@ -16,7 +16,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P04
     /// </summary>
-    public partial class P04 : Sci.Win.Tems.QueryForm
+    public partial class P04 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_location;
@@ -80,7 +80,7 @@ namespace Sci.Production.Logistic
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
@@ -125,7 +125,6 @@ namespace Sci.Production.Logistic
             {
                 rowIndex = e.RowIndex;
                 columIndex = e.ColumnIndex;
-
             };
 
             this.gridPackID.Sorted += (s, e) =>
@@ -165,6 +164,7 @@ namespace Sci.Production.Logistic
                 MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < TransferSlipNo > or < PO# > can not empty!");
                 return;
             }
+
             this.numSelectQty.Value = 0;
             this.numTTLCTNQty.Value = 0;
             this.gridData = null;
@@ -245,13 +245,13 @@ namespace Sci.Production.Logistic
                             //                                    set ClogLocationId = @clogLocationId, Remark = @remark
                             //                                    where id = @id and CTNStartNo = @ctnStartNo;";
 
-                            //ClogLocationId更新，EditLocationDate才要寫入，不過原本作法全部覆蓋，因此需要自己撈資料來比對
+                            // ClogLocationId更新，EditLocationDate才要寫入，不過原本作法全部覆蓋，因此需要自己撈資料來比對
                             DataTable tmpTable;
-                            string chkCmd =string.Format( @"SELECT ClogLocationId FROM PackingList_Detail PL WITH (NOLOCK) WHERE id ='{0}' AND CTNStartNo = '{1}' ", currentRow["ID"].ToString(), currentRow["CTNStartNo"].ToString());
+                            string chkCmd = string.Format(@"SELECT ClogLocationId FROM PackingList_Detail PL WITH (NOLOCK) WHERE id ='{0}' AND CTNStartNo = '{1}' ", currentRow["ID"].ToString(), currentRow["CTNStartNo"].ToString());
 
                             DualResult result1CHK = DBProxy.Current.Select(null, chkCmd, out tmpTable);
 
-                            string updateCmd="";
+                            string updateCmd = string.Empty;
 
                             if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
                             {
@@ -297,9 +297,10 @@ namespace Sci.Production.Logistic
                                 sp7.ParameterName = "@EditLocationDate";
                                 sp7.Value = DateTime.Now;
                                 sp8.ParameterName = "@EditLocationName";
-                                sp8.Value = Sci.Env.User.UserID;
+                                sp8.Value = Env.User.UserID;
                             }
-                            //EditLocationDate
+
+                            // EditLocationDate
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
 
@@ -315,7 +316,7 @@ namespace Sci.Production.Logistic
                                 cmds.Add(sp8);
                             }
                             #endregion
-                            DualResult result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
+                            DualResult result = DBProxy.Current.Execute(null, updateCmd, cmds);
                             if (!result)
                             {
                                 lastResult = false;
@@ -486,17 +487,17 @@ namespace Sci.Production.Logistic
                 }
 
                 rd.ReportResource = reportresource;
-                rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("Report_UpdateLocation", report_UpdateLocation));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Keyword))));
+                rd.ReportDataSources.Add(new KeyValuePair<string, object>("Report_UpdateLocation", report_UpdateLocation));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Env.User.Keyword))));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("request", MyUtility.Convert.GetString(this.comboRequestby.SelectedValue)));
 
-                using (var frm = new Sci.Win.Subs.ReportView(rd))
+                using (var frm = new Win.Subs.ReportView(rd))
                 {
                     frm.ShowDialog(this);
                 }
             }
         }
-        
+
         private string whereS;
 
         private void BtnImportFromBarcode_Click(object sender, EventArgs e)
@@ -509,10 +510,11 @@ namespace Sci.Production.Logistic
             {
                 this.numSelectQty.Value = 0;
                 this.numTTLCTNQty.Value = 0;
+
                 // 讀檔案
                 string wheresql = string.Empty;
                 this.whereS = string.Empty;
-                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
+                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, Encoding.UTF8))
                 {
                     string line;
                     while ((line = reader.ReadLine()) != null)
@@ -524,7 +526,7 @@ namespace Sci.Production.Logistic
                         {
                             if (item.Length >= 13)
                             {
-                                wheresql += $" or (PL.ID = '{item.Substring(0, 13)}' and PLD.CTNStartNo = '{item.Substring(13, item.Length-13)}') ";
+                                wheresql += $" or (PL.ID = '{item.Substring(0, 13)}' and PLD.CTNStartNo = '{item.Substring(13, item.Length - 13)}') ";
                             }
                         }
                     }
@@ -613,7 +615,7 @@ from (
                 -- 不在 CFA 送回 Clog 的路上
                 and PLD.CFAReturnClogDate is null
                 and PLD.CTNQty = 1
-                and orders.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
+                and orders.MDivisionID =  '{0}'", Env.User.Keyword));
             #region 組條件
             if (!isimport)
             {

@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci;
 using Sci.Data;
 
 namespace Sci.Production.Centralized
@@ -15,7 +8,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// IE_B04
     /// </summary>
-    public partial class IE_B04 : Sci.Win.Tems.Input1
+    public partial class IE_B04 : Win.Tems.Input1
     {
         /// <summary>
         /// IE_B04

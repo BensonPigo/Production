@@ -2,11 +2,8 @@
 using Sci.Data;
 using Sci.Win.Tools;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
@@ -14,9 +11,9 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// PPIC_P14
     /// </summary>
-    public partial class P14 : Sci.Win.Tems.Input1
+    public partial class P14 : Win.Tems.Input1
     {
-        private string M = Sci.Env.User.Keyword;
+        private string M = Env.User.Keyword;
         private DualResult result;
 
         /// <summary>
@@ -145,7 +142,7 @@ and MDivisionID = '{this.M}' and (category = 'S' or (category = 'B' and localord
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "KR", " ChangeKPILETARequest ", DateTime.Today, 3, "Id", null);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "KR", " ChangeKPILETARequest ", DateTime.Today, 3, "Id", null);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -248,13 +245,13 @@ and MDivisionID = '{this.M}' and (category = 'S' or (category = 'B' and localord
             string poHandle = MyUtility.GetValue.Lookup($"select EMail from TPEPass1 where ID=(select POHandle from PO WITH (NOLOCK) where ID='{poid}')");
             string poSMR = MyUtility.GetValue.Lookup($"select EMail from TPEPass1 where ID=(select POSMR from PO WITH (NOLOCK) where ID='{poid}')");
             string toAddress = mrHandle + ";" + smr + ";" + poHandle + ";" + poSMR;
-            string ccAddress = "Planning@sportscity.com.tw ; " + Sci.Env.User.MailAddress;
+            string ccAddress = "Planning@sportscity.com.tw ; " + Env.User.MailAddress;
             string subject = $" Change Order KPI LETA Request – Request#:{this.CurrentMaintain["id"]} , SP#:{this.CurrentMaintain["Orderid"]} ";
             string content = $@"Hi All, 
 Please help to change KPI LETA to {MyUtility.Convert.GetDate(this.CurrentMaintain["NewKPILETA"]).Value.ToShortDateString()} from {MyUtility.Convert.GetDate(this.CurrentMaintain["OldKPILETA"]).Value.ToShortDateString()}
 
 Thank you.";
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, content, false, true);
+            var email = new MailTo(Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, content, false, true);
             email.ShowDialog(this);
         }
     }

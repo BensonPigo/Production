@@ -4,35 +4,35 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
     static class P18_Utility
     {
-
         public static DualResult CheckDetailPOID(string poID, string fromFtyID, out string dataFrom)
         {
             dataFrom = "Po_Supp_Detail";
-            string strCheckOrders = string.Format(@"
+            string strCheckOrders = string.Format(
+                @"
 select  o.id
 from Orders o
 inner join dbo.Factory f on o.FactoryID = f.ID
 where   o.id = '{0}'
         and f.MDivisionID = '{1}' 
-", poID, Sci.Env.User.Keyword);
+", poID, Env.User.Keyword);
 
-            string strCheckInventory = string.Format(@"
+            string strCheckInventory = string.Format(
+                @"
 select  c.POID 
 from Inventory c WITH (NOLOCK) 
 inner join dbo.Orders o on c.POID = o.id
 inner join dbo.Factory f on o.FactoryID = f.ID
 where   c.POID = '{0}'
         and f.MDivisionID = '{1}' 
-", poID, Sci.Env.User.Keyword);
+", poID, Env.User.Keyword);
 
-            string strCheckInvtrans = string.Format(@"
+            string strCheckInvtrans = string.Format(
+                @"
 select id from Invtrans where InventoryPOID = '{0}' and type = '3'   and FactoryID = '{1}'
 ", poID, fromFtyID);
 
@@ -46,16 +46,14 @@ select id from Invtrans where InventoryPOID = '{0}' and type = '3'   and Factory
                 {
                     dataFrom = "Invtrans";
                 }
-
             }
 
             return new DualResult(true);
         }
 
-
         public static DualResult CheckDetailSeq(string seq, string fromFtyID, DataRow CurrentDetailData)
         {
-            //check Seq Length
+            // check Seq Length
             string[] seqSplit = seq.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (seqSplit.Length < 2)
             {
@@ -68,7 +66,9 @@ select id from Invtrans where InventoryPOID = '{0}' and type = '3'   and Factory
             if (CurrentDetailData["DataFrom"].Equals("Po_Supp_Detail"))
             {
                 #region check Po_Supp_Detail seq 1 2
-                bool isExistsPoSuppDetail = MyUtility.Check.Seek(string.Format(@"
+                bool isExistsPoSuppDetail = MyUtility.Check.Seek(
+                    string.Format(
+                    @"
 select  pounit
         , stockunit = dbo.GetStockUnitBySPSeq (id, seq1, seq2)
         , fabrictype
@@ -91,7 +91,9 @@ where   id = '{0}'
                 }
                 else
                 {
-                    if (!MyUtility.Check.Seek(string.Format(@"
+                    if (!MyUtility.Check.Seek(
+                        string.Format(
+                        @"
 select  poid = p.POID 
         , seq = left (p.seq1 + ' ', 3) + p.seq2
         , p.seq1
@@ -103,19 +105,19 @@ from dbo.Inventory p WITH (NOLOCK)
 where   poid = '{0}' 
         and seq1 = '{1}'
         and seq2 = '{2}' 
-        and factoryid = '{3}'", CurrentDetailData["poid"]
-                     , seq1
-                     , seq2
-                     , fromFtyID), out dr, null))
+        and factoryid = '{3}'", CurrentDetailData["poid"],
+                        seq1,
+                        seq2,
+                        fromFtyID), out dr, null))
                     {
                         return new DualResult(false, "Seq Data not found!");
                     }
                     else
                     {
-                        CurrentDetailData["stockunit"] = "";
+                        CurrentDetailData["stockunit"] = string.Empty;
                         CurrentDetailData["Description"] = dr["description"];
                         CurrentDetailData["fabrictype"] = dr["fabrictype"];
-                        CurrentDetailData["Fabric"] = "";
+                        CurrentDetailData["Fabric"] = string.Empty;
                     }
                 }
                 #endregion
@@ -123,7 +125,9 @@ where   poid = '{0}'
             else
             {
                 #region check Invtrans seq 1 2
-                if (!MyUtility.Check.Seek(string.Format(@"
+                if (!MyUtility.Check.Seek(
+                    string.Format(
+                    @"
 select    fabrictype
 from Invtrans WITH (NOLOCK) 
 where   InventoryPOID = '{0}' 
@@ -134,9 +138,8 @@ where   InventoryPOID = '{0}'
                 }
                 else
                 {
-
-                    CurrentDetailData["stockunit"] = "";
-                    CurrentDetailData["Description"] = "";
+                    CurrentDetailData["stockunit"] = string.Empty;
+                    CurrentDetailData["Description"] = string.Empty;
                     CurrentDetailData["fabrictype"] = dr["fabrictype"];
                 }
 
@@ -148,8 +151,8 @@ where   InventoryPOID = '{0}'
             CurrentDetailData["seq2"] = seq2;
             if (CurrentDetailData["fabrictype"].ToString().ToUpper() != "F")
             {
-                //CurrentDetailData["Roll"] = "";
-                //CurrentDetailData["Dyelot"] = "";
+                // CurrentDetailData["Roll"] = "";
+                // CurrentDetailData["Dyelot"] = "";
             }
 
             return new DualResult(true);
@@ -158,7 +161,8 @@ where   InventoryPOID = '{0}'
         public static DualResult CheckDetailStockTypeLocation(string stockType, string curLocation, out string newLocation)
         {
             newLocation = string.Empty;
-            string sqlcmd = string.Format(@"
+            string sqlcmd = string.Format(
+                @"
 SELECT  id
         , Description
         , StockType 
@@ -173,24 +177,24 @@ WHERE   StockType='{0}'
             List<string> trueLocation = new List<string>();
             foreach (string location in getLocation)
             {
-                if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !location.EqualString(string.Empty))
                 {
                     selectId &= false;
                     errLocation.Add(location);
                 }
-                else if (!(location.EqualString("")))
+                else if (!location.EqualString(string.Empty))
                 {
                     trueLocation.Add(location);
                 }
             }
 
-            //去除錯誤的Location將正確的Location填回
+            // 去除錯誤的Location將正確的Location填回
             trueLocation.Sort();
-            newLocation = string.Join(",", (trueLocation).ToArray());
+            newLocation = string.Join(",", trueLocation.ToArray());
 
             if (!selectId)
             {
-                return new DualResult(false, "Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!");
+                return new DualResult(false, "Location : " + string.Join(",", errLocation.ToArray()) + "  Data not found !!");
             }
 
             return new DualResult(true);
@@ -199,10 +203,12 @@ WHERE   StockType='{0}'
         public static DualResult CheckRollExists(string TransferInID, DataRow checkRow)
         {
             DataRow dr;
-            //判斷 物料 是否為 布，布料才需要 Roll & Dyelot
+
+            // 判斷 物料 是否為 布，布料才需要 Roll & Dyelot
             if (checkRow["fabrictype"].ToString().ToUpper() == "F")
             {
-                string checkSql = string.Format(@"
+                string checkSql = string.Format(
+                    @"
 select  1
     From dbo.TransferIn TI
 	inner join dbo.TransferIn_Detail TID on TI.ID = TID.ID
@@ -217,7 +223,8 @@ select  1
 
                 if (MyUtility.Check.Seek(checkSql, out dr, null))
                 {
-                    return new DualResult(false, string.Format(@"
+                    return new DualResult(false, string.Format(
+                        @"
 The Deylot of
 <SP#>:{0}, <Seq>:{1}, <Roll>:{2}, <Deylot>:{3} already exists
 ", checkRow["poid"], checkRow["seq1"].ToString() + " " + checkRow["seq2"].ToString(), checkRow["roll"], checkRow["Dyelot"].ToString().Trim()));
@@ -226,6 +233,5 @@ The Deylot of
 
             return new DualResult(true);
         }
-
     }
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Ict.Win;
 
 namespace Sci.Production.Basic
@@ -12,7 +6,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B12
     /// </summary>
-    public partial class B12 : Sci.Win.Tems.Input6
+    public partial class B12 : Win.Tems.Input6
     {
         /// <summary>
         /// B12

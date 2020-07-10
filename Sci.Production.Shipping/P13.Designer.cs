@@ -34,7 +34,7 @@
             this.txtSP2 = new Sci.Win.UI.TextBox();
             this.txtSP1 = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
@@ -228,7 +228,7 @@
         private Win.UI.TextBox txtSP2;
         private Win.UI.TextBox txtSP1;
         private Win.UI.Label labelSPNo;
-        private Class.txtbrand txtbrand1;
+        private Class.Txtbrand txtbrand1;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Win.UI.DateRange dateBuyerDelivery;

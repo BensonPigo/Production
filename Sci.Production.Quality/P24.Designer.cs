@@ -47,7 +47,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label1 = new Sci.Win.UI.Label();
-            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             this.btnUpdateAll = new Sci.Win.UI.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel7.SuspendLayout();
@@ -329,7 +329,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Label label1;
-        private Class.comboDropDownList comboDropDownList1;
+        private Class.ComboDropDownList comboDropDownList1;
         private Win.UI.Button btnUpdateAll;
         private System.Windows.Forms.Panel panel1;
     }

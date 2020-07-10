@@ -1,67 +1,66 @@
 ﻿using Ict;
 using Sci.Data;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
 namespace Sci.Production.Class
 {
-    public partial class comboFtyZone : Sci.Win.UI.ComboBox
+    /// <summary>
+    /// Combo FtyZone
+    /// </summary>
+    public partial class ComboFtyZone : Win.UI.ComboBox
     {
-        private bool _IssupportJunk = false;
-        private bool _FilteMDivision = false;
-        private string _SelectTable = "Factory";
-        private bool _isIncludeSampleRoom = false;
+        /// <summary>
+        /// Is support Junk
+        /// </summary>
+        public bool IssupportJunk { get; set; } = false;
 
-        public bool IssupportJunk
-        {
-            get { return _IssupportJunk; }
-            set { _IssupportJunk = value; }
-        }
-        public bool FilteMDivision
-        {
-            get { return _FilteMDivision; }
-            set { _FilteMDivision = value; }
-        }
-        public string SelectTable
-        {
-            get { return _SelectTable; }
-            set { _SelectTable = value; }
-        }
+        /// <summary>
+        /// Filte MDivision
+        /// </summary>
+        public bool FilteMDivision { get; set; } = false;
 
-        public bool IsIncludeSampleRoom
-        {
-            get { return _isIncludeSampleRoom; }
-            set { _isIncludeSampleRoom = value; }
-        }
+        /// <summary>
+        /// Select Table
+        /// </summary>
+        public string SelectTable { get; set; } = "Factory";
 
-        public comboFtyZone()
+        /// <summary>
+        /// Is Include Sample Room
+        /// </summary>
+        public bool IsIncludeSampleRoom { get; set; } = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComboFtyZone"/> class.
+        /// </summary>
+        public ComboFtyZone()
         {
-            InitializeComponent();
-            this.Size = new System.Drawing.Size(80, 23);            
+            this.InitializeComponent();
+            this.Size = new System.Drawing.Size(80, 23);
         }
 
-        public comboFtyZone(IContainer container)
+        /// <summary>
+        /// ComboFtyZone
+        /// </summary>
+        /// <param name="container">container</param>
+        public ComboFtyZone(IContainer container)
         {
             container.Add(this);
-            InitializeComponent();
-            this.Size = new System.Drawing.Size(80, 23);            
+            this.InitializeComponent();
+            this.Size = new System.Drawing.Size(80, 23);
         }
 
         /// <summary>
         /// Set ComboBox Data
         /// </summary>
         /// <param name="strMDivisionID">如果沒輸入，MDivision 預設 Sci.Env.User.Keywordd</param>
-        public void setDataSource(string strMDivisionID = null)
+        public void SetDataSource(string strMDivisionID = null)
         {
             DataTable dtFactoryData;
             DualResult result;
@@ -81,27 +80,29 @@ namespace Sci.Production.Class
         private string GetFtySQL(string strMDivisionID, out List<SqlParameter> listSqlPar)
         {
             listSqlPar = new List<SqlParameter>();
-            listSqlPar.Add(new SqlParameter("@MDivision", strMDivisionID.Empty() ? Sci.Env.User.Keyword : strMDivisionID));
+            listSqlPar.Add(new SqlParameter("@MDivision", strMDivisionID.Empty() ? Env.User.Keyword : strMDivisionID));
 
             #region SQL Filte
             List<string> listFilte = new List<string>();
-            if (this._IssupportJunk)
+            if (this.IssupportJunk)
             {
                 listFilte.Add("Junk = 0 ");
             }
 
-            if (!this._isIncludeSampleRoom && this._SelectTable == "Factory")
+            if (!this.IsIncludeSampleRoom && this.SelectTable == "Factory")
             {
                 listFilte.Add("IsSampleRoom = 0 ");
             }
 
-            if (this._FilteMDivision)
+            if (this.FilteMDivision)
             {
                 listFilte.Add("MDivisionID = @MDivision ");
             }
+
             listFilte.Add("isnull(FtyZone,'') <> '' ");
             #endregion
-            string sqlcmd = string.Format(@"
+            string sqlcmd = string.Format(
+                @"
 select *
 from (
     Select FtyZone = ''
@@ -112,13 +113,17 @@ from (
     {0}
 ) a
 order by FtyZone",
-            (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\r and ") : "",
-            _SelectTable);
+                (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\r and ") : string.Empty,
+                this.SelectTable);
 
             return sqlcmd;
         }
 
-        public DualResult setDataSourceAllFty()
+        /// <summary>
+        /// Set Data Source AllFty
+        /// </summary>
+        /// <returns>DualResult</returns>
+        public DualResult SetDataSourceAllFty()
         {
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
             string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS")).ToArray();
@@ -131,6 +136,7 @@ order by FtyZone",
                     connectionString.Add(connections);
                 }
             }
+
             DataTable dtFtyZone = null;
             foreach (string conString in connectionString)
             {
@@ -159,7 +165,6 @@ order by FtyZone",
                 }
             }
 
-            
             List<string> dicFtyZone = dtFtyZone.AsEnumerable().Select(s => s["FtyZone"].ToString()).Distinct().ToList();
             this.DataSource = dicFtyZone;
 

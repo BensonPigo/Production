@@ -1,29 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 
 namespace Sci.Production.Quality
 {
-    public partial class B20 : Sci.Win.Tems.Input1
+    public partial class B20 : Win.Tems.Input1
     {
         public B20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            btnSettingSort.Enabled = this.Perm.Edit;
+            this.btnSettingSort.Enabled = this.Perm.Edit;
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Numeric("Seq", header: "Seq", width: Widths.AnsiChars(5), minimum: 1, maximum: 255)
             .Text("ID", header: "Defect Code", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -31,14 +28,14 @@ namespace Sci.Production.Quality
             .Text("LocalDescription", header: "Local Desc", width: Widths.AnsiChars(20), iseditingreadonly: true)
             ;
             this.grid1.Columns["Seq"].DefaultCellStyle.BackColor = Color.Pink;
-
         }
+
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
             if (this.grid1 != null)
             {
-                if (EditMode)
+                if (this.EditMode)
                 {
                     this.grid1.IsEditingReadOnly = false;
                 }
@@ -48,6 +45,7 @@ namespace Sci.Production.Quality
                 }
             }
         }
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -57,19 +55,22 @@ namespace Sci.Production.Quality
             this.listControlBindingSource1.Position = -1;
             this.listControlBindingSource1.DataSource = dt;
         }
+
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtDefectType.ReadOnly = true;
         }
+
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(txtDefectType.Text))
+            if (MyUtility.Check.Empty(this.txtDefectType.Text))
             {
                 this.txtDefectType.Focus();
                 MyUtility.Msg.WarningBox("<Defect Type> cannot be empty! ");
                 return false;
             }
+
             if (this.IsDetailInserting)
             {
                 int seq = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("select max(seq) from GarmentDefectType"));
@@ -78,8 +79,10 @@ namespace Sci.Production.Quality
                 {
                     seq = 255;
                 }
-                CurrentMaintain["seq"] = seq;
+
+                this.CurrentMaintain["seq"] = seq;
             }
+
             return base.ClickSaveBefore();
         }
 
@@ -89,11 +92,13 @@ namespace Sci.Production.Quality
             foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState == DataRowState
             .Modified))
             {
-                update += $@" update GarmentDefectCode set seq = '{dr["seq"]}' , editname = '{Sci.Env.User.UserID}',editDate = getdate() where  GarmentDefectTypeID  = '{this.CurrentMaintain["ID"]}' and id = '{dr["id"]}'; ";
+                update += $@" update GarmentDefectCode set seq = '{dr["seq"]}' , editname = '{Env.User.UserID}',editDate = getdate() where  GarmentDefectTypeID  = '{this.CurrentMaintain["ID"]}' and id = '{dr["id"]}'; ";
             }
+
             DBProxy.Current.Execute(null, update);
             return base.ClickSavePost();
         }
+
         private void btnSettingSort_Click(object sender, EventArgs e)
         {
             B20_SettingSort f = new B20_SettingSort();

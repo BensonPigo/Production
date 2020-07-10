@@ -15,7 +15,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P03
     /// </summary>
-    public partial class P03 : Sci.Win.Tems.Input6
+    public partial class P03 : Win.Tems.Input6
     {
         private object totalGSD;
         private object totalCycleTime;
@@ -36,7 +36,7 @@ namespace Sci.Production.IE
             this.gridicon.Append.Visible = false;
 
             this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
-            this.detailpanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.detailpanel.Dock = DockStyle.Fill;
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ order by ld.No, ld.GroupKey", masterID);
             DataGridViewGeneratorTextColumnSettings notice = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings ppa = new DataGridViewGeneratorCheckBoxColumnSettings();
 
-            celltxtMachineGroup txtSubReason = (celltxtMachineGroup)celltxtMachineGroup.GetGridCell();
+            TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
             #region No.的Valid
             no.CellValidating += (s, e) =>
@@ -272,15 +272,15 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,43", dr["MachineTypeID"].ToString())
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8,43", dr["MachineTypeID"].ToString())
                             {
-                                Width = 590
+                                Width = 590,
                             };
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -305,12 +305,12 @@ order by ld.No, ld.GroupKey", masterID);
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
                         {
                             ParameterName = "@id",
-                            Value = e.FormattedValue.ToString()
+                            Value = e.FormattedValue.ToString(),
                         };
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
                         {
-                            sp1
+                            sp1,
                         };
                         string sqlCmd = "select ID from MachineType WITH (NOLOCK) where Junk = 0 and ID = @id";
                         DataTable machineData;
@@ -341,7 +341,7 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -349,9 +349,9 @@ order by ld.No, ld.GroupKey", masterID);
 
                             this.GetEmployee(null);
 
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,Name,Skill,SewingLine,Factory")
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,Name,Skill,SewingLine,Factory")
                             {
-                                Width = 700
+                                Width = 700,
                             };
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -407,9 +407,9 @@ order by ld.No, ld.GroupKey", masterID);
                 {
                     string sqlcmd = "select ID,Description from SewingMachineAttachment WITH (NOLOCK) where Junk = 0";
 
-                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null)
+                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null)
                     {
-                        Width = 666
+                        Width = 666,
                     };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -464,9 +464,9 @@ order by ld.No, ld.GroupKey", masterID);
                 {
                     string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
 
-                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
+                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
-                        Width = 666
+                        Width = 666,
                     };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -616,7 +616,7 @@ order by ld.No, ld.GroupKey", masterID);
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", this.CurrentMaintain["FactoryID"].ToString());
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
             {
-                ParameterName = "@id"
+                ParameterName = "@id",
             };
             if (iD != null)
             {
@@ -630,7 +630,7 @@ order by ld.No, ld.GroupKey", masterID);
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
             {
                 sp1,
-                sp2
+                sp2,
             };
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
@@ -886,7 +886,7 @@ WHERE Ukey={item["Ukey"]}
         /// <returns>bool</returns>
         protected override bool ClickPrint()
         {
-            Sci.Production.IE.P03_Print callNextForm = new Sci.Production.IE.P03_Print(this.CurrentMaintain, MyUtility.Convert.GetDecimal(this.numCPUPC.Value));
+            P03_Print callNextForm = new P03_Print(this.CurrentMaintain, MyUtility.Convert.GetDecimal(this.numCPUPC.Value));
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -1038,9 +1038,9 @@ WHERE Ukey={item["Ukey"]}
         {
             string sqlCmd = "select ID,SeasonID,BrandID,Description,CPU,Ukey from Style WITH (NOLOCK) where Junk = 0 order by ID,SeasonID";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,40,5,6", this.txtStyleID.Text, "Style#,Season,Brand,Description,CPU,Key", columndecimals: "0,0,0,0,3,0")
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "15,8,10,40,5,6", this.txtStyleID.Text, "Style#,Season,Brand,Description,CPU,Key", columndecimals: "0,0,0,0,3,0")
             {
-                Width = 838
+                Width = 838,
             };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -1062,7 +1062,7 @@ WHERE Ukey={item["Ukey"]}
             {
                 if (comboType.Rows.Count > 1)
                 {
-                    item = new Sci.Win.Tools.SelectItem(comboType, "Location", "2", string.Empty, "Combo Type");
+                    item = new Win.Tools.SelectItem(comboType, "Location", "2", string.Empty, "Combo Type");
                     returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -1088,7 +1088,7 @@ WHERE Ukey={item["Ukey"]}
         // Combo Type
         private void TxtStyleComboType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", this.CurrentMaintain["StyleUKey"].ToString()), "2", string.Empty, "Combo Type");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", this.CurrentMaintain["StyleUKey"].ToString()), "2", string.Empty, "Combo Type");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -1105,7 +1105,7 @@ WHERE Ukey={item["Ukey"]}
                 @"select Target from ChgOverTarget WITH (NOLOCK) where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate = (
 select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate <= GETDATE())",
                 type,
-                Sci.Env.User.Keyword));
+                Env.User.Keyword));
         }
 
         /// <summary>
@@ -1153,7 +1153,7 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
 
                 MyUtility.Msg.WarningBox(msg.ToString() + "Please select not hit target reason.");
                 string sqlCmd = "select ID, Description from IEReason WITH (NOLOCK) where Type = 'LM' and Junk = 0";
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "5,30", string.Empty);
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "5,30", string.Empty);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -1164,7 +1164,7 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
             }
 
             DualResult result;
-            string updateCmd = string.Format("update LineMapping set Status = 'Confirmed', IEReasonID = '{0}',EditName = '{1}', EditDate = GETDATE() where ID = {2}", notHitReasonID, Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update LineMapping set Status = 'Confirmed', IEReasonID = '{0}',EditName = '{1}', EditDate = GETDATE() where ID = {2}", notHitReasonID, Env.User.UserID, this.CurrentMaintain["ID"].ToString());
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -1181,7 +1181,7 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
             base.ClickUnconfirm();
 
             DualResult result;
-            string updateCmd = string.Format("update LineMapping set Status = 'New', IEReasonID = '',EditName = '{0}', EditDate = GETDATE() where ID = {1}", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update LineMapping set Status = 'New', IEReasonID = '',EditName = '{0}', EditDate = GETDATE() where ID = {1}", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -1200,9 +1200,9 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
         // Copy from other line mapping
         private void BtnCopyFromOtherLineMapping_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P03_CopyFromOtherStyle callNextForm = new Sci.Production.IE.P03_CopyFromOtherStyle();
+            P03_CopyFromOtherStyle callNextForm = new P03_CopyFromOtherStyle();
             DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 DataTable copyLineMapDetail;
                 string sqlCmd = string.Format(
@@ -1317,7 +1317,7 @@ where t.StyleID = s.ID
             P03CIPFinfo.Inspection = false;
             P03CIPFinfo.Pressing = false;
             P03CIPFinfo.Packing = false;
-            Sci.Production.IE.P03_CopyFromGSD_CIPF callNextForm = new Sci.Production.IE.P03_CopyFromGSD_CIPF();
+            P03_CopyFromGSD_CIPF callNextForm = new P03_CopyFromGSD_CIPF();
             callNextForm.ShowDialog(this);
 
             string ietmsUKEY = MyUtility.GetValue.Lookup($@" select i.Ukey from TimeStudy t WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on i.id = t.IETMSID and i.Version = t.IETMSVersion where t.id = '{timeStudy["ID"]}' ");

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using Sci.Data;
@@ -17,7 +14,7 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// P04
     /// </summary>
-    public partial class P04 : Sci.Win.Tems.QueryForm
+    public partial class P04 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P04
@@ -82,7 +79,7 @@ namespace Sci.Production.Sewing
             {
                var form = new P04_SaveComplete(dtSelectData);
                form.ShowDialog();
-                this.FindNow();
+               this.FindNow();
             }
         }
 
@@ -524,7 +521,7 @@ DROP TABLE #Child;");
         {
             #region SQL Parameter
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
-            listSqlParameter.Add(new SqlParameter("@Factory", Sci.Env.User.Factory));
+            listSqlParameter.Add(new SqlParameter("@Factory", Env.User.Factory));
             #endregion
             #region SQL Command
             string strSqlCmd = $@"

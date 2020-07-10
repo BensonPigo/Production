@@ -32,9 +32,9 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid = new Sci.Win.UI.Grid();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.btnCancel = new Sci.Win.UI.Button();
@@ -254,9 +254,9 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel1;
         private Win.UI.Grid grid;
-        private Class.txtfactory txtmfactory;
+        private Class.Txtfactory txtmfactory;
         private Win.UI.Label labelFactory;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelBrand;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.Button btnCancel;

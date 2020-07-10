@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
-    public partial class B49 : Sci.Win.Tems.Input1
+    public partial class B49 : Win.Tems.Input1
     {
         public B49(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -28,7 +26,7 @@ namespace Sci.Production.Shipping
 
         private void txtCustomerCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 @"select NLCode,HSCode,UnitID
 from VNContract_Detail WITH (NOLOCK) 
 where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
@@ -115,7 +113,7 @@ set UsageUnit = '{this.CurrentMaintain["UsageUnit"]}'
 ,PcsKg = '{pcsKG}'
 ,MiscRate = {miscRate}
 ,NLCodeEditDate = '{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")}'
-,NLCodeEditName = '{Sci.Env.User.UserID}'
+,NLCodeEditName = '{Env.User.UserID}'
 where id='{this.CurrentMaintain["ID"]}'
 ";
             DualResult result;
@@ -124,7 +122,7 @@ where id='{this.CurrentMaintain["ID"]}'
                 this.ShowErr(result);
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

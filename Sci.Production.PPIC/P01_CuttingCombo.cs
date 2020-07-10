@@ -8,7 +8,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_CuttingCombo
     /// </summary>
-    public partial class P01_CuttingCombo : Sci.Win.Subs.Base
+    public partial class P01_CuttingCombo : Win.Subs.Base
     {
         private string poID;
 

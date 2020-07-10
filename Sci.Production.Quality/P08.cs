@@ -4,8 +4,6 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
@@ -18,7 +16,7 @@ namespace Sci.Production.Quality
     /// <summary>
     /// P08
     /// </summary>
-    public partial class P08 : Sci.Win.Tems.QueryForm
+    public partial class P08 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P08
@@ -26,14 +24,14 @@ namespace Sci.Production.Quality
         public P08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
 
-            Dictionary<String, String> comboBoxUpdateTime_RowSource = new Dictionary<string, string>
+            Dictionary<string, string> comboBoxUpdateTime_RowSource = new Dictionary<string, string>
             {
                 { "CutTime", "Cut Shadeband Time" },
                 { "PasteTime", "Paste Shadeband Time" },
-                { "PassQATime", "Pass QA Time" }
+                { "PassQATime", "Pass QA Time" },
             };
             this.comboBoxUpdateTime.DataSource = new BindingSource(comboBoxUpdateTime_RowSource, null);
             this.comboBoxUpdateTime.ValueMember = "Key";
@@ -76,9 +74,9 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                List<SqlParameter> cmds =new List<SqlParameter>()
+                List<SqlParameter> cmds = new List<SqlParameter>()
                 {
-                    new SqlParameter("@ID", MyUtility.Convert.GetString(e.FormattedValue))
+                    new SqlParameter("@ID", MyUtility.Convert.GetString(e.FormattedValue)),
                 };
 
                 string sqlcmd = "select ID, Description from ShadebandDocLocation where Junk = 0 and ID = @ID";
@@ -95,8 +93,8 @@ namespace Sci.Production.Quality
                 curDr.EndEdit();
             };
 
-            Helper.Controls.Grid.Generator(this.gridReceiving)
-                 .CheckBox("select", header: "", trueValue: 1, falseValue: 0)
+            this.Helper.Controls.Grid.Generator(this.gridReceiving)
+                 .CheckBox("select", header: string.Empty, trueValue: 1, falseValue: 0)
                  .Text("ExportID", header: "WK#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Numeric("Packages", header: "Packages", width: Widths.AnsiChars(3), decimal_places: 0, iseditingreadonly: true)
                  .Date("ArriveDate", header: "Arrive W/H \r\n Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -131,7 +129,7 @@ namespace Sci.Production.Quality
             DBProxy.Current.Select(null, sqlcmd, out dt);
             SelectItem selectItem = new SelectItem(dt, "ID,Description", "10,25", "ID,Description")
             {
-                Width = 800
+                Width = 800,
             };
 
             selectItem.ShowDialog();
@@ -195,15 +193,15 @@ namespace Sci.Production.Quality
                 sqlWhere2 += $" and psd.ColorID = '{this.txtColor.Text}'" + Environment.NewLine;
             }
 
-            if (!txtSeq.checkSeq1Empty() && txtSeq.checkSeq2Empty())
+            if (!this.txtSeq.CheckSeq1Empty() && this.txtSeq.CheckSeq2Empty())
             {
-                sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}'";
-                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.seq1}'";
+                sqlWhere += $" and rd.seq1 = '{this.txtSeq.Seq1}'";
+                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.Seq1}'";
             }
-            else if (!txtSeq.checkEmpty(showErrMsg: false))
+            else if (!this.txtSeq.CheckEmpty(showErrMsg: false))
             {
-                sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}' and rd.seq2 = '{this.txtSeq.seq2}'";
-                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.seq1}' and td.seq2 = '{this.txtSeq.seq2}'";
+                sqlWhere += $" and rd.seq1 = '{this.txtSeq.Seq1}' and rd.seq2 = '{this.txtSeq.Seq2}'";
+                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.Seq1}' and td.seq2 = '{this.txtSeq.Seq2}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtSP.Text))
@@ -336,7 +334,7 @@ inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
             {
                 try
                 {
-                    DualResult result; 
+                    DualResult result;
                     if (!MyUtility.Check.Empty(sqlcmd))
                     {
                         result = MyUtility.Tool.ProcessWithDatatable(selectedListDataRow.CopyToDataTable(), "ID,Roll,Dyelot,CutTime,PasteTime,PassQATime,ShadebandDocLocationID", sqlcmd, out dtUpdate, temptablename: "#tmp");
@@ -382,7 +380,7 @@ inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
         /// <param name="e">e</param>
         private void BtnUpdateTime_Click(object sender, EventArgs e)
         {
-            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;  
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             if (dt == null)
             {
                 return;
@@ -392,7 +390,7 @@ inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
             if (selectedListDataRow.Any())
             {
                 string updateTime = MyUtility.Convert.GetDate(this.dateTimePickerUpdateTime.Text).HasValue ?
-                        MyUtility.Convert.GetDate(this.dateTimePickerUpdateTime.Text).Value.ToString("yyyy/MM/dd HH:mm:ss") : 
+                        MyUtility.Convert.GetDate(this.dateTimePickerUpdateTime.Text).Value.ToString("yyyy/MM/dd HH:mm:ss") :
                         string.Empty;
                 string comboUpdateTime = this.comboBoxUpdateTime.SelectedValue.ToString();
                 foreach (DataRow dr in selectedListDataRow.ToList())

@@ -3,16 +3,13 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class P26 : Sci.Win.Tems.QueryForm
+    public partial class P26 : Win.Tems.QueryForm
     {
         private DataTable selectDataTable;
         private string selectDataTable_DefaultView_Sort = string.Empty;
@@ -20,7 +17,7 @@ namespace Sci.Production.Quality
         public P26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void OnFormLoaded()
@@ -34,8 +31,8 @@ namespace Sci.Production.Quality
                  .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)                 
-                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(13), iseditingreadonly: true)                 
+                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -146,21 +143,21 @@ left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = c.SCICtnNo
 where 1=1
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 ";
-            #endregion            
-            DualResult result = DBProxy.Current.Select("", strCmd, listSQLParameter, out selectDataTable);
+            #endregion
+            DualResult result = DBProxy.Current.Select(string.Empty, strCmd, listSQLParameter, out this.selectDataTable);
 
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
             }
-            else if (selectDataTable.Rows.Count < 1)
+            else if (this.selectDataTable.Rows.Count < 1)
             {
                 this.listControlBindingSource1.DataSource = null;
                 MyUtility.Msg.InfoBox("Data not found !");
             }
             else
             {
-                this.listControlBindingSource1.DataSource = selectDataTable;
+                this.listControlBindingSource1.DataSource = this.selectDataTable;
             }
 
             this.HideWaitMessage();
@@ -168,7 +165,7 @@ where 1=1
 
         private void btnFind_Click(object sender, EventArgs e)
         {
-            Find();
+            this.Find();
         }
     }
 }

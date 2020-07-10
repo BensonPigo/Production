@@ -1,33 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R12 : Sci.Win.Tems.PrintForm
+    public partial class R12 : Win.Tems.PrintForm
     {
-        string artworktype, factory, subcon, mdivision, orderby;
-        DateTime? APdate1, APdate2;
+        string artworktype;
+        string factory;
+        string subcon;
+        string mdivision;
+        string orderby;
+        DateTime? APdate1;
+        DateTime? APdate2;
         DataTable printData;
 
         public R12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.Text = Sci.Env.User.Factory;
-            MyUtility.Tool.SetupCombox(comboOrderBy, 1, 1, "Supplier,Handle");
-            comboOrderBy.SelectedIndex = 0;
-            txtMdivisionM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.Text = Env.User.Factory;
+            MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Supplier,Handle");
+            this.comboOrderBy.SelectedIndex = 0;
+            this.txtMdivisionM.Text = Env.User.Keyword;
             int month = DateTime.Today.Month;
             int day = DateTime.Today.Day;
             this.dateAPDate.Value1 = DateTime.Today.AddMonths(-month + 1).AddDays(-day + 1);
@@ -37,25 +39,26 @@ namespace Sci.Production.Subcon
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateAPDate.Value1) && MyUtility.Check.Empty(dateAPDate.Value2))
+            if (MyUtility.Check.Empty(this.dateAPDate.Value1) && MyUtility.Check.Empty(this.dateAPDate.Value2))
             {
                 MyUtility.Msg.WarningBox("AP Date can't empty!!");
                 return false;
             }
-            APdate1 = dateAPDate.Value1;
-            APdate2 = dateAPDate.Value2;
-           
-            artworktype = txtartworktype_ftyArtworkType.Text;
-            mdivision = txtMdivisionM.Text;
-            factory = comboFactory.Text;
-            subcon = txtsubconSupplier.TextBox1.Text;
-            orderby = comboOrderBy.Text;
-            
+
+            this.APdate1 = this.dateAPDate.Value1;
+            this.APdate2 = this.dateAPDate.Value2;
+
+            this.artworktype = this.txtartworktype_ftyArtworkType.Text;
+            this.mdivision = this.txtMdivisionM.Text;
+            this.factory = this.comboFactory.Text;
+            this.subcon = this.txtsubconSupplier.TextBox1.Text;
+            this.orderby = this.comboOrderBy.Text;
+
             return base.ValidateInput();
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
@@ -102,76 +105,82 @@ where  a.ApvDate is null and 1=1"));
             System.Data.SqlClient.SqlParameter sp_subcon = new System.Data.SqlClient.SqlParameter();
             sp_subcon.ParameterName = "@subcon";
 
-             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 
-             if (!MyUtility.Check.Empty(APdate1))
+            if (!MyUtility.Check.Empty(this.APdate1))
              {
                  sqlCmd.Append(" and a.issuedate >= @APdate1");
-                 sp_APdate1.Value = APdate1;
+                 sp_APdate1.Value = this.APdate1;
                  cmds.Add(sp_APdate1);
              }
 
-             if (!MyUtility.Check.Empty(APdate2))
+            if (!MyUtility.Check.Empty(this.APdate2))
              {
                  sqlCmd.Append(" and a.issuedate <= @APdate2");
-                 sp_APdate2.Value = APdate2;
+                 sp_APdate2.Value = this.APdate2;
                  cmds.Add(sp_APdate2);
              }
 
-
-            if (!MyUtility.Check.Empty(artworktype))
+            if (!MyUtility.Check.Empty(this.artworktype))
             {
                 sqlCmd.Append(" and a.artworktypeid = @artworktype");
-                sp_artworktype.Value = artworktype;
+                sp_artworktype.Value = this.artworktype;
                 cmds.Add(sp_artworktype);
             }
 
-            if (!MyUtility.Check.Empty(mdivision))
+            if (!MyUtility.Check.Empty(this.mdivision))
             {
                 sqlCmd.Append(" and a.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
+                sp_mdivision.Value = this.mdivision;
                 cmds.Add(sp_mdivision);
             }
-            if (!MyUtility.Check.Empty(factory))
+
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and a.factoryid = @factory");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
             }
-            if (!MyUtility.Check.Empty(subcon))
+
+            if (!MyUtility.Check.Empty(this.subcon))
             {
                 sqlCmd.Append(" and a.localsuppid = @subcon");
-                sp_subcon.Value = subcon;
+                sp_subcon.Value = this.subcon;
                 cmds.Add(sp_subcon);
             }
 
-            if (orderby.ToUpper() == "SUPPLIER")
+            if (this.orderby.ToUpper() == "SUPPLIER")
+            {
                 sqlCmd.Append(" order by a.localsuppid ");
+            }
             else
+            {
                 sqlCmd.Append(" order by a.handle ");
+            }
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-            return Result.True;
+
+            return Ict.Result.True;
         }
 
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R12.xltx",2);
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R12.xltx", 2);
             return true;
         }
     }

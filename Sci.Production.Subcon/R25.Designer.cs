@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
+            this.txtartworktype_ftyCategory = new Sci.Production.Class.Txtartworktype_fty();
             this.txtRefno = new Sci.Win.UI.TextBox();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.dateReceiveDate = new Sci.Win.UI.DateRange();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelSupplier = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
@@ -81,8 +81,8 @@
             // txtartworktype_ftyCategory
             // 
             this.txtartworktype_ftyCategory.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyCategory.cClassify = "\'p\'";
-            this.txtartworktype_ftyCategory.cSubprocess = "";
+            this.txtartworktype_ftyCategory.CClassify = "\'p\'";
+            this.txtartworktype_ftyCategory.CSubprocess = "";
             this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(118, 131);
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
@@ -213,7 +213,7 @@
 
         private Win.UI.Panel panel1;
         private Win.UI.Label labelReceiveDate;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelSupplier;
         private Win.UI.Label labelCategory;
@@ -223,6 +223,6 @@
         private Win.UI.ComboBox comboFactory;
         private Win.UI.DateRange dateReceiveDate;
         private Win.UI.TextBox txtRefno;
-        private Class.txtartworktype_fty txtartworktype_ftyCategory;
+        private Class.Txtartworktype_fty txtartworktype_ftyCategory;
     }
 }

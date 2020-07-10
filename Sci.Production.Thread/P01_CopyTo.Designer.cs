@@ -31,7 +31,7 @@
             this.btnOK = new Sci.Win.UI.Button();
             this.btnCancel = new Sci.Win.UI.Button();
             this.labelSeason = new Sci.Win.UI.Label();
-            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtseason = new Sci.Production.Class.Txtseason();
             this.SuspendLayout();
             // 
             // btnOK
@@ -92,6 +92,6 @@
         private Win.UI.Button btnOK;
         private Win.UI.Button btnCancel;
         private Win.UI.Label labelSeason;
-        private Class.txtseason txtseason;
+        private Class.Txtseason txtseason;
     }
 }

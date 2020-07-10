@@ -34,7 +34,7 @@
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.txtCutplanID = new Sci.Win.UI.TextBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.txtfactoryByM = new Sci.Production.Class.txtfactory();
+            this.txtfactoryByM = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.labelSewingInline = new Sci.Win.UI.Label();
             this.dateSewingInline = new Sci.Win.UI.DateBox();
@@ -313,7 +313,7 @@
         private Win.UI.Label labelEstCutDate;
         private Win.UI.TextBox txtCutplanID;
         private Win.UI.Label label3;
-        private Class.txtfactory txtfactoryByM;
+        private Class.Txtfactory txtfactoryByM;
         private Win.UI.Label label1;
         private Win.UI.Label labelSewingInline;
         private Win.UI.DateBox dateSewingInline;

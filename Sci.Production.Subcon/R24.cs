@@ -1,38 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R24 : Sci.Win.Tems.PrintForm
+    public partial class R24 : Win.Tems.PrintForm
     {
-        string artworktype, factory, brandid, style, mdivision, spno1, spno2, ordertype, ratetype;
-        int ordertypeindex, statusindex;
-        DateTime? APdate1, APdate2, GLdate1, GLdate2;
+        string artworktype;
+        string factory;
+        string brandid;
+        string style;
+        string mdivision;
+        string spno1;
+        string spno2;
+        string ordertype;
+        string ratetype;
+        int ordertypeindex;
+        int statusindex;
+        DateTime? APdate1;
+        DateTime? APdate2;
+        DateTime? GLdate1;
+        DateTime? GLdate2;
         DataTable printData;
 
         public R24(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.Text = Sci.Env.User.Factory;
-            txtMdivisionM.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(comboOrderType, 1, 1, "Bulk,Sample,Material,Bulk+Sample,Bulk+Sample+Forecast,Bulk+Sample+Material+Forecast");
-            comboOrderType.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(comboRateType, 2, 1, "FX,Fixed Exchange Rate,KP,KPI Exchange Rate,DL,Daily Exchange Rate,3S,Custom Exchange Rate,RV,Currency Revaluation Rate,OT,One-time Exchange Rate");
-            comboRateType.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(comboStatus, 1, 1, "Only Approved,Only Unapproved,All");
-            comboStatus.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.Text = Env.User.Factory;
+            this.txtMdivisionM.Text = Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboOrderType, 1, 1, "Bulk,Sample,Material,Bulk+Sample,Bulk+Sample+Forecast,Bulk+Sample+Material+Forecast");
+            this.comboOrderType.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(this.comboRateType, 2, 1, "FX,Fixed Exchange Rate,KP,KPI Exchange Rate,DL,Daily Exchange Rate,3S,Custom Exchange Rate,RV,Currency Revaluation Rate,OT,One-time Exchange Rate");
+            this.comboRateType.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(this.comboStatus, 1, 1, "Only Approved,Only Unapproved,All");
+            this.comboStatus.SelectedIndex = 0;
 
             int month = DateTime.Today.Month;
             int day = DateTime.Today.Day;
@@ -41,64 +50,63 @@ namespace Sci.Production.Subcon
             this.dateAPDate.Value2 = DateTime.Now;
             this.dateGLDate.Value1 = DateTime.Today.AddMonths(-1);
             this.dateGLDate.Value2 = DateTime.Now;
-
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-
-            if (comboStatus.SelectedIndex != 1)
+            if (this.comboStatus.SelectedIndex != 1)
             {
-                if (MyUtility.Check.Empty(dateAPDate.Value1) && MyUtility.Check.Empty(dateAPDate.Value2) && MyUtility.Check.Empty(dateGLDate.Value1) && MyUtility.Check.Empty(dateGLDate.Value2))
+                if (MyUtility.Check.Empty(this.dateAPDate.Value1) && MyUtility.Check.Empty(this.dateAPDate.Value2) && MyUtility.Check.Empty(this.dateGLDate.Value1) && MyUtility.Check.Empty(this.dateGLDate.Value2))
                 {
                     MyUtility.Msg.WarningBox("[A/P Date] or [GL Date] must input one !!");
                     return false;
                 }
             }
 
-            APdate1 = dateAPDate.Value1;
-            APdate2 = dateAPDate.Value2;
-            spno1 = txtSPNoStart.Text;
-            spno2 = txtSPNoEnd.Text;
-            GLdate1 = dateGLDate.Value1;
-            GLdate2 = dateGLDate.Value2;
+            this.APdate1 = this.dateAPDate.Value1;
+            this.APdate2 = this.dateAPDate.Value2;
+            this.spno1 = this.txtSPNoStart.Text;
+            this.spno2 = this.txtSPNoEnd.Text;
+            this.GLdate1 = this.dateGLDate.Value1;
+            this.GLdate2 = this.dateGLDate.Value2;
 
-            artworktype = txtartworktype_ftyCategory.Text;
-            mdivision = txtMdivisionM.Text;
-            factory = comboFactory.Text;
-            ordertypeindex = comboOrderType.SelectedIndex;
-            ratetype = comboRateType.SelectedValue.ToString();
-            statusindex = comboStatus.SelectedIndex;
-            switch (ordertypeindex)
+            this.artworktype = this.txtartworktype_ftyCategory.Text;
+            this.mdivision = this.txtMdivisionM.Text;
+            this.factory = this.comboFactory.Text;
+            this.ordertypeindex = this.comboOrderType.SelectedIndex;
+            this.ratetype = this.comboRateType.SelectedValue.ToString();
+            this.statusindex = this.comboStatus.SelectedIndex;
+            switch (this.ordertypeindex)
             {
                 case 0:
-                    ordertype = "('B')";
+                    this.ordertype = "('B')";
                     break;
                 case 1:
-                    ordertype = "('S')";
+                    this.ordertype = "('S')";
                     break;
                 case 2:
-                    ordertype = "('M')";
+                    this.ordertype = "('M')";
                     break;
                 case 3:
-                    ordertype = "('B','S')";
+                    this.ordertype = "('B','S')";
                     break;
                 case 4:
-                    ordertype = "('B','S')";
+                    this.ordertype = "('B','S')";
                     break;
                 case 5:
-                    ordertype = "('B','S','M')";
+                    this.ordertype = "('B','S','M')";
                     break;
             }
-            brandid = txtbrand.Text;
-            style = txtstyle.Text;
+
+            this.brandid = this.txtbrand.Text;
+            this.style = this.txtstyle.Text;
 
             return base.ValidateInput();
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sqlparameter delcare --
             System.Data.SqlClient.SqlParameter sp_apdate1 = new System.Data.SqlClient.SqlParameter();
@@ -155,25 +163,28 @@ where c.Classify='P' {whereIncludeCancelOrder}
 ");
 
             #region -- 條件組合 --
-            switch (statusindex)
+            switch (this.statusindex)
             {
-                case 0: //Only Approve
-                    if (!MyUtility.Check.Empty(APdate1) && !MyUtility.Check.Empty(APdate2))
+                case 0: // Only Approve
+                    if (!MyUtility.Check.Empty(this.APdate1) && !MyUtility.Check.Empty(this.APdate2))
                     {
-                        sqlCmd.Append(string.Format(@" and a.apvdate is not null and a.issuedate between '{0}' and '{1}'"
-                            , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
+                        sqlCmd.Append(string.Format(
+                            @" and a.apvdate is not null and a.issuedate between '{0}' and '{1}'",
+                            Convert.ToDateTime(this.APdate1).ToString("d"), Convert.ToDateTime(this.APdate2).ToString("d")));
                     }
                     else
                     {
-                        if (!MyUtility.Check.Empty(APdate1))
+                        if (!MyUtility.Check.Empty(this.APdate1))
                         {
-                            sqlCmd.Append(string.Format(@" and a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(APdate1).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(this.APdate1).ToString("d")));
                         }
-                        if (!MyUtility.Check.Empty(APdate2))
+
+                        if (!MyUtility.Check.Empty(this.APdate2))
                         {
-                            sqlCmd.Append(string.Format(@" and a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(APdate2).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(this.APdate2).ToString("d")));
                         }
                     }
+
                     break;
 
                 case 1: // Only Unapprove
@@ -181,82 +192,86 @@ where c.Classify='P' {whereIncludeCancelOrder}
                     break;
 
                 case 2: // All
-                    if (!MyUtility.Check.Empty(APdate1) && !MyUtility.Check.Empty(APdate2))
+                    if (!MyUtility.Check.Empty(this.APdate1) && !MyUtility.Check.Empty(this.APdate2))
                     {
-                        sqlCmd.Append(string.Format(@" and (a.issuedate between '{0}' and '{1}')"
-                            , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
+                        sqlCmd.Append(string.Format(
+                            @" and (a.issuedate between '{0}' and '{1}')",
+                            Convert.ToDateTime(this.APdate1).ToString("d"), Convert.ToDateTime(this.APdate2).ToString("d")));
                     }
                     else
                     {
-                        if (!MyUtility.Check.Empty(APdate1))
+                        if (!MyUtility.Check.Empty(this.APdate1))
                         {
-                            sqlCmd.Append(string.Format(@" and (a.issuedate >= '{0}') ", Convert.ToDateTime(APdate1).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and (a.issuedate >= '{0}') ", Convert.ToDateTime(this.APdate1).ToString("d")));
                         }
-                        if (!MyUtility.Check.Empty(APdate2))
+
+                        if (!MyUtility.Check.Empty(this.APdate2))
                         {
-                            sqlCmd.Append(string.Format(@" and (a.issuedate <= '{0}') ", Convert.ToDateTime(APdate2).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and (a.issuedate <= '{0}') ", Convert.ToDateTime(this.APdate2).ToString("d")));
                         }
                     }
+
                     break;
             }
 
-            if (!MyUtility.Check.Empty(spno1))
+            if (!MyUtility.Check.Empty(this.spno1))
             {
                 sqlCmd.Append(" and b.orderid >= @spno1");
-                sp_spno1.Value = spno1;
+                sp_spno1.Value = this.spno1;
                 cmds.Add(sp_spno1);
             }
 
-            if (!MyUtility.Check.Empty(spno2))
+            if (!MyUtility.Check.Empty(this.spno2))
             {
                 sqlCmd.Append(" and b.orderid <= @spno2");
-                sp_spno2.Value = spno2;
+                sp_spno2.Value = this.spno2;
                 cmds.Add(sp_spno2);
             }
 
-            if (!MyUtility.Check.Empty(GLdate1))
+            if (!MyUtility.Check.Empty(this.GLdate1))
             {
                 sqlCmd.Append(" and a.ApvDate >= @GLdate1");
-                sp_GLdate1.Value = GLdate1;
+                sp_GLdate1.Value = this.GLdate1;
                 cmds.Add(sp_GLdate1);
             }
 
-            if (!MyUtility.Check.Empty(GLdate2))
+            if (!MyUtility.Check.Empty(this.GLdate2))
             {
                 sqlCmd.Append(" and a.ApvDate <= @GLdate2");
-                sp_GLdate2.Value = GLdate2;
+                sp_GLdate2.Value = this.GLdate2;
                 cmds.Add(sp_GLdate2);
             }
 
-            if (!MyUtility.Check.Empty(artworktype))
+            if (!MyUtility.Check.Empty(this.artworktype))
             {
                 sqlCmd.Append(" and a.category = @artworktype");
-                sp_artworktype.Value = artworktype;
+                sp_artworktype.Value = this.artworktype;
                 cmds.Add(sp_artworktype);
             }
 
-            if (!MyUtility.Check.Empty(mdivision))
+            if (!MyUtility.Check.Empty(this.mdivision))
             {
                 sqlCmd.Append(" and a.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
+                sp_mdivision.Value = this.mdivision;
                 cmds.Add(sp_mdivision);
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and a.factoryid = @factory");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
             }
 
             #endregion
 
-            if (!MyUtility.Check.Empty(artworktype))
+            if (!MyUtility.Check.Empty(this.artworktype))
             {
                 sqlCmd.Append(" and c.id = @artworktype");
             }
 
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format(
+                @"
 -- #tmp_localap
 select isnull(sum(a.ap_amt),0.00) ap_amt
      , isnull(sum(a.ap_qty),0) ap_qty 
@@ -331,91 +346,90 @@ outer apply(
 	WHERE al.POId = aa.poid  AND al.Category=t.artworktypeid
 )IrregularPrice 
 where 1=1 
-", ratetype));
+", this.ratetype));
             #endregion
 
             #region -- sqlCmd 條件組合 --
-            switch (statusindex)
+            switch (this.statusindex)
             {
-                case 0:  //Only Approve
+                case 0: // Only Approve
                     break;
 
-                case 1:  //Only Unapprove
+                case 1: // Only Unapprove
                     sqlCmd.Replace("AND AP.Status = 'Approved'", "AND AP.Status = 'New'");
                     break;
 
-                case 2:  //All
+                case 2: // All
                     sqlCmd.Replace("AND AP.Status = 'Approved'", " ");
                     break;
             }
             #endregion
 
-            if (chk_IrregularPriceReason.Checked)
+            if (this.chk_IrregularPriceReason.Checked)
             {
-                //價格異常的資料存在，卻沒有ReasonID
+                // 價格異常的資料存在，卻沒有ReasonID
                 sqlCmd.Append(string.Format(@" AND (y.order_qty=0 or x.ap_amt > isnull (y.order_amt, 0)) "));
                 sqlCmd.Append(string.Format(@" AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='') "));
-
             }
 
-            if (ordertypeindex >= 4) //include Forecast 
+            if (this.ordertypeindex >= 4) // include Forecast
             {
-                sqlCmd.Append(string.Format(@" and (aa.category in {0} OR aa.IsForecast =1)", ordertype));
+                sqlCmd.Append(string.Format(@" and (aa.category in {0} OR aa.IsForecast =1)", this.ordertype));
             }
             else
             {
-                sqlCmd.Append(string.Format(@" and aa.category in {0} ", ordertype));
+                sqlCmd.Append(string.Format(@" and aa.category in {0} ", this.ordertype));
             }
 
-            if (!MyUtility.Check.Empty(style))
+            if (!MyUtility.Check.Empty(this.style))
             {
                 sqlCmd.Append(" and aa.styleid = @style");
-                sp_style.Value = style;
+                sp_style.Value = this.style;
                 cmds.Add(sp_style);
             }
 
-            if (!MyUtility.Check.Empty(brandid))
+            if (!MyUtility.Check.Empty(this.brandid))
             {
                 sqlCmd.Append(" and aa.brandid = @brandid");
-                sp_brandid.Value = brandid;
+                sp_brandid.Value = this.brandid;
                 cmds.Add(sp_brandid);
             }
-
 
             sqlCmd.Append(@" 
 select * from #tmp_final
 drop table #tmp,#tmp_orders,#tmp_localap,#tmp_final");
             DBProxy.Current.DefaultTimeout = 1800;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             DBProxy.Current.DefaultTimeout = 300;
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-            return Result.True;
+
+            return Ict.Result.True;
         }
 
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R24.xltx", 4);
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R24.xltx", 4);
             return true;
         }
 
         private void comboStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
-            dateAPDate.Enabled = !(comboStatus.SelectedIndex == 1);
-            dateGLDate.Enabled = !(comboStatus.SelectedIndex == 1);
+            this.dateAPDate.Enabled = !(this.comboStatus.SelectedIndex == 1);
+            this.dateGLDate.Enabled = !(this.comboStatus.SelectedIndex == 1);
         }
     }
 }

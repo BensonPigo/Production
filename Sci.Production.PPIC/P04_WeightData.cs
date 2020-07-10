@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
@@ -14,7 +12,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_WeightData
     /// </summary>
-    public partial class P04_WeightData : Sci.Win.Subs.Input4
+    public partial class P04_WeightData : Win.Subs.Input4
     {
         private string uk;
 
@@ -40,7 +38,7 @@ namespace Sci.Production.PPIC
                 @"select *
                             from Style_WeightData sw WITH (NOLOCK) where StyleUkey = '{0}'
                             order by (select seq from Style_SizeCode ss WITH (NOLOCK) where ss.StyleUkey = sw.StyleUkey and ss.SizeCode = sw.SizeCode)",
-                            this.uk);
+                this.uk);
 
             DualResult result;
             return result = DBProxy.Current.Select(null, sql, out datas);
@@ -49,19 +47,19 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings size = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings article = new DataGridViewGeneratorTextColumnSettings();
             #region Size的Right Click & Validating
             size.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where StyleUkey = {0} order by Seq", this.KeyValue1), "8", dr["SizeCode"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where StyleUkey = {0} order by Seq", this.KeyValue1), "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -117,12 +115,12 @@ namespace Sci.Production.PPIC
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select Article from Style_Article WITH (NOLOCK) where StyleUkey = {0} order by Seq", this.KeyValue1), "8", dr["Article"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select Article from Style_Article WITH (NOLOCK) where StyleUkey = {0} order by Seq", this.KeyValue1), "8", dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -192,10 +190,10 @@ namespace Sci.Production.PPIC
             datas.Columns.Add("EditBy");
             foreach (DataRow gridData in datas.Rows)
             {
-                gridData["CreateBy"] = gridData["AddName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["AddName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-                if (gridData["EditDate"] != System.DBNull.Value)
+                gridData["CreateBy"] = gridData["AddName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["AddName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
+                if (gridData["EditDate"] != DBNull.Value)
                 {
-                    gridData["EditBy"] = gridData["EditName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["EditName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                    gridData["EditBy"] = gridData["EditName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["EditName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                 }
 
                 gridData.AcceptChanges();
@@ -223,9 +221,9 @@ namespace Sci.Production.PPIC
         // Copy Season
         private void BtnCopySeason_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P04_WeightData_CopySeason callNextForm = new Sci.Production.PPIC.P04_WeightData_CopySeason(this.KeyValue1);
+            P04_WeightData_CopySeason callNextForm = new P04_WeightData_CopySeason(this.KeyValue1);
             DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 DataRow styleData;
 

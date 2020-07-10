@@ -39,9 +39,9 @@
             this.txtSP1 = new Sci.Win.UI.TextBox();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.cboReportType = new Sci.Win.UI.ComboBox();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
-            this.txtMR = new Sci.Production.Class.txtuser();
-            this.txtSMR = new Sci.Production.Class.txtuser();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
+            this.txtMR = new Sci.Production.Class.Txtuser();
+            this.txtSMR = new Sci.Production.Class.Txtuser();
             this.SuspendLayout();
             // 
             // print
@@ -250,8 +250,8 @@
         private Win.UI.TextBox txtSP1;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.ComboBox cboReportType;
-        private Class.txtbrand txtBrand;
-        private Class.txtuser txtMR;
-        private Class.txtuser txtSMR;
+        private Class.Txtbrand txtBrand;
+        private Class.Txtuser txtMR;
+        private Class.Txtuser txtSMR;
     }
 }

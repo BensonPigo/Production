@@ -2,135 +2,141 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class R20 : Sci.Win.Tems.PrintForm
+    public partial class R20 : Win.Tems.PrintForm
     {
         DataTable printData;
-        DateTime? Period1, Period2;
-        string Factory, Brand, Line, Cell, DefectCode, DefectType;
+        DateTime? Period1;
+        DateTime? Period2;
+        string Factory;
+        string Brand;
+        string Line;
+        string Cell;
+        string DefectCode;
+        string DefectType;
 
         public R20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             DataTable factory;
-            InitializeComponent();
+            this.InitializeComponent();
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK)  ", out factory);
-            MyUtility.Tool.SetupCombox(ComboFactory, 1, factory);
-            ComboFactory.Text = Sci.Env.User.Keyword;            
+            MyUtility.Tool.SetupCombox(this.ComboFactory, 1, factory);
+            this.ComboFactory.Text = Env.User.Keyword;
         }
 
         private void radioPerLine_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioPerLine.Checked)
+            if (this.radioPerLine.Checked)
             {
-                txtDefectCode.Text = txtDefectType.Text = "";
-                txtDefectCode.Enabled = txtDefectType.Enabled = false;
+                this.txtDefectCode.Text = this.txtDefectType.Text = string.Empty;
+                this.txtDefectCode.Enabled = this.txtDefectType.Enabled = false;
             }
         }
 
         private void radioPerCell_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioPerCell.Checked)
+            if (this.radioPerCell.Checked)
             {
-                txtDefectCode.Text = txtDefectType.Text = "";
-                txtDefectCode.Enabled = txtDefectType.Enabled = false;
+                this.txtDefectCode.Text = this.txtDefectType.Text = string.Empty;
+                this.txtDefectCode.Enabled = this.txtDefectType.Enabled = false;
             }
         }
 
         private void radioAllData_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioAllData.Checked)
+            if (this.radioAllData.Checked)
             {
-                txtDefectCode.Text = txtDefectType.Text = "";
-                txtDefectCode.Enabled = txtDefectType.Enabled = false;
+                this.txtDefectCode.Text = this.txtDefectType.Text = string.Empty;
+                this.txtDefectCode.Enabled = this.txtDefectType.Enabled = false;
             }
         }
 
         private void radioDetail_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioDetail.Checked)
+            if (this.radioDetail.Checked)
             {
-                txtDefectCode.Enabled = txtDefectType.Enabled = true;
+                this.txtDefectCode.Enabled = this.txtDefectType.Enabled = true;
             }
         }
 
         private void radioSummybySP_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioSummybySP.Checked)
+            if (this.radioSummybySP.Checked)
             {
-                txtDefectCode.Enabled = txtDefectType.Enabled = true;
+                this.txtDefectCode.Enabled = this.txtDefectType.Enabled = true;
             }
         }
 
         private void radioSummybyStyle_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioSummybyStyle.Checked)
+            if (this.radioSummybyStyle.Checked)
             {
-                txtDefectCode.Enabled = txtDefectType.Enabled = true;
+                this.txtDefectCode.Enabled = this.txtDefectType.Enabled = true;
             }
         }
 
         private void radioSummybyDateandStyle_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioSummybyDateandStyle.Checked)
+            if (this.radioSummybyDateandStyle.Checked)
             {
-                txtDefectCode.Enabled = txtDefectType.Enabled = true;
+                this.txtDefectCode.Enabled = this.txtDefectType.Enabled = true;
             }
-        }        
+        }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            Period1 = datePeriod.Value1;
-            Period2 = datePeriod.Value2;
-            Factory = ComboFactory.Text;
-            Brand = txtBrand.Text;
-            Line = txtLine.Text;
-            Cell = txtCell.Text;
-            DefectCode = txtDefectCode.Text;
-            DefectType = txtDefectType.Text;
+            this.Period1 = this.datePeriod.Value1;
+            this.Period2 = this.datePeriod.Value2;
+            this.Factory = this.ComboFactory.Text;
+            this.Brand = this.txtBrand.Text;
+            this.Line = this.txtLine.Text;
+            this.Cell = this.txtCell.Text;
+            this.DefectCode = this.txtDefectCode.Text;
+            this.DefectType = this.txtDefectType.Text;
 
             return base.ValidateInput();
         }
 
-        //非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        // 非同步取資料
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            string d1 = "", d2 = "";
-            if (!MyUtility.Check.Empty(Period1))
+            string d1 = string.Empty, d2 = string.Empty;
+            if (!MyUtility.Check.Empty(this.Period1))
             {
-                d1 = Convert.ToDateTime(Period1).ToString("d");
+                d1 = Convert.ToDateTime(this.Period1).ToString("d");
             }
-            if (!MyUtility.Check.Empty(Period2))
+
+            if (!MyUtility.Check.Empty(this.Period2))
             {
-                d2 = Convert.ToDateTime(Period2).ToString("d");
+                d2 = Convert.ToDateTime(this.Period2).ToString("d");
             }
 
             #region radiobtn_PerLine
-            if (radioPerLine.Checked)
+            if (this.radioPerLine.Checked)
             {
-
-                string sqlWhere="";
+                string sqlWhere = string.Empty;
                 List<string> sqlList = new List<string>();
                   #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Period1))
+                if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlList.Add(string.Format(" CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
+                    sqlList.Add(string.Format(" CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(Period2))
+
+                if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlList.Add(string.Format(" CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
+                    sqlList.Add(string.Format(" CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
                 }
-                sqlWhere = string.Join(" and ",sqlList);
+
+                sqlWhere = string.Join(" and ", sqlList);
                 if (!MyUtility.Check.Empty(sqlWhere))
                 {
                     sqlWhere = " and " + sqlWhere;
@@ -144,7 +150,7 @@ FROM
     SELECT DISTINCT(CDate) 
     FROM RFT WITH (NOLOCK) 
 ) t
-WHERE 1=1" + sqlWhere+
+WHERE 1=1" + sqlWhere +
            @"
 order by CDate
 DECLARE @cols2 NVARCHAR(MAX)= N''
@@ -155,7 +161,7 @@ FROM
     FROM RFT WITH (NOLOCK) 
 ) t
 WHERE 1=1" + sqlWhere);
-              
+
                 sqlCmd.Append(@"
 order by CDate
 
@@ -174,33 +180,34 @@ INNER JOIN DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID
 WHERE 1=1 AND A.InspectQty<>0 
 ");
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Period1))
+                if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= ''{0}'' ", Convert.ToDateTime(Period1).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(Period2))
-                {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= ''{0}'' ", Convert.ToDateTime(Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= ''{0}'' ", Convert.ToDateTime(this.Period1).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Factory))
+                if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(" AND A.FactoryID = ''{0}''", Factory));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= ''{0}'' ", Convert.ToDateTime(this.Period2).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Brand))
+                if (!MyUtility.Check.Empty(this.Factory))
                 {
-                    sqlCmd.Append(string.Format(" AND C.BrandID = ''{0}''", Brand));
+                    sqlCmd.Append(string.Format(" AND A.FactoryID = ''{0}''", this.Factory));
                 }
 
-                if (!MyUtility.Check.Empty(Line))
+                if (!MyUtility.Check.Empty(this.Brand))
                 {
-                    sqlCmd.Append(string.Format(" AND A.SewinglineID = ''{0}''", Line));
+                    sqlCmd.Append(string.Format(" AND C.BrandID = ''{0}''", this.Brand));
                 }
 
-                if (!MyUtility.Check.Empty(Cell))
+                if (!MyUtility.Check.Empty(this.Line))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = ''0{0}'' ", Cell));
+                    sqlCmd.Append(string.Format(" AND A.SewinglineID = ''{0}''", this.Line));
+                }
+
+                if (!MyUtility.Check.Empty(this.Cell))
+                {
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = ''0{0}'' ", this.Cell));
                 }
                 #endregion
 
@@ -248,19 +255,21 @@ EXEC sp_executesql @sql
             #endregion
 
             #region radiobtn_PerCell
-            if (radioPerCell.Checked)
+            if (this.radioPerCell.Checked)
             {
-                string sqlWhere = "";
+                string sqlWhere = string.Empty;
                 List<string> sqlList = new List<string>();
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Period1))
+                if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlList.Add(string.Format(" CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
+                    sqlList.Add(string.Format(" CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(Period2))
+
+                if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlList.Add(string.Format(" CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
+                    sqlList.Add(string.Format(" CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
                 }
+
                 sqlWhere = string.Join(" and ", sqlList);
                 if (!MyUtility.Check.Empty(sqlWhere))
                 {
@@ -310,33 +319,34 @@ Outer Apply(
 WHERE 1=1 AND A.InspectQty<>0 
 ");
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Period1))
+                if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= ''{0}'' ", Convert.ToDateTime(Period1).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(Period2))
-                {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= ''{0}'' ", Convert.ToDateTime(Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= ''{0}'' ", Convert.ToDateTime(this.Period1).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Factory))
+                if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(" AND A.FactoryID = ''{0}''", Factory));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= ''{0}'' ", Convert.ToDateTime(this.Period2).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Brand))
+                if (!MyUtility.Check.Empty(this.Factory))
                 {
-                    sqlCmd.Append(string.Format(" AND C.BrandID = ''{0}''", Brand));
+                    sqlCmd.Append(string.Format(" AND A.FactoryID = ''{0}''", this.Factory));
                 }
 
-                if (!MyUtility.Check.Empty(Line))
+                if (!MyUtility.Check.Empty(this.Brand))
                 {
-                    sqlCmd.Append(string.Format(" AND A.SewinglineID = ''{0}''", Line));
+                    sqlCmd.Append(string.Format(" AND C.BrandID = ''{0}''", this.Brand));
                 }
 
-                if (!MyUtility.Check.Empty(Cell))
+                if (!MyUtility.Check.Empty(this.Line))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = ''0{0}'' ", Cell));
+                    sqlCmd.Append(string.Format(" AND A.SewinglineID = ''{0}''", this.Line));
+                }
+
+                if (!MyUtility.Check.Empty(this.Cell))
+                {
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = ''0{0}'' ", this.Cell));
                 }
                 #endregion
 
@@ -363,7 +373,7 @@ EXEC sp_executesql @sql
             #endregion
 
             #region radiobtn_AllData
-            if (radioAllData.Checked)
+            if (this.radioAllData.Checked)
             {
                 sqlCmd.Append(@"
 select
@@ -398,33 +408,34 @@ Outer Apply (
 WHERE 1=1
 ");
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Period1))
+                if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(Period2))
-                {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Factory))
+                if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(" and A.FactoryID = '{0}'", Factory));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Brand))
+                if (!MyUtility.Check.Empty(this.Factory))
                 {
-                    sqlCmd.Append(string.Format(" and C.BrandID = '{0}'", Brand));
+                    sqlCmd.Append(string.Format(" and A.FactoryID = '{0}'", this.Factory));
                 }
 
-                if (!MyUtility.Check.Empty(Line))
+                if (!MyUtility.Check.Empty(this.Brand))
                 {
-                    sqlCmd.Append(string.Format(" and A.SewinglineID = '{0}'", Line));
+                    sqlCmd.Append(string.Format(" and C.BrandID = '{0}'", this.Brand));
                 }
 
-                if (!MyUtility.Check.Empty(Cell))
+                if (!MyUtility.Check.Empty(this.Line))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
+                    sqlCmd.Append(string.Format(" and A.SewinglineID = '{0}'", this.Line));
+                }
+
+                if (!MyUtility.Check.Empty(this.Cell))
+                {
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", this.Cell));
                 }
                 #endregion
 
@@ -432,10 +443,10 @@ WHERE 1=1
 Order by [Factory], [CDate], [OrderID]
 ");
             }
-            #endregion            
+            #endregion
 
             #region radioBtn_Detail
-            if (radioDetail.Checked)
+            if (this.radioDetail.Checked)
             {
                 sqlCmd.Append(@"
 select
@@ -483,42 +494,44 @@ Outer Apply (
 WHERE 1=1
 ");
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Period1))
+                if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(Period2))
-                {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(Factory))
-                {
-                    sqlCmd.Append(string.Format(" and A.FactoryID = '{0}'", Factory));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Brand))
+                if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(" and C.BrandID = '{0}'", Brand));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Line))
+                if (!MyUtility.Check.Empty(this.Factory))
                 {
-                    sqlCmd.Append(string.Format(" and A.SewinglineID = '{0}'", Line));
+                    sqlCmd.Append(string.Format(" and A.FactoryID = '{0}'", this.Factory));
                 }
 
-                if (!MyUtility.Check.Empty(Cell))
+                if (!MyUtility.Check.Empty(this.Brand))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
+                    sqlCmd.Append(string.Format(" and C.BrandID = '{0}'", this.Brand));
                 }
 
-                if (!MyUtility.Check.Empty(DefectCode))
+                if (!MyUtility.Check.Empty(this.Line))
                 {
-                    sqlCmd.Append(string.Format(" AND B.GarmentDefectCodeID = '{0}' ", DefectCode));
+                    sqlCmd.Append(string.Format(" and A.SewinglineID = '{0}'", this.Line));
                 }
 
-                if (!MyUtility.Check.Empty(DefectType))
+                if (!MyUtility.Check.Empty(this.Cell))
                 {
-                    sqlCmd.Append(string.Format(" AND B.GarmentDefectTypeid = '{0}' ", DefectType));
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", this.Cell));
+                }
+
+                if (!MyUtility.Check.Empty(this.DefectCode))
+                {
+                    sqlCmd.Append(string.Format(" AND B.GarmentDefectCodeID = '{0}' ", this.DefectCode));
+                }
+
+                if (!MyUtility.Check.Empty(this.DefectType))
+                {
+                    sqlCmd.Append(string.Format(" AND B.GarmentDefectTypeid = '{0}' ", this.DefectType));
                 }
                 #endregion
 
@@ -529,7 +542,7 @@ Order by [Factory], [CDate], [OrderID], [Defaect Kind], [Defaect code]
             #endregion
 
             #region radioBtn_SummybySP
-            if (radioSummybySP.Checked)
+            if (this.radioSummybySP.Checked)
             {
                 sqlCmd.Append(@"
 IF OBJECT_ID('tempdb.dbo.#tmpall', 'U') IS NOT NULL
@@ -543,23 +556,24 @@ From DBO.Rft A WITH (NOLOCK)
 WHERE 1=1
 ");
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Period1))
+                if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(Period2))
-                {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Factory))
+                if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(" and A.FactoryID = '{0}'", Factory));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
                 }
-                
-                if (!MyUtility.Check.Empty(Line))
+
+                if (!MyUtility.Check.Empty(this.Factory))
                 {
-                    sqlCmd.Append(string.Format(" and A.SewinglineID = '{0}'", Line));
+                    sqlCmd.Append(string.Format(" and A.FactoryID = '{0}'", this.Factory));
+                }
+
+                if (!MyUtility.Check.Empty(this.Line))
+                {
+                    sqlCmd.Append(string.Format(" and A.SewinglineID = '{0}'", this.Line));
                 }
                 #endregion
 
@@ -609,25 +623,24 @@ WHERE 1=1
 ");
 
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Brand))
+                if (!MyUtility.Check.Empty(this.Brand))
                 {
-                    sqlCmd.Append(string.Format(" and C.BrandID = '{0}'", Brand));
+                    sqlCmd.Append(string.Format(" and C.BrandID = '{0}'", this.Brand));
                 }
 
-
-                if (!MyUtility.Check.Empty(Cell))
+                if (!MyUtility.Check.Empty(this.Cell))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", this.Cell));
                 }
 
-                if (!MyUtility.Check.Empty(DefectCode))
+                if (!MyUtility.Check.Empty(this.DefectCode))
                 {
-                    sqlCmd.Append(string.Format(" AND B.GarmentDefectCodeID = '{0}' ", DefectCode));
+                    sqlCmd.Append(string.Format(" AND B.GarmentDefectCodeID = '{0}' ", this.DefectCode));
                 }
 
-                if (!MyUtility.Check.Empty(DefectType))
+                if (!MyUtility.Check.Empty(this.DefectType))
                 {
-                    sqlCmd.Append(string.Format(" AND B.GarmentDefectTypeid = '{0}' ", DefectType));
+                    sqlCmd.Append(string.Format(" AND B.GarmentDefectTypeid = '{0}' ", this.DefectType));
                 }
                 #endregion
 
@@ -640,7 +653,7 @@ drop table #tmpall
             #endregion
 
             #region radiobtn_SummybyStyle
-            if (radioSummybyStyle.Checked)
+            if (this.radioSummybyStyle.Checked)
             {
                 sqlCmd.Append(@"
 IF OBJECT_ID('tempdb.dbo.#tmpall', 'U') IS NOT NULL
@@ -655,28 +668,29 @@ INNER JOIN DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID
 WHERE 1=1
 ");
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Period1))
+                if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(Period2))
-                {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Factory))
+                if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(" and A.FactoryID = '{0}'", Factory));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Line))
+                if (!MyUtility.Check.Empty(this.Factory))
                 {
-                    sqlCmd.Append(string.Format(" and A.SewinglineID = '{0}'", Line));
+                    sqlCmd.Append(string.Format(" and A.FactoryID = '{0}'", this.Factory));
                 }
 
-                if (!MyUtility.Check.Empty(Brand))
+                if (!MyUtility.Check.Empty(this.Line))
                 {
-                    sqlCmd.Append(string.Format(" and C.BrandID = '{0}'", Brand));
+                    sqlCmd.Append(string.Format(" and A.SewinglineID = '{0}'", this.Line));
+                }
+
+                if (!MyUtility.Check.Empty(this.Brand))
+                {
+                    sqlCmd.Append(string.Format(" and C.BrandID = '{0}'", this.Brand));
                 }
                 #endregion
 
@@ -722,19 +736,19 @@ WHERE 1=1
 ");
 
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Cell))
+                if (!MyUtility.Check.Empty(this.Cell))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", this.Cell));
                 }
 
-                if (!MyUtility.Check.Empty(DefectCode))
+                if (!MyUtility.Check.Empty(this.DefectCode))
                 {
-                    sqlCmd.Append(string.Format(" AND B.GarmentDefectCodeID = '{0}' ", DefectCode));
+                    sqlCmd.Append(string.Format(" AND B.GarmentDefectCodeID = '{0}' ", this.DefectCode));
                 }
 
-                if (!MyUtility.Check.Empty(DefectType))
+                if (!MyUtility.Check.Empty(this.DefectType))
                 {
-                    sqlCmd.Append(string.Format(" AND B.GarmentDefectTypeid = '{0}' ", DefectType));
+                    sqlCmd.Append(string.Format(" AND B.GarmentDefectTypeid = '{0}' ", this.DefectType));
                 }
                 #endregion
 
@@ -747,7 +761,7 @@ drop table #tmpall
             #endregion
 
             #region radiobtn_SummybyDateandStyle
-            if (radioSummybyDateandStyle.Checked)
+            if (this.radioSummybyDateandStyle.Checked)
             {
                 sqlCmd.Append(@"
 IF OBJECT_ID('tempdb.dbo.#tmpall', 'U') IS NOT NULL
@@ -763,28 +777,29 @@ INNER JOIN DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID
 WHERE 1=1
 ");
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Period1))
+                if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(Period2))
-                {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Factory))
+                if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(" and A.FactoryID = '{0}'", Factory));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(Line))
+                if (!MyUtility.Check.Empty(this.Factory))
                 {
-                    sqlCmd.Append(string.Format(" and A.SewinglineID = '{0}'", Line));
+                    sqlCmd.Append(string.Format(" and A.FactoryID = '{0}'", this.Factory));
                 }
 
-                if (!MyUtility.Check.Empty(Brand))
+                if (!MyUtility.Check.Empty(this.Line))
                 {
-                    sqlCmd.Append(string.Format(" and C.BrandID = '{0}'", Brand));
+                    sqlCmd.Append(string.Format(" and A.SewinglineID = '{0}'", this.Line));
+                }
+
+                if (!MyUtility.Check.Empty(this.Brand))
+                {
+                    sqlCmd.Append(string.Format(" and C.BrandID = '{0}'", this.Brand));
                 }
                 #endregion
 
@@ -831,19 +846,19 @@ WHERE 1=1
 ");
 
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Cell))
+                if (!MyUtility.Check.Empty(this.Cell))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", this.Cell));
                 }
 
-                if (!MyUtility.Check.Empty(DefectCode))
+                if (!MyUtility.Check.Empty(this.DefectCode))
                 {
-                    sqlCmd.Append(string.Format(" AND B.GarmentDefectCodeID = '{0}' ", DefectCode));
+                    sqlCmd.Append(string.Format(" AND B.GarmentDefectCodeID = '{0}' ", this.DefectCode));
                 }
 
-                if (!MyUtility.Check.Empty(DefectType))
+                if (!MyUtility.Check.Empty(this.DefectType))
                 {
-                    sqlCmd.Append(string.Format(" AND B.GarmentDefectTypeid = '{0}' ", DefectType));
+                    sqlCmd.Append(string.Format(" AND B.GarmentDefectTypeid = '{0}' ", this.DefectType));
                 }
                 #endregion
 
@@ -855,44 +870,44 @@ drop table #tmpall
             }
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
             #region radiobtn_PerLine
-            if (radioPerLine.Checked)
+            if (this.radioPerLine.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_PerLine.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_PerLine.xltx", 1, false, null, objApp);// 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_PerLine.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_PerLine.xltx", 1, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                for (int i = 2; i < printData.Columns.Count; i++)
+                for (int i = 2; i < this.printData.Columns.Count; i++)
                 {
-                    objSheets.Cells[1, i+1] = printData.Columns[i].ColumnName.ToString();
+                    objSheets.Cells[1, i + 1] = this.printData.Columns[i].ColumnName.ToString();
                 }
 
                 objSheets.Columns.AutoFit();
                 objSheets.Rows.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R20_PerLine");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R20_PerLine");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
@@ -904,21 +919,21 @@ drop table #tmpall
             #endregion
 
             #region radiobtn_PerCell
-            if (radioPerCell.Checked)
+            if (this.radioPerCell.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_PerCell.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_PerCell.xltx", 1, false, null, objApp);// 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_PerCell.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_PerCell.xltx", 1, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                for (int i = 2; i < printData.Columns.Count; i++)
+                for (int i = 2; i < this.printData.Columns.Count; i++)
                 {
-                    objSheets.Cells[1, i + 1] = printData.Columns[i].ColumnName.ToString();
+                    objSheets.Cells[1, i + 1] = this.printData.Columns[i].ColumnName.ToString();
                 }
 
                 objSheets.Columns.AutoFit();
                 objSheets.Rows.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R20_PerCell");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R20_PerCell");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
@@ -930,25 +945,25 @@ drop table #tmpall
             #endregion
 
             #region radiobtn_AllData
-            if (radioAllData.Checked)
+            if (this.radioAllData.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_AllData.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_AllData.xltx", 1, false, null, objApp);// 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_AllData.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_AllData.xltx", 1, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
-                int count = printData.Rows.Count;
+                int count = this.printData.Rows.Count;
                 objSheets.Cells[count + 3, 11] = "Total RFT (%):";
                 objSheets.Cells[count + 3, 12] = string.Format(@"=ROUND((SUM(K2:K{0})-SUM(L2:L{0}))/SUM(K2:K{0})*100,2) &"" %""", count + 1);
 
                 objSheets.Cells[count + 3, 14] = "Total QC:";
                 objSheets.Cells[count + 3, 15] = string.Format(@"=SUM(O2:O{0})", count + 1);
-                //objSheets.get_Range(string.Format("L:L{0}", count + 3), Type.Missing).NumberFormat = "0.00%";
-                
-                objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
+
+                // objSheets.get_Range(string.Format("L:L{0}", count + 3), Type.Missing).NumberFormat = "0.00%";
+                objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
                 objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R20_AllData");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R20_AllData");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
@@ -960,34 +975,34 @@ drop table #tmpall
             #endregion
 
             #region radioBtn_Detail
-            if (radioDetail.Checked)
+            if (this.radioDetail.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_Detail.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_Detail.xltx", 1, true, null, objApp);// 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_Detail.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_Detail.xltx", 1, true, null, objApp); // 將datatable copy to excel
             }
             #endregion
 
             #region radioBtn_SummybySP
-            if (radioSummybySP.Checked)
+            if (this.radioSummybySP.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_SummarybySP.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_SummarybySP.xltx", 1, true, null, objApp);// 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_SummarybySP.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_SummarybySP.xltx", 1, true, null, objApp); // 將datatable copy to excel
             }
             #endregion
 
             #region radiobtn_SummybyStyle
-            if (radioSummybyStyle.Checked)
+            if (this.radioSummybyStyle.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_SummarybyStyle.xltx"); //預先開啟excel app
-                 MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_SummarybyStyle.xltx", 1, true, null, objApp);// 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_SummarybyStyle.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_SummarybyStyle.xltx", 1, true, null, objApp); // 將datatable copy to excel
             }
             #endregion
 
             #region radiobtn_SummybyDateandStyle
-            if (radioSummybyDateandStyle.Checked)
+            if (this.radioSummybyDateandStyle.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_SummarybyDateaAndStyle.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_SummarybyDateaAndStyle.xltx", 1, true, null, objApp);// 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_SummarybyDateaAndStyle.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_SummarybyDateaAndStyle.xltx", 1, true, null, objApp); // 將datatable copy to excel
             }
             #endregion
 
@@ -996,9 +1011,9 @@ drop table #tmpall
 
         private void ComboFactory_TextChanged(object sender, EventArgs e)
         {
-            this.txtBrand.Text = "";
-            this.txtLine.Text = "";
-            this.txtCell.Text = "";
+            this.txtBrand.Text = string.Empty;
+            this.txtLine.Text = string.Empty;
+            this.txtCell.Text = string.Empty;
         }
     }
 }

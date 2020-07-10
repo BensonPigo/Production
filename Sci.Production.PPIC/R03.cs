@@ -13,7 +13,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R03
     /// </summary>
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         private string style;
         private string Article;
@@ -101,8 +101,8 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
             MyUtility.Tool.SetupCombox(this.comboSubProcess, 1, subprocess);
 
             this.comboZone.SelectedIndex = 0;
-            this.comboM.Text = Sci.Env.User.Keyword;
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
             this.comboSubProcess.SelectedIndex = 0;
             this.checkBulk.Checked = true;
         }
@@ -1151,7 +1151,7 @@ drop table #tmpListPoCombo,#tmp_PFRemark,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_Packi
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd;
 
@@ -1509,7 +1509,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
 
             DBProxy.Current.DefaultTimeout = 0;
             this.stdTMS = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("select StdTMS from System WITH (NOLOCK) "));
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 最後一欄 , 有新增欄位要改這
@@ -1526,7 +1526,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
             }
 
             this.ShowWaitMessage("Excel Processing...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_R03_PPICMasterList.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\PPIC_R03_PPICMasterList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -1579,6 +1579,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
             object[,] objArray = new object[tRow + 1, lastCol + 1];
 
             string kPIChangeReasonName;  // CLOUMN[CC]:dr["KPIChangeReason"]+dr["KPIChangeReasonName"]
+
                                          // Dictionary<string, DataRow> tmp_a = orderArtworkData.AsEnumerable().ToDictionary<DataRow, string, DataRow>(r => r["ID"].ToString(),r => r);
             if (this.orderArtworkData == null)
             {
@@ -1890,7 +1891,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
             this.SetCount(maxRow);
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R03_PPICMasterList");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_R03_PPICMasterList");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Ict.Win;
-using Sci;
 using Sci.Data;
 
 namespace Sci.Production.PublicForm
@@ -18,20 +12,21 @@ namespace Sci.Production.PublicForm
     /// <param name="strTableNm"></param>
     /// <param name="strColumnNm"></param>
     /// <param name="drData"></param>
-    public partial class EditRemark : Sci.Win.Subs.Base
+    public partial class EditRemark : Win.Subs.Base
     {
-        string _tableNm, _columnNm ;
+        string _tableNm;
+        string _columnNm;
         DataRow dr;
+
         public EditRemark(string tableNm, string columnNm, DataRow Data)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            _tableNm = tableNm;
-            _columnNm = columnNm;
-            dr = Data;
+            this._tableNm = tableNm;
+            this._columnNm = columnNm;
+            this.dr = Data;
 
-            edit_Remark.Text = dr[columnNm].ToString();
-
+            this.edit_Remark.Text = this.dr[columnNm].ToString();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -41,45 +36,57 @@ namespace Sci.Production.PublicForm
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            string sqlcmd = "";
-            string sqlwhere = "";
+            string sqlcmd = string.Empty;
+            string sqlwhere = string.Empty;
             DualResult result;
             ITableSchema tbs;
-            if (!(result = DBProxy.Current.GetTableSchema(null,_tableNm,out  tbs)))
+            if (!(result = DBProxy.Current.GetTableSchema(null, this._tableNm, out tbs)))
             {
-                ShowErr(_tableNm,result);
-                return;
-            }
-            
-            if (tbs.PKs.Count==0)
-            {
-                MessageBox.Show(string.Format("Table:{0} without PK, can't update!!",_tableNm),"Warrning",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                this.ShowErr(this._tableNm, result);
                 return;
             }
 
-            for (int i=0; i < tbs.PKs.Count; i++)
+            if (tbs.PKs.Count == 0)
+            {
+                MessageBox.Show(string.Format("Table:{0} without PK, can't update!!", this._tableNm), "Warrning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            for (int i = 0; i < tbs.PKs.Count; i++)
             {
                 if (i == 0)
                 {
-                    if (tbs.PKs[i].ColumnType.ToString().ToUpper()=="STRING")
-                        sqlwhere = string.Format(" where {0} = '{1}'", tbs.PKs[i].ColumnName, dr[tbs.PKs[i].ColumnName]);
+                    if (tbs.PKs[i].ColumnType.ToString().ToUpper() == "STRING")
+                    {
+                        sqlwhere = string.Format(" where {0} = '{1}'", tbs.PKs[i].ColumnName, this.dr[tbs.PKs[i].ColumnName]);
+                    }
                     else
-                        sqlwhere = string.Format(" where {0} = {1}", tbs.PKs[i].ColumnName, dr[tbs.PKs[i].ColumnName]);
+                    {
+                        sqlwhere = string.Format(" where {0} = {1}", tbs.PKs[i].ColumnName, this.dr[tbs.PKs[i].ColumnName]);
+                    }
                 }
                 else
                 {
                     if (tbs.PKs[i].ColumnType.ToString().ToUpper() == "STRING")
-                        sqlwhere = sqlwhere + string.Format(" and {0} = '{1}'", tbs.PKs[i].ColumnName, dr[tbs.PKs[i].ColumnName]);
+                    {
+                        sqlwhere = sqlwhere + string.Format(" and {0} = '{1}'", tbs.PKs[i].ColumnName, this.dr[tbs.PKs[i].ColumnName]);
+                    }
                     else
-                        sqlwhere = sqlwhere + string.Format(" and {0} = {1}", tbs.PKs[i].ColumnName, dr[tbs.PKs[i].ColumnName]);
+                    {
+                        sqlwhere = sqlwhere + string.Format(" and {0} = {1}", tbs.PKs[i].ColumnName, this.dr[tbs.PKs[i].ColumnName]);
+                    }
                 }
             }
 
-            sqlcmd = string.Format("update {0} set {1} = '{2}'", _tableNm, _columnNm, edit_Remark.Text) + sqlwhere;
+            sqlcmd = string.Format("update {0} set {1} = '{2}'", this._tableNm, this._columnNm, this.edit_Remark.Text) + sqlwhere;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
-                ShowErr(sqlcmd, result);
+            {
+                this.ShowErr(sqlcmd, result);
+            }
             else
+            {
                 this.Close();
+            }
         }
     }
 }

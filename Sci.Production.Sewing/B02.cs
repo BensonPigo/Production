@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
-    public partial class B02 : Sci.Win.Tems.Input1
+    public partial class B02 : Win.Tems.Input1
     {
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("FactoryID = '{0}'", Sci.Env.User.Factory);
+            this.DefaultFilter = string.Format("FactoryID = '{0}'", Env.User.Factory);
         }
 
         protected override void OnDetailEntered()
@@ -26,7 +18,7 @@ namespace Sci.Production.Sewing
 
         protected override bool ClickSaveBefore()
         {
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             string sql = string.Empty;
             #region 檢查不可為空值
             if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
@@ -46,7 +38,7 @@ namespace Sci.Production.Sewing
 
             if (this.IsDetailInserting)
             {
-                sql = string.Format("select * from LineLocation where FactoryID = '{0}' and ID = '{1}'", Sci.Env.User.Factory, this.txtID.Text.ToString());
+                sql = string.Format("select * from LineLocation where FactoryID = '{0}' and ID = '{1}'", Env.User.Factory, this.txtID.Text.ToString());
                 if (MyUtility.Check.Seek(sql))
                 {
                     this.txtID.Focus();
@@ -55,7 +47,7 @@ namespace Sci.Production.Sewing
                 }
             }
 
-            sql = string.Format("select * from LineLocation where FactoryID = '{0}' and Name = '{1}' and ID <> '{2}'", Sci.Env.User.Factory, this.txtName.Text.ToString(), this.txtID.Text.ToString());
+            sql = string.Format("select * from LineLocation where FactoryID = '{0}' and Name = '{1}' and ID <> '{2}'", Env.User.Factory, this.txtName.Text.ToString(), this.txtID.Text.ToString());
             if (MyUtility.Check.Seek(sql))
             {
                 this.txtName.Focus();
