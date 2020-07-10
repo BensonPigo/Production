@@ -19,11 +19,6 @@ namespace Sci.Production.Cutting
     /// <inheritdoc/>
     public partial class P02_ImportML : Sci.Win.Tems.QueryForm
     {
-        /// <summary>
-        /// L:Lectra；G:Gerber
-        /// </summary>
-        public string FileType;
-
         private class MarkerItemSet
         {
             /// <summary>
@@ -92,6 +87,7 @@ namespace Sci.Production.Cutting
             public string Version { get; set; }
         }
 
+        private string FileType;
         private LatestMatchPattern pattern = new LatestMatchPattern();
         private DataRow lastVerData;
         private string SizeRange = string.Empty;
