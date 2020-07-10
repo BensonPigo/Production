@@ -6,20 +6,27 @@ using Ict;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class B05 : Win.Tems.Input1
     {
-      public B05(ToolStripMenuItem menuitem)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B05"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
+        public B05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
-      protected override bool ClickSaveBefore()
+        /// <inheritdoc/>
+        protected override bool ClickSaveBefore()
         {
             return base.ClickSaveBefore();
         }
 
-      protected override DualResult ClickSave()
+        /// <inheritdoc/>
+        protected override DualResult ClickSave()
         {
             // 修改表身資料,不寫入表頭EditName and EditDate
             ITableSchema pass1Schema;
