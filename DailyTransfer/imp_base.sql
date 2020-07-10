@@ -3742,9 +3742,13 @@ on t.ID=s.ID
 when matched then
 	update set
 	t.UnselectableShipB03= s.UnselectableShipB03
+	,t.AddDate= s.AddDate
+	,t.AddName= s.AddName
+	,t.EditDate= s.EditDate
+	,t.EditName= s.EditName
 when not matched by target then
-	insert(UnselectableShipB03)
-	values(s.UnselectableShipB03)
+	insert(UnselectableShipB03 ,AddDate ,AddName ,EditDate ,EditName)
+	values(s.UnselectableShipB03 ,s.AddDate ,s.AddName ,s.EditDate ,s.EditName)
 when not matched by source then 
 	delete;	
 
