@@ -809,6 +809,7 @@ where a.ID='{0}'"
                         if (rolldt.Rows.Count < 1)
                         {
                             MyUtility.Msg.WarningBox("Must inspect at least 1 roll data.");
+                            return;
                         }
                     }
                 }
