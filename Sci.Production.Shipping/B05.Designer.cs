@@ -30,10 +30,11 @@
         {
             this.displayBrand = new Sci.Win.UI.DisplayBox();
             this.labelBrand = new Sci.Win.UI.Label();
-            this.displayEditDate = new Sci.Win.UI.DisplayBox();
             this.labelEditDate = new Sci.Win.UI.Label();
             this.txtuserShipLeader = new Sci.Production.Class.Txtuser();
             this.label1 = new Sci.Win.UI.Label();
+            this.chkJunk = new Sci.Win.UI.CheckBox();
+            this.displayEditDate = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -42,14 +43,25 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(723, 344);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkJunk);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtuserShipLeader);
             this.detailcont.Controls.Add(this.displayEditDate);
             this.detailcont.Controls.Add(this.labelEditDate);
             this.detailcont.Controls.Add(this.displayBrand);
             this.detailcont.Controls.Add(this.labelBrand);
+            this.detailcont.Size = new System.Drawing.Size(723, 306);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 306);
+            this.detailbtm.Size = new System.Drawing.Size(723, 38);
             // 
             // browse
             // 
@@ -58,6 +70,22 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(731, 373);
+            // 
+            // createby
+            // 
+            this.createby.Visible = false;
+            // 
+            // editby
+            // 
+            this.editby.Visible = false;
+            // 
+            // lblcreateby
+            // 
+            this.lblcreateby.Visible = false;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Visible = false;
             // 
             // displayBrand
             // 
@@ -76,17 +104,6 @@
             this.labelBrand.Size = new System.Drawing.Size(115, 23);
             this.labelBrand.TabIndex = 7;
             this.labelBrand.Text = "Brand";
-            // 
-            // displayEditDate
-            // 
-            this.displayEditDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayEditDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipLeaderEditDate", true));
-            this.displayEditDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayEditDate.FormatString = "yyyy/MM/dd HH:mm:ss";
-            this.displayEditDate.Location = new System.Drawing.Point(160, 116);
-            this.displayEditDate.Name = "displayEditDate";
-            this.displayEditDate.Size = new System.Drawing.Size(200, 23);
-            this.displayEditDate.TabIndex = 10;
             // 
             // labelEditDate
             // 
@@ -114,6 +131,31 @@
             this.label1.TabIndex = 12;
             this.label1.Text = "Shipping leader";
             // 
+            // chkJunk
+            // 
+            this.chkJunk.AutoSize = true;
+            this.chkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkJunk.IsSupportEditMode = false;
+            this.chkJunk.Location = new System.Drawing.Point(400, 27);
+            this.chkJunk.Name = "chkJunk";
+            this.chkJunk.ReadOnly = true;
+            this.chkJunk.Size = new System.Drawing.Size(57, 21);
+            this.chkJunk.TabIndex = 13;
+            this.chkJunk.Text = "Junk";
+            this.chkJunk.UseVisualStyleBackColor = true;
+            // 
+            // displayEditDate
+            // 
+            this.displayEditDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayEditDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipLeaderEditDate", true));
+            this.displayEditDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayEditDate.FormatString = "yyyy/MM/dd HH:mm:ss";
+            this.displayEditDate.Location = new System.Drawing.Point(160, 116);
+            this.displayEditDate.Name = "displayEditDate";
+            this.displayEditDate.Size = new System.Drawing.Size(200, 23);
+            this.displayEditDate.TabIndex = 10;
+            // 
             // B05
             // 
             this.ClientSize = new System.Drawing.Size(731, 406);
@@ -121,10 +163,10 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportLocate = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B05";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B05. Shipping Leader";
             this.WorkAlias = "Brand";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -146,7 +188,8 @@
         private Win.UI.Label labelBrand;
         private Win.UI.Label label1;
         private Class.Txtuser txtuserShipLeader;
-        private Win.UI.DisplayBox displayEditDate;
+        private Win.UI.CheckBox chkJunk;
         private Win.UI.Label labelEditDate;
+        private Win.UI.DisplayBox displayEditDate;
     }
 }
