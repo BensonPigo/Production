@@ -246,6 +246,7 @@ Select
     ,isbyAdditionalRevisedMarker = cast(0 as int)
     ,fromukey = a.ukey
     ,CuttingLayer = iif(isnull(cs.CuttingLayer,0) = 0, 100 ,cs.CuttingLayer)
+    ,ImportML = cast(0 as bit)
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
 left join Construction cs WITH (NOLOCK) on cs.ID = ConstructionID
@@ -482,7 +483,6 @@ where WorkOrderUkey={0}", masterID);
 
             return base.OnSubDetailSelectCommandPrepare(e);
         }
-
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -506,6 +506,7 @@ where WorkOrderUkey={0}", masterID);
             string maxcutrefCmd = string.Format("Select Max(Cutref) from workorder WITH (NOLOCK) where mDivisionid = '{0}'", this.keyWord);
             this.textbox_LastCutRef.Text = MyUtility.GetValue.Lookup(maxcutrefCmd);
             this.comboBox1.Enabled = !this.EditMode;  // Sorting於編輯模式時不可選取
+            this.BtnImportMarker.Enabled = this.EditMode;
 
             foreach (DataRow dr in this.DetailDatas)
             {
@@ -2295,6 +2296,11 @@ where WorkOrderUkey={0}", masterID);
             {
                 this.distributeMenuStrip.Enabled = this.EditMode;
             }
+
+            if (this.BtnImportMarker != null)
+            {
+                this.BtnImportMarker.Enabled = this.EditMode;
+            }
         }
 
         // 1394: CUTTING_P02_Cutting Work Order。KEEP當前的資料。
@@ -2637,7 +2643,7 @@ END";
                     // 找合併組合相同資料, 且還沒產生Cutref
                     DataRow[] sdr = wk.Select($"FabricCombo ='{dr["FabricCombo"]}' and FabricPanelCode ='{dr["FabricPanelCode"]}' and MarkerNo ='{dr["MarkerNo"]}' and Markername ='{dr["Markername"]}' and estcutdate ='{estcutdate}' and SizeCode ='{dr["SizeCode"]}' and isnull(CutRef,'') = ''");
 
-                    decimal sumLayer = MyUtility.Convert.GetDecimal(sdr.CopyToDataTable().Compute("sum(Layer)", string.Empty));
+                    decimal sumLayer = MyUtility.Convert.GetDecimal(sdr.ToList().Sum(s => MyUtility.Convert.GetInt(s["Layer"])));
 
                     if (sumLayer > MyUtility.Convert.GetDecimal(dr["CuttingLayer"])) // 最大裁剪數看其中一筆即可
                     {
@@ -2645,7 +2651,11 @@ END";
                     }
                     else
                     {
-                        decimal hm = sdr.AsEnumerable().Max(m => MyUtility.Convert.GetDecimal(m["cutno"]));
+                        decimal hm = 0;
+                        if (sdr.AsEnumerable().Any())
+                        {
+                            hm = sdr.AsEnumerable().Max(m => MyUtility.Convert.GetDecimal(m["cutno"]));
+                        }
                         if (hm != 0)
                         {
                             foreach (var item in sdr.AsEnumerable().Where(w => MyUtility.Check.Empty(w["cutno"])))
@@ -2755,6 +2765,7 @@ END";
 
             // base.OnDetailGridInsert(index); //先給一個NewKey
             int maxkey;
+
             object comput = ((DataTable)this.detailgridbs.DataSource).Compute("Max(newkey)", string.Empty);
             if (comput == DBNull.Value)
             {
@@ -2765,7 +2776,7 @@ END";
                 maxkey = Convert.ToInt32(comput);
             }
 
-            maxkey = maxkey + 1;
+            maxkey++;
 
             DataTable detailtmp = (DataTable)this.detailgridbs.DataSource;
             int TEMP = ((DataTable)this.detailgridbs.DataSource).Rows.Count;
@@ -3744,6 +3755,48 @@ where b.poid = '{0}'
             this.CurrentDetailData["PatternPanel"] = string.Join("+", x);
         }
 
+        private void BtnImportMarker_Click(object sender, EventArgs e)
+        {
+            string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            string sqlcmd = $@"
+select top 1 s.SizeGroup, s.PatternNo, oe.markerNo, s.ID, p.Version, Order_EachConsUkey=oe.Ukey
+from Order_EachCons oe 
+inner join dbo.SMNotice s on oe.SMNoticeID = s.ID
+inner join SMNotice_Detail sd with(nolock)on sd.id = s.id
+inner join Pattern p with(nolock)on p.id = sd.id
+where oe.ID = '{id}'
+and sd.PhaseID = 'Bulk'
+and p.Status='Completed'
+order by p.EditDate desc
+";
+            DataRow drSMNotice;
+            if (MyUtility.Check.Seek(sqlcmd, out drSMNotice))
+            {
+                string styleUkey = MyUtility.GetValue.Lookup($@"select o.StyleUkey from Orders o where o.id = '{id}'");
+                var form = new P02_ImportML(styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
+                form.ShowDialog();
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Not found SMNotice Datas"); // 正常不會發生這狀況
+            }
+
+            #region 產生第3層 PatternPanel 只有一筆
+            this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).ToList().ForEach(row =>
+            {
+                PatternPanelTb_Copy.Clear();
+                DataRow drNEW = PatternPanelTb_Copy.NewRow();
+                drNEW["id"] = CurrentMaintain["ID"];
+                drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
+                drNEW["PatternPanel"] = row["PatternPanel"];
+                drNEW["FabricPanelCode"] = row["FabricPanelCode"];
+                PatternPanelTb_Copy.Rows.Add(drNEW);
+
+                CreateSubDetailDatas(row);
+            });
+            #endregion
+        }
+
         private void Distribute_grid_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
         }
@@ -3874,6 +3927,31 @@ where   id = '{0}'
             this.callP07.MdiParent = this.MdiParent;
             this.callP07.Show();
             this.callP07.P07Data(this.CurrentMaintain["ID"].ToString());
+        }
+
+        public static void ProcessColumns(DataRow currentRow)
+        {
+            // MarkerLengthY, MarkerLengthE, ActCuttingPerimeterNew, StraightLengthNew, CurvedLengthNew
+
+            if (!MyUtility.Check.Empty(currentRow["MarkerLength"]))
+            {
+                string markerLength = MyUtility.Convert.GetString(currentRow["MarkerLength"]);
+                int indexY = markerLength.IndexOf("Ｙ");
+                currentRow["markerLengthY"] = markerLength.Substring(0, indexY).PadLeft(2, '0');
+                currentRow["markerLengthE"] = markerLength.Substring(indexY + 1);
+            }
+
+            PadLeftTen("ActCuttingPerimeter", currentRow);
+            PadLeftTen("StraightLength", currentRow);
+            PadLeftTen("CurvedLength", currentRow);
+        }
+
+        private static void PadLeftTen(string columnName, DataRow currentRow)
+        {
+            if (!MyUtility.Check.Empty(currentRow[columnName]))
+            {
+                currentRow[columnName + "New"] = MyUtility.Convert.GetString(currentRow[columnName]).PadLeft(10, '0');
+            }
         }
     }
 }

@@ -128,6 +128,12 @@
     <Compile Include="B01.Designer.cs">
       <DependentUpon>B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_ImportML.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_ImportML.Designer.cs">
+      <DependentUpon>P02_ImportML.cs</DependentUpon>
+    </Compile>
     <Compile Include="P08_MailTo_Detail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -534,6 +540,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B02.resx">
       <DependentUpon>B02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_ImportML.resx">
+      <DependentUpon>P02_ImportML.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P08_MailTo_Detail.resx">
       <DependentUpon>P08_MailTo_Detail.cs</DependentUpon>
