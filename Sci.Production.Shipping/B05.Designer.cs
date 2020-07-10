@@ -30,9 +30,11 @@
         {
             this.displayBrand = new Sci.Win.UI.DisplayBox();
             this.labelBrand = new Sci.Win.UI.Label();
+            this.labelEditDate = new Sci.Win.UI.Label();
             this.txtuserShipLeader = new Sci.Production.Class.txtuser();
             this.label1 = new Sci.Win.UI.Label();
             this.chkJunk = new Sci.Win.UI.CheckBox();
+            this.displayEditDate = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -50,6 +52,8 @@
             this.detailcont.Controls.Add(this.chkJunk);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtuserShipLeader);
+            this.detailcont.Controls.Add(this.displayEditDate);
+            this.detailcont.Controls.Add(this.labelEditDate);
             this.detailcont.Controls.Add(this.displayBrand);
             this.detailcont.Controls.Add(this.labelBrand);
             this.detailcont.Size = new System.Drawing.Size(723, 306);
@@ -66,6 +70,22 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(731, 373);
+            // 
+            // createby
+            // 
+            this.createby.Visible = false;
+            // 
+            // editby
+            // 
+            this.editby.Visible = false;
+            // 
+            // lblcreateby
+            // 
+            this.lblcreateby.Visible = false;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Visible = false;
             // 
             // displayBrand
             // 
@@ -84,6 +104,14 @@
             this.labelBrand.Size = new System.Drawing.Size(115, 23);
             this.labelBrand.TabIndex = 7;
             this.labelBrand.Text = "Brand";
+            // 
+            // labelEditDate
+            // 
+            this.labelEditDate.Location = new System.Drawing.Point(42, 116);
+            this.labelEditDate.Name = "labelEditDate";
+            this.labelEditDate.Size = new System.Drawing.Size(115, 23);
+            this.labelEditDate.TabIndex = 9;
+            this.labelEditDate.Text = "Edit Date";
             // 
             // txtuserShipLeader
             // 
@@ -116,6 +144,17 @@
             this.chkJunk.TabIndex = 13;
             this.chkJunk.Text = "Junk";
             this.chkJunk.UseVisualStyleBackColor = true;
+            // 
+            // displayEditDate
+            // 
+            this.displayEditDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayEditDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipLeaderEditDate", true));
+            this.displayEditDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayEditDate.FormatString = "yyyy/MM/dd HH:mm:ss";
+            this.displayEditDate.Location = new System.Drawing.Point(160, 116);
+            this.displayEditDate.Name = "displayEditDate";
+            this.displayEditDate.Size = new System.Drawing.Size(200, 23);
+            this.displayEditDate.TabIndex = 10;
             // 
             // B05
             // 
@@ -150,5 +189,7 @@
         private Win.UI.Label label1;
         private Class.txtuser txtuserShipLeader;
         private Win.UI.CheckBox chkJunk;
+        private Win.UI.Label labelEditDate;
+        private Win.UI.DisplayBox displayEditDate;
     }
 }
