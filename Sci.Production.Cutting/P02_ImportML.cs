@@ -16,12 +16,13 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P02_ImportML : Sci.Win.Tems.QueryForm
     {
         /// <summary>
         /// L:Lectra；G:Gerber
         /// </summary>
-        public string fileType;
+        public string FileType;
 
         private class MarkerItemSet
         {
@@ -92,23 +93,25 @@ namespace Sci.Production.Cutting
         }
 
         private LatestMatchPattern pattern = new LatestMatchPattern();
-        DataRow lastVerData;
+        private DataRow lastVerData;
         private string SizeRange = string.Empty;
         private string StyleUKey = string.Empty;
         private string MarkerNo = string.Empty;
         private string WorkOrderID = string.Empty;
         private DataTable WorkOrder;
+
         private Dictionary<string, string> SizeCodeCaches { get; set; }
 
+        /// <inheritdoc/>
         public P02_ImportML(string styleUKey, string id, DataRow drSMNotice, DataTable workOrder)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.StyleUKey = styleUKey;
             this.WorkOrderID = id;
             this.lastVerData = drSMNotice;
             this.WorkOrder = workOrder;
-            this.fileType = "L";
-            this.MarkerNo = lastVerData["markerNo"].ToString();
+            this.FileType = "L";
+            this.MarkerNo = this.lastVerData["markerNo"].ToString();
         }
 
         /// <inheritdoc />
@@ -123,7 +126,7 @@ namespace Sci.Production.Cutting
             gridDataSource.ColumnsStringAdd("FileType");
             this.ui_grid.DataSource = gridDataSource;
 
-            using (var dr = DBProxy.Current.SelectEx("Select SizeCode, Seq From Style_SizeCode Where StyleUKey = @UKey and SizeGroup = @SizeGroup", "UKey", this.StyleUKey, "SizeGroup", lastVerData["SizeGroup"].ToString()))
+            using (var dr = DBProxy.Current.SelectEx("Select SizeCode, Seq From Style_SizeCode Where StyleUKey = @UKey and SizeGroup = @SizeGroup", "UKey", this.StyleUKey, "SizeGroup", this.lastVerData["SizeGroup"].ToString()))
             {
                 if (dr == true)
                 {
@@ -145,10 +148,10 @@ namespace Sci.Production.Cutting
 
         private void Ui_btnImportFiles_Click(object sender, EventArgs e)
         {
-            var type = this.fileType;
+            var type = this.FileType;
             string filter;
 
-            filter = $"DAT Files({lastVerData["PatternNo"]}*.WRI)|*.WRI|All files (*.*)|*.*";
+            filter = $"DAT Files({this.lastVerData["PatternNo"]}*.WRI)|*.WRI|All files (*.*)|*.*";
 
             string[] fileNames = null;
             SciFileDialog.ShowDialog(
@@ -306,33 +309,33 @@ namespace Sci.Production.Cutting
 
                             // 此處 Production 的 ConsPC 只有數值， 確認 trade 那邊的轉換 ConsPC 是去掉yd
 
-                            //MatchFabric = 0 or 4
+                            // MatchFabric = 0 or 4
                             string matchFabric = currentRow_marker_ml["MatchFabric"].ToString();
                             if (matchFabric.Equals("0") || matchFabric.Equals("4"))
                             {
                                 if (!qty.EqualDecimal(0))
                                 {
-                                    currentRow_marker_ml["ConsPC"] = MyUtility.Math.Round(MyUtility.Math.Round((markerLength + 1M) / qty, 8) / 36M, 4);// + "yd";
+                                    currentRow_marker_ml["ConsPC"] = MyUtility.Math.Round(MyUtility.Math.Round((markerLength + 1M) / qty, 8) / 36M, 4);
                                 }
                             }
                             else if (matchFabric.Equals("1"))
                             {
                                 if (!vRepeat.EqualDecimal(0) && !qty.EqualDecimal(0))
                                 {
-                                    currentRow_marker_ml["ConsPC"] = MyUtility.Math.Round(MyUtility.Math.Round(Math.Ceiling(markerLength / vRepeat) * vRepeat / qty, 8) / 36M, 4);// + "yd";
+                                    currentRow_marker_ml["ConsPC"] = MyUtility.Math.Round(MyUtility.Math.Round(Math.Ceiling(markerLength / vRepeat) * vRepeat / qty, 8) / 36M, 4);
                                 }
                             }
                             else if (matchFabric.Equals("2") || matchFabric.Equals("3"))
                             {
                                 if (!vRepeat.EqualDecimal(0) && !qty.EqualDecimal(0))
                                 {
-                                    currentRow_marker_ml["ConsPC"] = MyUtility.Math.Round(MyUtility.Math.Round(Math.Ceiling((markerLength + 1M) / vRepeat) * vRepeat / qty, 8) / 36M, 4);// + "yd";
+                                    currentRow_marker_ml["ConsPC"] = MyUtility.Math.Round(MyUtility.Math.Round(Math.Ceiling((markerLength + 1M) / vRepeat) * vRepeat / qty, 8) / 36M, 4);
                                 }
                             }
                         }
                     }
 
-                    int maxKey = MyUtility.Convert.GetInt(this.WorkOrder.Compute("Max(newkey)", ""));
+                    int maxKey = MyUtility.Convert.GetInt(this.WorkOrder.Compute("Max(newkey)", string.Empty));
                     var mergeInTable = inserts_marker_ML.CopyToDataTable();
 
                     #region 判斷是否已有重複資料，[Fabric Combo]+[Fab_Panel Code]+[Marker No]+[Marker Name]
@@ -366,7 +369,7 @@ namespace Sci.Production.Cutting
                             row["OrderID"] = this.WorkOrderID; // 此處不用管 Type，因為用檔案匯入沒有dist
                             row["MarkerNo"] = this.MarkerNo;
                             row["EachconsMarkerNo"] = this.MarkerNo;
-                            row["EachconsMarkerVersion"] = lastVerData["Version"];
+                            row["EachconsMarkerVersion"] = this.lastVerData["Version"];
                             row["Cutno"] = DBNull.Value;
                             row["isbyAdditionalRevisedMarker"] = 0;
                             row["ImportML"] = true;
@@ -629,20 +632,19 @@ namespace Sci.Production.Cutting
 
         private bool SingleMarkerItem(List<DataRow> inserts_marker_ML, List<DataRow> inserts_marker_SizeCode, List<DataRow> inserts_marker_qty, MarkerItemSet item, List<string> allError)
         {
-            DataTable TableSchema_WorkOrder = this.WorkOrder.Clone();
-            TableSchema_WorkOrder.Columns.Add("MatchFabric", typeof(string));
-            TableSchema_WorkOrder.Columns.Add("V_Repeat", typeof(decimal));
-            var rowML = TableSchema_WorkOrder.NewRow();
+            DataTable tableSchema_WorkOrder = this.WorkOrder.Clone();
+            tableSchema_WorkOrder.Columns.Add("MatchFabric", typeof(string));
+            tableSchema_WorkOrder.Columns.Add("V_Repeat", typeof(decimal));
+            var rowML = tableSchema_WorkOrder.NewRow();
             if (item.FirstInsert == true)
             {
                 #region ML
                 {
                     // 10.當匯入的MarkerName =’K’開頭,就沒有 FabricPanelCode ,則無對應的Pattern Panel , Fabric Code , 直接匯入
                     // 11.當　MarkerName <> ‘K’ 開頭，就利用FabricPanelCode至Style_BOF中帶出最新的MatchFabric, V_Repeat , H_Repeat , HorizontalCutting, OneTwoWay , Pattern Panel , Fabric Code , SCIRefno
-
                     rowML["MarkerName"] = item.CurrentMarkerName;
                     rowML["ID"] = this.WorkOrderID;
-                    rowML["MarkerVersion"] = lastVerData["Version"];
+                    rowML["MarkerVersion"] = this.lastVerData["Version"];
                     rowML["FabricPanelCode"] = item.Fab_Type;
                     rowML["StraightLength"] = item.Straight;
                     rowML["CurvedLength"] = item.Curved;
@@ -684,7 +686,7 @@ Where bof.StyleUkey = @StyleUkey";
                             "FabricPanelCode",
                             fabricPanelCode,
                             "ID",
-                            lastVerData["ID"].ToString()))
+                            this.lastVerData["ID"].ToString()))
                         {
                             if (dr == false)
                             {
@@ -732,6 +734,7 @@ Where bof.StyleUkey = @StyleUkey";
                new SqlParameter("@sizeCodev", item.SizeCode),
             };
             string sqlcmd = $@"Select 1 From Style_SizeCode Where StyleUkey = {this.StyleUKey} And SizeCode = '{item.SizeCode}'";
+
             // 匯入的Size必須存在於Style – SizeSpec之中
             if (!MyUtility.Check.Seek(sqlcmd))
             {
@@ -762,11 +765,11 @@ Where bof.StyleUkey = @StyleUkey";
 
                 if (notExist)
                 {
-                    DataTable Marker_Qty = new DataTable();
-                    Marker_Qty.Columns.Add("MarkerName", typeof(string));
-                    Marker_Qty.Columns.Add("sizecode", typeof(string));
-                    Marker_Qty.Columns.Add("qty", typeof(decimal));
-                    var marker_qty_datarow = Marker_Qty.NewRow();
+                    DataTable marker_Qty = new DataTable();
+                    marker_Qty.Columns.Add("MarkerName", typeof(string));
+                    marker_Qty.Columns.Add("sizecode", typeof(string));
+                    marker_Qty.Columns.Add("qty", typeof(decimal));
+                    var marker_qty_datarow = marker_Qty.NewRow();
                     marker_qty_datarow["MarkerName"] = item.CurrentMarkerName;
                     marker_qty_datarow["sizeCode"] = item.SizeCode;
                     marker_qty_datarow["qty"] = item.Qty;
