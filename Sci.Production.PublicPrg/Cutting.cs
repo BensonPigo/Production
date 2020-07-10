@@ -10,6 +10,62 @@ namespace Sci.Production.PublicPrg
 
     public static partial class Prgs
     {
+        /// <summary>
+        /// 馬克長的格式轉換(轉換成 99Y99-9/9+9" 這種格式)
+        /// </summary>
+        /// <inheritdoc />
+        public static string MarkerLengthSampleTOTrade(string markerLength, string matchFabric)
+        {
+            // 馬克長的格式轉換(轉換成 99Y99-9/9+9" 這種格式)
+            string newMarkerLength, yd, addstring;
+            int length = markerLength.IndexOf("Yd", 1);
+            /*
+            yd = markerLength.Substring(0, length);
+
+            if (length == 0) { newMarkerLength = "00Ｙ"; }
+            else if (Convert.ToDecimal(yd) < 10) { newMarkerLength = "0" + yd + "Ｙ"; }
+            else { newMarkerLength = yd + "Y"; }
+            */
+            if (length <= 0)
+            {
+                newMarkerLength = "00Ｙ";
+            }
+            else
+            {
+                yd = markerLength.Substring(0, length);
+                newMarkerLength = yd.PadLeft(2, '0') + "Ｙ";
+            }
+
+            length = markerLength.IndexOf('"', 1);
+            if (length <= 0)
+            {
+                newMarkerLength += "00-";
+            }
+            else
+            {
+                int ydno = markerLength.IndexOf("Yd", 1);
+
+                if (ydno >= 0)
+                {
+                    ydno += 2; // 有找到Yd，就由Yd後的位置(x+2)開始抓
+                }
+                else
+                {
+                    ydno = 0;
+                }
+
+                string inch = markerLength.Substring(ydno, length - ydno);
+                newMarkerLength += inch.PadLeft(2, '0') + "-";
+            }
+
+            // 當為"Body Mapping"時，[Marker Length]不必顯示+1
+            addstring = matchFabric == "1" ? "\"" : "+1\"";
+            length = markerLength.IndexOf('/', 1);
+            newMarkerLength += (length <= 0 ? "0/0" : markerLength.Substring(length - 1, 3)) + addstring;
+
+            return newMarkerLength;
+        }
+
         #region BundleCardCheckSubprocess
         /// <summary>
         /// BundleCardCheckSubprocess(string[] ann, string patterncode,DataTable artTb, out bool lallpart)

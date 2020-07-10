@@ -102,6 +102,9 @@
       <DependentUpon>comboRFIDProcessLocation.cs</DependentUpon>
     </Compile>
     <Compile Include="Command\UserPrg.cs" />
+    <Compile Include="InchTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MergeRowGrid.cs">
       <SubType>Component</SubType>
     </Compile>
