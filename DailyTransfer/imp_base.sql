@@ -3747,8 +3747,8 @@ when matched then
 	,t.EditDate= s.EditDate
 	,t.EditName= s.EditName
 when not matched by target then
-	insert(UnselectableShipB03 ,AddDate ,AddName ,EditDate ,EditName)
-	values(s.UnselectableShipB03 ,s.AddDate ,s.AddName ,s.EditDate ,s.EditName)
+	insert(ID, UnselectableShipB03 ,AddDate ,AddName ,EditDate ,EditName)
+	values(s.ID, s.UnselectableShipB03 ,s.AddDate ,s.AddName ,s.EditDate ,s.EditName)
 when not matched by source then 
 	delete;	
 
