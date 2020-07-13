@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.labelPOID = new Sci.Win.UI.Label();
             this.checkBoxExtendAllParts = new Sci.Win.UI.CheckBox();
             this.buttonQuery = new Sci.Win.UI.Button();
             this.textBoxPOID = new Sci.Win.UI.TextBox();
@@ -40,20 +39,15 @@
             this.grid = new Sci.Win.UI.Grid();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.labelPatternPanel = new Sci.Win.UI.Label();
-            this.labelCreateDate = new Sci.Win.UI.Label();
             this.textBoxPatterPanel = new Sci.Win.UI.TextBox();
             this.dateRangeCreateDate = new Sci.Win.UI.DateRange();
+            this.labelSewingDate = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtCutref = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // labelPOID
-            // 
-            this.labelPOID.Location = new System.Drawing.Point(9, 12);
-            this.labelPOID.Name = "labelPOID";
-            this.labelPOID.Size = new System.Drawing.Size(45, 23);
-            this.labelPOID.TabIndex = 1;
-            this.labelPOID.Text = "POID";
             // 
             // checkBoxExtendAllParts
             // 
@@ -75,7 +69,7 @@
             this.buttonQuery.TabIndex = 3;
             this.buttonQuery.Text = "Query";
             this.buttonQuery.UseVisualStyleBackColor = true;
-            this.buttonQuery.Click += new System.EventHandler(this.buttonQuery_Click);
+            this.buttonQuery.Click += new System.EventHandler(this.ButtonQuery_Click);
             // 
             // textBoxPOID
             // 
@@ -95,7 +89,7 @@
             this.buttonClose.TabIndex = 7;
             this.buttonClose.Text = "Close";
             this.buttonClose.UseVisualStyleBackColor = true;
-            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+            this.buttonClose.Click += new System.EventHandler(this.ButtonClose_Click);
             // 
             // buttonToExcel
             // 
@@ -106,7 +100,7 @@
             this.buttonToExcel.TabIndex = 6;
             this.buttonToExcel.Text = "ToExcel";
             this.buttonToExcel.UseVisualStyleBackColor = true;
-            this.buttonToExcel.Click += new System.EventHandler(this.buttonToExcel_Click);
+            this.buttonToExcel.Click += new System.EventHandler(this.ButtonToExcel_Click);
             // 
             // buttonPrint
             // 
@@ -117,7 +111,7 @@
             this.buttonPrint.TabIndex = 5;
             this.buttonPrint.Text = "Print";
             this.buttonPrint.UseVisualStyleBackColor = true;
-            this.buttonPrint.Click += new System.EventHandler(this.buttonPrint_Click);
+            this.buttonPrint.Click += new System.EventHandler(this.ButtonPrint_Click);
             // 
             // grid
             // 
@@ -149,33 +143,26 @@
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid.ShowCellToolTips = false;
             this.grid.Size = new System.Drawing.Size(1226, 515);
             this.grid.TabIndex = 8;
             // 
             // labelPatternPanel
             // 
-            this.labelPatternPanel.Location = new System.Drawing.Point(187, 12);
+            this.labelPatternPanel.Location = new System.Drawing.Point(721, 12);
             this.labelPatternPanel.Name = "labelPatternPanel";
             this.labelPatternPanel.Size = new System.Drawing.Size(82, 23);
             this.labelPatternPanel.TabIndex = 1;
             this.labelPatternPanel.Text = "PatterPanel";
             // 
-            // labelCreateDate
-            // 
-            this.labelCreateDate.Location = new System.Drawing.Point(349, 12);
-            this.labelCreateDate.Name = "labelCreateDate";
-            this.labelCreateDate.Size = new System.Drawing.Size(79, 23);
-            this.labelCreateDate.TabIndex = 1;
-            this.labelCreateDate.Text = "CreateDate";
-            // 
             // textBoxPatterPanel
             // 
             this.textBoxPatterPanel.BackColor = System.Drawing.Color.White;
             this.textBoxPatterPanel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBoxPatterPanel.Location = new System.Drawing.Point(273, 12);
+            this.textBoxPatterPanel.Location = new System.Drawing.Point(807, 12);
             this.textBoxPatterPanel.Name = "textBoxPatterPanel";
             this.textBoxPatterPanel.Size = new System.Drawing.Size(73, 23);
-            this.textBoxPatterPanel.TabIndex = 1;
+            this.textBoxPatterPanel.TabIndex = 3;
             // 
             // dateRangeCreateDate
             // 
@@ -194,16 +181,71 @@
             this.dateRangeCreateDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateRangeCreateDate.DateBox2.TabIndex = 1;
             this.dateRangeCreateDate.IsRequired = false;
-            this.dateRangeCreateDate.Location = new System.Drawing.Point(432, 12);
+            this.dateRangeCreateDate.Location = new System.Drawing.Point(438, 12);
             this.dateRangeCreateDate.Name = "dateRangeCreateDate";
             this.dateRangeCreateDate.Size = new System.Drawing.Size(280, 23);
             this.dateRangeCreateDate.TabIndex = 2;
+            // 
+            // labelSewingDate
+            // 
+            this.labelSewingDate.Location = new System.Drawing.Point(187, 12);
+            this.labelSewingDate.Name = "labelSewingDate";
+            this.labelSewingDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSewingDate.RectStyle.BorderWidth = 1F;
+            this.labelSewingDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelSewingDate.RectStyle.ExtBorderWidth = 1F;
+            this.labelSewingDate.Size = new System.Drawing.Size(62, 23);
+            this.labelSewingDate.TabIndex = 97;
+            this.labelSewingDate.Text = "CutRef#";
+            this.labelSewingDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSewingDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 12);
+            this.label1.Name = "label1";
+            this.label1.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.RectStyle.BorderWidth = 1F;
+            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label1.RectStyle.ExtBorderWidth = 1F;
+            this.label1.Size = new System.Drawing.Size(46, 23);
+            this.label1.TabIndex = 98;
+            this.label1.Text = "POID";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // txtCutref
+            // 
+            this.txtCutref.BackColor = System.Drawing.Color.White;
+            this.txtCutref.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutref.Location = new System.Drawing.Point(252, 12);
+            this.txtCutref.Name = "txtCutref";
+            this.txtCutref.Size = new System.Drawing.Size(100, 23);
+            this.txtCutref.TabIndex = 1;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(355, 12);
+            this.label2.Name = "label2";
+            this.label2.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label2.RectStyle.BorderWidth = 1F;
+            this.label2.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label2.RectStyle.ExtBorderWidth = 1F;
+            this.label2.Size = new System.Drawing.Size(80, 23);
+            this.label2.TabIndex = 100;
+            this.label2.Text = "Create Date";
+            this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P13
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1244, 599);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.txtCutref);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelSewingDate);
             this.Controls.Add(this.dateRangeCreateDate);
             this.Controls.Add(this.textBoxPatterPanel);
             this.Controls.Add(this.grid);
@@ -213,15 +255,12 @@
             this.Controls.Add(this.textBoxPOID);
             this.Controls.Add(this.buttonQuery);
             this.Controls.Add(this.checkBoxExtendAllParts);
-            this.Controls.Add(this.labelCreateDate);
             this.Controls.Add(this.labelPatternPanel);
-            this.Controls.Add(this.labelPOID);
             this.EditMode = true;
             this.Name = "P13";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P13. Batch Print Bundle Check List";
-            this.Controls.SetChildIndex(this.labelPOID, 0);
             this.Controls.SetChildIndex(this.labelPatternPanel, 0);
-            this.Controls.SetChildIndex(this.labelCreateDate, 0);
             this.Controls.SetChildIndex(this.checkBoxExtendAllParts, 0);
             this.Controls.SetChildIndex(this.buttonQuery, 0);
             this.Controls.SetChildIndex(this.textBoxPOID, 0);
@@ -231,6 +270,10 @@
             this.Controls.SetChildIndex(this.grid, 0);
             this.Controls.SetChildIndex(this.textBoxPatterPanel, 0);
             this.Controls.SetChildIndex(this.dateRangeCreateDate, 0);
+            this.Controls.SetChildIndex(this.labelSewingDate, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.txtCutref, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -239,8 +282,6 @@
         }
 
         #endregion
-
-        private Win.UI.Label labelPOID;
         private Win.UI.CheckBox checkBoxExtendAllParts;
         private Win.UI.Button buttonQuery;
         private Win.UI.TextBox textBoxPOID;
@@ -250,8 +291,11 @@
         private Win.UI.Grid grid;
         private Win.UI.BindingSource bindingSource1;
         private Win.UI.Label labelPatternPanel;
-        private Win.UI.Label labelCreateDate;
         private Win.UI.TextBox textBoxPatterPanel;
         private Win.UI.DateRange dateRangeCreateDate;
+        private Win.UI.Label labelSewingDate;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtCutref;
+        private Win.UI.Label label2;
     }
 }
