@@ -34,14 +34,14 @@
             // 
             // textBox1
             // 
-            this.TextBox1TextBox1.Location = new System.Drawing.Point(0, 0);
+            this.TextBox1.Location = new System.Drawing.Point(0, 0);
             this.TextBox1.Name = "textBox1";
             this.TextBox1.Size = new System.Drawing.Size(95, 22);
             this.TextBox1.TabIndex = 0;
-            this.TextBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.TextBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.TextBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TextBox1_PopUp);
+            this.TextBox1.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
             this.TextBox1.Leave += new System.EventHandler(this.TextBox1_Leave);
-            this.TextBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.TextBox1.Validating += new System.ComponentModel.CancelEventHandler(this.TextBox1_Validating);
             // 
             // displayBox1
             // 

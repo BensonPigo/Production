@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Sci.Data;
 using Sci.Win.UI;
 using System.Data.SqlClient;
+using System.Collections.Generic;
 
 namespace Sci.Production.Class
 {
@@ -131,7 +132,7 @@ AND SUBSTRING(ID,1,4) NOT IN (
 )
 ORDER BY ID
 ";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "8,30", this.textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "8,30", this.TextBox1.Text);
 
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -144,13 +145,13 @@ ORDER BY ID
 
         private void TextBox1_Leave(object sender, EventArgs e)
         {
-            string newValue = this.textBox1.Text;
+            string newValue = this.TextBox1.Text;
             if (this.oldValue != newValue)
             {
                 if (MyUtility.Check.Empty(newValue))
                 {
-                    this.textBox1.Text = string.Empty;
-                    this.displayBox1.Text = string.Empty;
+                    this.TextBox1.Text = string.Empty;
+                    this.DisplayBox1.Text = string.Empty;
                     this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                     return;
                 }
@@ -177,11 +178,12 @@ ORDER BY ID
 
                 if (!MyUtility.Check.Seek(cmd, paras))
                 {
-                    this.textBox1.Text = string.Empty;
-                    this.displayBox1.Text = string.Empty;
+                    this.TextBox1.Text = string.Empty;
+                    this.DisplayBox1.Text = string.Empty;
                     MyUtility.Msg.WarningBox(string.Format("< Account No: {0} > not found!!!", newValue));
                     return;
                 }
+
                 this.oldValue = newValue;
                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
