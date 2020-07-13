@@ -97,7 +97,7 @@
             this.labelPatternPanel = new Sci.Win.UI.Label();
             this.txtPatternPanel = new Sci.Win.UI.DisplayBox();
             this.numMarkerLengthY = new Sci.Win.UI.TextBox();
-            this.txtCutCell = new Sci.Production.Class.txtCell();
+            this.txtCutCell = new Sci.Production.Class.TxtCell();
             this.txtMarkerLength = new Sci.Win.UI.TextBox();
             this.btn_Refresh = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -256,7 +256,7 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(1012, 742);
-            this.tabs.SelectedIndexChanged += new System.EventHandler(this.tabs_SelectedIndexChanged);
+            this.tabs.SelectedIndexChanged += new System.EventHandler(this.Tabs_SelectedIndexChanged);
             // 
             // createby
             // 
@@ -459,7 +459,7 @@
             this.btnBatchAssign.TabIndex = 17;
             this.btnBatchAssign.Text = "Batch assign";
             this.btnBatchAssign.UseVisualStyleBackColor = true;
-            this.btnBatchAssign.Click += new System.EventHandler(this.btnBatchAssign_Click);
+            this.btnBatchAssign.Click += new System.EventHandler(this.BtnBatchAssign_Click);
             // 
             // btnQuantityBreakdown
             // 
@@ -558,7 +558,7 @@
             this.txtMarkerLengthE.Name = "txtMarkerLengthE";
             this.txtMarkerLengthE.Size = new System.Drawing.Size(121, 23);
             this.txtMarkerLengthE.TabIndex = 9;
-            this.txtMarkerLengthE.Validating += new System.ComponentModel.CancelEventHandler(this.txtMarkerLengthE_MarkerLengthE_Validating);
+            this.txtMarkerLengthE.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLengthE_MarkerLengthE_Validating);
             // 
             // numUnitCons
             // 
@@ -584,7 +584,7 @@
             0,
             0,
             0});
-            this.numUnitCons.Validated += new System.EventHandler(this.numUnitCons_UnitCons_Validated);
+            this.numUnitCons.Validated += new System.EventHandler(this.NumUnitCons_UnitCons_Validated);
             // 
             // numCons
             // 
@@ -616,7 +616,7 @@
             this.txtFabricPanelCode.Name = "txtFabricPanelCode";
             this.txtFabricPanelCode.Size = new System.Drawing.Size(51, 23);
             this.txtFabricPanelCode.TabIndex = 15;
-            this.txtFabricPanelCode.Validating += new System.ComponentModel.CancelEventHandler(this.txtFabricPanelCode_Validating);
+            this.txtFabricPanelCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtFabricPanelCode_Validating);
             // 
             // txtFabricCombo
             // 
@@ -715,14 +715,14 @@
             this.insertSizeRatioToolStripMenuItem.Name = "insertSizeRatioToolStripMenuItem";
             this.insertSizeRatioToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.insertSizeRatioToolStripMenuItem.Text = "Insert Size Ratio";
-            this.insertSizeRatioToolStripMenuItem.Click += new System.EventHandler(this.insertSizeRatioToolStripMenuItem_Click);
+            this.insertSizeRatioToolStripMenuItem.Click += new System.EventHandler(this.InsertSizeRatioToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.deleteToolStripMenuItem.Text = "Delete Record";
-            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.DeleteToolStripMenuItem_Click);
             // 
             // labelCutplanNo
             // 
@@ -783,8 +783,8 @@
             this.gridDistributetoSPNo.Size = new System.Drawing.Size(373, 160);
             this.gridDistributetoSPNo.TabIndex = 48;
             this.gridDistributetoSPNo.TabStop = false;
-            this.gridDistributetoSPNo.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.distribute_grid_DataError);
-            this.gridDistributetoSPNo.SelectionChanged += new System.EventHandler(this.gridDistributetoSPNo_SelectionChanged);
+            this.gridDistributetoSPNo.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.Distribute_grid_DataError);
+            this.gridDistributetoSPNo.SelectionChanged += new System.EventHandler(this.GridDistributetoSPNo_SelectionChanged);
             // 
             // distributeMenuStrip
             // 
@@ -799,14 +799,14 @@
             this.insertNewRecordToolStripMenuItem.Name = "insertNewRecordToolStripMenuItem";
             this.insertNewRecordToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.insertNewRecordToolStripMenuItem.Text = "Insert New Record";
-            this.insertNewRecordToolStripMenuItem.Click += new System.EventHandler(this.insertNewRecordToolStripMenuItem_Click);
+            this.insertNewRecordToolStripMenuItem.Click += new System.EventHandler(this.InsertNewRecordToolStripMenuItem_Click);
             // 
             // deleteRecordToolStripMenuItem
             // 
             this.deleteRecordToolStripMenuItem.Name = "deleteRecordToolStripMenuItem";
             this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.deleteRecordToolStripMenuItem.Text = "Delete Record";
-            this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.deleteRecordToolStripMenuItem_Click);
+            this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.DeleteRecordToolStripMenuItem_Click);
             // 
             // gridQtyBreakdown
             // 
@@ -923,7 +923,7 @@
             this.comboBox1.OldText = "";
             this.comboBox1.Size = new System.Drawing.Size(137, 24);
             this.comboBox1.TabIndex = 47;
-            this.comboBox1.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
+            this.comboBox1.SelectedValueChanged += new System.EventHandler(this.ComboBox1_SelectedValueChanged);
             // 
             // AutoCut
             // 
@@ -954,7 +954,7 @@
             this.btnPatternPanel.TabIndex = 18;
             this.btnPatternPanel.Text = "PatternPanel";
             this.btnPatternPanel.UseVisualStyleBackColor = true;
-            this.btnPatternPanel.Click += new System.EventHandler(this.btnPatternPanel_Click);
+            this.btnPatternPanel.Click += new System.EventHandler(this.BtnPatternPanel_Click);
             // 
             // labelPatternPanel
             // 
@@ -983,7 +983,7 @@
             this.numMarkerLengthY.Size = new System.Drawing.Size(34, 23);
             this.numMarkerLengthY.TabIndex = 8;
             this.numMarkerLengthY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numMarkerLengthY.Validated += new System.EventHandler(this.numMarkerLengthY_MarkerLengthY_Validated);
+            this.numMarkerLengthY.Validated += new System.EventHandler(this.NumMarkerLengthY_MarkerLengthY_Validated);
             // 
             // txtCutCell
             // 
@@ -1014,7 +1014,7 @@
             this.btn_Refresh.TabIndex = 49;
             this.btn_Refresh.Text = "Refresh";
             this.btn_Refresh.UseVisualStyleBackColor = true;
-            this.btn_Refresh.Click += new System.EventHandler(this.btn_Refresh_Click);
+            this.btn_Refresh.Click += new System.EventHandler(this.Btn_Refresh_Click);
             // 
             // splitContainer1
             // 
@@ -1072,7 +1072,7 @@
             this.btnAdditionalrevisedmarker.TabIndex = 61;
             this.btnAdditionalrevisedmarker.Text = "Additional revised marker";
             this.btnAdditionalrevisedmarker.UseVisualStyleBackColor = true;
-            this.btnAdditionalrevisedmarker.Click += new System.EventHandler(this.btnAdditionalrevisedmarker_Click);
+            this.btnAdditionalrevisedmarker.Click += new System.EventHandler(this.BtnAdditionalrevisedmarker_Click);
             // 
             // splitContainer2
             // 
@@ -1113,7 +1113,7 @@
             this.displayTime.Name = "displayTime";
             this.displayTime.Size = new System.Drawing.Size(225, 23);
             this.displayTime.TabIndex = 64;
-            this.displayTime.DoubleClick += new System.EventHandler(this.displayTime_DoubleClick);
+            this.displayTime.DoubleClick += new System.EventHandler(this.DisplayTime_DoubleClick);
             // 
             // txtBoxMarkerNo
             // 
@@ -1123,8 +1123,8 @@
             this.txtBoxMarkerNo.Name = "txtBoxMarkerNo";
             this.txtBoxMarkerNo.Size = new System.Drawing.Size(136, 23);
             this.txtBoxMarkerNo.TabIndex = 63;
-            this.txtBoxMarkerNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtBoxMarkerNo_PopUp);
-            this.txtBoxMarkerNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtBoxMarkerNo_Validating);
+            this.txtBoxMarkerNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtBoxMarkerNo_PopUp);
+            this.txtBoxMarkerNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBoxMarkerNo_Validating);
             // 
             // label1
             // 
@@ -1154,7 +1154,7 @@
             this.btnCutplanChangeHistory.TabIndex = 1;
             this.btnCutplanChangeHistory.Text = "Cutplan Change History";
             this.btnCutplanChangeHistory.UseVisualStyleBackColor = true;
-            this.btnCutplanChangeHistory.Click += new System.EventHandler(this.btnCutplanChangeHistory_Click);
+            this.btnCutplanChangeHistory.Click += new System.EventHandler(this.BtnCutplanChangeHistory_Click);
             // 
             // btnStdQtyWIP
             // 
@@ -1274,7 +1274,7 @@
         private Win.UI.TextBox txtFabricCombo;
         private Win.UI.TextBox txtFabricPanelCode;
         private Win.UI.NumericBox numCons;
-        private Class.txtCell txtCutCell;
+        private Class.TxtCell txtCutCell;
         private Win.UI.NumericBox numUnitCons;
         private Win.UI.TextBox txtMarkerLengthE;
         private Win.UI.Label label17;
