@@ -286,6 +286,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out cTNData);
             if (!result)
             {
+                this.ShowErr(result);
                 return;
             }
 
@@ -308,6 +309,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
 
                 if (!result)
                 {
+                    this.ShowErr(result);
                     return;
                 }
             }
@@ -321,7 +323,8 @@ select CTNNo,(CtnLength*CtnWidth*CtnHeight)/6000 as vw from Express_CTNData
 where id='{0}') a)
 where ID = '{0}'", this.CurrentMaintain["ID"]);
 
-            DBProxy.Current.Execute(null, sqlcmd);
+            result = DBProxy.Current.Execute(null, sqlcmd);
+            this.ShowErr(result);
             #endregion
             this.RenewData();
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
@@ -402,6 +405,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out cTNData);
             if (!result)
             {
+                this.ShowErr(result);
                 return;
             }
 
@@ -424,6 +428,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
 
                 if (!result)
                 {
+                    this.ShowErr(result);
                     return;
                 }
             }
@@ -433,7 +438,9 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
 set VW= (select isnull(sum((CtnLength*CtnWidth*CtnHeight)/6000),0) as VW from Express_CTNData where id='{0}'),
 CTNNW = (select isnull(sum(CTNNW),0) as CTNNW from Express_CTNData where id='{0}')
 where id='{0}' ", this.CurrentMaintain["ID"]);
-            DBProxy.Current.Execute(null, sqlcmd);
+            result = DBProxy.Current.Execute(null, sqlcmd);
+
+            this.ShowErr(result);
             #endregion
 
             this.RenewData();

@@ -287,7 +287,13 @@ from Express_Detail where ID = '{0}' and Seq2 = ''),'{2}','{3}','{4}',{5},{6},'{
                     else
                     {
                         transactionScope.Dispose();
-                        MyUtility.Msg.WarningBox("Update failed, Pleaes re-try");
+
+                        string errorMsg = (!result1 ? result1.GetException().Message : string.Empty)
+                            + Environment.NewLine + Environment.NewLine +
+                            (!result2 ? result1.GetException().Message : string.Empty)
+                            ;
+
+                        MyUtility.Msg.WarningBox("Update failed, Pleaes re-try" + Environment.NewLine + errorMsg);
                         return;
                     }
                 }
