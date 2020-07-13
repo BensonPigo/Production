@@ -324,7 +324,10 @@ where id='{0}') a)
 where ID = '{0}'", this.CurrentMaintain["ID"]);
 
             result = DBProxy.Current.Execute(null, sqlcmd);
-            this.ShowErr(result);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
             #endregion
             this.RenewData();
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
@@ -439,8 +442,10 @@ set VW= (select isnull(sum((CtnLength*CtnWidth*CtnHeight)/6000),0) as VW from Ex
 CTNNW = (select isnull(sum(CTNNW),0) as CTNNW from Express_CTNData where id='{0}')
 where id='{0}' ", this.CurrentMaintain["ID"]);
             result = DBProxy.Current.Execute(null, sqlcmd);
-
-            this.ShowErr(result);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
             #endregion
 
             this.RenewData();
