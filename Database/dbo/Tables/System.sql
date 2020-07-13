@@ -44,19 +44,22 @@
     [InspAutoLockAcc]            BIT            DEFAULT ((0)) NOT NULL,
     [ShippingMarkPath]           VARCHAR (80)   NULL,
     [StyleSketch]                VARCHAR (80)   NULL,
-	[ARKServerName] VARCHAR(20) NULL, 
-    [ARKDatabaseName] VARCHAR(20) NULL, 
-    [ARKLoginId] VARCHAR(20) NULL, 
-    [ARKLoginPwd] VARCHAR(20) NULL,
+    [ARKServerName]              VARCHAR (20)   NULL,
+    [ARKDatabaseName]            VARCHAR (20)   NULL,
+    [ARKLoginId]                 VARCHAR (20)   NULL,
+    [ARKLoginPwd]                VARCHAR (20)   NULL,
     [MarkerInputPath]            NVARCHAR (80)  NULL,
-    [MarkerOutputPath]           NVARCHAR (80)  NULL, 
-    [ReplacementReport ] VARCHAR(80) NULL
-	CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC), 
-    [CuttingP10mustCutRef] BIT NOT NULL DEFAULT ((0)), 
-    [Automation] BIT NOT NULL CONSTRAINT [DF_System_Automation] DEFAULT ((0)), 
-    [AutomationAutoRunTime] TINYINT NOT NULL  CONSTRAINT [DF_System_AutomationAutoRunTime] DEFAULT ((0)), 
-    [CanReviseDailyLockData] BIT NOT NULL DEFAULT ((0))
+    [MarkerOutputPath]           NVARCHAR (80)  NULL,
+    [ReplacementReport]          VARCHAR (80)   NULL,
+    [CuttingP10mustCutRef]       BIT            DEFAULT ((0)) NOT NULL,
+    [Automation]                 BIT            DEFAULT ((0)) NOT NULL,
+    [AutomationAutoRunTime]      TINYINT        CONSTRAINT [DF_System_AutomationAutoRunTime] DEFAULT ((0)) NOT NULL,
+    [CanReviseDailyLockData]     BIT            DEFAULT ((0)) NOT NULL,
+    [AutoGenerateByTone]         BIT            CONSTRAINT [DF_System_AutoGenerateByTone] DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
+
+
 
 
 
