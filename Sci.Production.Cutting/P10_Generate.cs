@@ -34,11 +34,11 @@ namespace Sci.Production.Cutting
         DataTable qtyTb2;
         DataTable f_codeTb;
         DataTable garmentarRC;
-
+        bool ByToneGenerate;
         public P10_Generate(DataRow maindr, DataTable table_bundle_Detail, DataTable bundle_Detail_allpart_Tb, DataTable bundle_Detail_Art_Tb, DataTable bundle_Detail_Qty_Tb)
         {
-            this.InitializeComponent();
-            this.chkTone.Checked = MyUtility.Convert.GetBool(maindr["ByToneGenerate"]);
+            ByToneGenerate = MyUtility.Convert.GetBool(maindr["ByToneGenerate"]);
+            InitializeComponent();
             #region 準備要處理的table 和原本的table
             this.detailTb = table_bundle_Detail.Copy();
             this.alltmpTb = bundle_Detail_allpart_Tb.Copy();
@@ -184,8 +184,13 @@ order by ArticleGroup", patternukey);
         // 第一次產生時需全部重新撈值
         public void noexist_Table_Query()
         {
-            // 找出相同PatternPanel 的subprocessid
-            int npart = 0; // allpart 數量
+            chkTone.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select AutoGenerateByTone from System"));
+            if (chkTone.Checked)
+            {
+                this.numTone.Value = 1;
+            }
+            //找出相同PatternPanel 的subprocessid
+            int npart = 0; //allpart 數量
             StringBuilder w = new StringBuilder();
             w.Append("1 = 0");
             foreach (DataRow dr in this.f_codeTb.Rows)
@@ -300,7 +305,8 @@ order by ArticleGroup", patternukey);
         // 當bundle_allPart, bundle_art 存在時的對應資料
         public void exist_Table_Query()
         {
-            // 將Bundle_Detial_Art distinct PatternCode,
+            chkTone.Checked = ByToneGenerate;
+            //將Bundle_Detial_Art distinct PatternCode,
             DataTable tmp;
 
             // 用來當判斷條件的DataTable,避免DetailTB dataRow被刪除後無法用index撈出資料

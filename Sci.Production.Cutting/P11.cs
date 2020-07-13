@@ -855,7 +855,7 @@ Select  distinct 0 as sel
 	    , a.Ukey
 	    , ord.StyleUkey
 		, isEXCESS = ''
-        , byTone = 0
+        , byTone = (select AutoGenerateByTone from system)
 from workorder a WITH (NOLOCK) 
 inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp
 inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id and b.orderid = ord.id
