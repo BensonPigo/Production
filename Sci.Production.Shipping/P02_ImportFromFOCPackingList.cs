@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
 using System.Transactions;
 using System.Data.SqlClient;
 using Sci.Production.PublicPrg;
@@ -18,7 +15,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_ImportFromFOCPackingList
     /// </summary>
-    public partial class P02_ImportFromFOCPackingList : Sci.Win.Subs.Base
+    public partial class P02_ImportFromFOCPackingList : Win.Subs.Base
     {
         private DataRow masterData;
         private string chkPackingListID = string.Empty;
@@ -37,8 +34,8 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ctnno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings receiver = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ctnno = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings receiver = new DataGridViewGeneratorTextColumnSettings();
 
             // CTNNo要Trim掉空白字元
             ctnno.CellValidating += (s, e) =>
@@ -102,7 +99,7 @@ inner join Pullout_Detail p on p.PackingListID = pd.ID
 where pd.ID = @PackingID
 and Factory.IsProduceFty=1
 ";
-            if (MyUtility.Check.Seek(sqlcmdChk, listParameter,out dr))
+            if (MyUtility.Check.Seek(sqlcmdChk, listParameter, out dr))
             {
                 MyUtility.Msg.WarningBox($@"FOC PL# already in pullout ID: {dr["PulloutID"]}");
                 return;
@@ -156,9 +153,9 @@ where pd.ID = '{0}'
         private bool CheckPLNo(string pLNo)
         {
             // sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", pLNo);
+            SqlParameter sp1 = new SqlParameter("@id", pLNo);
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            IList<SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(sp1);
 
             DataTable packListData;
@@ -223,6 +220,7 @@ where pd.ID = '{0}'
                 MyUtility.Msg.WarningBox("Total <N.W.> cannot be more than <G.W.> of the Packing List.");
                 return;
             }
+
             IList<string> insertCmds = new List<string>();
 
             foreach (DataRow dr in dt.Rows)
@@ -255,21 +253,21 @@ where pd.ID = '{0}'
                     @"insert into Express_Detail(ID,OrderID,Seq1,SeasonID,StyleID,Description,Qty,NW,CTNNo,Category,PackingListID,Price,UnitID,Receiver,BrandID,Leader,InCharge,AddName,AddDate)
  values('{0}','{1}',(select ISNULL(RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3),'001')
 from Express_Detail where ID = '{0}' and Seq2 = ''),'{2}','{3}','{4}',{5},{6},'{7}','1','{8}',{9},'{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
-                                            MyUtility.Convert.GetString(this.masterData["ID"]),
-                                            MyUtility.Convert.GetString(dr["OrderID"]),
-                                            MyUtility.Convert.GetString(dr["SeasonID"]),
-                                            MyUtility.Convert.GetString(dr["StyleID"]),
-                                            MyUtility.Convert.GetString(dr["Description"]),
-                                            MyUtility.Convert.GetString(dr["ShipQty"]),
-                                            MyUtility.Convert.GetString(dr["NW"]),
-                                            MyUtility.Convert.GetString(dr["CTNNo"]),
-                                            MyUtility.Convert.GetString(dr["ID"]),
-                                            MyUtility.Convert.GetString(dr["Price"]),
-                                            MyUtility.Convert.GetString(dr["UnitID"]),
-                                            MyUtility.Convert.GetString(dr["Receiver"]),
-                                            MyUtility.Convert.GetString(dr["BrandID"]),
-                                            MyUtility.Convert.GetString(dr["LeaderID"]),
-                                            Sci.Env.User.UserID));
+                    MyUtility.Convert.GetString(this.masterData["ID"]),
+                    MyUtility.Convert.GetString(dr["OrderID"]),
+                    MyUtility.Convert.GetString(dr["SeasonID"]),
+                    MyUtility.Convert.GetString(dr["StyleID"]),
+                    MyUtility.Convert.GetString(dr["Description"]),
+                    MyUtility.Convert.GetString(dr["ShipQty"]),
+                    MyUtility.Convert.GetString(dr["NW"]),
+                    MyUtility.Convert.GetString(dr["CTNNo"]),
+                    MyUtility.Convert.GetString(dr["ID"]),
+                    MyUtility.Convert.GetString(dr["Price"]),
+                    MyUtility.Convert.GetString(dr["UnitID"]),
+                    MyUtility.Convert.GetString(dr["Receiver"]),
+                    MyUtility.Convert.GetString(dr["BrandID"]),
+                    MyUtility.Convert.GetString(dr["LeaderID"]),
+                    Env.User.UserID));
             }
 
             insertCmds.Add($"update PackingList set ExpressID = '{this.masterData["ID"]}' where ID = '{dt.Rows[0]["ID"]}'");
@@ -279,7 +277,7 @@ from Express_Detail where ID = '{0}' and Seq2 = ''),'{2}','{3}','{4}',{5},{6},'{
                 try
                 {
                     result1 = DBProxy.Current.Executes(null, insertCmds);
-                    result2 = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.masterData["ID"])));
+                    result2 = DBProxy.Current.Execute(null, Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.masterData["ID"])));
                     if (result1 && result2)
                     {
                         transactionScope.Complete();

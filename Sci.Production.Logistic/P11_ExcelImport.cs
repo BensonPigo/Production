@@ -3,18 +3,15 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Logistic
 {
-    public partial class P11_ExcelImport : Sci.Win.Subs.Base
+    public partial class P11_ExcelImport : Win.Subs.Base
     {
         private DataTable detailData;
         private DataRow master;
@@ -30,20 +27,20 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            //DataTable excelFile = new DataTable();
-            GridData.Columns.Add("ID", typeof(string));
-            GridData.Columns.Add("Status", typeof(string));
-            GridData.Columns.Add("PackingListID", typeof(string));
-            GridData.Columns.Add("CTNStartNO", typeof(string));
-            GridData.Columns.Add("OrderID", typeof(string));
-            GridData.Columns.Add("CustPoNo", typeof(string));
-            GridData.Columns.Add("StyleID", typeof(string));
-            GridData.Columns.Add("Article", typeof(string));
-            GridData.Columns.Add("Color", typeof(string));
-            GridData.Columns.Add("Size", typeof(string));
-            GridData.Columns.Add("QtyPerCTN", typeof(string));
-            GridData.Columns.Add("ClogLocationID", typeof(string));
 
+            // DataTable excelFile = new DataTable();
+            this.GridData.Columns.Add("ID", typeof(string));
+            this.GridData.Columns.Add("Status", typeof(string));
+            this.GridData.Columns.Add("PackingListID", typeof(string));
+            this.GridData.Columns.Add("CTNStartNO", typeof(string));
+            this.GridData.Columns.Add("OrderID", typeof(string));
+            this.GridData.Columns.Add("CustPoNo", typeof(string));
+            this.GridData.Columns.Add("StyleID", typeof(string));
+            this.GridData.Columns.Add("Article", typeof(string));
+            this.GridData.Columns.Add("Color", typeof(string));
+            this.GridData.Columns.Add("Size", typeof(string));
+            this.GridData.Columns.Add("QtyPerCTN", typeof(string));
+            this.GridData.Columns.Add("ClogLocationID", typeof(string));
 
             this.listControlBindingSource1.DataSource = this.GridData;
             this.grid1.DataSource = this.listControlBindingSource1;
@@ -69,7 +66,6 @@ namespace Sci.Production.Logistic
 
         private void btnExcelImport_Click(object sender, EventArgs e)
         {
-
             this.openFileDialog1.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls";
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK) // 開窗且有選擇檔案
             {
@@ -98,7 +94,7 @@ namespace Sci.Production.Logistic
                 Microsoft.Office.Interop.Excel.Range range = worksheet.Range[$"A{1}:AE{1}"];
                 object[,] objCellArray = range.Value;
                 int[] ItemPosition = new int[intColumnsCount + 1];
-                string[] ItemCheck = {"", "Packing No.", "CTN#"};
+                string[] ItemCheck = { string.Empty, "Packing No.", "CTN#" };
                 string[] ExcelItem = new string[intColumnsCount + 1];
 
                 for (int y = 1; y <= intColumnsCount; y++)
@@ -120,7 +116,10 @@ namespace Sci.Production.Logistic
                         }
                     }
 
-                    if (ItemPosition[x] == 0) columnName.Append("< " + ItemCheck[x].ToString() + " >, ");
+                    if (ItemPosition[x] == 0)
+                    {
+                        columnName.Append("< " + ItemCheck[x].ToString() + " >, ");
+                    }
                 }
 
                 if (!MyUtility.Check.Empty(columnName.Length))
@@ -177,7 +176,6 @@ namespace Sci.Production.Logistic
                 this.grid1.ResumeLayout();
                 this.HideWaitMessage();
             }
-
         }
 
         private DataRow StatusInsert(DataRow newRow)
@@ -222,7 +220,6 @@ namespace Sci.Production.Logistic
             // 5
             if (!MyUtility.Check.Empty(existIData))
             {
-
                 newRow["Status"] = $"Pack ID + CTN# already exist({existIData}).";
             }
 
@@ -277,10 +274,11 @@ WHERE pd.ID='{PackingListID}' AND pd.CTNStartNO='{CTNStartNo}'
 
         private void btnImportDate_Click(object sender, EventArgs e)
         {
-            if (this.listControlBindingSource1==null)
+            if (this.listControlBindingSource1 == null)
             {
                 return;
             }
+
             DataTable gridDate = (DataTable)this.listControlBindingSource1.DataSource;
 
             try
@@ -310,7 +308,6 @@ WHERE pd.ID='{PackingListID}' AND pd.CTNStartNO='{CTNStartNo}'
             {
                 this.ShowErr(ex);
             }
-
         }
     }
 }

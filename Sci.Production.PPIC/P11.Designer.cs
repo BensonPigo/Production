@@ -45,13 +45,13 @@
             this.displayFactory = new Sci.Win.UI.DisplayBox();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.displayMasterSP = new Sci.Win.UI.DisplayBox();
-            this.txtSewingLine = new Sci.Production.Class.txtsewingline();
+            this.txtSewingLine = new Sci.Production.Class.Txtsewingline();
             this.labelHandle = new Sci.Win.UI.Label();
             this.labelApprove = new Sci.Win.UI.Label();
             this.labelApvDate = new Sci.Win.UI.Label();
             this.labelIssueNo = new Sci.Win.UI.Label();
-            this.txtuserHandle = new Sci.Production.Class.txtuser();
-            this.txtuserApprove = new Sci.Production.Class.txtuser();
+            this.txtuserHandle = new Sci.Production.Class.Txtuser();
+            this.txtuserApprove = new Sci.Production.Class.Txtuser();
             this.dateApvDate = new Sci.Win.UI.DateBox();
             this.displayIssueNo = new Sci.Win.UI.DisplayBox();
             this.lbStatus = new Sci.Win.UI.Label();
@@ -60,7 +60,7 @@
             this.btnImport = new Sci.Win.UI.Button();
             this.labelSubconName = new Sci.Win.UI.Label();
             this.btnAutoOutputQuery = new Sci.Win.UI.Button();
-            this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
+            this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -383,7 +383,7 @@
             // 
             this.txtSewingLine.BackColor = System.Drawing.Color.White;
             this.txtSewingLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtSewingLine.factoryobjectName = this.displayFactory;
+            this.txtSewingLine.FactoryobjectName = this.displayFactory;
             this.txtSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSewingLine.Location = new System.Drawing.Point(323, 84);
             this.txtSewingLine.Name = "txtSewingLine";
@@ -583,13 +583,13 @@
 
         private Win.UI.DisplayBox displayIssueNo;
         private Win.UI.DateBox dateApvDate;
-        private Class.txtuser txtuserApprove;
-        private Class.txtuser txtuserHandle;
+        private Class.Txtuser txtuserApprove;
+        private Class.Txtuser txtuserHandle;
         private Win.UI.Label labelIssueNo;
         private Win.UI.Label labelApvDate;
         private Win.UI.Label labelApprove;
         private Win.UI.Label labelHandle;
-        private Class.txtsewingline txtSewingLine;
+        private Class.Txtsewingline txtSewingLine;
         private Win.UI.DisplayBox displayMasterSP;
         private Win.UI.TextBox txtSPNo;
         private Win.UI.DisplayBox displayFactory;
@@ -613,6 +613,6 @@
         private Win.UI.Button btnImport;
         private Win.UI.Label labelSubconName;
         private Win.UI.Button btnAutoOutputQuery;
-        private Class.txtLocalSupp txtLocalSupp1;
+        private Class.TxtLocalSupp txtLocalSupp1;
     }
 }

@@ -1,19 +1,13 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
-using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P05_SOCFMDate : Sci.Win.Subs.Base
+    public partial class P05_SOCFMDate : Win.Subs.Base
     {
         private DataRow dr;
 
@@ -40,7 +34,7 @@ values ('{0}','{1}','{2}','{3}','{4}',GETDATE())",
                 "SOCFMDate",
                 firstCFM ? string.Empty : "CFM",
                 "Un CFM",
-                Sci.Env.User.UserID);
+                Env.User.UserID);
 
             string updateCmd =
                 $@"

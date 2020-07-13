@@ -33,7 +33,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.displayID = new Sci.Win.UI.DisplayBox();
-            this.comboResponsible = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboResponsible = new Sci.Production.Class.ComboDropDownList(this.components);
             this.txtReason = new Sci.Win.UI.TextBox();
             this.chk_junk = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -177,7 +177,7 @@
         private Win.UI.Label label1;
         private Win.UI.CheckBox chk_junk;
         private Win.UI.TextBox txtReason;
-        private Class.comboDropDownList comboResponsible;
+        private Class.ComboDropDownList comboResponsible;
         private Win.UI.DisplayBox displayID;
         private Win.UI.Label label3;
         private Win.UI.Label label2;

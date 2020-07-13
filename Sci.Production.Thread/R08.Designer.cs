@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
+            this.comboMDivision = new Sci.Production.Class.ComboMDivision(this.components);
             this.labelM = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
@@ -350,6 +350,6 @@
         private Win.UI.Label labelRefNo;
         private Win.UI.Label labelDate;
         private Win.UI.Label labelM;
-        private Class.comboMDivision comboMDivision;
+        private Class.ComboMDivision comboMDivision;
     }
 }

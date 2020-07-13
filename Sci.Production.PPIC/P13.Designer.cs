@@ -40,11 +40,11 @@
             this.txtMR = new Sci.Win.UI.TextBox();
             this.displaySMR = new Sci.Win.UI.DisplayBox();
             this.txtSMR = new Sci.Win.UI.TextBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelMR = new Sci.Win.UI.Label();
             this.labelSMR = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.label4 = new Sci.Win.UI.Label();
             this.txtSPEnd = new Sci.Win.UI.TextBox();
             this.txtSPStart = new Sci.Win.UI.TextBox();
@@ -408,11 +408,11 @@
         private Win.UI.TextBox txtMR;
         private Win.UI.DisplayBox displaySMR;
         private Win.UI.TextBox txtSMR;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelMR;
         private Win.UI.Label labelSMR;
         private Win.UI.Label labelBrand;
-        private Class.txtstyle txtstyle;
+        private Class.Txtstyle txtstyle;
         private Win.UI.Label label4;
         private Win.UI.TextBox txtSPEnd;
         private Win.UI.TextBox txtSPStart;

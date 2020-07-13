@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
@@ -17,7 +13,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R18
     /// </summary>
-    public partial class R18 : Sci.Win.Tems.PrintForm
+    public partial class R18 : Win.Tems.PrintForm
     {
         private string sqlGetData;
         private DataTable dtResult;
@@ -43,7 +39,7 @@ namespace Sci.Production.PPIC
             this.comboFactory.DisplayMember = "ID";
             this.comboReportType.SelectedIndex = 0;
             this.comboStatus.SelectedIndex = 6;
-            this.comboMDivision.setDefalutIndex(true);
+            this.comboMDivision.SetDefalutIndex(true);
         }
 
         /// <summary>
@@ -245,15 +241,15 @@ drop table #tmpBaseICR
             this.ShowWaitMessage("Excel processing...");
 
             Excel.Application objApp = new Excel.Application();
-            Sci.Utility.Report.ExcelCOM com;
+            Utility.Report.ExcelCOM com;
 
             if (this.comboReportType.Text == "Detail List")
             {
-                com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_R18_DetailList.xltx", objApp);
+                com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\PPIC_R18_DetailList.xltx", objApp);
             }
             else
             {
-                com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_R18_RespDeptList.xltx", objApp);
+                com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\PPIC_R18_RespDeptList.xltx", objApp);
             }
 
             com.WriteTable(this.dtResult, 2);

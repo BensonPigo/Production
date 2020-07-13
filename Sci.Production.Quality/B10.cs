@@ -1,24 +1,21 @@
 ﻿using Sci.Data;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class B10 : Sci.Win.Tems.Input1
+    public partial class B10 : Win.Tems.Input1
     {
         Hashtable ht = new Hashtable();
+
         public B10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            ht.Add("Formula1", "(Total Points / Act. Yds Inspected ) x 100");
-            ht.Add("Formula2", "(Total Points × 3600) ÷ (Act. Yds Inspected × Actual Width)");
-            InitializeComponent();
+            this.ht.Add("Formula1", "(Total Points / Act. Yds Inspected ) x 100");
+            this.ht.Add("Formula2", "(Total Points × 3600) ÷ (Act. Yds Inspected × Actual Width)");
+            this.InitializeComponent();
         }
 
         protected override bool ClickSaveBefore()
@@ -30,46 +27,45 @@ namespace Sci.Production.Quality
                 return false;
             }
 
-            //DataRow dr;
+            // DataRow dr;
             if (MyUtility.Check.Seek(string.Format("select * from PointRate where brandid='{0}'", this.txtbrand.Text)) && !this.txtbrand.ReadOnly)
             {
                 MyUtility.Msg.WarningBox(string.Format("<Brand : {0}> existed, change other one please!", this.txtbrand.Text));
                 this.txtbrand.Focus();
                 return false;
             }
+
             return base.ClickSaveBefore();
         }
 
         protected override Ict.DualResult ClickSave()
         {
-
             DataRow dr;
             if (MyUtility.Check.Seek(string.Format("select * from PointRate where brandid='{0}'", this.txtbrand.Text), out dr))
             {
-                DBProxy.Current.Execute(null, string.Format(@"update PointRate set ID='{0}' where BrandID='{1}'", radioOption1.Checked ? "1" : "2", this.txtbrand.Text));
+                DBProxy.Current.Execute(null, string.Format(@"update PointRate set ID='{0}' where BrandID='{1}'", this.radioOption1.Checked ? "1" : "2", this.txtbrand.Text));
             }
 
-
             return base.ClickSave();
-
         }
 
         protected override void ClickLocate()
         {
             base.ClickLocate();
-            OnDetailEntered();
+            this.OnDetailEntered();
         }
 
         protected override void OnDetailEntered()
         {
-            if (CurrentMaintain.Empty())
+            if (this.CurrentMaintain.Empty())
             {
-                this.txtFormula.Text = "";
+                this.txtFormula.Text = string.Empty;
                 return;
             }
-            txtFormula.Text = CurrentMaintain["ID"].ToString() == "1" ? ht["Formula1"].ToString() : ht["Formula2"].ToString();
 
-            if (EditMode)
+            this.txtFormula.Text = this.CurrentMaintain["ID"].ToString() == "1" ? this.ht["Formula1"].ToString() : this.ht["Formula2"].ToString();
+
+            if (this.EditMode)
             {
                 this.radioPanel1.ReadOnly = false;
             }
@@ -85,7 +81,7 @@ namespace Sci.Production.Quality
         protected override void ClickNewAfter()
         {
             this.txtbrand.ReadOnly = false;
-            radioOption1.Checked = true;
+            this.radioOption1.Checked = true;
             base.ClickNewAfter();
         }
 
@@ -97,8 +93,7 @@ namespace Sci.Production.Quality
 
         private void radioPanel1_ValueChanged(object sender, EventArgs e)
         {
-            txtFormula.Text = radioPanel1.Value == "1" ? ht["Formula1"].ToString() : ht["Formula2"].ToString();
-
+            this.txtFormula.Text = this.radioPanel1.Value == "1" ? this.ht["Formula1"].ToString() : this.ht["Formula2"].ToString();
         }
     }
 }

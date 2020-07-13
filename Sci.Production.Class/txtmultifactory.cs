@@ -1,39 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class txtmultifactory : Sci.Win.UI.TextBox
+    /// <summary>
+    /// Txtmultifactory
+    /// </summary>
+    public partial class Txtmultifactory : Win.UI.TextBox
     {
-        public txtmultifactory()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtmultifactory"/> class.
+        /// </summary>
+        public Txtmultifactory()
         {
             this.Size = new System.Drawing.Size(450, 23);
             this.ReadOnly = true;
         }
 
-        public bool checkProduceFty = false;
+        /// <summary>
+        /// check Produce Fty
+        /// </summary>
+        public bool CheckProduceFty { get; set; } = false;
 
+        /// <inheritdoc/>
         protected override void OnPopUp(Win.UI.TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
             string sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID";
-            if (checkProduceFty)
+            if (this.CheckProduceFty)
             {
                 sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 order by ID";
             }
-            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
+
+            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
 
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
         }
-
     }
 }

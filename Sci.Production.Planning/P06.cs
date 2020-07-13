@@ -4,17 +4,15 @@ using Sci.Data;
 using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Planning
 {
-    public partial class P06 : Sci.Win.Tems.QueryForm
+    public partial class P06 : Win.Tems.QueryForm
     {
         private DataTable QuertData;
 
@@ -50,7 +48,7 @@ order by Seq
 
         protected override void OnFormLoaded()
         {
-            cellDropDownList dropdown = (cellDropDownList)cellDropDownList.GetGridCell("PMS_CriticalActivity");
+            CellDropDownList dropdown = (CellDropDownList)CellDropDownList.GetGridCell("PMS_CriticalActivity");
             dropdown.EditingControlShowing += (s, e) =>
             {
                 if (s == null || e == null)
@@ -243,7 +241,7 @@ from Orders o
 left join Style s on o.StyleUkey=s.Ukey
 left join CriticalActivity c on o.ID=c.orderid
 where 1=1
-and o.MDivisionID = '{Sci.Env.User.Keyword}'
+and o.MDivisionID = '{Env.User.Keyword}'
 and o.LocalOrder = 0
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
@@ -360,7 +358,7 @@ drop table #tmp
             DualResult result;
             DataTable dtResult;
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            if (dt == null || dt.Rows.Count < 1 )
+            if (dt == null || dt.Rows.Count < 1)
             {
                 return;
             }
@@ -377,11 +375,11 @@ on s.OrderID = t.OrderID and t.DropDownListID = s.ColumnType
 when matched then
 	update set
 	t.TargetDate = s.NewTargetDate,
-	t.EditName = '{Sci.Env.User.UserID}',
+	t.EditName = '{Env.User.UserID}',
 	t.EditDate = GetDate()
 when not matched by target then
 	insert (OrderID,DropDownListID,TargetDate,EditName,EditDate)
-	values(s.OrderID,s.ColumnType,s.NewTargetDate,'{Sci.Env.User.UserID}',GetDate());
+	values(s.OrderID,s.ColumnType,s.NewTargetDate,'{Env.User.UserID}',GetDate());
 
 -- 只要TargetDate是空值,就刪除已存在資料
 delete t

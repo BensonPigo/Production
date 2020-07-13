@@ -41,9 +41,9 @@
             this.chkHoliday = new Sci.Win.UI.CheckBox();
             this.numDateCutGapDay = new Sci.Win.UI.NumericBox();
             this.txtDateCutGapTime = new Sci.Win.UI.TextBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
@@ -245,7 +245,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -335,9 +335,9 @@
         private Win.UI.Label label4;
         private Win.UI.DateRange dateReady;
         private Win.UI.Label label5;
-        private Class.txtMdivision txtMdivision;
-        private Class.txtfactory txtfactory;
-        private Class.txtbrand txtbrand;
+        private Class.TxtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
+        private Class.Txtbrand txtbrand;
         private Win.UI.NumericBox numDateOfflineGap;
         private Win.UI.NumericBox numDateDeliveryGap;
         private Win.UI.Label label6;

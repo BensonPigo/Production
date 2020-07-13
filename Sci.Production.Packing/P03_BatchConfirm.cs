@@ -1,22 +1,16 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
-    public partial class P03_BatchConfirm : Sci.Win.Subs.Base
+    public partial class P03_BatchConfirm : Win.Subs.Base
     {
-        DataRow dr_master;
         DataTable dt_detail;
-        bool AutoQuery = false;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         public P03_BatchConfirm()
@@ -45,6 +39,7 @@ namespace Sci.Production.Packing
                .Date("PulloutDate", header: "Pullout Date", iseditingreadonly: true)
                .EditText("ErrorMsg", header: "Error Message", iseditingreadonly: true, width: Widths.AnsiChars(20))
               ;
+
             // 設定detailGrid Rows 是否可以編輯
             this.grid.RowEnter += this.Detailgrid_RowEnter;
             this.grid.Columns["Selected"].SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -52,7 +47,7 @@ namespace Sci.Production.Packing
 
         private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 )
+            if (e.RowIndex < 0)
             {
                 return;
             }
@@ -112,7 +107,7 @@ outer apply(
 	from Order_QtyShip os where os.Id=o.ID 
 	and os.Seq=p2.OrderShipmodeSeq
 )QtyShip
-where 1=1 and p1.Status='New' and p1.MDivisionID='{Sci.Env.User.Keyword}' and p1.Type='B'
+where 1=1 and p1.Status='New' and p1.MDivisionID='{Env.User.Keyword}' and p1.Type='B'
 ";
             if (!MyUtility.Check.Empty(pulloutdate1))
             {
@@ -140,7 +135,7 @@ where 1=1 and p1.Status='New' and p1.MDivisionID='{Sci.Env.User.Keyword}' and p1
             }
 
             this.ShowWaitMessage("Data Loading....");
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out this.dt_detail))
             {
                 if (this.dt_detail.Rows.Count == 0)
@@ -149,12 +144,15 @@ where 1=1 and p1.Status='New' and p1.MDivisionID='{Sci.Env.User.Keyword}' and p1
                     MyUtility.Msg.WarningBox("Data not found!!");
                 }
             }
-            else { this.ShowErr(strSQLCmd.ToString(), result); }
+            else
+            {
+                this.ShowErr(strSQLCmd.ToString(), result);
+            }
 
             #region 塞入Error Msg
             foreach (DataRow dr in this.dt_detail.Rows)
             {
-                sqlcmd = $@"exec dbo.usp_Packing_P03_Confirm '{dr["id"]}','{Sci.Env.User.Factory}','{Sci.Env.User.UserID}','0'";
+                sqlcmd = $@"exec dbo.usp_Packing_P03_Confirm '{dr["id"]}','{Env.User.Factory}','{Env.User.UserID}','0'";
 
                 DataTable dtSP = new DataTable();
                 if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtSP))
@@ -177,7 +175,11 @@ where 1=1 and p1.Status='New' and p1.MDivisionID='{Sci.Env.User.Keyword}' and p1
         {
             this.grid.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0)
+            {
+                return;
+            }
+
             DataRow[] dr2 = dtGridBS1.Select("Selected = 1 and ErrorMsg='' ");
             if (dr2.Length == 0)
             {
@@ -199,7 +201,7 @@ where 1=1 and p1.Status='New' and p1.MDivisionID='{Sci.Env.User.Keyword}' and p1
                 this.ShowWaitMessage($"{cnt}/{dr2.Length}");
 
                 // 有三個參數, PackingList.Id,Factory,UserID,1 = update Status, 0 = 只有Query
-                sqlcmd = $@"exec dbo.usp_Packing_P03_Confirm '{dr["id"]}','{Sci.Env.User.Factory}','{Sci.Env.User.UserID}','1'";
+                sqlcmd = $@"exec dbo.usp_Packing_P03_Confirm '{dr["id"]}','{Env.User.Factory}','{Env.User.UserID}','1'";
 
                 if (!(result = DBProxy.Current.Execute(string.Empty, sqlcmd)))
                 {

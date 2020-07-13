@@ -1,20 +1,10 @@
-﻿using Ict.Win;
-using Sci.Data;
+﻿using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Sci;
-using Sci.Win;
-using Sci.Win.Tools;
 using Ict;
-using Ict.Data;
-using Sci.Production.Class;
-using Sci.Production.PublicPrg;
-using System.Collections;
 using System.Transactions;
 
 namespace Sci.Production.Thread
@@ -22,7 +12,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// P01_CopyTo
     /// </summary>
-    public partial class P01_CopyTo : Sci.Win.Subs.Base
+    public partial class P01_CopyTo : Win.Subs.Base
     {
         private DataRow master;
 
@@ -203,7 +193,7 @@ order by Ukey",
                             }
 
                             // 準備:新增ThreadColorComb_operation
-                                insertSql.Append(string.Format(
+                            insertSql.Append(string.Format(
                                     @"Insert Into ThreadColorComb_operation
                                     (id,Operationid) 
                                     Select {0},Operationid 

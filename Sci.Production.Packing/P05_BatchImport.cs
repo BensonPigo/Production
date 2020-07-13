@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 
 namespace Sci.Production.Packing
@@ -15,7 +12,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P05_BatchImport
     /// </summary>
-    public partial class P05_BatchImport : Sci.Win.Subs.Base
+    public partial class P05_BatchImport : Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataRow packingListData;

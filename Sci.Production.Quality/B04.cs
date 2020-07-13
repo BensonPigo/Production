@@ -1,59 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
-
-using Ict;
-using Ict.Win;
-using Sci;
-using Sci.Data;
 
 namespace Sci.Production.Quality
 {
-    public partial class B04 : Sci.Win.Tems.Input1
-    {        
+    public partial class B04 : Win.Tems.Input1
+    {
         public B04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
+
             // 設定combox 固定的值
-            Dictionary<String,String> combobox1_RowSource = new Dictionary<string,string>();
+            Dictionary<string, string> combobox1_RowSource = new Dictionary<string, string>();
             combobox1_RowSource.Add("F", "Fabric");
             combobox1_RowSource.Add("A", "Accessories");
-            comboMaterialType.DataSource = new BindingSource(combobox1_RowSource, null);
-            comboMaterialType.ValueMember = "Key";
-            comboMaterialType.DisplayMember = "Value";
+            this.comboMaterialType.DataSource = new BindingSource(combobox1_RowSource, null);
+            this.comboMaterialType.ValueMember = "Key";
+            this.comboMaterialType.DisplayMember = "Value";
         }
+
         protected override void ClickEditAfter()
         {
-            base.ClickEditAfter();           
+            base.ClickEditAfter();
         }
 
         protected override bool ClickSaveBefore()
         {
             #region 必輸檢查
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
                 this.txtLevel.Focus();
                 MyUtility.Msg.WarningBox("< Level > can not be empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["Range1"]) && CurrentMaintain["ID"].ToString()!="A")
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Range1"]) && this.CurrentMaintain["ID"].ToString() != "A")
             {
                 this.txtRateRangeStart.Focus();
                 MyUtility.Msg.WarningBox("< Lower Rate Range > can not be empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["Range2"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Range2"]))
             {
                 this.txtRateRangeEnd.Focus();
                 MyUtility.Msg.WarningBox("< Higher Rate Range > can not be empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["Type"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Type"]))
             {
                 this.comboMaterialType.Focus();
                 MyUtility.Msg.WarningBox("< Material Type > can not be empty!");

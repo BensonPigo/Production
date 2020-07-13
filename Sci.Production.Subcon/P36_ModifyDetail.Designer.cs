@@ -30,7 +30,7 @@
         {
             this.labelSPNo = new Sci.Win.UI.Label();
             this.txtSPNo = new Sci.Win.UI.TextBox();
-            this.txtUnit = new Sci.Production.Class.txtunit();
+            this.txtUnit = new Sci.Production.Class.Txtunit();
             this.labelAffectQty = new Sci.Win.UI.Label();
             this.numAffectQty = new Sci.Win.UI.NumericBox();
             this.numClaimAmt = new Sci.Win.UI.NumericBox();
@@ -38,7 +38,7 @@
             this.numAdditionCharge = new Sci.Win.UI.NumericBox();
             this.labelAdditionCharge = new Sci.Win.UI.Label();
             this.labelReason = new Sci.Win.UI.Label();
-            this.txtReason = new Sci.Production.Class.txtReason();
+            this.txtReason = new Sci.Production.Class.TxtReason();
             this.labelUnit = new Sci.Win.UI.Label();
             this.labelDescription = new Sci.Win.UI.Label();
             this.editDescription = new Sci.Win.UI.EditBox();
@@ -313,7 +313,7 @@
 
         private Win.UI.Label labelSPNo;
         private Win.UI.TextBox txtSPNo;
-        private Class.txtunit txtUnit;
+        private Class.Txtunit txtUnit;
         private Win.UI.Label labelAffectQty;
         private Win.UI.NumericBox numAffectQty;
         private Win.UI.NumericBox numClaimAmt;
@@ -321,7 +321,7 @@
         private Win.UI.NumericBox numAdditionCharge;
         private Win.UI.Label labelAdditionCharge;
         private Win.UI.Label labelReason;
-        private Class.txtReason txtReason;
+        private Class.TxtReason txtReason;
         private Win.UI.Label labelUnit;
         private Win.UI.Label labelDescription;
         private Win.UI.EditBox editDescription;

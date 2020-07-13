@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
     /// <summary>
     /// B08
     /// </summary>
-    public partial class B08 : Sci.Win.Tems.Input6
+    public partial class B08 : Win.Tems.Input6
     {
         /// <summary>
         /// B08

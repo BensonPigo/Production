@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Thread
 {
     /// <summary>
     /// B04
     /// </summary>
-    public partial class B04 : Sci.Win.Tems.Input1
+    public partial class B04 : Win.Tems.Input1
     {
-        private string keyword = Sci.Env.User.Keyword;
+        private string keyword = Env.User.Keyword;
 
         /// <summary>
         /// B04
@@ -23,7 +17,6 @@ namespace Sci.Production.Thread
             : base(menuitem)
         {
             this.InitializeComponent();
-
         }
 
         /// <inheritdoc/>

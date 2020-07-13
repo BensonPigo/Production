@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -16,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R14
     /// </summary>
-    public partial class R14 : Sci.Win.Tems.PrintForm
+    public partial class R14 : Win.Tems.PrintForm
     {
         private DataTable printData;
 
@@ -64,7 +59,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region where
             string where = string.Empty;
@@ -73,22 +68,27 @@ namespace Sci.Production.Shipping
             {
                 where += $" and s.ID >= '{this.ShipPlanID1}' ";
             }
+
             if (!MyUtility.Check.Empty(this.ShipPlanID2))
             {
                 where += $" and s.ID <= '{this.ShipPlanID2}' ";
             }
+
             if (!MyUtility.Check.Empty(this.Brand))
             {
                 where += $" and g.BrandID = '{this.Brand}' ";
             }
+
             if (!MyUtility.Check.Empty(this.InvoiceDate1))
             {
                 where += $" and g.InvDate >= '{((DateTime)this.InvoiceDate1).ToString("yyyy/MM/dd")}' ";
             }
+
             if (!MyUtility.Check.Empty(this.InvoiceDate2))
             {
                 where += $" and g.InvDate <=  '{((DateTime)this.InvoiceDate2).ToString("yyyy/MM/dd")}' ";
             }
+
             if (!MyUtility.Check.Empty(this.PulloutDate1))
             {
                 where += $@" 
@@ -100,18 +100,22 @@ namespace Sci.Production.Shipping
 )
 ";
             }
+
             if (!MyUtility.Check.Empty(this.ETD1))
             {
                 where += $" g.ETD >= '{((DateTime)this.ETD1).ToString("yyyy/MM/dd")}' ";
             }
+
             if (!MyUtility.Check.Empty(this.ETD2))
             {
                 where += $" g.ETD <=  '{((DateTime)this.ETD2).ToString("yyyy/MM/dd")}' ";
             }
+
             if (!MyUtility.Check.Empty(this.ShipMode))
             {
                 where += $" and g.ShipModeID = '{this.ShipMode}' ";
             }
+
             if (!MyUtility.Convert.GetString(this.Status).ToLower().EqualString("all"))
             {
                 where += $" and s.Status = '{this.Status}' ";
@@ -278,7 +282,7 @@ order by s.ID,g.ID
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelName = this.Type == 1 ? "Shipping_R14_Detail" : this.Type == 2 ? "Shipping_R14_Summary" : "Shipping_R14_ContainerDetail";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             int startrow = this.Type == 1 ? 1 : this.Type == 2 ? 2 : 1;
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, $"{excelName}.xltx", startrow, false, null, excelApp, wSheet: excelApp.Sheets[1]);
 

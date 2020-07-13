@@ -38,8 +38,8 @@
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtCDCode = new Sci.Production.Class.txtcdcode();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtCDCode = new Sci.Production.Class.Txtcdcode();
             this.chk_Accumulate_output = new Sci.Win.UI.CheckBox();
             this.chk_Include_Artwork = new Sci.Win.UI.CheckBox();
             this.chkExcludeSampleFty = new Sci.Win.UI.CheckBox();
@@ -321,8 +321,8 @@
         private Win.UI.ComboBox comboCategory;
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboFactory;
-        private Class.txtbrand txtbrand;
-        private Class.txtcdcode txtCDCode;
+        private Class.Txtbrand txtbrand;
+        private Class.Txtcdcode txtCDCode;
         private Win.UI.CheckBox chk_Accumulate_output;
         private Win.UI.CheckBox chk_Include_Artwork;
         private Win.UI.CheckBox chkExcludeSampleFty;

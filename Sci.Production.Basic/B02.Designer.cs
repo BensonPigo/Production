@@ -98,7 +98,7 @@
             this.numQCMachineDelayTime = new Sci.Win.UI.NumericUpDown();
             this.lbQCMachineDelayTime = new Sci.Win.UI.Label();
             this.labelClipFilesPath = new Sci.Win.UI.Label();
-            this.txtUserPOApproved = new Sci.Production.Class.txtuser();
+            this.txtUserPOApproved = new Sci.Production.Class.Txtuser();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.btnReplacementReport = new Sci.Win.UI.Button();
@@ -1034,7 +1034,7 @@
         private Win.UI.Label labelUSDRate;
         private Win.UI.NumericBox numUSDRate;
         private Win.UI.Label labelPOApproved;
-        private Class.txtuser txtUserPOApproved;
+        private Class.Txtuser txtUserPOApproved;
         private Win.UI.Label labelAutoApprovedWhileDateBefore;
         private Win.UI.NumericUpDown numericUpDownAutoApprovedWhileDateBefore;
         private Win.UI.Label label8;

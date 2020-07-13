@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Windows.Forms;
 using Sci.Data;
@@ -29,7 +26,7 @@ namespace Sci.Production.Sewing
 
     public static partial class GetApiData
     {
-        public static bool GetAPIData(string i_M,string i_factory, DateTime i_start_date, DateTime i_end_date, out List<APIData> dataMode)
+        public static bool GetAPIData(string i_M, string i_factory, DateTime i_start_date, DateTime i_end_date, out List<APIData> dataMode)
         {
             try
             {
@@ -54,10 +51,11 @@ namespace Sci.Production.Sewing
                     var json = client.DownloadString(uri);
 
                     dataMode = JsonConvert.DeserializeObject<List<APIData>>(json);
-                    //dataMode = JsonConvert.DeserializeObject<APIData>(json);
+
+                    // dataMode = JsonConvert.DeserializeObject<APIData>(json);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 dataMode = null;
                 return false;

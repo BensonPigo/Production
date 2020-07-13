@@ -1,43 +1,51 @@
 ﻿using Sci.Data;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Class
 {
-    public partial class comboMDivision : Sci.Win.UI.ComboBox
+    /// <summary>
+    /// combo MDivision
+    /// </summary>
+    public partial class ComboMDivision : Win.UI.ComboBox
     {
-        public comboMDivision()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComboMDivision"/> class.
+        /// </summary>
+        public ComboMDivision()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Size = new System.Drawing.Size(80, 23);
         }
 
-        public comboMDivision(IContainer container)
+        /// <summary>
+        /// comboMDivision
+        /// </summary>
+        /// <param name="container">container</param>
+        public ComboMDivision(IContainer container)
         {
             container.Add(this);
-            InitializeComponent();
+            this.InitializeComponent();
             this.Size = new System.Drawing.Size(80, 23);
         }
 
-        public void setDefalutIndex(bool defaultValue = false)
+        /// <summary>
+        /// Set ComboBox Data
+        /// </summary>
+        /// <param name="defaultValue">如果沒輸入，SelectedValue 預設 Sci.Env.User.Keywordd</param>
+        public void SetDefalutIndex(bool defaultValue = false)
         {
             DataTable dataTable;
             DBProxy.Current.Select(null, "Select ID From MDivision", out dataTable);
             DataRow dataRow = dataTable.NewRow();
-            dataRow["ID"] = "";
+            dataRow["ID"] = string.Empty;
             dataTable.Rows.Add(dataRow);
             dataTable.DefaultView.Sort = "ID";
             this.DataSource = dataTable;
             this.ValueMember = "ID";
             this.DisplayMember = "ID";
 
-            this.SelectedValue = (defaultValue) ? Sci.Env.User.Keyword : "";
+            this.SelectedValue = defaultValue ? Env.User.Keyword : string.Empty;
         }
     }
 }

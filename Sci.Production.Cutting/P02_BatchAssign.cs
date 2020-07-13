@@ -7,45 +7,43 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using Sci.Production.Class;
 using static Sci.Production.PublicPrg.Prgs;
-using System.Threading;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P02_BatchAssign : Sci.Win.Subs.Base
+    public partial class P02_BatchAssign : Win.Subs.Base
     {
         private DataTable curTb;
         private DataTable detailTb;
         private DataTable sp;
         private string Poid;
-        private string KeyWord = Sci.Env.User.Keyword;
+        private string KeyWord = Env.User.Keyword;
 
         public P02_BatchAssign(DataTable cursor, string id, DataTable distqtyTb)
         {
-            InitializeComponent();
-            txtCutCell.MDivisionID = this.KeyWord;
-            txtCell2.MDivisionID = this.KeyWord;
-            detailTb = cursor;
-            curTb = cursor.Copy();
-            curTb.Columns.Add("Sel", typeof(bool));
+            this.InitializeComponent();
+            this.txtCutCell.MDivisionID = this.KeyWord;
+            this.txtCell2.MDivisionID = this.KeyWord;
+            this.detailTb = cursor;
+            this.curTb = cursor.Copy();
+            this.curTb.Columns.Add("Sel", typeof(bool));
             this.txtSpreadingNo.MDivision = this.KeyWord;
-            gridsetup();
-            btnFilter_Click(null, null);  //1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
+            this.gridsetup();
+            this.btnFilter_Click(null, null);  // 1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
 
-            MyUtility.Tool.ProcessWithDatatable(curTb, "orderid", "select distinct orderid from #tmp", out sp);
+            MyUtility.Tool.ProcessWithDatatable(this.curTb, "orderid", "select distinct orderid from #tmp", out this.sp);
             if (cursor != null)
             {
                 DataTable dtcopy = cursor.Copy();
                 dtcopy.AcceptChanges();
-                Poid = MyUtility.GetValue.Lookup($@"Select poid from orders WITH (NOLOCK) where id ='{dtcopy.Rows[0]["ID"]}'");
+                this.Poid = MyUtility.GetValue.Lookup($@"Select poid from orders WITH (NOLOCK) where id ='{dtcopy.Rows[0]["ID"]}'");
             }
 
-            ID = id;
-            DistqtyTb = distqtyTb;
+            this.ID = id;
+            this.DistqtyTb = distqtyTb;
         }
 
         protected override void OnFormLoaded()
@@ -54,6 +52,7 @@ namespace Sci.Production.Cutting
 
             this.bgWorkerUpdateInfo.RunWorkerAsync();
         }
+
         private void gridsetup()
         {
             DataGridViewGeneratorTextColumnSettings Cell = new DataGridViewGeneratorTextColumnSettings();
@@ -61,7 +60,7 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorTextColumnSettings col_Seq1 = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings col_Seq2 = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
-            DataGridViewGeneratorTextColumnSettings col_Shift = cellTextDropDownList.GetGridCell("Pms_WorkOrderShift");
+            DataGridViewGeneratorTextColumnSettings col_Shift = CellTextDropDownList.GetGridCell("Pms_WorkOrderShift");
             DataGridViewGeneratorDateColumnSettings WKETA = new DataGridViewGeneratorDateColumnSettings();
             Ict.Win.UI.DataGridViewDateBoxColumn col_wketa = new Ict.Win.UI.DataGridViewDateBoxColumn();
 
@@ -69,62 +68,90 @@ namespace Sci.Production.Cutting
             bool cellchk = true;
             Cell.EditingMouseDown += (s, e) =>
             {
-                DualResult DR; DataTable DT; SelectItem S;
+                DualResult DR;
+                DataTable DT;
+                SelectItem S;
                 if (e.Button == MouseButtons.Right)
                 {
-                    // Parent form 若是非編輯狀態就 return 
-                    if (!this.EditMode) { return; }
+                    // Parent form 若是非編輯狀態就 return
+                    if (!this.EditMode)
+                    {
+                        return;
+                    }
+
                     string CUTCELL = string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.KeyWord);
                     DR = DBProxy.Current.Select(null, CUTCELL, out DT);
                     S = new SelectItem(DT, "ID", "10", DT.Columns["id"].ToString(), false, ",");
                     DialogResult result = S.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     e.EditingControl.Text = S.GetSelectedString();
 
-                    DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                    DataRow dr = this.gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
 
-                    showMsgCheckCuttingWidth(e.EditingControl.Text, dr["SciRefno"].ToString());
+                    this.showMsgCheckCuttingWidth(e.EditingControl.Text, dr["SciRefno"].ToString());
 
                     cellchk = false;
                 }
             };
             Cell.CellValidating += (s, e) =>
             {
-                DualResult DR; DataTable DT;
+                DualResult DR;
+                DataTable DT;
 
-                if (!this.EditMode) { return; }
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
                 // 右鍵彈出功能
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
 
                 // 空白不檢查
-                if (e.FormattedValue.ToString().Empty()) return;
+                if (e.FormattedValue.ToString().Empty())
+                {
+                    return;
+                }
 
                 string oldvalue = dr["Cutcellid"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (oldvalue == newvalue) return;
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
                 string CUTCELL = string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.KeyWord);
                 DR = DBProxy.Current.Select(null, CUTCELL, out DT);
 
                 DataRow[] seledr = DT.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
                 {
-                    dr["Cutcellid"] = "";
+                    dr["Cutcellid"] = string.Empty;
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Cell> : {0} data not found!", newvalue));
                     return;
                 }
+
                 dr["Cutcellid"] = newvalue;
 
                 if (cellchk)
                 {
-                    showMsgCheckCuttingWidth(dr["CutcellID"].ToString(), dr["SciRefno"].ToString());
+                    this.showMsgCheckCuttingWidth(dr["CutcellID"].ToString(), dr["SciRefno"].ToString());
                 }
                 else
                 {
                     cellchk = true;
                 }
+
                 dr.EndEdit();
             };
             #endregion
@@ -137,8 +164,12 @@ namespace Sci.Production.Cutting
                 SelectItem S;
                 if (e.Button == MouseButtons.Right)
                 {
-                    // Parent form 若是非編輯狀態就 return 
-                    if (!this.EditMode) { return; }
+                    // Parent form 若是非編輯狀態就 return
+                    if (!this.EditMode)
+                    {
+                        return;
+                    }
+
                     string sqlSpreadingNo = $"Select id,CutCell=CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.KeyWord}' and junk=0";
                     Result = DBProxy.Current.Select(null, sqlSpreadingNo, out DT);
                     if (!Result)
@@ -146,37 +177,58 @@ namespace Sci.Production.Cutting
                         this.ShowErr(Result);
                         return;
                     }
+
                     S = new SelectItem(DT, "ID,CutCell", string.Empty, DT.Columns["id"].ToString(), false, ",");
                     DialogResult result = S.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    DataRow dr = this.gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
                     dr["SpreadingNoID"] = S.GetSelectedString();
                     if (!MyUtility.Check.Empty(S.GetSelecteds()[0]["CutCell"]))
                     {
                         dr["Cutcellid"] = S.GetSelecteds()[0]["CutCell"];
-                        showMsgCheckCuttingWidth(MyUtility.Convert.GetString(S.GetSelecteds()[0]["CutCell"]), dr["SciRefno"].ToString());
+                        this.showMsgCheckCuttingWidth(MyUtility.Convert.GetString(S.GetSelecteds()[0]["CutCell"]), dr["SciRefno"].ToString());
                     }
+
                     dr.EndEdit();
                     col_SpreadingNoIDchk = false;
                 }
             };
             SpreadingNo.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) return;
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
 
                 // 空白不檢查
-                if (e.FormattedValue.ToString().Empty()) return;
+                if (e.FormattedValue.ToString().Empty())
+                {
+                    return;
+                }
+
                 string oldvalue = dr["SpreadingNoID"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (oldvalue == newvalue) return;
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
 
                 DataRow SpreadingNodr;
                 string sqlSpreading = $"Select CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.KeyWord}' and  id = '{newvalue}' and junk=0";
                 if (!MyUtility.Check.Seek(sqlSpreading, out SpreadingNodr))
                 {
-                    dr["SpreadingNoID"] = "";
+                    dr["SpreadingNoID"] = string.Empty;
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<SpreadingNo> : {0} data not found!", newvalue));
@@ -186,25 +238,33 @@ namespace Sci.Production.Cutting
                 dr["SpreadingNoID"] = newvalue;
 
                 if (!MyUtility.Check.Empty(SpreadingNodr["CutCellID"]))
+                {
                     dr["cutCellid"] = SpreadingNodr["CutCellID"];
+                }
+
                 if (!col_SpreadingNoIDchk)
                 {
                     col_SpreadingNoIDchk = true;
                 }
                 else
                 {
-                    checkCuttingWidth(dr["cutCellid"].ToString(), dr["SCIRefno"].ToString());
+                    this.checkCuttingWidth(dr["cutCellid"].ToString(), dr["SCIRefno"].ToString());
                 }
+
                 dr.EndEdit();
             };
             #endregion
 
             EstCutDate.CellValidating += (s, e) =>
             {
-                if (!(MyUtility.Check.Empty(e.FormattedValue)))
+                if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
-                    if (e.FormattedValue.ToString() == dr["estcutdate"].ToString()) { return; }
+                    DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    if (e.FormattedValue.ToString() == dr["estcutdate"].ToString())
+                    {
+                        return;
+                    }
+
                     if (DateTime.Compare(DateTime.Today, Convert.ToDateTime(e.FormattedValue)) > 0)
                     {
                         e.Cancel = true;
@@ -220,15 +280,29 @@ namespace Sci.Production.Cutting
             };
             col_Seq1.EditingControlShowing += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
-                else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode)
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                }
+                else
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+                }
             };
             col_Seq1.CellFormatting += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
                 if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
                 {
                     e.CellStyle.BackColor = Color.White;
@@ -253,16 +327,29 @@ namespace Sci.Production.Cutting
             };
             col_Seq2.EditingControlShowing += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
-                else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
 
+                DataRow dr = this.gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode)
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                }
+                else
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+                }
             };
             col_Seq2.CellFormatting += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
                 if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
                 {
                     e.CellStyle.BackColor = Color.White;
@@ -283,23 +370,35 @@ namespace Sci.Production.Cutting
             #region WKETA
             WKETA.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                 if (e.Button == MouseButtons.Right)
                 {
                     P02_WKETA item = new P02_WKETA(dr);
                     DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    if (result == DialogResult.No) { dr["WKETA"] = DBNull.Value; }
-                    if (result == DialogResult.Yes) { dr["WKETA"] = itemx.WKETA; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    if (result == DialogResult.No)
+                    {
+                        dr["WKETA"] = DBNull.Value;
+                    }
+
+                    if (result == DialogResult.Yes)
+                    {
+                        dr["WKETA"] = itemx.WKETA;
+                    }
+
                     dr.EndEdit();
                 }
             };
-            
+
             #endregion
 
-            this.gridBatchAssignCellEstCutDate.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            Helper.Controls.Grid.Generator(this.gridBatchAssignCellEstCutDate)
-             .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+            this.gridBatchAssignCellEstCutDate.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.Helper.Controls.Grid.Generator(this.gridBatchAssignCellEstCutDate)
+             .CheckBox("Sel", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
              .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
              .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), integer_places: 3, iseditingreadonly: true)
              .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -330,21 +429,35 @@ namespace Sci.Production.Cutting
             this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.ForeColor = Color.Red;
             this.gridBatchAssignCellEstCutDate.Columns["Shift"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridBatchAssignCellEstCutDate.Columns["Shift"].DefaultCellStyle.ForeColor = Color.Red;
-            //col_wketa.Width = 97;
 
+            // col_wketa.Width = 97;
             col_wketa.EditingControlShowing += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode)
-                { ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true; ((Ict.Win.UI.DateBox)e.Control).Enabled = true; }
-                else { ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true; ((Ict.Win.UI.DateBox)e.Control).Enabled = false; }
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
 
+                DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode)
+                {
+                    ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
+                    ((Ict.Win.UI.DateBox)e.Control).Enabled = true;
+                }
+                else
+                {
+                    ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
+                    ((Ict.Win.UI.DateBox)e.Control).Enabled = false;
+                }
             };
             col_wketa.CellFormatting += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                 if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
                 {
                     e.CellStyle.BackColor = Color.White;
@@ -360,55 +473,94 @@ namespace Sci.Production.Cutting
 
         private void btnFilter_Click(object sender, EventArgs e)
         {
-            filter();
+            this.filter();
         }
 
         private void filter()
         {
-            string sp = txtSPNo.Text;
-            string article = txtArticle.Text;
-            string markername = txtMarkerName.Text;
-            string sizecode = txtSizeCode.Text;
-            string cutcell = txtCutCell.Text;
-            string fabriccombo = txtFabricCombo.Text;
-            string estcutdate = txtEstCutDate.Text.ToString();
+            string sp = this.txtSPNo.Text;
+            string article = this.txtArticle.Text;
+            string markername = this.txtMarkerName.Text;
+            string sizecode = this.txtSizeCode.Text;
+            string cutcell = this.txtCutCell.Text;
+            string fabriccombo = this.txtFabricCombo.Text;
+            string estcutdate = this.txtEstCutDate.Text.ToString();
             string filter = "(cutref is null or cutref = '') and (cutplanid is null or cutplanid = '') ";
-            if (!MyUtility.Check.Empty(sp)) filter = filter + string.Format(" and OrderID ='{0}'", sp);
-            if (!MyUtility.Check.Empty(article)) filter = filter + string.Format(" and article like '%{0}%'", article);
-            if (!MyUtility.Check.Empty(markername)) filter = filter + string.Format(" and markername ='{0}'", markername);
-            if (!MyUtility.Check.Empty(sizecode)) filter = filter + string.Format(" and sizecode like '%{0}%'", sizecode);
-            if (!MyUtility.Check.Empty(cutcell)) filter = filter + string.Format(" and cutcellid ='{0}'", cutcell);
-            if (!MyUtility.Check.Empty(fabriccombo)) filter = filter + string.Format(" and fabriccombo ='{0}'", fabriccombo);
-            if (!MyUtility.Check.Empty(numCutNo.Value)) filter = filter + string.Format(" and cutno ={0}", numCutNo.Value);
-            if (!MyUtility.Check.Empty(txtEstCutDate.Value)) filter = filter + string.Format(" and estcutdate ='{0}'", estcutdate);
-            if (checkOnlyShowEmptyEstCutDate.Checked) filter = filter + " and estcutdate is null ";
+            if (!MyUtility.Check.Empty(sp))
+            {
+                filter = filter + string.Format(" and OrderID ='{0}'", sp);
+            }
+
+            if (!MyUtility.Check.Empty(article))
+            {
+                filter = filter + string.Format(" and article like '%{0}%'", article);
+            }
+
+            if (!MyUtility.Check.Empty(markername))
+            {
+                filter = filter + string.Format(" and markername ='{0}'", markername);
+            }
+
+            if (!MyUtility.Check.Empty(sizecode))
+            {
+                filter = filter + string.Format(" and sizecode like '%{0}%'", sizecode);
+            }
+
+            if (!MyUtility.Check.Empty(cutcell))
+            {
+                filter = filter + string.Format(" and cutcellid ='{0}'", cutcell);
+            }
+
+            if (!MyUtility.Check.Empty(fabriccombo))
+            {
+                filter = filter + string.Format(" and fabriccombo ='{0}'", fabriccombo);
+            }
+
+            if (!MyUtility.Check.Empty(this.numCutNo.Value))
+            {
+                filter = filter + string.Format(" and cutno ={0}", this.numCutNo.Value);
+            }
+
+            if (!MyUtility.Check.Empty(this.txtEstCutDate.Value))
+            {
+                filter = filter + string.Format(" and estcutdate ='{0}'", estcutdate);
+            }
+
+            if (this.checkOnlyShowEmptyEstCutDate.Checked)
+            {
+                filter = filter + " and estcutdate is null ";
+            }
+
             string orderby = "SORT_NUM ASC,FabricCombo ASC,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC,Ukey";
-            curTb.DefaultView.RowFilter = filter;
-            curTb.DefaultView.Sort = orderby;
-            gridBatchAssignCellEstCutDate.DataSource = curTb;
+            this.curTb.DefaultView.RowFilter = filter;
+            this.curTb.DefaultView.Sort = orderby;
+            this.gridBatchAssignCellEstCutDate.DataSource = this.curTb;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            Close();
+            this.Close();
         }
 
         private void btnBatchUpdateEstCutDate_Click(object sender, EventArgs e)
         {
             this.gridBatchAssignCellEstCutDate.ValidateControl();
-            string cdate = "";
-            if (!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
+            string cdate = string.Empty;
+            if (!MyUtility.Check.Empty(this.txtBatchUpdateEstCutDate.Value))
             {
-                cdate = txtBatchUpdateEstCutDate.Text;
-            };
-            foreach (DataRow dr in curTb.Rows)
+                cdate = this.txtBatchUpdateEstCutDate.Text;
+            }
+
+            foreach (DataRow dr in this.curTb.Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
+                {
                     continue;
+                }
 
                 if (dr["Sel"].ToString() == "True")
                 {
-                    if (cdate != "")
+                    if (cdate != string.Empty)
                     {
                         dr["estcutdate"] = cdate;
                     }
@@ -419,19 +571,22 @@ namespace Sci.Production.Cutting
                 }
             }
 
-            string strShift = "";
-            if (!MyUtility.Check.Empty(txtShift.Text))
+            string strShift = string.Empty;
+            if (!MyUtility.Check.Empty(this.txtShift.Text))
             {
-                strShift = txtShift.Text;
-            };
-            foreach (DataRow dr in curTb.Rows)
+                strShift = this.txtShift.Text;
+            }
+
+            foreach (DataRow dr in this.curTb.Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
+                {
                     continue;
+                }
 
                 if (dr["Sel"].ToString() == "True")
                 {
-                    if (strShift != "")
+                    if (strShift != string.Empty)
                     {
                         dr["Shift"] = strShift;
                     }
@@ -439,21 +594,25 @@ namespace Sci.Production.Cutting
                     {
                         dr["Shift"] = string.Empty;
                     }
+
                     dr.EndEdit();
                 }
             }
 
-            string wkETA = "";
-            if (!MyUtility.Check.Empty(dateBoxWKETA.Value))
+            string wkETA = string.Empty;
+            if (!MyUtility.Check.Empty(this.dateBoxWKETA.Value))
             {
-                wkETA = dateBoxWKETA.Text;
-            };
+                wkETA = this.dateBoxWKETA.Text;
+            }
 
-            DataRow[] drSelect = curTb.Select("Sel = 1");
+            DataRow[] drSelect = this.curTb.Select("Sel = 1");
             foreach (DataRow dr in drSelect)
             {
                 if (dr.RowState == DataRowState.Deleted)
+                {
                     continue;
+                }
+
                 string sqlcmdChk = $@"
 select 1
 From Export_Detail ED 
@@ -474,15 +633,18 @@ and e.ETA = '{wkETA}'
 
             this.gridBatchAssignCellEstCutDate.ValidateControl();
             List<string> warningMsg = new List<string>();
+
             // 不可輸入空白
-            if (!MyUtility.Check.Empty(txtSpreadingNo.Text))
+            if (!MyUtility.Check.Empty(this.txtSpreadingNo.Text))
             {
-                string SpreadingNoID = txtSpreadingNo.Text;
+                string SpreadingNoID = this.txtSpreadingNo.Text;
                 string cellid = MyUtility.GetValue.Lookup($"Select CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.KeyWord}' and  id = '{SpreadingNoID}' and junk=0");
-                foreach (DataRow dr in curTb.Rows)
+                foreach (DataRow dr in this.curTb.Rows)
                 {
                     if (dr.RowState == DataRowState.Deleted)
+                    {
                         continue;
+                    }
 
                     if (dr["Sel"].ToString() == "True")
                     {
@@ -492,22 +654,25 @@ and e.ETA = '{wkETA}'
 
                 if (!MyUtility.Check.Empty(cellid))
                 {
-                    foreach (DataRow dr in curTb.Rows)
+                    foreach (DataRow dr in this.curTb.Rows)
                     {
                         if (dr.RowState == DataRowState.Deleted)
+                        {
                             continue;
+                        }
 
                         if (dr["Sel"].ToString() == "True")
                         {
                             dr["Cutcellid"] = cellid;
                             dr.EndEdit();
-                            string strMsg = checkCuttingWidth(dr["Cutcellid"].ToString(), dr["SciRefno"].ToString());
+                            string strMsg = this.checkCuttingWidth(dr["Cutcellid"].ToString(), dr["SciRefno"].ToString());
                             if (!strMsg.Empty())
                             {
                                 warningMsg.Add(strMsg);
                             }
                         }
                     }
+
                     if (warningMsg.Count > 0)
                     {
                         MyUtility.Msg.WarningBox(warningMsg.Select(x => x).Distinct().ToList().JoinToString("\n"));
@@ -516,35 +681,38 @@ and e.ETA = '{wkETA}'
             }
 
             List<string> warningMsgcell = new List<string>();
-            string cell = txtCell2.Text;
+            string cell = this.txtCell2.Text;
 
             // 不可輸入空白
             if (!cell.Empty())
             {
-                foreach (DataRow dr in curTb.Rows)
+                foreach (DataRow dr in this.curTb.Rows)
                 {
                     if (dr.RowState == DataRowState.Deleted)
+                    {
                         continue;
+                    }
 
                     if (dr["Sel"].ToString() == "True")
                     {
                         dr["Cutcellid"] = cell;
                         dr.EndEdit();
-                        string strMsg = checkCuttingWidth(dr["Cutcellid"].ToString(), dr["SciRefno"].ToString());
+                        string strMsg = this.checkCuttingWidth(dr["Cutcellid"].ToString(), dr["SciRefno"].ToString());
                         if (!strMsg.Empty())
                         {
                             warningMsgcell.Add(strMsg);
                         }
                     }
                 }
+
                 if (warningMsgcell.Count > 0)
                 {
                     MyUtility.Msg.WarningBox(warningMsgcell.Select(x => x).Distinct().ToList().JoinToString("\n"));
                 }
             }
 
-            string Seq1 = txtSeq1.Text;
-            string Seq2 = txtSeq2.Text;
+            string Seq1 = this.txtSeq1.Text;
+            string Seq2 = this.txtSeq2.Text;
             DataRow drCheckColor;
             bool isColorMatch = true;
             List<DataRow> listColorchangedDr = new List<DataRow>();
@@ -553,10 +721,12 @@ and e.ETA = '{wkETA}'
             // 不可輸入空白
             if (!MyUtility.Check.Empty(Seq1) && !MyUtility.Check.Empty(Seq2))
             {
-                foreach (DataRow dr in curTb.Rows)
+                foreach (DataRow dr in this.curTb.Rows)
                 {
                     if (dr.RowState == DataRowState.Deleted)
+                    {
                         continue;
+                    }
 
                     if (dr["Sel"].ToString() == "True")
                     {
@@ -564,7 +734,7 @@ and e.ETA = '{wkETA}'
 select Colorid from (
 	select ID,SEQ1,SEQ2,ColorID
 	from PO_Supp_Detail 
-	where ID = '{Poid}'
+	where ID = '{this.Poid}'
     and Refno = '{dr["Refno"]}'
 	and Junk != 1
 )a
@@ -580,10 +750,12 @@ where Seq1='{Seq1}' and Seq2='{Seq2}'
                                 isColorMatch = false;
                                 listColorchangedDr.Add(dr);
                             }
+
                             dr["Seq1"] = Seq1;
                             dr["Seq2"] = Seq2;
                             dr["Colorid"] = drCheckColor["Colorid"];
                         }
+
                         dr.EndEdit();
                     }
                 }
@@ -600,6 +772,7 @@ Do you want to continue? ");
                             listColorchangedDr[i]["Seq2"] = listOriDr[i]["Seq2"];
                             listColorchangedDr[i]["Colorid"] = listOriDr[i]["Colorid"];
                         }
+
                         return;
                     }
                 }
@@ -609,31 +782,35 @@ Do you want to continue? ");
         private void btnConfirm_Click(object sender, EventArgs e)
         {
             this.gridBatchAssignCellEstCutDate.ValidateControl();
-            string SpreadingNo = txtSpreadingNo.Text;
-            string cell = txtCell2.Text;
-            string cdate = "";
-            string Seq1 = txtSeq1.Text;
-            string Seq2 = txtSeq2.Text;
-            string Shift = txtShift.Text;
-            if (!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
+            string SpreadingNo = this.txtSpreadingNo.Text;
+            string cell = this.txtCell2.Text;
+            string cdate = string.Empty;
+            string Seq1 = this.txtSeq1.Text;
+            string Seq2 = this.txtSeq2.Text;
+            string Shift = this.txtShift.Text;
+            if (!MyUtility.Check.Empty(this.txtBatchUpdateEstCutDate.Value))
             {
-                cdate = txtBatchUpdateEstCutDate.Text;
-            };
-            foreach (DataRow dr in curTb.Rows)
+                cdate = this.txtBatchUpdateEstCutDate.Text;
+            }
+
+            foreach (DataRow dr in this.curTb.Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
+                {
                     continue;
+                }
+
                 if (dr["Sel"].ToString() == "True")
                 {
                     DataRow[] detaildr;
                     if (MyUtility.Check.Empty(dr["Ukey"]))
                     {
-                        detaildr = detailTb.Select(string.Format("newkey = '{0}'", dr["newkey"]));
+                        detaildr = this.detailTb.Select(string.Format("newkey = '{0}'", dr["newkey"]));
                     }
                     else
                     {
-                        detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
-                    }                    
+                        detaildr = this.detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
+                    }
 
                     detaildr[0]["SpreadingNoID"] = dr["SpreadingNoID"];
                     detaildr[0]["Cutcellid"] = dr["Cutcellid"];
@@ -642,17 +819,17 @@ Do you want to continue? ");
                     detaildr[0]["Seq1"] = dr["Seq1"];
                     detaildr[0]["Seq2"] = dr["Seq2"];
                     detaildr[0]["shift"] = dr["shift"];
-
                 }
             }
-            Close();
+
+            this.Close();
         }
 
         private void txtBatchUpdateEstCutDate_Validating(object sender, CancelEventArgs e)
         {
-            if (!(MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value)))
+            if (!MyUtility.Check.Empty(this.txtBatchUpdateEstCutDate.Value))
             {
-                if (DateTime.Compare(DateTime.Today, Convert.ToDateTime(txtBatchUpdateEstCutDate.Value)) > 0)
+                if (DateTime.Compare(DateTime.Today, Convert.ToDateTime(this.txtBatchUpdateEstCutDate.Value)) > 0)
                 {
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("[Est. Cut Date] can not be passed !!");
@@ -663,11 +840,15 @@ Do you want to continue? ");
         private void txtSPNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             SelectItem sele;
-            sele = new SelectItem(sp, "OrderID", "15@300,400", sp.Columns["OrderID"].ToString(), columndecimals: "50");
+            sele = new SelectItem(this.sp, "OrderID", "15@300,400", this.sp.Columns["OrderID"].ToString(), columndecimals: "50");
             DialogResult result = sele.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            txtSPNo.Text = sele.GetSelectedString();
-            filter();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtSPNo.Text = sele.GetSelectedString();
+            this.filter();
         }
 
         /// <summary>
@@ -679,11 +860,13 @@ Do you want to continue? ");
         /// <param name="strSCIRefno">SciRefno</param>
         private string checkCuttingWidth(string strCutCellID, string strSCIRefno)
         {
-            string chkwidth = MyUtility.GetValue.Lookup(string.Format(@"
+            string chkwidth = MyUtility.GetValue.Lookup(string.Format(
+                @"
 select width_cm = width*2.54 
 from Fabric 
 where SCIRefno = '{0}'", strSCIRefno));
-            string strCuttingWidth = MyUtility.GetValue.Lookup(string.Format(@"
+            string strCuttingWidth = MyUtility.GetValue.Lookup(string.Format(
+                @"
 select cuttingWidth = isnull (cuttingWidth, 0) 
 from CutCell 
 where   id = '{0}'
@@ -694,7 +877,7 @@ where   id = '{0}'
                 decimal decCuttingWidth = decimal.Parse(strCuttingWidth);
                 if (decCuttingWidth == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 if (width_CM > decCuttingWidth)
@@ -702,7 +885,8 @@ where   id = '{0}'
                     return string.Format("fab width greater than cutting cell {0}, please check it.", strCutCellID);
                 }
             }
-            return "";
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -714,7 +898,7 @@ where   id = '{0}'
         /// <param name="strSCIRefno">SciRefno</param>
         private void showMsgCheckCuttingWidth(string strCutCellID, string strSCIRefno)
         {
-            string Msg = checkCuttingWidth(strCutCellID, strSCIRefno);
+            string Msg = this.checkCuttingWidth(strCutCellID, strSCIRefno);
             if (!Msg.Empty())
             {
                 MyUtility.Msg.WarningBox(Msg);
@@ -723,33 +907,33 @@ where   id = '{0}'
 
         private void txtSeq1_Validating(object sender, CancelEventArgs e)
         {
-            string Seq1 = txtSeq1.Text;
+            string Seq1 = this.txtSeq1.Text;
             if (!MyUtility.Check.Empty(Seq1))
             {
-                if (!MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{Poid}' and Seq1='{Seq1}'  and Junk=0"))
+                if (!MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{this.Poid}' and Seq1='{Seq1}'  and Junk=0"))
                 {
                     MyUtility.Msg.WarningBox($@"Seq1: {Seq1} data not found!");
-                    txtSeq1.Text = string.Empty;
-                    txtSeq1.Focus();
+                    this.txtSeq1.Text = string.Empty;
+                    this.txtSeq1.Focus();
                     return;
                 }
             }
             else
             {
-                txtSeq1.Text = string.Empty;
+                this.txtSeq1.Text = string.Empty;
             }
         }
 
         private void txtSeq2_Validating(object sender, CancelEventArgs e)
         {
-            string Seq2 = txtSeq2.Text;
+            string Seq2 = this.txtSeq2.Text;
             if (!MyUtility.Check.Empty(Seq2))
             {
-                if (!MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{Poid}' and Seq2='{Seq2}' and Junk=0"))
+                if (!MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{this.Poid}' and Seq2='{Seq2}' and Junk=0"))
                 {
                     MyUtility.Msg.WarningBox($@"Seq2: {Seq2} data not found!");
-                    txtSeq2.Text = string.Empty;
-                    txtSeq2.Focus();
+                    this.txtSeq2.Text = string.Empty;
+                    this.txtSeq2.Focus();
                     return;
                 }
             }
@@ -757,20 +941,28 @@ where   id = '{0}'
 
         private void txtSeq1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            SelectItem item = new SelectItem($@"Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{Poid}' and junk=0", "SEQ1,SEQ2,Colorid", txtSeq1.Text, false, ",");
+            SelectItem item = new SelectItem($@"Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{this.Poid}' and junk=0", "SEQ1,SEQ2,Colorid", this.txtSeq1.Text, false, ",");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            txtSeq1.Text = item.GetSelectedString();
-            txtSeq2.Text = item.GetSelecteds()[0]["Seq2"].ToString();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtSeq1.Text = item.GetSelectedString();
+            this.txtSeq2.Text = item.GetSelecteds()[0]["Seq2"].ToString();
         }
 
         private void txtSeq2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            SelectItem item = new SelectItem($@"Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{Poid}' and junk=0", "SEQ1,SEQ2,Colorid", txtSeq2.Text, false, ",");
+            SelectItem item = new SelectItem($@"Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{this.Poid}' and junk=0", "SEQ1,SEQ2,Colorid", this.txtSeq2.Text, false, ",");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            txtSeq1.Text = item.GetSelecteds()[0]["Seq1"].ToString();
-            txtSeq2.Text = item.GetSelecteds()[0]["Seq2"].ToString();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtSeq1.Text = item.GetSelecteds()[0]["Seq1"].ToString();
+            this.txtSeq2.Text = item.GetSelecteds()[0]["Seq2"].ToString();
         }
 
         string ID;
@@ -779,7 +971,8 @@ where   id = '{0}'
         DataTable summaryData;
         DataTable dtG;
         DataTable dtF;
-        DateTime MinInLine, MaxOffLine;
+        DateTime MinInLine;
+        DateTime MaxOffLine;
         List<string> FtyFroup = new List<string>();
         List<InOffLineList> AllDataTmp = new List<InOffLineList>();
         List<InOffLineList> AllData = new List<InOffLineList>();
@@ -791,14 +984,14 @@ where   id = '{0}'
 
         private bool Query1()
         {
-            List<string> orderIDs = DistqtyTb.AsEnumerable()
+            List<string> orderIDs = this.DistqtyTb.AsEnumerable()
                 .Select(s => new { ID = MyUtility.Convert.GetString(s["OrderID"]) })
                 .Where(w => w.ID != "EXCESS")
                 .Distinct()
                 .Select(s => s.ID)
                 .ToList();
 
-            if (!Check_Subprocess_LeadTime(orderIDs))
+            if (!this.Check_Subprocess_LeadTime(orderIDs))
             {
                 return false;
             }
@@ -820,6 +1013,7 @@ where   id = '{0}'
 
             #region 時間軸
             this.Days.Clear();
+
             // 取出最早InLine / 最晚OffLine
             this.MinInLine = dt_Schedule.AsEnumerable().Min(o => Convert.ToDateTime(o["Inline"]));
             this.MaxOffLine = dt_Schedule.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"]));
@@ -831,21 +1025,24 @@ where   id = '{0}'
             DateTime start_where = this.MinInLine;
             DateTime end_where = this.MaxOffLine;
 
-            List<PublicPrg.Prgs.Day> daylist1 = PublicPrg.Prgs.GetDays(maxLeadTime, start_where.Date, this.FtyFroup);
-            List<PublicPrg.Prgs.Day> daylist2 = PublicPrg.Prgs.GetDays(minLeadTime, end_where.Date, this.FtyFroup);
+            List<PublicPrg.Prgs.Day> daylist1 = GetDays(maxLeadTime, start_where.Date, this.FtyFroup);
+            List<PublicPrg.Prgs.Day> daylist2 = GetDays(minLeadTime, end_where.Date, this.FtyFroup);
             foreach (var item in daylist1)
             {
                 this.Days.Add(item);
             }
+
             foreach (var item in daylist2)
             {
                 this.Days.Add(item);
             }
+
             DateTime d2 = daylist2.Select(s => s.Date).Min(m => m.Date);
+
             // 若 daylist1 是1/1~1/3, daylist2 是1/10~1/12, 中間也要補上
             if (start_where < d2)
             {
-                List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, d2, this.FtyFroup);
+                List<PublicPrg.Prgs.Day> daylist3 = GetRangeHoliday(start_where, d2, this.FtyFroup);
                 foreach (var item in daylist3)
                 {
                     this.Days.Add(item);
@@ -858,66 +1055,82 @@ where   id = '{0}'
                 .OrderBy(o => o.Date).ToList();
             #endregion
 
-            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+            {
+                return false;
+            }
+
             this.bgWorkerUpdateInfo.ReportProgress(5);
 
             this.AllData = GetInOffLineList(dt_Schedule, this.Days, startdate: DateTime.Today.Date, bw: this.bgWorkerUpdateInfo);
 
-            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+            {
+                return false;
+            }
+
             this.bgWorkerUpdateInfo.ReportProgress(90);
 
-            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
+            List<DataTable> LeadTimeList = GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
 
-            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+            {
+                return false;
+            }
+
             this.bgWorkerUpdateInfo.ReportProgress(95);
 
             this.summaryData = LeadTimeList[0];
             this.detailData = LeadTimeList[1];
 
-            dtG = this.summaryData.Clone();
+            this.dtG = this.summaryData.Clone();
             foreach (DataRow item in this.summaryData.Rows)
             {
                 DataRow drdStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Std. Qty'")[0];
-                dtG.ImportRow(drdStdQty);
+                this.dtG.ImportRow(drdStdQty);
                 DataRow drdAccStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Std. Qty'")[0];
 
                 DataRow drdAccCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
                 for (int i = 2; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
                 {
                     string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdAccCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
-                    if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == "" && MyUtility.Convert.GetString(drdAccStdQty[i]) == "")
+                    if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == string.Empty && MyUtility.Convert.GetString(drdAccStdQty[i]) == string.Empty)
                     {
                         bal = string.Empty;
                     }
 
                     string wip = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(item[i - 1]), 2));
-                    if (MyUtility.Convert.GetString(item[i - 1]) == "")
+                    if (MyUtility.Convert.GetString(item[i - 1]) == string.Empty)
                     {
                         wip = string.Empty;
                     }
+
                     string srow2 = string.Empty;
-                    if (!(MyUtility.Convert.GetString(bal) == "" && MyUtility.Convert.GetString(wip) == ""))
+                    if (!(MyUtility.Convert.GetString(bal) == string.Empty && MyUtility.Convert.GetString(wip) == string.Empty))
                     {
                         srow2 = wip + " / " + bal;
                     }
+
                     drdAccCutPlan[i] = srow2;
                 }
+
                 drdAccCutPlan["SP"] = string.Empty;
-                dtG.ImportRow(drdAccCutPlan);
+                this.dtG.ImportRow(drdAccCutPlan);
             }
 
             return true;
         }
+
         private bool Query2()
         {
-            List<string> orderIDs = DistqtyTb.AsEnumerable()
+            List<string> orderIDs = this.DistqtyTb.AsEnumerable()
                 .Select(s => new { ID = MyUtility.Convert.GetString(s["OrderID"]) })
                 .Where(w => w.ID != "EXCESS")
                 .Distinct()
                 .Select(s => s.ID)
                 .ToList();
 
-            if (!Check_Subprocess_LeadTime(orderIDs))
+            if (!this.Check_Subprocess_LeadTime(orderIDs))
             {
                 return false;
             }
@@ -939,6 +1152,7 @@ where   id = '{0}'
 
             #region 時間軸
             this.Days2.Clear();
+
             // 取出最早InLine / 最晚OffLine
             this.MinInLine = dt_Schedule.AsEnumerable().Min(o => Convert.ToDateTime(o["Inline"]));
             this.MaxOffLine = dt_Schedule.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"]));
@@ -950,21 +1164,24 @@ where   id = '{0}'
             DateTime start_where = this.MinInLine;
             DateTime end_where = this.MaxOffLine;
 
-            List<PublicPrg.Prgs.Day> daylist1 = PublicPrg.Prgs.GetDays(maxLeadTime, start_where, this.FtyFroup);
-            List<PublicPrg.Prgs.Day> daylist2 = PublicPrg.Prgs.GetDays(minLeadTime, end_where, this.FtyFroup);
+            List<PublicPrg.Prgs.Day> daylist1 = GetDays(maxLeadTime, start_where, this.FtyFroup);
+            List<PublicPrg.Prgs.Day> daylist2 = GetDays(minLeadTime, end_where, this.FtyFroup);
             foreach (var item in daylist1)
             {
                 this.Days2.Add(item);
             }
+
             foreach (var item in daylist2)
             {
                 this.Days2.Add(item);
             }
+
             DateTime d2 = daylist2.Select(s => s.Date).Min(m => m.Date);
+
             // 若 daylist1 是1/1~1/3, daylist2 是1/10~1/12, 中間也要補上
             if (start_where < d2)
             {
-                List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, d2, this.FtyFroup);
+                List<PublicPrg.Prgs.Day> daylist3 = GetRangeHoliday(start_where, d2, this.FtyFroup);
                 foreach (var item in daylist3)
                 {
                     this.Days2.Add(item);
@@ -977,60 +1194,76 @@ where   id = '{0}'
                 .OrderBy(o => o.Date).ToList();
             #endregion
 
-            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+            {
+                return false;
+            }
+
             this.bgWorkerUpdateInfo.ReportProgress(5);
 
             this.AllData2 = GetInOffLineList_byFabricPanelCode(dt_Schedule, this.Days2, startdate: DateTime.Today.Date, bw: this.bgWorkerUpdateInfo);
 
-            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+            {
+                return false;
+            }
+
             this.bgWorkerUpdateInfo.ReportProgress(90);
 
-            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days2, this.AllData2.OrderBy(o => o.OrderID).ToList());
+            List<DataTable> LeadTimeList = GetCutting_WIP_DataTable(this.Days2, this.AllData2.OrderBy(o => o.OrderID).ToList());
 
-            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+            {
+                return false;
+            }
+
             this.bgWorkerUpdateInfo.ReportProgress(95);
 
             this.summaryData = LeadTimeList[0];
             this.detailData = LeadTimeList[1];
 
-            dtF = this.summaryData.Clone();
+            this.dtF = this.summaryData.Clone();
             foreach (DataRow item in this.summaryData.Rows)
             {
                 DataRow drdStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Std. Qty'")[0];
-                dtF.ImportRow(drdStdQty);
+                this.dtF.ImportRow(drdStdQty);
                 DataRow drdAccStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Std. Qty'")[0];
 
                 DataRow drdAccCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
                 for (int i = 3; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
                 {
                     string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdAccCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
-                    if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == "" && MyUtility.Convert.GetString(drdAccStdQty[i]) == "")
+                    if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == string.Empty && MyUtility.Convert.GetString(drdAccStdQty[i]) == string.Empty)
                     {
                         bal = string.Empty;
                     }
 
                     string wip = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(item[i - 1]), 2));
-                    if (MyUtility.Convert.GetString(item[i - 1]) == "")
+                    if (MyUtility.Convert.GetString(item[i - 1]) == string.Empty)
                     {
                         wip = string.Empty;
                     }
+
                     string srow2 = string.Empty;
-                    if (!(MyUtility.Convert.GetString(bal) == "" && MyUtility.Convert.GetString(wip) == ""))
+                    if (!(MyUtility.Convert.GetString(bal) == string.Empty && MyUtility.Convert.GetString(wip) == string.Empty))
                     {
                         srow2 = wip + " / " + bal;
                     }
+
                     drdAccCutPlan[i] = srow2;
                 }
+
                 drdAccCutPlan["SP"] = string.Empty;
-                dtF.ImportRow(drdAccCutPlan);
+                this.dtF.ImportRow(drdAccCutPlan);
             }
 
             return true;
         }
+
         private void AfterQuery1()
         {
-            this.listControlBindingSource1.DataSource = dtG;
-            foreach (DataColumn item in dtG.Columns)
+            this.listControlBindingSource1.DataSource = this.dtG;
+            foreach (DataColumn item in this.dtG.Columns)
             {
                 this.Helper.Controls.Grid.Generator(this.gridGarment)
                 .Text(item.ColumnName, header: item.ColumnName, width: Widths.Auto(), iseditingreadonly: true)
@@ -1042,39 +1275,39 @@ where   id = '{0}'
             int ColumnIndex = 1;
             foreach (var day in this.Days)
             {
-                //string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
+                // string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
-                //gridGarment.Columns[ColumnIndex].Name = dateStr;
+                // gridGarment.Columns[ColumnIndex].Name = dateStr;
                 // 假日的話粉紅色
                 if (day.IsHoliday)
                 {
-                    gridGarment.Columns[ColumnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
+                    this.gridGarment.Columns[ColumnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
                 }
+
                 ColumnIndex++;
             }
 
-            //扣除無產出的日期
+            // 扣除無產出的日期
             List<PublicPrg.Prgs.Day> removeDays = new List<PublicPrg.Prgs.Day>();
 
             foreach (var day in this.Days)
             {
-                //如果該日期，不是「有資料」，則刪掉
+                // 如果該日期，不是「有資料」，則刪掉
                 if (!this.AllData.Where(x => x.InOffLines.Where(y => y.DateWithLeadTime == day.Date
-                                                                && (MyUtility.Convert.GetInt(y.CutQty) > 0 || MyUtility.Convert.GetInt(y.StdQty) > 0) // 不同於R01,是因此只有顯示CutQty,StdQty資料
-                                                                ).Any()
-                                       ).Any()
-                    //&& day.IsHoliday
-                    )
+                                                                && (MyUtility.Convert.GetInt(y.CutQty) > 0 || MyUtility.Convert.GetInt(y.StdQty) > 0)) // 不同於R01,是因此只有顯示CutQty,StdQty資料
+                                                                .Any())
+                                       .Any())
+
+                    // && day.IsHoliday
                 {
                     removeDays.Add(day);
                 }
                 else if (!this.AllData.Where(x => x.InOffLines.Where(
                                                                     y => y.DateWithLeadTime == day.Date
-                                                                    && MyUtility.Convert.GetDecimal(y.WIP) > 0
-                                                                ).Any()
-                                       ).Any()
-                    && day.IsHoliday
-                    )
+                                                                    && MyUtility.Convert.GetDecimal(y.WIP) > 0)
+                                                                .Any())
+                                       .Any()
+                    && day.IsHoliday)
                 {
                     removeDays.Add(day);
                 }
@@ -1089,15 +1322,17 @@ where   id = '{0}'
             {
                 if (removeDays.Where(o => o.Date == day.Date).Any())
                 {
-                    gridGarment.Columns[ColumnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
+                    this.gridGarment.Columns[ColumnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
                 }
+
                 ColumnIndex++;
             }
 
             if (removeDays.Count == ColumnIndex - 1)
             {
                 this.gridGarment.DataSource = null;
-                //gridGarment.Columns[0].Visible = false;
+
+                // gridGarment.Columns[0].Visible = false;
             }
 
             #region 關閉排序功能
@@ -1107,10 +1342,11 @@ where   id = '{0}'
             }
             #endregion
         }
+
         private void AfterQuery2()
         {
-            this.listControlBindingSource2.DataSource = dtF;
-            foreach (DataColumn item in dtF.Columns)
+            this.listControlBindingSource2.DataSource = this.dtF;
+            foreach (DataColumn item in this.dtF.Columns)
             {
                 this.Helper.Controls.Grid.Generator(this.gridFabric_Panel_Code)
                 .Text(item.ColumnName, header: item.ColumnName, width: Widths.Auto(), iseditingreadonly: true)
@@ -1120,40 +1356,40 @@ where   id = '{0}'
             int ColumnIndex = 2;
             foreach (var day in this.Days2)
             {
-                //string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
+                // string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
-                //gridFabric_Panel_Code.Columns[ColumnIndex].Name = dateStr;
+                // gridFabric_Panel_Code.Columns[ColumnIndex].Name = dateStr;
                 // 假日的話粉紅色
                 if (day.IsHoliday)
                 {
-                    gridFabric_Panel_Code.Columns[ColumnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
+                    this.gridFabric_Panel_Code.Columns[ColumnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
                 }
+
                 ColumnIndex++;
             }
 
-            //扣除無產出的日期
+            // 扣除無產出的日期
             List<PublicPrg.Prgs.Day> removeDays = new List<PublicPrg.Prgs.Day>();
 
             foreach (var day in this.Days2)
             {
-                //如果該日期，不是「有資料」，則刪掉
+                // 如果該日期，不是「有資料」，則刪掉
                 if (!this.AllData2.Where(x => x.InOffLines.Where(
                                                                     y => y.DateWithLeadTime == day.Date
-                                                                    && (MyUtility.Convert.GetInt(y.CutQty) > 0 || MyUtility.Convert.GetInt(y.StdQty) > 0) // 不同於R01,是因此只有顯示CutQty,StdQty資料
-                                                                ).Any()
-                                       ).Any()
-                    //&& day.IsHoliday
-                    )
+                                                                    && (MyUtility.Convert.GetInt(y.CutQty) > 0 || MyUtility.Convert.GetInt(y.StdQty) > 0)) // 不同於R01,是因此只有顯示CutQty,StdQty資料
+                                                                .Any())
+                                       .Any())
+
+                    // && day.IsHoliday
                 {
                     removeDays.Add(day);
                 }
                 else if (!this.AllData.Where(x => x.InOffLines.Where(
                                                                     y => y.DateWithLeadTime == day.Date
-                                                                    && MyUtility.Convert.GetDecimal(y.WIP) > 0
-                                                                ).Any()
-                                       ).Any()
-                    && day.IsHoliday
-                    )
+                                                                    && MyUtility.Convert.GetDecimal(y.WIP) > 0)
+                                                                .Any())
+                                       .Any()
+                    && day.IsHoliday)
                 {
                     removeDays.Add(day);
                 }
@@ -1168,8 +1404,9 @@ where   id = '{0}'
             {
                 if (removeDays.Where(o => o.Date == day.Date).Any())
                 {
-                    gridFabric_Panel_Code.Columns[ColumnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
+                    this.gridFabric_Panel_Code.Columns[ColumnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
                 }
+
                 ColumnIndex++;
             }
 
@@ -1178,8 +1415,9 @@ where   id = '{0}'
             if (removeDays.Count == ColumnIndex - 2)
             {
                 this.gridFabric_Panel_Code.DataSource = null;
-                //gridFabric_Panel_Code.Columns[0].Visible = false;
-                //gridFabric_Panel_Code.Columns[1].Visible = false;
+
+                // gridFabric_Panel_Code.Columns[0].Visible = false;
+                // gridFabric_Panel_Code.Columns[1].Visible = false;
             }
 
             #region 關閉排序功能
@@ -1190,6 +1428,7 @@ where   id = '{0}'
             #endregion
             return;
         }
+
         public bool Check_Subprocess_LeadTime(List<string> orderIDs)
         {
             DataTable PoID_dt;
@@ -1225,7 +1464,6 @@ drop table #OrderList
             this.FtyFroup = PoID_dt.AsEnumerable().Select(o => o["FtyGroup"].ToString()).Distinct().ToList();
             List<string> Msg = new List<string>();
 
-
             foreach (DataRow dr in PoID_dt.Rows)
             {
                 string POID = dr["POID"].ToString();
@@ -1233,10 +1471,9 @@ drop table #OrderList
                 string MDivisionID = dr["MDivisionID"].ToString();
                 string FactoryID = dr["FactoryID"].ToString();
 
-                PublicPrg.Prgs.GetGarmentListTable(string.Empty, POID, "", out GarmentTb);
+                GetGarmentListTable(string.Empty, POID, string.Empty, out GarmentTb);
 
                 List<string> AnnotationList = GarmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
-
 
                 List<string> AnnotationList_Final = new List<string>();
 
@@ -1244,7 +1481,7 @@ drop table #OrderList
                 {
                     foreach (var item in Annotation.Split('+'))
                     {
-                        string input = "";
+                        string input = string.Empty;
                         for (int i = 0; i <= item.Length - 1; i++)
                         {
                             // 排除掉數字
@@ -1254,6 +1491,7 @@ drop table #OrderList
                                 input += item[i].ToString();
                             }
                         }
+
                         if (!AnnotationList_Final.Contains(input) && MyUtility.Check.Seek($"SELECT 1 FROM Subprocess WHERE ID='{input}' "))
                         {
                             AnnotationList_Final.Add(input);
@@ -1300,7 +1538,7 @@ and s.MDivisionID = '{MDivisionID}'
                     LeadTime o = new LeadTime()
                     {
                         OrderID = OrderID,
-                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]) //加工段為空，LeadTimeDay = 0
+                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]), // 加工段為空，LeadTimeDay = 0
                     };
                     this.LeadTimeList.Add(o);
                 }
@@ -1314,11 +1552,13 @@ and s.MDivisionID = '{MDivisionID}'
 When the settings are complete, can be use this function!!
 ";
 
-                //MyUtility.Msg.InfoBox(message);
+                // MyUtility.Msg.InfoBox(message);
                 return false;
             }
+
             return true;
         }
+
         private void Grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex > 0)
@@ -1340,6 +1580,7 @@ When the settings are complete, can be use this function!!
                 e.AdvancedBorderStyle.Bottom = ((Win.UI.Grid)sender).AdvancedCellBorderStyle.Bottom;
             }
         }
+
         private bool IsEmptyCellValue(int row, Win.UI.Grid grid)
         {
             if (row == grid.Rows.Count - 1)
@@ -1354,6 +1595,7 @@ When the settings are complete, can be use this function!!
 
         private int Qend = 0;
         private int Qrun = 1;
+
         private void BgWorkerUpdateInfo_DoWork(object sender, DoWorkEventArgs e)
         {
             if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
@@ -1362,28 +1604,34 @@ When the settings are complete, can be use this function!!
             }
             else
             {
-                Qend = 0;
-                if (!Query1())
+                this.Qend = 0;
+                if (!this.Query1())
                 {
-                    Qend = 3;
+                    this.Qend = 3;
                     this.bgWorkerUpdateInfo.CancelAsync();
                     this.bgWorkerUpdateInfo.ReportProgress(0);
                     return;
                 }
-                Qend = 1;
 
-                if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return;
+                this.Qend = 1;
+
+                if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+                {
+                    return;
+                }
+
                 this.bgWorkerUpdateInfo.ReportProgress(100);
 
-                Qrun = 2;
-                if (!Query2())
+                this.Qrun = 2;
+                if (!this.Query2())
                 {
-                    Qend = 3;
+                    this.Qend = 3;
                     this.bgWorkerUpdateInfo.CancelAsync();
                     this.bgWorkerUpdateInfo.ReportProgress(0);
                     return;
                 }
-                Qend = 2;
+
+                this.Qend = 2;
                 this.bgWorkerUpdateInfo.ReportProgress(100);
             }
         }
@@ -1394,34 +1642,34 @@ When the settings are complete, can be use this function!!
             {
                 return;
             }
-            if (Qrun == 1)
+
+            if (this.Qrun == 1)
             {
-                progressBar1.Value = e.ProgressPercentage;
+                this.progressBar1.Value = e.ProgressPercentage;
             }
             else
             {
-                progressBar2.Value = e.ProgressPercentage;
+                this.progressBar2.Value = e.ProgressPercentage;
             }
 
             try
             {
-
-                if (Qend == 1)
+                if (this.Qend == 1)
                 {
-                    progressBar1.Visible = false;
-                    AfterQuery1();
-                    Qend = 0;
+                    this.progressBar1.Visible = false;
+                    this.AfterQuery1();
+                    this.Qend = 0;
                 }
-                else if (Qend == 2)
+                else if (this.Qend == 2)
                 {
-                    progressBar2.Visible = false;
-                    AfterQuery2();
-                    Qend = 0;
+                    this.progressBar2.Visible = false;
+                    this.AfterQuery2();
+                    this.Qend = 0;
                 }
-                else if (Qend == 3)
+                else if (this.Qend == 3)
                 {
-                    progressBar1.Visible = false;
-                    progressBar2.Visible = false;
+                    this.progressBar1.Visible = false;
+                    this.progressBar2.Visible = false;
                 }
             }
             catch (Exception ex)

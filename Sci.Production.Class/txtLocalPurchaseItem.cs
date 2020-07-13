@@ -1,19 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 using Sci.Win.UI;
-using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtLocalPurchaseItem : Sci.Win.UI.TextBox
+    /// <summary>
+    /// TxtLocalPurchaseItem
+    /// </summary>
+    public partial class TxtLocalPurchaseItem : Win.UI.TextBox
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtLocalPurchaseItem"/> class.
+        /// </summary>
+        public TxtLocalPurchaseItem()
+        {
+            this.Size = new System.Drawing.Size(140, 23);
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -22,14 +26,19 @@ namespace Sci.Production.Class
             string sqlCmd = string.Empty;
 
             sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere + " order by Seq";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
             item.Size = new System.Drawing.Size(435, 510);
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -37,25 +46,18 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-
                 string sqlWhere = string.Format("Where isLocalPurchase = 1 and id='{0}'", str);
                 string sqlCmd = string.Empty;
                 sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere;
 
                 if (MyUtility.Check.Seek(sqlCmd) == false)
                 {
-                    this.Text = "";
-                    e.Cancel = true; 
+                    this.Text = string.Empty;
+                    e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Artworktype : {0} > not found!!!", str));
                     return;
                 }
             }
-
-        }
-
-        public txtLocalPurchaseItem()
-        {
-            this.Size = new System.Drawing.Size(140, 23);
         }
     }
 }

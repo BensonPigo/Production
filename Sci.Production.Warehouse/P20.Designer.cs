@@ -39,7 +39,7 @@
             this.txtRefNo = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.txtSeq = new Sci.Production.Class.TxtSeq();
             this.checkQty = new Sci.Win.UI.CheckBox();
             this.labelSeq = new Sci.Win.UI.Label();
             this.txtSPNo = new Sci.Win.UI.TextBox();
@@ -180,8 +180,8 @@
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq.Location = new System.Drawing.Point(284, 9);
             this.txtSeq.Name = "txtSeq";
-            this.txtSeq.seq1 = "";
-            this.txtSeq.seq2 = "";
+            this.txtSeq.Seq1 = "";
+            this.txtSeq.Seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 1;
             // 
@@ -397,7 +397,7 @@
         private Win.UI.Grid gridTransactionID;
         private Win.UI.Grid gridRoll;
         private Win.UI.CheckBox checkQty;
-        private Class.txtSeq txtSeq;
+        private Class.TxtSeq txtSeq;
         private Win.UI.TextBox txtColorID;
         private Win.UI.TextBox txtRefNo;
         private Win.UI.Label label2;

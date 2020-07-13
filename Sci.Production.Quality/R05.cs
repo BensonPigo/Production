@@ -2,42 +2,48 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
 namespace Sci.Production.Quality
 {
-    public partial class R05 : Sci.Win.Tems.PrintForm
+    public partial class R05 : Win.Tems.PrintForm
     {
         DateTime? DateSCIStart; DateTime? DateSCIEnd;
         List<SqlParameter> lis;
-        DataTable dtFabricDetail, dtAccessoryDetail, dtFabricSummary, dtAccessorySummary;
-        private string cmdFabricDetail, cmdAccessoryDetail, str_Category, str_Material, ReportType, cmdFabricSummary, cmdAccessorySummary;
+        DataTable dtFabricDetail;
+        DataTable dtAccessoryDetail;
+        DataTable dtFabricSummary;
+        DataTable dtAccessorySummary;
+        private string cmdFabricDetail;
+        private string cmdAccessoryDetail;
+        private string str_Category;
+        private string str_Material;
+        private string reportType;
+        private string cmdFabricSummary;
+        private string cmdAccessorySummary;
         private string MaterialType = string.Empty;
+
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-
-            InitializeComponent();
+            this.InitializeComponent();
             this.comboCategory.SelectedIndex = 0;
             DualResult result;
             DataTable Material = null;
-            string sqlM = (@" 
+            string sqlM = @" 
                         SELECT distinct case fabrictype
                                when 'F' then 'Fabric' 
 	                           when 'A' then 'Accessory'
 	                           end fabrictype
                         FROM Po_supp_detail WITH (NOLOCK) 
                         where fabrictype !='O'  AND fabrictype !=''
-                        ");
-            if (!(result = DBProxy.Current.Select("", sqlM, out Material)))
+                        ";
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlM, out Material)))
             {
-                ShowErr(result);
+                this.ShowErr(result);
             }
             else
             {
@@ -47,79 +53,89 @@ namespace Sci.Production.Quality
                 this.comboMaterialType.DisplayMember = "fabrictype";
                 this.comboMaterialType.SelectedIndex = 0;
                 this.comboMaterialType.SelectedValue = "Fabric";
-                MaterialType = this.comboMaterialType.SelectedValue.ToString();
+                this.MaterialType = this.comboMaterialType.SelectedValue.ToString();
             }
-          
-            print.Enabled = false;
+
+            this.print.Enabled = false;
         }
 
         protected override bool ValidateInput()
         {
-
             bool dateSciDelivery_Empty = !this.dateSCIDelivery.HasValue, comboCategory_Empty = this.comboCategory.Text.Empty(), comboMaterial_Empty = this.comboMaterialType.Text.Empty(),
                  report_Empty = this.radioPanel.Value.Empty();
             if (dateSciDelivery_Empty)
             {
-                dateSCIDelivery.Focus();
+                this.dateSCIDelivery.Focus();
                 MyUtility.Msg.ErrorBox("Please entry the 'SCI Delivery'");
                 return false;
-            } if (comboCategory_Empty)
+            }
+
+            if (comboCategory_Empty)
             {
-                comboCategory.Focus();
+                this.comboCategory.Focus();
                 MyUtility.Msg.ErrorBox("Please entry the 'Category'");
                 return false;
-            } if (comboMaterial_Empty)
+            }
+
+            if (comboMaterial_Empty)
             {
-                comboMaterialType.Focus();
+                this.comboMaterialType.Focus();
                 MyUtility.Msg.ErrorBox("Please entry the 'MaterialType'");
                 return false;
             }
-            DateSCIStart = dateSCIDelivery.Value1;
-            DateSCIEnd = dateSCIDelivery.Value2;
-            str_Category = comboCategory.Text;
-            str_Material = comboMaterialType.Text;
-            ReportType = radioPanel.Value.ToString();
 
-            lis = new List<SqlParameter>();
-            string sqlWhere = ""; string sqlOrdersWhere = "";
-            string CATEGORY = "";
+            this.DateSCIStart = this.dateSCIDelivery.Value1;
+            this.DateSCIEnd = this.dateSCIDelivery.Value2;
+            this.str_Category = this.comboCategory.Text;
+            this.str_Material = this.comboMaterialType.Text;
+            this.reportType = this.radioPanel.Value.ToString();
+
+            this.lis = new List<SqlParameter>();
+            string sqlWhere = string.Empty;
+            string sqlOrdersWhere = string.Empty;
+            string cATEGORY = string.Empty;
             List<string> sqlWheres = new List<string>();
             List<string> sqlOrderWheres = new List<string>();
             #region --組WHERE--
             if (!this.dateSCIDelivery.Value1.Empty())
             {
                 sqlOrderWheres.Add("SciDelivery >= @SCIDate1");
-                lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
+                this.lis.Add(new SqlParameter("@SCIDate1", this.DateSCIStart));
             }
+
             if (!this.dateSCIDelivery.Value2.Empty())
             {
                 sqlOrderWheres.Add("SciDelivery <= @SCIDate2");
-                lis.Add(new SqlParameter("@SCIDate2", DateSCIEnd));
+                this.lis.Add(new SqlParameter("@SCIDate2", this.DateSCIEnd));
             }
+
             if (!this.comboCategory.SelectedItem.ToString().Empty())
             {
-                CATEGORY = $"({this.comboCategory.SelectedValue})";
+                cATEGORY = $"({this.comboCategory.SelectedValue})";
                 sqlOrderWheres.Add($"Category in ({this.comboCategory.SelectedValue})");
+            }
 
-            } if (!this.comboMaterialType.SelectedItem.ToString().Empty())
+            if (!this.comboMaterialType.SelectedItem.ToString().Empty())
             {
                 sqlWheres.Add("psd.FabricType=@FabricType");
-                if (str_Material == "Fabric")
+                if (this.str_Material == "Fabric")
                 {
-                    lis.Add(new SqlParameter("@FabricType", "F"));
-                } if (str_Material == "Accessory")
+                    this.lis.Add(new SqlParameter("@FabricType", "F"));
+                }
+
+                if (this.str_Material == "Accessory")
                 {
-                    lis.Add(new SqlParameter("@FabricType", "A"));
+                    this.lis.Add(new SqlParameter("@FabricType", "A"));
                 }
             }
 
-            if (radioSummary.Checked)
+            if (this.radioSummary.Checked)
             {
-                lis.Add(new SqlParameter("@summary", "1"));
+                this.lis.Add(new SqlParameter("@summary", "1"));
             }
             else
             {
-                lis.Add(new SqlParameter("@summary", "0"));
+                this.lis.Add(new SqlParameter("@summary", "0"));
             }
 
             #endregion
@@ -129,10 +145,11 @@ namespace Sci.Production.Quality
             {
                 sqlOrdersWhere = " AND " + sqlOrdersWhere;
             }
+
             sqlOrdersWhere += this.chkIncludeCancelOrder.Checked ? string.Empty : " and orders.Junk = 0 ";
             #region --撈Fabric Detail 資料--
 
-            cmdFabricDetail = string.Format(@" 
+            this.cmdFabricDetail = string.Format(@" 
                 with order_rawdata as
                 (
 	                select distinct poid from dbo.orders WITH (NOLOCK) 
@@ -152,7 +169,7 @@ namespace Sci.Production.Quality
                 ,f.Physical
                 ,va.WhseArrival
                 ,o.scidelivery
-                ,iif('B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<25,'Y','')
+                ,iif('B' in " + cATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<25,'Y','')
 		        ,iif(DATEDIFF(day, va.WhseArrival,o.scidelivery )<15,'Y','')
 		                ) [Delay]
                 ,psd.ID
@@ -175,7 +192,7 @@ namespace Sci.Production.Quality
                 where " + sqlWhere + @" AND  psd.SEQ1 NOT BETWEEN '50'AND'79' and f.Physical<>'' and f.PhysicalEncode=1 ");
             #endregion
             #region --撈 Accessory Detail 資料--
-            cmdAccessoryDetail = string.Format(@" with order_rawdata as
+            this.cmdAccessoryDetail = string.Format(@" with order_rawdata as
                 (
 	                select distinct poid from dbo.orders WITH (NOLOCK) 
 	                where 1 = 1  " + sqlOrdersWhere + @"
@@ -192,7 +209,7 @@ namespace Sci.Production.Quality
                ,AR.Result
                 ,va.WhseArrival
                 ,o.scidelivery
-                ,iif(  'B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<25,'Y','')
+                ,iif(  'B' in " + cATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<25,'Y','')
 		        ,iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<15,'Y','')
 		                ) [Delay]
                 ,AR.POID
@@ -209,7 +226,7 @@ namespace Sci.Production.Quality
 and ar.Status='Confirmed' ");
             #endregion
             #region --撈 Fabric Summary 資料--
-            cmdFabricSummary = string.Format(@"
+            this.cmdFabricSummary = string.Format(@"
 with order_rawdata as
 ( 
 	select distinct poid 
@@ -355,7 +372,7 @@ else
 drop table #tmp");
             #endregion
             #region --撈 Accessory Summary 資料--
-            cmdAccessorySummary = string.Format(@"
+            this.cmdAccessorySummary = string.Format(@"
             ; declare @testcategory as varchar(1);
             set @testcategory = 'B';             
             with order_rawdata as
@@ -374,7 +391,7 @@ drop table #tmp");
             inner join dbo.Supp as s WITH (NOLOCK) on s.ID = ps.SuppID
             inner join dbo.View_AllReceivingDetail as n WITH (NOLOCK) on n.Id = ai.ReceivingID and n.PoId = psd.ID and n.seq1 = psd.seq1 and n.seq2 = psd.SEQ2
             left join dbo.View_AllReceiving va with (nolock) on va.ID = ai.ReceivingID
-            OUTER APPLY (SELECT iif('B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival, (select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
+            OUTER APPLY (SELECT iif('B' in " + cATEGORY + @",iif(DATEDIFF(day, va.WhseArrival, (select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
                                                      ,iif(DATEDIFF(day, va.WhseArrival, (select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y',''))  
                                                        TF)DelayItemsRef
             WHERE " + sqlWhere + @" AND psd.SEQ1 NOT BETWEEN '50'AND'79' AND Ai.Result<>''
@@ -419,33 +436,34 @@ and ai.Status='Confirmed'
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res = new DualResult(false);
 
-            if (MaterialType.EqualString("Fabric"))
+            if (this.MaterialType.EqualString("Fabric"))
             {
-                if (radioDetail.Checked)
-                {                    
-                    res = DBProxy.Current.Select("", cmdFabricDetail, lis, out dtFabricDetail);
-                }
-                if (radioSummary.Checked)
-                {                    
-                    res = DBProxy.Current.Select("", cmdFabricSummary, lis, out dtFabricSummary);
+                if (this.radioDetail.Checked)
+                {
+                    res = DBProxy.Current.Select(string.Empty, this.cmdFabricDetail, this.lis, out this.dtFabricDetail);
                 }
 
-            }
-            else if (MaterialType.EqualString("Accessory"))
-            {
-                if (radioDetail.Checked) 
+                if (this.radioSummary.Checked)
                 {
-                    res = DBProxy.Current.Select("", cmdAccessoryDetail, lis, out dtAccessoryDetail);
+                    res = DBProxy.Current.Select(string.Empty, this.cmdFabricSummary, this.lis, out this.dtFabricSummary);
                 }
-                if (radioSummary.Checked)
+            }
+            else if (this.MaterialType.EqualString("Accessory"))
+            {
+                if (this.radioDetail.Checked)
                 {
-                    res = DBProxy.Current.Select("", cmdAccessorySummary, lis, out dtAccessorySummary);
-                    dtAccessorySummary.Columns.Remove("SuppID");
-                    dtAccessorySummary.Columns.Remove("AbbEN");
+                    res = DBProxy.Current.Select(string.Empty, this.cmdAccessoryDetail, this.lis, out this.dtAccessoryDetail);
+                }
+
+                if (this.radioSummary.Checked)
+                {
+                    res = DBProxy.Current.Select(string.Empty, this.cmdAccessorySummary, this.lis, out this.dtAccessorySummary);
+                    this.dtAccessorySummary.Columns.Remove("SuppID");
+                    this.dtAccessorySummary.Columns.Remove("AbbEN");
                 }
             }
 
@@ -454,23 +472,23 @@ and ai.Status='Confirmed'
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-      
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+            var saveDialog = Utility.Excel.MyExcelPrg.GetSaveFileDialog(Utility.Excel.MyExcelPrg.Filter_Excel);
 
             if ("Fabric".EqualString(this.comboMaterialType.Text))
             {
-                if (radioDetail.Checked) //("Detail".EqualString(this.radioDetail.Text))
+                if (this.radioDetail.Checked) // ("Detail".EqualString(this.radioDetail.Text))
                 {
                     // 顯示筆數於PrintForm上Count欄位
-                    SetCount(dtFabricDetail.Rows.Count);
-                    if (dtFabricDetail == null || dtFabricDetail.Rows.Count == 0)
+                    this.SetCount(this.dtFabricDetail.Rows.Count);
+                    if (this.dtFabricDetail == null || this.dtFabricDetail.Rows.Count == 0)
                     {
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }
+
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_FabricDetail.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.XltRptTable dt = new sxrc.XltRptTable(dtFabricDetail);
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtFabricDetail);
                     dt.ShowHeader = false;
                     dt.BoAddFilter = true;
                     sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);
@@ -478,18 +496,20 @@ and ai.Status='Confirmed'
                     sxr.BoOpenFile = true;
                     sxr.Save();
                 }
-                if (radioSummary.Checked)//("Summary".EqualString(this.radioSummary.Text))
+
+                if (this.radioSummary.Checked) // ("Summary".EqualString(this.radioSummary.Text))
                 {
                     // 顯示筆數於PrintForm上Count欄位
-                    SetCount(dtFabricSummary.Rows.Count);
-                    if (dtFabricSummary == null || dtFabricSummary.Rows.Count == 0)
+                    this.SetCount(this.dtFabricSummary.Rows.Count);
+                    if (this.dtFabricSummary == null || this.dtFabricSummary.Rows.Count == 0)
                     {
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }
+
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_FabricSummary.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.XltRptTable dt = new sxrc.XltRptTable(dtFabricSummary);
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtFabricSummary);
                     dt.ShowHeader = false;
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Columns.AutoFit();
@@ -497,22 +517,22 @@ and ai.Status='Confirmed'
 
                     sxr.Save();
                 }
-
             }
             else if ("Accessory".EqualString(this.comboMaterialType.Text))
             {
-                if (radioDetail.Checked) //("Detail".EqualString(this.radioDetail.Text))
-                { 
+                if (this.radioDetail.Checked) // ("Detail".EqualString(this.radioDetail.Text))
+                {
                     // 顯示筆數於PrintForm上Count欄位
-                    SetCount(dtAccessoryDetail.Rows.Count);
-                    if (dtAccessoryDetail == null || dtAccessoryDetail.Rows.Count == 0)
+                    this.SetCount(this.dtAccessoryDetail.Rows.Count);
+                    if (this.dtAccessoryDetail == null || this.dtAccessoryDetail.Rows.Count == 0)
                     {
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }
+
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_AccessoryDetail.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.XltRptTable dt = new sxrc.XltRptTable(dtAccessoryDetail);
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtAccessoryDetail);
                     dt.ShowHeader = false;
                     dt.BoAddFilter = true;
                     sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);
@@ -520,18 +540,20 @@ and ai.Status='Confirmed'
                     sxr.BoOpenFile = true;
                     sxr.Save();
                 }
-                if (radioSummary.Checked)//("Summary".EqualString(this.radioSummary.Text))
+
+                if (this.radioSummary.Checked) // ("Summary".EqualString(this.radioSummary.Text))
                 {
                     // 顯示筆數於PrintForm上Count欄位
-                    SetCount(dtAccessorySummary.Rows.Count);
-                    if (dtAccessorySummary == null || dtAccessorySummary.Rows.Count == 0)
+                    this.SetCount(this.dtAccessorySummary.Rows.Count);
+                    if (this.dtAccessorySummary == null || this.dtAccessorySummary.Rows.Count == 0)
                     {
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }
+
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_AccessorySummary.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.XltRptTable dt = new sxrc.XltRptTable(dtAccessorySummary);
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtAccessorySummary);
                     dt.ShowHeader = false;
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Columns.AutoFit();
@@ -539,14 +561,14 @@ and ai.Status='Confirmed'
 
                     sxr.Save();
                 }
-
             }
+
             return true;
         }
 
         private void comboMaterialType_SelectedValueChanged(object sender, EventArgs e)
         {
-            MaterialType = this.comboMaterialType.SelectedValue.ToString();
+            this.MaterialType = this.comboMaterialType.SelectedValue.ToString();
         }
     }
 }

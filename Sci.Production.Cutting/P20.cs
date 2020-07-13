@@ -1,14 +1,10 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
@@ -16,50 +12,54 @@ using System.Linq;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P20 : Sci.Win.Tems.Input8
+    public partial class P20 : Win.Tems.Input8
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
 
         public P20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", keyWord);
-            DoSubForm = new P20_Detail();
+            this.InitializeComponent();
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", this.keyWord);
+            this.DoSubForm = new P20_Detail();
             DataTable queryDT;
-            string querySql = string.Format(@"
+            string querySql = string.Format(
+                @"
 select '' FTYGroup
 
 union 
 select distinct FTYGroup 
 from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DualResult result;
             result = DBProxy.Current.Select(null, querySql, out queryDT);
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
             }
-            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
-            queryfors.SelectedIndex = 0;
-            queryfors.SelectedIndexChanged += (s, e) =>
+
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
+            this.queryfors.SelectedIndex = 0;
+            this.queryfors.SelectedIndexChanged += (s, e) =>
             {
-                switch (queryfors.SelectedIndex)
+                switch (this.queryfors.SelectedIndex)
                 {
                     case 0:
-                        this.DefaultWhere = "";
+                        this.DefaultWhere = string.Empty;
                         break;
                     default:
-                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
+                        this.DefaultWhere = string.Format("FactoryID = '{0}'", this.queryfors.SelectedValue);
                         break;
                 }
+
                 this.ReloadDatas();
             };
         }
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
+            string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmdsql = string.Format(
             @"
 Select a.* , e.FabricCombo, e.FabricPanelCode, 
@@ -90,9 +90,10 @@ ORDER BY CutRef
             this.DetailSelectCommand = cmdsql;
             return base.OnDetailSelectCommandPrepare(e);
         }
-        protected override DualResult OnSubDetailSelectCommandPrepare(Win.Tems.Input8.PrepareSubDetailSelectCommandEventArgs e)
+
+        protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Detail == null) ? "" : e.Detail["Ukey"].ToString();
+            string masterID = (e.Detail == null) ? string.Empty : e.Detail["Ukey"].ToString();
 
             this.SubDetailSelectCommand = string.Format(
             @"Select a.*
@@ -100,14 +101,19 @@ ORDER BY CutRef
             where a.Cuttingoutput_DetailUkey = '{0}'", masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
         }
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            label9.Text = CurrentMaintain["Status"].ToString();
+            this.label9.Text = this.CurrentMaintain["Status"].ToString();
 
-            //去除表身[sizeRatio]最後一個/ 字元
-            foreach (DataRow dr in DetailDatas) dr["sizeRatio"] = dr["sizeRatio"].ToString().Trim().TrimEnd('/');
+            // 去除表身[sizeRatio]最後一個/ 字元
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                dr["sizeRatio"] = dr["sizeRatio"].ToString().Trim().TrimEnd('/');
+            }
         }
+
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -117,13 +123,24 @@ ORDER BY CutRef
             DataGridViewGeneratorTextColumnSettings cutref = new DataGridViewGeneratorTextColumnSettings();
             cutref.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) return;
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Cutref"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (newvalue == oldvalue || newvalue.Trim() == "") return;
-                
+                if (newvalue == oldvalue || newvalue.Trim() == string.Empty)
+                {
+                    return;
+                }
+
                 DataTable dt;
                 string cutrefsql = $@"
 Select
@@ -182,31 +199,32 @@ outer apply(select CuttingLayer = isnull(x3.Qty,0)-isnull(acc.AccuCuttingLayer,0
 where a.CutRef = '{e.FormattedValue}'
 and a.CutRef != ''
 --and a.Layer > isnull(acc.AccuCuttingLayer,0)
-and a.MDivisionId = '{Sci.Env.User.Keyword}'
+and a.MDivisionId = '{Env.User.Keyword}'
 ";
                 DualResult result = DBProxy.Current.Select(null, cutrefsql, out dt);
                 if (!result)
                 {
-                    ShowErr(result);
+                    this.ShowErr(result);
                     return;
                 }
 
-                dr["Orderid"] = "";
-                dr["Cuttingid"] = "";
-                dr["Cutref"] = "";
-                dr["FabricCombo"] = "";
-                dr["MarkerName"] = "";
+                dr["Orderid"] = string.Empty;
+                dr["Cuttingid"] = string.Empty;
+                dr["Cutref"] = string.Empty;
+                dr["FabricCombo"] = string.Empty;
+                dr["MarkerName"] = string.Empty;
                 dr["WorkOderLayer"] = 0;
                 dr["AccuCuttingLayer"] = 0;
                 dr["Layer"] = 0;
                 dr["LackingLayers"] = 0;
                 dr["Cons"] = 0;
-                dr["FabricPanelCode"] = "";
+                dr["FabricPanelCode"] = string.Empty;
                 dr["Workorderukey"] = 0;
-                dr["SizeRatio"] = "";
+                dr["SizeRatio"] = string.Empty;
                 dr["ConsPC"] = 0;
                 dr["SizeRatioQty"] = 0;
                 dr.EndEdit();
+
                 // 找不到資料
                 if (dt.Rows.Count == 0)
                 {
@@ -225,6 +243,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                     {
                         nowOutputRow_Layer += nowOutputRowVal.OutputLayer;
                     }
+
                     var delRow = this.GetDetailGridDatasByDeleted().FirstOrDefault(x => x["CutRef", DataRowVersion.Original].EqualString(e.FormattedValue));
                     int delRow_Layer = delRow == null ? 0 : MyUtility.Convert.GetInt(delRow["Layer", DataRowVersion.Original]);
                     var rows = dt.AsEnumerable().Where(x => MyUtility.Convert.GetInt(x["WorkOderLayer"]) > MyUtility.Convert.GetInt(x["AccuCuttingLayer"]) + nowOutputRow_Layer - delRow_Layer);
@@ -232,6 +251,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                     {
                         dtCamWork = rows.CopyToDataTable();
                     }
+
                     if (dtCamWork.Rows.Count == 0)
                     {
                         // WorkOderLayer <= AccuCuttingLayer
@@ -242,26 +262,28 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                                     inner join cuttingoutput_Detail b WITH (NOLOCK) on b.WorkOrderUkey = a.Ukey
                                     where a.CutRef =  '{e.FormattedValue}'
                                     and a.CutRef != ''
-                                    and a.MDivisionId = '{Sci.Env.User.Keyword}'";
+                                    and a.MDivisionId = '{Env.User.Keyword}'";
                         result = DBProxy.Current.Select(null, cutrefsql, out dt);
                         if (!result)
                         {
-                            ShowErr(result);
+                            this.ShowErr(result);
                             return;
                         }
+
                         e.Cancel = true;
 
-                        var m = new Sci.Win.UI.MsgGridForm(dt
-                            , "this <Cut Ref#(" + e.FormattedValue + ")> already output finished \r\nPlease refer to the following information"
-                            , "Warning"
-                            , null, MessageBoxButtons.OK);
+                        var m = new Win.UI.MsgGridForm(
+                            dt,
+                            "this <Cut Ref#(" + e.FormattedValue + ")> already output finished \r\nPlease refer to the following information",
+                            "Warning",
+                            null, MessageBoxButtons.OK);
 
                         m.Width = 630;
                         m.grid1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                         m.grid1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                         m.text_Find.Width = 140;
                         m.btn_Find.Location = new Point(150, 6);
-                        m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
+                        m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
                         m.ShowDialog();
 
                         return;
@@ -271,7 +293,11 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                         SelectItem sele;
                         sele = new SelectItem(dtCamWork, "cutref,Orderid,FabricCombo,WorkOderLayer,AccuCuttingLayer,CuttingLayer,LackingLayers,Cons", string.Empty, dr["cutref"].ToString(), false, ",");
                         DialogResult resultShowDialog = sele.ShowDialog();
-                        if (resultShowDialog == DialogResult.Cancel) { return; }
+                        if (resultShowDialog == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
                         e.FormattedValue = sele.GetSelectedString();
                         seldr = sele.GetSelecteds()[0];
                         if (((DataTable)this.detailgridbs.DataSource).Select($"Workorderukey = '{seldr["Ukey"]}'").Length > 0)
@@ -294,7 +320,8 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                     dr["WorkOderLayer"] = seldr["WorkOderLayer"];
                     dr["AccuCuttingLayer"] = seldr["AccuCuttingLayer"];
                     dr["Layer"] = MyUtility.Convert.GetInt(seldr["CuttingLayer"]) - nowOutputRow_Layer;
-                    //dr["LackingLayers"] = seldr["LackingLayers"];
+
+                    // dr["LackingLayers"] = seldr["LackingLayers"];
                     dr["LackingLayers"] = MyUtility.Convert.GetInt(seldr["WorkOderLayer"]) - MyUtility.Convert.GetInt(seldr["AccuCuttingLayer"]) - (MyUtility.Convert.GetInt(dr["Layer"]) + nowOutputRow_Layer);
                     dr["Cons"] = seldr["Cons"];
                     dr["FabricPanelCode"] = seldr["FabricPanelCode"];
@@ -312,34 +339,36 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             #region SizeRatio Dobule Click entery next form
             sizeratio.CellMouseDoubleClick += (s, e) =>
             {
-
-                if (e.Button == System.Windows.Forms.MouseButtons.Left && !this.EditMode)
+                if (e.Button == MouseButtons.Left && !this.EditMode)
                 {
-                    OpenSubDetailPage();
+                    this.OpenSubDetailPage();
                 }
             };
             #endregion
             #region Cutting Layer
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
             Layer.CellValidating += (s, e) =>
             {
-                if (!EditMode)
+                if (!this.EditMode)
                 {
                     return;
                 }
+
                 if (e.RowIndex == -1)
                 {
                     return;
                 }
+
                 var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                //if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
-                //{
+
+                // if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
+                // {
                 //    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
                 //    dr["Layer"] = 0;
                 //    dr["Cons"] = 0;
                 //    dr.EndEdit();
                 //    return;
-                //}
+                // }
                 dr["Layer"] = e.FormattedValue;
                 dr["Cons"] = MyUtility.Convert.GetDecimal(e.FormattedValue) * MyUtility.Convert.GetDecimal(dr["ConsPC"]) * MyUtility.Convert.GetDecimal(dr["SizeRatioQty"]);
                 dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["Layer"]);
@@ -348,7 +377,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             };
             #endregion
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Cutref", header: "Cut Ref#", width: Widths.AnsiChars(6), settings: cutref)
             .Text("Cuttingid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -367,49 +396,58 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             this.detailgrid.Columns["Cutref"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["Layer"].DefaultCellStyle.BackColor = Color.Pink;
         }
+
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["cDate"] = DateTime.Today.AddDays(-1);
-            CurrentMaintain["mDivisionid"] = keyWord;
-            CurrentMaintain["Status"] = "New";
-            txtfactoryByM1.Text = Sci.Env.User.Factory;
+            this.CurrentMaintain["cDate"] = DateTime.Today.AddDays(-1);
+            this.CurrentMaintain["mDivisionid"] = this.keyWord;
+            this.CurrentMaintain["Status"] = "New";
+            this.txtfactoryByM1.Text = Env.User.Factory;
         }
+
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Status"].ToString() != "New")
+            if (this.CurrentMaintain["Status"].ToString() != "New")
             {
                 MyUtility.Msg.WarningBox("<Status> is not New, you can not modify.");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
+
         protected override bool ClickDeleteBefore()
         {
-            if (CurrentMaintain["Status"].ToString() != "New")
+            if (this.CurrentMaintain["Status"].ToString() != "New")
             {
                 MyUtility.Msg.WarningBox("<Status> is not New, you can not delete.");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
+
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(dateDate.Value))
+            if (MyUtility.Check.Empty(this.dateDate.Value))
             {
                 MyUtility.Msg.WarningBox("<Date> can not be empty.");
                 return false;
             }
-            if (MyUtility.Check.Empty(numManPower.Text))
+
+            if (MyUtility.Check.Empty(this.numManPower.Text))
             {
                 MyUtility.Msg.WarningBox("<Man Power> can not be empty.");
                 return false;
             }
-            if (MyUtility.Check.Empty(txtfactoryByM1.Text))
+
+            if (MyUtility.Check.Empty(this.txtfactoryByM1.Text))
             {
                 MyUtility.Msg.WarningBox("<Factory> can not be empty.");
                 return false;
             }
+
             // 檢查表身不能裁0層
             DataRow[] chkzero = ((DataTable)this.detailgridbs.DataSource).Select("Layer = '0'");
             if (chkzero.Length > 0)
@@ -419,6 +457,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 {
                     chkZeroItemList.Add(MyUtility.Convert.GetString(item["Cutref"]));
                 }
+
                 string chkZeroItemMsg = $"Cutref: [{string.Join(",", chkZeroItemList)}] layers can not be zero.";
                 MyUtility.Msg.WarningBox(chkZeroItemMsg);
                 return false;
@@ -426,23 +465,26 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
 
             if (this.IsDetailInserting)
             {
-                string date = dateDate.Text;
-                string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) Where cdate = '{0}' and id !='{1}' and FactoryID ='{2}'", date, CurrentMaintain["ID"], txtfactoryByM1.Text);
+                string date = this.dateDate.Text;
+                string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) Where cdate = '{0}' and id !='{1}' and FactoryID ='{2}'", date, this.CurrentMaintain["ID"], this.txtfactoryByM1.Text);
                 if (MyUtility.Check.Seek(sql, null))
                 {
                     MyUtility.Msg.WarningBox("The <Date> had been existed already.");
-                    //CurrentMaintain["cDate"] = "";
+
+                    // CurrentMaintain["cDate"] = "";
                     return false;
                 }
             }
-            DataTable dt = ((DataTable)detailgridbs.DataSource);
 
-            DataView dv = ((DataTable)detailgridbs.DataSource).DefaultView;
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+
+            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
             if (dv.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can not be empty.");
                 return false;
             }
+
             DataTable sumTb;
 
             MyUtility.Tool.ProcessWithDatatable(dt, "Layer,cutref,workorderukey,cuttingid,id", "Select sum(Layer) as tlayer,cutref,workorderukey,cuttingid,id from #tmp group by cutref,workorderukey,cuttingid,id", out sumTb);
@@ -455,13 +497,25 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 cuttingid = dr["cuttingid"].ToString();
                 sumsql = string.Format("Select sum(Layer) as tlayer from Workorder WITH (NOLOCK) where id='{0}' and cutref = '{1}'", cuttingid, cutref);
                 string str = MyUtility.GetValue.Lookup(sumsql, null);
-                if (MyUtility.Check.Empty(str)) layer_work = 0;
-                else layer_work = Convert.ToInt32(str);
+                if (MyUtility.Check.Empty(str))
+                {
+                    layer_work = 0;
+                }
+                else
+                {
+                    layer_work = Convert.ToInt32(str);
+                }
 
                 sumsql = string.Format("Select sum(Layer) as cuttingL from Cuttingoutput_Detail WITH (NOLOCK) where id!='{0}' and cutref = '{1}' and cuttingid= '{2}'", id, cutref, cuttingid);
                 str = MyUtility.GetValue.Lookup(sumsql, null);
-                if (MyUtility.Check.Empty(str)) layer_cutting = 0;
-                else layer_cutting = Convert.ToInt32(str);
+                if (MyUtility.Check.Empty(str))
+                {
+                    layer_cutting = 0;
+                }
+                else
+                {
+                    layer_cutting = Convert.ToInt32(str);
+                }
 
                 layer_cutting = layer_cutting + Convert.ToInt32(dr["tlayer"]);
                 if (layer_cutting > layer_work)
@@ -470,30 +524,33 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                     return false;
                 }
             }
-            decimal cons = Convert.ToDecimal(((DataTable)detailgridbs.DataSource).Compute("Sum(cons)", ""));
-            CurrentMaintain["Actoutput"] = cons;
-            if (IsDetailInserting)
+
+            decimal cons = Convert.ToDecimal(((DataTable)this.detailgridbs.DataSource).Compute("Sum(cons)", string.Empty));
+            this.CurrentMaintain["Actoutput"] = cons;
+            if (this.IsDetailInserting)
             {
-                string cid = MyUtility.GetValue.GetID(keyWord + "CD", "CuttingOutput");
-                CurrentMaintain["id"] = cid;
+                string cid = MyUtility.GetValue.GetID(this.keyWord + "CD", "CuttingOutput");
+                this.CurrentMaintain["id"] = cid;
             }
             #region 掃表身找出有改變的寫入第三層
-            DataTable detailTb = ((DataTable)detailgridbs.DataSource);
+            DataTable detailTb = (DataTable)this.detailgridbs.DataSource;
             DataTable subtb, SizeTb;
             MyUtility.Tool.ProcessWithDatatable(detailTb, "WorkorderUkey", "Select b.* from #tmp a, workorder_SizeRatio b WITH (NOLOCK) where a.workorderukey = b.workorderukey", out SizeTb);
             DataRow[] dray;
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in this.DetailDatas)
             {
-                GetSubDetailDatas(dr, out subtb);
-                //變更需刪除第三層資料
-                if ((dr.RowState == DataRowState.Modified))
+                this.GetSubDetailDatas(dr, out subtb);
+
+                // 變更需刪除第三層資料
+                if (dr.RowState == DataRowState.Modified)
                 {
                     foreach (DataRow sdr in subtb.Rows)
                     {
                         sdr.Delete();
                     }
                 }
-                //新增與變更需增加第三層
+
+                // 新增與變更需增加第三層
                 if ((dr.RowState == DataRowState.Added) || (dr.RowState == DataRowState.Modified))
                 {
                     dray = SizeTb.Select(string.Format("WorkorderUkey ='{0}'", dr["WorkorderUkey"]));
@@ -505,7 +562,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                             ndr["CuttingID"] = dr2["id"];
                             ndr["SizeCode"] = dr2["SizeCode"];
                             ndr["Qty"] = dr2["Qty"];
-                            ndr["ID"] = CurrentMaintain["ID"];
+                            ndr["ID"] = this.CurrentMaintain["ID"];
                             subtb.Rows.Add(ndr);
                         }
                     }
@@ -518,14 +575,15 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             this.CurrentMaintain.EndEdit();
             return base.ClickSaveBefore();
         }
+
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
             DualResult result;
             #region 若前面的單子有尚未Confrim 則不可Confirm
 
-            string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) where cdate<'{0}' and Status='New' and mDivisionid = '{1}'", ((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd"), keyWord);
-            string msg = "";
+            string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) where cdate<'{0}' and Status='New' and mDivisionid = '{1}'", ((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd"), this.keyWord);
+            string msg = string.Empty;
             DataTable Dt;
             result = DBProxy.Current.Select(null, sql, out Dt);
             if (result)
@@ -534,6 +592,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 {
                     msg = msg + "<ID>:" + dr["ID"] + ",<Date>:" + ((DateTime)dr["cdate"]).ToString("yyyy/MM/dd") + Environment.NewLine;
                 }
+
                 if (!MyUtility.Check.Empty(msg))
                 {
                     MyUtility.Msg.WarningBox("The record not yet confirm, you can not confirm.Please see below list." + Environment.NewLine + msg);
@@ -542,15 +601,15 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             }
             else
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
 
             #endregion
 
-            string update = "";
-            update = $@"update Cuttingoutput set status='Confirmed',editDate=getdate(),editname ='{loginID}' where id='{CurrentMaintain["ID"]}';
-                        EXEC Cutting_P20_CFM_Update '{CurrentMaintain["ID"]}','{((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{CurrentMaintain["ManPower"]},{CurrentMaintain["ManHours"]},'Confirm';
+            string update = string.Empty;
+            update = $@"update Cuttingoutput set status='Confirmed',editDate=getdate(),editname ='{this.loginID}' where id='{this.CurrentMaintain["ID"]}';
+                        EXEC Cutting_P20_CFM_Update '{this.CurrentMaintain["ID"]}','{((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{this.CurrentMaintain["ManPower"]},{this.CurrentMaintain["ManHours"]},'Confirm';
 ";
 
             #region transaction
@@ -563,9 +622,10 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(upResult);
+                        this.ShowErr(upResult);
                         return;
                     }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
@@ -573,23 +633,25 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
+
             _transactionscope.Dispose();
             _transactionscope = null;
 
             #endregion
         }
+
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
             DualResult result;
             #region 若前面的單子有UnConfrim 則UnConfirm
 
-            string sql = string.Format("Select * from Cuttingoutput  WITH (NOLOCK) where cdate>'{0}' and Status!='New' and mDivisionid = '{1}'", ((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd"), keyWord);
-            string msg = "";
+            string sql = string.Format("Select * from Cuttingoutput  WITH (NOLOCK) where cdate>'{0}' and Status!='New' and mDivisionid = '{1}'", ((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd"), this.keyWord);
+            string msg = string.Empty;
             DataTable Dt;
             result = DBProxy.Current.Select(null, sql, out Dt);
             if (result)
@@ -598,6 +660,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 {
                     msg = msg + "<ID>:" + dr["ID"] + ",<Date>:" + ((DateTime)dr["cdate"]).ToString("yyyy/MM/dd") + Environment.NewLine;
                 }
+
                 if (!MyUtility.Check.Empty(msg))
                 {
                     MyUtility.Msg.WarningBox("The record not yet Unconfirm, you can not Unconfirm.Please see below list." + Environment.NewLine + msg);
@@ -606,13 +669,13 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             }
             else
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
             #endregion
-            string update = "";
-            update = $@"update Cuttingoutput set status='New',editDate=getdate(),editname ='{loginID}' where id='{CurrentMaintain["ID"]}';
-                        EXEC Cutting_P20_CFM_Update '{CurrentMaintain["ID"]}','{((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{CurrentMaintain["ManPower"]},{CurrentMaintain["ManHours"]},'UnConfirm';
+            string update = string.Empty;
+            update = $@"update Cuttingoutput set status='New',editDate=getdate(),editname ='{this.loginID}' where id='{this.CurrentMaintain["ID"]}';
+                        EXEC Cutting_P20_CFM_Update '{this.CurrentMaintain["ID"]}','{((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{this.CurrentMaintain["ManPower"]},{this.CurrentMaintain["ManHours"]},'UnConfirm';
 ";
 
             #region transaction
@@ -625,9 +688,10 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(upResult);
+                        this.ShowErr(upResult);
                         return;
                     }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
@@ -635,10 +699,11 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
+
             _transactionscope.Dispose();
             _transactionscope = null;
 
@@ -648,61 +713,71 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
 
         private void btnImportfromWorkOrder_Click(object sender, EventArgs e)
         {
-            detailgrid.ValidateControl();
-            DataTable dt = (DataTable)detailgridbs.DataSource;
-            var frm = new Sci.Production.Cutting.P20_Import_Workorder(CurrentMaintain, dt);
+            this.detailgrid.ValidateControl();
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            var frm = new P20_Import_Workorder(this.CurrentMaintain, dt);
             frm.ShowDialog(this);
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
         }
 
         private void btnImportfromRealtimeBundleTracking_Click(object sender, EventArgs e)
         {
-            detailgrid.ValidateControl();
-            DataTable dt = (DataTable)detailgridbs.DataSource;
-            var frm = new P20_Import_RFID(CurrentMaintain, dt);
+            this.detailgrid.ValidateControl();
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            var frm = new P20_Import_RFID(this.CurrentMaintain, dt);
             frm.ShowDialog(this);
         }
 
         int index;
-        string find = "";
+        string find = string.Empty;
         DataRow[] find_dr;
+
         private void BtnFind_Click(object sender, EventArgs e)
         {
-            DataTable detDtb = (DataTable)detailgridbs.DataSource;
-            //移到指定那筆
-            string cutref = txtCutref.Text;
-            string find_new = "";
+            DataTable detDtb = (DataTable)this.detailgridbs.DataSource;
+
+            // 移到指定那筆
+            string cutref = this.txtCutref.Text;
+            string find_new = string.Empty;
 
             if (!MyUtility.Check.Empty(cutref))
             {
                 find_new = string.Format("Cutref='{0}'", cutref);
             }
 
-            if (find != find_new)
+            if (this.find != find_new)
             {
-                find = find_new;
-                find_dr = detDtb.Select(find_new);
-                if (find_dr.Length == 0)
+                this.find = find_new;
+                this.find_dr = detDtb.Select(find_new);
+                if (this.find_dr.Length == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not Found.");
                     return;
                 }
-                else { index = 0; }
+                else
+                {
+                    this.index = 0;
+                }
             }
             else
             {
-                index++;
-                if (find_dr == null)
+                this.index++;
+                if (this.find_dr == null)
                 {
                     return;
                 }
-                if (index >= find_dr.Length) index = 0;
+
+                if (this.index >= this.find_dr.Length)
+                {
+                    this.index = 0;
+                }
             }
-            detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
+
+            this.detailgridbs.Position = this.DetailDatas.IndexOf(this.find_dr[this.index]);
         }
 
         private void BtnCopyBal_Click(object sender, EventArgs e)

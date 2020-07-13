@@ -1,29 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class txtMultiSubconNoConfirm : Sci.Win.UI.TextBox
+    /// <summary>
+    /// TxtMultiSubconNoConfirm
+    /// </summary>
+    public partial class TxtMultiSubconNoConfirm : Win.UI.TextBox
     {
+        /// <summary>
+        /// 串sql條件值使用，會將值用單引號先包起來。例：'G001','G002','G003'
+        /// </summary>
         [Category("Custom Properties")]
         [Description("串sql條件值使用，會將值用單引號先包起來。例：'G001','G002','G003'")]
-        public string Subcons { set; get; }
+        public string Subcons { get; set; }
 
-        public txtMultiSubconNoConfirm()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtMultiSubconNoConfirm"/> class.
+        /// </summary>
+        public TxtMultiSubconNoConfirm()
         {
             this.Size = new System.Drawing.Size(450, 23);
             this.ReadOnly = true;
             this.IsSupportEditMode = false;
-            //this.Text = "";
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
@@ -31,19 +34,36 @@ namespace Sci.Production.Class
             {
                 string sqlcmd = string.Format(@"select id,abb from dbo.LocalSupp WITH (NOLOCK) ");
 
-                Sci.Win.Tools.SelectItem2 selectSubcons = new Win.Tools.SelectItem2(sqlcmd,
-                                "Supp ID,Supp Abb", "10,15", this.Text, null, null, null);
-                selectSubcons.Width = 410;
+                Win.Tools.SelectItem2 selectSubcons = new Win.Tools.SelectItem2(
+                    sqlcmd,
+                    "Supp ID,Supp Abb",
+                    "10,15",
+                    this.Text,
+                    null,
+                    null,
+                    null)
+                {
+                    Width = 410,
+                };
                 DialogResult result = selectSubcons.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
                 this.Text = selectSubcons.GetSelectedString();
                 if (!MyUtility.Check.Empty(this.Text))
-                    Subcons = "'" + string.Join("','", selectSubcons.GetSelectedList().ToArray()) + "'";
+                {
+                    this.Subcons = "'" + string.Join("','", selectSubcons.GetSelectedList().ToArray()) + "'";
+                }
                 else
-                    Subcons = "";
+                {
+                    this.Subcons = string.Empty;
+                }
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(PaintEventArgs pe)
         {
             base.OnPaint(pe);

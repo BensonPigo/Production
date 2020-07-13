@@ -56,7 +56,7 @@
             this.btnToExcel = new Sci.Win.UI.Button();
             this.dateArriveWHDate = new Sci.Win.UI.DateBox();
             this.dateLastInspectionDate = new Sci.Win.UI.DateBox();
-            this.txtsupplierSupp = new Sci.Production.Class.txtsupplier();
+            this.txtsupplierSupp = new Sci.Production.Class.Txtsupplier();
             this.labelDescription = new Sci.Win.UI.Label();
             this.editDescription = new Sci.Win.UI.EditBox();
             this.btntoPDF = new Sci.Win.UI.Button();
@@ -533,7 +533,7 @@
         private Win.UI.Button btnToExcel;
         private Win.UI.DateBox dateArriveWHDate;
         private Win.UI.DateBox dateLastInspectionDate;
-        private Class.txtsupplier txtsupplierSupp;
+        private Class.Txtsupplier txtsupplierSupp;
         private Win.UI.Label labelDescription;
         private Win.UI.EditBox editDescription;
         private Win.UI.Button btntoPDF;

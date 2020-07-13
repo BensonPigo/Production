@@ -31,7 +31,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.txtRemark = new Sci.Win.UI.EditBox();
-            this.txtCountry = new Sci.Production.Class.txtcountry();
+            this.txtCountry = new Sci.Production.Class.Txtcountry();
             this.txtMidBankName = new Sci.Win.UI.TextBox();
             this.txtMidSWIFTCode = new Sci.Win.UI.TextBox();
             this.txtCity = new Sci.Win.UI.TextBox();
@@ -354,7 +354,7 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.EditBox txtRemark;
-        private Class.txtcountry txtCountry;
+        private Class.Txtcountry txtCountry;
         private Win.UI.TextBox txtMidBankName;
         private Win.UI.TextBox txtMidSWIFTCode;
         private Win.UI.TextBox txtCity;

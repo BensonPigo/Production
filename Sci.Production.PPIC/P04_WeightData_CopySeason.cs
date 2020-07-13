@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
 
 namespace Sci.Production.PPIC
@@ -14,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_WeightData_CopySeason
     /// </summary>
-    public partial class P04_WeightData_CopySeason : Sci.Win.Subs.Base
+    public partial class P04_WeightData_CopySeason : Win.Subs.Base
     {
         private string ppicP04CopySeason;
         private string styleUkey;
@@ -47,12 +44,12 @@ namespace Sci.Production.PPIC
 
         private void TxtFromSeason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item;
+            Win.Tools.SelectItem item;
             string sqlCmd = string.Format(
                 @"select s.SeasonID from Style s WITH (NOLOCK) 
 where exists (select 1 from Style ss WITH (NOLOCK) where ss.Ukey = {0} and ss.ID = s.ID and ss.BrandID = s.BrandID and ss.SeasonID <> s.SeasonID)
 and exists (select 1 from Style_WeightData sw WITH (NOLOCK) where sw.StyleUkey = s.Ukey)", this.styleUkey);
-            item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", this.Text);
+            item = new Win.Tools.SelectItem(sqlCmd, "10", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -102,7 +99,7 @@ and s.SeasonID = @seasonid";
         private void BtnOK_Click(object sender, EventArgs e)
         {
             this.PPICP04CopySeason = this.txtFromSeason.Text;
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
     }
 }

@@ -37,8 +37,8 @@
             this.textSPStart = new Sci.Win.UI.TextBox();
             this.textSPEnd = new Sci.Win.UI.TextBox();
             this.labelSign = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.label1 = new Sci.Win.UI.Label();
             this.dateBoxSewingOutput = new Sci.Win.UI.DateBox();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
@@ -153,7 +153,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -263,8 +263,8 @@
         private Win.UI.TextBox textSPStart;
         private Win.UI.TextBox textSPEnd;
         private Win.UI.Label labelSign;
-        private Class.txtfactory txtfactory;
-        private Class.txtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label label1;
         private Win.UI.DateBox dateBoxSewingOutput;
         private Win.UI.CheckBox chkIncludeCancelOrder;

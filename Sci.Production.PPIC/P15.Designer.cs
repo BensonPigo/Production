@@ -38,8 +38,8 @@
             this.labelFabricType = new Sci.Win.UI.Label();
             this.labelShift = new Sci.Win.UI.Label();
             this.labelStatus = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.comboBoxShift = new Sci.Win.UI.ComboBox();
             this.comboBoxFbType = new Sci.Win.UI.ComboBox();
             this.comboBoxStatus = new Sci.Win.UI.ComboBox();
@@ -434,8 +434,8 @@
         private Win.UI.Label labelFabricType;
         private Win.UI.Label labelShift;
         private Win.UI.Label labelStatus;
-        private Class.txtMdivision txtMdivision;
-        private Class.txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
         private Win.UI.ComboBox comboBoxShift;
         private Win.UI.ComboBox comboBoxFbType;
         private Win.UI.ComboBox comboBoxStatus;

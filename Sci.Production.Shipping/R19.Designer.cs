@@ -38,8 +38,8 @@
             this.txtWKno_e = new Sci.Win.UI.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.txtConsignee = new Sci.Win.UI.TextBox();
-            this.txtshipmode = new Sci.Production.Class.txtshipmode();
-            this.txtscifactory = new Sci.Production.Class.txtscifactory();
+            this.txtshipmode = new Sci.Production.Class.Txtshipmode();
+            this.txtscifactory = new Sci.Production.Class.Txtscifactory();
             this.SuspendLayout();
             // 
             // print
@@ -250,7 +250,7 @@
         private Win.UI.TextBox txtWKno_e;
         private System.Windows.Forms.Label label5;
         private Win.UI.TextBox txtConsignee;
-        private Class.txtshipmode txtshipmode;
-        private Class.txtscifactory txtscifactory;
+        private Class.Txtshipmode txtshipmode;
+        private Class.Txtscifactory txtscifactory;
     }
 }

@@ -62,7 +62,7 @@ namespace Sci.Production.Logistic
 
         private void OnPropertyChangeed(string propname)
         {
-            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propname));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propname));
         }
     }
 }

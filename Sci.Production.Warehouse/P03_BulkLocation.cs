@@ -1,28 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Ict;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_BulkLocation : Sci.Win.Subs.Base
+    public partial class P03_BulkLocation : Win.Subs.Base
     {
         DataRow dr;
         string stocktype;
+
         public P03_BulkLocation(DataRow data, string _stocktype)
         {
-            InitializeComponent();
-            dr = data;
-            stocktype = _stocktype;
+            this.InitializeComponent();
+            this.dr = data;
+            this.stocktype = _stocktype;
 
-            switch (stocktype)
+            switch (this.stocktype)
             {
                 case "B":
                     this.Text = "P03_BulkLocation";
@@ -35,15 +30,16 @@ namespace Sci.Production.Warehouse
                     break;
             }
 
-            this.Text += string.Format(" ({0}-{1}- {2})", dr["id"].ToString()
-, dr["seq1"].ToString()
-, dr["seq2"].ToString());
+            this.Text += string.Format(" ({0}-{1}- {2})", this.dr["id"].ToString(),
+this.dr["seq1"].ToString(),
+this.dr["seq2"].ToString());
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string selectCommand1 = string.Format(@";with tmp as
+            string selectCommand1 = string.Format(
+                @";with tmp as
 (SELECT a.ID, a.issuedate, a.Remark
 , sum(b.Qty) qty
 , b.FromLocation
@@ -63,25 +59,28 @@ select issuedate,id,sum(qty) qty
 ,EditName+'-'+ isnull((select pass1.NAME from pass1 WITH (NOLOCK) where id = a.EditName),'') editname
 ,EditDate from  tmp a
 group by EditName,ID,issuedate, Remark,EditDate
-order by EditName,ID"
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , stocktype);
+order by EditName,ID",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString(),
+                this.stocktype);
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
-            if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
+            if (selectResult1 == false)
+            {
+                this.ShowErr(selectCommand1, selectResult1);
+            }
             else
             {
-                bindingSource1.DataSource = selectDataTable1;
+                this.bindingSource1.DataSource = selectDataTable1;
                 selectDataTable1.DefaultView.Sort = "editdate";
             }
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridBulkLocationTransaction.IsEditingReadOnly = true;
-            this.gridBulkLocationTransaction.DataSource = bindingSource1;
-            
-            Helper.Controls.Grid.Generator(this.gridBulkLocationTransaction)
+            this.gridBulkLocationTransaction.DataSource = this.bindingSource1;
+
+            this.Helper.Controls.Grid.Generator(this.gridBulkLocationTransaction)
                 .Date("issuedate", header: "Date", width: Widths.AnsiChars(10))
                  .Text("id", header: "Transaction ID", width: Widths.AnsiChars(14))
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)

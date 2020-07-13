@@ -32,8 +32,8 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
-            this.Category = new Sci.Production.Class.comboDropDownList(this.components);
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.Category = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.lbFactory = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
             this.comboFabricType = new Sci.Win.UI.ComboBox();
@@ -426,7 +426,7 @@
         private Win.UI.Grid gridRel;
         private Win.UI.CheckBox checkOnly;
         private Win.UI.Label lbFactory;
-        private Class.txtfactory txtfactory;
-        private Class.comboDropDownList Category;
+        private Class.Txtfactory txtfactory;
+        private Class.ComboDropDownList Category;
     }
 }

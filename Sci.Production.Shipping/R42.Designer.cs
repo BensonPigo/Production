@@ -36,7 +36,7 @@
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -178,6 +178,6 @@
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboFactory;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboCategory;
     }
 }

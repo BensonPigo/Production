@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Ict;
-using Sci.Win.Tems;
+﻿using Ict;
 
 namespace Sci.Production.Quality
 {
@@ -16,15 +6,15 @@ namespace Sci.Production.Quality
     {
         public P40_History(string ID)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             this.DefaultFilter = $"ID = '{ID}'";
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
-            string masterVersion = (e.Master == null) ? "" : e.Master["Version"].ToString();
+            string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
+            string masterVersion = (e.Master == null) ? string.Empty : e.Master["Version"].ToString();
             string cmd = string.Format(
 @"
 select 

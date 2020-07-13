@@ -1,28 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
-using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// menuitem
     /// </summary>
-    public partial class P42 : Sci.Win.Tems.Input6
+    public partial class P42 : Win.Tems.Input6
     {
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings nlcode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings brand = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings refno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings fabricType = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings usageUnit = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings nlcode = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings brand = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings refno = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings fabricType = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings usageUnit = new DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// P42
@@ -181,6 +178,7 @@ order by TRY_CONVERT(int, SUBSTRING(vd.NLCode, 3, LEN(vd.NLCode))), vd.NLCode", 
                             dr["usageUnit"] = string.Empty;
                             dr.EndEdit();
                         }
+
                         this.BRT(dr, e);
                     }
                 }
@@ -318,7 +316,7 @@ order by TRY_CONVERT(int, SUBSTRING(vd.NLCode, 3, LEN(vd.NLCode))), vd.NLCode", 
             DualResult result = DBProxy.Current.Execute(null, sqldelete);
             if (!result)
             {
-                return Result.F(result.ToString());
+                return Ict.Result.F(result.ToString());
             }
 
             return base.ClickDeletePost();
@@ -365,11 +363,13 @@ order by TRY_CONVERT(int, SUBSTRING(vd.NLCode, 3, LEN(vd.NLCode))), vd.NLCode", 
                     MyUtility.Msg.WarningBox("Brand cannot be empty!");
                     return false;
                 }
+
                 if (MyUtility.Check.Empty(dr["Refno"]))
                 {
                     MyUtility.Msg.WarningBox("Ref No. cannot be empty!");
                     return false;
                 }
+
                 if (MyUtility.Check.Empty(dr["FabricType"]))
                 {
                     MyUtility.Msg.WarningBox("FabricType cannot be empty!");
@@ -451,7 +451,7 @@ drop table #tmp,#tmps
             DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, insertuUdataDetail, out dt);
             if (!result)
             {
-                return Result.F(result.ToString());
+                return Ict.Result.F(result.ToString());
             }
 
             return base.ClickSavePost();
@@ -463,7 +463,7 @@ drop table #tmp,#tmps
             base.ClickConfirm();
             string updateCmds = string.Format(
                 "update VNContractQtyAdjust set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = {1}",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
@@ -481,7 +481,7 @@ drop table #tmp,#tmps
 
             string updateCmds = string.Format(
                 "update VNContractQtyAdjust set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = {1}",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
@@ -537,10 +537,10 @@ order by vaqd.NLCode
             }
             #endregion
             string excelFileName = "Shipping_P42";
-            Microsoft.Office.Interop.Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelFileName}.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelFileName}.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(dt, string.Empty, $"{excelFileName}.xltx", 1, false, null, excelApp);
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelFileName);
+            string strExcelName = Class.MicrosoftFile.GetName(excelFileName);
             Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -548,7 +548,7 @@ order by vaqd.NLCode
             Marshal.ReleaseComObject(excelApp);
             Marshal.ReleaseComObject(workbook);
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return base.ClickPrint();
         }
 
@@ -838,7 +838,7 @@ drop table #tmp
 
         private void BtnDownloadexcel(object sender, EventArgs e)
         {
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P42_ImportExcelFormat.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P42_ImportExcelFormat.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {

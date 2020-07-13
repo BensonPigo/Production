@@ -1,12 +1,6 @@
-﻿using Ict;
-using Ict.Win;
-using System;
-using System.Collections.Generic;
+﻿using Ict.Win;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.SubProcess
@@ -14,7 +8,7 @@ namespace Sci.Production.SubProcess
     /// <summary>
     /// SubProcess_B04
     /// </summary>
-    public partial class B04 : Sci.Win.Tems.Input6
+    public partial class B04 : Win.Tems.Input6
     {
         /// <summary>
         /// B04
@@ -23,13 +17,13 @@ namespace Sci.Production.SubProcess
         public B04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         // Type 右鍵開窗
         private void TxtType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 @"Select  Id,ArtworkTypeId  from  subprocess  where isselection=1 and Junk=0  order by Id ",
                 "10,20",
                 this.txtType.Text);

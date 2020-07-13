@@ -1,24 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict;
 using Ict.Win;
-using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class PFHis : Sci.Win.Subs.Input4
+    public partial class PFHis : Win.Subs.Input4
     {
         private DataRow drOrders;
 
         public PFHis(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow drOrders)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.drOrders = drOrders;
 
             DateTime? dtStr = MyUtility.Convert.GetDate(drOrders["CFMDate"]).Value.AddDays(14);

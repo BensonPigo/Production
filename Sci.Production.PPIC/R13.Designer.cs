@@ -36,9 +36,9 @@
             this.label5 = new Sci.Win.UI.Label();
             this.checkHoliday = new Sci.Win.UI.CheckBox();
             this.label6 = new Sci.Win.UI.Label();
-            this.txtFactory = new Sci.Production.Class.txtfactory();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtFactory = new Sci.Production.Class.Txtfactory();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.txtTime = new Sci.Win.UI.TextBox();
             this.numericBoxDateGap = new Sci.Win.UI.NumericBox();
             this.labBuyerDelivery = new Sci.Win.UI.Label();
@@ -160,7 +160,7 @@
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
-            this.txtFactory.boolFtyGroupList = true;
+            this.txtFactory.BoolFtyGroupList = true;
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFactory.IsProduceFty = true;
@@ -323,9 +323,9 @@
         private Win.UI.Label label5;
         private Win.UI.CheckBox checkHoliday;
         private Win.UI.Label label6;
-        private Class.txtfactory txtFactory;
-        private Class.txtbrand txtBrand;
-        private Class.txtMdivision txtMdivision;
+        private Class.Txtfactory txtFactory;
+        private Class.Txtbrand txtBrand;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.TextBox txtTime;
         private Win.UI.NumericBox numericBoxDateGap;
         private Win.UI.Label labBuyerDelivery;

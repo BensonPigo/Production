@@ -38,11 +38,11 @@
             this.dateIssueDate = new Sci.Win.UI.DateRange();
             this.comboOrderBy = new Sci.Win.UI.ComboBox();
             this.txtSPNO = new Sci.Win.UI.TextBox();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
-            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.Txtartworktype_fty();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivisionM = new Sci.Production.Class.txtMdivision();
+            this.txtMdivisionM = new Sci.Production.Class.TxtMdivision();
             this.labelIssueDate = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
@@ -181,8 +181,8 @@
             // txtartworktype_ftyArtworkType
             // 
             this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyArtworkType.cClassify = "";
-            this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
+            this.txtartworktype_ftyArtworkType.CClassify = "";
+            this.txtartworktype_ftyArtworkType.CSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(114, 48);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
@@ -198,8 +198,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 6;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // labelM
             // 
@@ -292,11 +292,11 @@
         private Win.UI.DateRange dateIssueDate;
         private Win.UI.ComboBox comboOrderBy;
         private Win.UI.TextBox txtSPNO;
-        private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
-        private Class.txtstyle txtstyle;
+        private Class.Txtartworktype_fty txtartworktype_ftyArtworkType;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
+        private Class.Txtstyle txtstyle;
         private Win.UI.Label labelM;
-        private Class.txtMdivision txtMdivisionM;
+        private Class.TxtMdivision txtMdivisionM;
         private Win.UI.Label labelIssueDate;
     }
 }

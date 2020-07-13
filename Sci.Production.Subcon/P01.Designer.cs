@@ -59,11 +59,11 @@
             this.dateDeliveryDate = new Sci.Win.UI.DateBox();
             this.btnBatchCreate = new Sci.Win.UI.Button();
             this.dateApproveDate = new Sci.Win.UI.DateBox();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
-            this.txtuserApproveName = new Sci.Production.Class.txtuser();
-            this.txtuserHandle = new Sci.Production.Class.txtuser();
-            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
+            this.txtuserApproveName = new Sci.Production.Class.Txtuser();
+            this.txtuserHandle = new Sci.Production.Class.Txtuser();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.Txtartworktype_fty();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.labelTotalPoQty = new Sci.Win.UI.Label();
             this.numTotalPOQty = new Sci.Win.UI.NumericBox();
             this.btnIrrPriceReason = new Sci.Win.UI.Button();
@@ -72,8 +72,8 @@
             this.lbCloseName = new Sci.Win.UI.Label();
             this.lbLockDate = new Sci.Win.UI.Label();
             this.lbCloseDate = new Sci.Win.UI.Label();
-            this.txtuserLockName = new Sci.Production.Class.txtuser();
-            this.txtuserCloseName = new Sci.Production.Class.txtuser();
+            this.txtuserLockName = new Sci.Production.Class.Txtuser();
+            this.txtuserCloseName = new Sci.Production.Class.Txtuser();
             this.dateLockDate = new Sci.Win.UI.DateBox();
             this.dateCloseDate = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -604,7 +604,7 @@
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
-            this.txtmfactory.boolFtyGroupList = true;
+            this.txtmfactory.BoolFtyGroupList = true;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -639,8 +639,8 @@
             // txtartworktype_ftyArtworkType
             // 
             this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyArtworkType.cClassify = "";
-            this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
+            this.txtartworktype_ftyArtworkType.CClassify = "";
+            this.txtartworktype_ftyArtworkType.CSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(107, 66);
@@ -655,9 +655,9 @@
             this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = false;
-            this.txtsubconSupplier.isMisc = false;
-            this.txtsubconSupplier.isShipping = false;
-            this.txtsubconSupplier.isSubcon = false;
+            this.txtsubconSupplier.IsMisc = false;
+            this.txtsubconSupplier.IsShipping = false;
+            this.txtsubconSupplier.IsSubcon = false;
             this.txtsubconSupplier.Location = new System.Drawing.Point(107, 40);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(165, 23);
@@ -862,34 +862,34 @@
         private Win.UI.TextBox txtInternalRemark;
         private Win.UI.NumericBox numVatRate;
         private Win.UI.TextBox txtRemark;
-        private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
+        private Class.Txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.DisplayBox displayCurrency;
         private Win.UI.DateBox dateIssueDate;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
         private Win.UI.DisplayBox displayPONo;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Label label17;
         private Win.UI.Label label25;
-        private Class.txtuser txtuserApproveName;
-        private Class.txtuser txtuserHandle;
+        private Class.Txtuser txtuserApproveName;
+        private Class.Txtuser txtuserHandle;
         private Win.UI.NumericBox numTotal;
         private Win.UI.NumericBox numAmount;
         private Win.UI.NumericBox numVat;
         private Win.UI.Label labelDeliveryDate;
         private Win.UI.DateBox dateDeliveryDate;
         private Win.UI.Button btnBatchCreate;
-        private Class.txtfactory txtmfactory;
+        private Class.Txtfactory txtmfactory;
         private Win.UI.DateBox dateApproveDate;
         private Win.UI.NumericBox numTotalPOQty;
         private Win.UI.Label labelTotalPoQty;
         private Win.UI.Button btnIrrPriceReason;
         private Win.UI.Button btnBatchApprove;
-        private Class.txtuser txtuserLockName;
+        private Class.Txtuser txtuserLockName;
         private Win.UI.Label lbCloseDate;
         private Win.UI.Label lbLockDate;
         private Win.UI.Label lbCloseName;
         private Win.UI.Label lbLockName;
-        private Class.txtuser txtuserCloseName;
+        private Class.Txtuser txtuserCloseName;
         private Win.UI.DateBox dateCloseDate;
         private Win.UI.DateBox dateLockDate;
     }

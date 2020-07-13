@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace Sci.Production.IE
@@ -11,7 +6,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_B11
     /// </summary>
-    public partial class B11 : Sci.Win.Tems.Input1
+    public partial class B11 : Win.Tems.Input1
     {
         /// <summary>
         /// B11

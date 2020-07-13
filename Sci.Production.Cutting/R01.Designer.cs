@@ -31,8 +31,8 @@
             this.labelCuttingDate = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.SewingDate = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
@@ -102,7 +102,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -171,8 +171,8 @@
         private Win.UI.Label labelCuttingDate;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
-        private Class.txtMdivision txtMdivision;
-        private Class.txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
         private Win.UI.DateRange SewingDate;
     }
 }

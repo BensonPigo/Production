@@ -62,9 +62,9 @@
             this.numDefectsQty = new Sci.Win.UI.NumericBox();
             this.numOrderQty = new Sci.Win.UI.NumericBox();
             this.labConfirm = new System.Windows.Forms.Label();
-            this.txtdropdownlistShift = new Sci.Production.Class.txtdropdownlist();
-            this.txtuserCFA = new Sci.Production.Class.txtuser();
-            this.txtsewingline = new Sci.Production.Class.txtSewingScheduleLine();
+            this.txtdropdownlistShift = new Sci.Production.Class.Txtdropdownlist();
+            this.txtuserCFA = new Sci.Production.Class.Txtuser();
+            this.txtsewingline = new Sci.Production.Class.TxtSewingScheduleLine();
             this.numSQR = new Sci.Win.UI.NumericBox();
             this.labSQR = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateBox();
@@ -645,7 +645,7 @@
             // txtsewingline
             // 
             this.txtsewingline.BackColor = System.Drawing.Color.White;
-            this.txtsewingline.cell = null;
+            this.txtsewingline.Cell = null;
             this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineID", true));
             this.txtsewingline.Factorytxt = this.txtFactory;
             this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -775,9 +775,9 @@
         private Win.UI.Label labelAuditDate;
         private Win.UI.Label labelDestination;
         private Win.UI.DateBox dateAuditDate;
-        private Class.txtuser txtuserCFA;
+        private Class.Txtuser txtuserCFA;
         private Win.UI.Label label19;
-        private Class.txtdropdownlist txtdropdownlistShift;
+        private Class.Txtdropdownlist txtdropdownlistShift;
         private Win.UI.ComboBox comboTeam;
         private Win.UI.TextBox txtInspectionStage;
         private Win.UI.NumericBox numGarmentOutput;
@@ -785,7 +785,7 @@
         private Win.UI.NumericBox numDefectsQty;
         private Win.UI.NumericBox numOrderQty;
         private System.Windows.Forms.Label labConfirm;
-        private Class.txtSewingScheduleLine txtsewingline;
+        private Class.TxtSewingScheduleLine txtsewingline;
         private Win.UI.NumericBox numSQR;
         private Win.UI.Label labSQR;
         private Win.UI.DateBox dateBuyerDelivery;

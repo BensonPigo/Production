@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using Sci.Data;
-using Sci;
-using Ict;
-using Ict.Win;
 
 namespace Sci.Production.PublicPrg
 {
-
     public static partial class Prgs
     {
         #region GetWorkDate
+
         /// <summary>
         /// GetWorkDate()
         /// </summary>
@@ -24,7 +17,8 @@ namespace Sci.Production.PublicPrg
         /// <returns>datetime workdate</returns>
         public static DateTime GetWorkDate(string factoryid, int days, DateTime basicdate)
         {
-            string sqlcmd = string.Format(@"declare @days as int  = {0} ,@count as int = 0, @bascidate as date = '{1}';
+            string sqlcmd = string.Format(
+                @"declare @days as int  = {0} ,@count as int = 0, @bascidate as date = '{1}';
                                                 declare @fetchdate as date;
 
                                                 while @days <> 0
@@ -54,12 +48,11 @@ namespace Sci.Production.PublicPrg
                                                 end
                                                 select dateadd(day, @count,@bascidate) as workdate", days, basicdate.ToShortDateString(), factoryid);
 
-            return DateTime.Parse((MyUtility.GetValue.Lookup(sqlcmd, null)));
-
-
+            return DateTime.Parse(MyUtility.GetValue.Lookup(sqlcmd, null));
         }
         #endregion
         #region GetStdQ
+
         /// <summary>
         /// GetStdQ()
         /// </summary>
@@ -67,7 +60,8 @@ namespace Sci.Production.PublicPrg
         /// <returns>Int StdQ</returns>
         public static int GetStdQ(string orderid)
         {
-            string sqlcmd = string.Format(@"
+            string sqlcmd = string.Format(
+                @"
 WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,ComboType,Hours,WDAY) AS (  
       SELECT DATEDIFF(DAY,A.Inline,A.Offline)+1 AS DD
                     , 1 as num
@@ -95,30 +89,32 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
 	outer apply(select avghours=iif(wday=0,0,h/wday) from #std)avgh
 	drop table #std
 ", orderid);
-            //原SQL
-            //WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,stdq,ComboType) AS (  
+
+            // 原SQL
+            // WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,stdq,ComboType) AS (
             //      SELECT DATEDIFF(DAY,A.Inline,A.Offline)+1 AS DD
             //                    , 1 as num
-            //                    , convert(date,A.Inline) inline 
+            //                    , convert(date,A.Inline) inline
             //                    ,A.OrderID
             //                    ,sewinglineid
             //                    ,a.FactoryID
             //                    ,iif(a.WorkDay=0,(a.WorkHour / 1 * a.StandardOutput),(a.WorkHour / a.WorkDay * a.StandardOutput)) stdq
             //                    ,a.ComboType
-            //	  FROM SewingSchedule A WITH (NOLOCK) WHERE ORDERID='{0}'
-            //      UNION ALL  
+            // FROM SewingSchedule A WITH (NOLOCK) WHERE ORDERID='{0}'
+            //      UNION ALL
             //      SELECT DD,num + 1, DATEADD(DAY,1,INLINE) ,ORDERID,sewinglineid,FactoryID,stdq,ComboType
-            //	  FROM cte a where num < DD  AND ORDERID='{0}'
-            //    )  
-            //	select min(stdq) stdq
-            //	from (
-            //	 SELECT a.orderid,a.sewinglineid,a.ComboType,a.INLINE,sum(a.stdq) stdq, isnull(b.hours,0) workhours
-            //	 FROM cte a left join WorkHour b WITH (NOLOCK) on convert(date,a.inline) = b.date and a.sewinglineid = b.SewingLineID and a.FactoryID=b.FactoryID 
-            //	 group by a.orderid,a.sewinglineid,a.ComboType,a.INLINE,b.Hours
-            //	 having isnull(b.hours,0) > 0) tmp
+            // FROM cte a where num < DD  AND ORDERID='{0}'
+            //    )
+            // select min(stdq) stdq
+            // from (
+            // SELECT a.orderid,a.sewinglineid,a.ComboType,a.INLINE,sum(a.stdq) stdq, isnull(b.hours,0) workhours
+            // FROM cte a left join WorkHour b WITH (NOLOCK) on convert(date,a.inline) = b.date and a.sewinglineid = b.SewingLineID and a.FactoryID=b.FactoryID
+            // group by a.orderid,a.sewinglineid,a.ComboType,a.INLINE,b.Hours
+            // having isnull(b.hours,0) > 0) tmp
             DataTable dt;
             DBProxy.Current.Select(null, sqlcmd, out dt);
-            //return int.Parse(dt.Rows[0][0].ToString());
+
+            // return int.Parse(dt.Rows[0][0].ToString());
             if (dt == null || dt.Rows.Count == 0 || dt.Rows[0].Table == null || dt.Rows[0].Table.Rows.Count == 0 || dt.Rows[0][0].Empty())
             {
                 return 0;
@@ -129,7 +125,7 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
             }
         }
         #endregion
-        #region 
+        #region
 
         /// <summary>
         /// 最終算出每張[By SP]或[By SP,Article,Size]目前可完成的成衣件數
@@ -141,33 +137,35 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
         /// <param name="isNeedCombinBundleGroup">是否要依照 BundleGroup 算成衣件數 true/false</param>
         /// <param name="isMorethenOrderQty">回傳Qty值是否超過訂單數, (生產有可能超過) </param>
         /// <returns>回傳字串, 提供接下去的Sql指令使用#temp Table</returns>
-        /// 
-	/*
-	 * @Order
-		訂單號碼
-	 * @SubprocessID
-		外加工段
-	 * @IsSpectialReader
-		特殊的外加工段
-		e.g. Sorting, Loading...
-	 * @InStartDate
-		篩選裁片收進的起始日
-	 * @InEndDate
-		篩選裁片收進的結束日
-	 * @OutStartDate
-		篩選裁片完成加工段的起始日
-	 * @OutEndDate
-		篩選裁片完成加工段的結束日
-	 * @IsNeedCombinBundleGroup
-		是否要依照 BundleGroup 算成衣件數
-	 * @IsMorethenOrderQty
-		回傳Qty值是否超過訂單數, (生產有可能超過)
-	 */
-        ///非常重要 更新此處一定要把此dll檔案更新到MES
-        ///非常重要 更新此處一定要把此dll檔案更新到MES
-        ///非常重要 更新此處一定要把此dll檔案更新到MES
-        ///非常重要 更新此處一定要把此dll檔案更新到MES
-        ///非常重要 更新此處一定要把此dll檔案更新到MES
+        ///
+
+    /*
+     * @Order
+        訂單號碼
+     * @SubprocessID
+        外加工段
+     * @IsSpectialReader
+        特殊的外加工段
+        e.g. Sorting, Loading...
+     * @InStartDate
+        篩選裁片收進的起始日
+     * @InEndDate
+        篩選裁片收進的結束日
+     * @OutStartDate
+        篩選裁片完成加工段的起始日
+     * @OutEndDate
+        篩選裁片完成加工段的結束日
+     * @IsNeedCombinBundleGroup
+        是否要依照 BundleGroup 算成衣件數
+     * @IsMorethenOrderQty
+        回傳Qty值是否超過訂單數, (生產有可能超過)
+     */
+
+        // 非常重要 更新此處一定要把此dll檔案更新到MES
+        // 非常重要 更新此處一定要把此dll檔案更新到MES
+        // 非常重要 更新此處一定要把此dll檔案更新到MES
+        // 非常重要 更新此處一定要把此dll檔案更新到MES
+        // 非常重要 更新此處一定要把此dll檔案更新到MES
         public static string QtyBySetPerSubprocess(
             string[] subprocessIDs,
             string tempTable = "#cte",
@@ -354,11 +352,13 @@ group by st2.Orderid, st2.Article, st2.Sizecode
 
 --2020/3/18↓效能調整,移除join Order_SizeCode,現在上方準備資料階段SizeCode已從Bundle來源改成Bundle_Detail和Order_Qty, 不需要再去串Order_SizeCode確認此SizeCode是否存在
 select    st0.Orderid
+        , bund.BundleNo
 		, SubprocessId=sub.id
 		, sub.InOutRule
 		, bunD.BundleGroup
 		, Size=st0.SizeCode
 		, st0.Article
+        , st0.SizeCode
 		, st0.PatternPanel
 		, bunD.FabricPanelCode
 		, st0.PatternCode
@@ -597,8 +597,6 @@ group by OrderID, Size, Article, InStartDate,InEndDate,OutStartDate,OutEndDate
 ";
                 }
 
-
-
                 sqlcmd += $@"
 -- Result Data --
 --	 *	3.	最終算出每張訂單目前可完成的成衣件數
@@ -671,7 +669,7 @@ outer apply (
 ) IOQtyPerPcs
 where FinishedQty is not null
 
-drop table #QtyBySetPerCutpart{subprocessIDtmp}, #BundleInOutDetail{subprocessIDtmp}, #CutpartBySet{subprocessIDtmp}, #FinalQtyBySet{subprocessIDtmp}, #BundleInOutQty{subprocessIDtmp}
+drop table #QtyBySetPerCutpart{subprocessIDtmp}, #CutpartBySet{subprocessIDtmp}, #FinalQtyBySet{subprocessIDtmp}
 ";
                 if (bySP)
                 {
@@ -690,6 +688,7 @@ group by OrderID, InStartDate,InEndDate,OutStartDate,OutEndDate
 
                 sqlcmd += Environment.NewLine + $@"/*******************   {subprocessIDtmp} END  ********************/";
             }
+
             sqlcmd += Environment.NewLine + " drop table #AllOrders, #tmp_Bundle_QtyBySubprocess; " + Environment.NewLine;
             return sqlcmd;
         }

@@ -1,21 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// P05_ExpenseData
     /// </summary>
-    public partial class P05_ExpenseData : Sci.Win.Subs.Base
+    public partial class P05_ExpenseData : Win.Subs.Base
     {
         private string id;
         private string columnName;
@@ -29,7 +23,7 @@ namespace Sci.Production.Shipping
         /// <param name="iD">iD</param>
         /// <param name="columnName">columnName</param>
         /// <param name="ed">ed</param>
-        public P05_ExpenseData(string iD, string columnName,bool ed)
+        public P05_ExpenseData(string iD, string columnName, bool ed)
         {
             this.InitializeComponent();
             this.id = iD;
@@ -48,7 +42,7 @@ namespace Sci.Production.Shipping
             this.gridExpenseData.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridExpenseData)
             .Text("Type", header: "Type", width: Widths.AnsiChars(33), iseditingreadonly: true)
-            .MaskedText("AccountID","0000-0000", header: "Account No", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .MaskedText("AccountID", "0000-0000", header: "Account No", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Numeric("Amount", header: "Expense", decimal_places: 2, iseditingreadonly: true)
             .Text("ShippingAPID", header: "A/P No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -100,21 +94,21 @@ where se.WKNo = '{0}' and se.junk=0", this.id);
         {
             if (this.EditMode)
             {
-
                 if (this.gridExpenseData.DataSource == null)
                 {
                     return;
                 }
 
-                //SD開頭, 且13碼, 才能SAVE成功，不過空白要放行
+                // SD開頭, 且13碼, 才能SAVE成功，不過空白要放行
                 bool checkResult = true;
-                for (int i = 0; i <= this.gridExpenseData.Rows.Count-1; i++)
+                for (int i = 0; i <= this.gridExpenseData.Rows.Count - 1; i++)
                 {
                     string DebitNote = this.gridExpenseData.Rows[i].Cells[5].Value.ToString();
                     if (MyUtility.Check.Empty(DebitNote))
                     {
                         continue;
                     }
+
                     if (DebitNote.Length != 13 || !(DebitNote.StartsWith("SD") || DebitNote.StartsWith("IC") || DebitNote.StartsWith("DB")))
                     {
                         checkResult = false;
@@ -133,7 +127,7 @@ using(select * from #tmp)s
 on s.ShippingAPID = t.ShippingAPID and s.BLNo =t.BLNo and s.WKNo =t.WKNo and s.InvNo = t.InvNo and s.AccountID = t.AccountID
 when matched then update set
 	t.DebitID = s.DebitID,
-    t.EditName='{Sci.Env.User.UserID}',
+    t.EditName='{Env.User.UserID}',
     t.EditDate=GETDATE()
 ;
 ";
@@ -156,7 +150,7 @@ when matched then update set
         // Close
         private void BtnClose_Click(object sender, EventArgs e)
         {
-            //this.Close();
+            // this.Close();
         }
     }
 }

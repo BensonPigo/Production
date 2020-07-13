@@ -94,7 +94,7 @@
             this.label4 = new Sci.Win.UI.Label();
             this.displayKIT = new Sci.Win.UI.DisplayBox();
             this.boxPackingRemark = new Sci.Win.UI.EditBox();
-            this.txtDest = new Sci.Production.Class.txtcountry();
+            this.txtDest = new Sci.Production.Class.Txtcountry();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -1018,7 +1018,7 @@
         private Win.UI.DisplayBox displayCustomize1;
         private Win.UI.DisplayBox displayCustomize2;
         private Win.UI.DisplayBox displayCustomize3;
-        private Class.txtcountry txtDest;
+        private Class.Txtcountry txtDest;
         private Win.UI.Label label2;
         private Win.UI.Label lbWeight;
         private Win.UI.Label lbTotalWeight;

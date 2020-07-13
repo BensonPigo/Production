@@ -14,7 +14,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P06
     /// </summary>
-    public partial class P06 : Sci.Win.Tems.QueryForm
+    public partial class P06 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P06
@@ -136,7 +136,7 @@ from (
 
     where cr.MDivisionID = '{0}'
     --and pd.ReturnDate is not null 
-    ", Sci.Env.User.Keyword));
+    ", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.dateReturnDate.Value1))
             {
@@ -223,16 +223,16 @@ order by PackingListID, OrderID, rn");
             printDT.Columns.Remove("Selected");
             printDT.Columns.Remove("rn");
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P06.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Logistic_P06.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(printDT, string.Empty, "Logistic_P06.xltx", 3, false, null, objApp); // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
+            objSheets.Cells[2, 2] = Env.User.Keyword;
 
             int r = printDT.Rows.Count;
             objSheets.get_Range(string.Format("A4:M{0}", r + 3)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
             DataRow dr;
-            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Sci.Env.User.Factory), out dr, null);
+            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Env.User.Factory), out dr, null);
             objSheets.Cells[1, 1] = dr["NameEN"].ToString() + "\r\n" + "CARTON RETURN REPORT";
 
             string d1 = string.Empty, d2 = string.Empty;
@@ -252,7 +252,7 @@ order by PackingListID, OrderID, rn");
             objSheets.get_Range("A1").RowHeight = 45;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_P06");
+            string strExcelName = Class.MicrosoftFile.GetName("Logistic_P06");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

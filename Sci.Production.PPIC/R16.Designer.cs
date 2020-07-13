@@ -35,9 +35,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.dateRangeByerDev = new Sci.Win.UI.DateRange();
             this.chkOutstanding = new Sci.Win.UI.CheckBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.chkExcludeSis = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
@@ -155,7 +155,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -234,9 +234,9 @@
         private Win.UI.Label lbSP;
         private Win.UI.Label lbSCIDelivery;
         private Win.UI.Label lbReport;
-        private Class.txtMdivision txtMdivision;
-        private Class.txtfactory txtfactory;
-        private Class.txtbrand txtbrand;
+        private Class.TxtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
+        private Class.Txtbrand txtbrand;
         private System.Windows.Forms.Label label1;
         private Win.UI.DateRange dateRangeByerDev;
         private Win.UI.CheckBox chkOutstanding;

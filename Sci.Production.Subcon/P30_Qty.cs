@@ -2,23 +2,17 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P30_Qty : Sci.Win.Tems.QueryForm
+    public partial class P30_Qty : Win.Tems.QueryForm
     {
         private DataRow DataRow;
+
         public P30_Qty(DataRow dataRow)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.grid1.AutoGenerateColumns = true;
             this.grid2.AutoGenerateColumns = true;
             this.DataRow = dataRow;
@@ -28,14 +22,14 @@ namespace Sci.Production.Subcon
         {
             base.OnFormLoaded();
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("ID", header: "ID", iseditingreadonly: true, width: Widths.AnsiChars(16))
             .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(16))
             .Text("OrderShipmodeSeq", header: "Seq", iseditingreadonly: true, width: Widths.AnsiChars(3))
             .Text("refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(20))
             .Numeric("qty", header: "Qty", iseditingreadonly: true, width: Widths.AnsiChars(6))
             ;
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.Helper.Controls.Grid.Generator(this.grid2)
             .Text("ID", header: "ID", iseditingreadonly: true, width: Widths.AnsiChars(16))
             .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(16))
             .Text("refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(20))
@@ -57,6 +51,7 @@ group by pd.ID,pd.OrderID,pd.OrderShipmodeSeq,pd.RefNo
                 this.ShowErr(result);
                 return;
             }
+
             this.listControlBindingSource1.DataSource = dt1;
 
             string sqlcmd2 = $@"
@@ -72,6 +67,7 @@ group by lpd.ID,lpd.OrderId,lpd.Refno
                 this.ShowErr(result);
                 return;
             }
+
             this.listControlBindingSource2.DataSource = dt2;
         }
 

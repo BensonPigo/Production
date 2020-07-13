@@ -46,12 +46,12 @@
             this.displayBrand = new Sci.Win.UI.DisplayBox();
             this.displayStyle = new Sci.Win.UI.DisplayBox();
             this.displaySeason = new Sci.Win.UI.DisplayBox();
-            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
+            this.txtcountryDestination = new Sci.Production.Class.Txtcountry();
             this.displayDescription = new Sci.Win.UI.DisplayBox();
             this.numQtyCarton = new Sci.Win.UI.NumericBox();
-            this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
-            this.txtuserLocalMR = new Sci.Production.Class.txtuser();
-            this.txttpeuserOrderHandle = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserSMR = new Sci.Production.Class.Txttpeuser();
+            this.txtuserLocalMR = new Sci.Production.Class.Txtuser();
+            this.txttpeuserOrderHandle = new Sci.Production.Class.Txttpeuser();
             this.displayPOcombo = new Sci.Win.UI.DisplayBox();
             this.btnbdown = new Sci.Win.UI.Button();
             this.checkLocalOrder = new Sci.Win.UI.CheckBox();
@@ -64,7 +64,7 @@
             this.labelSewingOffline = new Sci.Win.UI.Label();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.labelCloseGarment = new Sci.Win.UI.Label();
-            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
+            this.txtdropdownlistCategory = new Sci.Production.Class.Txtdropdownlist();
             this.displayProject = new Sci.Win.UI.DisplayBox();
             this.numOrderQty = new Sci.Win.UI.NumericBox();
             this.displayOrderQty = new Sci.Win.UI.DisplayBox();
@@ -78,7 +78,7 @@
             this.btnMaterialImport = new Sci.Win.UI.Button();
             this.btnCartonBooking = new Sci.Win.UI.Button();
             this.btnOverrunGarmentRecord = new Sci.Win.UI.Button();
-            this.txtdropdownlistPackingMethod = new Sci.Production.Class.txtdropdownlist();
+            this.txtdropdownlistPackingMethod = new Sci.Production.Class.Txtdropdownlist();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -735,12 +735,12 @@
         private Win.UI.CheckBox checkLocalOrder;
         private Win.UI.Button btnbdown;
         private Win.UI.DisplayBox displayPOcombo;
-        private Class.txttpeuser txttpeuserOrderHandle;
-        private Class.txtuser txtuserLocalMR;
-        private Class.txttpeuser txttpeuserSMR;
+        private Class.Txttpeuser txttpeuserOrderHandle;
+        private Class.Txtuser txtuserLocalMR;
+        private Class.Txttpeuser txttpeuserSMR;
         private Win.UI.NumericBox numQtyCarton;
         private Win.UI.DisplayBox displayDescription;
-        private Class.txtcountry txtcountryDestination;
+        private Class.Txtcountry txtcountryDestination;
         private Win.UI.DisplayBox displaySeason;
         private Win.UI.DisplayBox displayStyle;
         private Win.UI.DisplayBox displayBrand;
@@ -767,7 +767,7 @@
         private Win.UI.Label labelProject;
         private Win.UI.Label labelCategory;
         private Win.UI.DisplayBox displayProject;
-        private Class.txtdropdownlist txtdropdownlistCategory;
+        private Class.Txtdropdownlist txtdropdownlistCategory;
         private Win.UI.DateBox dateCloseGarment;
         private Win.UI.DateBox dateBuyerDelivery;
         private Win.UI.DateBox dateSewingOffline;
@@ -780,6 +780,6 @@
         private Win.UI.Button btnCartonBooking;
         private Win.UI.Button btnMaterialImport;
         private Win.UI.Button btnCartonStatus;
-        private Class.txtdropdownlist txtdropdownlistPackingMethod;
+        private Class.Txtdropdownlist txtdropdownlistPackingMethod;
     }
 }

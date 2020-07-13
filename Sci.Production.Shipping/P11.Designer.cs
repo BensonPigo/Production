@@ -38,7 +38,7 @@
             this.lbExVoucherID = new Sci.Win.UI.Label();
             this.disExVoucherID = new Sci.Win.UI.DisplayBox();
             this.btnBatchApprove = new Sci.Win.UI.Button();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -268,7 +268,7 @@
         private Win.UI.TextBox txtInvSerial;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.DisplayBox disExVoucherID;
         private Win.UI.Label lbExVoucherID;
         private Win.UI.Button btnBatchApprove;

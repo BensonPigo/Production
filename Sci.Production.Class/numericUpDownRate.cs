@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sci.Production.Class
+﻿namespace Sci.Production.Class
 {
-    public class numericUpDownRate : Sci.Win.UI.NumericUpDown
+    /// <summary>
+    /// Numeric UpDownRate
+    /// </summary>
+    public class NumericUpDownRate : Win.UI.NumericUpDown
     {
+        /// <inheritdoc/>
         protected override void UpdateEditText()
         {
             this.Text = this.Value.ToString() + "%";
         }
-
     }
 }

@@ -41,8 +41,8 @@
             this.dateApproveDate1 = new Sci.Win.UI.DateBox();
             this.dateApproveDate2 = new Sci.Win.UI.DateBox();
             this.label9 = new Sci.Win.UI.Label();
-            this.txtCountryImportCountry = new Sci.Production.Class.txtcountry();
-            this.comboShipmodeShipmodeID = new Sci.Production.Class.txtshipmode();
+            this.txtCountryImportCountry = new Sci.Production.Class.Txtcountry();
+            this.comboShipmodeShipmodeID = new Sci.Production.Class.Txtshipmode();
             this.txtForwarder = new Sci.Win.UI.TextBox();
             this.comboRateTypeID = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
@@ -288,8 +288,8 @@
         private Win.UI.DateBox dateApproveDate1;
         private Win.UI.DateBox dateApproveDate2;
         private Win.UI.Label label9;
-        private Class.txtcountry txtCountryImportCountry;
-        private Class.txtshipmode comboShipmodeShipmodeID;
+        private Class.Txtcountry txtCountryImportCountry;
+        private Class.Txtshipmode comboShipmodeShipmodeID;
         private Win.UI.TextBox txtForwarder;
         private Win.UI.ComboBox comboRateTypeID;
     }

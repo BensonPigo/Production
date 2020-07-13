@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
 using Sci.Data;
 using System.Runtime.InteropServices;
-using static Sci.MyUtility;
 
 namespace Sci.Production.Sewing
 {
-    public partial class R07 : Sci.Win.Tems.PrintForm
+    public partial class R07 : Win.Tems.PrintForm
     {
         private string Factory;
         private string M;
@@ -33,7 +29,7 @@ namespace Sci.Production.Sewing
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboStatus, 2, 1, ",,New,New,Confirmed,Confirmed");
             this.comboStatus.SelectedIndex = 0;
-            this.txtMdivisionM.Text = Sci.Env.User.Keyword;
+            this.txtMdivisionM.Text = Env.User.Keyword;
         }
 
         protected override bool ValidateInput()
@@ -178,7 +174,7 @@ where 1=1
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
@@ -192,7 +188,7 @@ where 1=1
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Sewing_R07.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Sewing_R07.xltx");
             objApp.Visible = false;
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Sewing_R07.xltx", 3, false, null, objApp);
             Microsoft.Office.Interop.Excel.Worksheet wks = objApp.ActiveWorkbook.Worksheets[1];
@@ -225,7 +221,7 @@ where 1=1
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideVertical].Weight = 2;
 
             #region Save Excel
-            string excelFile = Sci.Production.Class.MicrosoftFile.GetName("Sewing_R07");
+            string excelFile = Class.MicrosoftFile.GetName("Sewing_R07");
             objApp.ActiveWorkbook.SaveAs(excelFile);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

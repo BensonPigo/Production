@@ -11,7 +11,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P14
     /// </summary>
-    public partial class P14 : Sci.Win.Tems.QueryForm
+    public partial class P14 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
@@ -139,7 +139,7 @@ from (
                                                     and oq.Seq = pd.OrderShipmodeSeq
     where t.MDivisionID = '{0}' 
     --and pd.TransferDate is not null 
-    ", Sci.Env.User.Keyword));
+    ", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.dateTimePicker1.Text))
             {

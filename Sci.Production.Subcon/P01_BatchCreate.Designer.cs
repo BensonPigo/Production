@@ -38,12 +38,12 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.lblIrregularQtyReason = new Sci.Win.UI.Label();
-            this.txtIrregularQtyReason = new Sci.Production.Class.txtSubconReason();
+            this.txtIrregularQtyReason = new Sci.Production.Class.TxtSubconReason();
             this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
             this.labelNoQuoteHint = new Sci.Win.UI.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.labelArtworkType = new Sci.Win.UI.Label();
-            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.Txtartworktype_fty();
             this.btnFindNow = new Sci.Win.UI.Button();
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
@@ -253,8 +253,8 @@
             // txtartworktype_ftyArtworkType
             // 
             this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyArtworkType.cClassify = "";
-            this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
+            this.txtartworktype_ftyArtworkType.CClassify = "";
+            this.txtartworktype_ftyArtworkType.CSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(107, 73);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
@@ -418,12 +418,12 @@
         private Win.UI.Label labelArtworkType;
         private Win.UI.DateBox dateDelivery;
         private Win.UI.DateBox dateIssueDate;
-        private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
+        private Class.Txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Label label8;
         private Win.UI.Label labelNoQuoteHintColor;
         private Win.UI.Label labelNoQuoteHint;
-        private Class.txtSubconReason txtIrregularQtyReason;
+        private Class.TxtSubconReason txtIrregularQtyReason;
         private Win.UI.Label lblIrregularQtyReason;
     }
 }

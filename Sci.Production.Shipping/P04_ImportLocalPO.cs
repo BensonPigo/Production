@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// P04_ImportLocalPO
     /// </summary>
-    public partial class P04_ImportLocalPO : Sci.Win.Subs.Base
+    public partial class P04_ImportLocalPO : Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable detailData;

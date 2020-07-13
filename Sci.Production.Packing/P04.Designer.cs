@@ -35,16 +35,16 @@
             this.labelTtlCtn = new Sci.Win.UI.Label();
             this.labelRemark = new Sci.Win.UI.Label();
             this.displayNo = new Sci.Win.UI.DisplayBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtcustcd = new Sci.Production.Class.txtcustcd();
-            this.txtcountry = new Sci.Production.Class.txtcountry();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtcustcd = new Sci.Production.Class.Txtcustcd();
+            this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelShipMode = new Sci.Win.UI.Label();
             this.labelCartonEstBooking = new Sci.Win.UI.Label();
             this.labelCartonEstArrived = new Sci.Win.UI.Label();
             this.labelPurchaseCTN = new Sci.Win.UI.Label();
-            this.txtshipmode = new Sci.Production.Class.txtshipmode();
+            this.txtshipmode = new Sci.Production.Class.Txtshipmode();
             this.dateCartonEstBooking = new Sci.Win.UI.DateBox();
             this.dateCartonEstArrived = new Sci.Win.UI.DateBox();
             this.labelPullOutDate = new Sci.Win.UI.Label();
@@ -64,7 +64,7 @@
             this.btnRecalculateWeight = new Sci.Win.UI.Button();
             this.numTtlCtn = new Sci.Win.UI.NumericBox();
             this.displayPurchaseCTN = new Sci.Win.UI.DisplayBox();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.labelConfirmed = new Sci.Win.UI.Label();
             this.numTtlGW = new Sci.Win.UI.NumericBox();
             this.labelTtlGW = new Sci.Win.UI.Label();
@@ -635,7 +635,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -854,9 +854,9 @@
         private Win.UI.Label labelCustCD;
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelNo;
-        private Class.txtcountry txtcountry;
-        private Class.txtcustcd txtcustcd;
-        private Class.txtbrand txtbrand;
+        private Class.Txtcountry txtcountry;
+        private Class.Txtcustcd txtcustcd;
+        private Class.Txtbrand txtbrand;
         private Win.UI.DisplayBox displayNo;
         private Win.UI.Label labelPurchaseCTN;
         private Win.UI.Label labelCartonEstArrived;
@@ -876,7 +876,7 @@
         private Win.UI.Label labelPullOutDate;
         private Win.UI.DateBox dateCartonEstArrived;
         private Win.UI.DateBox dateCartonEstBooking;
-        private Class.txtshipmode txtshipmode;
+        private Class.Txtshipmode txtshipmode;
         private Win.UI.Button btnRecalculateWeight;
         private Win.UI.Button btnDownloadExcelFormat;
         private Win.UI.Button btnImportFromExcel;
@@ -884,7 +884,7 @@
         private Win.UI.Button btnCartonSummary;
         private Win.UI.DisplayBox displayPurchaseCTN;
         private Win.UI.NumericBox numTtlCtn;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labelConfirmed;
         private Win.UI.NumericBox numTtlGW;
         private Win.UI.Label labelTtlGW;

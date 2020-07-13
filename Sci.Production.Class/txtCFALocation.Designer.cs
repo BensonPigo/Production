@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtCFALocation
+    partial class TxtCFALocation
     {
         /// <summary> 
         /// 設計工具所需的變數。

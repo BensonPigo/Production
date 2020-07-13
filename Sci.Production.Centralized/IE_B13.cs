@@ -1,23 +1,20 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
-    public partial class IE_B13 : Sci.Win.Tems.Input1
+    public partial class IE_B13 : Win.Tems.Input1
     {
         public IE_B13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void OnFormLoaded()
@@ -25,7 +22,7 @@ namespace Sci.Production.Centralized
             base.OnFormLoaded();
 
             // 新增Upload File from excel 按鈕
-            Sci.Win.UI.Button btn = new Win.UI.Button();
+            Win.UI.Button btn = new Win.UI.Button();
             btn.Text = "Upload File";
             btn.Click += new EventHandler(this.BtnUploadFile_Click);
             this.browsetop.Controls.Add(btn);
@@ -85,7 +82,6 @@ namespace Sci.Production.Centralized
             this.HideWaitMessage();
 
             // 匯入到DB
-
             string sqlUpdate = $@"
 merge ProductionTPE.dbo.OperationDesc as t
 using (
@@ -101,7 +97,7 @@ when matched then update set
 	t.DescVI = s.DescVI,
 	t.DescCHS = s.DescCHS,
 	t.EditDate = GETDATE(),
-	t.EditName = '{Sci.Env.User.UserID}'	
+	t.EditName = '{Env.User.UserID}'	
 when not matched by target then
 	insert (
 	   [ID]
@@ -116,7 +112,7 @@ when not matched by target then
       ,s.[DescVI]
       ,s.[DescCHS]
       ,GETDATE()
-      ,'{Sci.Env.User.UserID}');
+      ,'{Env.User.UserID}');
 ";
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection("ProductionTPE", out sqlConn);
@@ -131,7 +127,6 @@ when not matched by target then
                 MyUtility.Msg.InfoBox("import excel successful!");
                 this.ReloadDatas();
             }
-
         }
 
         protected override void ClickEditAfter()
@@ -159,12 +154,10 @@ when not matched by target then
             string sqlCmd = $"SELECT DescEN FROM Operation WHERE ID='{this.CurrentMaintain["ID"]}' ";
 
             this.txtOperationtitle.Text = MyUtility.GetValue.Lookup(sqlCmd, "Production");
-
         }
 
         protected override bool ClickPrint()
         {
-
             this.ShowWaitMessage("Processing...");
 
             DualResult result;
@@ -190,18 +183,18 @@ FROM OperationDesc WITH (NOLOCK)
 
             for (int i = 0; i < printData.Rows.Count - 1; i++)
             {
-                printData.Rows[i]["OperationTitle"] = MyUtility.GetValue.Lookup($"SELECT DescEN FROM Operation WITH (NOLOCK) WHERE ID='{ printData.Rows[i]["ID"]}' ", "Production");
+                printData.Rows[i]["OperationTitle"] = MyUtility.GetValue.Lookup($"SELECT DescEN FROM Operation WITH (NOLOCK) WHERE ID='{printData.Rows[i]["ID"]}' ", "Production");
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx"); // 預先開啟excel app
 
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx", objApp);
 
             com.ColumnsAutoFit = false;
             com.WriteTable(printData, 2);
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Centralized_IE_B13");
+            string strExcelName = Class.MicrosoftFile.GetName("Centralized_IE_B13");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -212,7 +205,6 @@ FROM OperationDesc WITH (NOLOCK)
             this.HideWaitMessage();
 
             return true;
-
         }
     }
 }

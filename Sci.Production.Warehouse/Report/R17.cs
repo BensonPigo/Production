@@ -1,77 +1,76 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Data.SqlClient;
-using Sci;
 using Sci.Data;
 using Ict;
-using Ict.Win;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R17 : Sci.Win.Tems.PrintForm
+    public partial class R17 : Win.Tems.PrintForm
     {
         DataTable dt;
 
         int selectindex = 0;
+
         public R17(ToolStripMenuItem menuitem)
-            :base(menuitem)
+            : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
-            comboStockType.SelectedIndex = 0;
+            this.comboStockType.SelectedIndex = 0;
         }
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) 
-                && MyUtility.Check.Empty(dateSCIDelivery.Value2) 
-                && MyUtility.Check.Empty(txtSPNo.Text)
-                && MyUtility.Check.Empty(dateETA.TextBox1.Value)
-                && MyUtility.Check.Empty(dateETA.TextBox2.Value)
-                && MyUtility.Check.Empty(txtMtlLocationStart.Text) 
-                && MyUtility.Check.Empty(txtLocationEnd.Text))
+            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1)
+                && MyUtility.Check.Empty(this.dateSCIDelivery.Value2)
+                && MyUtility.Check.Empty(this.txtSPNo.Text)
+                && MyUtility.Check.Empty(this.dateETA.TextBox1.Value)
+                && MyUtility.Check.Empty(this.dateETA.TextBox2.Value)
+                && MyUtility.Check.Empty(this.txtMtlLocationStart.Text)
+                && MyUtility.Check.Empty(this.txtLocationEnd.Text))
             {
                 MyUtility.Msg.WarningBox("SP#, SCI Delivery, ETA, Location can't be empty!!");
                 return false;
             }
-            selectindex = comboStockType.SelectedIndex;
+
+            this.selectindex = this.comboStockType.SelectedIndex;
             return base.ValidateInput();
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            SetCount(dt.Rows.Count);
-            DualResult result = Result.True;
-            if (dt.Rows.Count == 0)
+            this.SetCount(this.dt.Rows.Count);
+            DualResult result = Ict.Result.True;
+            if (this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
                 return result;
             }
 
-            //MyUtility.Excel.CopyToXls(dt,"","Warehouse_R17_Location_List.xltx");
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R17_Location_List.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R17_Location_List.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
+            // MyUtility.Excel.CopyToXls(dt,"","Warehouse_R17_Location_List.xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R17_Location_List.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_R17_Location_List.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             this.ShowWaitMessage("Excel Processing...");
-            
-            for (int i = 1; i <= dt.Rows.Count; i++)
+
+            for (int i = 1; i <= this.dt.Rows.Count; i++)
             {
                 if (!((string)((Excel.Range)objSheets.Cells[i + 1, 12]).Value).Empty())
+                {
                     objSheets.Cells[i + 1, 12] = ((string)((Excel.Range)objSheets.Cells[i + 1, 12]).Value).Trim();
+                }
             }
-          //  objSheets.Columns[12].ColumnWidth = 50;
+
+          // objSheets.Columns[12].ColumnWidth = 50;
             objSheets.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R17_Location_List");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R17_Location_List");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -85,41 +84,42 @@ namespace Sci.Production.Warehouse
 
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            //return base.OnAsyncDataLoad(e);
-            string spno = txtSPNo.Text.TrimEnd();
-            string locationStart = txtMtlLocationStart.Text;
-            string locationEnd = txtLocationEnd.Text;          
-            string factory = txtfactory.Text;
-            bool chkbalance = checkBalanceQty.Checked;
-            string locationFilte = "";
+            // return base.OnAsyncDataLoad(e);
+            string spno = this.txtSPNo.Text.TrimEnd();
+            string locationStart = this.txtMtlLocationStart.Text;
+            string locationEnd = this.txtLocationEnd.Text;
+            string factory = this.txtfactory.Text;
+            bool chkbalance = this.checkBalanceQty.Checked;
+            string locationFilte = string.Empty;
             string eta1 = string.Empty;
             string eta2 = string.Empty;
-            if (!MyUtility.Check.Empty(dateETA.TextBox1.Value))
+            if (!MyUtility.Check.Empty(this.dateETA.TextBox1.Value))
             {
-                eta1 = dateETA.TextBox1.Text;
+                eta1 = this.dateETA.TextBox1.Text;
             }
 
-            if (!MyUtility.Check.Empty(dateETA.TextBox2.Value))
+            if (!MyUtility.Check.Empty(this.dateETA.TextBox2.Value))
             {
-                eta2 = dateETA.TextBox2.Text;
+                eta2 = this.dateETA.TextBox2.Text;
             }
-
 
             if (locationStart.Empty() == false && locationEnd.Empty() == false)
             {
                 locationFilte = string.Format("b.mtllocationid between '{0}' and '{1}'", locationStart, locationEnd);
-            } else if (locationStart.Empty() == true && locationEnd.Empty() == false)
+            }
+            else if (locationStart.Empty() == true && locationEnd.Empty() == false)
             {
                 locationFilte = locationFilte = string.Format("b.mtllocationid < '{0}'", locationEnd);
-            } else if (locationStart.Empty() == false && locationEnd.Empty() == true)
+            }
+            else if (locationStart.Empty() == false && locationEnd.Empty() == true)
             {
                 locationFilte = locationFilte = string.Format("'{0}' < b.mtllocationid", locationStart);
             }
 
-                DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             StringBuilder sqlcmd = new StringBuilder();
             #region sql command
-            if (MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2))    // SCI Delivery empty
+            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2)) // SCI Delivery empty
             {
                 if (MyUtility.Check.Empty(locationStart) && MyUtility.Check.Empty(locationEnd)) // Location empty
                 {
@@ -169,42 +169,55 @@ OUTER APPLY(
 	and a.POID=rd.PoId and a.Seq1=rd.Seq1 and a.Seq2=rd.Seq2
 )Receive
 where   1=1");
-                    if (!MyUtility.Check.Empty(spno)) 
-                        sqlcmd.Append(string.Format(@"
+                    if (!MyUtility.Check.Empty(spno))
+                    {
+                        sqlcmd.Append(string.Format(
+                            @"
         And a.Poid like '{0}%'", spno));
-
-                    if (!txtSeq.checkSeq1Empty())
-                    {
-                        sqlcmd.Append(string.Format(@"
-        and a.seq1 = '{0}'", txtSeq.seq1));
-                    }
-                    if (!txtSeq.checkSeq2Empty())
-                    {
-                        sqlcmd.Append(string.Format(@" 
-        and a.seq2 = '{0}'", txtSeq.seq2));
                     }
 
-                    if (chkbalance) 
+                    if (!this.txtSeq.CheckSeq1Empty())
+                    {
+                        sqlcmd.Append(string.Format(
+                            @"
+        and a.seq1 = '{0}'", this.txtSeq.Seq1));
+                    }
+
+                    if (!this.txtSeq.CheckSeq2Empty())
+                    {
+                        sqlcmd.Append(string.Format(
+                            @" 
+        and a.seq2 = '{0}'", this.txtSeq.Seq2));
+                    }
+
+                    if (chkbalance)
+                    {
                         sqlcmd.Append(@" 
         And a.inqty- a.outqty + a.adjustqty > 0");
+                    }
 
                     if (!MyUtility.Check.Empty(factory))
-                        sqlcmd.Append(string.Format(@" 
+                    {
+                        sqlcmd.Append(string.Format(
+                            @" 
         and orders.FactoryID = '{0}'", factory));
+                    }
 
                     if (!MyUtility.Check.Empty(eta1))
                     {
-                        sqlcmd.Append(string.Format(@" 
+                        sqlcmd.Append(string.Format(
+                            @" 
         and Receive.ETA >= '{0}'", eta1));
                     }
 
                     if (!MyUtility.Check.Empty(eta2))
                     {
-                        sqlcmd.Append(string.Format(@" 
+                        sqlcmd.Append(string.Format(
+                            @" 
         and Receive.ETA <= '{0}'", eta2));
                     }
 
-                    switch (selectindex)
+                    switch (this.selectindex)
                     {
                         case 0:
                             sqlcmd.Append(@" 
@@ -222,8 +235,8 @@ where   1=1");
                 }
                 else
                 {
-
-                    sqlcmd.Append(string.Format(@"
+                    sqlcmd.Append(string.Format(
+                        @"
 select distinct 
         Factory		= orders.Factoryid,
         sp			= a.Poid,
@@ -270,42 +283,55 @@ OUTER APPLY(
 )Receive
 where   1=1 
         And {0} ", locationFilte));
-                    if (!MyUtility.Check.Empty(spno)) 
-                        sqlcmd.Append(string.Format(@" 
+                    if (!MyUtility.Check.Empty(spno))
+                    {
+                        sqlcmd.Append(string.Format(
+                            @" 
         And a.Poid like '{0}%'", spno));
-
-                    if (!txtSeq.checkSeq1Empty())
-                    {
-                        sqlcmd.Append(string.Format(@"
-        and a.seq1 = '{0}'", txtSeq.seq1));
-                    }
-                    if (!txtSeq.checkSeq2Empty())
-                    {
-                        sqlcmd.Append(string.Format(@" 
-        and a.seq2 = '{0}'", txtSeq.seq2));
                     }
 
-                    if (chkbalance) 
+                    if (!this.txtSeq.CheckSeq1Empty())
+                    {
+                        sqlcmd.Append(string.Format(
+                            @"
+        and a.seq1 = '{0}'", this.txtSeq.Seq1));
+                    }
+
+                    if (!this.txtSeq.CheckSeq2Empty())
+                    {
+                        sqlcmd.Append(string.Format(
+                            @" 
+        and a.seq2 = '{0}'", this.txtSeq.Seq2));
+                    }
+
+                    if (chkbalance)
+                    {
                         sqlcmd.Append(@" 
         And a.inqty- a.outqty + a.adjustqty > 0");
+                    }
 
-                    if(!MyUtility.Check.Empty(factory))
-                        sqlcmd.Append(string.Format(@" 
+                    if (!MyUtility.Check.Empty(factory))
+                    {
+                        sqlcmd.Append(string.Format(
+                            @" 
         and orders.FactoryID = '{0}'", factory));
+                    }
 
                     if (!MyUtility.Check.Empty(eta1))
                     {
-                        sqlcmd.Append(string.Format(@" 
+                        sqlcmd.Append(string.Format(
+                            @" 
         and Receive.ETA >= '{0}'", eta1));
                     }
 
                     if (!MyUtility.Check.Empty(eta2))
                     {
-                        sqlcmd.Append(string.Format(@" 
+                        sqlcmd.Append(string.Format(
+                            @" 
         and Receive.ETA <= '{0}'", eta2));
                     }
 
-                    switch (selectindex)
+                    switch (this.selectindex)
                     {
                         case 0:
                             sqlcmd.Append(@" 
@@ -373,47 +399,69 @@ OUTER APPLY(
 )Receive
 where   1=1"));
 
-                    if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
-                        sqlcmd.Append(string.Format(@" 
-        and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d")));
-                    if (!MyUtility.Check.Empty(dateSCIDelivery.Value2))
-                        sqlcmd.Append(string.Format(@" 
-        and orders.scidelivery <= '{0}'", Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d")));
-
-                    if (!MyUtility.Check.Empty(spno)) 
-                        sqlcmd.Append(string.Format(@" 
-        And a.Poid like '{0}%'", spno));
-
-                    if (!txtSeq.checkSeq1Empty())
+                    if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
                     {
-                        sqlcmd.Append(string.Format(@"
-        and a.seq1 = '{0}'", txtSeq.seq1));
+                        sqlcmd.Append(string.Format(
+                            @" 
+        and '{0}' <= orders.scidelivery", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));
                     }
-                    if (!txtSeq.checkSeq2Empty()) 
-                        sqlcmd.Append(string.Format(@" 
-        and a.seq2 = '{0}'", txtSeq.seq2));
 
-                    if (chkbalance) 
+                    if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
+                    {
+                        sqlcmd.Append(string.Format(
+                            @" 
+        and orders.scidelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(spno))
+                    {
+                        sqlcmd.Append(string.Format(
+                            @" 
+        And a.Poid like '{0}%'", spno));
+                    }
+
+                    if (!this.txtSeq.CheckSeq1Empty())
+                    {
+                        sqlcmd.Append(string.Format(
+                            @"
+        and a.seq1 = '{0}'", this.txtSeq.Seq1));
+                    }
+
+                    if (!this.txtSeq.CheckSeq2Empty())
+                    {
+                        sqlcmd.Append(string.Format(
+                            @" 
+        and a.seq2 = '{0}'", this.txtSeq.Seq2));
+                    }
+
+                    if (chkbalance)
+                    {
                         sqlcmd.Append(@" 
         And a.inqty- a.outqty + a.adjustqty > 0");
+                    }
 
                     if (!MyUtility.Check.Empty(factory))
-                        sqlcmd.Append(string.Format(@" 
+                    {
+                        sqlcmd.Append(string.Format(
+                            @" 
         and orders.FactoryID = '{0}'", factory));
+                    }
 
                     if (!MyUtility.Check.Empty(eta1))
                     {
-                        sqlcmd.Append(string.Format(@" 
+                        sqlcmd.Append(string.Format(
+                            @" 
         and Receive.ETA >= '{0}'", eta1));
                     }
 
                     if (!MyUtility.Check.Empty(eta2))
                     {
-                        sqlcmd.Append(string.Format(@" 
+                        sqlcmd.Append(string.Format(
+                            @" 
         and Receive.ETA <= '{0}'", eta2));
                     }
 
-                    switch (selectindex)
+                    switch (this.selectindex)
                     {
                         case 0:
                             sqlcmd.Append(@" 
@@ -431,7 +479,8 @@ where   1=1"));
                 }
                 else
                 {
-                    sqlcmd.Append(string.Format(@"
+                    sqlcmd.Append(string.Format(
+                        @"
 select distinct
         Factory		= orders.factoryid,
         sp			= a.Poid,
@@ -479,45 +528,66 @@ OUTER APPLY(
 where   1=1
         And {0} ", locationFilte));
 
-                    if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
-                        sqlcmd.Append(string.Format(@" 
-        and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d")));
-                    if (!MyUtility.Check.Empty(dateSCIDelivery.Value2))
-                        sqlcmd.Append(string.Format(@" 
-        and orders.scidelivery <= '{0}'", Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d")));
-
-                    if (!MyUtility.Check.Empty(spno)) 
-                        sqlcmd.Append(string.Format(@" 
-        And a.Poid like '{0}%'", spno));
-
-                    if (!txtSeq.checkSeq1Empty())
+                    if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
                     {
-                        sqlcmd.Append(string.Format(@"
-        and a.seq1 = '{0}'", txtSeq.seq1));
+                        sqlcmd.Append(string.Format(
+                            @" 
+        and '{0}' <= orders.scidelivery", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));
                     }
-                    if (!txtSeq.checkSeq2Empty()) 
-                        sqlcmd.Append(string.Format(@" 
-        and a.seq2 = '{0}'", txtSeq.seq2));
 
-                    if (chkbalance) 
+                    if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
+                    {
+                        sqlcmd.Append(string.Format(
+                            @" 
+        and orders.scidelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(spno))
+                    {
+                        sqlcmd.Append(string.Format(
+                            @" 
+        And a.Poid like '{0}%'", spno));
+                    }
+
+                    if (!this.txtSeq.CheckSeq1Empty())
+                    {
+                        sqlcmd.Append(string.Format(
+                            @"
+        and a.seq1 = '{0}'", this.txtSeq.Seq1));
+                    }
+
+                    if (!this.txtSeq.CheckSeq2Empty())
+                    {
+                        sqlcmd.Append(string.Format(
+                            @" 
+        and a.seq2 = '{0}'", this.txtSeq.Seq2));
+                    }
+
+                    if (chkbalance)
+                    {
                         sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
+                    }
 
                     if (!MyUtility.Check.Empty(factory))
+                    {
                         sqlcmd.Append(string.Format(@" and orders.FactoryId = '{0}'", factory));
+                    }
 
                     if (!MyUtility.Check.Empty(eta1))
                     {
-                        sqlcmd.Append(string.Format(@" 
+                        sqlcmd.Append(string.Format(
+                            @" 
         and Receive.ETA >= '{0}'", eta1));
                     }
 
                     if (!MyUtility.Check.Empty(eta2))
                     {
-                        sqlcmd.Append(string.Format(@" 
+                        sqlcmd.Append(string.Format(
+                            @" 
         and Receive.ETA <= '{0}'", eta2));
                     }
 
-                    switch (selectindex)
+                    switch (this.selectindex)
                     {
                         case 0:
                             sqlcmd.Append(@" And (a.stocktype = 'B' or a.stocktype = 'I')");
@@ -535,14 +605,18 @@ where   1=1
             try
             {
                 DBProxy.Current.DefaultTimeout = 600;
-                result = DBProxy.Current.Select(null, sqlcmd.ToString(), out dt);
+                result = DBProxy.Current.Select(null, sqlcmd.ToString(), out this.dt);
                 DBProxy.Current.DefaultTimeout = 30;
-                if (!result) return result;
+                if (!result)
+                {
+                    return result;
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+
             return result;
         }
     }

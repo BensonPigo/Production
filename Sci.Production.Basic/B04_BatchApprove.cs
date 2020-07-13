@@ -1,20 +1,14 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Basic
 {
-    public partial class B04_BatchApprove : Sci.Win.Forms.Base
+    public partial class B04_BatchApprove : Win.Forms.Base
     {
         Action reloadParant;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
@@ -51,7 +45,8 @@ namespace Sci.Production.Basic
 
             this.Helper.Controls.Grid.Generator(this.grid2)
                 .CheckBox("IsDefault", header: "Default", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out this.col_chk2)
-                //.Text("IsDefault", header: "Default", width: Widths.AnsiChars(6), iseditingreadonly: true)
+
+                // .Text("IsDefault", header: "Default", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("AccountNo", header: "Account No", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SWIFTCode", header: "Swift", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -160,8 +155,8 @@ DROP TABLE #Master
 
             DataRelation relation = new DataRelation(
                 "rel1",
-                    new DataColumn[] { this.master.Columns["ID"], this.master.Columns["PKey"] },
-                    new DataColumn[] { this.detail.Columns["ID"], this.detail.Columns["PKey"] });
+                new DataColumn[] { this.master.Columns["ID"], this.master.Columns["PKey"] },
+                new DataColumn[] { this.detail.Columns["ID"], this.detail.Columns["PKey"] });
 
             datas.Relations.Add(relation);
 
@@ -205,13 +200,11 @@ DROP TABLE #Master
                 {
                     this.grid1.Rows[i].DefaultCellStyle.BackColor = Color.White;
                 }
-
             }
         }
 
         private void btnconfirm_Click(object sender, EventArgs e)
         {
-
             if (this.master == null || this.master.Rows.Count == 0)
             {
                 return;
@@ -243,7 +236,7 @@ WHERE t.status = 'New'
             // 若有單已經被其他使用者先approve則跳過, 加上status = 'New' 為更新條件
             string updSql = $@"
 Update  l
-set l.Status = 'Confirmed' ,l.ApproveName='{Sci.Env.User.UserID}' ,l.ApproveDate=GETDATE() ,l.editname = '{Env.User.UserID}', l.editdate = GETDATE() 
+set l.Status = 'Confirmed' ,l.ApproveName='{Env.User.UserID}' ,l.ApproveDate=GETDATE() ,l.editname = '{Env.User.UserID}', l.editdate = GETDATE() 
 FROM LocalSupp_Bank l
 INNER JOIN #tmp t ON t.ID = l.ID AND t.PKey = l.PKey
 
@@ -280,6 +273,4 @@ when matched then update set
             this.reloadParant();
         }
     }
-
-
 }

@@ -43,7 +43,7 @@
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.dateDead = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.txtSeq = new Sci.Production.Class.TxtSeq();
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -225,8 +225,8 @@
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq.Location = new System.Drawing.Point(209, 19);
             this.txtSeq.Name = "txtSeq";
-            this.txtSeq.seq1 = "";
-            this.txtSeq.seq2 = "";
+            this.txtSeq.Seq1 = "";
+            this.txtSeq.Seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 1;
             // 
@@ -296,7 +296,7 @@
         private Win.UI.Panel panel1;
         private Win.UI.Grid gridImport;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Class.txtSeq txtSeq;
+        private Class.TxtSeq txtSeq;
         private Win.UI.Button btnUpdateAllLocation;
         private Win.UI.TextBox txtLocation;
         private Win.UI.Label labelLocation;

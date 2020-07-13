@@ -45,7 +45,7 @@
             this.displayBrand = new Sci.Win.UI.DisplayBox();
             this.displayStyleNo = new Sci.Win.UI.DisplayBox();
             this.displaySeason = new Sci.Win.UI.DisplayBox();
-            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
+            this.txtcountryDestination = new Sci.Production.Class.Txtcountry();
             this.displayDescription = new Sci.Win.UI.DisplayBox();
             this.displayCDcode = new Sci.Win.UI.DisplayBox();
             this.displayShipMode = new Sci.Win.UI.DisplayBox();
@@ -127,7 +127,7 @@
             this.btnFabricInspectionList = new Sci.Win.UI.Button();
             this.btnCFARFTList = new Sci.Win.UI.Button();
             this.displayCFAFinalInspDate = new Sci.Win.UI.DisplayBox();
-            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
+            this.txtdropdownlistCategory = new Sci.Production.Class.Txtdropdownlist();
             this.btnAccessoryInspectionList = new Sci.Win.UI.Button();
             this.panel7 = new System.Windows.Forms.Panel();
             this.numPackErrCTN = new Sci.Win.UI.NumericBox();
@@ -1540,7 +1540,7 @@
         private Win.UI.DisplayBox displayShipMode;
         private Win.UI.DisplayBox displayCDcode;
         private Win.UI.DisplayBox displayDescription;
-        private Class.txtcountry txtcountryDestination;
+        private Class.Txtcountry txtcountryDestination;
         private Win.UI.DisplayBox displaySeason;
         private Win.UI.DisplayBox displayStyleNo;
         private Win.UI.DisplayBox displayBrand;
@@ -1597,7 +1597,7 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape3;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
-        private Class.txtdropdownlist txtdropdownlistCategory;
+        private Class.Txtdropdownlist txtdropdownlistCategory;
         private Win.UI.Button btnAccessoryInspectionList;
         private System.Windows.Forms.Panel panel7;
         private Win.UI.Label label1;

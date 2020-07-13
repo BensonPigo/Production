@@ -5,7 +5,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic
     /// </summary>
-    public partial class P02_InputDate : Sci.Win.Subs.Base
+    public partial class P02_InputDate : Win.Subs.Base
     {
         private DateTime returnDate;
 

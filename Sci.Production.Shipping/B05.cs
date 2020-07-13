@@ -1,28 +1,31 @@
 ﻿using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 
 namespace Sci.Production.Shipping
 {
-    public partial class B05 : Sci.Win.Tems.Input1
+    /// <inheritdoc/>
+    public partial class B05 : Win.Tems.Input1
     {
-      public B05(ToolStripMenuItem menuitem)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B05"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
+        public B05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             // 修改表身資料,不寫入表頭EditName and EditDate
@@ -41,7 +44,7 @@ namespace Sci.Production.Shipping
             };
             DBProxy.Current.Execute(string.Empty, upd_brand_sql, upd_par);
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

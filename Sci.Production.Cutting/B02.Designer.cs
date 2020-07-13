@@ -39,7 +39,7 @@
             this.textCuttingWidth = new Sci.Win.UI.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtCuttingMachineID1 = new Sci.Production.Class.txtCuttingMachineID();
+            this.txtCuttingMachineID1 = new Sci.Production.Class.TxtCuttingMachineID();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -246,6 +246,6 @@
         private Win.UI.TextBox textCuttingWidth;
         private Win.UI.Label labelCuttingWidth;
         private Win.UI.Label label2;
-        private Class.txtCuttingMachineID txtCuttingMachineID1;
+        private Class.TxtCuttingMachineID txtCuttingMachineID1;
     }
 }

@@ -1,11 +1,8 @@
 ﻿using Sci.Win.Tools;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
@@ -13,7 +10,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B45
     /// </summary>
-    public partial class B45 : Sci.Win.Tems.Input1
+    public partial class B45 : Win.Tems.Input1
     {
         /// <summary>
         /// B45
@@ -176,6 +173,5 @@ namespace Sci.Production.Shipping
                 this.CurrentMaintain[popFrom] = popResult[0][popFrom];
             }
         }
-
     }
 }

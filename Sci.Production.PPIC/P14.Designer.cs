@@ -42,8 +42,8 @@
             this.labelKPILETA = new Sci.Win.UI.Label();
             this.dateConfirmedNewKPILETA = new Sci.Win.UI.DateBox();
             this.labPurchaseApvName = new Sci.Win.UI.Label();
-            this.txtApproveName = new Sci.Production.Class.txttpeuser();
-            this.txtConfirmName = new Sci.Production.Class.txttpeuser();
+            this.txtApproveName = new Sci.Production.Class.Txttpeuser();
+            this.txtConfirmName = new Sci.Production.Class.Txttpeuser();
             this.labPlanningConfName = new Sci.Win.UI.Label();
             this.labPurchaseApvDate = new Sci.Win.UI.Label();
             this.labPlanningConfDate = new Sci.Win.UI.Label();
@@ -459,8 +459,8 @@
         private Win.UI.Label labPlanningConfDate;
         private Win.UI.Label labPurchaseApvDate;
         private Win.UI.Label labPlanningConfName;
-        private Class.txttpeuser txtConfirmName;
-        private Class.txttpeuser txtApproveName;
+        private Class.Txttpeuser txtConfirmName;
+        private Class.Txttpeuser txtApproveName;
         private Win.UI.Label labPurchaseApvName;
         private Win.UI.DateBox dateConfirmedNewKPILETA;
         private Win.UI.Label labelKPILETA;

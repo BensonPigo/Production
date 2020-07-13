@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtSeq
+    partial class TxtSeq
     {
         /// <summary> 
         /// 設計工具所需的變數。
@@ -69,7 +69,7 @@
             this.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.Name = "txtSeq";
             this.Size = new System.Drawing.Size(61, 23);
-            this.Leave += new System.EventHandler(this.txtSeq_Leave);
+            this.Leave += new System.EventHandler(this.TxtSeq_Leave);
             this.ResumeLayout(false);
             this.PerformLayout();
 

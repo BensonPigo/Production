@@ -37,8 +37,8 @@
             this.TxtZone = new Sci.Win.UI.TextBox();
             this.labZone = new Sci.Win.UI.Label();
             this.radioProductionStatus = new Sci.Win.UI.RadioButton();
-            this.txtFactory = new Sci.Production.Class.txtfactory();
-            this.txtMDivision = new Sci.Production.Class.txtMdivision();
+            this.txtFactory = new Sci.Production.Class.Txtfactory();
+            this.txtMDivision = new Sci.Production.Class.TxtMdivision();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
             this.chkFty = new Sci.Win.UI.CheckBox();
@@ -46,7 +46,7 @@
             this.chkOrder = new Sci.Win.UI.CheckBox();
             this.cbReportType = new Sci.Win.UI.ComboBox();
             this.cbDateType = new Sci.Win.UI.ComboBox();
-            this.txtBrand1 = new Sci.Production.Class.txtbrand();
+            this.txtBrand1 = new Sci.Production.Class.Txtbrand();
             this.numMonth = new System.Windows.Forms.NumericUpDown();
             this.numYear = new System.Windows.Forms.NumericUpDown();
             this.lbMonth = new Sci.Win.UI.Label();
@@ -205,7 +205,7 @@
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
-            this.txtFactory.boolFtyGroupList = false;
+            this.txtFactory.BoolFtyGroupList = false;
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFactory.IsProduceFty = true;
@@ -480,7 +480,7 @@
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelYear;
         private System.Windows.Forms.RadioButton rdHalfMonth;
-        private Class.txtbrand txtBrand1;
+        private Class.Txtbrand txtBrand1;
         private System.Windows.Forms.NumericUpDown numMonth;
         private Win.UI.CheckBox chkFty;
         private Win.UI.CheckBox chkForecast;
@@ -490,8 +490,8 @@
         private Win.UI.Label label1;
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelM;
-        private Class.txtfactory txtFactory;
-        private Class.txtMdivision txtMDivision;
+        private Class.Txtfactory txtFactory;
+        private Class.TxtMdivision txtMDivision;
         private Win.UI.RadioButton radioProductionStatus;
         private Win.UI.Label labZone;
         private Win.UI.TextBox TxtZone;

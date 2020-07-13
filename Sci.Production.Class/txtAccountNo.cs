@@ -1,78 +1,192 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
 using Sci.Win.UI;
+using System.Data.SqlClient;
+using System.Collections.Generic;
 
 namespace Sci.Production.Class
 {
-    public partial class txtAccountNo : Sci.Win.UI._UserControl
+    /// <summary>
+    /// TxtAccountNo
+    /// </summary>
+    public partial class TxtAccountNo : Win.UI._UserControl
     {
-        public txtAccountNo()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtAccountNo"/> class.
+        /// </summary>
+        public TxtAccountNo()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-        public Sci.Win.UI.TextBox TextBox1
-        {
-            get { return this.textBox1; }
-        }
+        /// <inheritdoc/>
+        public Win.UI.TextBox TextBox1 { get; private set; }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
-        {
-            get { return this.displayBox1; }
-        }
+        /// <inheritdoc/>
+        public Win.UI.DisplayBox DisplayBox1 { get; private set; }
 
+        /// <inheritdoc/>
         [Bindable(true)]
         public string TextBox1Binding
         {
-            set { this.textBox1.Text = value; }
-            get { return textBox1.Text; }
+            get { return this.TextBox1.Text; }
+            set { this.TextBox1.Text = value; }
         }
 
+        /// <inheritdoc/>
         [Bindable(true)]
         public string DisplayBox1Binding
         {
-            set { this.displayBox1.Text = value; }
-            get { return this.displayBox1.Text; }
+            get { return this.DisplayBox1.Text; }
+            set { this.DisplayBox1.Text = value; }
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private string oldValue = string.Empty;
+
+        private void TextBox1_Validating(object sender, CancelEventArgs e)
         {
            // base.OnValidating(e);
-            string textValue = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
+            string textValue = this.TextBox1.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.TextBox1.OldValue)
             {
-                if (!MyUtility.Check.Seek(string.Format(@"select name from SciFMS_AccountNo where id = '{0}' and junk = 0", textValue)))
+                /*
+                    有列在 AccountNoSetting 且 UnselectableShipB03 有勾選會計科目皆不可使用
+
+                    判斷方法
+                    1.	統治科目有勾選則『底下所有子科目』皆無法使用
+                    2.	若統制科目沒有勾選則『依照子科目判斷是否有勾選』
+
+                */
+
+                string cmd = $@"
+SELECT ID ,Name
+FROM SciFMS_AccountNo
+WHERE Junk = 0
+AND ID NOT IN (
+		SELECT ID
+		FROM AccountNoSetting 
+		WHERE  LEN(ID) > 4 AND UnselectableShipB03 = 1
+	)
+AND SUBSTRING(ID,1,4) NOT IN (	
+	SELECT ID
+	FROM AccountNoSetting 
+	WHERE  LEN(ID)=4 AND UnselectableShipB03 = 1
+)
+AND ID = @ID
+ORDER BY ID
+";
+                List<SqlParameter> paras = new List<SqlParameter>();
+                paras.Add(new SqlParameter("@ID", textValue));
+
+                if (!MyUtility.Check.Seek(cmd, paras))
                 {
-                    this.textBox1.Text = "";
+                    this.TextBox1.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Account No: {0} > not found!!!", textValue));
                     return;
                 }
+
                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void TextBox1_TextChanged(object sender, EventArgs e)
         {
-            this.displayBox1.Text = MyUtility.GetValue.Lookup(string.Format(@"select name from SciFMS_AccountNo where id = '{0}' and junk = 0 ", this.textBox1.Text));
+            this.DisplayBox1.Text = MyUtility.GetValue.Lookup(string.Format(@"select name from SciFMS_AccountNo where id = '{0}' and junk = 0 ", this.TextBox1.Text));
         }
 
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TextBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,name from SciFMS_AccountNo where junk = 0 order by ID", "8,30", this.textBox1.Text);
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
+            if (myForm.EditMode == false || this.TextBox1.ReadOnly == true)
+            {
+                return;
+            }
+
+            /*
+                有列在 AccountNoSetting 且 UnselectableShipB03 有勾選會計科目皆不可使用
+
+                判斷方法
+                1.	統治科目有勾選則『底下所有子科目』皆無法使用
+                2.	若統制科目沒有勾選則『依照子科目判斷是否有勾選』
+
+            */
+
+            string cmd = @"
+SELECT ID ,Name
+FROM SciFMS_AccountNo
+WHERE Junk = 0
+AND ID NOT IN (
+		SELECT ID
+		FROM AccountNoSetting 
+		WHERE  LEN(ID) > 4 AND UnselectableShipB03 = 1
+	)
+AND SUBSTRING(ID,1,4) NOT IN (	
+	SELECT ID
+	FROM AccountNoSetting 
+	WHERE  LEN(ID) = 4 AND UnselectableShipB03 = 1
+)
+ORDER BY ID
+";
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "8,30", this.TextBox1.Text);
+
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
-            this.textBox1.Text = item.GetSelectedString();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.TextBox1.Text = item.GetSelectedString();
+        }
+
+        private void TextBox1_Leave(object sender, EventArgs e)
+        {
+            string newValue = this.TextBox1.Text;
+            if (this.oldValue != newValue)
+            {
+                if (MyUtility.Check.Empty(newValue))
+                {
+                    this.TextBox1.Text = string.Empty;
+                    this.DisplayBox1.Text = string.Empty;
+                    this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+                    return;
+                }
+
+                string cmd = $@"
+SELECT ID ,Name
+FROM SciFMS_AccountNo
+WHERE Junk = 0
+AND ID NOT IN (
+		SELECT ID
+		FROM AccountNoSetting 
+		WHERE  LEN(ID) > 4 AND UnselectableShipB03 = 1
+	)
+AND SUBSTRING(ID,1,4) NOT IN (	
+	SELECT ID
+	FROM AccountNoSetting 
+	WHERE  LEN(ID)=4 AND UnselectableShipB03 = 1
+)
+AND ID = @ID
+ORDER BY ID
+";
+                List<SqlParameter> paras = new List<SqlParameter>();
+                paras.Add(new SqlParameter("@ID", newValue));
+
+                if (!MyUtility.Check.Seek(cmd, paras))
+                {
+                    this.TextBox1.Text = string.Empty;
+                    this.DisplayBox1.Text = string.Empty;
+                    MyUtility.Msg.WarningBox(string.Format("< Account No: {0} > not found!!!", newValue));
+                    return;
+                }
+
+                this.oldValue = newValue;
+                this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+            }
         }
     }
 }

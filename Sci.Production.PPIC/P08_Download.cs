@@ -3,22 +3,18 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
-    public partial class P08_Download : Sci.Win.Tems.QueryForm
+    public partial class P08_Download : Win.Tems.QueryForm
     {
         DataRow Master;
         string ClipPath;
-        int i = 1;
+
         public P08_Download(DataRow master)
         {
             this.InitializeComponent();
@@ -85,9 +81,10 @@ where TableName = 'ReplacementReport' AND UniqueKey = '{this.Master["ID"]}'";
                 return;
             }
 
-            //string fullpath = Path.Combine(this.ClipPath, dr["FileName"].ToString());
+            // string fullpath = Path.Combine(this.ClipPath, dr["FileName"].ToString());
             FileInfo[] filelist = this.GetFile(diInfo, dr["FileName"].ToString()).ToArray();
-            //if (!File.Exists(fullpath))
+
+            // if (!File.Exists(fullpath))
             if (filelist.Length == 0)
             {
                 MyUtility.Msg.WarningBox("File not Exists!");
@@ -99,13 +96,13 @@ where TableName = 'ReplacementReport' AND UniqueKey = '{this.Master["ID"]}'";
             saveFileDialog1.Title = "Save File";
             saveFileDialog1.FileName = dr["FileName"].ToString();
 
-            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    System.IO.File.Copy(filelist[0].FullName, saveFileDialog1.FileName, true);
+                    File.Copy(filelist[0].FullName, saveFileDialog1.FileName, true);
                 }
-                catch (System.IO.IOException exception)
+                catch (IOException exception)
                 {
                     MyUtility.Msg.ErrorBox("Error: Download file fail. Original error: " + exception.Message);
                 }

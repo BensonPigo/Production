@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -15,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R01
     /// </summary>
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         private string shipper;
         private string brand;
@@ -78,7 +75,6 @@ namespace Sci.Production.Shipping
             this.etd1 = this.dateETD.Value1;
             this.etd2 = this.dateETD.Value2;
 
-
             this.FCRDate1 = this.dateFCR.Value1;
             this.CutOffDate1 = this.dateCutoff.Value1;
             this.SOCFMDate1 = this.dateConfirm.Value1;
@@ -94,7 +90,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlCmd_where = new StringBuilder();
@@ -421,7 +417,6 @@ where pl.ID<>'' and 1=1 "));
                 sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
             }
 
-
             if (!MyUtility.Check.Empty(this.FCRDate1))
             {
                 sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.FCRDate1).ToString("d")));
@@ -498,7 +493,7 @@ and exists (select 1
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -514,7 +509,7 @@ and exists (select 1
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + (this.reportType == "1" ? "\\Shipping_R01_MainList.xltx" : "\\Shipping_R01_DetailList.xltx");
+            string strXltName = Env.Cfg.XltPathDir + (this.reportType == "1" ? "\\Shipping_R01_MainList.xltx" : "\\Shipping_R01_DetailList.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -622,7 +617,7 @@ and exists (select 1
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.reportType == "1" ? "Shipping_R01_MainList" : "Shipping_R01_DetailList");
+            string strExcelName = Class.MicrosoftFile.GetName(this.reportType == "1" ? "Shipping_R01_MainList" : "Shipping_R01_DetailList");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -642,6 +637,7 @@ and exists (select 1
                 this.dateDelivery.Value1 = null;
                 this.dateDelivery.Value2 = null;
             }
+
             if (this.radioDetailList.Checked)
             {
                 this.ReportType = "DetailList";

@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtunit_fty
+    partial class Txtunit_fty
     {
         /// <summary> 
         /// 設計工具所需的變數。

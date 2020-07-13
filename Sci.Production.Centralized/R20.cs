@@ -2,11 +2,8 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using Sci.Utility.Excel;
@@ -18,7 +15,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// R20
     /// </summary>
-    internal partial class R20 : Sci.Win.Tems.PrintForm
+    internal partial class R20 : Win.Tems.PrintForm
     {
         private DataTable DT1;
         private string WhereStockStr = string.Empty;
@@ -461,7 +458,7 @@ from #Query
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.DT1 = null;
             DualResult result;
@@ -572,7 +569,7 @@ select DISTINCT ID,ETD from #GarmentInvoice";
                     result = DBProxy.Current.SelectByConn(
                         conn,
                         sqlcmd,
-out dtGMTBooking);
+                        out dtGMTBooking);
                     if (!result)
                     {
                         return result;
@@ -706,7 +703,7 @@ out dtGMTBooking);
                 this.DT1.Rows.Add(totalrow);
             }
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -743,7 +740,7 @@ out dtGMTBooking);
                 title2ForExcel = "製成品進銷存明細表 -- FOB";
             }
 
-            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls(callsExcel);
+            SaveXltReportCls xl = new SaveXltReportCls(callsExcel);
             SaveXltReportCls.XltRptTable data1 = new SaveXltReportCls.XltRptTable(this.DT1);
             xl.BoOpenFile = true;
             data1.ShowHeader = false;
@@ -771,7 +768,7 @@ out dtGMTBooking);
             xl.DicDatas.Add("##Parameter", parameter);
             xl.DicDatas.Add("##Data", data1);
 
-            xl.Save(Sci.Production.Class.MicrosoftFile.GetName(title2ForExcel), false);
+            xl.Save(Class.MicrosoftFile.GetName(title2ForExcel), false);
 
             // 因再次匯出資料時，會殘留上次的連線數，故先清空
             this.SetLoadingText(string.Empty);

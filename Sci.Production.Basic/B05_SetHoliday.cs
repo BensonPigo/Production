@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 
@@ -13,7 +7,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B05_SetHoliday
     /// </summary>
-    public partial class B05_SetHoliday : Sci.Win.Subs.Base
+    public partial class B05_SetHoliday : Win.Subs.Base
     {
         private DateTime reviseDate;
         private int newRecord;
@@ -34,7 +28,7 @@ namespace Sci.Production.Basic
         {
             base.OnFormLoaded();
 
-            string sqlcmd = string.Format("select Name from Holiday WITH (NOLOCK) where HolidayDate='{0}' and FactoryID = '{1}'", this.txtDate.Text, Sci.Env.User.Factory);
+            string sqlcmd = string.Format("select Name from Holiday WITH (NOLOCK) where HolidayDate='{0}' and FactoryID = '{1}'", this.txtDate.Text, Env.User.Factory);
             string holidayName = MyUtility.GetValue.Lookup(sqlcmd);
 
             if (MyUtility.Check.Empty(holidayName))
@@ -56,7 +50,7 @@ namespace Sci.Production.Basic
             {
                 if (this.newRecord == 0)
                 {
-                    string deleteCmd = string.Format("delete Holiday where HolidayDate = '{0}' and FactoryID = '{1}'", this.reviseDate.ToString("d"), Sci.Env.User.Factory);
+                    string deleteCmd = string.Format("delete Holiday where HolidayDate = '{0}' and FactoryID = '{1}'", this.reviseDate.ToString("d"), Env.User.Factory);
                     DualResult result = DBProxy.Current.Execute(null, deleteCmd);
                     if (!result)
                     {
@@ -69,7 +63,7 @@ namespace Sci.Production.Basic
             {
                 if (this.newRecord == 0)
                 {
-                    string updateCmd = string.Format("update Holiday set Name = '{0}' where HolidayDate = '{1}' and FactoryID = '{2}'", this.txtDescription.Text, this.reviseDate.ToString("d"), Sci.Env.User.Factory);
+                    string updateCmd = string.Format("update Holiday set Name = '{0}' where HolidayDate = '{1}' and FactoryID = '{2}'", this.txtDescription.Text, this.reviseDate.ToString("d"), Env.User.Factory);
                     DualResult result = DBProxy.Current.Execute(null, updateCmd);
                     if (!result)
                     {

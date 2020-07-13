@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 
@@ -14,7 +10,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R02
     /// </summary>
-    public partial class R02 : Sci.Win.Tems.PrintForm
+    public partial class R02 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DateTime? sciDate1;
@@ -44,7 +40,7 @@ namespace Sci.Production.PPIC
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             MyUtility.Tool.SetupCombox(this.comboPrintType, 1, 1, "ALL,MR Not Send,MR Send Not Receive,Factory Receive");
             this.comboPrintType.SelectedIndex = 0;
         }
@@ -78,7 +74,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
@@ -189,7 +185,7 @@ where 1=1 "));
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -204,7 +200,7 @@ where 1=1 "));
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R02_ProductionKits.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R02_ProductionKits.xltx");
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R02_ProductionKits.xltx", 1, true, string.Empty, objApp);
 
             return true;

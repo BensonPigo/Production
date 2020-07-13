@@ -72,14 +72,14 @@
             this.gridCutRef = new Sci.Win.UI.Grid();
             this.btnQuery = new Sci.Win.UI.Button();
             this.labelGroup = new Sci.Win.UI.Label();
-            this.txtfactoryByM = new Sci.Production.Class.txtfactory();
+            this.txtfactoryByM = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-            this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
+            this.txtSpreadingNo1 = new Sci.Production.Class.TxtSpreadingNo();
             this.label2 = new Sci.Win.UI.Label();
             this.chkAEQ = new Sci.Win.UI.CheckBox();
             this.labelBalance = new Sci.Win.UI.Label();
@@ -670,7 +670,7 @@
             // txtfactoryByM
             // 
             this.txtfactoryByM.BackColor = System.Drawing.Color.White;
-            this.txtfactoryByM.boolFtyGroupList = true;
+            this.txtfactoryByM.BoolFtyGroupList = true;
             this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactoryByM.IsProduceFty = false;
@@ -1086,7 +1086,7 @@
         private System.Windows.Forms.ToolStripMenuItem insertIntoRecordToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteRecordToolStripMenuItem;
         private Win.UI.Label labelGroup;
-        private Class.txtfactory txtfactoryByM;
+        private Class.Txtfactory txtfactoryByM;
         private Win.UI.Label label1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
@@ -1101,7 +1101,7 @@
         private Win.UI.Label labelBalanceValue;
         private Win.UI.Label labelToalCutOutputValue;
         private Win.UI.CheckBox chkAEQ;
-        private Class.txtSpreadingNo txtSpreadingNo1;
+        private Class.TxtSpreadingNo txtSpreadingNo1;
         private Win.UI.Label label2;
         private Win.UI.NumericBox numTone;
         private Win.UI.Label label3;

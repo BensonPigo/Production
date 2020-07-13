@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtstyle
+    partial class Txtstyle
     {
         /// <summary> 
         /// 設計工具所需的變數。

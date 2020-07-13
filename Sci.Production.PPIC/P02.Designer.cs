@@ -33,7 +33,7 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.btnQuery = new System.Windows.Forms.Button();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
             this.labBrand = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.labelFactory = new Sci.Win.UI.Label();
@@ -280,7 +280,7 @@
         private Win.UI.Grid gridUpdateOrder;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Button btnQuery;
-        private Class.txtbrand txtbrand1;
+        private Class.Txtbrand txtbrand1;
         private Win.UI.Label labBrand;
     }
 }

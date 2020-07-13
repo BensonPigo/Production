@@ -11,7 +11,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// P01_BatchApprove
     /// </summary>
-    public partial class P01_BatchApprove : Sci.Win.Subs.Base
+    public partial class P01_BatchApprove : Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
@@ -265,7 +265,7 @@ inner join dbo.factory WITH (NOLOCK) on factory.id = ods.factoryid
 where ods.finished=0 and ods.isforecast = 0 and factory.IsProduceFty = 1
 and (ods.category = 'B' or ods.category = 'S')
 and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0) ",
-checkSelect ? 1 : 0);
+                    checkSelect ? 1 : 0);
                 if (!chkApprove)
                 {
                     strSQLCmd += " and  ot.apvdate is null";
@@ -357,7 +357,7 @@ checkSelect ? 1 : 0);
 
                 DataTable dtOT;
 
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out dtOT))
                 {
                     if (dtOT.Rows.Count == 0 && ap)

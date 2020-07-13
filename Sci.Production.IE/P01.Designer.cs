@@ -56,7 +56,7 @@
             this.labelApplyVersion = new Sci.Win.UI.Label();
             this.displayApplyNo = new Sci.Win.UI.DisplayBox();
             this.displayApplyVersion = new Sci.Win.UI.DisplayBox();
-            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtseason = new Sci.Production.Class.Txtseason();
             this.labVersionWarning = new System.Windows.Forms.Label();
             this.btnCIPF = new Sci.Win.UI.Button();
             this.ui_pnlBatchUpdate = new Sci.Win.UI.Panel();
@@ -713,7 +713,7 @@
         private Win.UI.ComboBox comboStatus;
         private Win.UI.Label labelStatus;
         private Win.UI.NumericBox numNumOfSewer;
-        private Class.txtseason txtseason;
+        private Class.Txtseason txtseason;
         private Win.UI.ComboBox comboStyle;
         private Win.UI.Label labelNumOfSewer;
         private Win.UI.Label labelBrand;

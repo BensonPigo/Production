@@ -44,9 +44,9 @@
             this.dateETA1 = new Sci.Win.UI.DateBox();
             this.label11 = new Sci.Win.UI.Label();
             this.dateETA2 = new Sci.Win.UI.DateBox();
-            this.txtBrandBranadID = new Sci.Production.Class.txtbrand();
-            this.txtFactoryFactoryID = new Sci.Production.Class.txtCentralizedFactory();
-            this.txtCountryRegion = new Sci.Production.Class.txtcountry();
+            this.txtBrandBranadID = new Sci.Production.Class.Txtbrand();
+            this.txtFactoryFactoryID = new Sci.Production.Class.TxtCentralizedFactory();
+            this.txtCountryRegion = new Sci.Production.Class.Txtcountry();
             this.comboExportRateBy = new Sci.Win.UI.ComboBox();
             this.checkExportDetail = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
@@ -330,9 +330,9 @@
         private Win.UI.DateBox dateETA1;
         private Win.UI.Label label11;
         private Win.UI.DateBox dateETA2;
-        private Sci.Production.Class.txtbrand txtBrandBranadID;
-        private Sci.Production.Class.txtCentralizedFactory txtFactoryFactoryID;
-        private Sci.Production.Class.txtcountry txtCountryRegion;
+        private Sci.Production.Class.Txtbrand txtBrandBranadID;
+        private Sci.Production.Class.TxtCentralizedFactory txtFactoryFactoryID;
+        private Sci.Production.Class.Txtcountry txtCountryRegion;
         private Win.UI.ComboBox comboExportRateBy;
         private Win.UI.CheckBox checkExportDetail;
     }

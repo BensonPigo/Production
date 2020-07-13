@@ -48,7 +48,7 @@
             this.gridBatchImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.lblIrregularQtyReason = new Sci.Win.UI.Label();
-            this.txtIrregularQtyReason = new Sci.Production.Class.txtSubconReason();
+            this.txtIrregularQtyReason = new Sci.Production.Class.TxtSubconReason();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -339,6 +339,6 @@
         private Win.UI.Label labelNoQuoteHint;
         private Win.UI.Label labelNoQuoteHintColor;
         private Win.UI.Label lblIrregularQtyReason;
-        private Class.txtSubconReason txtIrregularQtyReason;
+        private Class.TxtSubconReason txtIrregularQtyReason;
     }
 }

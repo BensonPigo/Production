@@ -5,7 +5,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_B01
     /// </summary>
-    public partial class B01 : Sci.Win.Tems.Input1
+    public partial class B01 : Win.Tems.Input1
     {
         /// <summary>
         /// B01

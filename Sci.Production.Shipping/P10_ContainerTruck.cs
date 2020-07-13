@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
@@ -15,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P05_ContainerTruck
     /// </summary>
-    public partial class P10_ContainerTruck : Sci.Win.Subs.Input4
+    public partial class P10_ContainerTruck : Win.Subs.Input4
     {
         private string ShipPlanID;
         private Dictionary<string, string> di_CYCFS = new Dictionary<string, string>();
@@ -46,18 +43,26 @@ namespace Sci.Production.Shipping
         {
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_CYCFS;
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings id = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings id = new DataGridViewGeneratorTextColumnSettings();
 
             // 限制最大字數，避免寫入DB錯誤
-            DataGridViewGeneratorTextColumnSettings CTNRNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20};
+            DataGridViewGeneratorTextColumnSettings CTNRNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20 };
             DataGridViewGeneratorTextColumnSettings SealNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 15 };
             DataGridViewGeneratorTextColumnSettings TruckNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20 };
 
             id.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
                 {
                     DataTable selectDt;
                     string strSelectSqlCmd = $@"
@@ -70,9 +75,13 @@ and s.IncludeSeaShipping = 1
 and g.CYCFS = 'CY-CY'";
                     DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
 
-                    Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "GB#,LoadingType", "20,10", this.CurrentData["ID"].ToString());
+                    Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "GB#,LoadingType", "20,10", this.CurrentData["ID"].ToString());
                     DialogResult result = selectItem.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     this.CurrentData["ID"] = selectItem.GetSelectedString();
                     this.CurrentData["CYCFS"] = selectItem.GetSelecteds()[0]["LoadingType"];
                     this.CurrentData["BrandGroup"] = selectItem.GetSelecteds()[0]["BrandGroup"];
@@ -162,7 +171,7 @@ and g.CYCFS = 'CY-CY'
             #endregion
 
             #region 若相同Brand, Forwarder, Loading Type, Cut-Off Date才能放在同一個Container#
-            string inCTNRNo = "'" + string.Join("','", dt.AsEnumerable().Where(w =>w.RowState != DataRowState.Deleted).Select(s => MyUtility.Convert.GetString(s["CTNRNo"]))) + "'";
+            string inCTNRNo = "'" + string.Join("','", dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => MyUtility.Convert.GetString(s["CTNRNo"]))) + "'";
             string inPkey = "'" + string.Join("','", dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => MyUtility.Convert.GetString(s["id"]) + MyUtility.Convert.GetString(s["CTNRNo"]) + MyUtility.Convert.GetString(s["TruckNo"]))) + "'";
             string sqlchk = $@"
 select distinct gc.CTNRNo,b.BrandGroup,g.Forwarder,g.CYCFS,g.CutOffDate
@@ -202,8 +211,7 @@ and concat(gc.id, gc.CTNRNo,gc.TruckNo)not in ({inPkey})
                     if (!MyUtility.Convert.GetString(dr["BrandGroup"]).EqualString(MyUtility.Convert.GetString(drs["BrandGroup"])) ||
                         !MyUtility.Convert.GetString(dr["Forwarder"]).EqualString(MyUtility.Convert.GetString(drs["Forwarder"])) ||
                         !MyUtility.Convert.GetString(dr["CYCFS"]).EqualString(MyUtility.Convert.GetString(drs["CYCFS"])) ||
-                        !MyUtility.Convert.GetString(dr["CutOffDate"]).EqualString(MyUtility.Convert.GetString(drs["CutOffDate"]))
-                        )
+                        !MyUtility.Convert.GetString(dr["CutOffDate"]).EqualString(MyUtility.Convert.GetString(drs["CutOffDate"])))
                     {
                         MyUtility.Msg.WarningBox("GB# can be added to the same Container# only GBs with the same Brand、Forwarder、Loading Type and Cut-Off Date");
                         return false;
@@ -242,10 +250,10 @@ where g.ShipPlanID ='{this.ShipPlanID}'
             datas.Columns.Add("EditBy");
             foreach (DataRow gridData in datas.Rows)
             {
-                gridData["AddBy"] = MyUtility.Convert.GetString(gridData["AddName"]) + " - " + MyUtility.GetValue.Lookup("Name", MyUtility.Convert.GetString(gridData["AddName"]), "Pass1", "ID") + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                gridData["AddBy"] = MyUtility.Convert.GetString(gridData["AddName"]) + " - " + MyUtility.GetValue.Lookup("Name", MyUtility.Convert.GetString(gridData["AddName"]), "Pass1", "ID") + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                 if (!MyUtility.Check.Empty(gridData["EditDate"]))
                 {
-                    gridData["EditBy"] = MyUtility.Convert.GetString(gridData["EditName"]) + " - " + MyUtility.GetValue.Lookup("Name", MyUtility.Convert.GetString(gridData["EditName"]), "Pass1", "ID") + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                    gridData["EditBy"] = MyUtility.Convert.GetString(gridData["EditName"]) + " - " + MyUtility.GetValue.Lookup("Name", MyUtility.Convert.GetString(gridData["EditName"]), "Pass1", "ID") + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                 }
 
                 gridData.AcceptChanges();

@@ -31,7 +31,7 @@
             this.labSupp = new Sci.Win.UI.Label();
             this.labType = new Sci.Win.UI.Label();
             this.comboBoxType = new Sci.Win.UI.ComboBox();
-            this.txtlocalSupp = new Sci.Production.Class.txtLocalSuppNoConfirm();
+            this.txtlocalSupp = new Sci.Production.Class.TxtLocalSuppNoConfirm();
             this.SuspendLayout();
             // 
             // print
@@ -109,6 +109,6 @@
         private Win.UI.Label labSupp;
         private Win.UI.Label labType;
         private Win.UI.ComboBox comboBoxType;
-        private Class.txtLocalSuppNoConfirm txtlocalSupp;
+        private Class.TxtLocalSuppNoConfirm txtlocalSupp;
     }
 }

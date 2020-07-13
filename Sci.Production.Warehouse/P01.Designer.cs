@@ -170,15 +170,15 @@
             this.displayIsMixMarker = new Sci.Win.UI.DisplayBox();
             this.comboSubconInType = new Ict.Win.UI.ComboBox();
             this.displayAllowancePO = new Sci.Win.UI.DisplayBox();
-            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
-            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
-            this.txtuserMCHandle = new Sci.Production.Class.txtuser();
-            this.txtuserLocalMR = new Sci.Production.Class.txtuser();
-            this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserPOHandle = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserPOSMR = new Sci.Production.Class.txttpeuser();
+            this.txtdropdownlistCategory = new Sci.Production.Class.Txtdropdownlist();
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
+            this.txtcountryDestination = new Sci.Production.Class.Txtcountry();
+            this.txtuserMCHandle = new Sci.Production.Class.Txtuser();
+            this.txtuserLocalMR = new Sci.Production.Class.Txtuser();
+            this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserPOHandle = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserSMR = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserPOSMR = new Sci.Production.Class.Txttpeuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -1775,7 +1775,7 @@
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
-            this.txtmfactory.boolFtyGroupList = true;
+            this.txtmfactory.BoolFtyGroupList = true;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -1907,10 +1907,10 @@
         private Win.UI.Label labelOrderType;
         private Win.UI.Label labelProject;
         private Win.UI.Label labelCategory;
-        private Class.txtuser txtuserLocalMR;
-        private Class.txtuser txtuserMCHandle;
-        private Class.txttpeuser txttpeuserHandle;
-        private Class.txttpeuser txttpeuserSMR;
+        private Class.Txtuser txtuserLocalMR;
+        private Class.Txtuser txtuserMCHandle;
+        private Class.Txttpeuser txttpeuserHandle;
+        private Class.Txttpeuser txttpeuserSMR;
         private Win.UI.Label labelBuyMonth;
         private Win.UI.Label labelUnit;
         private Win.UI.Label labelLocalMR;
@@ -1924,7 +1924,7 @@
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private Win.UI.EditBox editShipMode;
-        private Class.txtcountry txtcountryDestination;
+        private Class.Txtcountry txtcountryDestination;
         private Win.UI.DisplayBox displayCustCD;
         private Win.UI.Label labelShipMode;
         private Win.UI.Label labelDestination;
@@ -1977,7 +1977,7 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape4;
         private Win.UI.Label labelAllowancePO;
         private Win.UI.DisplayBox displayBuyMonth;
-        private Class.txtfactory txtmfactory;
+        private Class.Txtfactory txtmfactory;
         private Win.UI.DisplayBox displayRMTLETAMasterSP;
         private Win.UI.DateBox dateRMTLETAMasterSP;
         private Win.UI.Label labelRMTLETAMasterSP;
@@ -2014,9 +2014,9 @@
         private Win.UI.Label labelEstPullout;
         private Win.UI.Label labelPOHandle;
         private Win.UI.Label labelPOSMR;
-        private Class.txttpeuser txttpeuserPOHandle;
-        private Class.txttpeuser txttpeuserPOSMR;
-        private Class.txtdropdownlist txtdropdownlistCategory;
+        private Class.Txttpeuser txttpeuserPOHandle;
+        private Class.Txttpeuser txttpeuserPOSMR;
+        private Class.Txtdropdownlist txtdropdownlistCategory;
         private Win.UI.Label labelSDPDate;
         private Win.UI.DateBox dateSDPDate;
         private Win.UI.Label labelCFMDate;

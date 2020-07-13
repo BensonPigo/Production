@@ -36,7 +36,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.btnBatchUpdate = new Sci.Win.UI.Button();
             this.labelThreadCombination = new Sci.Win.UI.Label();
-            this.txtthreadcomb = new Sci.Production.Class.txtthreadcomb();
+            this.txtthreadcomb = new Sci.Production.Class.Txtthreadcomb();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnGenerate = new Sci.Win.UI.Button();
             this.gridDetail = new Sci.Win.UI.Grid();
@@ -272,7 +272,7 @@
         private Win.UI.CheckBox checkOnlyShowNotYetAssignCombination;
         private Win.UI.Label labelMachineType;
         private Win.UI.Label labelThreadCombination;
-        private Class.txtthreadcomb txtthreadcomb;
+        private Class.Txtthreadcomb txtthreadcomb;
         private Win.UI.Button btnBatchUpdate;
         private Win.UI.TextBox txtMachineType;
         private Win.UI.ListControlBindingSource listControlBindingSource1;

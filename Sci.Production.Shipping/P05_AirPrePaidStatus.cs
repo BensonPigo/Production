@@ -1,21 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// P05_AirPrePaidStatus
     /// </summary>
-    public partial class P05_AirPrePaidStatus : Sci.Win.Subs.Base
+    public partial class P05_AirPrePaidStatus : Win.Subs.Base
     {
         private DualResult result;
         private DataTable gridData;
@@ -32,7 +26,7 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string sqlCmd =@"select status,followup from AirPPStatus WITH (NOLOCK)";
+            string sqlCmd = @"select status,followup from AirPPStatus WITH (NOLOCK)";
 
             if (this.result = DBProxy.Current.Select(null, sqlCmd, out this.gridData))
             {

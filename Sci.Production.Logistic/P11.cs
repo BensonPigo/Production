@@ -1,16 +1,10 @@
 ﻿using Ict;
 using Sci.Production.PublicPrg;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
-using Sci.Win.Tems;
 using Ict.Win;
 using Sci.Data;
 using System.IO;
@@ -20,7 +14,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// P11
     /// </summary>
-    public partial class P11 : Sci.Win.Tems.Input6
+    public partial class P11 : Win.Tems.Input6
     {
         /// <summary>
         /// P11
@@ -322,17 +316,16 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
 
         private void btnExcelImport_Click(object sender, EventArgs e)
         {
-            Sci.Production.Logistic.P11_ExcelImport callNextForm = new Sci.Production.Logistic.P11_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            P11_ExcelImport callNextForm = new P11_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
         }
 
         private void btnDownloadExcel_Click(object sender, EventArgs e)
         {
-
             // 呼叫執行檔絕對路徑
-            DirectoryInfo dir = new DirectoryInfo(System.Windows.Forms.Application.StartupPath);
+            DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\ClogP11_ExcelImportTemplete.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\ClogP11_ExcelImportTemplete.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {

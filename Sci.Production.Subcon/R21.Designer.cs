@@ -35,9 +35,9 @@
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.dateAPDate = new Sci.Win.UI.DateRange();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivisionM = new Sci.Production.Class.txtMdivision();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
-            this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
+            this.txtMdivisionM = new Sci.Production.Class.TxtMdivision();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtartworktype_ftyCategory = new Sci.Production.Class.Txtartworktype_fty();
             this.comboOrderBy = new Sci.Win.UI.ComboBox();
             this.labelOrderBy = new Sci.Win.UI.Label();
             this.SuspendLayout();
@@ -149,8 +149,8 @@
             // txtartworktype_ftyCategory
             // 
             this.txtartworktype_ftyCategory.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyCategory.cClassify = "\'P\'";
-            this.txtartworktype_ftyCategory.cSubprocess = "";
+            this.txtartworktype_ftyCategory.CClassify = "\'P\'";
+            this.txtartworktype_ftyCategory.CSubprocess = "";
             this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(114, 48);
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
@@ -228,9 +228,9 @@
         private Win.UI.Label labelSupplier;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.DateRange dateAPDate;
-        private Class.txtartworktype_fty txtartworktype_ftyCategory;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
-        private Class.txtMdivision txtMdivisionM;
+        private Class.Txtartworktype_fty txtartworktype_ftyCategory;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
+        private Class.TxtMdivision txtMdivisionM;
         private Win.UI.Label labelM;
         private Win.UI.ComboBox comboOrderBy;
         private Win.UI.Label labelOrderBy;

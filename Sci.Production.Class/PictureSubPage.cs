@@ -1,22 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class PictureSubPage : Sci.Win.Subs.Base
+    /// <summary>
+    /// PictureSubPage
+    /// </summary>
+    public partial class PictureSubPage : Win.Subs.Base
     {
+        /// <summary>
+        /// PictureSubPage
+        /// </summary>
+        /// <param name="img">Image</param>
         public PictureSubPage(Image img)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.pbPicture.Image = img;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

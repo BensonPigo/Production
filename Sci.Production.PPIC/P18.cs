@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Sci.Win.Tems;
 using Ict.Win;
 using Sci.Data;
 using System.Linq;
-using System.Transactions;
 using System.Data.SqlClient;
 using Sci.Win.Tools;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -20,7 +16,7 @@ using System.Reflection;
 
 namespace Sci.Production.PPIC
 {
-    public partial class P18 : Sci.Win.Tems.Input8
+    public partial class P18 : Win.Tems.Input8
     {
         private DualResult result;
         private string Excelfile;
@@ -29,7 +25,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format($"MDivisionID='{Sci.Env.User.Keyword}'");
+            this.DefaultFilter = string.Format($"MDivisionID='{Env.User.Keyword}'");
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -88,13 +84,20 @@ where a.id='{masterID}'
         protected override void OnDetailGridSetup()
         {
             #region SP#
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_SP = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_SP = new DataGridViewGeneratorTextColumnSettings();
             col_SP.CellValidating += (s, e) =>
              {
-                 if (this.CurrentDetailData == null) return;
+                 if (this.CurrentDetailData == null)
+                 {
+                     return;
+                 }
+
                  string oldvalue = MyUtility.Convert.GetString(this.CurrentDetailData["OrderID"]);
                  string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
-                 if (oldvalue == newvalue) return;
+                 if (oldvalue == newvalue)
+                 {
+                     return;
+                 }
 
                  if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                  {
@@ -106,7 +109,7 @@ where a.id='{masterID}'
 select o.*,[Destination] = c.Alias from Orders o
 inner join Country c on c.ID= o.Dest
 where o.id=@id
-and o.MDivisionID='{Sci.Env.User.Keyword}'";
+and o.MDivisionID='{Env.User.Keyword}'";
                      if (!(this.result = DBProxy.Current.Select(string.Empty, sql, sqlpara, out odt)))
                      {
                          this.ShowErr(this.result);
@@ -194,17 +197,22 @@ WHERE oq.ID= @id
             #endregion
 
             #region SEQ
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_Seq = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_Seq = new DataGridViewGeneratorTextColumnSettings();
             col_Seq.CellValidating += (s, e) =>
             {
-                if (this.CurrentDetailData == null) return;
+                if (this.CurrentDetailData == null)
+                {
+                    return;
+                }
+
                 DataRow dr;
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
                     List<SqlParameter> sqlpara = new List<SqlParameter>();
                     sqlpara.Add(new SqlParameter("@seq", e.FormattedValue));
 
-                    if (MyUtility.Check.Seek($@"
+                    if (MyUtility.Check.Seek(
+                        $@"
 SELECT Seq,ShipmodeID as 'ShipMode',oq.Qty,BuyerDelivery
 ,[TotalCrtns] = isnull(packing.qty,0)
 FROM Order_QtyShip oq
@@ -246,15 +254,24 @@ where oq.id='{this.CurrentDetailData["OrderID"]}' and oq.seq=@seq", sqlpara, out
 
             col_Seq.EditingMouseDown += (s, e) =>
             {
-                if (this.CurrentDetailData == null) return;
+                if (this.CurrentDetailData == null)
+                {
+                    return;
+                }
+
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem sel = new Win.Tools.SelectItem($@"
+                    SelectItem sel = new SelectItem(
+                        $@"
 SELECT Seq,ShipmodeID as 'ShipMode'
 FROM Order_QtyShip
 WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentDetailData["OrderShipmodeSeq"].ToString(), null);
                     DialogResult res = sel.ShowDialog();
-                    if (res == DialogResult.Cancel) return;
+                    if (res == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     this.CurrentDetailData["OrderShipmodeSeq"] = sel.GetSelecteds()[0]["seq"];
                     this.CurrentDetailData["ShipModeID"] = sel.GetSelecteds()[0]["ShipMode"];
                     this.CurrentDetailData.EndEdit();
@@ -263,16 +280,20 @@ WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentD
             #endregion
 
             #region Ship Mode
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_ShipMode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_ShipMode = new DataGridViewGeneratorTextColumnSettings();
             col_ShipMode.CellValidating += (s, e) =>
             {
-                if (this.CurrentDetailData == null) return;
+                if (this.CurrentDetailData == null)
+                {
+                    return;
+                }
 
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
                     List<SqlParameter> sqlpara = new List<SqlParameter>();
                     sqlpara.Add(new SqlParameter("@ShipmodeID", e.FormattedValue));
-                    if (MyUtility.Check.Seek($@"
+                    if (MyUtility.Check.Seek(
+                        $@"
 select 1 
 from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]}' and ShipmodeID=@ShipmodeID", sqlpara))
                     {
@@ -291,15 +312,24 @@ from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]}' and ShipmodeID
 
             col_ShipMode.EditingMouseDown += (s, e) =>
             {
-                if (this.CurrentDetailData == null) return;
+                if (this.CurrentDetailData == null)
+                {
+                    return;
+                }
+
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem sel = new Win.Tools.SelectItem($@"
+                    SelectItem sel = new SelectItem(
+                        $@"
 SELECT Seq,ShipmodeID as 'ShipMode'
 FROM Order_QtyShip
 WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentDetailData["OrderShipmodeSeq"].ToString(), null);
                     DialogResult res = sel.ShowDialog();
-                    if (res == DialogResult.Cancel) return;
+                    if (res == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     this.CurrentDetailData["OrderShipmodeSeq"] = sel.GetSelecteds()[0]["seq"];
                     this.CurrentDetailData["ShipModeID"] = sel.GetSelecteds()[0]["ShipMode"];
                     this.CurrentDetailData.EndEdit();
@@ -308,11 +338,14 @@ WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentD
             #endregion
 
             #region AccLacking
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_acc = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_acc = new DataGridViewGeneratorTextColumnSettings();
 
             col_acc.CellValidating += (s, e) =>
             {
-                if (this.CurrentDetailData == null) return;
+                if (this.CurrentDetailData == null)
+                {
+                    return;
+                }
 
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
@@ -335,12 +368,12 @@ ORDER BY PSD.Refno ";
                     List<string> trueRefno = new List<string>();
                     foreach (string refno in getRefno)
                     {
-                        if (!dt.AsEnumerable().Any(row => row["Refno"].EqualString(refno)) && !(refno.EqualString(string.Empty)))
+                        if (!dt.AsEnumerable().Any(row => row["Refno"].EqualString(refno)) && !refno.EqualString(string.Empty))
                         {
                             selectRefno &= false;
                             errRefno.Add(refno);
                         }
-                        else if (!(refno.EqualString(string.Empty)))
+                        else if (!refno.EqualString(string.Empty))
                         {
                             trueRefno.Add(refno);
                         }
@@ -349,20 +382,26 @@ ORDER BY PSD.Refno ";
                     if (!selectRefno)
                     {
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Acc Lacking : " + string.Join(",", (errRefno).ToArray()) + " Data not found!!", "Data not found");
+                        MyUtility.Msg.WarningBox("Acc Lacking : " + string.Join(",", errRefno.ToArray()) + " Data not found!!", "Data not found");
                     }
+
                     trueRefno.Sort();
-                    this.CurrentDetailData["AccLacking"] = string.Join(",", (trueRefno).ToArray());
+                    this.CurrentDetailData["AccLacking"] = string.Join(",", trueRefno.ToArray());
                     this.CurrentDetailData.EndEdit();
                 }
             };
 
             col_acc.EditingMouseDown += (s, e) =>
              {
-                 if (this.CurrentDetailData == null) return;
+                 if (this.CurrentDetailData == null)
+                 {
+                     return;
+                 }
+
                  if (this.EditMode && e.Button == MouseButtons.Right)
                  {
-                     Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2($@"
+                     SelectItem2 item = new SelectItem2(
+                         $@"
 SELECT DISTINCT PSD.Refno
 FROM PO_Supp_Detail PSD
 LEFT JOIN Fabric F ON F.SCIRefno = PSD.SCIRefno
@@ -373,7 +412,11 @@ WHERE O.id ='{this.CurrentDetailData["OrderID"]}'
   AND PSD.Junk=0
 ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                      DialogResult result = item.ShowDialog();
-                     if (result == DialogResult.Cancel) { return; }
+                     if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                      this.CurrentDetailData["AccLacking"] = item.GetSelectedString();
                      this.CurrentDetailData.EndEdit();
                  }
@@ -440,15 +483,15 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.CurrentMaintain["cDate"] = DateTime.Now.ToString("yyyy/MM/dd");
         }
 
         protected override void ClickSend()
         {
             base.ClickSend();
-            string updateCmd = $@"update AVO set Status = 'Sent', PPICSupApvDate = GETDATE(), PPICSupApvName = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Sent', PPICSupApvDate = GETDATE(), PPICSupApvName = '{Env.User.UserID}', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -464,7 +507,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
         protected override void ClickRecall()
         {
             base.ClickRecall();
-            string updateCmd = $@"update AVO set Status = 'New', PPICSupApvDate = null, PPICSupApvName = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'New', PPICSupApvDate = null, PPICSupApvName = '', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -479,7 +522,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickCheck()
         {
-            string updateCmd = $@"update AVO set Status = 'Checked', WHSupApvDate  = GetDate(), WHSupApvName = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Checked', WHSupApvDate  = GetDate(), WHSupApvName = '{Env.User.UserID}', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -496,7 +539,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickUncheck()
         {
-            string updateCmd = $@"update AVO set Status = 'Sent', WHSupApvDate  = null, WHSupApvName  = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Sent', WHSupApvDate  = null, WHSupApvName  = '', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -513,7 +556,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickReceive()
         {
-            string updateCmd = $@"update AVO set Status = 'Received', PPDApvDate  = GetDate(), PPDApvName  = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Received', PPDApvDate  = GetDate(), PPDApvName  = '{Env.User.UserID}', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -530,7 +573,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickReturn()
         {
-            string updateCmd = $@"update AVO set Status = 'Checked', PPDApvDate  = null, PPDApvName  = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Checked', PPDApvDate  = null, PPDApvName  = '', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -547,7 +590,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickConfirm()
         {
-            string updateCmd = $@"update AVO set Status = 'Confirmed', ProdApvDate = GetDate(), ProdApvName = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Confirmed', ProdApvDate = GetDate(), ProdApvName = '{Env.User.UserID}', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -564,7 +607,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickUnconfirm()
         {
-            string updateCmd = $@"update AVO set Status = 'Received', ProdApvDate = null, ProdApvName = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Received', ProdApvDate = null, ProdApvName = '', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -587,6 +630,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                 MyUtility.Msg.WarningBox("The record status is not new, can't modify !!");
                 return false;
             }
+
             return base.ClickEdit();
         }
 
@@ -624,7 +668,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
             #region 取單號
             if (this.IsDetailInserting)
             {
-                string tmpID = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "AV", "AVO", DateTime.Now);
+                string tmpID = MyUtility.GetValue.GetID(Env.User.Keyword + "AV", "AVO", DateTime.Now);
                 if (MyUtility.Check.Empty(tmpID))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!");
@@ -761,12 +805,12 @@ where a2.id ='{this.CurrentMaintain["id"]}'
                         FinalETA = row1["FinalETA"].ToString(),
                         BuyerDelivery = (row1["BuyerDelivery"] == DBNull.Value) ? string.Empty : ((DateTime)row1["BuyerDelivery"]).ToString("yyyy/MM/dd"),
                         VasShas = row1["VAS"].ToString(),
-                        Alias = row1["Alias"].ToString()
+                        Alias = row1["Alias"].ToString(),
                     }).ToList();
 
                 rd.ReportDataSource = data;
                 rd.ReportResource = reportresource;
-                var frm1 = new Sci.Win.Subs.ReportView(rd);
+                var frm1 = new Win.Subs.ReportView(rd);
                 frm1.MdiParent = this.MdiParent;
                 frm1.TopMost = true;
                 frm1.Show();
@@ -822,7 +866,7 @@ outer apply(
 )po3
 where a2.id ='{this.CurrentMaintain["id"]}'
 ";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd,out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("data faile.\r\n" + result.ToString());
@@ -830,7 +874,7 @@ where a2.id ='{this.CurrentMaintain["id"]}'
             }
 
             Excel.Application objApp = new Excel.Application();
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_P18.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\PPIC_P18.xltx", objApp);
 
             Excel.Worksheet worksheet = objApp.Sheets[1];
 
@@ -852,12 +896,11 @@ where a2.id ='{this.CurrentMaintain["id"]}'
             objApp.Visible = false;
             objApp.Columns.AutoFit();
             objApp.Rows.AutoFit();
-            this.Excelfile = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P18");
+            this.Excelfile = Class.MicrosoftFile.GetName("PPIC_P18");
             objApp.ActiveWorkbook.SaveAs(this.Excelfile);
             objApp.Quit();
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);
-
         }
 
         private void btnSendEMail_Click(object sender, EventArgs e)
@@ -867,7 +910,7 @@ where a2.id ='{this.CurrentMaintain["id"]}'
 
             if (MyUtility.Check.Seek("select * from MailTo where id='017'", out dr))
             {
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString(), dr["Subject"].ToString(), this.Excelfile, dr["Content"].ToString(), false, false);
+                var email = new MailTo(Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString(), dr["Subject"].ToString(), this.Excelfile, dr["Content"].ToString(), false, false);
                 email.ShowDialog(this);
             }
         }

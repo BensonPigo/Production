@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
-using System.Linq;
 
 namespace Sci.Production.Packing
 {
     /// <summary>
     /// Packing_P12
     /// </summary>
-    public partial class P12 : Sci.Win.Tems.QueryForm
+    public partial class P12 : Win.Tems.QueryForm
     {
         private DualResult result;
         private DataTable gridData;
@@ -122,9 +117,9 @@ and o.Qty > 0
 and (oq.EstPulloutDate <= '{1}' or dateadd(day,4,o.SewOffLine) <= '{1}')
 and o.Category in ({2})
 ",
-            Sci.Env.User.Keyword,
-            Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("d"),
-            category));
+                Env.User.Keyword,
+                Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("d"),
+                category));
             sqlCmd.Append(@"
 select distinct id,seq into #tmpIDSeq from  #tmpClocationids
 
@@ -238,7 +233,7 @@ drop table #tmpClocationids,#tmpIDSeq,#tmp1,#tmp2
                 return;
             }
 
-            Sci.Production.Packing.P12_Print callNextForm = new Sci.Production.Packing.P12_Print((DataTable)this.listControlBindingSource1.DataSource);
+            P12_Print callNextForm = new P12_Print((DataTable)this.listControlBindingSource1.DataSource);
             callNextForm.ShowDialog(this);
         }
 

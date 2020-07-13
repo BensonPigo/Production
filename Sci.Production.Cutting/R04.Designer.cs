@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.radioByDetail = new Sci.Win.UI.RadioButton();
             this.radioByFactory = new Sci.Win.UI.RadioButton();
@@ -294,6 +294,6 @@
         private Win.UI.Label label4;
         private Win.UI.RadioButton radioByFactory;
         private Win.UI.Label labelFactory;
-        private Class.comboFactory comboFactory;
+        private Class.ComboFactory comboFactory;
     }
 }

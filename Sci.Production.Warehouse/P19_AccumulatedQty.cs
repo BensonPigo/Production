@@ -1,32 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
 
-
 namespace Sci.Production.Warehouse
 {
-    public partial class P19_AccumulatedQty : Sci.Win.Subs.Base
+    public partial class P19_AccumulatedQty : Win.Subs.Base
     {
-        public Sci.Win.Tems.Base P19;
+        public Win.Tems.Base P19;
         protected DataRow dr;
+
         public P19_AccumulatedQty(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
+            this.InitializeComponent();
+            this.dr = data;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             StringBuilder selectCommand1 = new StringBuilder();
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
 ;with Z as(
 	select A.PoId,A.Seq1,A.Seq2
 	,requestqty =isnull(x.q,0 )
@@ -84,23 +81,25 @@ select  PoId
         ,[Description] = dbo.getmtldesc(Z.poid,Z.seq1,Z.seq2,2,0)
 from Z
 group by PoId,Seq1,Seq2,Qty,stockunit;
-", dr["id"].ToString(), Sci.Env.User.Keyword, Sci.Env.User.Factory));
+", this.dr["id"].ToString(), Env.User.Keyword, Env.User.Factory));
 
             DataTable selectDataTable1;
-            P19.ShowWaitMessage("Data Loading...");
+            this.P19.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
-            
+
             if (selectResult1 == false)
-            { ShowErr(selectCommand1.ToString(), selectResult1); }
+            {
+                this.ShowErr(selectCommand1.ToString(), selectResult1);
+            }
 
-            P19.HideWaitMessage();
+            this.P19.HideWaitMessage();
 
-            bindingSource1.DataSource = selectDataTable1;
+            this.bindingSource1.DataSource = selectDataTable1;
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridAccumulatedQty.IsEditingReadOnly = true;
-            this.gridAccumulatedQty.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
+            this.gridAccumulatedQty.DataSource = this.bindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))

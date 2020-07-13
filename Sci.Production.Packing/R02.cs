@@ -2,11 +2,8 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -15,7 +12,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_Packing
     /// </summary>
-    public partial class R02 : Sci.Win.Tems.PrintForm
+    public partial class R02 : Win.Tems.PrintForm
     {
         /// <summary>
         /// R02
@@ -29,8 +26,8 @@ namespace Sci.Production.Packing
             DataTable factory;
             DBProxy.Current.Select(null, "select '' union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
-            this.txtMdivision1.Text = Sci.Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
+            this.txtMdivision1.Text = Env.User.Keyword;
         }
 
         private string _sp1;
@@ -153,7 +150,7 @@ namespace Sci.Production.Packing
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region where
             string where = string.Empty;
@@ -336,7 +333,7 @@ drop table #tmp
             }
             #endregion
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -358,7 +355,7 @@ drop table #tmp
             this.ShowWaitMessage("Excel Processing");
 
             string excelName = "Packing_R02";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             Excel.Worksheet worksheet = excelApp.Sheets[1];
             worksheet.Cells[2, 2] = this._sp1 + "~" + this._sp2;
             worksheet.Cells[2, 5] = this._po1 + "~" + this._po2;

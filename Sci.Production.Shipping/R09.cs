@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -15,7 +13,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R09
     /// </summary>
-    public partial class R09 : Sci.Win.Tems.PrintForm
+    public partial class R09 : Win.Tems.PrintForm
     {
         private DateTime? arrivePortDate1;
         private DateTime? arrivePortDate2;
@@ -73,7 +71,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             if (this.reportType == 1)
@@ -263,14 +261,15 @@ select AccountID from FtyExportData --where AccountID not in ('61012001','610120
                 }
 
                 StringBuilder allAccno = new StringBuilder();
-                //allAccno.Append("[61012001],[61012002],[61012003],[61012004],[61012005]");
-                allAccno.Append("[" + this.accnoData.AsEnumerable().Select(o => o["Accno"].ToString()).JoinToString("],[") +"]");
-                //foreach (DataRow dr in this.accnoData.Rows)
-                //{
+
+                // allAccno.Append("[61012001],[61012002],[61012003],[61012004],[61012005]");
+                allAccno.Append("[" + this.accnoData.AsEnumerable().Select(o => o["Accno"].ToString()).JoinToString("],[") + "]");
+
+                // foreach (DataRow dr in this.accnoData.Rows)
+                // {
                 //    allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
 
-                //}
-
+                // }
                 sqlCmd.Append(string.Format(
                     @"),
 tmpAllData
@@ -498,7 +497,7 @@ select * from FtyExportData");
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -514,7 +513,7 @@ select * from FtyExportData");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + (this.reportType == 1 ? "\\Shipping_R09_ShareExpenseImportByWK.xltx" : "\\Shipping_R09_ShareExpenseImportByWKByFee.xltx");
+            string strXltName = Env.Cfg.XltPathDir + (this.reportType == 1 ? "\\Shipping_R09_ShareExpenseImportByWK.xltx" : "\\Shipping_R09_ShareExpenseImportByWKByFee.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -565,11 +564,12 @@ select * from FtyExportData");
                     objArray[0, 12] = dr["PortArrival"];
                     objArray[0, 13] = dr["DocArrival"];
                     objArray[0, 14] = dr["CurrencyID"];
-                    //objArray[0, 15] = MyUtility.Check.Empty(dr["61012001"]) ? 0 : dr["61012001"];
-                    //objArray[0, 16] = MyUtility.Check.Empty(dr["61012002"]) ? 0 : dr["61012002"];
-                    //objArray[0, 17] = MyUtility.Check.Empty(dr["61012003"]) ? 0 : dr["61012003"];
-                    //objArray[0, 18] = MyUtility.Check.Empty(dr["61012004"]) ? 0 : dr["61012004"];
-                    //objArray[0, 19] = MyUtility.Check.Empty(dr["61012005"]) ? 0 : dr["61012005"];
+
+                    // objArray[0, 15] = MyUtility.Check.Empty(dr["61012001"]) ? 0 : dr["61012001"];
+                    // objArray[0, 16] = MyUtility.Check.Empty(dr["61012002"]) ? 0 : dr["61012002"];
+                    // objArray[0, 17] = MyUtility.Check.Empty(dr["61012003"]) ? 0 : dr["61012003"];
+                    // objArray[0, 18] = MyUtility.Check.Empty(dr["61012004"]) ? 0 : dr["61012004"];
+                    // objArray[0, 19] = MyUtility.Check.Empty(dr["61012005"]) ? 0 : dr["61012005"];
                     i = 0;
                     foreach (DataRow ddr in this.accnoData.Rows)
                     {
@@ -631,7 +631,7 @@ select * from FtyExportData");
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.reportType == 1 ? "Shipping_R09_ShareExpenseImportByWK" : "Shipping_R09_ShareExpenseImportByWKByFee");
+            string strExcelName = Class.MicrosoftFile.GetName(this.reportType == 1 ? "Shipping_R09_ShareExpenseImportByWK" : "Shipping_R09_ShareExpenseImportByWKByFee");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -655,7 +655,7 @@ order by ID";
 
             DataTable tbSelect;
             DBProxy.Current.Select(null, selectCommand, out tbSelect);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbSelect, "ID,Abb", "9,13", this.Text, false, ",", "ID,Abb");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbSelect, "ID,Abb", "9,13", this.Text, false, ",", "ID,Abb");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

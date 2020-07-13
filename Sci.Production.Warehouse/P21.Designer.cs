@@ -43,7 +43,7 @@
             this.btnUpdate = new Sci.Win.UI.Button();
             this.cmbMaterialType = new Sci.Win.UI.ComboBox();
             this.labelMaterialType = new Sci.Win.UI.Label();
-            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.txtSeq = new Sci.Production.Class.TxtSeq();
             this.labelRef = new Sci.Win.UI.Label();
             this.txtRef = new Sci.Win.UI.TextBox();
             this.txtRoll = new Sci.Win.UI.TextBox();
@@ -56,7 +56,7 @@
             this.labSelectCnt = new Sci.Win.UI.Label();
             this.numSelectCnt = new Sci.Win.UI.NumericBox();
             this.labLocation = new Sci.Win.UI.Label();
-            this.txtMtlLocation = new Sci.Production.Class.txtMtlLocation(this.components);
+            this.txtMtlLocation = new Sci.Production.Class.TxtMtlLocation(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
             this.SuspendLayout();
             // 
@@ -213,8 +213,8 @@
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq.Location = new System.Drawing.Point(445, 43);
             this.txtSeq.Name = "txtSeq";
-            this.txtSeq.seq1 = "";
-            this.txtSeq.seq2 = "";
+            this.txtSeq.Seq1 = "";
+            this.txtSeq.Seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 6;
             // 
@@ -442,7 +442,7 @@
         private Win.UI.Button btnUpdate;
         private Win.UI.ComboBox cmbMaterialType;
         private Win.UI.Label labelMaterialType;
-        private Class.txtSeq txtSeq;
+        private Class.TxtSeq txtSeq;
         private Win.UI.Label labelRef;
         private Win.UI.TextBox txtRef;
         private Win.UI.TextBox txtRoll;
@@ -455,6 +455,6 @@
         private Win.UI.Label labSelectCnt;
         private Win.UI.NumericBox numSelectCnt;
         private Win.UI.Label labLocation;
-        private Class.txtMtlLocation txtMtlLocation;
+        private Class.TxtMtlLocation txtMtlLocation;
     }
 }

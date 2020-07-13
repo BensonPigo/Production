@@ -40,7 +40,7 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.lblGroup = new Sci.Win.UI.Label();
             this.txtGroup = new Sci.Win.UI.TextBox();
-            this.txtCellNo = new Sci.Production.Class.txtCell();
+            this.txtCellNo = new Sci.Production.Class.TxtCell();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -267,7 +267,7 @@
         private Win.UI.Label labelLine;
         private Win.UI.Label labelFactory;
         private Win.UI.CheckBox checkJunk;
-        private Class.txtCell txtCellNo;
+        private Class.TxtCell txtCellNo;
         private Win.UI.TextBox txtGroup;
         private Win.UI.Label lblGroup;
     }

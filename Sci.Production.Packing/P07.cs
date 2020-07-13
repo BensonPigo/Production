@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Packing
 {
     /// <summary>
     /// Packing_P07
     /// </summary>
-    public partial class P07 : Sci.Win.Tems.QueryForm
+    public partial class P07 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable gridData;
@@ -76,7 +72,7 @@ inner join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join GMTBooking g WITH (NOLOCK) on p.INVNo = g.ID
 left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id and oq.Seq = pd.OrderShipmodeSeq
 where p.Type = 'B'
-and p.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+and p.MDivisionID = '{0}'", Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtGarmentBookingStart.Text))
             {
                 sqlCmd.Append(string.Format(" and p.INVNo >= '{0}'", this.txtGarmentBookingStart.Text));
@@ -249,7 +245,6 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
             }
 
             PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dt, this.radioFormA.Checked ? "1" : "2", dsPrintdata, dsctnDim, dsqtyBDown);
-
 
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Complete.");

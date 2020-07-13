@@ -39,7 +39,7 @@
             this.checkZipper = new Sci.Win.UI.CheckBox();
             this.checkIsICRItem = new Sci.Win.UI.CheckBox();
             this.labelIssueType = new Sci.Win.UI.Label();
-            this.txtDropdownlistIssueType = new Sci.Production.Class.txtdropdownlist();
+            this.txtDropdownlistIssueType = new Sci.Production.Class.Txtdropdownlist();
             this.checkIsTrimCardOther = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -280,7 +280,7 @@
         private Win.UI.CheckBox checkExtend;
         private Win.UI.CheckBox checkJunk;
         private Win.UI.Label labelIssueType;
-        private Class.txtdropdownlist txtDropdownlistIssueType;
+        private Class.Txtdropdownlist txtDropdownlistIssueType;
         private Win.UI.CheckBox checkIsTrimCardOther;
     }
 }

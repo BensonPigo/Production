@@ -35,9 +35,9 @@
             this.dateAmtRevised = new Sci.Win.UI.DateRange();
             this.comboPaymentSettled = new Sci.Win.UI.ComboBox();
             this.comboStatus = new Sci.Win.UI.ComboBox();
-            this.txtuserSMR = new Sci.Production.Class.txtuser();
-            this.txtuserHandle = new Sci.Production.Class.txtuser();
-            this.txtLocalSuppSupplier = new Sci.Production.Class.txtLocalSuppNoConfirm();
+            this.txtuserSMR = new Sci.Production.Class.Txtuser();
+            this.txtuserHandle = new Sci.Production.Class.Txtuser();
+            this.txtLocalSuppSupplier = new Sci.Production.Class.TxtLocalSuppNoConfirm();
             this.txtSDNoEnd = new Sci.Win.UI.TextBox();
             this.label15 = new Sci.Win.UI.Label();
             this.txtSDNoStart = new Sci.Win.UI.TextBox();
@@ -531,9 +531,9 @@
         private Win.UI.TextBox txtSDNoEnd;
         private Win.UI.Label label15;
         private Win.UI.TextBox txtSDNoStart;
-        private Class.txtLocalSuppNoConfirm txtLocalSuppSupplier;
-        private Class.txtuser txtuserSMR;
-        private Class.txtuser txtuserHandle;
+        private Class.TxtLocalSuppNoConfirm txtLocalSuppSupplier;
+        private Class.Txtuser txtuserSMR;
+        private Class.Txtuser txtuserHandle;
         private Win.UI.ComboBox comboOrderBy;
         private Win.UI.DateRange dateReceiveddate;
         private Win.UI.DateRange dateAmtRevised;

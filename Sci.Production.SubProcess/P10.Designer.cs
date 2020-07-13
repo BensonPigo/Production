@@ -74,7 +74,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.chkcontainOverload = new Sci.Win.UI.CheckBox();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -730,7 +730,7 @@
         private Win.UI.DateRange dateRangeSCIDelivery;
         private Win.UI.Label labelWorkHour;
         private Win.UI.Label labelEff;
-        private Class.txtfactory txtfactory1;
+        private Class.Txtfactory txtfactory1;
         private Win.UI.Button btnQuery;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private Win.UI.Grid gridLeft;

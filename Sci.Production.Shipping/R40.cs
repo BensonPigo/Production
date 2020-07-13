@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -16,12 +12,11 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R40
     /// </summary>
-    public partial class R40 : Sci.Win.Tems.PrintForm
+    public partial class R40 : Win.Tems.PrintForm
     {
         private string contract;
         private string hscode;
         private string nlcode;
-        private string sp;
         private List<string> FactoryList;
         private bool liguidationonly;
         private DataTable Summary;
@@ -82,7 +77,7 @@ namespace Sci.Production.Shipping
                     return false;
                 }
 
-                Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(excelFile);
+                Excel.Application excel = MyUtility.Excel.ConnectExcel(excelFile);
                 if (excel == null)
                 {
                     return false;
@@ -91,12 +86,12 @@ namespace Sci.Production.Shipping
                 this.ShowWaitMessage("Starting Import EXCEL...");
 
                 excel.Visible = false;
-                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+                Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
                 int intRowsCount = worksheet.UsedRange.Rows.Count + 6;
                 int intRowsStart = 3;
                 int intRowsRead = intRowsStart - 1;
 
-                Microsoft.Office.Interop.Excel.Range range;
+                Excel.Range range;
                 object[,] objCellArray;
 
                 while (intRowsRead < intRowsCount)
@@ -129,7 +124,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region 先取得合約(VNContract)的所有工廠Factory
             // FactoryList
@@ -202,7 +197,7 @@ from (
 ) a
 group by a.NLCode;",
                 this.contract,
-                Sci.Env.User.Keyword));
+                Env.User.Keyword));
 
             if (this.liguidationonly)
             {
@@ -1537,13 +1532,13 @@ drop table  #tmpContract
             , #tmpScrapQty
             , #tmpOutstanding 
 ", MyUtility.Check.Empty(this.hscode) ? string.Empty : string.Format("and HSCode = '{0}'", this.hscode),
-                                                                       MyUtility.Check.Empty(this.nlcode) ? string.Empty : string.Format("and NLCode = '{0}'", this.nlcode)));
+                    MyUtility.Check.Empty(this.nlcode) ? string.Empty : string.Format("and NLCode = '{0}'", this.nlcode)));
                 #endregion
             }
             #endregion
 
             DataTable[] allData;
-            DBProxy.Current.DefaultTimeout = 12000;  //加長時間為 2 小時，避免timeout
+            DBProxy.Current.DefaultTimeout = 12000;  // 加長時間為 2 小時，避免timeout
 
             DualResult queryResult = MyUtility.Tool.ProcessWithDatatable(this.dtImportEcusData, string.Empty, sqlCmd.ToString(), out allData, temptablename: "#CusQty");
             if (!queryResult)
@@ -1566,7 +1561,7 @@ drop table  #tmpContract
                 this.AlreadySewingOutput = allData[9];
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -1582,15 +1577,14 @@ drop table  #tmpContract
             this.SetCount(this.Summary.Rows.Count + (this.liguidationonly ? 0 : this.OnRoadMaterial.Rows.Count + this.WHDetail.Rows.Count + this.WIPDetail.Rows.Count + this.ProdDetail.Rows.Count + this.ScrapDetail.Rows.Count + this.OnRoadProduction.Rows.Count + this.Outstanding.Rows.Count));
 
             this.ShowWaitMessage("Starting EXCEL...");
-            bool result;
             this.ShowWaitMessage("Starting EXCEL...Summary");
             string filename = string.Empty;
             string ftys = string.Join(",", this.FactoryList);
             if (!this.liguidationonly)
             {
                 filename = "Shipping_R40_Summary.xltx";
-                Excel.Application excelSummary = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
-                Sci.Utility.Report.ExcelCOM comSummary = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelSummary);
+                Excel.Application excelSummary = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                Utility.Report.ExcelCOM comSummary = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelSummary);
                 comSummary.ColumnsAutoFit = true;
                 comSummary.WriteTable(this.Summary, 3);
 
@@ -1602,8 +1596,8 @@ drop table  #tmpContract
                 {
                     this.ShowWaitMessage("Starting EXCEL...OnRoadMaterial List");
                     filename = "Shipping_R40_OnRoadMaterial.xltx";
-                    Excel.Application excelOnRoadMaterial = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
-                    Sci.Utility.Report.ExcelCOM comOnRoadMaterial = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelOnRoadMaterial);
+                    Excel.Application excelOnRoadMaterial = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                    Utility.Report.ExcelCOM comOnRoadMaterial = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelOnRoadMaterial);
                     comOnRoadMaterial.ColumnsAutoFit = true;
                     comOnRoadMaterial.WriteTable(this.OnRoadMaterial, 3);
 
@@ -1616,8 +1610,8 @@ drop table  #tmpContract
                 {
                     this.ShowWaitMessage("Starting EXCEL...WHouse Qty Detail");
                     filename = "Shipping_R40_WHQtyDetail.xltx";
-                    Excel.Application excelWHDetail = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
-                    Sci.Utility.Report.ExcelCOM comWHDetail = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelWHDetail);
+                    Excel.Application excelWHDetail = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                    Utility.Report.ExcelCOM comWHDetail = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelWHDetail);
                     comWHDetail.ColumnsAutoFit = true;
                     comWHDetail.WriteTable(this.WHDetail, 3);
 
@@ -1630,8 +1624,8 @@ drop table  #tmpContract
                 {
                     this.ShowWaitMessage("Starting EXCEL...WIP Qty Detail");
                     filename = "Shipping_R40_WIPQtyDetail.xltx";
-                    Excel.Application excelWIP = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
-                    Sci.Utility.Report.ExcelCOM comWIP = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelWIP);
+                    Excel.Application excelWIP = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                    Utility.Report.ExcelCOM comWIP = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelWIP);
                     comWIP.ColumnsAutoFit = true;
                     comWIP.WriteTable(this.WIPDetail, 3);
 
@@ -1644,8 +1638,8 @@ drop table  #tmpContract
                 {
                     this.ShowWaitMessage("Starting EXCEL...Prod. Qty Detail");
                     filename = "Shipping_R40_ProdQtyDetail.xltx";
-                    Excel.Application excelProdDetail = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
-                    Sci.Utility.Report.ExcelCOM comProdDetail = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelProdDetail);
+                    Excel.Application excelProdDetail = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                    Utility.Report.ExcelCOM comProdDetail = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelProdDetail);
                     comProdDetail.ColumnsAutoFit = true;
                     comProdDetail.WriteTable(this.ProdDetail, 3);
 
@@ -1658,8 +1652,8 @@ drop table  #tmpContract
                 {
                     this.ShowWaitMessage("Starting EXCEL...Scrap Qty Detail");
                     filename = "Shipping_R40_ScrapQtyDetail.xltx";
-                    Excel.Application excelScrapDetail = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
-                    Sci.Utility.Report.ExcelCOM comScrapDetail = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelScrapDetail);
+                    Excel.Application excelScrapDetail = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                    Utility.Report.ExcelCOM comScrapDetail = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelScrapDetail);
                     comScrapDetail.ColumnsAutoFit = true;
                     comScrapDetail.WriteTable(this.ScrapDetail, 3);
 
@@ -1672,8 +1666,8 @@ drop table  #tmpContract
                 {
                     this.ShowWaitMessage("Starting EXCEL...OnRoadProduction List");
                     filename = "Shipping_R40_OnRoadProduction.xltx";
-                    Excel.Application excelOnRoadProduction = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
-                    Sci.Utility.Report.ExcelCOM comOnRoadProduction = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelOnRoadProduction);
+                    Excel.Application excelOnRoadProduction = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                    Utility.Report.ExcelCOM comOnRoadProduction = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelOnRoadProduction);
                     comOnRoadProduction.ColumnsAutoFit = true;
                     comOnRoadProduction.WriteTable(this.OnRoadProduction, 3);
 
@@ -1686,8 +1680,8 @@ drop table  #tmpContract
                 {
                     this.ShowWaitMessage("Starting EXCEL...Outstanding");
                     filename = "Shipping_R40_OutStanding.xltx";
-                    Excel.Application excelOutstanding = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
-                    Sci.Utility.Report.ExcelCOM comOutstanding = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelOutstanding);
+                    Excel.Application excelOutstanding = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                    Utility.Report.ExcelCOM comOutstanding = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelOutstanding);
                     comOutstanding.ColumnsAutoFit = true;
                     comOutstanding.WriteTable(this.Outstanding, 3);
 
@@ -1700,8 +1694,8 @@ drop table  #tmpContract
                 {
                     this.ShowWaitMessage("Starting EXCEL...Warehouse Not Close List");
                     filename = "Shipping_R40_WHNotClose.xltx";
-                    Excel.Application excelWHNotClose = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
-                    Sci.Utility.Report.ExcelCOM comWHNotClose = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelWHNotClose);
+                    Excel.Application excelWHNotClose = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                    Utility.Report.ExcelCOM comWHNotClose = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelWHNotClose);
                     comWHNotClose.ColumnsAutoFit = true;
                     comWHNotClose.WriteTable(this.WarehouseNotClose, 3);
 
@@ -1714,8 +1708,8 @@ drop table  #tmpContract
                 {
                     this.ShowWaitMessage("Starting EXCEL...Already SewingOutput List");
                     filename = "Shipping_R40_AlreadySewingOutput.xltx";
-                    Excel.Application excelAlreadySewing = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
-                    Sci.Utility.Report.ExcelCOM comAlreadySewing = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelAlreadySewing);
+                    Excel.Application excelAlreadySewing = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                    Utility.Report.ExcelCOM comAlreadySewing = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelAlreadySewing);
                     comAlreadySewing.ColumnsAutoFit = true;
                     comAlreadySewing.WriteTable(this.AlreadySewingOutput, 3);
 
@@ -1727,8 +1721,8 @@ drop table  #tmpContract
             else
             {
                 filename = "Shipping_R40_Summary(Only Liquidation).xltx";
-                Excel.Application excelSummary = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
-                Sci.Utility.Report.ExcelCOM comSummary = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + filename, excelSummary);
+                Excel.Application excelSummary = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                Utility.Report.ExcelCOM comSummary = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelSummary);
                 comSummary.ColumnsAutoFit = true;
                 comSummary.WriteTable(this.Summary, 3);
 
@@ -1743,8 +1737,8 @@ drop table  #tmpContract
 
         private void SaveExcelwithName(Excel.Application excelapp, string filename)
         {
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(filename);
-            Microsoft.Office.Interop.Excel.Workbook workbook = excelapp.ActiveWorkbook;
+            string strExcelName = Class.MicrosoftFile.GetName(filename);
+            Excel.Workbook workbook = excelapp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             excelapp.Quit();
@@ -1753,7 +1747,7 @@ drop table  #tmpContract
 
         private void TxtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract]", "20,10,10", this.Text, false, ",", headercaptions: "Contract No, Start Date, End Date");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract]", "20,10,10", this.Text, false, ",", headercaptions: "Contract No, Start Date, End Date");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

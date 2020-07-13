@@ -30,17 +30,17 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.txtmultiSeason = new Sci.Production.Class.txtmultiSeason();
-            this.comboFtyZone = new Sci.Production.Class.comboFtyZone(this.components);
+            this.txtmultiSeason = new Sci.Production.Class.TxtmultiSeason();
+            this.comboFtyZone = new Sci.Production.Class.ComboFtyZone(this.components);
             this.lbFtyZone = new Sci.Win.UI.Label();
             this.chkType = new Sci.Win.UI.CheckBox();
-            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
-            this.txtBrand1 = new Sci.Production.Class.txtbrand();
+            this.comboDropDownListCategory = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtstyle1 = new Sci.Production.Class.Txtstyle();
+            this.txtBrand1 = new Sci.Production.Class.Txtbrand();
             this.label12 = new Sci.Win.UI.Label();
-            this.txtCentralizedFactory1 = new Sci.Production.Class.txtCentralizedFactory();
+            this.txtCentralizedFactory1 = new Sci.Production.Class.TxtCentralizedFactory();
             this.label11 = new Sci.Win.UI.Label();
-            this.txtCountry1 = new Sci.Production.Class.txtcountry();
+            this.txtCountry1 = new Sci.Production.Class.Txtcountry();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.dateRange3 = new Sci.Win.UI.DateRange();
             this.dateRange2 = new Sci.Win.UI.DateRange();
@@ -175,8 +175,8 @@
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
             this.txtstyle1.TabIndex = 6;
-            this.txtstyle1.tarBrand = null;
-            this.txtstyle1.tarSeason = null;
+            this.txtstyle1.TarBrand = null;
+            this.txtstyle1.TarSeason = null;
             // 
             // txtBrand1
             // 
@@ -426,17 +426,17 @@
         private Win.UI.Label label8;
         private Win.UI.Label label7;
         private Win.UI.ComboBox comboBox1;
-        private Class.txtbrand txtBrand1;
-        private Class.txtcountry txtCountry1;
+        private Class.Txtbrand txtBrand1;
+        private Class.Txtcountry txtCountry1;
         private Win.UI.Label label10;
         private Win.UI.Label label11;
-        private Class.txtCentralizedFactory txtCentralizedFactory1;
-        private Class.txtstyle txtstyle1;
+        private Class.TxtCentralizedFactory txtCentralizedFactory1;
+        private Class.Txtstyle txtstyle1;
         private Win.UI.Label label12;
-        private Class.comboDropDownList comboDropDownListCategory;
+        private Class.ComboDropDownList comboDropDownListCategory;
         private Win.UI.CheckBox chkType;
-        private Class.comboFtyZone comboFtyZone;
+        private Class.ComboFtyZone comboFtyZone;
         private Win.UI.Label lbFtyZone;
-        private Class.txtmultiSeason txtmultiSeason;
+        private Class.TxtmultiSeason txtmultiSeason;
     }
 }

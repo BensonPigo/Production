@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿using System.Data;
 using System.Windows.Forms;
 using Ict.Win;
-using Ict;
-using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// B01
     /// </summary>
-    public partial class B01 : Sci.Win.Tems.Input6
+    public partial class B01 : Win.Tems.Input6
     {
         /// <summary>
         /// B01
@@ -31,7 +24,7 @@ namespace Sci.Production.Shipping
         {
             this.txtbrand.IsSupportEditMode = false;
             this.txtubconForwarder.TextBox1.IsSupportEditMode = false;
-            this.txtShipMode.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.txtShipMode.EditMode = Win.UI.AdvEditModes.DisableOnEdit;
             return base.ClickEditBefore();
         }
 
@@ -89,7 +82,7 @@ namespace Sci.Production.Shipping
 
             this.txtbrand.IsSupportEditMode = true;
             this.txtubconForwarder.TextBox1.IsSupportEditMode = true;
-            this.txtShipMode.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.txtShipMode.EditMode = Win.UI.AdvEditModes.EnableOnEdit;
             return base.ClickSaveBefore();
         }
 
@@ -98,7 +91,7 @@ namespace Sci.Production.Shipping
         {
             this.txtbrand.IsSupportEditMode = true;
             this.txtubconForwarder.TextBox1.IsSupportEditMode = true;
-            this.txtShipMode.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.txtShipMode.EditMode = Win.UI.AdvEditModes.EnableOnEdit;
             base.ClickUndo();
         }
     }

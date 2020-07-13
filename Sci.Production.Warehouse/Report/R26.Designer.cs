@@ -33,10 +33,10 @@
             this.labelM = new Sci.Win.UI.Label();
             this.dateConfirmedDate = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.txtuser1 = new Sci.Production.Class.Txtuser();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
             this.label2 = new Sci.Win.UI.Label();
             this.txtWK = new Sci.Win.UI.TextBox();
             this.label3 = new Sci.Win.UI.Label();
@@ -152,7 +152,7 @@
             // txtfactory1
             // 
             this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.boolFtyGroupList = true;
+            this.txtfactory1.BoolFtyGroupList = true;
             this.txtfactory1.FilteMDivision = false;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory1.IsProduceFty = false;
@@ -301,10 +301,10 @@
         private Win.UI.Label labelM;
         private Win.UI.DateRange dateConfirmedDate;
         private Win.UI.Label label1;
-        private Class.txtuser txtuser1;
-        private Class.txtMdivision txtMdivision1;
-        private Class.txtfactory txtfactory1;
-        private Class.txtbrand txtbrand1;
+        private Class.Txtuser txtuser1;
+        private Class.TxtMdivision txtMdivision1;
+        private Class.Txtfactory txtfactory1;
+        private Class.Txtbrand txtbrand1;
         private Win.UI.Label label2;
         private Win.UI.TextBox txtWK;
         private Win.UI.Label label3;

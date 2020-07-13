@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Data;
-using Sci.Data;
 using System.Configuration;
 
 namespace Sci.Production.Class
@@ -8,12 +7,12 @@ namespace Sci.Production.Class
     /// <summary>
     /// ComboFactory
     /// </summary>
-    public partial class comboCentralizedFactory : Sci.Win.UI.ComboBox
+    public partial class ComboCentralizedFactory : Win.UI.ComboBox
     {
         /// <summary>
         /// ComboFactory
         /// </summary>
-        public comboCentralizedFactory()
+        public ComboCentralizedFactory()
         {
             this.InitializeComponent();
             this.Size = new System.Drawing.Size(80, 23);
@@ -23,7 +22,7 @@ namespace Sci.Production.Class
         /// ComboFactory
         /// </summary>
         /// <param name="container">container</param>
-        public comboCentralizedFactory(IContainer container)
+        public ComboCentralizedFactory(IContainer container)
         {
             container.Add(this);
             this.InitializeComponent();
@@ -31,9 +30,10 @@ namespace Sci.Production.Class
         }
 
         /// <summary>
-        /// SetDefalutIndex
+        /// Set Defalut Index
         /// </summary>
-        /// <param name="defalutValue">defalutValue</param>
+        /// <param name="defalutValue">Defalut Value</param>
+        /// <param name="ftygroup">Fty group</param>
         public void SetDefalutIndex(string defalutValue = null, bool ftygroup = false)
         {
             DataTable dtFty = new DataTable();
@@ -44,13 +44,14 @@ namespace Sci.Production.Class
             {
                 strSevers = ConfigurationManager.AppSettings["ServerMatchFtyGeoup"].Split(new char[] { ';' });
             }
+
             foreach (string strServer in strSevers)
             {
-                string[] Factorys = strServer.Split(new char[] { ':', ',' });
-                for (int i = 1; i < Factorys.Length; i++)
+                string[] factorys = strServer.Split(new char[] { ':', ',' });
+                for (int i = 1; i < factorys.Length; i++)
                 {
                     dr = dtFty.NewRow();
-                    dr["Factory"] = Factorys[i];
+                    dr["Factory"] = factorys[i];
                     dtFty.Rows.Add(dr);
                 }
             }
@@ -63,7 +64,7 @@ namespace Sci.Production.Class
             this.DataSource = dtFty;
             this.ValueMember = "Factory";
             this.DisplayMember = "Factory";
-            this.SelectedValue = (defalutValue == null) ? Sci.Env.User.Factory : defalutValue;
+            this.SelectedValue = (defalutValue == null) ? Env.User.Factory : defalutValue;
         }
     }
 }

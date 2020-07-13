@@ -43,9 +43,9 @@
             this.txtPONoEnd = new Sci.Win.UI.TextBox();
             this.txtPONoStart = new Sci.Win.UI.TextBox();
             this.labelPONo = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.labelM = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.label2 = new Sci.Win.UI.Label();
@@ -54,7 +54,7 @@
             this.labelReportType = new Sci.Win.UI.Label();
             this.radioButton1 = new Sci.Win.UI.RadioButton();
             this.label3 = new Sci.Win.UI.Label();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txtuser1 = new Sci.Production.Class.Txtuser();
             this.txtBarcode = new Sci.Win.UI.TextBox();
             this.labHangtagBarcode = new Sci.Win.UI.Label();
             this.dateScan2 = new System.Windows.Forms.DateTimePicker();
@@ -486,9 +486,9 @@
         private Win.UI.TextBox txtPONoEnd;
         private Win.UI.TextBox txtPONoStart;
         private Win.UI.Label labelPONo;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelBrand;
-        private Class.txtMdivision txtMdivision1;
+        private Class.TxtMdivision txtMdivision1;
         private Win.UI.Label labelM;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.Label label2;
@@ -497,7 +497,7 @@
         private Win.UI.Label labelReportType;
         private Win.UI.RadioButton radioButton1;
         private Win.UI.Label label3;
-        private Class.txtuser txtuser1;
+        private Class.Txtuser txtuser1;
         private Win.UI.TextBox txtBarcode;
         private Win.UI.Label labHangtagBarcode;
         private System.Windows.Forms.DateTimePicker dateScan2;

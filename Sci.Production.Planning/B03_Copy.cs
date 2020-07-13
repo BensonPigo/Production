@@ -11,7 +11,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// B03_Copy
     /// </summary>
-    public partial class B03_Copy : Sci.Win.Subs.Base
+    public partial class B03_Copy : Win.Subs.Base
     {
         private DataRow data;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -41,7 +41,7 @@ FROM DBO.Style_Artwork WITH (NOLOCK) WHERE StyleUkey={1} and ukey!= {0}",
 
             DataTable dtArtwork;
 
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
             {
                 if (dtArtwork.Rows.Count == 0)
@@ -122,9 +122,9 @@ insert (ukey,localsuppid,currencyid,price,oven,wash,mockup,priceApv,styleukey)
 values (s.ukey,s.localsuppid,s.currencyid,s.price,s.oven,s.wash,mockup,s.priceApv,s.styleukey)
 when not matched by source and t.ukey = {0} then
 delete ;",
-dr2[i]["ukey"],
-this.data["styleukey"],
-this.data["ukey"]);
+                    dr2[i]["ukey"],
+                    this.data["styleukey"],
+                    this.data["ukey"]);
                 SqlCommandText tmp = new SqlCommandText(txttmp, null);
                 updateCmds.Add(tmp);
             }

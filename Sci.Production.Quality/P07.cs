@@ -1,27 +1,25 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
 using System.Transactions;
-using Sci.Win.Tools;
-using System.Data.SqlClient;
-
-
 
 namespace Sci.Production.Quality
 {
-    public partial class P07 : Sci.Win.Tems.Input6
+    public partial class P07 : Win.Tems.Input6
     {
         DualResult result;
-        string sql, ID, POID, SEQ1, SEQ2, OLDtxtWK, OLDtxtSEQ;
+        string sql;
+        string ID;
+        string POID;
+        string SEQ1;
+        string SEQ2;
+        string OLDtxtWK;
+        string OLDtxtSEQ;
         DataRow ROW;
         DataRow[] rows = null;
         DataTable dtDetail = null;
@@ -30,34 +28,35 @@ namespace Sci.Production.Quality
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            GenComboBox();
-            this.detailgrid.ContextMenuStrip = detailgridmenus;                
+            this.InitializeComponent();
+            this.GenComboBox();
+            this.detailgrid.ContextMenuStrip = this.detailgridmenus;
         }
 
         private void GenComboBox()
         {
-            Dictionary<String, String> Result_RowSource = new Dictionary<string, string>();
-            Result_RowSource.Add("", "");
+            Dictionary<string, string> Result_RowSource = new Dictionary<string, string>();
+            Result_RowSource.Add(string.Empty, string.Empty);
             Result_RowSource.Add("Oven Test", "Oven Test");
             Result_RowSource.Add("Wash Test", "Wash Test");
             Result_RowSource.Add("Both Test", "Both Test");
-            comboOvenWashBoth.DataSource = new BindingSource(Result_RowSource, null);
-            comboOvenWashBoth.ValueMember = "Key";
-            comboOvenWashBoth.DisplayMember = "Value";
+            this.comboOvenWashBoth.DataSource = new BindingSource(Result_RowSource, null);
+            this.comboOvenWashBoth.ValueMember = "Key";
+            this.comboOvenWashBoth.DisplayMember = "Value";
         }
 
-        //refresh
+        // refresh
         protected override void OnDetailEntered()
         {
             DataRow dr;
             this.detailgrid.AutoResizeColumns();
-            string sql_cmd = string.Format(@"select a.ID , b.StyleID , b.SeasonID , b.BrandID , b.CutInLine
+            string sql_cmd = string.Format(
+                @"select a.ID , b.StyleID , b.SeasonID , b.BrandID , b.CutInLine
 	                                             ,GetSCI.MinSciDelivery , CASE WHEN a.Complete = 1 THEN 'Y' WHEN a.Complete = 0 THEN 'N' END as Complete , a.AIRLaboratoryRemark
                                             from po a WITH (NOLOCK) 
                                             left join Orders b WITH (NOLOCK) on a.ID = b.POID
                                             cross apply dbo.GetSCI(a.id,'') as GetSCI
-                                            where a.id='{0}'", CurrentMaintain["ID"].ToString().Trim());
+                                            where a.id='{0}'", this.CurrentMaintain["ID"].ToString().Trim());
             if (MyUtility.Check.Seek(sql_cmd, out dr))
             {
                 this.displaySP.Text = dr["id"].ToString();
@@ -67,25 +66,37 @@ namespace Sci.Production.Quality
                 this.editRemark.Text = dr["AIRLaboratoryRemark"].ToString();
                 this.displayMtlCmplt.Text = dr["Complete"].ToString();
 
-                //[Earliest Est. Cutting Date]
-                if (dr["CutInLine"] == DBNull.Value) dateEarliestEstCuttingDate.Text = "";
-                else dateEarliestEstCuttingDate.Value = Convert.ToDateTime(dr["CutInLine"]);
+                // [Earliest Est. Cutting Date]
+                if (dr["CutInLine"] == DBNull.Value)
+                {
+                    this.dateEarliestEstCuttingDate.Text = string.Empty;
+                }
+                else
+                {
+                    this.dateEarliestEstCuttingDate.Value = Convert.ToDateTime(dr["CutInLine"]);
+                }
 
-                //[Target Lead time]
+                // [Target Lead time]
                 DateTime? targT = null;
                 if (!MyUtility.Check.Empty(dr["CutInLine"]) && !MyUtility.Check.Empty(dr["MinSciDelivery"]))
-                    targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(dr["CutInLine"], dr["MinSciDelivery"]);
-                if (targT != null)
-                    dateTargetLeadtime.Value = targT;
-                else
-                    dateTargetLeadtime.Text = "";
+                {
+                    targT = PublicPrg.Prgs.GetTargetLeadTime(dr["CutInLine"], dr["MinSciDelivery"]);
+                }
 
+                if (targT != null)
+                {
+                    this.dateTargetLeadtime.Value = targT;
+                }
+                else
+                {
+                    this.dateTargetLeadtime.Text = string.Empty;
+                }
             }
 
             #region [% of Inspection][Completion Date]
-            decimal dRowCount = DetailDatas.Count;
+            decimal dRowCount = this.DetailDatas.Count;
             string inspnum = "0";
-            DataTable articleDT = (DataTable)detailgridbs.DataSource;
+            DataTable articleDT = (DataTable)this.detailgridbs.DataSource;
 
             if (articleDT.Rows.Count != 0)
             {
@@ -96,33 +107,30 @@ namespace Sci.Production.Quality
                 }
             }
 
-            DateTime? CompDate,OvenDate,WashDate; 
+            DateTime? CompDate, OvenDate, WashDate;
             if (inspnum == "100")
             {
-                OvenDate= MyUtility.Convert.GetDate(articleDT.Compute("Max(OvenDate)", ""));
-                WashDate= MyUtility.Convert.GetDate(articleDT.Compute("Max(WashDate)", ""));
-                if (MyUtility.Math.DateMinus(OvenDate,WashDate).TotalSeconds < 0)
-	            {
-		            CompDate = WashDate;
-	            }
+                OvenDate = MyUtility.Convert.GetDate(articleDT.Compute("Max(OvenDate)", string.Empty));
+                WashDate = MyUtility.Convert.GetDate(articleDT.Compute("Max(WashDate)", string.Empty));
+                if (MyUtility.Math.DateMinus(OvenDate, WashDate).TotalSeconds < 0)
+                {
+                    CompDate = WashDate;
+                }
                 else
-	            {
+                {
                     CompDate = OvenDate;
-	            }
-                dateCompletionDate.Text = CompDate == null ? "" : ((DateTime)CompDate).ToShortDateString(); 
-                ////CompDate = DateTime.Compare((DateTime)articleDT.Compute("Max(OvenDate)", ""),(DateTime)articleDT.Compute("Max(WashDate)", "")) > 0 ? (DateTime)articleDT.Compute("Max(OvenDate)", "") : (DateTime)articleDT.Compute("Max(WashDate)", "") ;                              
-          
-                //compl_text.Value = CompDate;
+                }
+
+                this.dateCompletionDate.Text = CompDate == null ? string.Empty : ((DateTime)CompDate).ToShortDateString();
             }
             else
             {
-                dateCompletionDate.Text = "";
+                this.dateCompletionDate.Text = string.Empty;
             }
             #endregion
 
-            //判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
-            //contextMenuStrip();
-
+            // 判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
+            // contextMenuStrip();
             base.OnDetailEntered();
         }
 
@@ -153,101 +161,131 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings WashRemarkCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region CellMouseDoubleClick
- 
+
             OvenCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-               
             };
             OvenScaleCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                
             };
             OvenDateCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-               
             };
             OvenInspectorCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-               
             };
             OvenRemarkCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-               
             };
 
             WashCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-               
             };
             WashScaleCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                
             };
             WashDateCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-               
             };
             WashInspectorCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                
             };
             WashRemarkCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                
             };
             #endregion
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("SEQ", header: "SEQ#", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("ExportID", header: "WKNO", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("WhseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -285,61 +323,76 @@ namespace Sci.Production.Quality
             col_WashDate.DefaultCellStyle.BackColor = Color.SkyBlue;
             col_Washinspector.DefaultCellStyle.BackColor = Color.SkyBlue;
             col_WashRemark.DefaultCellStyle.BackColor = Color.SkyBlue;
-
         }
 
         protected override void OnFormLoaded()
         {
-            
-            detailgridmenus.Items.Clear();
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Modify Oven Test", onclick: (s, e) => OvenTest());
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Modify Wash Test", onclick: (s, e) => WashTest());
+            this.detailgridmenus.Items.Clear();
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Modify Oven Test", onclick: (s, e) => this.OvenTest());
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Modify Wash Test", onclick: (s, e) => this.WashTest());
 
             base.OnFormLoaded();
         }
 
         private void OvenTest()
         {
-            if (!IsSupportEdit || EditMode) return;          
+            if (!this.IsSupportEdit || this.EditMode)
+            {
+                return;
+            }
+
             var dr = this.CurrentDetailData;
-            if (dr == null) return;
+            if (dr == null)
+            {
+                return;
+            }
+
             string currentID = this.CurrentDetailData["ID"].ToString();
             string currentseq1 = this.CurrentDetailData["SEQ1"].ToString();
             string currentseq2 = this.CurrentDetailData["SEQ2"].ToString();
 
-            Sci.Production.Quality.P07_Oven callOvenDetailForm=new P07_Oven(true,this.CurrentDetailData["ID"].ToString(),this.displaySP.Text,this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString() , dr);
-            
+            P07_Oven callOvenDetailForm = new P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+
             callOvenDetailForm.ShowDialog(this);
             callOvenDetailForm.Dispose();
-            
+
             this.RenewData();
-            OnDetailEntered();
+            this.OnDetailEntered();
 
             int rowindex = 0;
-            for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
+            for (int rIdx = 0; rIdx < this.detailgrid.Rows.Count; rIdx++)
             {
-                DataGridViewRow dvr = detailgrid.Rows[rIdx];
+                DataGridViewRow dvr = this.detailgrid.Rows[rIdx];
                 DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
 
-                if (row["ID"].ToString()==currentID && row["SEQ1"].ToString() == currentseq1 && row["SEQ2"].ToString() == currentseq2)
+                if (row["ID"].ToString() == currentID && row["SEQ1"].ToString() == currentseq1 && row["SEQ2"].ToString() == currentseq2)
                 {
                     rowindex = rIdx;
                     break;
                 }
             }
-            detailgrid.SelectRowTo(rowindex);
+
+            this.detailgrid.SelectRowTo(rowindex);
         }
 
         private void WashTest()
         {
-            if (!IsSupportEdit || EditMode) return;          
+            if (!this.IsSupportEdit || this.EditMode)
+            {
+                return;
+            }
+
             var dr = this.CurrentDetailData;
-            if (dr == null) return;
-            Sci.Production.Quality.P07_Wash callWasHDetailForm = new P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            if (dr == null)
+            {
+                return;
+            }
+
+            P07_Wash callWasHDetailForm = new P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
             callWasHDetailForm.ShowDialog(this);
             callWasHDetailForm.Dispose();
             this.RenewData();
-            OnDetailEntered();
+            this.OnDetailEntered();
         }
 
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
@@ -358,89 +411,115 @@ namespace Sci.Production.Quality
 
             foreach (DataRow dr in dt.Rows)
             {
-                ID = dr["ID"].ToString().Trim();
-                POID = dr["POID"].ToString().Trim();
-                SEQ1 = dr["SEQ1"].ToString().Trim();
-                SEQ2 = dr["SEQ2"].ToString().Trim();
-                sql = string.Format(@"select C.ExportID , C.WhseArrival , B.SCIRefno , B.Refno , B.Suppid + '-' + D.AbbEN as supplier
+                this.ID = dr["ID"].ToString().Trim();
+                this.POID = dr["POID"].ToString().Trim();
+                this.SEQ1 = dr["SEQ1"].ToString().Trim();
+                this.SEQ2 = dr["SEQ2"].ToString().Trim();
+                this.sql = string.Format(
+                    @"select C.ExportID , C.WhseArrival , B.SCIRefno , B.Refno , B.Suppid + '-' + D.AbbEN as supplier
                                             ,E.ColorID , E.Sizespec , B.ArriveQty , B.ReceivingID
                                     from AIR_Laboratory A WITH (NOLOCK) 
                                     left join AIR B WITH (NOLOCK) on A.id=B.id
                                     left join Receiving C WITH (NOLOCK) on C.id=B.receivingID
                                     left join Supp D WITH (NOLOCK) on D.ID=B.Suppid
                                     left join PO_Supp_Detail E WITH (NOLOCK) on E.ID=A.POID and E.SEQ1=A.SEQ1 and E.SEQ2=A.SEQ2
-                                    where A.id={0} and A.poid='{1}' and A.seq1='{2}' and A.seq2='{3}'"
-                                    , ID, POID, SEQ1, SEQ2);
-                MyUtility.Check.Seek(sql, out ROW);
+                                    where A.id={0} and A.poid='{1}' and A.seq1='{2}' and A.seq2='{3}'",
+                    this.ID, this.POID, this.SEQ1, this.SEQ2);
+                MyUtility.Check.Seek(this.sql, out this.ROW);
 
-                dr["SEQ"] = SEQ1 + "-" + SEQ2;
-                dr["ExportID"] = ROW["ExportID"];
-                dr["WhseArrival"] = ROW["WhseArrival"];
-                dr["SCIRefno"] = ROW["SCIRefno"];
-                dr["BrandRefno"] = ROW["Refno"];
-                dr["supplier"] = ROW["supplier"];
-                dr["ColorID"] = ROW["ColorID"];
-                dr["Sizespec"] = ROW["Sizespec"];
-                dr["ArriveQty"] = ROW["ArriveQty"];
-                dr["ReceivingID"] = ROW["ReceivingID"];
-
+                dr["SEQ"] = this.SEQ1 + "-" + this.SEQ2;
+                dr["ExportID"] = this.ROW["ExportID"];
+                dr["WhseArrival"] = this.ROW["WhseArrival"];
+                dr["SCIRefno"] = this.ROW["SCIRefno"];
+                dr["BrandRefno"] = this.ROW["Refno"];
+                dr["supplier"] = this.ROW["supplier"];
+                dr["ColorID"] = this.ROW["ColorID"];
+                dr["Sizespec"] = this.ROW["Sizespec"];
+                dr["ArriveQty"] = this.ROW["ArriveQty"];
+                dr["ReceivingID"] = this.ROW["ReceivingID"];
             }
+
             return base.OnRenewDataDetailPost(e);
         }
 
-        //[Find]
+        // [Find]
         private void btnFind_Click(object sender, EventArgs e)
         {
-            int Count = DetailDatas.Count;
-            if (Count == 0) return;
-            if (MyUtility.Check.Empty(txtLocateforWK.Text) && MyUtility.Check.Empty(txtSEQ.Text)) return;
+            int Count = this.DetailDatas.Count;
+            if (Count == 0)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtLocateforWK.Text) && MyUtility.Check.Empty(this.txtSEQ.Text))
+            {
+                return;
+            }
 
             int index;
-            if (txtLocateforWK.Text != OLDtxtWK || txtSEQ.Text != OLDtxtSEQ)
+            if (this.txtLocateforWK.Text != this.OLDtxtWK || this.txtSEQ.Text != this.OLDtxtSEQ)
             {
-                OLDtxtWK = txtLocateforWK.Text;
-                OLDtxtSEQ = txtSEQ.Text;
+                this.OLDtxtWK = this.txtLocateforWK.Text;
+                this.OLDtxtSEQ = this.txtSEQ.Text;
 
-                dtDetail = (DataTable)detailgridbs.DataSource;
+                this.dtDetail = (DataTable)this.detailgridbs.DataSource;
 
-                if (!MyUtility.Check.Empty(txtLocateforWK.Text) && !MyUtility.Check.Empty(txtSEQ.Text))
-                    sql = string.Format(@"ExportID like '%{0}%' and SEQ like '%{1}%'", txtLocateforWK.Text.Trim() , txtSEQ.Text.Trim());
-                else if (!MyUtility.Check.Empty(txtLocateforWK.Text))
-                    sql = string.Format(@"ExportID like '%{0}%'", txtLocateforWK.Text.Trim());
-                else if (!MyUtility.Check.Empty(txtSEQ.Text))
-                    sql = string.Format(@"SEQ like '%{0}%'", txtSEQ.Text.Trim());
+                if (!MyUtility.Check.Empty(this.txtLocateforWK.Text) && !MyUtility.Check.Empty(this.txtSEQ.Text))
+                {
+                    this.sql = string.Format(@"ExportID like '%{0}%' and SEQ like '%{1}%'", this.txtLocateforWK.Text.Trim(), this.txtSEQ.Text.Trim());
+                }
+                else if (!MyUtility.Check.Empty(this.txtLocateforWK.Text))
+                {
+                    this.sql = string.Format(@"ExportID like '%{0}%'", this.txtLocateforWK.Text.Trim());
+                }
+                else if (!MyUtility.Check.Empty(this.txtSEQ.Text))
+                {
+                    this.sql = string.Format(@"SEQ like '%{0}%'", this.txtSEQ.Text.Trim());
+                }
 
-                rows = dtDetail.Select(sql);
-                if (rows.Length == 0) return;
-                index = dtDetail.Rows.IndexOf(rows[0]);
-                detailgrid.SelectRowTo(index);
-                rowsCount = 0;
+                this.rows = this.dtDetail.Select(this.sql);
+                if (this.rows.Length == 0)
+                {
+                    return;
+                }
+
+                index = this.dtDetail.Rows.IndexOf(this.rows[0]);
+                this.detailgrid.SelectRowTo(index);
+                this.rowsCount = 0;
             }
             else
             {
-                if (rows.Length == 0) return;
-                rowsCount++;
-                if (rowsCount >= rows.Length) rowsCount = 0;
-                index = dtDetail.Rows.IndexOf(rows[rowsCount]);
-                detailgrid.SelectRowTo(index);
+                if (this.rows.Length == 0)
+                {
+                    return;
+                }
+
+                this.rowsCount++;
+                if (this.rowsCount >= this.rows.Length)
+                {
+                    this.rowsCount = 0;
+                }
+
+                index = this.dtDetail.Rows.IndexOf(this.rows[this.rowsCount]);
+                this.detailgrid.SelectRowTo(index);
             }
         }
 
-        //[Batch update N/A]
+        // [Batch update N/A]
         private void btnBatchUpdateNA_Click(object sender, EventArgs e)
         {
-            DataTable dt = (DataTable)detailgridbs.DataSource;           
-            if (MyUtility.Check.Empty(comboOvenWashBoth.SelectedValue2))
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            if (MyUtility.Check.Empty(this.comboOvenWashBoth.SelectedValue2))
             {
                 MyUtility.Msg.WarningBox("< ComboBox > can not be empty!");
                 return;
             }
 
-            if (comboOvenWashBoth.SelectedValue2.ToString() == "Oven Test")
+            if (this.comboOvenWashBoth.SelectedValue2.ToString() == "Oven Test")
             {
-                sql = string.Format("update AIR_Laboratory set NonOven=1 where POID='{0}'", CurrentMaintain["ID"].ToString().Trim());
-                result = DBProxy.Current.Execute(null,sql);
-                if (result)
+                this.sql = string.Format("update AIR_Laboratory set NonOven=1 where POID='{0}'", this.CurrentMaintain["ID"].ToString().Trim());
+                this.result = DBProxy.Current.Execute(null, this.sql);
+                if (this.result)
                 {
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
@@ -448,11 +527,11 @@ namespace Sci.Production.Quality
                     }
                 }
             }
-            else if (comboOvenWashBoth.SelectedValue2.ToString() == "Wash Test")
+            else if (this.comboOvenWashBoth.SelectedValue2.ToString() == "Wash Test")
             {
-                sql = string.Format("update AIR_Laboratory set NonWash=1 where POID='{0}'", CurrentMaintain["ID"].ToString().Trim());
-                result = DBProxy.Current.Execute(null, sql);
-                if (result)
+                this.sql = string.Format("update AIR_Laboratory set NonWash=1 where POID='{0}'", this.CurrentMaintain["ID"].ToString().Trim());
+                this.result = DBProxy.Current.Execute(null, this.sql);
+                if (this.result)
                 {
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
@@ -460,11 +539,11 @@ namespace Sci.Production.Quality
                     }
                 }
             }
-            else if (comboOvenWashBoth.SelectedValue2.ToString() == "Both Test")
+            else if (this.comboOvenWashBoth.SelectedValue2.ToString() == "Both Test")
             {
-                sql = string.Format("update AIR_Laboratory set NonOven=1 , NonWash=1 where POID='{0}'", CurrentMaintain["ID"].ToString().Trim());
-                result = DBProxy.Current.Execute(null, sql);
-                if (result)
+                this.sql = string.Format("update AIR_Laboratory set NonOven=1 , NonWash=1 where POID='{0}'", this.CurrentMaintain["ID"].ToString().Trim());
+                this.result = DBProxy.Current.Execute(null, this.sql);
+                if (this.result)
                 {
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
@@ -473,9 +552,9 @@ namespace Sci.Production.Quality
                     }
                 }
             }
+
             this.detailgrid.Update();
             this.detailgrid.Refresh();
-
         }
 
         protected override void ClickSaveAfter()
@@ -486,8 +565,8 @@ namespace Sci.Production.Quality
             {
                 try
                 {
-                    //更新PO.AIRLabInspPercent
-                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIRLab','{CurrentMaintain["ID"]}'")))
+                    // 更新PO.AIRLabInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIRLab','{this.CurrentMaintain["ID"]}'")))
                     {
                         _transactionscope.Dispose();
                         return;
@@ -499,13 +578,14 @@ namespace Sci.Production.Quality
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
+
             _transactionscope.Dispose();
             _transactionscope = null;
-            RenewData();
+            this.RenewData();
             base.ClickSaveAfter();
         }
     }

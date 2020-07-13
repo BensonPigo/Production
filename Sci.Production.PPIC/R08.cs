@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
-using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using System.Runtime.InteropServices;
 using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -18,7 +13,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R08
     /// </summary>
-    public partial class R08 : Sci.Win.Tems.PrintForm
+    public partial class R08 : Win.Tems.PrintForm
     {
         private DataTable[] _printData;
         private DateTime? Cdate1;
@@ -34,7 +29,7 @@ namespace Sci.Production.PPIC
         private string T;
         private string Status;
         private string Sharedept;
-        private string ReportType;
+        private string reportType;
 
         /// <summary>
         /// R08
@@ -52,11 +47,11 @@ namespace Sci.Production.PPIC
             MyUtility.Tool.SetupCombox(this.cmbReportType, 2, 1, "0,Detail List,1,Resp. Dept. List");
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             this.comboType.SelectedIndex = 0;
             this.cmbStatus.SelectedIndex = 0;
             this.cmbReportType.SelectedIndex = 0;
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>
@@ -75,12 +70,12 @@ namespace Sci.Production.PPIC
             this.T = MyUtility.Convert.GetString(this.comboType.SelectedValue);
             this.Status = this.cmbStatus.Text;
             this.Sharedept = this.txtSharedept.Text;
-            this.ReportType = this.cmbReportType.Text;
+            this.reportType = this.cmbReportType.Text;
             return base.ValidateInput();
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region SqlParameter
             List<SqlParameter> sqlpar = new List<SqlParameter>();
@@ -169,7 +164,7 @@ namespace Sci.Production.PPIC
 
             #region sqlcmd 主table
             string sqlcmd = string.Empty;
-            if (this.ReportType == "Detail List")
+            if (this.reportType == "Detail List")
             {
                 sqlcmd = $@"
 select
@@ -390,7 +385,7 @@ where 1=1
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -406,7 +401,7 @@ where 1=1
             }
 
             string filename = string.Empty;
-            if (this.ReportType == "Detail List")
+            if (this.reportType == "Detail List")
             {
                 filename = "PPIC_R08_DetailList";
             }
@@ -416,7 +411,7 @@ where 1=1
             }
 
             this.ShowWaitMessage("Excel Processing...");
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{filename}.xltx");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{filename}.xltx");
             MyUtility.Excel.CopyToXls(this._printData[0], string.Empty, $"{filename}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
             if (this._printData.Length == 2)
             {
@@ -445,7 +440,7 @@ where 1=1
         private void TxtSharedept_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sql = "select ID,Name from FinanceEN.dbo.Department";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "12,15", this.txtSharedept.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "12,15", this.txtSharedept.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

@@ -40,7 +40,7 @@ namespace Sci.Production.IE
             this.labelBrand = new Sci.Win.UI.Label();
             this.txtBrand = new Sci.Win.UI.TextBox();
             this.txtStyle = new Sci.Win.UI.TextBox();
-            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtseason = new Sci.Production.Class.Txtseason();
             this.comboStyle = new Sci.Win.UI.ComboBox();
             this.btnOK = new Sci.Win.UI.Button();
             this.btnCancel = new Sci.Win.UI.Button();
@@ -176,7 +176,7 @@ namespace Sci.Production.IE
         private Win.UI.Label labelBrand;
         private Win.UI.TextBox txtBrand;
         private Win.UI.TextBox txtStyle;
-        private Class.txtseason txtseason;
+        private Class.Txtseason txtseason;
         private Win.UI.ComboBox comboStyle;
         private Win.UI.Button btnOK;
         private Win.UI.Button btnCancel;

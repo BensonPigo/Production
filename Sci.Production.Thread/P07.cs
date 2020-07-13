@@ -1,25 +1,23 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
+using Sci.Production.Class;
 
 namespace Sci.Production.Thread
 {
     /// <summary>
     /// P07
     /// </summary>
-    public partial class P07 : Sci.Win.Tems.Input6
+    public partial class P07 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
 
         /// <summary>
         /// P07
@@ -32,7 +30,7 @@ namespace Sci.Production.Thread
         }
 
         /// <inheritdoc/>
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
@@ -56,7 +54,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread", null, ",,category,Description");
+            DataGridViewGeneratorTextColumnSettings refno = Txtlocalitem.Celllocalitem.GetGridCell("Thread", null, ",,category,Description");
             DataGridViewGeneratorTextColumnSettings thcolor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings thlocationfrom = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings thlocationto = new DataGridViewGeneratorTextColumnSettings();
@@ -161,12 +159,12 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
                         return;
                     }
 
-                    if (e.Button != System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button != MouseButtons.Right)
                     {
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ThreadLocation WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.CurrentDetailData["locationfrom"].ToString());
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from ThreadLocation WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.CurrentDetailData["locationfrom"].ToString());
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -224,12 +222,12 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
                     return;
                 }
 
-                if (e.Button != System.Windows.Forms.MouseButtons.Right)
+                if (e.Button != MouseButtons.Right)
                 {
                     return;
                 }
 
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ThreadLocation WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.CurrentDetailData["locationto"].ToString());
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from ThreadLocation WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.CurrentDetailData["locationto"].ToString());
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -792,7 +790,7 @@ insert  ThreadStock (refno, threadcolorid, threadlocationid, newcone, usedcone, 
         private void BtnImportFromStock_Click(object sender, EventArgs e)
         {
             DataTable detTable = (DataTable)this.detailgridbs.DataSource;
-            Form p07_import = new Sci.Production.Thread.P07_Import(detTable);
+            Form p07_import = new P07_Import(detTable);
             p07_import.ShowDialog();
         }
     }

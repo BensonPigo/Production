@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 		{
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivisionM = new Sci.Production.Class.txtMdivision();
+            this.txtMdivisionM = new Sci.Production.Class.TxtMdivision();
             this.txtSPNO = new Sci.Win.UI.TextBox();
             this.comboStatus = new Sci.Win.UI.ComboBox();
             this.dateIssueDate = new Sci.Win.UI.DateRange();
@@ -41,7 +41,7 @@
             this.labContract = new Sci.Win.UI.Label();
             this.txtSubCon = new Sci.Win.UI.TextBox();
             this.txtContract = new Sci.Win.UI.TextBox();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.labelIssueDate = new Sci.Win.UI.Label();
             this.labApvDate = new Sci.Win.UI.Label();
             this.SuspendLayout();
@@ -277,7 +277,7 @@
 
         #endregion
         private Win.UI.Label labelM;
-        private Class.txtMdivision txtMdivisionM;
+        private Class.TxtMdivision txtMdivisionM;
         private Win.UI.TextBox txtSPNO;
         private Win.UI.ComboBox comboStatus;
         private Win.UI.DateRange dateIssueDate;
@@ -289,7 +289,7 @@
         private Win.UI.Label labContract;
         private Win.UI.TextBox txtSubCon;
         private Win.UI.TextBox txtContract;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labelIssueDate;
         private Win.UI.Label labApvDate;
     }

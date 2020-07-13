@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtcountry = new Sci.Production.Class.txtcountry();
+            this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.btnQuery = new Sci.Win.UI.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dateSewingOutput = new Sci.Win.UI.DateBox();
@@ -275,7 +275,7 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Class.txtcountry txtcountry;
+        private Class.Txtcountry txtcountry;
         private Win.UI.Button btnQuery;
         private System.Windows.Forms.Label label3;
         private Win.UI.DateBox dateSewingOutput;

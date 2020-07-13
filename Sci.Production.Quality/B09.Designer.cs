@@ -39,7 +39,7 @@
             this.chkP11 = new Sci.Win.UI.CheckBox();
             this.chkP12 = new Sci.Win.UI.CheckBox();
             this.chkP13 = new Sci.Win.UI.CheckBox();
-            this.txtID = new Sci.Production.Class.txtuser();
+            this.txtID = new Sci.Production.Class.Txtuser();
             this.chkGarmentTest = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -254,7 +254,7 @@
         private Win.UI.PictureBox pictureBoxSignature;
         private Win.UI.Button btnDelete;
         private Win.UI.Button btnAttach;
-        private Class.txtuser txtID;
+        private Class.Txtuser txtID;
         private Win.UI.CheckBox chkGarmentTest;
     }
 }

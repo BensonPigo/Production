@@ -1,22 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
+﻿using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtdropdownlist : Sci.Win.UI.ComboBox
+    /// <summary>
+    /// TxtDropdownlist
+    /// </summary>
+    public partial class Txtdropdownlist : Win.UI.ComboBox
     {
         private string type;
+
+        /// <summary>
+        /// Type
+        /// </summary>
         [Category("Custom Properties")]
         public string Type
         {
+            get
+            {
+                return this.type;
+            }
+
             set
             {
                 this.type = value;
@@ -33,10 +38,13 @@ namespace Sci.Production.Class
                     }
                 }
             }
-            get { return this.type; }
         }
 
-        public txtdropdownlist()
-        { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtdropdownlist"/> class.
+        /// </summary>
+        public Txtdropdownlist()
+        {
+        }
     }
 }

@@ -45,7 +45,7 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.txtpo = new Sci.Win.UI.TextBox();
             this.txtsp = new Sci.Win.UI.TextBox();
-            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.txtSeq = new Sci.Production.Class.TxtSeq();
             this.dateRangeETA = new Sci.Win.UI.DateRange();
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
@@ -60,7 +60,7 @@
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.txtColor = new Sci.Win.UI.TextBox();
             this.txtRefno = new Sci.Win.UI.TextBox();
-            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
+            this.txtsupplier1 = new Sci.Production.Class.Txtsupplier();
             this.label6 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
@@ -266,8 +266,8 @@
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq.Location = new System.Drawing.Point(874, 6);
             this.txtSeq.Name = "txtSeq";
-            this.txtSeq.seq1 = "";
-            this.txtSeq.seq2 = "";
+            this.txtSeq.Seq1 = "";
+            this.txtSeq.Seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 4;
             // 
@@ -534,7 +534,7 @@
         private System.Windows.Forms.TabPage tab1stBulkDyelot;
         private Win.UI.TextBox txtpo;
         private Win.UI.TextBox txtsp;
-        private Class.txtSeq txtSeq;
+        private Class.TxtSeq txtSeq;
         private Win.UI.Button btnQuery;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnSave;
@@ -542,7 +542,7 @@
         private Win.UI.Grid grid1;
         private Win.UI.TextBox txtColor;
         private Win.UI.TextBox txtRefno;
-        private Class.txtsupplier txtsupplier1;
+        private Class.Txtsupplier txtsupplier1;
         private Win.UI.Label label6;
         private Win.UI.Label label5;
         private Win.UI.Label label4;

@@ -1,41 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Ict;
 using System.Linq;
-using System.Data.SqlClient;
-using System.Runtime.InteropServices;
 using Sci.Utility.Excel;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P32 : Sci.Win.Tems.QueryForm
+    public partial class P32 : Win.Tems.QueryForm
     {
-        protected DataTable dtGrid1, dtGrid2, dtGrid_NoCarton; DataSet dataSet;
-        string SP1, SP2,M; string POID; string sqlWhere = "";
-        DateTime? sewingdate1, sewingdate2, scidate1, scidate2;
+        protected DataTable dtGrid1;
+        protected DataTable dtGrid2;
+        protected DataTable dtGrid_NoCarton; DataSet dataSet;
+        string SP1;
+        string SP2;
+        string M; string POID; string sqlWhere = string.Empty;
+        DateTime? sewingdate1;
+        DateTime? sewingdate2;
+        DateTime? scidate1;
+        DateTime? scidate2;
         List<string> sqlWheres = new List<string>();
         StringBuilder sqlcmd = new StringBuilder();
-    
+
         public P32(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent(); 
+            this.InitializeComponent();
             this.EditMode = true;
 
             #region -- Grid1 Setting --
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.grid1.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.grid1.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.grid1)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("OrderId", header: "Mother SP#", width: Widths.AnsiChars(15),iseditingreadonly:true)
+                .Text("OrderId", header: "Mother SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Earliest BuyerDlv", iseditingreadonly: true)
                 .Date("SciDelivery", header: "Earliest SciDlv", iseditingreadonly: true)
@@ -45,26 +48,26 @@ namespace Sci.Production.Subcon
                 .Text("EmbThread", header: "Emb Thread", width: Widths.AnsiChars(5), iseditingreadonly: true);
             #endregion
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.EditingMouseDoubleClick += (s, e) =>
             {
                 DataRow thisRow = this.grid2.GetDataRow(this.listControlBindingSource2.Position);
-                var frm = new Sci.Production.Subcon.P30_InComingList(thisRow["Ukey"].ToString());
+                var frm = new P30_InComingList(thisRow["Ukey"].ToString());
                 DialogResult result = frm.ShowDialog(this);
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.EditingMouseDoubleClick += (s, e) =>
             {
                 DataRow thisRow = this.grid2.GetDataRow(this.listControlBindingSource2.Position);
-                var frm = new Sci.Production.Subcon.P30_AccountPayble(thisRow["Ukey"].ToString());
+                var frm = new P30_AccountPayble(thisRow["Ukey"].ToString());
                 DialogResult result = frm.ShowDialog(this);
             };
 
             #region -- Grid2 Setting --
             this.grid2.IsEditingReadOnly = true;
-            this.grid2.DataSource = listControlBindingSource2;
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.grid2.DataSource = this.listControlBindingSource2;
+            this.Helper.Controls.Grid.Generator(this.grid2)
                  .Text("OrderId", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("Category", header: "Category", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Text("LocalSuppID", header: "LocalSupp", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -83,78 +86,81 @@ namespace Sci.Production.Subcon
                  .Numeric("APQty", header: "APQty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 0, iseditingreadonly: true, settings: ns2)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(40), iseditingreadonly: true)
                  ;
-            #endregion  
-        
+            #endregion
+
             this.grid2.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             this.grid2.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-
         }
 
-        //Query
+        // Query
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            
-            if (sqlcmd != null)
+            if (this.sqlcmd != null)
             {
-                sqlcmd.Clear();
-                sqlWhere = "";
-                sqlWheres.Clear();
-                if (dataSet != null) 
+                this.sqlcmd.Clear();
+                this.sqlWhere = string.Empty;
+                this.sqlWheres.Clear();
+                if (this.dataSet != null)
                 {
-                    dataSet.Clear();
-                    dtGrid1.Clear();
-                    dtGrid2.Clear();
+                    this.dataSet.Clear();
+                    this.dtGrid1.Clear();
+                    this.dtGrid2.Clear();
                 }
             }
-          
+
             bool sewingdate1_Empty = !this.dateSewingInline.HasValue, scidate_Empty = !this.dateSCIDelivery.HasValue, txtsp_Empty1 = this.txtSPStart.Text.Empty(), txtsp_Empty = this.txtSPEnd.Text.Empty();
             if (sewingdate1_Empty && scidate_Empty && txtsp_Empty1 && txtsp_Empty)
             {
                 MyUtility.Msg.ErrorBox("Please select at least one field entry");
-                txtSPStart.Focus();
+                this.txtSPStart.Focus();
                 return;
             }
 
-            SP1 = txtSPStart.Text.ToString();
-            SP2 = txtSPEnd.Text.ToString();
-            sewingdate1 = dateSewingInline.Value1;
-            sewingdate2 = dateSewingInline.Value2;
-            scidate1 = dateSCIDelivery.Value1;
-            scidate2 = dateSCIDelivery.Value2;
-            M = Sci.Env.User.Keyword;
+            this.SP1 = this.txtSPStart.Text.ToString();
+            this.SP2 = this.txtSPEnd.Text.ToString();
+            this.sewingdate1 = this.dateSewingInline.Value1;
+            this.sewingdate2 = this.dateSewingInline.Value2;
+            this.scidate1 = this.dateSCIDelivery.Value1;
+            this.scidate2 = this.dateSCIDelivery.Value2;
+            this.M = Env.User.Keyword;
             #region --組WHERE--
             if (!this.txtSPStart.Text.Empty())
             {
-                sqlWheres.Add(" and O.ID >= '"+ SP1 + "'");
+                this.sqlWheres.Add(" and O.ID >= '" + this.SP1 + "'");
             }
+
             if (!this.txtSPEnd.Text.Empty())
             {
-                sqlWheres.Add(" and O.ID <= '" + SP2 + "'");
+                this.sqlWheres.Add(" and O.ID <= '" + this.SP2 + "'");
             }
-            if (!this.dateSCIDelivery.Value1.Empty() )
-            {
-                sqlWheres.Add(" and o.SciDelivery >= '" + Convert.ToDateTime(scidate1).ToShortDateString() + "'");
 
-            } 
+            if (!this.dateSCIDelivery.Value1.Empty())
+            {
+                this.sqlWheres.Add(" and o.SciDelivery >= '" + Convert.ToDateTime(this.scidate1).ToShortDateString() + "'");
+            }
+
             if (!this.dateSCIDelivery.Value2.Empty())
             {
-                sqlWheres.Add(" and o.SciDelivery <= '" + Convert.ToDateTime(scidate2).ToShortDateString() + "'");
-
+                this.sqlWheres.Add(" and o.SciDelivery <= '" + Convert.ToDateTime(this.scidate2).ToShortDateString() + "'");
             }
+
             if (!this.dateSewingInline.Value1.Empty())
             {
-                sqlWheres.Add(" and o.SewInLine >= '" + Convert.ToDateTime(sewingdate1).ToShortDateString() + "'");
+                this.sqlWheres.Add(" and o.SewInLine >= '" + Convert.ToDateTime(this.sewingdate1).ToShortDateString() + "'");
             }
+
             if (!this.dateSewingInline.Value2.Empty())
             {
-                sqlWheres.Add(" and o.SewInLine <= '" + Convert.ToDateTime(sewingdate2).ToShortDateString() + "'");
+                this.sqlWheres.Add(" and o.SewInLine <= '" + Convert.ToDateTime(this.sewingdate2).ToShortDateString() + "'");
             }
-             sqlWhere = string.Join(" ", sqlWheres);
+
+            this.sqlWhere = string.Join(" ", this.sqlWheres);
             #endregion
-          
+
             #region -- sql command --
-             this.ShowWaitMessage("Data Loading....");
-            sqlcmd.Append(string.Format(@"
+            this.ShowWaitMessage("Data Loading....");
+            this.sqlcmd.Append(string.Format(
+                @"
 select  DISTINCT o.Poid
         , o.FactoryID
 	    , OrderId = O.id
@@ -174,7 +180,7 @@ left join LocalPO L1 WITH (NOLOCK) on L1.Id=LD.Id
 cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
 where o.id = o.poid
 and  o.MdivisionID= '{0}'
-      " + sqlWhere + @"  
+      " + this.sqlWhere + @"  
 order by O.ID
                     
 SELECT DISTINCT #tmp1.Poid
@@ -211,11 +217,13 @@ select  #tmp.Poid
 			            ELSE 'N'
 		              END
 from #tmp order by #tmp.OrderId
-DROP TABLE  #tmp1", M));
+DROP TABLE  #tmp1", this.M));
 
-            sqlcmd.Append(Environment.NewLine); // 換行
-            //Grid2
-            sqlcmd.Append(string.Format(@"
+            this.sqlcmd.Append(Environment.NewLine); // 換行
+
+            // Grid2
+            this.sqlcmd.Append(string.Format(
+                @"
 select distinct o.Poid
        , LD.OrderId
 	   , L.Category
@@ -244,7 +252,7 @@ left join orders O WITH (NOLOCK) on LD.OrderId=O.ID
                                     and LD.POID = o.POID
 cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
 where 1=1 
-      " + sqlWhere + @"
+      " + this.sqlWhere + @"
       and  L.MdivisionID= '{0}' 
 
 select * from #tmp2
@@ -283,15 +291,15 @@ where not exists(
 order by o.ID
 
 drop table  #tmp,#tmp2
-", M));
+", this.M));
             #endregion
-           
+
             DBProxy.Current.DefaultTimeout = 1200;
             try
             {
-                if (!SQL.Selects("", sqlcmd.ToString(), out dataSet))
+                if (!SQL.Selects(string.Empty, this.sqlcmd.ToString(), out this.dataSet))
                 {
-                    ShowErr(sqlcmd.ToString());
+                    this.ShowErr(this.sqlcmd.ToString());
                     return;
                 }
             }
@@ -302,21 +310,23 @@ drop table  #tmp,#tmp2
             finally
             {
                 DBProxy.Current.DefaultTimeout = 0;
-            }           
+            }
+
             this.HideWaitMessage();
-            dtGrid1 = dataSet.Tables[0];
-            dtGrid2 = dataSet.Tables[1];
-            dtGrid_NoCarton = dataSet.Tables[2];
-            if (dtGrid1.Rows.Count == 0)
+            this.dtGrid1 = this.dataSet.Tables[0];
+            this.dtGrid2 = this.dataSet.Tables[1];
+            this.dtGrid_NoCarton = this.dataSet.Tables[2];
+            if (this.dtGrid1.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!!");
             }
-            dtGrid1.TableName = "dtGrid1";
-            dtGrid2.TableName = "dtGrid2";
-            listControlBindingSource1.DataSource = dtGrid1;
-            listControlBindingSource2.DataSource = dtGrid2;
-            listControlBindingSource1_PositionChanged(sender,e);
-            this.grid1.AutoResizeColumns();//調整寬度
+
+            this.dtGrid1.TableName = "dtGrid1";
+            this.dtGrid2.TableName = "dtGrid2";
+            this.listControlBindingSource1.DataSource = this.dtGrid1;
+            this.listControlBindingSource2.DataSource = this.dtGrid2;
+            this.listControlBindingSource1_PositionChanged(sender, e);
+            this.grid1.AutoResizeColumns(); // 調整寬度
             this.grid2.AutoResizeColumns();
         }
 
@@ -332,24 +342,37 @@ drop table  #tmp,#tmp2
             {
                 return;
             }
-            POID = parent["Poid"].ToString();
-            listControlBindingSource2.Filter = " Poid = '"+ POID+"'";
+
+            this.POID = parent["Poid"].ToString();
+            this.listControlBindingSource2.Filter = " Poid = '" + this.POID + "'";
             this.grid2.AutoResizeColumns();
         }
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            if (dataSet == null) return;
-            if (dtGrid1.Rows.Count == 0) return;            
-            Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_P32.xltx");
+            if (this.dataSet == null)
+            {
+                return;
+            }
+
+            if (this.dtGrid1.Rows.Count == 0)
+            {
+                return;
+            }
+
+            SaveXltReportCls x1 = new SaveXltReportCls("Subcon_P32.xltx");
             if (this.chkCarton.Checked)
             {
-                if (dtGrid_NoCarton.Rows.Count == 0) return;
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt = new SaveXltReportCls.XltRptTable(dtGrid_NoCarton);
+                if (this.dtGrid_NoCarton.Rows.Count == 0)
+                {
+                    return;
+                }
+
+                SaveXltReportCls.XltRptTable dt = new SaveXltReportCls.XltRptTable(this.dtGrid_NoCarton);
                 x1.DicDatas.Add("##dt1", dt);
                 dt.ShowHeader = false;
                 Microsoft.Office.Interop.Excel.Worksheet ws = x1.ExcelApp.ActiveWorkbook.Worksheets[1];
-                Microsoft.Office.Interop.Excel.Worksheet ws2 = x1.ExcelApp.ActiveWorkbook.Worksheets[2];                
+                Microsoft.Office.Interop.Excel.Worksheet ws2 = x1.ExcelApp.ActiveWorkbook.Worksheets[2];
                 ws.Cells[1, 2] = "SP#";
                 ws.Cells[1, 4] = "BuyerDlv";
                 ws.Cells[1, 5] = "SciDlv";
@@ -359,25 +382,32 @@ drop table  #tmp,#tmp2
             }
             else
             {
-                if (dtGrid2.Rows.Count == 0) return;
-                DataTable dtMaster = dtGrid1.AsEnumerable().Where(row => true).CopyToDataTable();
-                DataTable dtChild = dtGrid2.AsEnumerable().Where(row => true).CopyToDataTable();
-                dtMaster.Columns.Remove("Poid");
-                dtChild.Columns.Remove("Poid");              
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dtMaster);
-                //DataView dataView = dtGrid2.DefaultView;
+                if (this.dtGrid2.Rows.Count == 0)
+                {
+                    return;
+                }
 
-                if (dtChild.Columns.Contains("Ukey")) dtChild.Columns.Remove("Ukey");
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(dtChild);
+                DataTable dtMaster = this.dtGrid1.AsEnumerable().Where(row => true).CopyToDataTable();
+                DataTable dtChild = this.dtGrid2.AsEnumerable().Where(row => true).CopyToDataTable();
+                dtMaster.Columns.Remove("Poid");
+                dtChild.Columns.Remove("Poid");
+                SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dtMaster);
+
+                // DataView dataView = dtGrid2.DefaultView;
+                if (dtChild.Columns.Contains("Ukey"))
+                {
+                    dtChild.Columns.Remove("Ukey");
+                }
+
+                SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(dtChild);
                 x1.DicDatas.Add("##dt1", dt1);
                 x1.DicDatas.Add("##dt2", dt2);
                 dt1.ShowHeader = false;
                 dt2.ShowHeader = false;
             }
-           
-            x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P32"));
-            return ;
 
+            x1.Save(Class.MicrosoftFile.GetName("Subcon_P32"));
+            return;
         }
     }
 }

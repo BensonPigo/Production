@@ -1,40 +1,34 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
-using Sci.Production;
-using Sci.Production.PublicPrg;
-using Sci.Utility.Excel;
-using Sci.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Transactions;
-using Sci.Win.Tools;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03 : Sci.Win.Tems.QueryForm
+    public partial class P03 : Win.Tems.QueryForm
     {
-        string userCountry = "";
-        string SpNo = "";                   
+        string userCountry = string.Empty;
+        string SpNo = string.Empty;
         bool ButtonOpen = false;
-        private static string _Refno, _MaterialType, _Color;
+        private static string _Refno;
+        private static string _MaterialType;
+        private static string _Color;
+
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            this.EditMode = true;            
+            this.InitializeComponent();
+            this.EditMode = true;
             #region set userCountry
             string sql = "select CountryID from Factory WITH (NOLOCK) where ID = @ID";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
-            sqlPar.Add(new SqlParameter("@ID", Sci.Env.User.Factory));            
+            sqlPar.Add(new SqlParameter("@ID", Env.User.Factory));
             DataTable dt;
             DualResult result;
 
@@ -44,23 +38,23 @@ namespace Sci.Production.Warehouse
             }
             else
             {
-                userCountry = dt.Rows[0]["CountryID"].ToString();
+                this.userCountry = dt.Rows[0]["CountryID"].ToString();
             }
-            #endregion 
-            ButtonOpen = false;
+            #endregion
+            this.ButtonOpen = false;
         }
 
-        //Form to Form W/H.P01
+        // Form to Form W/H.P01
         public P03(string P01SPNo, ToolStripMenuItem menuitem)
             : base(menuitem)
-        {            
-            InitializeComponent();
+        {
+            this.InitializeComponent();
             this.EditMode = true;
 
             #region set userCountry
             string sql = "select CountryID from Factory WITH (NOLOCK) where ID = @ID";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
-            sqlPar.Add(new SqlParameter("@ID", Sci.Env.User.Factory));
+            sqlPar.Add(new SqlParameter("@ID", Env.User.Factory));
             DataTable dt;
             DualResult result;
 
@@ -70,24 +64,23 @@ namespace Sci.Production.Warehouse
             }
             else
             {
-                userCountry = dt.Rows[0]["CountryID"].ToString();
+                this.userCountry = dt.Rows[0]["CountryID"].ToString();
             }
-            #endregion 
-            SpNo = P01SPNo;
-            this.txtSPNo.Text = SpNo.Trim();
-            ButtonOpen = true;
-            
+            #endregion
+            this.SpNo = P01SPNo;
+            this.txtSPNo.Text = this.SpNo.Trim();
+            this.ButtonOpen = true;
         }
 
         // Form to Form W/H.P05
-        public static void P05Filter(string P01SPNo,string Refno,string MaterialType, string Color, Form MdiParent)
+        public static void P05Filter(string P01SPNo, string Refno, string MaterialType, string Color, Form MdiParent)
         {
             foreach (Form form in Application.OpenForms)
             {
-                if (form is Sci.Production.Warehouse.P03)
+                if (form is P03)
                 {
                     form.Activate();
-                    Sci.Production.Warehouse.P03 activateForm = (Sci.Production.Warehouse.P03)form;
+                    P03 activateForm = (P03)form;
                     activateForm.setTxtSPNo(P01SPNo);
                     activateForm.Query();
                     return;
@@ -95,46 +88,48 @@ namespace Sci.Production.Warehouse
             }
 
             ToolStripMenuItem P03MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
                 {
                     foreach (var subMenuItem in toolMenuItem.DropDown.Items)
                     {
-                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
                             {
-                                P03MenuItem = ((ToolStripMenuItem)subMenuItem);
+                                P03MenuItem = (ToolStripMenuItem)subMenuItem;
                                 break;
                             }
                         }
                     }
                 }
             }
+
             P03 call = new P03(P01SPNo, P03MenuItem);
 
             call.MdiParent = MdiParent;
             call.Show();
-            //改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
+
+            // 改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
             call.P03Data(P01SPNo);
             call.Activate();
             _Refno = Refno;
-            _MaterialType = ((MaterialType == "F") ? "Fabric" : (MaterialType == "A") ? "Accessory" : (MaterialType == "O") ? "Orher" : "");
+            _MaterialType = (MaterialType == "F") ? "Fabric" : (MaterialType == "A") ? "Accessory" : (MaterialType == "O") ? "Orher" : string.Empty;
             _Color = Color;
             call.grid_Filter();
             call.ChangeDetailColor();
         }
 
-        //PPIC_P01 Called        
+        // PPIC_P01 Called
         public static void Call(string PPIC_SPNo, Form MdiParent)
         {
             foreach (Form form in Application.OpenForms)
             {
-                if (form is Sci.Production.Warehouse.P03)
+                if (form is P03)
                 {
                     form.Activate();
-                    Sci.Production.Warehouse.P03 activateForm = (Sci.Production.Warehouse.P03)form;
+                    P03 activateForm = (P03)form;
                     activateForm.setTxtSPNo(PPIC_SPNo);
                     activateForm.Query();
                     return;
@@ -142,358 +137,403 @@ namespace Sci.Production.Warehouse
             }
 
             ToolStripMenuItem P03MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
                 {
                     foreach (var subMenuItem in toolMenuItem.DropDown.Items)
                     {
-                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
                             {
-                                P03MenuItem = ((ToolStripMenuItem)subMenuItem);
+                                P03MenuItem = (ToolStripMenuItem)subMenuItem;
                                 break;
                             }
                         }
                     }
                 }
             }
+
             P03 call = new P03(PPIC_SPNo, P03MenuItem);
 
-            call.MdiParent = MdiParent;            
+            call.MdiParent = MdiParent;
             call.Show();
-            //改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
+
+            // 改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
             call.P03Data(PPIC_SPNo);
             call.Activate();
             call.ChangeDetailColor();
         }
 
-        //隨著 P01上下筆SP#切換資料
-        public void P03Data(string P01SPNo)  
+        // 隨著 P01上下筆SP#切換資料
+        public void P03Data(string P01SPNo)
         {
             this.EditMode = true;
-            SpNo = P01SPNo;
-            this.txtSPNo.Text = SpNo.Trim();
-            ButtonOpen = true;
-            Query();
-            ChangeDetailColor();
+            this.SpNo = P01SPNo;
+            this.txtSPNo.Text = this.SpNo.Trim();
+            this.ButtonOpen = true;
+            this.Query();
+            this.ChangeDetailColor();
         }
 
         protected override void OnFormLoaded()
         {
-
             base.OnFormLoaded();
-            
-            comboSortBy.SelectedIndex = 0;
+
+            this.comboSortBy.SelectedIndex = 0;
 
             #region Supp 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
             ts1.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P03_Supplier(dr);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P03_Supplier(dr);
                 frm.ShowDialog(this);
             };
             #endregion
 
             #region refno 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
+                if (dr == null)
+                {
+                    return;
+                }
+
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_Refno(dr);
+                    var frm = new P03_Refno(dr);
                     frm.ShowDialog(this);
                 }
             };
             #endregion
 
             #region OrderList 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings OrderList = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings OrderList = new DataGridViewGeneratorTextColumnSettings();
             OrderList.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex >= 0)
                 {
                     DataRow dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                    var frm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["OrderIdList"]), "Order List", false, null);
+                    var frm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["OrderIdList"]), "Order List", false, null);
                     frm.ShowDialog(this);
                 }
             };
             #endregion
 
             #region Ship qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
             ts3.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
+                if (dr == null)
+                {
+                    return;
+                }
+
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_Wkno(dr);
+                    var frm = new P03_Wkno(dr);
                     frm.ShowDialog(this);
                 }
             };
             #endregion
             #region Taipei Stock Qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             ts4.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
+                if (dr == null)
+                {
+                    return;
+                }
+
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_TaipeiInventory(dr);
+                    var frm = new P03_TaipeiInventory(dr);
                     frm.ShowDialog(this);
                 }
             };
             #endregion
             #region Released Qty 開窗
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts5 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ts5 = new DataGridViewGeneratorNumericColumnSettings();
             ts5.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
+                if (dr == null)
+                {
+                    return;
+                }
+
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_RollTransaction(dr);
+                    var frm = new P03_RollTransaction(dr);
                     frm.ShowDialog(this);
                 }
             };
             #endregion
             #region Balance Qty 開窗
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts6 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ts6 = new DataGridViewGeneratorNumericColumnSettings();
             ts6.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
+                if (dr == null)
+                {
+                    return;
+                }
+
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
+                    var frm = new P03_Transaction(dr);
                     frm.ShowDialog(this);
                     if (MyUtility.Check.Empty(dr["ukey"]))
                     {
-                        DataRow drukey ;
-                        if (MyUtility.Check.Seek($@"select ukey from MDivisionPoDetail 
-where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out drukey))
+                        DataRow drukey;
+                        if (MyUtility.Check.Seek(
+                            $@"select ukey from MDivisionPoDetail 
+where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out drukey))
                         {
                             dr["ukey"] = drukey["ukey"];
                             dr.EndEdit();
                         }
-                    }                   
+                    }
                 }
                 else if (dr["From_Program"].Equals("P04"))
                 {
-                    var form = new Sci.Production.Warehouse.P04_LocalTransaction(dr, "P03");
+                    var form = new P04_LocalTransaction(dr, "P03");
                     form.Show(this);
                 }
             };
             #endregion
             #region Inventory Qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts7 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts7 = new DataGridViewGeneratorTextColumnSettings();
             ts7.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
-                if (dr["From_Program"].Equals("P03"))
+                if (dr == null)
                 {
-                    var frm = new Sci.Production.Warehouse.P03_InventoryStatus(dr);
-                    frm.ShowDialog(this);
+                    return;
                 }
 
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new P03_InventoryStatus(dr);
+                    frm.ShowDialog(this);
+                }
             };
             #endregion
             #region Scrap Qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts8 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts8 = new DataGridViewGeneratorTextColumnSettings();
             ts8.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
+                if (dr == null)
+                {
+                    return;
+                }
+
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_Scrap(dr);
+                    var frm = new P03_Scrap(dr);
                     frm.ShowDialog(this);
                 }
                 else if (dr["From_Program"].Equals("P04"))
                 {
-                    var frm = new Sci.Production.Warehouse.P04_ScrapQty(dr["ID"].ToString(), dr["refno"].ToString(), dr["ColorID"].ToString());
+                    var frm = new P04_ScrapQty(dr["ID"].ToString(), dr["refno"].ToString(), dr["ColorID"].ToString());
                     frm.ShowDialog(this);
                 }
-
             };
             #endregion
             #region Bulk Location 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts9 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts9 = new DataGridViewGeneratorTextColumnSettings();
             ts9.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
-                if (dr["From_Program"].Equals("P03"))
+                if (dr == null)
                 {
-                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "B");
-                    frm.ShowDialog(this);
+                    return;
                 }
 
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new P03_BulkLocation(dr, "B");
+                    frm.ShowDialog(this);
+                }
             };
             #endregion
             #region Stock Location 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts11 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts11 = new DataGridViewGeneratorTextColumnSettings();
             ts11.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
-                if (dr["From_Program"].Equals("P03"))
+                if (dr == null)
                 {
-                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "I");
-                    frm.ShowDialog(this);
+                    return;
                 }
 
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new P03_BulkLocation(dr, "I");
+                    frm.ShowDialog(this);
+                }
             };
             #endregion
 
             #region Scrap Location 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts12 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts12 = new DataGridViewGeneratorTextColumnSettings();
             ts12.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
-                if (dr["From_Program"].Equals("P03"))
+                if (dr == null)
                 {
-                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "O");
-                    frm.ShowDialog(this);
+                    return;
                 }
 
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new P03_BulkLocation(dr, "O");
+                    frm.ShowDialog(this);
+                }
             };
             #endregion
             #region FIR 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts10 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts10 = new DataGridViewGeneratorTextColumnSettings();
             ts10.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
-                if (dr["From_Program"].Equals("P03"))
+                if (dr == null)
                 {
-                    var frm = new Sci.Production.Warehouse.P03_InspectionList(dr);
-                    frm.ShowDialog(this);
+                    return;
                 }
 
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new P03_InspectionList(dr);
+                    frm.ShowDialog(this);
+                }
             };
             #endregion
 
             #region 欄位設定
-            Helper.Controls.Grid.Generator(this.gridMaterialStatus)
-            .Text("id", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))  //1
-            .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2))  //2
-            .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(2))  //3
-            .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4), settings: ts1)  //3
-            .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(2), iseditingreadonly: true)    //4
-            .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(2), iseditingreadonly: true)    //5
-            .Text("FabricCombo", header: "Fabric" + Environment.NewLine + "Combo", iseditingreadonly: true)  
-            .Text("refno", header: "Ref#", iseditingreadonly: true, settings: ts2)  //6
+            this.Helper.Controls.Grid.Generator(this.gridMaterialStatus)
+            .Text("id", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 1
+            .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 2
+            .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 3
+            .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4), settings: ts1) // 3
+            .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(2), iseditingreadonly: true) // 4
+            .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(2), iseditingreadonly: true) // 5
+            .Text("FabricCombo", header: "Fabric" + Environment.NewLine + "Combo", iseditingreadonly: true)
+            .Text("refno", header: "Ref#", iseditingreadonly: true, settings: ts2) // 6
             .CheckBox("SustainableMaterial", header: "Recycled", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
-            .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(33))  //8
-            .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6))  //7  
-            .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15))  //8
-            .Text("ColorID", header: "Color", iseditingreadonly: true,width:Widths.AnsiChars(6))  //9
-            .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2))  //10
-            .EditText("GarmentSize", header: "Garment\r\nSize", iseditingreadonly: true, width: Widths.AnsiChars(2))  //8
-            .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(2))  //11
-            .Text("unitqty", header: "Qty", iseditingreadonly: true, width: Widths.AnsiChars(2),alignment : DataGridViewContentAlignment.MiddleRight)  //12
-            .Text("Qty", header: "Order\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight)  //13     
-            .Text("NETQty", header: "Net\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight)  //14
-            .Text("useqty", header: "Use\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight)  //15
-            .Text("ShipQty", header: "Ship\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts3)  //16
-            .Text("ShipFOC", header: "F.O.C", iseditingreadonly: true, width: Widths.AnsiChars(3), alignment: DataGridViewContentAlignment.MiddleRight)  //17
-            .Text("InputQty", header: "Taipei" + Environment.NewLine + "Stock Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts4)  //19
-            .Text("POUnit", header: "PO Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))  //20
-            .Text("Complete", header: "Cmplt", iseditingreadonly: true,width:Widths.AnsiChars(3))  //21
-            .Text("FinalETA", header: "Act.ETA", width: Widths.AnsiChars(8), iseditingreadonly: true)    //22
-            .Text("OrderIdList", header: "Order List", iseditingreadonly: true, settings: OrderList)  //23
-            .Numeric("InQty", header: "Arrived" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //24
-            .Text("StockUnit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))  //25
-            .Numeric("OutQty", header: "Released" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts5)    //26
-            .Numeric("AdjustQty", header: "Adjust" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true)    //27
-            .Numeric("balanceqty", header: "Balance", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts6)    //28
-            .Text("LInvQty", header: "Stock Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts7)  //29
-            .Text("LObQty", header: "Scrap Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts8)  //30
-            .Text("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9)  //31
-            .Text("BLocation", header: "Stock Location", iseditingreadonly: true, settings: ts11)  //32
-            .Text("CLocation", header: "Crap Location", iseditingreadonly: true, settings: ts12)  //32
-            .Text("FIR", header: "FIR", iseditingreadonly: true, settings: ts10)  //33
-            .Text("WashLab", header: "WashLab Report", iseditingreadonly: true, settings: ts10)  //33
-            .Text("Preshrink", header: "Preshrink", iseditingreadonly: true)  //34
-            .EditText("Remark", header: "Remark", iseditingreadonly: true)  //35
+            .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(33)) // 8
+            .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 7
+            .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 8
+            .Text("ColorID", header: "Color", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 9
+            .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 10
+            .EditText("GarmentSize", header: "Garment\r\nSize", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 8
+            .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 11
+            .Text("unitqty", header: "Qty", iseditingreadonly: true, width: Widths.AnsiChars(2), alignment: DataGridViewContentAlignment.MiddleRight) // 12
+            .Text("Qty", header: "Order\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 13
+            .Text("NETQty", header: "Net\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 14
+            .Text("useqty", header: "Use\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 15
+            .Text("ShipQty", header: "Ship\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts3) // 16
+            .Text("ShipFOC", header: "F.O.C", iseditingreadonly: true, width: Widths.AnsiChars(3), alignment: DataGridViewContentAlignment.MiddleRight) // 17
+            .Text("InputQty", header: "Taipei" + Environment.NewLine + "Stock Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts4) // 19
+            .Text("POUnit", header: "PO Unit", iseditingreadonly: true, width: Widths.AnsiChars(4)) // 20
+            .Text("Complete", header: "Cmplt", iseditingreadonly: true, width: Widths.AnsiChars(3)) // 21
+            .Text("FinalETA", header: "Act.ETA", width: Widths.AnsiChars(8), iseditingreadonly: true) // 22
+            .Text("OrderIdList", header: "Order List", iseditingreadonly: true, settings: OrderList) // 23
+            .Numeric("InQty", header: "Arrived" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true) // 24
+            .Text("StockUnit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4)) // 25
+            .Numeric("OutQty", header: "Released" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts5) // 26
+            .Numeric("AdjustQty", header: "Adjust" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true) // 27
+            .Numeric("balanceqty", header: "Balance", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts6) // 28
+            .Text("LInvQty", header: "Stock Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts7) // 29
+            .Text("LObQty", header: "Scrap Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts8) // 30
+            .Text("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9) // 31
+            .Text("BLocation", header: "Stock Location", iseditingreadonly: true, settings: ts11) // 32
+            .Text("CLocation", header: "Crap Location", iseditingreadonly: true, settings: ts12) // 32
+            .Text("FIR", header: "FIR", iseditingreadonly: true, settings: ts10) // 33
+            .Text("WashLab", header: "WashLab Report", iseditingreadonly: true, settings: ts10) // 33
+            .Text("Preshrink", header: "Preshrink", iseditingreadonly: true) // 34
+            .EditText("Remark", header: "Remark", iseditingreadonly: true) // 35
             ;
             #endregion
 
-            this.gridMaterialStatus.ColumnFrozen(gridMaterialStatus.Columns["fabrictype2"].Index); 
-            gridMaterialStatus.Columns["id"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            gridMaterialStatus.Columns["FinalETA"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            gridMaterialStatus.Columns["CurrencyID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            gridMaterialStatus.Columns["ShipFOC"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            gridMaterialStatus.Columns["InputQty"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            gridMaterialStatus.Columns["seq1"].Width = 40;
-            this.gridMaterialStatus.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.gridMaterialStatus.ColumnFrozen(this.gridMaterialStatus.Columns["fabrictype2"].Index);
+            this.gridMaterialStatus.Columns["id"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.gridMaterialStatus.Columns["FinalETA"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.gridMaterialStatus.Columns["CurrencyID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.gridMaterialStatus.Columns["ShipFOC"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.gridMaterialStatus.Columns["InputQty"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.gridMaterialStatus.Columns["seq1"].Width = 40;
+            this.gridMaterialStatus.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8F);
 
-            displayUseStock.BackColor = Color.FromArgb(255, 255, 128);
-            displayFtySupp.BackColor = Color.FromArgb(220, 140, 255);
-            displayCalSize.BackColor = Color.FromArgb(255, 170, 100);
-            displayJunk.BackColor = Color.FromArgb(190, 190, 190);
+            this.displayUseStock.BackColor = Color.FromArgb(255, 255, 128);
+            this.displayFtySupp.BackColor = Color.FromArgb(220, 140, 255);
+            this.displayCalSize.BackColor = Color.FromArgb(255, 170, 100);
+            this.displayJunk.BackColor = Color.FromArgb(190, 190, 190);
         }
 
         public void ChangeDetailColor()
         {
-            for (int index = 0; index < gridMaterialStatus.Rows.Count; index++)
+            for (int index = 0; index < this.gridMaterialStatus.Rows.Count; index++)
             {
-                DataRow dr = gridMaterialStatus.GetDataRow(index);
-                if (gridMaterialStatus.Rows.Count <= index || index < 0) return;
-
+                DataRow dr = this.gridMaterialStatus.GetDataRow(index);
+                if (this.gridMaterialStatus.Rows.Count <= index || index < 0)
+                {
+                    return;
+                }
 
                 int i = index;
 
-                
-
-                
-
                 if (dr["junk"].ToString() == "1")
                 {
-                    gridMaterialStatus.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
+                    this.gridMaterialStatus.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
                 }
                 else
                 {
                     if (dr["ThirdCountry"].ToString() == "1")
                     {
-                        gridMaterialStatus.Rows[i].Cells["Suppid"].Style.BackColor = Color.FromArgb(220, 140, 255);
+                        this.gridMaterialStatus.Rows[i].Cells["Suppid"].Style.BackColor = Color.FromArgb(220, 140, 255);
                     }
 
                     if (dr["BomTypeCalculate"].ToString() == "1")
                     {
-                        gridMaterialStatus.Rows[i].Cells["description"].Style.BackColor = Color.FromArgb(255, 170, 100);
+                        this.gridMaterialStatus.Rows[i].Cells["description"].Style.BackColor = Color.FromArgb(255, 170, 100);
                     }
-                    //
+
                     decimal ShipQty = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(dr["ShipQty"]) + MyUtility.Convert.GetDecimal(dr["ShipFOC"])) ? 0 : MyUtility.Convert.GetDecimal(dr["ShipQty"]) + MyUtility.Convert.GetDecimal(dr["ShipFOC"]);
                     decimal Qty = MyUtility.Check.Empty(dr["Qty"].ToString()) ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
                     if (!dr["ShipQty"].ToString().Empty() && !dr["Qty"].ToString().Empty())
-                    if (ShipQty < Qty)
                     {
-                        gridMaterialStatus.Rows[i].Cells["ShipQty"].Style.ForeColor = Color.Red;
+                        if (ShipQty < Qty)
+                    {
+                        this.gridMaterialStatus.Rows[i].Cells["ShipQty"].Style.ForeColor = Color.Red;
+                    }
                     }
 
-                    if (dr["SuppCountry"].ToString().EqualString(userCountry))
+                    if (dr["SuppCountry"].ToString().EqualString(this.userCountry))
                     {
-                        gridMaterialStatus.Rows[i].Cells["Seq1"].Style.BackColor = Color.FromArgb(255, 255, 128);
-                        gridMaterialStatus.Rows[i].Cells["Seq2"].Style.BackColor = Color.FromArgb(255, 255, 128);
+                        this.gridMaterialStatus.Rows[i].Cells["Seq1"].Style.BackColor = Color.FromArgb(255, 255, 128);
+                        this.gridMaterialStatus.Rows[i].Cells["Seq2"].Style.BackColor = Color.FromArgb(255, 255, 128);
                     }
 
                     if (!dr["OutQty"].ToString().Empty() && !dr["NETQty"].ToString().Empty() && !dr["NETQty"].ToString().Equals("-"))
-                    if (Convert.ToDecimal(dr["OutQty"].ToString()) > Convert.ToDecimal(dr["NETQty"].ToString()))
                     {
-                        gridMaterialStatus.Rows[i].Cells["OutQty"].Style.ForeColor = Color.Red;
+                        if (Convert.ToDecimal(dr["OutQty"].ToString()) > Convert.ToDecimal(dr["NETQty"].ToString()))
+                    {
+                        this.gridMaterialStatus.Rows[i].Cells["OutQty"].Style.ForeColor = Color.Red;
                     }
-                        
+                    }
                 }
             }
         }
@@ -501,22 +541,23 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out dru
         // Query
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(txtSPNo.Text))
+            if (MyUtility.Check.Empty(this.txtSPNo.Text))
             {
                 MyUtility.Msg.WarningBox("SP# can't be empty. Please fill SP# first!");
-                txtSPNo.Focus();
+                this.txtSPNo.Focus();
                 return;
             }
-            Query();
+
+            this.Query();
         }
 
         public void Query()
         {
             DataTable dtData = new DataTable();
-            listControlBindingSource1.DataSource = null;
-            string junk_where1 = "", junk_where2 = "";
-            string spno = txtSPNo.Text.TrimEnd() + "%";
-            #region -- SQL Command --           
+            this.listControlBindingSource1.DataSource = null;
+            string junk_where1 = string.Empty, junk_where2 = string.Empty;
+            string spno = this.txtSPNo.Text.TrimEnd() + "%";
+            #region -- SQL Command --
             string sqlcmd
                 = @"
 declare @id varchar(20) = @sp1		
@@ -961,30 +1002,34 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
             ";
             #endregion
             #region -- 準備sql參數資料 --
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            SqlParameter sp1 = new SqlParameter();
             sp1.ParameterName = "@sp1";
             sp1.Value = spno;
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            IList<SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(sp1);
             #endregion
             this.ShowWaitMessage("Data Loading....");
 
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtData))
             {
-                if (dtData.Rows.Count == 0 && !ButtonOpen)
-                { MyUtility.Msg.WarningBox("Data not found!!"); }
-                listControlBindingSource1.DataSource = ReCombineOrderList(dtData);
-                grid_Filter();
-                grid1_sorting();
-                ChangeDetailColor();
-                ButtonOpen = false;
+                if (dtData.Rows.Count == 0 && !this.ButtonOpen)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+
+                this.listControlBindingSource1.DataSource = this.ReCombineOrderList(dtData);
+                this.grid_Filter();
+                this.grid1_sorting();
+                this.ChangeDetailColor();
+                this.ButtonOpen = false;
             }
             else
             {
-                ShowErr(result);
+                this.ShowErr(result);
             }
+
             _Refno = string.Empty;
             _Color = string.Empty;
             _MaterialType = string.Empty;
@@ -1020,7 +1065,7 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
 
                 // 比較的 OrderID
                 string strCompareID = MyUtility.Convert.GetString(dr["id"]);
-                bool listHaveDiffOrderID = OrderByOrderList(dr["OrderIdList"].ToString().Split('/'), strID, out arrayOrderList);
+                bool listHaveDiffOrderID = this.OrderByOrderList(dr["OrderIdList"].ToString().Split('/'), strID, out arrayOrderList);
                 foreach (string item in arrayOrderList)
                 {
                     // 目前比較的 ID 不存在於 item
@@ -1035,11 +1080,11 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
                     {
                         if (item.Equals(strID))
                         {
-                            /* 
+                            /*
                              * Case 1   OrderList 存在不同的 OrderID
                              *          則每一個新的 OrderID 都必須完整顯示
                              * Case 2   OrderList 每一項都與搜尋的 OrderID 相同
-                             *          則不需要顯示完整的 item 
+                             *          則不需要顯示完整的 item
                              *          每一項只需從第八碼開始取字串
                              */
                             if (listHaveDiffOrderID)
@@ -1093,26 +1138,35 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
 
         private void grid_Filter()
         {
-            string filter = "";
-            if (gridMaterialStatus.RowCount > 0)
+            string filter = string.Empty;
+            if (this.gridMaterialStatus.RowCount > 0)
             {
-                switch (chk_includeJunk.Checked)
-                {                    
+                switch (this.chk_includeJunk.Checked)
+                {
                     case true:
-                        if (MyUtility.Check.Empty(gridMaterialStatus)) break;
+                        if (MyUtility.Check.Empty(this.gridMaterialStatus))
+                        {
+                            break;
+                        }
+
                         if (!MyUtility.Check.Empty(_Refno) && !MyUtility.Check.Empty(_Color) && !MyUtility.Check.Empty(_MaterialType))
                         {
                             filter = $@" refno='{_Refno}' and ColorID='{_Color}' and fabrictype2='{_MaterialType}'";
                         }
                         else
                         {
-                            filter = "";
+                            filter = string.Empty;
                         }
-                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
                         break;
 
                     case false:
-                        if (MyUtility.Check.Empty(gridMaterialStatus)) break;
+                        if (MyUtility.Check.Empty(this.gridMaterialStatus))
+                        {
+                            break;
+                        }
+
                         if (!MyUtility.Check.Empty(_Refno) && !MyUtility.Check.Empty(_Color) && !MyUtility.Check.Empty(_MaterialType))
                         {
                             filter = $@" refno='{_Refno}' and ColorID='{_Color}' and fabrictype2='{_MaterialType}' and junk=0";
@@ -1120,26 +1174,35 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
                         else
                         {
                             filter = " junk=0";
-                        }                        
-                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        }
+
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
                         break;
-                }               
-            }           
+                }
+            }
         }
 
         private void grid1_sorting()
         {
-            if (gridMaterialStatus.RowCount > 0)
+            if (this.gridMaterialStatus.RowCount > 0)
             {
-                switch (comboSortBy.SelectedIndex)
+                switch (this.comboSortBy.SelectedIndex)
                 {
                     case 0:
-                        if (MyUtility.Check.Empty(gridMaterialStatus)) break;
-                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = " from_Program ,refno ,id,fabrictypeOrderby, colorid";
+                        if (MyUtility.Check.Empty(this.gridMaterialStatus))
+                        {
+                            break;
+                        }
+
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " from_Program ,refno ,id,fabrictypeOrderby, colorid";
                         break;
                     case 1:
-                        if (MyUtility.Check.Empty(gridMaterialStatus)) break;
-                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = "from_Program ,id,seq1 , seq2";
+                        if (MyUtility.Check.Empty(this.gridMaterialStatus))
+                        {
+                            break;
+                        }
+
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = "from_Program ,id,seq1 , seq2";
                         break;
                 }
             }
@@ -1150,66 +1213,79 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
         {
             this.Close();
         }
-        //Excel
+
+        // Excel
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            
-            if (null == this.gridMaterialStatus.CurrentRow) return;
-            var dr = this.gridMaterialStatus.GetDataRow<DataRow>(this.gridMaterialStatus.CurrentRow.Index);
-            if (null == dr) return;
+            if (this.gridMaterialStatus.CurrentRow == null)
+            {
+                return;
+            }
 
-            P03_Print p = new P03_Print(dr, comboSortBy.SelectedIndex, chk_includeJunk.Checked);
-            p.MdiParent = MdiParent;
-            p.TopMost = true;            
+            var dr = this.gridMaterialStatus.GetDataRow<DataRow>(this.gridMaterialStatus.CurrentRow.Index);
+            if (dr == null)
+            {
+                return;
+            }
+
+            P03_Print p = new P03_Print(dr, this.comboSortBy.SelectedIndex, this.chk_includeJunk.Checked);
+            p.MdiParent = this.MdiParent;
+            p.TopMost = true;
             p.Show();
 
             return;
-           
         }
+
         private void comboSortBy_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(txtSPNo.Text))return;
-            grid_Filter();
-            grid1_sorting();
-            ChangeDetailColor();
+            if (MyUtility.Check.Empty(this.txtSPNo.Text))
+            {
+                return;
+            }
+
+            this.grid_Filter();
+            this.grid1_sorting();
+            this.ChangeDetailColor();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (txtSPNo.Focused)
+            if (this.txtSPNo.Focused)
             {
                 switch (keyData)
                 {
                     case Keys.Enter:
-                        Query();
+                        this.Query();
                         break;
                 }
             }
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private void gridMaterialStatus_Sorted(object sender, EventArgs e)
         {
-            ChangeDetailColor();
+            this.ChangeDetailColor();
         }
 
         private void btnNewSearch_Click(object sender, EventArgs e)
         {
-            txtSPNo.ResetText();
-            txtSPNo.Select();
+            this.txtSPNo.ResetText();
+            this.txtSPNo.Select();
         }
 
         public void setTxtSPNo(string spNo)
         {
             this.txtSPNo.Text = spNo;
         }
+
         private void gridMaterialStatus_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             this.ShowErr(e.Exception);
             e.ThrowException = false;
-            if (listControlBindingSource1.DataSource != null && listControlBindingSource1.DataSource is DataTable)
+            if (this.listControlBindingSource1.DataSource != null && this.listControlBindingSource1.DataSource is DataTable)
             {
-                DataTable data = (DataTable)listControlBindingSource1.DataSource;
+                DataTable data = (DataTable)this.listControlBindingSource1.DataSource;
                 data.Clear();
                 return;
             }
@@ -1217,9 +1293,9 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
 
         private void chk_includeJunk_CheckedChanged(object sender, EventArgs e)
         {
-            grid_Filter();
-            grid1_sorting();
-            ChangeDetailColor();
+            this.grid_Filter();
+            this.grid1_sorting();
+            this.ChangeDetailColor();
         }
     }
 }

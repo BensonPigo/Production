@@ -32,8 +32,8 @@
             this.comboReportType = new Sci.Win.UI.ComboBox();
             this.comboPaymentSettled = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.txttpeuser_caneditSMR = new Sci.Production.Class.txttpeuser_canedit();
-            this.txttpeuser_caneditHandle = new Sci.Production.Class.txttpeuser_canedit();
+            this.txttpeuser_caneditSMR = new Sci.Production.Class.Txttpeuser_canedit();
+            this.txttpeuser_caneditHandle = new Sci.Production.Class.Txttpeuser_canedit();
             this.dateSettledDate = new Sci.Win.UI.DateRange();
             this.dateConfirmDate = new Sci.Win.UI.DateRange();
             this.dateDebitDate = new Sci.Win.UI.DateRange();
@@ -361,8 +361,8 @@
         private Win.UI.DateRange dateDebitDate;
         private Win.UI.TextBox txtDebitNoEnd;
         private Win.UI.ComboBox comboFactory;
-        private Class.txttpeuser_canedit txttpeuser_caneditSMR;
-        private Class.txttpeuser_canedit txttpeuser_caneditHandle;
+        private Class.Txttpeuser_canedit txttpeuser_caneditSMR;
+        private Class.Txttpeuser_canedit txttpeuser_caneditHandle;
         private Win.UI.ComboBox comboReportType;
         private Win.UI.ComboBox comboPaymentSettled;
 

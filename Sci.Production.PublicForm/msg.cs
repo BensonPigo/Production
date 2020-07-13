@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.PublicForm
@@ -14,7 +7,7 @@ namespace Sci.Production.PublicForm
     {
         public msg()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.picInfo.Image = System.Drawing.SystemIcons.Information.ToBitmap();
         }
 

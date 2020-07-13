@@ -2,40 +2,36 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P10_BatchDelete : Sci.Win.Subs.Base
+    public partial class P10_BatchDelete : Win.Subs.Base
     {
         private DataTable dtQuery;
+
         public P10_BatchDelete()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
-            QueryData();
+            this.QueryData();
         }
 
         private void QueryData()
         {
             DateTime? AddDate1, AddDate2, EstCutDate;
-            AddDate1 = dateAddDate.Value1;
-            AddDate2 = dateAddDate.Value2;
-            EstCutDate = dateEstCutDate.Value;
+            AddDate1 = this.dateAddDate.Value1;
+            AddDate2 = this.dateAddDate.Value2;
+            EstCutDate = this.dateEstCutDate.Value;
             if ((MyUtility.Check.Empty(AddDate1) && MyUtility.Check.Empty(AddDate2)) &&
                 MyUtility.Check.Empty(this.txtCutRef.Text) &&
                 MyUtility.Check.Empty(this.txtSPNo.Text) &&
                 MyUtility.Check.Empty(this.txtSPNo1.Text) &&
-                MyUtility.Check.Empty(EstCutDate)) 
+                MyUtility.Check.Empty(EstCutDate))
             {
                 MyUtility.Msg.WarningBox("search condition can't be all empty!!");
                 return;
@@ -49,12 +45,12 @@ namespace Sci.Production.Cutting
 
             if (!MyUtility.Check.Empty(EstCutDate))
             {
-                sqlwhere += $@" and estdate.estcutdate = '{Convert.ToDateTime(EstCutDate).ToString("d")}'"; ;
+                sqlwhere += $@" and estdate.estcutdate = '{Convert.ToDateTime(EstCutDate).ToString("d")}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtCutRef.Text))
             {
-                sqlwhere += $@" and b.CutRef = '{this.txtCutRef.Text}'"; ;
+                sqlwhere += $@" and b.CutRef = '{this.txtCutRef.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text) && !MyUtility.Check.Empty(this.txtSPNo1.Text))
@@ -69,6 +65,7 @@ namespace Sci.Production.Cutting
             {
                 sqlwhere += $@" and b.OrderID like '{this.txtSPNo1.Text}%'";
             }
+
             string sqlcmd = $@"
 select 
 [Selected]=0
@@ -91,23 +88,27 @@ outer apply
 	and workorder.MDivisionID = b.MDivisionID
 ) as estdate
 where 1=1
-      and o.mDivisionid='{Sci.Env.User.Keyword}'
+      and o.mDivisionid='{Env.User.Keyword}'
       {sqlwhere}
 ";
             this.ShowWaitMessage("Data Loading....");
-            Ict.DualResult result;
-            if (result = DBProxy.Current.Select(null, sqlcmd, out dtQuery))
+            DualResult result;
+            if (result = DBProxy.Current.Select(null, sqlcmd, out this.dtQuery))
             {
-                if (dtQuery.Rows.Count == 0)
+                if (this.dtQuery.Rows.Count == 0)
                 {
                     this.HideWaitMessage();
                     MyUtility.Msg.WarningBox("Data not found!!");
                 }
-                listControlBindingSource1.DataSource = dtQuery;
-            }
-            else { ShowErr(sqlcmd, result); }
-            this.HideWaitMessage();
 
+                this.listControlBindingSource1.DataSource = this.dtQuery;
+            }
+            else
+            {
+                this.ShowErr(sqlcmd, result);
+            }
+
+            this.HideWaitMessage();
         }
 
         protected override void OnFormLoaded()
@@ -115,9 +116,9 @@ where 1=1
             base.OnFormLoaded();
 
             this.gridBatchDelete.IsEditingReadOnly = false;
-            this.gridBatchDelete.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridBatchDelete)
-                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+            this.gridBatchDelete.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridBatchDelete)
+                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("id", header: "ID", iseditingreadonly: true, width: Widths.AnsiChars(14))
                 .Text("POID", header: "POID", iseditingreadonly: true, width: Widths.AnsiChars(12))
                 .Text("MDivisionid", header: "M", iseditingreadonly: true, width: Widths.AnsiChars(5))
@@ -145,9 +146,12 @@ where 1=1
 
         private void BtnDelete_Click(object sender, EventArgs e)
         {
-            gridBatchDelete.ValidateControl();
-            DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
+            this.gridBatchDelete.ValidateControl();
+            DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0)
+            {
+                return;
+            }
 
             DualResult result;
             DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
@@ -158,12 +162,17 @@ where 1=1
             }
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to delete these Bundle Card?");
-            if (dResult.ToString().ToUpper() == "NO") return;
+            if (dResult.ToString().ToUpper() == "NO")
+            {
+                return;
+            }
+
             string sqldelete = string.Empty;
             this.ShowWaitMessage("Data Process....");
             foreach (DataRow dr in dr2)
             {
-                sqldelete += string.Format(@"
+                sqldelete += string.Format(
+                    @"
 delete from bundle where id = '{0}';
 delete from Bundle_Detail where id = '{0}';
 delete from Bundle_Detail_Art where id = '{0}';
@@ -172,16 +181,16 @@ delete from Bundle_Detail_qty where id = '{0}';
 ", dr["ID"]);
             }
 
-            if (!(result = DBProxy.Current.Execute("", sqldelete)))
+            if (!(result = DBProxy.Current.Execute(string.Empty, sqldelete)))
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 this.HideWaitMessage();
                 return;
             }
 
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Finish batch delete!!");
-            QueryData();
+            this.QueryData();
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)

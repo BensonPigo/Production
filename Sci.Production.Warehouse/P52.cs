@@ -3,25 +3,22 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P52 : Sci.Win.Tems.Input6
+    public partial class P52 : Win.Tems.Input6
     {
         public P52(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.InitializeComponent();
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
             #region Set ComboBox Dictionary
             Dictionary<string, string> dicForwardBack = new Dictionary<string, string>();
             dicForwardBack.Add("F", "Forward");
@@ -35,7 +32,7 @@ namespace Sci.Production.Warehouse
             this.comboBoxStockType.DataSource = new BindingSource(dicStockType, null);
             this.comboBoxStockType.ValueMember = "key";
             this.comboBoxStockType.DisplayMember = "value";
-            #endregion 
+            #endregion
         }
 
         protected override void OnFormLoaded()
@@ -46,50 +43,58 @@ namespace Sci.Production.Warehouse
             gridSPSetting.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
+                {
                     return;
-                string strOldSP = CurrentDetailData["POID"].ToString();
+                }
+
+                string strOldSP = this.CurrentDetailData["POID"].ToString();
                 string strNewSP = e.FormattedValue.ToString();
                 #region NewSP is Empty 該筆資料自動清空
                 if (strNewSP.Empty())
                 {
-                    CurrentDetailData["POID"] = "";
-                    this.gridRowDataReSet(CurrentDetailData);
+                    this.CurrentDetailData["POID"] = string.Empty;
+                    this.gridRowDataReSet(this.CurrentDetailData);
                     return;
                 }
-                #endregion 
+                #endregion
                 #region check SP#
-                bool boolCheckSPNum = MyUtility.Check.Seek(string.Format(@"
+                bool boolCheckSPNum = MyUtility.Check.Seek(string.Format(
+                    @"
 select Linv.*
 from LocalInventory Linv
 inner join orders o on Linv.OrderID = o.ID
 where   Linv.OrderID = '{0}'
-        and o.MDivisionID = '{1}'", strNewSP
-                                  , Sci.Env.User.Keyword));
+        and o.MDivisionID = '{1}'", strNewSP,
+                    Env.User.Keyword));
                 if (boolCheckSPNum)
                 {
                     if (!strOldSP.EqualString(strNewSP))
                     {
-                        CurrentDetailData["POID"] = strNewSP;
-                        this.gridRowDataReSet(CurrentDetailData);
+                        this.CurrentDetailData["POID"] = strNewSP;
+                        this.gridRowDataReSet(this.CurrentDetailData);
                     }
                 }
                 else
                 {
                     e.Cancel = true;
-                    this.gridRowDataReSet(CurrentDetailData);
+                    this.gridRowDataReSet(this.CurrentDetailData);
                     MyUtility.Msg.WarningBox(string.Format("SP# : {0} not found.", strNewSP));
                 }
-                #endregion 
+                #endregion
             };
-            #endregion 
+            #endregion
             #region Ref#
             DataGridViewGeneratorTextColumnSettings gridRefNumSetting = new DataGridViewGeneratorTextColumnSettings();
             gridRefNumSetting.EditingMouseDown += (s, e) =>
             {
-                if (e.Button != System.Windows.Forms.MouseButtons.Right || !this.EditMode)
+                if (e.Button != MouseButtons.Right || !this.EditMode)
+                {
                     return;
+                }
                 #region Ref# 右鍵開窗
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+                    string.Format(
+                    @"
 select  LInv.Refno
         , LInv.ThreadColorID
         , LI.Description
@@ -107,9 +112,9 @@ outer apply (
 						when 'O' then LInv.LobQty
 				   end
 ) BookQty
-Where LInv.OrderID = '{1}'", CurrentMaintain["StockType"]
-                           , CurrentDetailData["POID"]), null, null);
-                #endregion 
+Where LInv.OrderID = '{1}'", this.CurrentMaintain["StockType"],
+                    this.CurrentDetailData["POID"]), null, null);
+                #endregion
                 DialogResult result = item.ShowDialog();
                 #region 開窗後選擇的結果
                 if (result == DialogResult.Cancel)
@@ -118,25 +123,29 @@ Where LInv.OrderID = '{1}'", CurrentMaintain["StockType"]
                 }
                 else
                 {
-                    CurrentDetailData["Refno"] = item.GetSelecteds()[0]["Refno"];
-                    CurrentDetailData["Color"] = item.GetSelecteds()[0]["ThreadColorID"];
-                    CurrentDetailData["Location"] = item.GetSelecteds()[0]["Location"];
-                    CurrentDetailData["QtyBefore"] = item.GetSelecteds()[0]["QtyBefore"];
-                    CurrentDetailData["UnitID"] = item.GetSelecteds()[0]["UnitID"];
-                    CurrentDetailData["Variance"] = Convert.ToDecimal(CurrentDetailData["QtyAfter"]) - Convert.ToDecimal(CurrentDetailData["QtyBefore"]);
-                    CurrentDetailData.EndEdit();
+                    this.CurrentDetailData["Refno"] = item.GetSelecteds()[0]["Refno"];
+                    this.CurrentDetailData["Color"] = item.GetSelecteds()[0]["ThreadColorID"];
+                    this.CurrentDetailData["Location"] = item.GetSelecteds()[0]["Location"];
+                    this.CurrentDetailData["QtyBefore"] = item.GetSelecteds()[0]["QtyBefore"];
+                    this.CurrentDetailData["UnitID"] = item.GetSelecteds()[0]["UnitID"];
+                    this.CurrentDetailData["Variance"] = Convert.ToDecimal(this.CurrentDetailData["QtyAfter"]) - Convert.ToDecimal(this.CurrentDetailData["QtyBefore"]);
+                    this.CurrentDetailData.EndEdit();
                 }
-                #endregion 
+                #endregion
             };
             #endregion
             #region Color
             DataGridViewGeneratorTextColumnSettings gridColorSetting = new DataGridViewGeneratorTextColumnSettings();
             gridColorSetting.EditingMouseDown += (s, e) =>
             {
-                if (e.Button != System.Windows.Forms.MouseButtons.Right || !this.EditMode)
+                if (e.Button != MouseButtons.Right || !this.EditMode)
+                {
                     return;
+                }
                 #region Ref# 右鍵開窗
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+                    string.Format(
+                    @"
 select  LInv.ThreadColorID
         , LI.Description
         , Location = case '{0}'
@@ -154,9 +163,9 @@ outer apply (
 				   end
 ) BookQty
 Where   LInv.OrderID = '{1}'
-        and LInv.Refno = '{2}'", CurrentMaintain["StockType"]
-                               , CurrentDetailData["POID"]
-                               , CurrentDetailData["Refno"]), null, null);
+        and LInv.Refno = '{2}'", this.CurrentMaintain["StockType"],
+                    this.CurrentDetailData["POID"],
+                    this.CurrentDetailData["Refno"]), null, null);
                 #endregion
                 DialogResult result = item.ShowDialog();
                 #region 開窗後選擇的結果
@@ -166,24 +175,24 @@ Where   LInv.OrderID = '{1}'
                 }
                 else
                 {
-                    CurrentDetailData["Color"] = item.GetSelecteds()[0]["ThreadColorID"];
-                    CurrentDetailData["Location"] = item.GetSelecteds()[0]["Location"];
-                    CurrentDetailData["QtyBefore"] = item.GetSelecteds()[0]["QtyBefore"];
-                    CurrentDetailData["UnitID"] = item.GetSelecteds()[0]["UnitID"];
-                    CurrentDetailData["Variance"] = Convert.ToDecimal(CurrentDetailData["QtyAfter"]) - Convert.ToDecimal(CurrentDetailData["QtyBefore"]);
-                    CurrentDetailData.EndEdit();
+                    this.CurrentDetailData["Color"] = item.GetSelecteds()[0]["ThreadColorID"];
+                    this.CurrentDetailData["Location"] = item.GetSelecteds()[0]["Location"];
+                    this.CurrentDetailData["QtyBefore"] = item.GetSelecteds()[0]["QtyBefore"];
+                    this.CurrentDetailData["UnitID"] = item.GetSelecteds()[0]["UnitID"];
+                    this.CurrentDetailData["Variance"] = Convert.ToDecimal(this.CurrentDetailData["QtyAfter"]) - Convert.ToDecimal(this.CurrentDetailData["QtyBefore"]);
+                    this.CurrentDetailData.EndEdit();
                 }
-                #endregion 
+                #endregion
             };
-            #endregion 
+            #endregion
             #region QtyAfter
             DataGridViewGeneratorNumericColumnSettings gridQtyAfterSetting = new DataGridViewGeneratorNumericColumnSettings();
             gridQtyAfterSetting.CellValidating += (s, e) =>
             {
-                CurrentDetailData["QtyAfter"] = e.FormattedValue;
-                CurrentDetailData["Variance"] = Convert.ToDecimal(CurrentDetailData["QtyAfter"]) - Convert.ToDecimal(CurrentDetailData["QtyBefore"]);
+                this.CurrentDetailData["QtyAfter"] = e.FormattedValue;
+                this.CurrentDetailData["Variance"] = Convert.ToDecimal(this.CurrentDetailData["QtyAfter"]) - Convert.ToDecimal(this.CurrentDetailData["QtyBefore"]);
             };
-            #endregion 
+            #endregion
             #region Set Grid Columns
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("POID", header: "SP#", settings: gridSPSetting)
@@ -203,20 +212,21 @@ Where   LInv.OrderID = '{1}'
         /// <param name="dataRow">需要清空的資料列</param>
         private void gridRowDataReSet(DataRow dataRow)
         {
-            dataRow["Refno"] = "";
-            dataRow["Color"] = "";
-            dataRow["Location"] = "";
+            dataRow["Refno"] = string.Empty;
+            dataRow["Color"] = string.Empty;
+            dataRow["Location"] = string.Empty;
             dataRow["QtyBefore"] = 0;
             dataRow["QtyAfter"] = 0;
             dataRow["Variance"] = 0;
-            dataRow["UnitID"] = "";
+            dataRow["UnitID"] = string.Empty;
             dataRow.EndEdit();
         }
 
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string strMasterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"
+            string strMasterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(
+                @"
 select	STLD.ID
         , STLD.Ukey
         , STLD.POID
@@ -243,9 +253,12 @@ order by STLD.POID, STLD.Refno, STLD.Color
 
         private void comboBoxStockType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!EditMode || this.detailgrid.Rows.Count == 0)
+            if (!this.EditMode || this.detailgrid.Rows.Count == 0)
+            {
                 return;
-            DataTable dtDetailGrid = ((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource);
+            }
+
+            DataTable dtDetailGrid = (DataTable)((BindingSource)this.detailgrid.DataSource).DataSource;
             #region 移除表身所有資料
             for (int i = 0; i < dtDetailGrid.Rows.Count;)
             {
@@ -258,53 +271,56 @@ order by STLD.POID, STLD.Refno, STLD.Color
                         continue;
                     }
                 }
+
                 i++;
             }
-            #endregion 
+            #endregion
         }
 
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["IssueDate"] = DateTime.Today;
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            CurrentMaintain["Type"] = "F";
-            CurrentMaintain["StockType"] = "B";
-            CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["IssueDate"] = DateTime.Today;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["Type"] = "F";
+            this.CurrentMaintain["StockType"] = "B";
+            this.CurrentMaintain["Status"] = "New";
         }
 
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain != null && CurrentMaintain["Status"].EqualString("Confirmed"))
+            if (this.CurrentMaintain != null && this.CurrentMaintain["Status"].EqualString("Confirmed"))
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
         protected override bool ClickDeleteBefore()
         {
-            if (CurrentMaintain != null && CurrentMaintain["Status"].EqualString("Confirmed"))
+            if (this.CurrentMaintain != null && this.CurrentMaintain["Status"].EqualString("Confirmed"))
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't delete.", "Warning");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
 
         protected override bool ClickSaveBefore()
         {
             DualResult result;
-            DataTable dtDetailGrid = ((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource);
+            DataTable dtDetailGrid = (DataTable)((BindingSource)this.detailgrid.DataSource).DataSource;
             #region 表頭 StockType 不可為空值
-            if (CurrentMaintain != null && CurrentMaintain["StockType"].Empty())
+            if (this.CurrentMaintain != null && this.CurrentMaintain["StockType"].Empty())
             {
                 MyUtility.Msg.WarningBox("Stock Type can't be empty.");
                 return false;
             }
-            #endregion 
+            #endregion
             #region 表身【SP#, Refno, Color】不可重複
             DataTable dtCheckDuplicateData;
             string strCheckDuplicateData = @"
@@ -330,6 +346,7 @@ where countDuplicate.value > 1";
                     {
                         strErrMsg.Append(string.Format("SP#:{0} Refno#:{1} Color:{2}'s", dr["Poid"], dr["Refno"].ToString().Trim(), dr["Color"]) + Environment.NewLine);
                     }
+
                     strErrMsg.Append("SP#, Refno#, Color can't be duplicate.");
                     MyUtility.Msg.WarningBox(strErrMsg.ToString());
                     return false;
@@ -340,7 +357,7 @@ where countDuplicate.value > 1";
                 MyUtility.Msg.WarningBox(result.Description, "表身【SP#, Refno, Color】不可重複");
                 return false;
             }
-            #endregion 
+            #endregion
             #region 移除表身 SP# is empty 的資料
             for (int i = 0; i < dtDetailGrid.Rows.Count;)
             {
@@ -356,9 +373,10 @@ where countDuplicate.value > 1";
                         }
                     }
                 }
+
                 i++;
             }
-            #endregion 
+            #endregion
             #region Actual Qty 不可為負數
             foreach (DataRow dr in ((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource).Rows)
             {
@@ -371,53 +389,59 @@ where countDuplicate.value > 1";
                     }
                 }
             }
-            #endregion 
+            #endregion
             #region 檢查 【Forward : 表身至少要有一筆資料】【Back : 表身允許為空值】
             bool boolCheckDetailFail = false;
-            switch (CurrentMaintain["Type"].ToString())
+            switch (this.CurrentMaintain["Type"].ToString())
             {
                 case "F":
                     if (this.detailgrid.Rows.Count == 0)
+                    {
                         boolCheckDetailFail = true;
+                    }
+
                     break;
             }
+
             if (boolCheckDetailFail)
             {
                 MyUtility.Msg.WarningBox("Detail can't be empty");
                 return false;
             }
-            #endregion 
-            #region 表身資料補上 StockType 
+            #endregion
+            #region 表身資料補上 StockType
             foreach (DataRow dr in dtDetailGrid.Rows)
             {
                 if (dr.RowState != DataRowState.Detached && dr.RowState != DataRowState.Deleted)
                 {
-                    dr["StockType"] = CurrentMaintain["StockType"];
+                    dr["StockType"] = this.CurrentMaintain["StockType"];
                 }
             }
             #endregion
             #region 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SL", "StocktakingLocal", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "SL", "StocktakingLocal", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
                     return false;
                 }
-                CurrentMaintain["id"] = tmpId;
+
+                this.CurrentMaintain["id"] = tmpId;
             }
-            #endregion 
+            #endregion
             return base.ClickSaveBefore();
         }
 
         protected override void ClickConfirm()
         {
             DualResult result;
-            DataTable dtDetailGrid = ((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource);
+            DataTable dtDetailGrid = (DataTable)((BindingSource)this.detailgrid.DataSource).DataSource;
             #region 檢查庫存是否足夠
             DataTable dtCheckStockQty;
-            string strCheckStockQty = string.Format(@"
+            string strCheckStockQty = string.Format(
+                @"
 select  #tmp.POID
         , #tmp.Refno
         , #tmp.Color
@@ -446,13 +470,15 @@ where stockQty.value + StockTackingAdjust.value < 0
                     StringBuilder strErrMsg = new StringBuilder();
                     foreach (DataRow dr in dtCheckStockQty.Rows)
                     {
-                        strErrMsg.Append(string.Format("SP#:{0} Refno#:{1} Color:{2}'s balance:{3} is less than Adjust qty:{4}"
-                            , dr["POID"]
-                            , dr["Refno"]
-                            , dr["Color"]
-                            , dr["Balance"]
-                            , dr["AdjustQty"]) + Environment.NewLine);
+                        strErrMsg.Append(string.Format(
+                            "SP#:{0} Refno#:{1} Color:{2}'s balance:{3} is less than Adjust qty:{4}",
+                            dr["POID"],
+                            dr["Refno"],
+                            dr["Color"],
+                            dr["Balance"],
+                            dr["AdjustQty"]) + Environment.NewLine);
                     }
+
                     strErrMsg.Append("Balacne Qty is not enough!!");
                     MyUtility.Msg.WarningBox(strErrMsg.ToString(), "檢查庫存是否足夠");
                     return;
@@ -469,17 +495,18 @@ where stockQty.value + StockTackingAdjust.value < 0
             using (_transactionscope)
             using (sqlConn)
             {
-                string strAdjustID = "";
+                string strAdjustID = string.Empty;
                 #region 調整庫存
                 DataTable dtUpdateStockQty;
-                string strUpdateStockQty = string.Format(@"
+                string strUpdateStockQty = string.Format(
+                    @"
 merge LocalInventory as LI
 using #tmp as tmp on  LI.OrderID = tmp.POID
 								   and LI.Refno = tmp.Refno
 								   and LI.ThreadColorID = tmp.Color
 when matched then 
-		update set {0};"
-                    , CurrentMaintain["StockType"].EqualString("O") ? "LI.LobQty = LI.LobQty + (tmp.QtyAfter - tmp.QtyBefore)" : "LI.AdjustQty = LI.AdjustQty + (tmp.QtyAfter - tmp.QtyBefore)");
+		update set {0};",
+                    this.CurrentMaintain["StockType"].EqualString("O") ? "LI.LobQty = LI.LobQty + (tmp.QtyAfter - tmp.QtyBefore)" : "LI.AdjustQty = LI.AdjustQty + (tmp.QtyAfter - tmp.QtyBefore)");
                 result = MyUtility.Tool.ProcessWithDatatable(dtDetailGrid, null, strUpdateStockQty, out dtUpdateStockQty);
                 if (!result)
                 {
@@ -487,14 +514,14 @@ when matched then
                     MyUtility.Msg.WarningBox(result.Description);
                     return;
                 }
-                #endregion 
+                #endregion
                 if (dtDetailGrid.AsEnumerable().Any(row => !row["QtyAfter"].EqualDecimal(row["QtyBefore"])))
                 {
                     dtDetailGrid = dtDetailGrid.AsEnumerable().Where(row => !row["QtyAfter"].EqualDecimal(row["QtyBefore"])).CopyToDataTable();
                     #region 庫存足夠，【QtyAfter != QtyBefore】建立調整單
                     #region 取 Adjust 單號
-                    string strLBLC = CurrentMaintain["StockType"].EqualString("O") ? "LC" : "LB";
-                    strAdjustID = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + strLBLC, "AdjustLocal", (DateTime)CurrentMaintain["Issuedate"], 2, "ID", null);
+                    string strLBLC = this.CurrentMaintain["StockType"].EqualString("O") ? "LC" : "LB";
+                    strAdjustID = MyUtility.GetValue.GetID(Env.User.Keyword + strLBLC, "AdjustLocal", (DateTime)this.CurrentMaintain["Issuedate"], 2, "ID", null);
                     if (MyUtility.Check.Empty(strAdjustID))
                     {
                         _transactionscope.Dispose();
@@ -503,19 +530,20 @@ when matched then
                     }
                     #endregion
                     #region 新增 Adjust 表頭
-                    string strInsertAdjustLocal = string.Format(@"
+                    string strInsertAdjustLocal = string.Format(
+                        @"
 insert into AdjustLocal 
     (ID				, MDivisionID	, FactoryID	, IssueDate	, Remark
     , Status		, AddName		, AddDate	, Type		, StocktakingID) 
 values 
     ('{0}'			, '{1}'			, '{2}'		, GETDATE()	, 'Add by stocktaking'
-    , 'Confirmed'	, '{3}'			, GETDATE()	, '{4}'		, '{5}');"
-                        , strAdjustID
-                        , CurrentMaintain["MDivisionID"]
-                        , CurrentMaintain["FactoryID"]
-                        , CurrentMaintain["AddName"]
-                        , CurrentMaintain["StockType"].EqualString("O") ? "C" : "A"
-                        , CurrentMaintain["ID"]);
+    , 'Confirmed'	, '{3}'			, GETDATE()	, '{4}'		, '{5}');",
+                        strAdjustID,
+                        this.CurrentMaintain["MDivisionID"],
+                        this.CurrentMaintain["FactoryID"],
+                        this.CurrentMaintain["AddName"],
+                        this.CurrentMaintain["StockType"].EqualString("O") ? "C" : "A",
+                        this.CurrentMaintain["ID"]);
                     result = DBProxy.Current.Execute(null, strInsertAdjustLocal);
                     if (!result)
                     {
@@ -526,7 +554,8 @@ values
                     #endregion
                     #region 新增 Adjust 表身
                     DataTable dtInsertAdjustLocalDetail;
-                    string strInsertAdjustLocalDetail = string.Format(@"
+                    string strInsertAdjustLocalDetail = string.Format(
+                        @"
 insert into AdjustLocal_Detail (
         ID				    , MDivisionID	    , POID		    , Refno		        , Color
         , StockType         , QtyBefore		    , QtyAfter	    , ReasonId
@@ -536,9 +565,9 @@ select  '{0}'			    , '{1}'			    , #tmp.POID	    , #tmp.Refno        , #tmp.Col
 from #tmp
 outer apply (
     select value = iif (#tmp.QtyAfter > #tmp.QtyBefore, '00010', '00011')
-) ReasonID", strAdjustID
-           , CurrentMaintain["MDivisionID"]
-           , CurrentMaintain["StockType"]);
+) ReasonID", strAdjustID,
+                        this.CurrentMaintain["MDivisionID"],
+                        this.CurrentMaintain["StockType"]);
                     result = MyUtility.Tool.ProcessWithDatatable(dtDetailGrid, null, strInsertAdjustLocalDetail, out dtInsertAdjustLocalDetail);
                     if (!result)
                     {
@@ -552,13 +581,14 @@ outer apply (
                 #region 庫存足夠，【QtyAfter = QtyBefore】不建立調整單
                 #endregion
                 #region Update Status & Adjust ID
-                string strUpdateStatus = string.Format(@"
+                string strUpdateStatus = string.Format(
+                    @"
 update STL
 set STL.Status = 'Confirmed'
     , STL.AdjustID = '{1}'
 from StocktakingLocal STL
-where STL.ID = '{0}'", CurrentMaintain["ID"]
-                     , strAdjustID);
+where STL.ID = '{0}'", this.CurrentMaintain["ID"],
+                    strAdjustID);
                 result = DBProxy.Current.Execute(null, strUpdateStatus);
                 if (!result)
                 {
@@ -576,8 +606,8 @@ where STL.ID = '{0}'", CurrentMaintain["ID"]
 
         protected override bool ClickPrint()
         {
-            DataTable dtDetailGrid = ((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource);
-            var frm = new P52_Print(CurrentMaintain, dtDetailGrid);
+            DataTable dtDetailGrid = (DataTable)((BindingSource)this.detailgrid.DataSource).DataSource;
+            var frm = new P52_Print(this.CurrentMaintain, dtDetailGrid);
             frm.ShowDialog();
             return false;
         }
@@ -585,12 +615,12 @@ where STL.ID = '{0}'", CurrentMaintain["ID"]
         private void buttonGenerate_Click(object sender, EventArgs e)
         {
             #region checkStockType
-            if (CurrentMaintain["StockType"].Empty())
+            if (this.CurrentMaintain["StockType"].Empty())
             {
                 return;
             }
-            #endregion 
-            var frm = new P52_Import(CurrentMaintain["StockType"]);
+            #endregion
+            var frm = new P52_Import(this.CurrentMaintain["StockType"]);
             frm.ShowDialog();
             if (frm.getBoolImport())
             {
@@ -599,7 +629,7 @@ where STL.ID = '{0}'", CurrentMaintain["ID"]
                 DataTable dtResultImportData = frm.getResultImportDatas();
                 if (dtResultImportData != null && dtResultImportData.Rows.Count > 0)
                 {
-                    DataTable dtDetailGrid = ((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource);
+                    DataTable dtDetailGrid = (DataTable)((BindingSource)this.detailgrid.DataSource).DataSource;
                     foreach (DataRow dr in dtResultImportData.Rows)
                     {
                         if (!dtDetailGrid.AsEnumerable().Any(row => row["Poid"].EqualString(dr["Poid"])

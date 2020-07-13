@@ -13,7 +13,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P02
     /// </summary>
-    public partial class P02 : Sci.Win.Tems.Input1
+    public partial class P02 : Win.Tems.Input1
     {
         private string dateTimeMask = string.Empty;
         private string emptyDTMask = string.Empty;
@@ -32,22 +32,22 @@ namespace Sci.Production.IE
             this.InitializeComponent();
             this.type = type;
             this.Text = this.type == "1" ? "P02. Style Changeover Monitor" : "P021. Style Changeover Monitor (History)";
-            this.DefaultFilter = this.type == "1" ? string.Format("MDivisionID = '{0}' AND Status <> 'Closed'", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND Status = 'Closed'", Sci.Env.User.Keyword);
+            this.DefaultFilter = this.type == "1" ? string.Format("MDivisionID = '{0}' AND Status <> 'Closed'", Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND Status = 'Closed'", Env.User.Keyword);
             if (this.type == "2")
            {
                this.IsSupportEdit = false;
             }
 
             // 組InLine date的mask
-            for (int i = 0; i < Sci.Env.Cfg.DateTimeStringFormat.Length; i++)
+            for (int i = 0; i < Env.Cfg.DateTimeStringFormat.Length; i++)
             {
-                this.dtmask = Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == " " ? " " : "0";
-                this.empmask = Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "s" ? string.Empty : " ";
+                this.dtmask = Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Env.Cfg.DateTimeStringFormat.Substring(i, 1) == " " ? " " : "0";
+                this.empmask = Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "s" ? string.Empty : " ";
                 this.DateTimeMask = this.DateTimeMask + this.dtmask;
                 this.emptyDTMask = this.emptyDTMask + this.empmask;
             }
 
-            this.txtInLineDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Inline", true, DataSourceUpdateMode.OnValidation, this.emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
+            this.txtInLineDate.DataBindings.Add(new Binding("Text", this.mtbs, "Inline", true, DataSourceUpdateMode.OnValidation, this.emptyDTMask, Env.Cfg.DateTimeStringFormat));
             this.txtInLineDate.Mask = this.DateTimeMask;
         }
 
@@ -277,7 +277,7 @@ order by OutputDate
         // Time of First/Last Good Output
         private void TxtTimeOfFirstGoodOutput_Validating(object sender, CancelEventArgs e)
         {
-            Sci.Win.UI.TextBox prodTextValue = (Sci.Win.UI.TextBox)sender;
+            Win.UI.TextBox prodTextValue = (Win.UI.TextBox)sender;
             if (this.EditMode && !MyUtility.Check.Empty(prodTextValue.Text) && prodTextValue.Text != prodTextValue.OldValue)
             {
                 string textValue = prodTextValue.Text.ToString().PadRight(4);
@@ -299,7 +299,7 @@ order by OutputDate
         // FTY GSD
         private void BtnFTYGSD_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01 callNextForm = new Sci.Production.IE.P01(this.CurrentMaintain["StyleID"].ToString(), MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["OrderID"].ToString())), this.CurrentMaintain["SeasonID"].ToString(), this.CurrentMaintain["ComboType"].ToString());
+            P01 callNextForm = new P01(this.CurrentMaintain["StyleID"].ToString(), MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["OrderID"].ToString())), this.CurrentMaintain["SeasonID"].ToString(), this.CurrentMaintain["ComboType"].ToString());
             callNextForm.ShowDialog(this);
         }
 
@@ -360,7 +360,7 @@ order by OutputDate
                 }
             }
 
-            Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null, this.CurrentMaintain["Type"].ToString());
+            P02_NewCheckList callNextForm = new P02_NewCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null, this.CurrentMaintain["Type"].ToString());
             callNextForm.ShowDialog(this);
         }
 
@@ -388,7 +388,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
             bool canEdit = this.CurrentMaintain["Status"].ToString() != "Closed" &&
                            this.CurrentMaintain["Status"].ToString() != "Approved";
 
-            Sci.Production.IE.P02_Problem callNextForm = new Sci.Production.IE.P02_Problem(canEdit, this.CurrentMaintain["ID"].ToString(), null, null);
+            P02_Problem callNextForm = new P02_Problem(canEdit, this.CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
         }
 
@@ -398,7 +398,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            string sqlCmd = string.Format("update ChgOver set Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            string sqlCmd = string.Format("update ChgOver set Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
@@ -414,7 +414,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
         {
             base.ClickUnconfirm();
 
-            string sqlCmd = string.Format("update ChgOver set Status = 'New', ApvDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            string sqlCmd = string.Format("update ChgOver set Status = 'New', ApvDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
@@ -457,12 +457,12 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 @"Select top 1 Target from ChgOverTarget WITH (NOLOCK) 
                                                                         where Type = 'COPT' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
                                                                         Order by EffectiveDate desc", mDivisionID,
-                           inline.ToShortDateString()));
+                inline.ToShortDateString()));
             string target_COT = MyUtility.GetValue.Lookup(string.Format(
                 @"Select top 1 Target from ChgOverTarget WITH (NOLOCK) 
                                                                         where Type = 'COT' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
                                                                         Order by EffectiveDate desc", mDivisionID,
-                           inline.ToShortDateString()));
+                inline.ToShortDateString()));
             #endregion
 
             string cDCodeID = this.dt1.Rows[0]["CDCodeID"].ToString().Trim();
@@ -496,24 +496,24 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 this.dt1.Rows[0]["FactoryID"],
                 this.dt1.Rows[0]["SewingLineID"],
                 this.dt1.Rows[0]["SewingCell"]);
-                DualResult result2 = DBProxy.Current.Select(null, exceldt2, out this.dt2);
-                if (!result2)
+            DualResult result2 = DBProxy.Current.Select(null, exceldt2, out this.dt2);
+            if (!result2)
                 {
                     this.ShowErr(result2);
                 }
 
-                string previous_BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", this.dt2.Rows[0]["OrderID"].ToString().Trim()));
-                string previous_StyleID = this.dt2.Rows[0]["StyleID"].ToString().Trim();
-                string previous_SeasonID = this.dt2.Rows[0]["SeasonID"].ToString().Trim();
-                previous_CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style WITH (NOLOCK) where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", previous_BrandID, previous_StyleID, previous_SeasonID));
+            string previous_BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", this.dt2.Rows[0]["OrderID"].ToString().Trim()));
+            string previous_StyleID = this.dt2.Rows[0]["StyleID"].ToString().Trim();
+            string previous_SeasonID = this.dt2.Rows[0]["SeasonID"].ToString().Trim();
+            previous_CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style WITH (NOLOCK) where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", previous_BrandID, previous_StyleID, previous_SeasonID));
 
                 // Previous_TYPE = GetType(PreviousDR["ComboType"].ToString().Trim(), PreviousDR["CDCodeID"].ToString().Trim());
             #endregion
 
-                string cmdsql = string.Format("SELECT TOP 1 'CHANGEOVER REPORT'  FROM ChgOver WITH (NOLOCK) where 1=1");
+            string cmdsql = string.Format("SELECT TOP 1 'CHANGEOVER REPORT'  FROM ChgOver WITH (NOLOCK) where 1=1");
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out dtTitle);
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\IE_P02_ChangeoverReport.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\IE_P02_ChangeoverReport.xltx"); // 預先開啟excel app
 
             if (MyUtility.Excel.CopyToXls(dtTitle, string.Empty, "IE_P02_ChangeoverReport.xltx", 2, false, null, objApp, false))
             { // 將datatable copy to excel
@@ -613,7 +613,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                     @"Select top 1 Target from ChgOverTarget  WITH (NOLOCK) 
                                                                     where Type = 'EFF.' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
                                                                     Order by EffectiveDate desc", mDivisionID,
-                           inline.ToShortDateString()));
+                    inline.ToShortDateString()));
                 string outputCMP_A = MyUtility.GetValue.Lookup(string.Format(
                     @"Select Sum(b.QAQty)  
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK)  
@@ -748,7 +748,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 #endregion
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_P02_ChangeoverReport");
+                string strExcelName = Class.MicrosoftFile.GetName("IE_P02_ChangeoverReport");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();

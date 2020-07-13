@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_Import : Sci.Win.Subs.Base
+    public partial class P01_Import : Win.Subs.Base
     {
         DataRow dr_artworkpo;
         DataTable dt_artworkpoDetail;
@@ -23,27 +20,32 @@ namespace Sci.Production.Subcon
         protected DataTable dtArtwork;
         bool isNeedPlanningB03Quote = false;
         bool IsSintexSubcon = false;
-        string apvdate_b, apvdate_e, sciDelivery_b, sciDelivery_e, sp_b, sp_e;
-        string titleStitch = "";
+        string apvdate_b;
+        string apvdate_e;
+        string sciDelivery_b;
+        string sciDelivery_e;
+        string sp_b;
+        string sp_e;
+        string titleStitch = string.Empty;
 
         public P01_Import(DataRow master, DataTable detail, string fuc, bool isNeedPlanningB03Quote = false)
         {
-            InitializeComponent();
-            dr_artworkpo = master;
-            dt_artworkpoDetail = detail;
-            flag = fuc == "P01";
-            if (flag)
+            this.InitializeComponent();
+            this.dr_artworkpo = master;
+            this.dt_artworkpoDetail = detail;
+            this.flag = fuc == "P01";
+            if (this.flag)
             {
-                poType = "O";
+                this.poType = "O";
                 this.Text += " (Sub-con Purchase Order)";
             }
             else
             {
-                poType = "I";
+                this.poType = "I";
                 this.Text += " (In-House Requisition)";
             }
 
-            this.Text += string.Format(" : {0}", dr_artworkpo["LocalSuppID"].ToString());
+            this.Text += string.Format(" : {0}", this.dr_artworkpo["LocalSuppID"].ToString());
 
             this.isNeedPlanningB03Quote = isNeedPlanningB03Quote;
             this.IsSintexSubcon = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select IsSintexSubcon from LocalSupp with (nolock) where ID = '{master["localsuppid"]}'"));
@@ -51,40 +53,53 @@ namespace Sci.Production.Subcon
             this.titleStitch = MyUtility.GetValue.Lookup($"select iif(artworkunit='','PCS',artworkunit) from artworktype WITH (NOLOCK) where id='{master["ArtworkTypeID"]}'");
         }
 
-        //Find Now Button
+        // Find Now Button
         private void btnFindNow_Click(object sender, EventArgs e)
         {
-
             this.apvdate_b = null;
             this.apvdate_e = null;
             this.sciDelivery_b = null;
             this.sciDelivery_e = null;
 
-            if (dateApproveDate.Value1 != null) apvdate_b = this.dateApproveDate.Text1;
-            if (dateApproveDate.Value2 != null) { apvdate_e = this.dateApproveDate.Text2; }
-            if (dateSCIDelivery.Value1 != null) sciDelivery_b = this.dateSCIDelivery.Text1;
-            if (dateSCIDelivery.Value2 != null) { sciDelivery_e = this.dateSCIDelivery.Text2; }
+            if (this.dateApproveDate.Value1 != null)
+            {
+                this.apvdate_b = this.dateApproveDate.Text1;
+            }
 
+            if (this.dateApproveDate.Value2 != null)
+            {
+                this.apvdate_e = this.dateApproveDate.Text2;
+            }
+
+            if (this.dateSCIDelivery.Value1 != null)
+            {
+                this.sciDelivery_b = this.dateSCIDelivery.Text1;
+            }
+
+            if (this.dateSCIDelivery.Value2 != null)
+            {
+                this.sciDelivery_e = this.dateSCIDelivery.Text2;
+            }
 
             this.sp_b = this.txtSPNoStart.Text;
             this.sp_e = this.txtSPNoEnd.Text;
 
-            if ((apvdate_b == null && apvdate_e == null) &&
-                (sciDelivery_b == null && sciDelivery_e == null) &&
-                string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e))
+            if ((this.apvdate_b == null && this.apvdate_e == null) &&
+                (this.sciDelivery_b == null && this.sciDelivery_e == null) &&
+                string.IsNullOrWhiteSpace(this.sp_b) && string.IsNullOrWhiteSpace(this.sp_e))
             {
                 MyUtility.Msg.WarningBox("< Approve Date > or < SCI Delivery > or < SP# > can't be empty!!");
-                dateApproveDate.Focus1();
+                this.dateApproveDate.Focus1();
                 return;
             }
 
-            if (!MyUtility.Check.Empty(apvdate_e))
+            if (!MyUtility.Check.Empty(this.apvdate_e))
             {
-                apvdate_e = Convert.ToDateTime(apvdate_e).AddDays(1).ToString("yyyyMMdd");
+                this.apvdate_e = Convert.ToDateTime(this.apvdate_e).AddDays(1).ToString("yyyyMMdd");
             }
 
             string strSQLCmd = string.Empty;
-            if (isNeedPlanningB03Quote)
+            if (this.isNeedPlanningB03Quote)
             {
                 if (this.IsSintexSubcon && Prgs.CheckIsArtworkorUseArtwork(MyUtility.Convert.GetString(this.dr_artworkpo["artworktypeid"])))
                 {
@@ -100,69 +115,78 @@ namespace Sci.Production.Subcon
                 strSQLCmd = this.QuoteFromTmsCost();
             }
 
-            Ict.DualResult result;
-            if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
+            DualResult result;
+            if (result = DBProxy.Current.Select(null, strSQLCmd, out this.dtArtwork))
             {
-                DualResult resultGetSpecialRecordData = GetSpecialRecordData();
+                DualResult resultGetSpecialRecordData = this.GetSpecialRecordData();
                 if (!resultGetSpecialRecordData)
                 {
                     this.ShowErr(resultGetSpecialRecordData);
                 }
 
-                if (dtArtwork.Rows.Count == 0)
-                { MyUtility.Msg.WarningBox("Data not found!!"); }
-               
-                listControlBindingSource1.DataSource = dtArtwork;
+                if (this.dtArtwork.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+
+                this.listControlBindingSource1.DataSource = this.dtArtwork;
                 this.gridBatchImport.AutoResizeColumns();
 
                 foreach (DataGridViewRow dr in this.gridBatchImport.Rows)
                 {
                     this.DetalGridCellEditChange(dr.Index);
                 }
+
                 this.gridBatchImport.ClearSelection();
             }
-            else { ShowErr(strSQLCmd, result); }
+            else
+            {
+                this.ShowErr(strSQLCmd, result);
+            }
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
-                DataRow ddr = gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
+                DataRow ddr = this.gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
                 ddr["UnitPrice"] = Convert.ToDecimal(e.FormattedValue);
                 ddr["Price"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["qtygarment"]);
                 ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["PoQty"]) * Convert.ToInt32(ddr["qtygarment"]);
                 ddr.EndEdit();
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
-                DataRow ddr = gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
+                DataRow ddr = this.gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
                 ddr["Price"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToDecimal(ddr["UnitPrice"]);
                 ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["PoQty"]) * Convert.ToDecimal(ddr["UnitPrice"]);
                 ddr.EndEdit();
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings col_ReqQtyIssueQty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings col_ReqQtyIssueQty = new DataGridViewGeneratorNumericColumnSettings();
 
             col_ReqQtyIssueQty.CellMouseDoubleClick += (s, e) =>
             {
                 DataRow dr = this.gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
-                if (null == dr) return;
-                var frm = new Sci.Production.Subcon.P01_AccuPoQtyList(dr);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P01_AccuPoQtyList(dr);
                 frm.ShowDialog();
             };
 
-
             this.gridBatchImport.Font = new Font("Arial", 9);
-            this.gridBatchImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridBatchImport.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridBatchImport)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+            this.gridBatchImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridBatchImport.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridBatchImport)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
                 .Text("ArtworkTypeID", header: "Artwork Type", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Numeric("OrderQty", header: "Order Qty", iseditingreadonly: true)
@@ -171,29 +195,27 @@ namespace Sci.Production.Subcon
                 .Date("sewinline", header: "Sewinline", iseditingreadonly: true)
                 .Date("SciDelivery", header: "SciDelivery", iseditingreadonly: true)
                 .Text("Article", header: "Article", iseditingreadonly: true)
-                .Text("artworkid", header: "Artwork", iseditingreadonly: true)      //5
+                .Text("artworkid", header: "Artwork", iseditingreadonly: true) // 5
                 .Numeric("coststitch", header: "Cost" + Environment.NewLine + "(Pcs/Stitch)", iseditingreadonly: true)
-                .Numeric("Stitch", header: this.titleStitch, iseditable: true, iseditingreadonly: true)    //7
+                .Numeric("Stitch", header: this.titleStitch, iseditable: true, iseditingreadonly: true) // 7
                 .Text("PatternCode", header: "Cut Part", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cut Part Name", iseditingreadonly: true)
-                .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, settings: ns2, iseditingreadonly: true) //10
-                .Numeric("Cost", header: "Cost(USD)", settings: ns, iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //11
-                .Numeric("UnitPrice", header: "Unit Price", settings: ns, iseditable: true, decimal_places: 4, integer_places: 4)  //12
-                .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5)  //13
+                .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, settings: ns2, iseditingreadonly: true) // 10
+                .Numeric("Cost", header: "Cost(USD)", settings: ns, iseditingreadonly: true, decimal_places: 4, integer_places: 4) // 11
+                .Numeric("UnitPrice", header: "Unit Price", settings: ns, iseditable: true, decimal_places: 4, integer_places: 4) // 12
+                .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5) // 13
                 .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14)
                 .Numeric("FarmOut", header: "Farm Out", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("FarmIn", header: "Farm In", iseditingreadonly: true)
-                .Text("IrregularQtyReason", header: "Irregular Qty Reason", iseditingreadonly: true);  //14
+                .Text("IrregularQtyReason", header: "Irregular Qty Reason", iseditingreadonly: true);  // 14
 
-
-            //this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
-            //this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty/GMT
-            this.gridBatchImport.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
-            this.gridBatchImport.Columns["Cost"].Visible = flag;
-            this.gridBatchImport.Columns["UnitPrice"].Visible = flag;
-            this.gridBatchImport.Columns["Price"].Visible = flag;
-            this.gridBatchImport.Columns["Amount"].Visible = flag;
-            
+            // this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
+            // this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty/GMT
+            this.gridBatchImport.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;  // UnitPrice
+            this.gridBatchImport.Columns["Cost"].Visible = this.flag;
+            this.gridBatchImport.Columns["UnitPrice"].Visible = this.flag;
+            this.gridBatchImport.Columns["Price"].Visible = this.flag;
+            this.gridBatchImport.Columns["Amount"].Visible = this.flag;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -203,12 +225,16 @@ namespace Sci.Production.Subcon
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            listControlBindingSource1.EndEdit();
-            DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
+            this.listControlBindingSource1.EndEdit();
+            DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0)
+            {
+                return;
+            }
+
             DataRow[] dr2 = dtGridBS1.Select("UnitPrice = 0 and Selected = 1");
 
-            if (dr2.Length > 0 && flag)
+            if (dr2.Length > 0 && this.flag)
             {
                 MyUtility.Msg.WarningBox("UnitPrice of selected row can't be zero!", "Warning");
                 return;
@@ -217,12 +243,12 @@ namespace Sci.Production.Subcon
             dr2 = dtGridBS1.Select("Selected = 1");
             if (dr2.Length > 0)
             {
-                bool yns = false;
+                // bool yns = false;
                 StringBuilder ids = new StringBuilder();
-                
+
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow = dt_artworkpoDetail.Select($@"orderid = '{tmp["orderid"].ToString()}' and 
+                    DataRow[] findrow = this.dt_artworkpoDetail.Select($@"orderid = '{tmp["orderid"].ToString()}' and 
 ArtworkId = '{tmp["ArtworkId"].ToString()}' and 
 patterncode = '{tmp["patterncode"].ToString()}' and 
 cost='{tmp["Cost"]}' and
@@ -241,10 +267,10 @@ ArtworkReqID = '{tmp["ArtworkReqID"]}'
                     }
                     else
                     {
-                        tmp["id"] = dr_artworkpo["id"];
+                        tmp["id"] = this.dr_artworkpo["id"];
                         tmp.AcceptChanges();
                         tmp.SetAdded();
-                        dt_artworkpoDetail.ImportRow(tmp);
+                        this.dt_artworkpoDetail.ImportRow(tmp);
                     }
                 }
             }
@@ -253,6 +279,7 @@ ArtworkReqID = '{tmp["ArtworkReqID"]}'
                 MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
+
             this.Close();
         }
 
@@ -261,8 +288,8 @@ ArtworkReqID = '{tmp["ArtworkReqID"]}'
             string strSQLCmd = string.Empty;
 
             strSQLCmd += $@"
-Declare @sp1 varchar(16)= '{sp_b}'
-Declare @sp2 varchar(16)= '{sp_e}'
+Declare @sp1 varchar(16)= '{this.sp_b}'
+Declare @sp2 varchar(16)= '{this.sp_e}'
 
 SELECT  bd.QTY 
 	,bdl.Orderid 
@@ -278,16 +305,18 @@ INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
 INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
 WHERE bio.RFIDProcessLocationID=''
 ";
-            if (!MyUtility.Check.Empty(sp_b))
+            if (!MyUtility.Check.Empty(this.sp_b))
             {
                 strSQLCmd += $@" AND bdl.Orderid >= @sp1 ";
             }
-            if (!MyUtility.Check.Empty(sp_e))
+
+            if (!MyUtility.Check.Empty(this.sp_e))
             {
                 strSQLCmd += $@" AND bdl.Orderid <= @sp2";
             }
 
-            strSQLCmd += string.Format(@"
+            strSQLCmd += string.Format(
+                @"
 select distinct Selected = 0
         , sao.LocalSuppId
         , id = ''
@@ -361,13 +390,33 @@ where f.IsProduceFty=1
 --and o.PulloutComplete = 0
 and o.category  in ('B','S')
 and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
-", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
+", Env.User.Keyword, this.dr_artworkpo["artworktypeid"], this.dr_artworkpo["localsuppid"]);
 
-            if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
-            if (!(dateSCIDelivery.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
-            if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
-            if (!(dateApproveDate.Value2 == null)) { strSQLCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
-            if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+            if (!(this.dateSCIDelivery.Value1 == null))
+            {
+                strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", this.sciDelivery_b);
+            }
+
+            if (!(this.dateSCIDelivery.Value2 == null))
+            {
+                strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", this.sciDelivery_e);
+            }
+
+            if (!(this.dateApproveDate.Value1 == null))
+            {
+                strSQLCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", this.apvdate_b);
+            }
+
+            if (!(this.dateApproveDate.Value2 == null))
+            {
+                strSQLCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", this.apvdate_e);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.sp_b))
+            {
+                strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", this.sp_b, this.sp_e);
+            }
+
             if (!MyUtility.Check.Empty(this.txtIrregularQtyReason.TextBox1.Text))
             {
                 string whereReasonID = this.txtIrregularQtyReason.WhereString();
@@ -423,8 +472,8 @@ from #quoteFromPlanningB03 main
             string strSQLCmd = string.Empty;
 
             strSQLCmd += $@"
-Declare @sp1 varchar(16)= '{sp_b}'
-Declare @sp2 varchar(16)= '{sp_e}'
+Declare @sp1 varchar(16)= '{this.sp_b}'
+Declare @sp2 varchar(16)= '{this.sp_e}'
 
 SELECT  bd.QTY 
 	,bdl.Orderid 
@@ -440,11 +489,12 @@ INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
 INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
 WHERE bio.RFIDProcessLocationID=''
 ";
-            if (!MyUtility.Check.Empty(sp_b))
+            if (!MyUtility.Check.Empty(this.sp_b))
             {
                 strSQLCmd += $@" AND bdl.Orderid >= @sp1 ";
             }
-            if (!MyUtility.Check.Empty(sp_e))
+
+            if (!MyUtility.Check.Empty(this.sp_e))
             {
                 strSQLCmd += $@" AND bdl.Orderid <= @sp2";
             }
@@ -509,11 +559,11 @@ where
 f.IsProduceFty=1
 and o.category  in ('B','S')
 and ar.Status = 'Approved'
-and ar.LocalSuppID = '{dr_artworkpo["localsuppid"]}'
+and ar.LocalSuppID = '{this.dr_artworkpo["localsuppid"]}'
 ";
 
-            strSQLCmd += string.Format(" and o.MDivisionID='{0}' and ar.ArtworkTypeID = '{1}' and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
-            if (poType == "O")
+            strSQLCmd += string.Format(" and o.MDivisionID='{0}' and ar.ArtworkTypeID = '{1}' and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) ", Env.User.Keyword, this.dr_artworkpo["artworktypeid"]);
+            if (this.poType == "O")
             {
                 strSQLCmd += @"  and ((o.Category = 'B' and ot.InhouseOSP='O' and ot.price > 0) or o.category !='B')";
             }
@@ -521,11 +571,32 @@ and ar.LocalSuppID = '{dr_artworkpo["localsuppid"]}'
             {
                 strSQLCmd += $" and ot.InhouseOSP = 'I'";
             }
-            if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
-            if (!(dateSCIDelivery.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
-            if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
-            if (!(dateApproveDate.Value2 == null)) { strSQLCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
-            if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+
+            if (!(this.dateSCIDelivery.Value1 == null))
+            {
+                strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", this.sciDelivery_b);
+            }
+
+            if (!(this.dateSCIDelivery.Value2 == null))
+            {
+                strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", this.sciDelivery_e);
+            }
+
+            if (!(this.dateApproveDate.Value1 == null))
+            {
+                strSQLCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", this.apvdate_b);
+            }
+
+            if (!(this.dateApproveDate.Value2 == null))
+            {
+                strSQLCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", this.apvdate_e);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.sp_b))
+            {
+                strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", this.sp_b, this.sp_e);
+            }
+
             if (!MyUtility.Check.Empty(this.txtIrregularQtyReason.TextBox1.Text))
             {
                 string whereReasonID = this.txtIrregularQtyReason.WhereString();
@@ -540,8 +611,8 @@ and ar.LocalSuppID = '{dr_artworkpo["localsuppid"]}'
             string strSQLCmd = string.Empty;
 
             strSQLCmd += $@"
-Declare @sp1 varchar(16)= '{sp_b}'
-Declare @sp2 varchar(16)= '{sp_e}'
+Declare @sp1 varchar(16)= '{this.sp_b}'
+Declare @sp2 varchar(16)= '{this.sp_e}'
 
 SELECT  bd.QTY 
 	,bdl.Orderid 
@@ -557,16 +628,18 @@ INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
 INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
 WHERE bio.RFIDProcessLocationID=''
 ";
-            if (!MyUtility.Check.Empty(sp_b))
+            if (!MyUtility.Check.Empty(this.sp_b))
             {
                 strSQLCmd += $@" AND bdl.Orderid >= @sp1 ";
             }
-            if (!MyUtility.Check.Empty(sp_e))
+
+            if (!MyUtility.Check.Empty(this.sp_e))
             {
                 strSQLCmd += $@" AND bdl.Orderid <= @sp2";
             }
 
-            strSQLCmd += string.Format(@"
+            strSQLCmd += string.Format(
+                @"
 select  Selected = 0
         , id = ''
         , orderid = ard.OrderID
@@ -634,13 +707,33 @@ where f.IsProduceFty=1
 and o.category  in ('B','S')
 and o.MDivisionID='{0}' and ar.ArtworkTypeID = '{1}' and ar.LocalSuppId = '{2}' and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 and ((o.Category = 'B' and  oa.price > 0) or (o.category !='B'))
-", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
+", Env.User.Keyword, this.dr_artworkpo["artworktypeid"], this.dr_artworkpo["localsuppid"]);
 
-            if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
-            if (!(dateSCIDelivery.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
-            if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
-            if (!(dateApproveDate.Value2 == null)) { strSQLCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
-            if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+            if (!(this.dateSCIDelivery.Value1 == null))
+            {
+                strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", this.sciDelivery_b);
+            }
+
+            if (!(this.dateSCIDelivery.Value2 == null))
+            {
+                strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", this.sciDelivery_e);
+            }
+
+            if (!(this.dateApproveDate.Value1 == null))
+            {
+                strSQLCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", this.apvdate_b);
+            }
+
+            if (!(this.dateApproveDate.Value2 == null))
+            {
+                strSQLCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", this.apvdate_e);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.sp_b))
+            {
+                strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", this.sp_b, this.sp_e);
+            }
+
             if (!MyUtility.Check.Empty(this.txtIrregularQtyReason.TextBox1.Text))
             {
                 string whereReasonID = this.txtIrregularQtyReason.WhereString();
@@ -676,11 +769,31 @@ group by  ard.OrderID
         private DualResult GetSpecialRecordData()
         {
             string sqlWhere = string.Empty;
-            if (!(dateSCIDelivery.Value1 == null)) { sqlWhere += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
-            if (!(dateSCIDelivery.Value2 == null)) { sqlWhere += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
-            if (!(dateApproveDate.Value1 == null)) { sqlWhere += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
-            if (!(dateApproveDate.Value2 == null)) { sqlWhere += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
-            if (!(string.IsNullOrWhiteSpace(sp_b))) { sqlWhere += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+            if (!(this.dateSCIDelivery.Value1 == null))
+            {
+                sqlWhere += string.Format(" and o.SciDelivery >= '{0}' ", this.sciDelivery_b);
+            }
+
+            if (!(this.dateSCIDelivery.Value2 == null))
+            {
+                sqlWhere += string.Format(" and o.SciDelivery <= '{0}' ", this.sciDelivery_e);
+            }
+
+            if (!(this.dateApproveDate.Value1 == null))
+            {
+                sqlWhere += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", this.apvdate_b);
+            }
+
+            if (!(this.dateApproveDate.Value2 == null))
+            {
+                sqlWhere += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", this.apvdate_e);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.sp_b))
+            {
+                sqlWhere += string.Format("     and o.ID between '{0}' and '{1}'", this.sp_b, this.sp_e);
+            }
+
             if (!MyUtility.Check.Empty(this.txtIrregularQtyReason.TextBox1.Text))
             {
                 string whereReasonID = this.txtIrregularQtyReason.WhereString();
@@ -723,7 +836,7 @@ outer apply (
         from ArtworkPO_Detail AD, ArtworkPO A
         where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= ard.PatternCode
 ) IssueQty
-where  ar.ArtworkTypeID = '{dr_artworkpo["artworktypeid"]}' and ar.Status = 'Approved' and ar.LocalSuppId = '{dr_artworkpo["LocalSuppId"]}' and  ard.ArtworkPOID = '' and
+where  ar.ArtworkTypeID = '{this.dr_artworkpo["artworktypeid"]}' and ar.Status = 'Approved' and ar.LocalSuppId = '{this.dr_artworkpo["LocalSuppId"]}' and  ard.ArtworkPOID = '' and
     (
 	(o.Category = 'B' and at.IsSubprocess = 1 and at.isArtwork = 0 and at.Classify = 'O') 
 	or 
@@ -753,26 +866,25 @@ where  ar.ArtworkTypeID = '{dr_artworkpo["artworktypeid"]}' and ar.Status = 'App
         {
             string orderCategory = this.gridBatchImport.GetDataRow(index)["Category"].ToString();
 
-
-            if (orderCategory != "S" && isNeedPlanningB03Quote)
+            if (orderCategory != "S" && this.isNeedPlanningB03Quote)
             {
                 this.gridBatchImport.Rows[index].Cells["unitprice"].ReadOnly = true;
                 this.gridBatchImport.Rows[index].Cells["unitprice"].Style.ForeColor = Color.Black;
-                this.gridBatchImport.Rows[index].Cells["unitprice"].Style.BackColor = Color.White; //Unit Price
+                this.gridBatchImport.Rows[index].Cells["unitprice"].Style.BackColor = Color.White; // Unit Price
 
                 decimal unitPrice = (decimal)this.gridBatchImport.GetDataRow(index)["unitprice"];
                 if (unitPrice == 0)
                 {
                     this.gridBatchImport.Rows[index].Cells["Selected"].ReadOnly = true;
                     this.gridBatchImport.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(229, 108, 126);
-                    this.gridBatchImport.Rows[index].Cells["unitprice"].Style.BackColor = Color.FromArgb(229, 108, 126); //Unit Price
+                    this.gridBatchImport.Rows[index].Cells["unitprice"].Style.BackColor = Color.FromArgb(229, 108, 126); // Unit Price
                 }
             }
             else
             {
                 this.gridBatchImport.Rows[index].Cells["unitprice"].ReadOnly = false;
                 this.gridBatchImport.Rows[index].Cells["unitprice"].Style.ForeColor = Color.Red;
-                this.gridBatchImport.Rows[index].Cells["unitprice"].Style.BackColor = Color.Pink; //Unit Price
+                this.gridBatchImport.Rows[index].Cells["unitprice"].Style.BackColor = Color.Pink; // Unit Price
             }
         }
     }

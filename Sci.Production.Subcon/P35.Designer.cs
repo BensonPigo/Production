@@ -58,12 +58,12 @@
             this.displayVoucher = new Sci.Win.UI.DisplayBox();
             this.labelVoucher = new Sci.Win.UI.Label();
             this.dateApvDate = new Sci.Win.UI.DateBox();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
-            this.txtpayterm_ftyTerms = new Sci.Production.Class.txtpayterm_fty();
-            this.txtuserAccountant = new Sci.Production.Class.txtuser();
-            this.txtuserHandle = new Sci.Production.Class.txtuser();
-            this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
+            this.txtpayterm_ftyTerms = new Sci.Production.Class.Txtpayterm_fty();
+            this.txtuserAccountant = new Sci.Production.Class.Txtuser();
+            this.txtuserHandle = new Sci.Production.Class.Txtuser();
+            this.txtartworktype_ftyCategory = new Sci.Production.Class.Txtartworktype_fty();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.labelTotalQty = new Sci.Win.UI.Label();
             this.numTotalqty = new Sci.Win.UI.NumericBox();
             this.lbExVoucherID = new Sci.Win.UI.Label();
@@ -610,8 +610,8 @@
             // txtartworktype_ftyCategory
             // 
             this.txtartworktype_ftyCategory.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyCategory.cClassify = "\'P\'";
-            this.txtartworktype_ftyCategory.cSubprocess = "";
+            this.txtartworktype_ftyCategory.CClassify = "\'P\'";
+            this.txtartworktype_ftyCategory.CSubprocess = "";
             this.txtartworktype_ftyCategory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "category", true));
             this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(86, 49);
@@ -736,15 +736,15 @@
         private Win.UI.Label labelID;
         private Win.UI.NumericBox numVatRate;
         private Win.UI.TextBox txtRemark;
-        private Class.txtartworktype_fty txtartworktype_ftyCategory;
+        private Class.Txtartworktype_fty txtartworktype_ftyCategory;
         private Win.UI.DisplayBox displayCurrency;
         private Win.UI.DateBox dateIssueDate;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
         private Win.UI.DisplayBox displayID;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Label label25;
-        private Class.txtuser txtuserAccountant;
-        private Class.txtuser txtuserHandle;
+        private Class.Txtuser txtuserAccountant;
+        private Class.Txtuser txtuserHandle;
         private Win.UI.NumericBox numTotal;
         private Win.UI.NumericBox numAmount;
         private Win.UI.NumericBox numVat;
@@ -752,9 +752,9 @@
         private Win.UI.Label labelVoucher;
         private Win.UI.TextBox txtInvoice;
         private Win.UI.Label labelInvoice;
-        private Class.txtpayterm_fty txtpayterm_ftyTerms;
+        private Class.Txtpayterm_fty txtpayterm_ftyTerms;
         private Win.UI.Label labelTerms;
-        private Class.txtfactory txtmfactory;
+        private Class.Txtfactory txtmfactory;
         private Win.UI.DateBox dateApvDate;
         private Win.UI.NumericBox numTotalqty;
         private Win.UI.Label labelTotalQty;

@@ -3,26 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Reflection;
-using Sci;
 using Sci.Data;
 using Ict;
 using Ict.Win;
-using Sci.Win;
 using Sci.Production.Class.Commons;
 using Microsoft.Office.Interop.Excel;
-using Excel = Microsoft.Office.Interop.Excel;
-using MsExcel = Microsoft.Office.Interop.Excel;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
-using Sci.Utility.Excel;
-using Sci.Utility.Drawing;
 
 using System.Runtime.InteropServices;
 using Sci.Production.PublicForm;
-using System.IO;
 using System.Linq;
 
 namespace Sci.Production.PPIC
@@ -30,7 +22,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01
     /// </summary>
-    public partial class P01 : Sci.Win.Tems.Input1
+    public partial class P01 : Win.Tems.Input1
     {
         private string dataType;
         private bool muustEmpty = false;
@@ -48,7 +40,7 @@ namespace Sci.Production.PPIC
             this.IsSupportEdit = type == "1" ? true : false;
 
             this.Text = type == "1" ? "P01. PPIC Master List" : "P011. PPIC Master List (History)";
-            this.DefaultFilter = $@"MDivisionID = '{Sci.Env.User.Keyword}'";
+            this.DefaultFilter = $@"MDivisionID = '{Env.User.Keyword}'";
             this.DefaultFilter += type == "1" ? " AND Finished = 0" : " AND Finished = 1";
             this.DefaultFilter += " and (IsForecast = 0 or (IsForecast = 1 and (SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))";
 
@@ -57,7 +49,7 @@ namespace Sci.Production.PPIC
             this.btnBacktoPPICMasterList.Visible = this.dataType != "1"; // Back to P01. PPIC Master List
 
             Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("0", "");
+            comboBox1_RowSource.Add("0", string.Empty);
             comboBox1_RowSource.Add("1", "Subcon-in from sister factory (same M division)");
             comboBox1_RowSource.Add("2", "Subcon-in from sister factory (different M division)");
             comboBox1_RowSource.Add("3", "Subcon-in from non-sister factory");
@@ -117,13 +109,12 @@ namespace Sci.Production.PPIC
            var dateSCIDlv = this.dateSCIDlv.Value;
            if (dateBuyerDlv > dateSCIDlv)
            {
-              this.dateSCIDlv.TextBackColor = System.Drawing.Color.Yellow;
+              this.dateSCIDlv.TextBackColor = Color.Yellow;
            }
            else
            {
-              this.dateSCIDlv.TextBackColor = System.Drawing.Color.FromArgb(183, 227, 225);
+              this.dateSCIDlv.TextBackColor = Color.FromArgb(183, 227, 225);
            }
-
         }
 
         /// <inheritdoc/>
@@ -132,7 +123,7 @@ namespace Sci.Production.PPIC
             base.OnFormLoaded();
 
             // 新增Batch Shipment Finished按鈕
-            Sci.Win.UI.Button btn = new Sci.Win.UI.Button();
+            Win.UI.Button btn = new Win.UI.Button();
             btn.Text = "Batch Shipment Finished";
             btn.Click += new EventHandler(this.Btn_Click);
             this.browsetop.Controls.Add(btn);
@@ -174,8 +165,9 @@ namespace Sci.Production.PPIC
             this.CurrentMaintain["ShipModeList"] = dataRow["ShipModeList"];
             this.CurrentMaintain["MCHandle"] = dataRow["MCHandle"];
             this.CurrentMaintain["LocalMR"] = dataRow["LocalMR"];
-            //this.CurrentMaintain["NeedProduction"] = dataRow["NeedProduction"];
-            //this.CurrentMaintain["KeepPanels"] = dataRow["KeepPanels"];
+
+            // this.CurrentMaintain["NeedProduction"] = dataRow["NeedProduction"];
+            // this.CurrentMaintain["KeepPanels"] = dataRow["KeepPanels"];
             this.SetStyleColumn(MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]));
         }
 
@@ -322,7 +314,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
 
             this.displayOrderCombo.Value = MyUtility.GetValue.Lookup(string.Format("Select Top 1 OrderComboList from dbo.Order_OrderComboList with(nolock) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             #endregion
-            bool lConfirm = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. PPIC Master List", "CanConfirm");
+            bool lConfirm = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P01. PPIC Master List", "CanConfirm");
             this.btnMCHandleCFM.Enabled = this.CurrentMaintain != null && this.dataType == "1" && lConfirm && !this.EditMode;
             this.btnLocalMRCFM.Enabled = this.CurrentMaintain != null && this.dataType == "1" && lConfirm && !this.EditMode;
             this.btnbdown.Enabled = this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["CtnType"]) == "2" && !this.EditMode;
@@ -334,7 +326,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.btnOrderRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
             this.BtnBuyBack.ForeColor = MyUtility.Check.Seek(string.Format("select 1 from Order_BuyBack WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
-            //若有資料顯示藍色，否則黑色
+            // 若有資料顯示藍色，否則黑色
             this.btnPoRemark.ForeColor = MyUtility.Check.Seek(string.Format("select PoRemark from PO WITH (NOLOCK) where ID = '{0}' AND PoRemark != '' ", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
             this.btnFactoryCMT.ForeColor = haveTmsCost ? Color.Blue : Color.Black;
@@ -415,7 +407,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                     this.labelBuyMonth.Text = "Est. Download Date";
 
                     // 加寬
-                    this.labelBuyMonth.Size = new System.Drawing.Size(119, 21);
+                    this.labelBuyMonth.Size = new Size(119, 21);
 
                     // 其餘控制項往右推
                     this.displayBuyMonth.Location = new System.Drawing.Point(697, 139);
@@ -427,7 +419,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 else
                 {
                     this.labelBuyMonth.Text = "Buy Month";
-                    this.labelBuyMonth.Size = new System.Drawing.Size(65, 21);
+                    this.labelBuyMonth.Size = new Size(65, 21);
 
                     this.displayBuyMonth.Location = new System.Drawing.Point(644, 139);
                     this.labelOrderQty.Location = new System.Drawing.Point(815, 112);
@@ -455,8 +447,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             // 帶入預設值
             this.CurrentMaintain["Category"] = "B";
             this.CurrentMaintain["LocalOrder"] = 1;
-            this.CurrentMaintain["MCHandle"] = Sci.Env.User.UserID;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MCHandle"] = Env.User.UserID;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["FtyGroup"] = Env.User.Factory;
             this.CurrentMaintain["CMPUnit"] = "PCS";
             this.CurrentMaintain["CFMDate"] = DateTime.Today;
@@ -599,7 +591,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 #endregion
 
                 // 檢查是否幫姊妹廠代工
-                List<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                List<SqlParameter> cmds = new List<SqlParameter>();
                 cmds.Add(new SqlParameter("@ProgramID", this.CurrentMaintain["ProgramID"].ToString()));
                 cmds.Add(new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"].ToString()));
                 cmds.Add(new SqlParameter("@M", this.CurrentMaintain["MDivisionID"].ToString()));
@@ -613,7 +605,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 }
                 else
                 {
-                    if (MyUtility.Check.Seek(@"
+                    if (MyUtility.Check.Seek(
+                        @"
 select ID from SCIFty s WITH (NOLOCK)
 where id = @ProgramID
 and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDivisionID)
@@ -647,7 +640,7 @@ where oq.Id = '{1}'", Convert.ToDateTime(this.CurrentMaintain["BuyerDelivery"]).
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "LO", "Orders", DateTime.Today);
+                string id = MyUtility.GetValue.GetID(Env.User.Factory + "LO", "Orders", DateTime.Today);
 
                 // string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", CurrentMaintain["ID"].ToString(), "Orders", "ID") + "LO", "Orders", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
@@ -683,9 +676,9 @@ select '{0}'as ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,Artwor
 ,(select isnull(MIN(UKey),0) from Order_Artwork)as 'rownumber', Row_Number() OVER( order by PatternCode ) as 'row'
 from Style_Artwork where StyleUkey = '{2}'
 ) x",
-                         MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                         Env.User.UserID,
-                         MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
+                        MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                        Env.User.UserID,
+                        MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
 
                     result = DBProxy.Current.Execute(null, insertCmd);
                     if (!result)
@@ -702,7 +695,7 @@ from Style_Artwork where StyleUkey = '{2}'
 insert into Order_TmsCost(ID,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,AddName,AddDate)
 select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from Style_TmsCost where StyleUkey = {2}",
                         MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                        Sci.Env.User.UserID,
+                        Env.User.UserID,
                         MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
 
                     result = DBProxy.Current.Execute(null, insertCmd);
@@ -748,7 +741,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 #endregion
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // Style
@@ -758,8 +751,8 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         {
             IList<DataRow> styleData;
             string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 ";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,28,5,7,7,6", string.Empty, "Style,Season,Brand,Description,CdCode,CPU,Unit,Ukey", columndecimals: "0,0,0,0,0,3,0,0");
-            item.Size = new System.Drawing.Size(950, 500);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "15,8,10,28,5,7,7,6", string.Empty, "Style,Season,Brand,Description,CdCode,CPU,Unit,Ukey", columndecimals: "0,0,0,0,0,3,0,0");
+            item.Size = new Size(950, 500);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -818,9 +811,9 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         {
             // 檢查資料是否存在
             // sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@styleid", style);
+            SqlParameter sp1 = new SqlParameter("@styleid", style);
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            IList<SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(sp1);
 
             System.Data.DataTable styleData;
@@ -898,7 +891,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         // Batch Shipment Finished按鈕的Click事件
         private void Btn_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_BatchShipmentFinished callNextForm = new Sci.Production.PPIC.P01_BatchShipmentFinished();
+            P01_BatchShipmentFinished callNextForm = new P01_BatchShipmentFinished();
             callNextForm.ShowDialog(this);
             if (callNextForm.Haveupdate)
             {
@@ -909,7 +902,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         // MC Handle CFM
         private void BtnMCHandleCFM_Click(object sender, EventArgs e)
         {
-            string sqlCmd = string.Format("update Orders set MCHandle = '{0}' where POID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            string sqlCmd = string.Format("update Orders set MCHandle = '{0}' where POID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
@@ -917,13 +910,13 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 return;
             }
 
-            this.txtuser1.TextBox1.Text = Sci.Env.User.UserID;
+            this.txtuser1.TextBox1.Text = Env.User.UserID;
         }
 
         // Local MR CFM
         private void BtnLocalMRCFM_Click(object sender, EventArgs e)
         {
-            string sqlCmd = string.Format("update Orders set LocalMR = '{0}' where POID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            string sqlCmd = string.Format("update Orders set LocalMR = '{0}' where POID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
@@ -931,20 +924,20 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 return;
             }
 
-            this.txtuser2.TextBox1.Text = Sci.Env.User.UserID;
+            this.txtuser2.TextBox1.Text = Env.User.UserID;
         }
 
         // Production output
         private void BtnProductionOutput_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ProductionOutput callNextForm = new Sci.Production.PPIC.P01_ProductionOutput(this.CurrentMaintain);
+            P01_ProductionOutput callNextForm = new P01_ProductionOutput(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Order remark
         private void BtnOrderRemark_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["OrderRemark"]), "Order Remark", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["OrderRemark"]), "Order Remark", false, null);
             callNextForm.ShowDialog(this);
         }
 
@@ -952,6 +945,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         private void btnPoRemark_Click(object sender, EventArgs e)
         {
             System.Data.DataTable data;
+
             // 串接規則Orders.ID=PO.ID
             string sqlCmd = string.Format("select PoRemark from PO WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"]);
 
@@ -964,12 +958,12 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
 
             if (data.Rows.Count > 0)
             {
-                Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(data.Rows[0]["PoRemark"].ToString(), "PO Remark", false, null);
+                Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(data.Rows[0]["PoRemark"].ToString(), "PO Remark", false, null);
                 callNextForm.ShowDialog(this);
             }
             else
             {
-                Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(" ", "PO Remark", false, null);
+                Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(" ", "PO Remark", false, null);
                 callNextForm.ShowDialog(this);
             }
         }
@@ -977,21 +971,21 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         // Factory CMT
         private void BtnFactoryCMT_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_FactoryCMT callNextForm = new Sci.Production.PPIC.P01_FactoryCMT(this.CurrentMaintain);
+            P01_FactoryCMT callNextForm = new P01_FactoryCMT(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Label & Hangtag
         private void BtnLabelHangtag_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Label"]), "Label & Hangtag", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Label"]), "Label & Hangtag", false, null);
             callNextForm.ShowDialog(this);
         }
 
         // Q'ty b'down by shipmode
         private void BtnQtyBdownByShipmode_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            P01_QtyShip callNextForm = new P01_QtyShip(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             callNextForm.ShowDialog(this);
         }
 
@@ -1000,7 +994,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         {
             if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE")
             {
-                Sci.Production.PPIC.P01_QtyLocalOrder callNextForm = new Sci.Production.PPIC.P01_QtyLocalOrder(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.dataType == "1" ? true : false, MyUtility.Convert.GetInt(this.CurrentMaintain["Qty"]));
+                P01_QtyLocalOrder callNextForm = new P01_QtyLocalOrder(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.dataType == "1" ? true : false, MyUtility.Convert.GetInt(this.CurrentMaintain["Qty"]));
                 callNextForm.ShowDialog(this);
                 if (this.dataType == "1")
                 {
@@ -1009,7 +1003,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             }
             else
             {
-                Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), this.editPOCombo.Text);
+                P01_Qty callNextForm = new P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), this.editPOCombo.Text);
                 callNextForm.ShowDialog(this);
             }
         }
@@ -1017,21 +1011,21 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         // Shipping mark
         private void BtnShippingMark_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ShippingMark callNextForm = new Sci.Production.PPIC.P01_ShippingMark(false, this.CurrentMaintain);
+            P01_ShippingMark callNextForm = new P01_ShippingMark(false, this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // TMS & Cost
         private void BtnTMSCost_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_TMSAndCost callNextForm = new Sci.Production.PPIC.P01_TMSAndCost(false, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null);
+            P01_TMSAndCost callNextForm = new P01_TMSAndCost(false, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null);
             callNextForm.ShowDialog(this);
         }
 
         // Std.GSD List
         private void BtnStdGSDList_Click(object sender, EventArgs e)
         {
-            Sci.Production.PublicForm.StdGSDList callNextForm = new Sci.Production.PublicForm.StdGSDList(MyUtility.Convert.GetLong(this.CurrentMaintain["StyleUKey"]));
+            StdGSDList callNextForm = new StdGSDList(MyUtility.Convert.GetLong(this.CurrentMaintain["StyleUKey"]));
             callNextForm.ShowDialog(this);
         }
 
@@ -1045,21 +1039,21 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         // Artwork
         private void BtnArtwork_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_Artwork callNextForm = new Sci.Production.PPIC.P01_Artwork(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            P01_Artwork callNextForm = new P01_Artwork(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Garment export
         private void BtnGarmentExport_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_GMTExport callNextForm = new Sci.Production.PPIC.P01_GMTExport(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            P01_GMTExport callNextForm = new P01_GMTExport(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Sewing Inline History
         private void BtnH_Click(object sender, EventArgs e)
         {
-            Sci.Win.UI.ShowHistory callNextForm =
+            Win.UI.ShowHistory callNextForm =
                 new Win.UI.ShowHistory("Order_History", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "SewInOffLine", caption: "History SP#", dataType: "D", setGrid: this.ShowHistory_SetGrid);
             callNextForm.ShowDialog(this);
         }
@@ -1091,7 +1085,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         // Cutting Combo
         private void BtnCuttingCombo_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_CuttingCombo callNextForm = new Sci.Production.PPIC.P01_CuttingCombo(MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            P01_CuttingCombo callNextForm = new P01_CuttingCombo(MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             callNextForm.ShowDialog(this);
         }
 
@@ -1119,21 +1113,21 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         // Accessory inspection list
         private void BtnAccessoryInspectionList_Click(object sender, EventArgs e)
         {
-            Sci.Production.Quality.P02 callNextForm = new Sci.Production.Quality.P02(MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            Quality.P02 callNextForm = new Quality.P02(MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Artwork Transaction List
         private void BtnArtworkTransactionList_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ArtworkTrans callNextForm = new Sci.Production.PPIC.P01_ArtworkTrans(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            P01_ArtworkTrans callNextForm = new P01_ArtworkTrans(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Production Kits
         private void BtnProductionKits_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ProductionKit callNextForm = new Sci.Production.PPIC.P01_ProductionKit(this.dataType == "1" ? true : false, MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]));
+            P01_ProductionKit callNextForm = new P01_ProductionKit(this.dataType == "1" ? true : false, MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]));
             callNextForm.ShowDialog(this);
         }
 
@@ -1169,7 +1163,6 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@OrderId", this.CurrentDataRow["ID"]), new SqlParameter("@BrandID", this.CurrentDataRow["BrandID"]) }, out tmp, null);
             if (res && tmp["Kit"] != null)
             {
-
                 this.displayKit.Text = tmp["Kit"].ToString();
             }
             else
@@ -1190,7 +1183,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             this.txtDevSample.Text = isDevSample ? "Y" : string.Empty;
         }
 
-     private DataRow GetTitleDataByCustCD(string poid, string id, bool byCustCD = true)
+        private DataRow GetTitleDataByCustCD(string poid, string id, bool byCustCD = true)
         {
             DataRow drvar;
             string cmd = string.Empty;
@@ -1239,7 +1232,7 @@ where POID = @poid group by POID,b.spno";
                     return;
                 }
 
-                var frm = new Sci.Production.PPIC.P01_MNoticePrint(null, dr["ID"].ToString());
+                var frm = new P01_MNoticePrint(null, dr["ID"].ToString());
                 frm.ShowDialog(this);
                 this.RenewData();
                 return;
@@ -1258,18 +1251,18 @@ where POID = @poid group by POID,b.spno";
         /// <param name="rowPosition">int rowPosition</param>
         /// <param name="subBlockSheet">MsExcel.Worksheet subBlockSheet</param>
         /// <param name="blankRowsAfterThisBlock">int? blankRowsAfterThisBlock</param>
-        public static void MoveSubBlockIntoMainSheet(Worksheet mainSheet, ref int rowPosition, MsExcel.Worksheet subBlockSheet, int? blankRowsAfterThisBlock = null)
+        public static void MoveSubBlockIntoMainSheet(Worksheet mainSheet, ref int rowPosition, Worksheet subBlockSheet, int? blankRowsAfterThisBlock = null)
         {
             // 把這個Block3完整複製過去主Sheet(參考rowPosition)
             var thisSheetUsedRange = subBlockSheet.UsedRange;
-            (mainSheet.Rows[rowPosition] as MsExcel.Range).EntireRow.InsertIndent(thisSheetUsedRange.Rows.Count);
+            (mainSheet.Rows[rowPosition] as Range).EntireRow.InsertIndent(thisSheetUsedRange.Rows.Count);
 
             var rowStart = thisSheetUsedRange.Rows[1].Row;
             var rowEnd = rowStart + thisSheetUsedRange.Rows.Count;
 
             // Full Row Copy for row height copy purpose
             subBlockSheet.Range[subBlockSheet.Rows[rowStart], subBlockSheet.Rows[rowEnd]].Copy();
-            mainSheet.Range[mainSheet.Rows[rowPosition], mainSheet.Rows[rowPosition + thisSheetUsedRange.Rows.Count]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+            mainSheet.Range[mainSheet.Rows[rowPosition], mainSheet.Rows[rowPosition + thisSheetUsedRange.Rows.Count]].PasteSpecial(XlPasteType.xlPasteAll, XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
 
             ////Range Copy for content & cell format  <-- because Range Copy ignore Row height copy, so I have to copy full rows before here
             // thisSheetUsedRange.Copy();
@@ -1285,21 +1278,21 @@ where POID = @poid group by POID,b.spno";
         // Q'ty b'down by schedule
         private void BtnQtyBdownbySchedule_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_QtySewingSchedule callNextForm = new Sci.Production.PPIC.P01_QtySewingSchedule(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]));
+            P01_QtySewingSchedule callNextForm = new P01_QtySewingSchedule(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]));
             callNextForm.ShowDialog(this);
         }
 
         // Carton Status
         private void BtnCartonStatus_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_CTNStatus callNextForm = new Sci.Production.PPIC.P01_CTNStatus(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), false);
+            P01_CTNStatus callNextForm = new P01_CTNStatus(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), false);
             callNextForm.ShowDialog(this);
         }
 
         // Packing Method
         private void BtnPackingMethod_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Packing"]), "Packing Method", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Packing"]), "Packing Method", false, null);
             callNextForm.ShowDialog(this);
         }
 
@@ -1371,7 +1364,7 @@ where POID = @poid group by POID,b.spno";
             }
 
             DialogResult buttonResult = MyUtility.Msg.QuestionBox("Are you sure you want to finish shipment?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1399,7 +1392,7 @@ where POID = @poid group by POID,b.spno";
         // VAS/SHAS Instruction
         private void BtnVASSHASInstruction_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Packing2"]), "VAS/SHAS Instruction", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Packing2"]), "VAS/SHAS Instruction", false, null);
             callNextForm.ShowDialog(this);
         }
 
@@ -1413,7 +1406,7 @@ where POID = @poid group by POID,b.spno";
             }
 
             DialogResult buttonResult = MyUtility.Msg.QuestionBox("Are you sure you want to 'Back to P01. PPIC Master List'?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1444,7 +1437,7 @@ where POID = @poid group by POID,b.spno";
             if (this.EditMode && MyUtility.Convert.GetString(this.CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE")
             {
                 string sqlCmd = "select ID from ShipMode WITH (NOLOCK) where UseFunction like '%ORDER%' and Junk = 0";
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", this.editShipMode.Text, "Ship Mode");
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10", this.editShipMode.Text, "Ship Mode");
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -1524,12 +1517,12 @@ where POID = @poid group by POID,b.spno";
         {
             if (this.EditMode)
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     string strSQLSelect = string.Format(
                 @"select id,countryid,city from Custcd where brandid= '{0}' and junk=0 ", this.displayBrand.Text);
 
-                    Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(strSQLSelect, "16,2,16", this.disCustCD.Text);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(strSQLSelect, "16,2,16", this.disCustCD.Text);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -1554,7 +1547,7 @@ where POID = @poid group by POID,b.spno";
             string sqlCmd = string.Format("select ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
             if (MyUtility.Check.Seek(sqlCmd, out styleData))
             {
-                Sci.Win.Tools.EditMemo form = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
+                Win.Tools.EditMemo form = new Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
                 form.ShowDialog(this);
             }
         }
@@ -1674,7 +1667,6 @@ and p.Type in ('L', 'B')
 
             this.RenewData();
             this.OnDetailEntered();
-
         }
 
         private void BtnComboType_Click(object sender, EventArgs e)

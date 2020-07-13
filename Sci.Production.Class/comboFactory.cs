@@ -1,71 +1,74 @@
 ﻿using Ict;
 using Sci.Data;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Class
 {
-    public partial class comboFactory : Sci.Win.UI.ComboBox
+    /// <summary>
+    /// Combo Factory
+    /// </summary>
+    public partial class ComboFactory : Win.UI.ComboBox
     {
-        private bool _IssupportJunk = false;
-        private bool _FilteMDivision = false;
+        /// <summary>
+        /// Is support Junk
+        /// </summary>
+        public bool IssupportJunk { get; set; } = false;
 
-        public bool IssupportJunk
+        /// <summary>
+        /// Filte MDivision
+        /// </summary>
+        public bool FilteMDivision { get; set; } = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComboFactory"/> class.
+        /// </summary>
+        public ComboFactory()
         {
-            get { return _IssupportJunk; }
-            set { _IssupportJunk = value; }
-        }
-        public bool FilteMDivision
-        {
-            get { return _FilteMDivision; }
-            set { _FilteMDivision = value; }
+            this.InitializeComponent();
+            this.Size = new System.Drawing.Size(80, 23);
         }
 
-        public comboFactory()
-        {
-            InitializeComponent();
-            this.Size = new System.Drawing.Size(80, 23);            
-        }
-
-        public comboFactory(IContainer container)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComboFactory"/> class.
+        /// </summary>
+        /// <param name="container">container</param>
+        public ComboFactory(IContainer container)
         {
             container.Add(this);
-            InitializeComponent();
-            this.Size = new System.Drawing.Size(80, 23);            
+            this.InitializeComponent();
+            this.Size = new System.Drawing.Size(80, 23);
         }
 
         /// <summary>
         /// Set ComboBox Data
         /// </summary>
         /// <param name="strMDivisionID">如果沒輸入，MDivision 預設 Sci.Env.User.Keywordd</param>
-        public void setDataSource(string strMDivisionID = null)
+        public void SetDataSource(string strMDivisionID = null)
         {
             DataTable dtFactoryData;
             DualResult result;
             #region SQL Parameter
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
-            listSqlPar.Add(new SqlParameter("@MDivision", strMDivisionID.Empty() ? Sci.Env.User.Keyword : strMDivisionID));
+            listSqlPar.Add(new SqlParameter("@MDivision", strMDivisionID.Empty() ? Env.User.Keyword : strMDivisionID));
             #endregion
             #region SQL Filte
             List<string> listFilte = new List<string>();
-            if (this._IssupportJunk)
+            if (this.IssupportJunk)
             {
                 listFilte.Add("Junk = 0");
             }
-            if (this._FilteMDivision)
+
+            if (this.FilteMDivision)
             {
                 listFilte.Add("MDivisionID = @MDivision");
             }
             #endregion
             #region SQL CMD
-            string sqlcmd = string.Format(@"
+            string sqlcmd = string.Format(
+                @"
 select *
 from (
     Select Factory = ''
@@ -75,7 +78,7 @@ from (
     from Factory WITH (NOLOCK) 
     {0}
 ) a
-order by Factory", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : "");
+order by Factory", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty);
             #endregion
             result = DBProxy.Current.Select(null, sqlcmd, listSqlPar, out dtFactoryData);
             if (result && dtFactoryData != null)

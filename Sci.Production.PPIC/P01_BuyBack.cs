@@ -1,18 +1,16 @@
 ﻿using Ict;
 using Ict.Win.UI;
 using Sci.Data;
-//using Sci.Trade.Class;
-//using Sci.Trade.Class.Commons;
-using Sci.Win.Tems;
+
+// using Sci.Trade.Class;
+// using Sci.Trade.Class.Commons;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DataGridViewComboBoxColumn = Ict.Win.UI.DataGridViewComboBoxColumn;
-using DataGridViewTextBoxColumn = Ict.Win.UI.DataGridViewTextBoxColumn;
 using Widths = Ict.Win.Widths;
 
 namespace Sci.Production.PPIC
@@ -20,7 +18,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// Order P01 BuyBack
     /// </summary>
-    public partial class P01_BuyBack : Sci.Win.Subs.Base
+    public partial class P01_BuyBack : Win.Subs.Base
     {
         /// <summary>
         /// is data change or not
@@ -102,7 +100,7 @@ namespace Sci.Production.PPIC
             var buyBackReasonCell = new Ict.Win.DataGridViewGeneratorComboBoxColumnSettings();
             {
                 var sql = string.Format("select ID, Name from DropDownList where Type = 'BuyBack'");
-                Ict.DualResult result;
+                DualResult result;
                 DataTable dropDownListTable = new DataTable();
                 if (result = DBProxy.Current.Select(null, sql, out dropDownListTable))
                 {
@@ -116,7 +114,7 @@ namespace Sci.Production.PPIC
             Ict.Win.DataGridViewGeneratorTextColumnSettings popupSPCell = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             popupSPCell.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode && e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     if (e.RowIndex == -1)
                     {
@@ -150,7 +148,8 @@ and oq.SizeCode in ({sizeCodeStr})";
                     DataTable data;
                     DBProxy.Current.Select(null, cmd, out data)
                     ;
-                    //data.AsEnumerable().Where(rr => spList.Contains(rr["ID"].ToString())
+
+                    // data.AsEnumerable().Where(rr => spList.Contains(rr["ID"].ToString())
                     //    && rr["ID"].ToString() != dr["ID"].ToString()).Delete();
                     foreach (var row in data.AsEnumerable().Where(rr => spList.Contains(rr["ID"].ToString())
                         && rr["ID"].ToString() != dr["ID"].ToString()))
@@ -161,7 +160,7 @@ and oq.SizeCode in ({sizeCodeStr})";
                     data.AcceptChanges();
 
                     //// 剩餘項目跳窗選擇
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(data, "ID,StyleID", "13,10", dr["ID"].ToString(), filterColumns: "StyleID");
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(data, "ID,StyleID", "13,10", dr["ID"].ToString(), filterColumns: "StyleID");
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -382,7 +381,7 @@ order by os.Seq, os.SizeCode, oa.Article";
             return res;
         }
 
-        private void SetGridIsEditingReadOnly(Sci.Win.UI.Grid grid, string openColumn)
+        private void SetGridIsEditingReadOnly(Win.UI.Grid grid, string openColumn)
         {
             foreach (var col in grid.Columns)
             {
@@ -565,12 +564,12 @@ where   obq.ID = '{this.ID}'
             var articleList = this.dtMain.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted)
             .GroupBy(rr => new
             {
-                article = rr["Article"].ToString()
+                article = rr["Article"].ToString(),
             })
             .Select(rr => new
             {
                 article = rr.Key.article,
-                sumAssign = rr.Sum(rrr => MyUtility.Convert.GetInt(rrr[sizecode + StrAssign]))
+                sumAssign = rr.Sum(rrr => MyUtility.Convert.GetInt(rrr[sizecode + StrAssign])),
             })
             .ToList();
 
@@ -838,9 +837,9 @@ where   obq.ID = '{this.ID}'
             }
         }
 
-        private void Grid_CellFormatting(object sender, System.Windows.Forms.DataGridViewCellFormattingEventArgs e)
+        private void Grid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            Sci.Win.UI.Grid thisGrid = (Sci.Win.UI.Grid)sender;
+            Win.UI.Grid thisGrid = (Win.UI.Grid)sender;
             DataGridViewColumn thisColumn = thisGrid.Columns[e.ColumnIndex];
 
             if (thisColumn.DataPropertyName.Contains(StrAssign))
@@ -958,7 +957,7 @@ where   obq.ID = '{this.ID}'
             };
         }
 
-        private void SetComboSubMethod(Sci.Win.UI.ComboBox cb, string keyName, ref DataTable data, ref DataTable list)
+        private void SetComboSubMethod(Win.UI.ComboBox cb, string keyName, ref DataTable data, ref DataTable list)
         {
             var obj = cb.SelectedValue;
             cb.SelectedValue = string.Empty;
@@ -975,7 +974,7 @@ where   obq.ID = '{this.ID}'
             }
         }
 
-        private void SetEmptyCombo(Sci.Win.UI.ComboBox cb, string keyName)
+        private void SetEmptyCombo(Win.UI.ComboBox cb, string keyName)
         {
             DataTable dt = new DataTable();
             dt.Columns.Add(keyName, typeof(string));

@@ -7,7 +7,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B01
     /// </summary>
-    public partial class B01 : Sci.Win.Tems.Input1
+    public partial class B01 : Win.Tems.Input1
     {
         /// <summary>
         /// B01
@@ -17,7 +17,7 @@ namespace Sci.Production.Basic
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
         }
 
         /// <summary>
@@ -69,14 +69,14 @@ namespace Sci.Production.Basic
             }
 
             // MDivisionID為登入的ID
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
 
             return base.ClickSaveBefore();
         }
 
         private void BtnCapacityWorkday_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B01_CapacityWorkDay callNextForm = new Sci.Production.Basic.B01_CapacityWorkDay(this.CurrentMaintain);
+            B01_CapacityWorkDay callNextForm = new B01_CapacityWorkDay(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
     }

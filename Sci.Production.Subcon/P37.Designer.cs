@@ -81,9 +81,9 @@
             this.labelFactoryVoucherDate = new Sci.Win.UI.Label();
             this.displayTWSettledVoucherNo = new Sci.Win.UI.DisplayBox();
             this.displayFactoryVoucherNo = new Sci.Win.UI.DisplayBox();
-            this.txttpeuserConfirm = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserConfirm = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserSMR = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
             this.lblResponsibleFTY = new Sci.Win.UI.Label();
             this.displayResponsibleFTY = new Sci.Win.UI.DisplayBox();
             this.label1 = new Sci.Win.UI.Label();
@@ -971,9 +971,9 @@
         private Win.UI.Label labelConfirm;
         private Win.UI.DisplayBox displayCurrency;
         private Win.UI.Label labelCurrency;
-        private Class.txttpeuser txttpeuserConfirm;
-        private Class.txttpeuser txttpeuserSMR;
-        private Class.txttpeuser txttpeuserHandle;
+        private Class.Txttpeuser txttpeuserConfirm;
+        private Class.Txttpeuser txttpeuserSMR;
+        private Class.Txttpeuser txttpeuserHandle;
         private Win.UI.DateBox dateFactoryVoucherDate;
         private Win.UI.DisplayBox displayResponsibleFTY;
         private Win.UI.Label lblResponsibleFTY;

@@ -52,9 +52,9 @@ namespace Sci.Production.Basic
             this.checkIsFactory = new Sci.Win.UI.CheckBox();
             this.btnAccountingChartNo = new Sci.Win.UI.Button();
             this.btnBankDetail = new Sci.Win.UI.Button();
-            this.txtpayterm_ftyPaymentTerm = new Sci.Production.Class.txtpayterm_fty();
-            this.txtCurrency = new Sci.Production.Class.txtcurrency();
-            this.txtCountryNationality = new Sci.Production.Class.txtcountry();
+            this.txtpayterm_ftyPaymentTerm = new Sci.Production.Class.Txtpayterm_fty();
+            this.txtCurrency = new Sci.Production.Class.Txtcurrency();
+            this.txtCountryNationality = new Sci.Production.Class.Txtcountry();
             this.numWHoldingTerm = new Sci.Win.UI.NumericBox();
             this.chkIsShipping = new Sci.Win.UI.CheckBox();
             this.chkisSubcon = new Sci.Win.UI.CheckBox();
@@ -616,9 +616,9 @@ namespace Sci.Production.Basic
         #endregion
 
         private Win.UI.Label labelCode;
-        private Class.txtpayterm_fty txtpayterm_ftyPaymentTerm;
-        private Class.txtcurrency txtCurrency;
-        private Class.txtcountry txtCountryNationality;
+        private Class.Txtpayterm_fty txtpayterm_ftyPaymentTerm;
+        private Class.Txtcurrency txtCurrency;
+        private Class.Txtcountry txtCountryNationality;
         private Win.UI.EditBox editAddress;
         private Win.UI.TextBox txtFax;
         private Win.UI.TextBox txtTel;

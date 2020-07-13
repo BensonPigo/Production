@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtseason = new Sci.Production.Class.Txtseason();
             this.labelSeason = new Sci.Win.UI.Label();
             this.btnSketchDownload = new Sci.Win.UI.Button();
             this.SuspendLayout();
@@ -110,7 +110,7 @@
 
       #endregion
 
-      private Class.txtseason txtseason;
+      private Class.Txtseason txtseason;
       private Win.UI.Label labelSeason;
         private Win.UI.Button btnSketchDownload;
     }

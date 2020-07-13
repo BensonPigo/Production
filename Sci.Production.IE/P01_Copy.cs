@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
 
 namespace Sci.Production.IE
@@ -14,7 +10,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P01_Copy
     /// </summary>
-    public partial class P01_Copy : Sci.Win.Subs.Base
+    public partial class P01_Copy : Win.Subs.Base
     {
         private DataRow masterData;
 
@@ -58,11 +54,11 @@ namespace Sci.Production.IE
         // Style
         private void TxtStyle_PopUp1(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item;
+            Win.Tools.SelectItem item;
             string selectCommand;
             selectCommand = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
 
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "14,6,50,12", this.Text);
+            item = new Win.Tools.SelectItem(selectCommand, "14,6,50,12", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -85,7 +81,7 @@ namespace Sci.Production.IE
         private void TxtBrand_PopUp1(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,40,40", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlWhere, "10,40,40", this.Text, false, ",");
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -209,7 +205,7 @@ where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid and sl.Loca
                 return;
             }
 
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
     }
 }

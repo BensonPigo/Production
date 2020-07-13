@@ -41,7 +41,7 @@
             this.btnEncode = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
-            this.txtInspector = new Sci.Production.Class.txtuser();
+            this.txtInspector = new Sci.Production.Class.Txtuser();
             this.numInspectRate = new Sci.Win.UI.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
@@ -263,7 +263,7 @@
         private Win.UI.DateBox dateInspectDt;
         private Win.UI.ComboBox comboResult;
         private Win.UI.TextBox txtRemark;
-        private Class.txtuser txtInspector;
+        private Class.Txtuser txtInspector;
         private Win.UI.Button btnEncode;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnSave;

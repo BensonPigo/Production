@@ -1,59 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
-using Sci;
 using Sci.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Sci.Win.Tools;
-using System.Transactions;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P38 : Sci.Win.Tems.QueryForm
+    public partial class P38 : Win.Tems.QueryForm
     {
-        const Byte UnLock = 0, Lock = 1;
+        const byte UnLock = 0;
+        const byte Lock = 1;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
         public P38(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            comboStatus.SelectedIndex = 0;
-            comboStockType.SelectedIndex = 0;
-            comboDropDownList1.SelectedIndex = 0;
+            this.comboStatus.SelectedIndex = 0;
+            this.comboStockType.SelectedIndex = 0;
+            this.comboDropDownList1.SelectedIndex = 0;
             Ict.Win.UI.DataGridViewTextBoxColumn columnStatus = new Ict.Win.UI.DataGridViewTextBoxColumn();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings remark = new DataGridViewGeneratorTextColumnSettings();
-            
+            DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings remark = new DataGridViewGeneratorTextColumnSettings();
+
             ns.CellMouseDoubleClick += (s, e) =>
                 {
                     DataRow thisRow = this.gridMaterialLock.GetDataRow(e.RowIndex);
                     string dyelot = thisRow["dyelot"].ToString();
-                    DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+                    DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
                     string tempstatus = thisRow["selected"].ToString();
                     foreach (DataRow dr in dt.Rows)
                     {
                         if (dr["dyelot"].ToString() == dyelot)
                         {
-                            if (tempstatus == "0") dr["selected"] = true;
-                            else dr["selected"] = false;
-                        }                    
+                            if (tempstatus == "0")
+                            {
+                                dr["selected"] = true;
+                            }
+                            else
+                            {
+                                dr["selected"] = false;
+                            }
+                        }
                     }
                 };
             remark.CellValidating += (s, e) =>
-             {                 
+             {
                  if (e.RowIndex != -1)
                  {
                      DataRow dr = this.gridMaterialLock.GetDataRow(e.RowIndex);
@@ -70,21 +75,21 @@ namespace Sci.Production.Warehouse
              };
 
             #region -- 設定Grid1的顯示欄位 --
-            this.gridMaterialLock.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridMaterialLock.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridMaterialLock)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.gridMaterialLock.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridMaterialLock.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridMaterialLock)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                  .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                   .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
                   .Text("FabricType", header: "Material Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .Text("roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true,settings: ns)
+                  .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: ns)
                   .Text("status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out columnStatus)
                   .Date("WhseArrival", header: "Material ATA ", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .DateTime("lockdate", header: "Lock/Unlock" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .Text("lockname", header: "Lock/Unlock" + Environment.NewLine + "Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12),iseditingreadonly:false,settings: remark)
+                  .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12), iseditingreadonly: false, settings: remark)
                   .Text("FIR", header: "FIR", width: Widths.AnsiChars(5), iseditingreadonly: true)
                   .Text("PointRate", header: "Point rate\n\rper 100yds", width: Widths.AnsiChars(2), iseditingreadonly: true)
                   .Text("WashLab Report", header: "WashLab Report", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -103,9 +108,9 @@ namespace Sci.Production.Warehouse
                   .Text("factoryid", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   ;
             columnStatus.DefaultCellStyle.ForeColor = Color.Blue;
-            gridMaterialLock.Columns["dyelot"].HeaderCell.Style.BackColor = Color.Orange;
-            gridMaterialLock.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
-            gridMaterialLock.Columns["Remark"].DefaultCellStyle.ForeColor = Color.Red;
+            this.gridMaterialLock.Columns["dyelot"].HeaderCell.Style.BackColor = Color.Orange;
+            this.gridMaterialLock.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridMaterialLock.Columns["Remark"].DefaultCellStyle.ForeColor = Color.Red;
 
             #endregion
         }
@@ -118,10 +123,10 @@ namespace Sci.Production.Warehouse
         private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp1 = this.txtSP.Text.TrimEnd() + '%';
+            string sp1 = this.txtSP.Text.TrimEnd() + '%';
             string strMtlLocation = string.Empty;
 
-            if (MyUtility.Check.Empty(txtSP.Text) && MyUtility.Check.Empty(txtwkno.Text) && MyUtility.Check.Empty(txtReceivingid.Text)
+            if (MyUtility.Check.Empty(this.txtSP.Text) && MyUtility.Check.Empty(this.txtwkno.Text) && MyUtility.Check.Empty(this.txtReceivingid.Text)
                 && this.dateATA.Value1.Empty() && this.dateATA.Value2.Empty())
             {
                 MyUtility.Msg.WarningBox("SP# and WK NO and Receiving ID and ATA can't be empty!!");
@@ -185,7 +190,7 @@ cross apply
     where o1.POID = fi.POID and o1.Junk = 0
 ) x
 {strMtlLocation}
-where   f.MDivisionID = '{Sci.Env.User.Keyword}' 
+where   f.MDivisionID = '{Env.User.Keyword}' 
         and fi.POID like @poid1 
 ");
 
@@ -196,7 +201,7 @@ where   f.MDivisionID = '{Sci.Env.User.Keyword}'
             sp1_1.Value = sp1;
             cmds.Add(sp1_1);
 
-            switch (comboStatus.SelectedIndex)
+            switch (this.comboStatus.SelectedIndex)
             {
                 case 0:
                     break;
@@ -210,7 +215,7 @@ where   f.MDivisionID = '{Sci.Env.User.Keyword}'
                     break;
             }
 
-            switch (comboStockType.SelectedIndex)
+            switch (this.comboStockType.SelectedIndex)
             {
                 case 0:
                     strSQLCmd.Append(@" 
@@ -226,37 +231,48 @@ where   f.MDivisionID = '{Sci.Env.User.Keyword}'
                     break;
             }
 
-            if (!txtSeq.checkSeq1Empty())
+            if (!this.txtSeq.CheckSeq1Empty())
             {
-                strSQLCmd.Append(string.Format(@"
-        and fi.seq1 = '{0}'", txtSeq.seq1));
+                strSQLCmd.Append(string.Format(
+                    @"
+        and fi.seq1 = '{0}'", this.txtSeq.Seq1));
             }
-            if (!txtSeq.checkSeq2Empty())
+
+            if (!this.txtSeq.CheckSeq2Empty())
             {
-                strSQLCmd.Append(string.Format(@" 
-        and fi.seq2 = '{0}'", txtSeq.seq2));
+                strSQLCmd.Append(string.Format(
+                    @" 
+        and fi.seq2 = '{0}'", this.txtSeq.Seq2));
             }
-            if (!MyUtility.Check.Empty(txtwkno.Text))
+
+            if (!MyUtility.Check.Empty(this.txtwkno.Text))
             {
-                strSQLCmd.Append(string.Format(@" 
+                strSQLCmd.Append(string.Format(
+                    @" 
 and exists (select 1 from Export_Detail e where e.poid = fi.poid and e.seq1 = fi.seq1 and e.seq2 = fi.seq2 and e.id = '{0}')",
-txtwkno.Text));
+                    this.txtwkno.Text));
             }
-            if (!MyUtility.Check.Empty(txtReceivingid.Text))
+
+            if (!MyUtility.Check.Empty(this.txtReceivingid.Text))
             {
-                strSQLCmd.Append(string.Format(@" 
+                strSQLCmd.Append(string.Format(
+                    @" 
 and exists (select 1 from Receiving_Detail r where r.poid = fi.poid and r.seq1 = fi.seq1 and r.seq2 = fi.seq2 and r.Roll = fi.Roll and r.Dyelot = fi.Dyelot and r.id = '{0}' )",
-txtReceivingid.Text));
+                    this.txtReceivingid.Text));
             }
-            if (!MyUtility.Check.Empty(dateATA.TextBox1.Value))
+
+            if (!MyUtility.Check.Empty(this.dateATA.TextBox1.Value))
             {
-                strSQLCmd.Append(string.Format(@" 
-and r.WhseArrival between '{0}' and '{1}'", dateATA.TextBox1.Text, dateATA.TextBox2.Text));
+                strSQLCmd.Append(string.Format(
+                    @" 
+and r.WhseArrival between '{0}' and '{1}'", this.dateATA.TextBox1.Text, this.dateATA.TextBox2.Text));
             }
-            if (!MyUtility.Check.Empty(comboDropDownList1.SelectedValue))
+
+            if (!MyUtility.Check.Empty(this.comboDropDownList1.SelectedValue))
             {
-                strSQLCmd.Append(string.Format(@" 
-and pd.FabricType in ({0})", comboDropDownList1.SelectedValue));
+                strSQLCmd.Append(string.Format(
+                    @" 
+and pd.FabricType in ({0})", this.comboDropDownList1.SelectedValue));
             }
 
             if (!MyUtility.Check.Empty(this.txtMtlLocation.Text))
@@ -410,29 +426,37 @@ left join #tmp_PointRate PointRate on PointRate.POID=fi.POID	and PointRate.SEQ1 
 drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab,#tmp_PointRate
 ");
 
-            Ict.DualResult result;
+            DualResult result;
             DataTable dtData;
             this.ShowWaitMessage("Data Loading...");
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out dtData))
             {
                 if (dtData.Rows.Count == 0)
-                { MyUtility.Msg.WarningBox("Data not found!!"); }
-                listControlBindingSource1.DataSource = dtData;
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+
+                this.listControlBindingSource1.DataSource = dtData;
                 dtData.DefaultView.Sort = "poid,seq1,seq2,dyelot,roll,stocktype";
             }
             else
             {
-                ShowErr(strSQLCmd.ToString(), result);
+                this.ShowErr(strSQLCmd.ToString(), result);
             }
+
             this.HideWaitMessage();
         }
 
         private void btnLock_Click(object sender, EventArgs e)
         {
-            if (listControlBindingSource1.DataSource == null) return;
-            if (checkStatus(Lock))
+            if (this.listControlBindingSource1.DataSource == null)
             {
-                LockUnlock(Lock);
+                return;
+            }
+
+            if (this.checkStatus(Lock))
+            {
+                this.LockUnlock(Lock);
             }
             else
             {
@@ -442,10 +466,14 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
 
         private void btnUnlock_Click(object sender, EventArgs e)
         {
-            if (listControlBindingSource1.DataSource == null) return;
-            if (checkStatus(UnLock))
+            if (this.listControlBindingSource1.DataSource == null)
             {
-                LockUnlock(UnLock);
+                return;
+            }
+
+            if (this.checkStatus(UnLock))
+            {
+                this.LockUnlock(UnLock);
             }
             else
             {
@@ -453,10 +481,10 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
             }
         }
 
-        private bool checkStatus(Byte flag)
+        private bool checkStatus(byte flag)
         {
             bool check = true;
-            string strCheckStatus = "";
+            string strCheckStatus = string.Empty;
             #region 確認 Lock Or UnLock
             switch (flag)
             {
@@ -467,27 +495,35 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
                     strCheckStatus = "Locked";
                     break;
             }
-            #endregion 
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            #endregion
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             check = !dt.AsEnumerable().Any(row => row["status"].EqualString(strCheckStatus) && row["Selected"].EqualString("1"));
             return check;
         }
 
-        private void LockUnlock(Byte flag)
+        private void LockUnlock(byte flag)
         {
             bool x;
-            if (!(x = gridMaterialLock.ValidateControl())) MyUtility.Msg.WarningBox("grid1.ValidateControl failed");
-            gridMaterialLock.EndEdit();
-            listControlBindingSource1.EndEdit();
+            if (!(x = this.gridMaterialLock.ValidateControl()))
+            {
+                MyUtility.Msg.WarningBox("grid1.ValidateControl failed");
+            }
+
+            this.gridMaterialLock.EndEdit();
+            this.listControlBindingSource1.EndEdit();
             DualResult result;
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             dt.AcceptChanges();
-            
-            if (dt == null || dt.Rows.Count == 0) return;
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return;
+            }
+
             DataRow[] find;
             DialogResult dResult;
 
-            string keyword = "";
+            string keyword = string.Empty;
             if (flag == 1)
             {
                 keyword = "Lock";
@@ -506,15 +542,18 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
 
             dResult = MyUtility.Msg.QuestionBox(string.Format("Are you sure to {0} it?", keyword), "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
 
-            if (dResult == DialogResult.No) return;
+            if (dResult == DialogResult.No)
+            {
+                return;
+            }
 
             StringBuilder sqlcmd = new StringBuilder();
             foreach (DataRow item in find)
             {
-                sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE(),Remark='{3}' where ukey ={0};", item["ukey"],flag,Sci.Env.User.UserID,item["Remark"]));
+                sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE(),Remark='{3}' where ukey ={0};", item["ukey"], flag, Env.User.UserID, item["Remark"]));
             }
 
-            if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd.ToString())))
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd.ToString())))
             {
                 MyUtility.Msg.WarningBox(string.Format("{0} failed, Pleaes re-try", keyword));
                 return;
@@ -525,35 +564,35 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
                 MyUtility.Msg.InfoBox(string.Format("{0} successful!!", keyword));
             }
 
-            btnQuery_Click(null,null);
+            this.btnQuery_Click(null, null);
         }
 
         private void btnExcel_Click(object sender, EventArgs e)
         {
-            if (listControlBindingSource1.DataSource == null)
+            if (this.listControlBindingSource1.DataSource == null)
             {
                 return;
             }
 
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P38");            
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P38");
 
             if (this.SaveExcel(dt, strExcelName))
             {
                 strExcelName.OpenFile();
             }
-        }        
+        }
 
         private void SendExcel()
         {
-            if (listControlBindingSource1.DataSource == null)
+            if (this.listControlBindingSource1.DataSource == null)
             {
                 return;
             }
 
-            DataTable dt = ((DataTable)listControlBindingSource1.DataSource).AsEnumerable().Where(row => row["selected"].EqualDecimal(1)).CopyToDataTable();
+            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(row => row["selected"].EqualDecimal(1)).CopyToDataTable();
 
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P38");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P38");
 
             if (this.SaveExcel(dt, strExcelName))
             {
@@ -569,10 +608,11 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
                         string mailCC = dtSendAccount.Rows[0]["CCAddress"].ToString();
                         string subject = dtSendAccount.Rows[0]["Subject"].ToString();
                         string content = dtSendAccount.Rows[0]["Content"].ToString();
-                        var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, strExcelName, content, false, true);
+                        var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, strExcelName, content, false, true);
                         email.ShowDialog(this);
                     }
-                }else
+                }
+                else
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                 }
@@ -618,14 +658,14 @@ inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P38.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(k, "", "Warehouse_P38.xltx", 2, false, null, objApp);      // 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P38.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(k, string.Empty, "Warehouse_P38.xltx", 2, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
-            objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
+            objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
-            #region Save Excel            
+            #region Save Excel
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -634,6 +674,5 @@ inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
 
             return true;
         }
-        
     }
 }

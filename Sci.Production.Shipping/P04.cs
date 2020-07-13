@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
@@ -15,7 +13,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P04
     /// </summary>
-    public partial class P04 : Sci.Win.Tems.Input6
+    public partial class P04 : Win.Tems.Input6
     {
         /// <summary>
         /// P04
@@ -33,7 +31,7 @@ namespace Sci.Production.Shipping
 
             #region Shipping Mode
             string sqlcmd = @"select ID,UseFunction from ShipMode WITH (NOLOCK) where id !='AIR' order by ID";
-            Ict.DualResult cbResult;
+            DualResult cbResult;
             DataTable shipModeTable = new DataTable();
             if (cbResult = DBProxy.Current.Select(null, sqlcmd, out shipModeTable))
             {
@@ -57,7 +55,7 @@ from FtyExport_Detail ed WITH (NOLOCK)
 left join FtyExport fe WITH (NOLOCK) on fe.ID = ed.ID
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 where ed.ID = '{0}'", masterID);
-            return base.OnDetailSelectCommandPrepare(e);
+             return base.OnDetailSelectCommandPrepare(e);
         }
 
         protected override void OnDetailEntered()
@@ -139,7 +137,7 @@ where ed.ID = '{0}'", masterID);
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Type"] = 1;
-            this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["Handle"] = Env.User.UserID;
         }
 
         /// <inheritdoc/>
@@ -359,7 +357,7 @@ where ed.ID = '{0}'", masterID);
         private void TxtPortofLoading_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "select ID,CountryID from Port WITH (NOLOCK) where Junk = 0";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20,3", this.txtPortofLoading.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlWhere, "20,3", this.txtPortofLoading.Text);
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -377,7 +375,7 @@ where ed.ID = '{0}'", masterID);
         private void TxtPortofDischarge_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "select ID,CountryID from Port WITH (NOLOCK) where Junk = 0";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20,3", this.txtPortofDischarge.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlWhere, "20,3", this.txtPortofDischarge.Text);
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -415,7 +413,7 @@ where ed.ID = '{0}'", masterID);
         // Expense Data
         private void BtnExpenseData_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Type"]) == "3" ? "InvNo" : "WKNo", false);
+            P05_ExpenseData callNextForm = new P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Type"]) == "3" ? "InvNo" : "WKNo", false);
             callNextForm.ShowDialog(this);
         }
 
@@ -425,19 +423,19 @@ where ed.ID = '{0}'", masterID);
             switch (this.CurrentMaintain["Type"].ToString())
             {
                 case "1":
-                    Sci.Production.Shipping.P04_Import3rd call3rdForm = new Sci.Production.Shipping.P04_Import3rd((DataTable)this.detailgridbs.DataSource);
+                    P04_Import3rd call3rdForm = new P04_Import3rd((DataTable)this.detailgridbs.DataSource);
                     call3rdForm.ShowDialog(this);
                     break;
                 case "2":
-                    Sci.Production.Shipping.P04_ImportTransferIn callTransferInForm = new Sci.Production.Shipping.P04_ImportTransferIn((DataTable)this.detailgridbs.DataSource);
+                    P04_ImportTransferIn callTransferInForm = new P04_ImportTransferIn((DataTable)this.detailgridbs.DataSource);
                     callTransferInForm.ShowDialog(this);
                     break;
                 case "3":
-                    Sci.Production.Shipping.P04_ImportTransferOut callTransferOutForm = new Sci.Production.Shipping.P04_ImportTransferOut((DataTable)this.detailgridbs.DataSource);
+                    P04_ImportTransferOut callTransferOutForm = new P04_ImportTransferOut((DataTable)this.detailgridbs.DataSource);
                     callTransferOutForm.ShowDialog(this);
                     break;
                 case "4":
-                    Sci.Production.Shipping.P04_ImportLocalPO callLocalPOForm = new Sci.Production.Shipping.P04_ImportLocalPO((DataTable)this.detailgridbs.DataSource);
+                    P04_ImportLocalPO callLocalPOForm = new P04_ImportLocalPO((DataTable)this.detailgridbs.DataSource);
                     callLocalPOForm.ShowDialog(this);
                     break;
                 default:

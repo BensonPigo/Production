@@ -30,10 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.txtSeason = new Sci.Production.Class.txtseason();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtSeason = new Sci.Production.Class.Txtseason();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
+            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.comboOverallResultStatus = new Sci.Win.UI.ComboBox();
             this.txtRefno = new Sci.Win.UI.TextBox();
             this.label13 = new Sci.Win.UI.Label();
@@ -412,7 +412,7 @@
         private Win.UI.Label labelSewingInLineDate;
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.Label labelArriveWHDate;
-        private Class.txtsupplier txtsupplier;
+        private Class.Txtsupplier txtsupplier;
         private Win.UI.ComboBox comboOverallResultStatus;
         private Win.UI.TextBox txtRefno;
         private Win.UI.Label label13;
@@ -423,8 +423,8 @@
         private Win.UI.DateRange dateRange4;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.DateRange dateArriveWHDate;
-        private Class.txtbrand txtBrand;
-        private Class.txtseason txtSeason;
-        private Class.comboDropDownList comboCategory;
+        private Class.Txtbrand txtBrand;
+        private Class.Txtseason txtSeason;
+        private Class.ComboDropDownList comboCategory;
     }
 }

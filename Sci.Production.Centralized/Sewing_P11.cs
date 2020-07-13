@@ -3,22 +3,17 @@ using Newtonsoft.Json;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
 namespace Sci.Production.Centralized
 {
-    public partial class Sewing_P11 : Sci.Win.Tems.QueryForm
+    public partial class Sewing_P11 : Win.Tems.QueryForm
     {
         private string Type;
 
@@ -26,8 +21,8 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtCentralizedmulitM1.Text = Sci.Env.User.Keyword;
-            this.txtCentralizedmulitFactory1.Text = Sci.Env.User.Factory;
+            this.txtCentralizedmulitM1.Text = Env.User.Keyword;
+            this.txtCentralizedmulitFactory1.Text = Env.User.Factory;
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -87,7 +82,7 @@ namespace Sci.Production.Centralized
                     string whereM = string.Empty;
                     List<string> mList = this.txtCentralizedmulitM1.Text.Split(',').ToList();
                     whereM = " where MDivisionID in ('" + string.Join("','", mList) + "')";
-                    DualResult result = Result.True;
+                    DualResult result = Ict.Result.True;
                     DataTable data;
                     SqlConnection con;
                     using (con = new SqlConnection(connections))
@@ -117,7 +112,7 @@ namespace Sci.Production.Centralized
                     string whereF = string.Empty;
                     List<string> fList = this.txtCentralizedmulitFactory1.Text.Split(',').ToList();
                     whereF = " where FtyGroup in ('" + string.Join("','", fList) + "')";
-                    DualResult result = Result.True;
+                    DualResult result = Ict.Result.True;
                     DataTable data;
                     SqlConnection con;
                     using (con = new SqlConnection(connections))
@@ -147,7 +142,7 @@ namespace Sci.Production.Centralized
                 {
                     string nowConnection = MyUtility.Convert.GetString(row["nowConnection"]); // EX:testing_PH1
                     string factory = MyUtility.Convert.GetString(row["factory"]);
-                    this.APILock(factory, date, Sci.Env.User.UserID, "LockSewingMonthly", nowConnection);
+                    this.APILock(factory, date, Env.User.UserID, "LockSewingMonthly", nowConnection);
                 }
             }
             else if (this.rdbtnUnlock.Checked)
@@ -157,7 +152,7 @@ namespace Sci.Production.Centralized
                 {
                     string nowConnection = MyUtility.Convert.GetString(row["nowConnection"]); // EX:testing_PH1
                     string factory = MyUtility.Convert.GetString(row["factory"]);
-                    this.APILock(factory, date, Sci.Env.User.UserID, "UnlockSewingMonthly", nowConnection);
+                    this.APILock(factory, date, Env.User.UserID, "UnlockSewingMonthly", nowConnection);
                 }
             }
 

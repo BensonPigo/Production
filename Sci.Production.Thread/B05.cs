@@ -3,11 +3,8 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -16,9 +13,9 @@ namespace Sci.Production.Thread
     /// <summary>
     /// B05
     /// </summary>
-    public partial class B05 : Sci.Win.Tems.Input6
+    public partial class B05 : Win.Tems.Input6
     {
-        private string keyWord = Sci.Env.User.Keyword;
+        private string keyWord = Env.User.Keyword;
         private DataTable gridTb;
         private bool gtbflag = false;
 
@@ -44,7 +41,7 @@ namespace Sci.Production.Thread
         }
 
         /// <inheritdoc/>
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["refno"].ToString();
 

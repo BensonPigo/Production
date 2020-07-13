@@ -51,10 +51,10 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
-            this.txtShift = new Sci.Production.Class.txtDropDownList();
-            this.txtsewingline = new Sci.Production.Class.txtsewingline();
-            this.txtFactory = new Sci.Production.Class.txtfactory();
-            this.txtdepartment = new Sci.Production.Class.txtdepartment();
+            this.txtShift = new Sci.Production.Class.TxtDropDownList();
+            this.txtsewingline = new Sci.Production.Class.Txtsewingline();
+            this.txtFactory = new Sci.Production.Class.Txtfactory();
+            this.txtdepartment = new Sci.Production.Class.Txtdepartment();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -425,7 +425,7 @@
             // 
             this.txtsewingline.BackColor = System.Drawing.Color.White;
             this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewingline.factoryobjectName = this.txtFactory;
+            this.txtsewingline.FactoryobjectName = this.txtFactory;
             this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewingline.Location = new System.Drawing.Point(497, 43);
             this.txtsewingline.Name = "txtsewingline";
@@ -520,13 +520,13 @@
         private Win.UI.Label labelActReturnDate;
         private Win.UI.Label labelEstReturnDate;
         private Win.UI.DateBox dateEstReturnDate;
-        private Class.txtfactory txtFactory;
+        private Class.Txtfactory txtFactory;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Class.txtDropDownList txtShift;
-        private Class.txtsewingline txtsewingline;
-        private Class.txtdepartment txtdepartment;
+        private Class.TxtDropDownList txtShift;
+        private Class.Txtsewingline txtsewingline;
+        private Class.Txtdepartment txtdepartment;
     }
 }

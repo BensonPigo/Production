@@ -1,25 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using System.Transactions;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// P11_BatchImport
     /// </summary>
-    public partial class P11_BatchApprove : Sci.Win.Subs.Base
+    public partial class P11_BatchApprove : Win.Subs.Base
     {
         Action reloadParant;
         private DataTable dt;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
         /// <summary>
         /// P11_BatchImport
         /// </summary>
@@ -37,7 +33,7 @@ namespace Sci.Production.Shipping
             this.Helper.Controls.Grid.Generator(this.grid1)
              .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
             .Text("InvSerial", header: "Invoice Serial", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Numeric("KGS", header: "TTL GRS WEIGHT (KGS)", width: Widths.AnsiChars(15), decimal_places:2, iseditingreadonly: true)
+            .Numeric("KGS", header: "TTL GRS WEIGHT (KGS)", width: Widths.AnsiChars(15), decimal_places: 2, iseditingreadonly: true)
             .Numeric("qty", header: "TTL QTY", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
             .Text("NameEN", header: "COUNTRY OF DESTINATION", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("BIRShipTo", header: "Ship To", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -156,7 +152,7 @@ drop table #tmp
             }
 
             string sqlupdate = $@"
-update BIRInvoice set Status='Approved', Approve='{Sci.Env.User.UserID}', ApproveDate=getdate(), EditName='{Sci.Env.User.UserID}', EditDate=getdate()
+update BIRInvoice set Status='Approved', Approve='{Env.User.UserID}', ApproveDate=getdate(), EditName='{Env.User.UserID}', EditDate=getdate()
 where id in({string.Join(",", ids)})
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlupdate);

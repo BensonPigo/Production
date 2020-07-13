@@ -3,11 +3,8 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Basic
@@ -15,9 +12,8 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B04
     /// </summary>
-    public partial class B04 : Sci.Win.Tems.Input1
+    public partial class B04 : Win.Tems.Input1
     {
-        private bool Junk;
         /// <summary>
         /// B04
         /// </summary>
@@ -28,7 +24,8 @@ namespace Sci.Production.Basic
             this.InitializeComponent();
 
             this.label2.ForeColor = Color.Black;
-            //this.label2.BackColor = Color.White;
+
+            // this.label2.BackColor = Color.White;
         }
 
         /// <summary>
@@ -154,7 +151,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
         /// <param name="e">e</param>
         private void BtnAccountingChartNo_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B04_AccountNo callNextForm = new Sci.Production.Basic.B04_AccountNo(this.IsSupportEdit, this.CurrentMaintain["ID"].ToString(), null, null);
+            B04_AccountNo callNextForm = new B04_AccountNo(this.IsSupportEdit, this.CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
         }
@@ -166,8 +163,9 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
         /// <param name="e">e</param>
         private void BtnBankDetail_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(Prgs.GetAuthority(Sci.Env.User.UserID, "B04. Supplier/Sub Con (Local)", "CanEdit"), this.CurrentMaintain["ID"].ToString(), null, null ,this.Perm.Confirm ,null);
-            //Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(new ToolStripMenuItem(), this.CurrentMaintain["ID"].ToString());
+            B04_BankDetail callNextForm = new B04_BankDetail(Prgs.GetAuthority(Env.User.UserID, "B04. Supplier/Sub Con (Local)", "CanEdit"), this.CurrentMaintain["ID"].ToString(), null, null, this.Perm.Confirm, null);
+
+            // Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(new ToolStripMenuItem(), this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
         }
@@ -206,6 +204,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
                         this.DefaultWhere = string.Empty;
                         break;
                 }
+
                 this.ReloadDatas();
             };
         }
@@ -214,7 +213,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
         protected override void ClickJunk()
         {
             base.ClickJunk();
-            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'Junked',Junk=1,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'Junked',Junk=1,EditDate=GETDATE(),EditName='{Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }
@@ -222,7 +221,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();
-            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'New' ,Junk=0,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'New' ,Junk=0,EditDate=GETDATE(),EditName='{Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }
@@ -231,7 +230,6 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
 
         private void btnBatchApprove_Click(object sender, EventArgs e)
         {
-
             if (!this.Perm.Confirm)
             {
                 MyUtility.Msg.WarningBox("You don't have permission to confirm.");
@@ -240,7 +238,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
 
             if (this.batchapprove == null || this.batchapprove.IsDisposed)
             {
-                this.batchapprove = new Sci.Production.Basic.B04_BatchApprove(reload);
+                this.batchapprove = new B04_BatchApprove(this.reload);
                 this.batchapprove.Show();
             }
             else

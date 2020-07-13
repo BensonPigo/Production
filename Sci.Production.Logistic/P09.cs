@@ -7,14 +7,13 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Logistic
 {
     /// <summary>
     /// Logistic_P10
     /// </summary>
-    public partial class P09 : Sci.Win.Tems.QueryForm
+    public partial class P09 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P10
@@ -28,7 +27,6 @@ namespace Sci.Production.Logistic
 
         private DataTable gridData;
         private string selectDataTable_DefaultView_Sort = string.Empty;
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         /// <summary>
         /// OnFormLoaded()
@@ -133,7 +131,7 @@ from (
     left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     where 1=1 
-", Sci.Env.User.Keyword));
+", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.dateTransferDate.Value1))
             {

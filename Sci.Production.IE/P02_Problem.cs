@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
@@ -14,7 +11,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P02_Problem
     /// </summary>
-    public partial class P02_Problem : Sci.Win.Subs.Input4
+    public partial class P02_Problem : Win.Subs.Input4
     {
         /// <summary>
         /// P02_Problem
@@ -35,17 +32,17 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings iereason = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings iereason = new DataGridViewGeneratorTextColumnSettings();
             iereason.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from IEReason WITH (NOLOCK) where Type = 'CP' and Junk = 0 order by ID", "4,30", dr["IEReasonID"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from IEReason WITH (NOLOCK) where Type = 'CP' and Junk = 0 order by ID", "4,30", dr["IEReasonID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -78,7 +75,7 @@ namespace Sci.Production.IE
 from ChgOver_Problem cp WITH (NOLOCK) 
 left join IEReason ir WITH (NOLOCK) on cp.IEReasonID = ir.ID and ir.Type = 'CP'
 where cp.ID = {0}", this.KeyValue1);
-            Ict.DualResult returnResult;
+            DualResult returnResult;
             DataTable chgOverProblem = new DataTable();
             returnResult = DBProxy.Current.Select(null, selectCommand, out chgOverProblem);
             if (!returnResult)
@@ -87,7 +84,7 @@ where cp.ID = {0}", this.KeyValue1);
             }
 
             this.SetGrid(chgOverProblem);
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // Save -- Append/Revise/Delete按鈕要隱藏

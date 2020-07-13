@@ -37,7 +37,7 @@
             this.comboComplete = new Sci.Win.UI.ComboBox();
             this.txtSewingLineID = new Sci.Win.UI.TextBox();
             this.txtCutCell = new Sci.Win.UI.TextBox();
-            this.txtFactory = new Sci.Production.Class.txtfactory();
+            this.txtFactory = new Sci.Production.Class.Txtfactory();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.txtEstCutDate = new Sci.Win.UI.DateBox();
             this.label7 = new Sci.Win.UI.Label();
@@ -158,7 +158,7 @@
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
-            this.txtFactory.boolFtyGroupList = true;
+            this.txtFactory.BoolFtyGroupList = true;
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFactory.IsProduceFty = false;
@@ -321,7 +321,7 @@
         private Win.UI.ComboBox comboComplete;
         private Win.UI.TextBox txtSewingLineID;
         private Win.UI.TextBox txtCutCell;
-        private Class.txtfactory txtFactory;
+        private Class.Txtfactory txtFactory;
         private Win.UI.TextBox txtSPNo;
         private Win.UI.DateBox txtEstCutDate;
         private Win.UI.CheckBox chkExtendAllParts;

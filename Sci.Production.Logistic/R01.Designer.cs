@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.labelBrand = new Sci.Win.UI.Label();
@@ -216,7 +216,7 @@
 
         #endregion
 
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.ComboBox comboM;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label labelBrand;

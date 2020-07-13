@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtToMdivision
+    partial class TxtToMdivision
     {
         /// <summary> 
         /// 設計工具所需的變數。

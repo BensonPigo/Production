@@ -60,7 +60,7 @@
             this.dateSewingInline = new Sci.Win.UI.DateBox();
             this.dateRMTLETA = new Sci.Win.UI.DateBox();
             this.numOrderQty = new Sci.Win.UI.NumericBox();
-            this.txtuserMCHandle = new Sci.Production.Class.txtuser();
+            this.txtuserMCHandle = new Sci.Production.Class.Txtuser();
             this.btnAccessoryInspectionList = new Sci.Win.UI.Button();
             this.btnFabricInspectionList = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -649,7 +649,7 @@
         private Win.UI.DateBox dateSewingInline;
         private Win.UI.DateBox dateSewingOffline;
         private Win.UI.DateBox dateSDPDate;
-        private Class.txtuser txtuserMCHandle;
+        private Class.Txtuser txtuserMCHandle;
         private Win.UI.NumericBox numOrderQty;
         private Win.UI.Button btnAccessoryInspectionList;
         private Win.UI.Button btnFabricInspectionList;

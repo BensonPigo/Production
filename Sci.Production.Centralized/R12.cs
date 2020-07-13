@@ -16,7 +16,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// R12
     /// </summary>
-    public partial class R12 : Sci.Win.Tems.PrintForm
+    public partial class R12 : Win.Tems.PrintForm
     {
         private DataTable dt_All;
         private DataTable dt_Tmp;
@@ -102,8 +102,8 @@ namespace Sci.Production.Centralized
             {
                 sqlWheres.Add(string.Format(
                     "fe.PortArrival between '{0}' and '{1}' ",
-                   ((DateTime)this.dateShipDate1.Value).ToShortDateString(),
-                   ((DateTime)this.dateShipDate2.Value).ToShortDateString()));
+                    ((DateTime)this.dateShipDate1.Value).ToShortDateString(),
+                    ((DateTime)this.dateShipDate2.Value).ToShortDateString()));
 
                 ship_Date = true;
             }
@@ -112,8 +112,8 @@ namespace Sci.Production.Centralized
             {
                 sqlWheres.Add(string.Format(
                     "ShippingAP.ApvDate between '{0}' and '{1}' ",
-                   ((DateTime)this.dateApproveDate1.Value).ToShortDateString(),
-                   ((DateTime)this.dateApproveDate2.Value).ToShortDateString()));
+                    ((DateTime)this.dateApproveDate1.Value).ToShortDateString(),
+                    ((DateTime)this.dateApproveDate2.Value).ToShortDateString()));
 
                 approve_Date = true;
             }
@@ -309,7 +309,7 @@ from #data";
         #endregion
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.dt_All = null;
             this.dt_Tmp = null;
@@ -346,8 +346,8 @@ from #data";
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                   i + 1,
-                   connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {
@@ -427,8 +427,8 @@ order by Brand
 
                     listSummary = string.Format(
                         listSummary,
-                       string.Join(",", ftyAmt),
-                       string.Join(",", ftyList));
+                        string.Join(",", ftyAmt),
+                        string.Join(",", ftyList));
                     result = DBProxy.Current.SelectByConn(conn, listSummary, out this.dt_Tmp);
                     if (!result)
                     {
@@ -511,8 +511,8 @@ order by Brand
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                   i + 1,
-                   connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {
@@ -638,7 +638,7 @@ order by FactorySort
                 this.dt_All.Rows[i]["TTLPER"] = tTColumnAMT == 0 ? 0 : decimal.Round((ttlamt / tTColumnAMT) * 100, 2);
             }
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -670,7 +670,7 @@ order by FactorySort
             #endregion
 
             #region --匯出Excel
-            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Centralized_R12_Transportation_Cost_Sister_Factory_Transfer.xltx");
+            SaveXltReportCls xl = new SaveXltReportCls("Centralized_R12_Transportation_Cost_Sister_Factory_Transfer.xltx");
             xl.BoOpenFile = true;
             SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(this.dt_All);
             xdt_All.ShowHeader = true;
@@ -682,13 +682,13 @@ order by FactorySort
                 SaveXltReportCls.XltRptTable xdt_detail_All = new SaveXltReportCls.XltRptTable(this.dt_detail_All);
                 xdt_detail_All.ShowHeader = false;
                 xl.DicDatas.Add("##R21UNRLDETAIL", xdt_detail_All);
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R12_Transportation_Cost_Sister_Factory_Transfer"));
+                xl.Save(Class.MicrosoftFile.GetName("Centralized_R12_Transportation_Cost_Sister_Factory_Transfer"));
             }
             else
             {
                 Microsoft.Office.Interop.Excel.Application excel = xl.ExcelApp;
                 excel.Worksheets[2].Delete();
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R12_Transportation_Cost_Sister_Factory_Transfer"));
+                xl.Save(Class.MicrosoftFile.GetName("Centralized_R12_Transportation_Cost_Sister_Factory_Transfer"));
             }
 
             #endregion

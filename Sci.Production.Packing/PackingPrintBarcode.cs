@@ -1,15 +1,10 @@
 ﻿using Ict;
-using Microsoft.ReportingServices.ReportProcessing.OnDemandReportObjectModel;
 using OnBarcode.Barcode;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ZXing;
 using ZXing.QrCode;
@@ -33,19 +28,19 @@ namespace Sci.Production.Packing
                 return new DualResult(false, "Data not found.");
             }
 
-            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            Word._Application winword = new Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
             winword.Visible = false;
             object printFile;
-            Microsoft.Office.Interop.Word._Document document;
+            Word._Document document;
             Word.Table tables = null;
 
             #region check Factory
-            string countryID = MyUtility.GetValue.Lookup(string.Format(@"Select CountryID from Factory where id = '{0}'", Sci.Env.User.Factory));
+            string countryID = MyUtility.GetValue.Lookup(string.Format(@"Select CountryID from Factory where id = '{0}'", Env.User.Factory));
             switch (countryID)
             {
                 case "VN":
-                    printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_BarcodeVN.dotx";
+                    printFile = Env.Cfg.XltPathDir + "\\Packing_P03_BarcodeVN.dotx";
                     document = winword.Documents.Add(ref printFile);
                     #region VN
                     try
@@ -130,7 +125,7 @@ namespace Sci.Production.Packing
                     break;
                 case "PH":
                 default:
-                    printFile = Sci.Env.Cfg.XltPathDir + (print_type.Equals("New") ? "\\Packing_P03_Barcode_New.dotx" : "\\Packing_P03_Barcode.dotx");
+                    printFile = Env.Cfg.XltPathDir + (print_type.Equals("New") ? "\\Packing_P03_Barcode_New.dotx" : "\\Packing_P03_Barcode.dotx");
                     document = winword.Documents.Add(ref printFile);
                     #region PH
                     try
@@ -181,7 +176,7 @@ namespace Sci.Production.Packing
                                 tables.Cell(1, 2).Range.Text = sizeQty;
                                 if (country)
                                 {
-                                    string madein = "Made in " + MyUtility.Convert.GetString(MyUtility.GetValue.Lookup($"select Alias from country where id = (select countryid from factory where id = '{Sci.Env.User.Factory}')"));
+                                    string madein = "Made in " + MyUtility.Convert.GetString(MyUtility.GetValue.Lookup($"select Alias from country where id = (select countryid from factory where id = '{Env.User.Factory}')"));
                                     string deldate = "del date: " + (MyUtility.Check.Empty(printData.Rows[i]["BuyerDelivery"]) ? string.Empty : ((DateTime)printData.Rows[i]["BuyerDelivery"]).ToString("yyyy/MM/dd"));
                                     tables.Cell(3, 1).Range.Text = madein;
                                     tables.Cell(3, 2).Range.Text = deldate;
@@ -215,7 +210,6 @@ namespace Sci.Production.Packing
                                 tables.Cell(6, 1).Range.Text = sizeQty;
                                 #endregion
                             }
-
                         }
                         #endregion
                         winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
@@ -272,21 +266,22 @@ namespace Sci.Production.Packing
                 return new DualResult(false, "Data not found.");
             }
 
-            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            Word._Application winword = new Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
             winword.Visible = false;
             object printFile;
-            Microsoft.Office.Interop.Word._Document document;
+            Word._Document document;
             Word.Table tables = null;
 
-            printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_QRcode.dotx";
+            printFile = Env.Cfg.XltPathDir + "\\Packing_P03_QRcode.dotx";
             document = winword.Documents.Add(ref printFile);
 
             try
             {
                 document.Activate();
                 Word.Tables table = document.Tables;
-                //winword.Visible = true;
+
+                // winword.Visible = true;
                 #region 計算頁數
                 winword.Selection.Tables[1].Select();
                 winword.Selection.Copy();
@@ -368,7 +363,6 @@ namespace Sci.Production.Packing
             }
 
             return new DualResult(true);
-
         }
 
         public DualResult PrintCustCTN(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
@@ -384,14 +378,14 @@ namespace Sci.Production.Packing
                 return new DualResult(false, "Data not found.");
             }
 
-            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            Word._Application winword = new Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
             winword.Visible = false;
             object printFile;
-            Microsoft.Office.Interop.Word._Document document;
+            Word._Document document;
             Word.Table tables = null;
 
-            printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Barcode_CustCTN.dotx";
+            printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Barcode_CustCTN.dotx";
             document = winword.Documents.Add(ref printFile);
 
             try
@@ -478,6 +472,7 @@ namespace Sci.Production.Packing
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
+
             return new DualResult(true);
         }
 
@@ -508,30 +503,30 @@ namespace Sci.Production.Packing
         private Bitmap NewQRcode(string strBarcode)
         {
             /*
-  Level L (Low)      7%  of codewords can be restored. 
-  Level M (Medium)   15% of codewords can be restored. 
-  Level Q (Quartile) 25% of codewords can be restored. 
-  Level H (High)     30% of codewords can be restored. 
+  Level L (Low)      7%  of codewords can be restored.
+  Level M (Medium)   15% of codewords can be restored.
+  Level Q (Quartile) 25% of codewords can be restored.
+  Level H (High)     30% of codewords can be restored.
 */
             BarcodeWriter writer = new BarcodeWriter
             {
                 Format = BarcodeFormat.QR_CODE,
                 Options = new QrCodeEncodingOptions
                 {
-                    //Create Photo 
+                    // Create Photo
                     Height = 120,
                     Width = 120,
                     Margin = 0,
                     CharacterSet = "UTF-8",
                     PureBarcode = true,
-                    //錯誤修正容量
-                    //L水平    7%的字碼可被修正
-                    //M水平    15%的字碼可被修正
-                    //Q水平    25%的字碼可被修正
-                    //H水平    30%的字碼可被修正
-                    ErrorCorrection = ErrorCorrectionLevel.L
-                }
 
+                    // 錯誤修正容量
+                    // L水平    7%的字碼可被修正
+                    // M水平    15%的字碼可被修正
+                    // Q水平    25%的字碼可被修正
+                    // H水平    30%的字碼可被修正
+                    ErrorCorrection = ErrorCorrectionLevel.L,
+                },
             };
 
             return writer.Write(strBarcode);

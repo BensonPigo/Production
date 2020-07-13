@@ -38,12 +38,12 @@
             this.displayTotal = new Sci.Win.UI.DisplayBox();
             this.labelTotal = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
+            this.txtSeq1 = new Sci.Production.Class.TxtSeq();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.labFabricType = new Sci.Win.UI.Label();
-            this.comboFabricType = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboFabricType = new Sci.Production.Class.ComboDropDownList(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -154,8 +154,8 @@
             this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq1.Location = new System.Drawing.Point(235, 19);
             this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Seq1 = "";
+            this.txtSeq1.Seq2 = "";
             this.txtSeq1.Size = new System.Drawing.Size(61, 23);
             this.txtSeq1.TabIndex = 1;
             // 
@@ -248,8 +248,8 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.DisplayBox displayTotal;
         private Win.UI.Label labelTotal;
-        private Class.txtSeq txtSeq1;
+        private Class.TxtSeq txtSeq1;
         private Win.UI.Label labFabricType;
-        private Class.comboDropDownList comboFabricType;
+        private Class.ComboDropDownList comboFabricType;
     }
 }

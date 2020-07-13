@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
 using System.Data.SqlClient;
@@ -15,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R32 : Sci.Win.Tems.PrintForm
+    public partial class R32 : Win.Tems.PrintForm
     {
         string subProcess;
         string factory;
@@ -23,9 +18,9 @@ namespace Sci.Production.Subcon
         DataTable printData;
 
         public R32(ToolStripMenuItem menuitem)
-            :base(menuitem)
+            : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             #region set ComboFactory
             DataTable dtFactory;
             DBProxy.Current.Select(null, @"
@@ -35,9 +30,9 @@ union all
 select distinct FTYGroup 
 from Factory 
 where Junk != 1", out dtFactory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, dtFactory);
-            comboFactory.Text = Sci.Env.User.Factory;
-            #endregion 
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, dtFactory);
+            this.comboFactory.Text = Env.User.Factory;
+            #endregion
         }
 
         protected override bool ValidateInput()
@@ -56,11 +51,11 @@ where Junk != 1", out dtFactory);
             this.factory = this.comboFactory.Text;
             this.subProcess = this.txtsubprocess.Text;
             this.spNo = this.txtSPNo.Text;
-            
+
             return true;
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
             #region SQL first where
@@ -112,40 +107,40 @@ where Junk != 1", out dtFactory);
 
             if (this.dateBundleScan.HasValue)
             {
-                if (dateBundleScan.Value1.Empty() == false)
+                if (this.dateBundleScan.Value1.Empty() == false)
                 {
                     FirstWhere.Add(" and (left(b.ID,2) = 'TB' and b.IssueDate >= @dateBundleScanFrom or left(b.ID,2) = 'TC' and bd.ReceiveDate >= @dateBundleScanFrom)");
                     finalWhere.Add(" and (FarmOut.IssueDate >= @dateBundleScanFrom or FarmIn.ReceiveDate >= @dateBundleScanFrom)");
-                    listSqlPar.Add(new SqlParameter("@dateBundleScanFrom", (this.dateBundleScan.DateBox1.Value)));
+                    listSqlPar.Add(new SqlParameter("@dateBundleScanFrom", this.dateBundleScan.DateBox1.Value));
                 }
-            
-                if (dateBundleScan.Value2.Empty() == false)
+
+                if (this.dateBundleScan.Value2.Empty() == false)
                 {
                     FirstWhere.Add(" and (left(b.ID,2) = 'TB' and b.IssueDate <= @dateBundleScanTo or left(b.ID,2) = 'TC' and bd.ReceiveDate <= @dateBundleScanTo)");
                     finalWhere.Add(" and (FarmOut.IssueDate <= @dateBundleScanTo or FarmIn.ReceiveDate <= @dateBundleScanTo)");
-                    listSqlPar.Add(new SqlParameter("@dateBundleScanTo", (this.dateBundleScan.DateBox2.Value.Value.AddDays(1).AddSeconds(-1))));
+                    listSqlPar.Add(new SqlParameter("@dateBundleScanTo", this.dateBundleScan.DateBox2.Value.Value.AddDays(1).AddSeconds(-1)));
                 }
 
                 joinTmpBase = joinTmpBase.Replace("LEFT", "inner");
             }
-            
-            #endregion 
+
+            #endregion
             #region SQL final where
-            if (!factory.Empty())
+            if (!this.factory.Empty())
             {
                 finalWhere.Add("	and O.FTYGroup = @Factory   --Factory");
-                listSqlPar.Add(new SqlParameter("@Factory", factory));
+                listSqlPar.Add(new SqlParameter("@Factory", this.factory));
             }
 
             if (!MyUtility.Check.Empty(this.subProcess))
             {
-                finalWhere.Add($@" and s.id in ('{subProcess.Replace(",", "','")}')");
+                finalWhere.Add($@" and s.id in ('{this.subProcess.Replace(",", "','")}')");
             }
 
             if (!MyUtility.Check.Empty(this.spNo))
             {
-                FirstWhere.Add($@" and bd.orderid = '{spNo}'");
-                finalWhere.Add($@" and o.ID = '{spNo}'");
+                FirstWhere.Add($@" and bd.orderid = '{this.spNo}'");
+                finalWhere.Add($@" and o.ID = '{this.spNo}'");
             }
 
             #endregion
@@ -283,36 +278,36 @@ Drop Table #FarmOutList,#FarmInList,#Base
 
             #endregion
             #region Get Data
-            DBProxy.Current.DefaultTimeout = 900;  //加長時間為15分鐘，避免timeout
+            DBProxy.Current.DefaultTimeout = 900;  // 加長時間為15分鐘，避免timeout
             DualResult result;
-            result = DBProxy.Current.Select(null, sqlCmd, listSqlPar, out printData);
+            result = DBProxy.Current.Select(null, sqlCmd, listSqlPar, out this.printData);
             if (!result)
             {
-                return Result.F(result.ToString());
-            }            
+                return Ict.Result.F(result.ToString());
+            }
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region check printData
-            if (printData.Rows.Count == 0)
+            if (this.printData.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found.");
                 return false;
             }
             #endregion
-            this.SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
             this.ShowWaitMessage("Excel Processing");
             #region To Excel
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R32.xltx");
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R32.xltx", 1, showExcel: false, excelApp: objApp);
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R32.xltx");
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R32.xltx", 1, showExcel: false, excelApp: objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R32");
+            string strExcelName = Class.MicrosoftFile.GetName("Subcon_R32");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -320,8 +315,8 @@ Drop Table #FarmOutList,#FarmInList,#Base
 
             strExcelName.OpenFile();
             #endregion
-            #endregion 
-            this.HideWaitMessage();            
+            #endregion
+            this.HideWaitMessage();
             return true;
         }
     }

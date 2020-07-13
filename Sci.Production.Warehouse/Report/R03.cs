@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -13,88 +10,110 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
-        string season, mdivision, orderby, spno1, spno2, fabrictype, refno1, refno2, style, country, supp, factory, wkNo1, wkNo2 ,brand;
-        string IncludeJunk, ExcludeMaterial;
-        DateTime? sciDelivery1, sciDelivery2, suppDelivery1, suppDelivery2, eta1, eta2, ata1, ata2;
+        string season;
+        string mdivision;
+        string orderby;
+        string spno1;
+        string spno2;
+        string fabrictype;
+        string refno1;
+        string refno2;
+        string style;
+        string country;
+        string supp;
+        string factory;
+        string wkNo1;
+        string wkNo2;
+        string brand;
+        string IncludeJunk;
+        string ExcludeMaterial;
+        DateTime? sciDelivery1;
+        DateTime? sciDelivery2;
+        DateTime? suppDelivery1;
+        DateTime? suppDelivery2;
+        DateTime? eta1;
+        DateTime? eta2;
+        DateTime? ata1;
+        DateTime? ata2;
         DataTable printData;
 
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            txtMdivision.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
-            comboFabricType.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(comboOrderBy, 1, 1, "Supplier,SP#");
-            comboOrderBy.SelectedIndex = 0;
+            this.InitializeComponent();
+            this.txtMdivision.Text = Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
+            this.comboFabricType.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Supplier,SP#");
+            this.comboOrderBy.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) &&
-                MyUtility.Check.Empty(dateSuppDelivery.Value1) && MyUtility.Check.Empty(dateSuppDelivery.Value2) &&
-                MyUtility.Check.Empty(dateETA.Value1) && MyUtility.Check.Empty(dateFinalETA.Value2) &&
-                MyUtility.Check.Empty(dateFinalETA.Value1) && MyUtility.Check.Empty(dateETA.Value2) &&
-                (MyUtility.Check.Empty(txtSPNoStart.Text) && MyUtility.Check.Empty(txtSPNoEnd.Text)) &&
-                (MyUtility.Check.Empty(txtRefnoStart.Text) && MyUtility.Check.Empty(txtRefnoEnd.Text)) &&
-                (MyUtility.Check.Empty(txtWKNo1.Text) && MyUtility.Check.Empty(txtWKNo2.Text)))
+            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2) &&
+                MyUtility.Check.Empty(this.dateSuppDelivery.Value1) && MyUtility.Check.Empty(this.dateSuppDelivery.Value2) &&
+                MyUtility.Check.Empty(this.dateETA.Value1) && MyUtility.Check.Empty(this.dateFinalETA.Value2) &&
+                MyUtility.Check.Empty(this.dateFinalETA.Value1) && MyUtility.Check.Empty(this.dateETA.Value2) &&
+                (MyUtility.Check.Empty(this.txtSPNoStart.Text) && MyUtility.Check.Empty(this.txtSPNoEnd.Text)) &&
+                (MyUtility.Check.Empty(this.txtRefnoStart.Text) && MyUtility.Check.Empty(this.txtRefnoEnd.Text)) &&
+                (MyUtility.Check.Empty(this.txtWKNo1.Text) && MyUtility.Check.Empty(this.txtWKNo2.Text)))
             {
                 MyUtility.Msg.WarningBox("< Supp Delivery > & < SCI Delivery > & < ETA > & < FinalETA >& < SP# > & < Refno > & < Wk# > can't be empty!!");
                 return false;
             }
             #region -- 擇一必輸的條件 --
-            sciDelivery1 = dateSCIDelivery.Value1;
-            sciDelivery2 = dateSCIDelivery.Value2;
-            suppDelivery1 = dateSuppDelivery.Value1;
-            suppDelivery2 = dateSuppDelivery.Value2;
-            eta1 = dateETA.Value1;
-            eta2 = dateETA.Value2;
-            ata1 = dateFinalETA.Value1;
-            ata2 = dateFinalETA.Value2;
-            spno1 = txtSPNoStart.Text;
-            spno2 = txtSPNoEnd.Text;
-            refno1 = txtRefnoStart.Text;
-            refno2 = txtRefnoEnd.Text;
-            wkNo1 = txtWKNo1.Text;
-            wkNo2 = txtWKNo2.Text;
+            this.sciDelivery1 = this.dateSCIDelivery.Value1;
+            this.sciDelivery2 = this.dateSCIDelivery.Value2;
+            this.suppDelivery1 = this.dateSuppDelivery.Value1;
+            this.suppDelivery2 = this.dateSuppDelivery.Value2;
+            this.eta1 = this.dateETA.Value1;
+            this.eta2 = this.dateETA.Value2;
+            this.ata1 = this.dateFinalETA.Value1;
+            this.ata2 = this.dateFinalETA.Value2;
+            this.spno1 = this.txtSPNoStart.Text;
+            this.spno2 = this.txtSPNoEnd.Text;
+            this.refno1 = this.txtRefnoStart.Text;
+            this.refno2 = this.txtRefnoEnd.Text;
+            this.wkNo1 = this.txtWKNo1.Text;
+            this.wkNo2 = this.txtWKNo2.Text;
             #endregion
 
-            country = txtcountry.TextBox1.Text;
-            supp = txtsupplier.TextBox1.Text;
-            style = txtstyle.Text;
-            season = txtseason.Text;
-            mdivision = txtMdivision.Text;
-            factory = txtfactory.Text;
-            fabrictype = comboFabricType.SelectedValue.ToString();
-            orderby = comboOrderBy.Text;
-            brand = txtbrand.Text;
+            this.country = this.txtcountry.TextBox1.Text;
+            this.supp = this.txtsupplier.TextBox1.Text;
+            this.style = this.txtstyle.Text;
+            this.season = this.txtseason.Text;
+            this.mdivision = this.txtMdivision.Text;
+            this.factory = this.txtfactory.Text;
+            this.fabrictype = this.comboFabricType.SelectedValue.ToString();
+            this.orderby = this.comboOrderBy.Text;
+            this.brand = this.txtbrand.Text;
 
             if (this.chkIncludeJunk.Checked)
             {
-                IncludeJunk = Environment.NewLine;
+                this.IncludeJunk = Environment.NewLine;
             }
             else
             {
-                IncludeJunk = " AND PSD.Junk=0 ";
+                this.IncludeJunk = " AND PSD.Junk=0 ";
             }
 
             if (this.chkExcludeMaterial.Checked)
             {
-                ExcludeMaterial = " AND o.Category <> 'M' ";
+                this.ExcludeMaterial = " AND o.Category <> 'M' ";
             }
             else
             {
-                ExcludeMaterial = Environment.NewLine;
+                this.ExcludeMaterial = Environment.NewLine;
             }
 
             return base.ValidateInput();
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlSeparateByWK = string.Empty;
 
@@ -134,7 +153,7 @@ left join Export ex with (nolock) on ex.ID = exd.ID
 
             System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
             sp_factory.ParameterName = "@FactoryID";
-            
+
             System.Data.SqlClient.SqlParameter sp_brand = new System.Data.SqlClient.SqlParameter();
             sp_brand.ParameterName = "@BrandID";
 
@@ -306,173 +325,192 @@ where 1=1
 "));
 
             #region --- 條件組合  ---
-            if (!MyUtility.Check.Empty(sciDelivery1))
+            if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and '{0}' <= O.SciDelivery ", Convert.ToDateTime(sciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and '{0}' <= O.SciDelivery ", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(sciDelivery2))
+
+            if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(@" and O.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and O.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(style))
+
+            if (!MyUtility.Check.Empty(this.style))
             {
                 sqlCmd.Append(" and O.styleid = @style");
-                sp_style.Value = style;
+                sp_style.Value = this.style;
                 cmds.Add(sp_style);
             }
-            if (!MyUtility.Check.Empty(season))
+
+            if (!MyUtility.Check.Empty(this.season))
             {
                 sqlCmd.Append(" and O.seasonid = @season");
-                sp_season.Value = season;
+                sp_season.Value = this.season;
                 cmds.Add(sp_season);
             }
-            if (!MyUtility.Check.Empty(spno1) && !MyUtility.Check.Empty(spno2))
+
+            if (!MyUtility.Check.Empty(this.spno1) && !MyUtility.Check.Empty(this.spno2))
             {
-                //若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
+                // 若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
                 sqlCmd.Append(" and PSD.id >= @spno1 and PSD.id <= @spno2");
-                sp_spno1.Value = spno1.PadRight(10, '0');
-                sp_spno2.Value = spno2.PadRight(10, 'Z');
+                sp_spno1.Value = this.spno1.PadRight(10, '0');
+                sp_spno2.Value = this.spno2.PadRight(10, 'Z');
                 cmds.Add(sp_spno1);
                 cmds.Add(sp_spno2);
             }
-            else if (!MyUtility.Check.Empty(spno1))
+            else if (!MyUtility.Check.Empty(this.spno1))
             {
-                //只有 sp1 輸入資料
+                // 只有 sp1 輸入資料
                 sqlCmd.Append(" and PSD.id like @spno1 ");
-                sp_spno1.Value = spno1 + "%";
+                sp_spno1.Value = this.spno1 + "%";
                 cmds.Add(sp_spno1);
             }
-            else if (!MyUtility.Check.Empty(spno2))
+            else if (!MyUtility.Check.Empty(this.spno2))
             {
-                //只有 sp2 輸入資料
+                // 只有 sp2 輸入資料
                 sqlCmd.Append(" and PSD.id like @spno2 ");
-                sp_spno2.Value = spno2 + "%";
+                sp_spno2.Value = this.spno2 + "%";
                 cmds.Add(sp_spno2);
             }
 
-            if (!MyUtility.Check.Empty(suppDelivery1) || !MyUtility.Check.Empty(suppDelivery2))
+            if (!MyUtility.Check.Empty(this.suppDelivery1) || !MyUtility.Check.Empty(this.suppDelivery2))
             {
-                if (!MyUtility.Check.Empty(suppDelivery1))
-                    sqlCmd.Append(string.Format(@" and '{0}' <= Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD)", Convert.ToDateTime(suppDelivery1).ToString("d")));
-                if (!MyUtility.Check.Empty(suppDelivery2))
-                    sqlCmd.Append(string.Format(@" and Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD) <= '{0}'", Convert.ToDateTime(suppDelivery2).ToString("d")));
+                if (!MyUtility.Check.Empty(this.suppDelivery1))
+                {
+                    sqlCmd.Append(string.Format(@" and '{0}' <= Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD)", Convert.ToDateTime(this.suppDelivery1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.suppDelivery2))
+                {
+                    sqlCmd.Append(string.Format(@" and Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD) <= '{0}'", Convert.ToDateTime(this.suppDelivery2).ToString("d")));
+                }
             }
 
-            if (!MyUtility.Check.Empty(eta1) || !MyUtility.Check.Empty(eta2))
+            if (!MyUtility.Check.Empty(this.eta1) || !MyUtility.Check.Empty(this.eta2))
             {
-                if (!MyUtility.Check.Empty(eta1))
-                    sqlCmd.Append(string.Format(@" and '{0}' <= PSD.ETA", Convert.ToDateTime(eta1).ToString("d")));
-                if (!MyUtility.Check.Empty(eta2))
-                    sqlCmd.Append(string.Format(@" and PSD.ETA <= '{0}'", Convert.ToDateTime(eta2).ToString("d")));
+                if (!MyUtility.Check.Empty(this.eta1))
+                {
+                    sqlCmd.Append(string.Format(@" and '{0}' <= PSD.ETA", Convert.ToDateTime(this.eta1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.eta2))
+                {
+                    sqlCmd.Append(string.Format(@" and PSD.ETA <= '{0}'", Convert.ToDateTime(this.eta2).ToString("d")));
+                }
             }
 
-            if (!MyUtility.Check.Empty(ata1) || !MyUtility.Check.Empty(ata2))
+            if (!MyUtility.Check.Empty(this.ata1) || !MyUtility.Check.Empty(this.ata2))
             {
-                if (!MyUtility.Check.Empty(ata1))
-                    sqlCmd.Append(string.Format(@" and '{0}' <= PSD.FinalETA", Convert.ToDateTime(ata1).ToString("d")));
-                if (!MyUtility.Check.Empty(ata2))
-                    sqlCmd.Append(string.Format(@" and PSD.FinalETA <= '{0}'", Convert.ToDateTime(ata2).ToString("d")));
+                if (!MyUtility.Check.Empty(this.ata1))
+                {
+                    sqlCmd.Append(string.Format(@" and '{0}' <= PSD.FinalETA", Convert.ToDateTime(this.ata1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.ata2))
+                {
+                    sqlCmd.Append(string.Format(@" and PSD.FinalETA <= '{0}'", Convert.ToDateTime(this.ata2).ToString("d")));
+                }
             }
 
-            if (!MyUtility.Check.Empty(country))
+            if (!MyUtility.Check.Empty(this.country))
             {
-                sqlCmd.Append(string.Format(" and S.countryID = '{0}'", country));
+                sqlCmd.Append(string.Format(" and S.countryID = '{0}'", this.country));
             }
 
-            if (!MyUtility.Check.Empty(supp))
+            if (!MyUtility.Check.Empty(this.supp))
             {
-                sqlCmd.Append(string.Format(" and PS.suppid = '{0}'",supp));
+                sqlCmd.Append(string.Format(" and PS.suppid = '{0}'", this.supp));
             }
 
-            if (!MyUtility.Check.Empty(mdivision))
+            if (!MyUtility.Check.Empty(this.mdivision))
             {
                 sqlCmd.Append(" and F.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
+                sp_mdivision.Value = this.mdivision;
                 cmds.Add(sp_mdivision);
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and O.FactoryID = @FactoryID");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
             }
 
-            if (!MyUtility.Check.Empty(brand))
+            if (!MyUtility.Check.Empty(this.brand))
             {
                 sqlCmd.Append(" and O.BrandID = @BrandID");
-                sp_brand.Value = brand;
+                sp_brand.Value = this.brand;
                 cmds.Add(sp_brand);
             }
 
-            if (!MyUtility.Check.Empty(fabrictype))
+            if (!MyUtility.Check.Empty(this.fabrictype))
             {
-                sqlCmd.Append(string.Format(@" and PSD.FabricType = '{0}'", fabrictype));
+                sqlCmd.Append(string.Format(@" and PSD.FabricType = '{0}'", this.fabrictype));
             }
 
-            if (!MyUtility.Check.Empty(refno1) && !MyUtility.Check.Empty(refno2))
+            if (!MyUtility.Check.Empty(this.refno1) && !MyUtility.Check.Empty(this.refno2))
             {
-                //Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
+                // Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
                 sqlCmd.Append(" and PSD.refno >= @refno1 and PSD.refno <= @refno2");
-                sp_refno1.Value = refno1;
-                sp_refno2.Value = refno2;
+                sp_refno1.Value = this.refno1;
+                sp_refno2.Value = this.refno2;
                 cmds.Add(sp_refno1);
                 cmds.Add(sp_refno2);
             }
-            else if (!MyUtility.Check.Empty(refno1))
+            else if (!MyUtility.Check.Empty(this.refno1))
             {
-                //只輸入 Refno1
+                // 只輸入 Refno1
                 sqlCmd.Append(" and PSD.refno like @refno1");
-                sp_refno1.Value = refno1 + "%";
+                sp_refno1.Value = this.refno1 + "%";
                 cmds.Add(sp_refno1);
             }
-            else if (!MyUtility.Check.Empty(refno2))
+            else if (!MyUtility.Check.Empty(this.refno2))
             {
-                //只輸入 Refno2
+                // 只輸入 Refno2
                 sqlCmd.Append(" and PSD.refno like @refno2");
-                sp_refno2.Value = refno2 + "%";
+                sp_refno2.Value = this.refno2 + "%";
                 cmds.Add(sp_refno2);
             }
 
             // Wkno 塞選條件
-            if (!MyUtility.Check.Empty(wkNo1) && !MyUtility.Check.Empty(wkNo2))
+            if (!MyUtility.Check.Empty(this.wkNo1) && !MyUtility.Check.Empty(this.wkNo2))
             {
-                //Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
+                // Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
                 sqlCmd.Append(" and wk.wkno between @wkno1 and @wkno2 ");
-                sp_wkno1.Value = wkNo1;
-                sp_wkno2.Value = wkNo2;
+                sp_wkno1.Value = this.wkNo1;
+                sp_wkno2.Value = this.wkNo2;
                 cmds.Add(sp_wkno1);
                 cmds.Add(sp_wkno2);
             }
-            else if (!MyUtility.Check.Empty(wkNo1))
+            else if (!MyUtility.Check.Empty(this.wkNo1))
             {
-                //只輸入 Refno1
+                // 只輸入 Refno1
                 sqlCmd.Append(" and wk.wkno like @wkno1");
-                sp_wkno1.Value = wkNo1 + "%";
+                sp_wkno1.Value = this.wkNo1 + "%";
                 cmds.Add(sp_wkno1);
             }
-            else if (!MyUtility.Check.Empty(wkNo2))
+            else if (!MyUtility.Check.Empty(this.wkNo2))
             {
-                //只輸入 Refno2
+                // 只輸入 Refno2
                 sqlCmd.Append(" and wk.wkno like @wkno2");
-                sp_wkno2.Value = wkNo2 + "%";
+                sp_wkno2.Value = this.wkNo2 + "%";
                 cmds.Add(sp_wkno2);
             }
-            int dwr = (chkDWR.Checked) ? 1 : 0;
+
+            int dwr = this.chkDWR.Checked ? 1 : 0;
 
             sqlCmd.Append($@" and fabric.DWR = {dwr}");
 
-            if (chkWhseClose.Checked)
+            if (this.chkWhseClose.Checked)
             {
                 sqlCmd.Append(" and o.WhseClose is null");
             }
 
-
-            sqlCmd.Append(IncludeJunk + Environment.NewLine);
-            sqlCmd.Append(ExcludeMaterial + Environment.NewLine);
+            sqlCmd.Append(this.IncludeJunk + Environment.NewLine);
+            sqlCmd.Append(this.ExcludeMaterial + Environment.NewLine);
             sqlCmd.Append("and F.IsProduceFty = 1" + Environment.NewLine);
 
-            if (orderby.ToUpper().TrimEnd() == "SUPPLIER")
+            if (this.orderby.ToUpper().TrimEnd() == "SUPPLIER")
             {
                 sqlCmd.Append(" ORDER BY PS.SUPPID, PSD.ID, PSD.SEQ1, PSD.SEQ2 ");
             }
@@ -483,34 +521,35 @@ where 1=1
 
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-            return Result.True;
+
+            return Ict.Result.True;
         }
 
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-            
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx"); //預先開啟excel app
-            this.ShowWaitMessage("Excel Processing...");
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx", objApp);
 
-            //com.TransferArray_Limit = 200000;
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx"); // 預先開啟excel app
+            this.ShowWaitMessage("Excel Processing...");
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx", objApp);
+
+            // com.TransferArray_Limit = 200000;
             com.ColumnsAutoFit = true;
-            com.WriteTable(printData,2);
+            com.WriteTable(this.printData, 2);
 
             if (this.chkSeparateByWK.Checked)
             {
@@ -520,22 +559,22 @@ where 1=1
                 objApp.Sheets[1].Cells[1, 41].Value = "WK ShipQty";
                 objApp.Sheets[1].Cells[1, 42].Value = "WK F.O.C";
             }
-            //Excel.Worksheet worksheet = objApp.Sheets[1];
 
-            //for (int i = 1; i <= printData.Rows.Count; i++)
-            //{
+            // Excel.Worksheet worksheet = objApp.Sheets[1];
+
+            // for (int i = 1; i <= printData.Rows.Count; i++)
+            // {
             //    string str = worksheet.Cells[i + 1, 12].Value;
             //    if (!MyUtility.Check.Empty(str))
             //        worksheet.Cells[i + 1, 12] = str.Trim();
-            //}
-
+            // }
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R03");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R03");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
-            //Marshal.ReleaseComObject(worksheet);
 
+            // Marshal.ReleaseComObject(worksheet);
             strExcelName.OpenFile();
             #endregion
             this.HideWaitMessage();

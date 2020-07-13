@@ -8,8 +8,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -18,7 +16,7 @@ namespace Sci.Production.SubProcess
     /// <summary>
     /// P10
     /// </summary>
-    public partial class P10 : Sci.Win.Tems.QueryForm
+    public partial class P10 : Win.Tems.QueryForm
     {
         private int intRightColumnHeaderCount = 3;
         private object objStartDate;
@@ -40,6 +38,7 @@ namespace Sci.Production.SubProcess
 
         private Ict.Win.UI.DataGridViewNumericBoxColumn setEarlyInlinecolor;
         private Ict.Win.UI.DataGridViewTextBoxColumn setPPAInlinecolor;
+
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
@@ -49,7 +48,7 @@ namespace Sci.Production.SubProcess
             DataGridViewGeneratorTextColumnSettings setPPAGroup = new DataGridViewGeneratorTextColumnSettings();
             setPPAGroup.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.gridLeft.GetDataRow<DataRow>(e.RowIndex);
                     this.PPAGroupMouseRightClick(dr, dr["Group"].ToString());
@@ -73,7 +72,7 @@ namespace Sci.Production.SubProcess
             DataGridViewGeneratorTextColumnSettings setPPALine = new DataGridViewGeneratorTextColumnSettings();
             setPPALine.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.gridLeft.GetDataRow<DataRow>(e.RowIndex);
                     this.PPALineMouseRightClick(dr, dr["Group"].ToString());
@@ -107,7 +106,7 @@ namespace Sci.Production.SubProcess
             DataGridViewGeneratorTextColumnSettings setPPAFeature = new DataGridViewGeneratorTextColumnSettings();
             setPPAFeature.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.gridLeft.GetDataRow<DataRow>(e.RowIndex);
                     this.PPAFeatureMouseRightClick(dr);
@@ -143,7 +142,7 @@ namespace Sci.Production.SubProcess
             setEarlyInline.IsSupportNegative = true;
             setLearnCurve.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.gridLeft.GetDataRow<DataRow>(e.RowIndex);
                     string strOldSubProcessLearnCurveID = dr["SubProcessLearnCurveID"].ToString();
@@ -232,7 +231,7 @@ namespace Sci.Production.SubProcess
             listSQLParameter.Add(new SqlParameter("@SciDeliveryStart", strSciDeliveryStart));
             listSQLParameter.Add(new SqlParameter("@SciDeliveryEnd", strSciDeliveryEnd));
             listSQLParameter.Add(new SqlParameter("@Style", this.txtStyle.Text));
-            listSQLParameter.Add(new SqlParameter("@MDivisionID ", Sci.Env.User.Keyword));
+            listSQLParameter.Add(new SqlParameter("@MDivisionID ", Env.User.Keyword));
 
             List<string> listSQLFilter = new List<string>();
             string strHolidayDateFactory = string.Empty;
@@ -640,10 +639,11 @@ end
                 this.listControlBindingSourceRemark.DataSource = dtGridData[5];
 
                 #region Set Remark Color
-                //foreach (DataRow dr in ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows)
-                //{
+
+                // foreach (DataRow dr in ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows)
+                // {
                 //    this.RemarkColorChange(dr);
-                //}
+                // }
                 #endregion
                 #endregion
 
@@ -732,7 +732,6 @@ end
         //        }
         //    }
         // }
-
         private string EditRemark(string strRemark)
         {
             Win.Tools.EditMemo editUi = new Win.Tools.EditMemo(strRemark, "P10_Remark", true, null);
@@ -810,11 +809,11 @@ where Qty is not null
                         this.ShowWaitMessage($"Data Processing ({intProcessIndex} / {intProcessCount}) ...", 500);
 
                         List<SqlParameter> listSQLParameter = new List<SqlParameter>();
-                        listSQLParameter.Add(new SqlParameter("@UserName", Sci.Env.User.UserID));
+                        listSQLParameter.Add(new SqlParameter("@UserName", Env.User.UserID));
                         listSQLParameter.Add(new SqlParameter("@OrderID", drPPASchedule["OrderID"]));
                         listSQLParameter.Add(new SqlParameter("@StartDate", this.objStartDate));
                         listSQLParameter.Add(new SqlParameter("@EndDate", this.objEndDate));
-                        listSQLParameter.Add(new SqlParameter("@MDivisionID ", Sci.Env.User.Keyword));
+                        listSQLParameter.Add(new SqlParameter("@MDivisionID ", Env.User.Keyword));
 
                         DataTable dtPPASchedule_Detail = dtOutputDateQtyRemark.Clone();
 
@@ -1004,7 +1003,7 @@ and t.OutputDate between @StartDate and @EndDate";
 
         private void TxtUpdateColumn_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
                 string strComboBoxColumnName = this.comboBoxUpdateColumn.Text;
 
@@ -1112,7 +1111,7 @@ and t.OutputDate between @StartDate and @EndDate";
 select ID
 from SubProcessLine
 where Type = 'PPA'
-	  and Junk = 0 and MDivisionID ='{Sci.Env.User.Keyword}'
+	  and Junk = 0 and MDivisionID ='{Env.User.Keyword}'
       and GroupID = @Group";
 
                 if (MyUtility.Check.Seek(strCheckGroupSQL, listSQLParameter) == true)
@@ -1178,7 +1177,7 @@ where Type = 'PPA'
 select GroupID
 from SubProcessLine
 where Type = 'PPA'
-	  and Junk = 0 and MDivisionID ='{Sci.Env.User.Keyword}'
+	  and Junk = 0 and MDivisionID ='{Env.User.Keyword}'
       and ID = @ID";
 
                 if (MyUtility.Check.Seek(strCheckGroupSQL, listSQLParameter) == true)
@@ -1257,7 +1256,7 @@ order by Feature";
             DataTable dtSelectItems;
             DualResult result = DBProxy.Current.Select(null, strGetFeatureSQL, listSQLParameter, out dtSelectItems);
 
-            Sci.Win.Tools.SelectItem2 items = new Win.Tools.SelectItem2(dtSelectItems, "Feature,SMV,Remark", "Feature,SMV,Remark", "10,6,20", dr["Feature"].ToString());
+            Win.Tools.SelectItem2 items = new Win.Tools.SelectItem2(dtSelectItems, "Feature,SMV,Remark", "Feature,SMV,Remark", "10,6,20", dr["Feature"].ToString());
             DialogResult diaResult = items.ShowDialog();
 
             if (diaResult != DialogResult.Cancel)
@@ -1302,7 +1301,7 @@ order by Feature";
                 List<SqlParameter> listSQLParameter = new List<SqlParameter>();
                 listSQLParameter.Add(new SqlParameter("@SewInLine", dr["SewInLine"]));
                 listSQLParameter.Add(new SqlParameter("@EarlyInline", dr["EarlyInline"]));
-                listSQLParameter.Add(new SqlParameter("@FactoryID", Sci.Env.User.Factory));
+                listSQLParameter.Add(new SqlParameter("@FactoryID", Env.User.Factory));
 
                 #region Update PPA Inline
                 string strGetNewPPAInlineDateSQL = @"select Inline = dbo.[CalculateWorkDate](@SewInLine, 0 - @EarlyInline, @FactoryID)";
@@ -1400,7 +1399,7 @@ from SubProcessLearnCurve
 where Type = 'PPA'
 	  and Junk = 0
 order by ID";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(strGetLearnCurveSQL, "10,20", strOldSubProcessLearnCurveID);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(strGetLearnCurveSQL, "10,20", strOldSubProcessLearnCurveID);
 
             DialogResult result = item.ShowDialog();
             if (result != DialogResult.Cancel)
@@ -1493,10 +1492,10 @@ select [Group] = GroupID
        , ID
 from SubProcessLine
 where Type = 'PPA'
-	  and Junk = 0 and MDivisionID ='{Sci.Env.User.Keyword}'
+	  and Junk = 0 and MDivisionID ='{Env.User.Keyword}'
 order by GroupID";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(strGetListSQL, "15,15", strGroup);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(strGetListSQL, "15,15", strGroup);
 
             DialogResult result = item.ShowDialog();
             if (result != DialogResult.Cancel)
@@ -1535,7 +1534,7 @@ order by GroupID";
         {
             List<SqlParameter> listSQLParameter = new List<SqlParameter>();
             listSQLParameter.Add(new SqlParameter("@Inline", dr["Inline"]));
-            listSQLParameter.Add(new SqlParameter("@FactoryID", Sci.Env.User.Factory));
+            listSQLParameter.Add(new SqlParameter("@FactoryID", Env.User.Factory));
             listSQLParameter.Add(new SqlParameter("@OrderQty", dr["OrderQty"]));
             listSQLParameter.Add(new SqlParameter("@TargetQty", dr["TargetQty"]));
             listSQLParameter.Add(new SqlParameter("@SubProcessLearnCurveID", dr["SubProcessLearnCurveID"]));
@@ -1855,7 +1854,10 @@ or Manpower = {fint}";
                     MyUtility.Msg.WarningBox("Data not Found.");
                     return;
                 }
-                else { this.index = 0; }
+                else
+                {
+                    this.index = 0;
+                }
             }
             else
             {

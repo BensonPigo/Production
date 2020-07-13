@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// P08_ShareExpense_ImportGarment
     /// </summary>
-    public partial class P08_ShareExpense_ImportGarment : Sci.Win.Subs.Base
+    public partial class P08_ShareExpense_ImportGarment : Win.Subs.Base
     {
         private DataTable detailData;
         private DataTable gridData;

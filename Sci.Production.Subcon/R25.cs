@@ -1,30 +1,25 @@
 ﻿using Ict;
 using Sci.Data;
-using Sci.Utility.Excel;
-using Sci.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R25 : Sci.Win.Tems.PrintForm
+    public partial class R25 : Win.Tems.PrintForm
     {
         public R25(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable factory = null;
 
             DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.SelectedValue = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.SelectedValue = Env.User.Factory;
             this.print.Enabled = false;
         }
 
@@ -41,63 +36,70 @@ namespace Sci.Production.Subcon
             if (!this.dateReceiveDate.HasValue && this.txtSPNo.Text.Empty())
             {
                 MyUtility.Msg.ErrorBox("[Receive Date] or [SP#] must input one !!");
-                dateReceiveDate.Focus();
-                txtSPNo.Focus();
+                this.dateReceiveDate.Focus();
+                this.txtSPNo.Focus();
                 return false;
             }
-           
-             ReceiveDate = dateReceiveDate.Value1;
-             ReceiveDate2 = dateReceiveDate.Value2;
-             SP = txtSPNo.Text.ToString();
-             Refno = txtRefno.Text.ToString();
-             Category = txtartworktype_ftyCategory.Text.ToString();
-             Supplier = txtsubconSupplier.TextBox1.Text;
-             Factory = comboFactory.SelectedValue.ToString();
-            
+
+            this.ReceiveDate = this.dateReceiveDate.Value1;
+            this.ReceiveDate2 = this.dateReceiveDate.Value2;
+            this.SP = this.txtSPNo.Text.ToString();
+            this.Refno = this.txtRefno.Text.ToString();
+            this.Category = this.txtartworktype_ftyCategory.Text.ToString();
+            this.Supplier = this.txtsubconSupplier.TextBox1.Text;
+            this.Factory = this.comboFactory.SelectedValue.ToString();
+
             return base.ValidateInput();
         }
-       
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> lis = new List<SqlParameter>();
-            string sqlWhere = ""; string order = "";
+            string sqlWhere = string.Empty;
+            string order = string.Empty;
             List<string> sqlWheres = new List<string>();
             if (!this.dateReceiveDate.Value1.Empty())
             {
                 sqlWheres.Add("lr.issuedate >= @ReceiveDate");
-                lis.Add(new SqlParameter("@ReceiveDate", ReceiveDate));
+                lis.Add(new SqlParameter("@ReceiveDate", this.ReceiveDate));
             }
+
             if (!this.dateReceiveDate.Value2.Empty())
             {
                 sqlWheres.Add("lr.issuedate <= @ReceiveDate2");
-                lis.Add(new SqlParameter("@ReceiveDate2", ReceiveDate2));
+                lis.Add(new SqlParameter("@ReceiveDate2", this.ReceiveDate2));
             }
+
             if (!this.txtSPNo.Text.Empty())
             {
                 sqlWheres.Add("lrd.orderid=@SP");
-                lis.Add(new SqlParameter("@SP", SP));
+                lis.Add(new SqlParameter("@SP", this.SP));
             }
+
             if (!this.txtRefno.Text.Empty())
             {
                 sqlWheres.Add("lrd.refno=@Refno");
-                lis.Add(new SqlParameter("@Refno", Refno));
+                lis.Add(new SqlParameter("@Refno", this.Refno));
             }
+
             if (!this.txtartworktype_ftyCategory.Text.Empty())
             {
                 sqlWheres.Add("lrd.category=@Category");
-                lis.Add(new SqlParameter("@Category", Category));
+                lis.Add(new SqlParameter("@Category", this.Category));
             }
+
             if (!this.txtsubconSupplier.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("lr.localsuppid=@Supplier");
-                lis.Add(new SqlParameter("@Supplier", Supplier));
+                lis.Add(new SqlParameter("@Supplier", this.Supplier));
             }
-            if (Factory != "") //(!this.comboBox1.Text.Empty())
+
+            if (this.Factory != string.Empty) // (!this.comboBox1.Text.Empty())
             {
                 sqlWheres.Add("lr.factoryid =@Factory");
-                lis.Add(new SqlParameter("@Factory", Factory));
+                lis.Add(new SqlParameter("@Factory", this.Factory));
             }
+
             order = "order by lr.issuedate,lr.id";
 
             sqlWhere = string.Join(" and ", sqlWheres);
@@ -105,6 +107,7 @@ namespace Sci.Production.Subcon
             {
                 sqlWhere = " where " + sqlWhere;
             }
+
             DualResult result;
 
             string sqlcmd = string.Format(@"
@@ -132,33 +135,35 @@ left join dbo.LocalReceiving_Detail lrd WITH (NOLOCK) on  lr.id=lrd.Id
 left join dbo.LocalPO_Detail c WITH (NOLOCK) on lrd.LocalPo_detailukey=c.Ukey  
 left join dbo.LocalItem li WITH (NOLOCK) on li.RefNo=lrd.Refno
 " + sqlWhere + " " + order);
-            result = DBProxy.Current.Select("", sqlcmd,lis, out dtt);
-        
-            return result; //base.OnAsyncDataLoad(e);
+            result = DBProxy.Current.Select(string.Empty, sqlcmd, lis, out this.dtt);
+
+            return result; // base.OnAsyncDataLoad(e);
         }
+
         DataTable dtt;
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (dtt == null || dtt.Rows.Count <= 0)
+            if (this.dtt == null || this.dtt.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            SetCount(dtt.Rows.Count);
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R25.xltx");
-            MyUtility.Excel.CopyToXls(dtt, "", "Subcon_R25.xltx", 3, showExcel: false, showSaveMsg: false, excelApp : objApp);
+            this.SetCount(this.dtt.Rows.Count);
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R25.xltx");
+            MyUtility.Excel.CopyToXls(this.dtt, string.Empty, "Subcon_R25.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             this.ShowWaitMessage("Excel Processing...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.Sheets[1];
-            worksheet.Cells[2, 1] = string.Format("Receive Date: {0}~{1}  ,SP#:{2}  ,Refno:{3} Category:{4}  Supplier:{5}  ,Factory:{6}  ",
-                                                    (MyUtility.Check.Empty(ReceiveDate)) ? "" : Convert.ToDateTime(ReceiveDate).ToString("yyyy/MM/dd"),
-                                                    (MyUtility.Check.Empty(ReceiveDate2)) ? "" : Convert.ToDateTime(ReceiveDate2).ToString("yyyy/MM/dd"),
-                                                    SP, Refno, Category, Supplier, Factory);
+            worksheet.Cells[2, 1] = string.Format(
+                "Receive Date: {0}~{1}  ,SP#:{2}  ,Refno:{3} Category:{4}  Supplier:{5}  ,Factory:{6}  ",
+                MyUtility.Check.Empty(this.ReceiveDate) ? string.Empty : Convert.ToDateTime(this.ReceiveDate).ToString("yyyy/MM/dd"),
+                MyUtility.Check.Empty(this.ReceiveDate2) ? string.Empty : Convert.ToDateTime(this.ReceiveDate2).ToString("yyyy/MM/dd"),
+                this.SP, this.Refno, this.Category, this.Supplier, this.Factory);
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R25");
+            string strExcelName = Class.MicrosoftFile.GetName("Subcon_R25");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

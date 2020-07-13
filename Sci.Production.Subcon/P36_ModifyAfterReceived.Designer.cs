@@ -35,8 +35,8 @@
             this.editDescription = new Sci.Win.UI.EditBox();
             this.mtbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.labelAccountNo = new Sci.Win.UI.Label();
-            this.txtAccountNo = new Sci.Production.Class.txtAccountNo();
-            this.txtuserReceived = new Sci.Production.Class.txtuser();
+            this.txtAccountNo = new Sci.Production.Class.TxtAccountNo();
+            this.txtuserReceived = new Sci.Production.Class.Txtuser();
             this.labelReceived = new Sci.Win.UI.Label();
             this.dateReceived = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -158,8 +158,8 @@
         private Win.UI.Label label1;
         private Win.UI.EditBox editDescription;
         private Win.UI.Label labelAccountNo;
-        private Class.txtAccountNo txtAccountNo;
-        private Class.txtuser txtuserReceived;
+        private Class.TxtAccountNo txtAccountNo;
+        private Class.Txtuser txtuserReceived;
         private Win.UI.Label labelReceived;
         private Win.UI.DateBox dateReceived;
         private Win.UI.ListControlBindingSource mtbs;

@@ -2,21 +2,17 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P02_Cartondetail : Sci.Win.Forms.Base
+    public partial class P02_Cartondetail : Win.Forms.Base
     {
         string Export_DetailUkey;
+
         public P02_Cartondetail(string export_DetailUkey)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Export_DetailUkey = export_DetailUkey;
         }
 
@@ -32,7 +28,7 @@ select
 from [Export_Detail_Carton] edc WITH (NOLOCK)
 inner join Export_Detail ed WITH (NOLOCK) on ed.ukey = edc.Export_DetailUkey
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
-where Export_DetailUkey = '{Export_DetailUkey}'
+where Export_DetailUkey = '{this.Export_DetailUkey}'
 order by edc.poid,edc.seq1,edc.seq2,edc.Carton";
             DataTable dt;
             DualResult Result;
@@ -42,9 +38,10 @@ order by edc.poid,edc.seq1,edc.seq2,edc.Carton";
                 this.ShowErr(Result);
                 return;
             }
+
             this.listControlBindingSource1.DataSource = dt;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("Poid", header: "PO#", width: Widths.AnsiChars(16))
             .Text("seq", header: "Seq", width: Widths.AnsiChars(8))
             .Text("Supp", header: "Supplier", width: Widths.AnsiChars(20))

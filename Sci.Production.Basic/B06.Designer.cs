@@ -61,7 +61,7 @@
             this.numericBox13 = new Sci.Win.UI.NumericBox();
             this.numericBox14 = new Sci.Win.UI.NumericBox();
             this.lbFactory = new Sci.Win.UI.Label();
-            this.txtfactoryByM = new Sci.Production.Class.txtfactory();
+            this.txtfactoryByM = new Sci.Production.Class.Txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -733,6 +733,6 @@
         private Win.UI.NumericBox numericBox9;
         private Win.UI.NumericBox numericBox8;
         private Win.UI.Label lbFactory;
-        private Class.txtfactory txtfactoryByM;
+        private Class.Txtfactory txtfactoryByM;
     }
 }

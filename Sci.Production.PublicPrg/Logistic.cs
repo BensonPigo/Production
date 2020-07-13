@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Data;
 using Sci.Data;
-using Sci;
 using Ict;
-using Ict.Win;
 
 namespace Sci.Production.PublicPrg
 {
-
     public static partial class Prgs
     {
         #region UpdateOrdersCTN
+
         /// <summary>
         /// UpdateOrdersCTN(string)
         /// </summary>
@@ -24,7 +18,8 @@ namespace Sci.Production.PublicPrg
         {
             string sqlCmd;
 
-            sqlCmd = string.Format(@"
+            sqlCmd = string.Format(
+                @"
 update Orders 
 set TotalCTN = (
     select sum(b.CTNQty) 
@@ -55,8 +50,8 @@ PackErrCTN = (
     select ISNULL(sum(b.CTNQty),0)
     from PackingList a, PackingList_Detail b 
     where a.id = b.id and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and b.PackErrTransferDate is not null)
-where ID = '{0}'"
-, orderID);
+where ID = '{0}'",
+                orderID);
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
@@ -76,7 +71,8 @@ where ID = '{0}'"
             IList<string> updateCmds = new List<string>();
             foreach (DataRow dr in OrderData.Rows)
             {
-                updateCmds.Add(string.Format(@"
+                updateCmds.Add(string.Format(
+                    @"
 update Orders 
 set TotalCTN = (
     select sum(b.CTNQty) 
@@ -107,15 +103,17 @@ PackErrCTN = (
     select ISNULL(sum(b.CTNQty),0)
     from PackingList a, PackingList_Detail b 
     where a.id = b.id and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and b.PackErrTransferDate is not null)
-where ID = '{0}'"
-, dr["OrderID"].ToString()));
+where ID = '{0}'",
+                    dr["OrderID"].ToString()));
             }
+
             if (updateCmds.Count > 0)
             {
                 DualResult result = DBProxy.Current.Executes(null, updateCmds);
                 return result;
             }
-            return Result.True;
+
+            return Ict.Result.True;
         }
         #endregion
     }

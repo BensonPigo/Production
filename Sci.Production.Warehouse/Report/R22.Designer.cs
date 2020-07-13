@@ -42,11 +42,11 @@
             this.lbThreadColor = new Sci.Win.UI.Label();
             this.lbSupplier = new Sci.Win.UI.Label();
             this.lbFactory = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.label2 = new Sci.Win.UI.Label();
             this.chkQtyOver0 = new System.Windows.Forms.CheckBox();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.chkQtyless0 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
@@ -322,11 +322,11 @@
         private Win.UI.Label lbThreadColor;
         private Win.UI.Label lbSupplier;
         private Win.UI.Label lbFactory;
-        private Class.txtfactory txtfactory;
-        private Class.txtsubconNoConfirm txtSupplier;
+        private Class.Txtfactory txtfactory;
+        private Class.TxtsubconNoConfirm txtSupplier;
         private Win.UI.Label label2;
         private System.Windows.Forms.CheckBox chkQtyOver0;
-        private Class.txtMdivision txtMdivision1;
+        private Class.TxtMdivision txtMdivision1;
         private System.Windows.Forms.CheckBox chkQtyless0;
     }
 }

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
@@ -14,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_CTNDimensionAndWeight
     /// </summary>
-    public partial class P02_CTNDimensionAndWeight : Sci.Win.Subs.Input4
+    public partial class P02_CTNDimensionAndWeight : Win.Subs.Input4
     {
         /// <summary>
         /// P02_CTNDimensionAndWeight
@@ -73,7 +68,7 @@ namespace Sci.Production.Shipping
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void Save_Click(object sender, EventArgs e)

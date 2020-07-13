@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
-using System.Transactions;
 using System.Data.SqlClient;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Packing
 {
     /// <inheritdoc/>
-    public partial class P25 : Sci.Win.Tems.QueryForm
+    public partial class P25 : Win.Tems.QueryForm
     {
         private DataTable gridData;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -75,7 +70,7 @@ namespace Sci.Production.Packing
             StringBuilder sqlCmd = new StringBuilder();
 
             #region WHERE條件
-            sqlParameters.Add(new SqlParameter("@MDivisionID", Sci.Env.User.Keyword));
+            sqlParameters.Add(new SqlParameter("@MDivisionID", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.txtSP_s.Text))
             {

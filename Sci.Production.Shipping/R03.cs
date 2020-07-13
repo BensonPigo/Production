@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -15,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R03
     /// </summary>
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         private DateTime? pulloutDate1;
         private DateTime? pulloutDate2;
@@ -38,7 +35,7 @@ namespace Sci.Production.Shipping
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             this.comboFactory.SelectedIndex = -1;
         }
 
@@ -61,7 +58,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             string sqlWhere = string.Empty;
@@ -157,7 +154,7 @@ drop table #temp1,#temp2
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -173,7 +170,7 @@ drop table #temp1,#temp2
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R03_ActualShipmentRecord.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_R03_ActualShipmentRecord.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -197,8 +194,9 @@ drop table #temp1,#temp2
                 objArray[0, 7] = dr["byCombo"];
                 objArray[0, 8] = dr["ShipQty"];
                 objArray[0, 9] = dr["StatusExp"];
-                //objArray[0, 10] = dr["CMP"];
-                //objArray[0, 10] = dr["CMPAmt"];
+
+                // objArray[0, 10] = dr["CMP"];
+                // objArray[0, 10] = dr["CMPAmt"];
                 objArray[0, 10] = dr["PoPrice"];
                 objArray[0, 11] = dr["FOBAmt"];
                 objArray[0, 12] = dr["BrandID"];
@@ -215,7 +213,7 @@ drop table #temp1,#temp2
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_R03_ActualShipmentRecord");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_R03_ActualShipmentRecord");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

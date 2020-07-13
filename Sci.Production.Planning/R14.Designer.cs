@@ -48,13 +48,13 @@
             this.label12 = new Sci.Win.UI.Label();
             this.label13 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.comboInvStatus = new Sci.Production.Class.comboDropDownList(this.components);
-            this.txtcustcd = new Sci.Production.Class.txtcustcd();
-            this.txtDest = new Sci.Production.Class.txtcountry();
-            this.txtExportOrigin = new Sci.Production.Class.txtcountry();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.comboInvStatus = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtcustcd = new Sci.Production.Class.Txtcustcd();
+            this.txtDest = new Sci.Production.Class.Txtcountry();
+            this.txtExportOrigin = new Sci.Production.Class.Txtcountry();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -374,7 +374,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IssupportJunk = false;
@@ -470,13 +470,13 @@
         private Win.UI.Label label8;
         private Win.UI.Label label9;
         private Win.UI.TextBox txtInvNo_From;
-        private Class.txtbrand txtbrand;
-        private Class.txtfactory txtfactory;
-        private Class.txtcountry txtExportOrigin;
-        private Class.txtcountry txtDest;
-        private Class.txtcustcd txtcustcd;
-        private Class.comboDropDownList comboInvStatus;
-        private Class.comboDropDownList comboCategory;
+        private Class.Txtbrand txtbrand;
+        private Class.Txtfactory txtfactory;
+        private Class.Txtcountry txtExportOrigin;
+        private Class.Txtcountry txtDest;
+        private Class.Txtcustcd txtcustcd;
+        private Class.ComboDropDownList comboInvStatus;
+        private Class.ComboDropDownList comboCategory;
         private Win.UI.TextBox txtInvNo_To;
         private Win.UI.Label label10;
         private Win.UI.DateRange dateRangePulloutDate;

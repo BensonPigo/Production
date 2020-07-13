@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci;
 using Sci.Data;
 
 namespace Sci.Production.Centralized
@@ -15,7 +8,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// WH_B04
     /// </summary>
-    public partial class WH_B04 : Sci.Win.Tems.Input1
+    public partial class WH_B04 : Win.Tems.Input1
     {
         /// <summary>
         /// WH_B04
@@ -55,7 +48,7 @@ namespace Sci.Production.Centralized
                     else
                     {
                         int newID = int.Parse(id) + 1;
-                    this.CurrentMaintain["id"] = Convert.ToString(newID).ToString().PadLeft(5, '0');
+                        this.CurrentMaintain["id"] = Convert.ToString(newID).ToString().PadLeft(5, '0');
                     }
                 }
                 else

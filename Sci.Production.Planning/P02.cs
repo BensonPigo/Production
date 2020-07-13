@@ -14,7 +14,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// P02
     /// </summary>
-    public partial class P02 : Sci.Win.Tems.QueryForm
+    public partial class P02 : Win.Tems.QueryForm
     {
         private Dictionary<string, string> di_inhouseOsp2 = new Dictionary<string, string>();
         private DataGridViewColumn col_Fty;
@@ -104,7 +104,7 @@ namespace Sci.Production.Planning
                 #endregion
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
             ts1.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex < 0)
@@ -139,12 +139,12 @@ namespace Sci.Production.Planning
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorDateColumnSettings ts2 = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorDateColumnSettings ts2 = new DataGridViewGeneratorDateColumnSettings();
             ts2.CellValidating += (s, e) =>
             {
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                     if (MyUtility.Check.Empty(dr["tapeoffline"]))
                     {
                         return;
@@ -158,12 +158,12 @@ namespace Sci.Production.Planning
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorDateColumnSettings ts3 = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorDateColumnSettings ts3 = new DataGridViewGeneratorDateColumnSettings();
             ts3.CellValidating += (s, e) =>
             {
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                     if (MyUtility.Check.Empty(dr["tapeinline"]))
                     {
                         return;
@@ -178,7 +178,7 @@ namespace Sci.Production.Planning
             };
 
             #region local supplier 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex < 0)
@@ -218,7 +218,7 @@ GROUP  BY QU.localsuppid,
 order by QU.localsuppid ", ddr["ID"].ToString().Trim());
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30,15", null);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "10,30,15", null);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -257,7 +257,7 @@ GROUP  BY QU.localsuppid,
           localsupp.abb, 
           QU.mockup 
 order by QU.localsuppid ", ddr["ID"].ToString().Trim());
-                Ict.DualResult result;
+                DualResult result;
                 string dtid = string.Empty;
                 string dtabb = string.Empty;
                 result = DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -521,7 +521,7 @@ where	a.Finished = 0
             sqlcmd += string.Format(@" ORDER BY a.FactoryID, a.StyleID, a.SeasonID,a.ID ");
             this.ShowWaitMessage("Querying....Please wait....");
 
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out this.dtData))
             {
                 if (this.dtData.Rows.Count == 0)
@@ -600,12 +600,12 @@ where	a.Finished = 0
                 }
 
                 sqlcmd += string.Format(@",inhouseosp = '{0}',localsuppid='{1}'", item["inhouseosp"].ToString(), item["localsuppid"].ToString());
-                sqlcmd += string.Format(",EditName = '{0}' ,EditDate='{1}' ", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
+                sqlcmd += string.Format(",EditName = '{0}' ,EditDate='{1}' ", Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
 
                 sqlcmd += string.Format(@" where id ='{0}' and artworktypeid = 'PRINTING';", item["ID"]);
             }
 
-            if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
                 MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
                 return;
@@ -707,7 +707,7 @@ where	a.Finished = 0
                        select new
                        {
                            Supplier = grouprows.Key.localsuppid + "-" + grouprows.Key.suppnm,
-                           TotalQty = grouprows.Sum(r => (r.Field<int>("OrderQty") - r.Field<int>("qaqty")) * r.Field<decimal>("qty"))
+                           TotalQty = grouprows.Sum(r => (r.Field<int>("OrderQty") - r.Field<int>("qaqty")) * r.Field<decimal>("qty")),
                        }).ToList();
 
             var bs2 = (from rows in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable()
@@ -715,7 +715,7 @@ where	a.Finished = 0
                        select new
                        {
                            Supplier = grouprows.Key.localsuppid,
-                           TotalQty = grouprows.Sum(r => (r.Field<int>("OrderQty") - r.Field<int>("qaqty")) * r.Field<decimal>("qty"))
+                           TotalQty = grouprows.Sum(r => (r.Field<int>("OrderQty") - r.Field<int>("qaqty")) * r.Field<decimal>("qty")),
                        }).ToList();
             bs1.AddRange(bs2);
             this.gridSupplier.DataSource = bs1;

@@ -52,7 +52,7 @@
             this.displayBoxShift = new Sci.Win.UI.DisplayBox();
             this.labelSubconName = new Sci.Win.UI.Label();
             this.labelshift = new Sci.Win.UI.Label();
-            this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
+            this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
             this.lblDept = new Sci.Win.UI.Label();
             this.displayDept = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -521,7 +521,7 @@
         private Win.UI.DisplayBox displayBoxShift;
         private Win.UI.Label labelSubconName;
         private Win.UI.Label labelshift;
-        private Class.txtLocalSupp txtLocalSupp1;
+        private Class.TxtLocalSupp txtLocalSupp1;
         private Win.UI.DisplayBox displayDept;
         private Win.UI.Label lblDept;
     }

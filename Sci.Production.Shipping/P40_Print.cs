@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -15,7 +10,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P40_Print
     /// </summary>
-    public partial class P40_Print : Sci.Win.Tems.PrintForm
+    public partial class P40_Print : Win.Tems.PrintForm
     {
         private string type;
         private DataTable printData;
@@ -42,7 +37,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             DualResult result;
@@ -59,7 +54,7 @@ left join Country c WITH (NOLOCK) on id.FromSite = c.ID
 where idd.ID = '{2}'
 order by idd.NLCode",
                     MyUtility.Convert.GetString(this.masterData["VNContractID"]),
-                    Sci.Env.User.Keyword,
+                    Env.User.Keyword,
                     MyUtility.Convert.GetString(this.masterData["ID"])));
 
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
@@ -96,7 +91,7 @@ where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ID"])));
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -112,7 +107,7 @@ where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ID"])));
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + (this.type == "1" ? "\\Shipping_P40_CommercialInvoice.xltx" : "\\Shipping_P40_FormForCustomSystem.xltx");
+            string strXltName = Env.Cfg.XltPathDir + (this.type == "1" ? "\\Shipping_P40_CommercialInvoice.xltx" : "\\Shipping_P40_FormForCustomSystem.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -237,7 +232,7 @@ where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ID"])));
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.type == "1" ? "Shipping_P40_CommercialInvoice" : "Shipping_P40_FormForCustomSystem");
+            string strExcelName = Class.MicrosoftFile.GetName(this.type == "1" ? "Shipping_P40_CommercialInvoice" : "Shipping_P40_FormForCustomSystem");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

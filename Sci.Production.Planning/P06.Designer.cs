@@ -36,9 +36,9 @@
             this.dateSCIDlvDate = new Sci.Win.UI.DateRange();
             this.labSCIDlv = new Sci.Win.UI.Label();
             this.labColumnType = new Sci.Win.UI.Label();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.labStyle = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labBrandID = new Sci.Win.UI.Label();
             this.labSPNo = new Sci.Win.UI.Label();
             this.txtSPNo = new Sci.Win.UI.TextBox();
@@ -162,8 +162,8 @@
             this.txtstyle.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 2;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // labStyle
             // 
@@ -293,9 +293,9 @@
         private Win.UI.Button btnSave;
         private Win.UI.Label labSCIDlv;
         private Win.UI.Label labColumnType;
-        private Class.txtstyle txtstyle;
+        private Class.Txtstyle txtstyle;
         private Win.UI.Label labStyle;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labBrandID;
         private Win.UI.Label labSPNo;
         private Win.UI.TextBox txtSPNo;

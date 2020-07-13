@@ -12,9 +12,8 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R02
     /// </summary>
-    public partial class R02 : Sci.Win.Tems.PrintForm
+    public partial class R02 : Win.Tems.PrintForm
     {
-        private int selectindex = 0;
         private string factory;
         private string mdivision;
         private string spno1;
@@ -45,8 +44,8 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
-            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
         }
 
         /// <summary>
@@ -96,7 +95,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
             System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter();
@@ -309,7 +308,7 @@ order by k.FactoryID,k.ID");
             }
 
             DBProxy.Current.DefaultTimeout = 0;
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -342,8 +341,8 @@ order by k.FactoryID,k.ID");
 
             if (this.checkIncludeFarmOutInDate.Checked)
             {
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Planning_R02_Detail.xltx");
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R02_Detail.xltx"); // 預先開啟excel app
+                Utility.Excel.SaveXltReportCls x1 = new Utility.Excel.SaveXltReportCls("Planning_R02_Detail.xltx");
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Planning_R02_Detail.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R02_Detail.xltx", 6, false, null, objApp);      // 將datatable copy to excel
                 objApp.Visible = false;
                 Microsoft.Office.Interop.Excel.Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -353,7 +352,7 @@ order by k.FactoryID,k.ID");
                 objSheet.Cells[4, 13] = this.totalpartsqty;   // 條件字串寫入excel
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R02_Detail");
+                string strExcelName = Class.MicrosoftFile.GetName("Planning_R02_Detail");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
@@ -368,7 +367,7 @@ order by k.FactoryID,k.ID");
             }
             else
             {
-                Microsoft.Office.Interop.Excel.Application objApp2 = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R02.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp2 = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Planning_R02.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R02.xltx", 6, false, null, objApp2);      // 將datatable copy to excel
                 objApp2.Visible = false;
                 Microsoft.Office.Interop.Excel.Worksheet objSheet2 = objApp2.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -378,7 +377,7 @@ order by k.FactoryID,k.ID");
                 objSheet2.Cells[4, 13] = this.totalpartsqty;   // 條件字串寫入excel
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R02");
+                string strExcelName = Class.MicrosoftFile.GetName("Planning_R02");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp2.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();

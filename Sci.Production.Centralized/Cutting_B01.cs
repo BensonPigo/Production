@@ -1,9 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
-using Sci.Production.Automation;
-using Sci.Production.Prg;
 using System.Data;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
@@ -11,7 +8,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// Cutting_B01
     /// </summary>
-    public partial class Cutting_B01 : Sci.Win.Tems.Input1
+    public partial class Cutting_B01 : Win.Tems.Input1
     {
         /// <summary>
         /// Cutting_B01

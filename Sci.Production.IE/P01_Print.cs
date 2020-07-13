@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -15,7 +10,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P01_Print
     /// </summary>
-    public partial class P01_Print : Sci.Win.Tems.PrintForm
+    public partial class P01_Print : Win.Tems.PrintForm
     {
         private DataRow masterData;
         private string artworktype;
@@ -76,7 +71,7 @@ and TimeStudy_Detail.ID = {0}",
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.custcdID = MyUtility.GetValue.Lookup(string.Format("select CdCodeID from Style WITH (NOLOCK) where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", MyUtility.Convert.GetString(this.masterData["StyleID"]), MyUtility.Convert.GetString(this.masterData["SeasonID"]), MyUtility.Convert.GetString(this.masterData["BrandID"])));
             this.machineID = MyUtility.GetValue.Lookup(string.Format(
@@ -238,7 +233,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -299,7 +294,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P01_Print.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\IE_P01_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -481,7 +476,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_P01_Print");
+            string strExcelName = Class.MicrosoftFile.GetName("IE_P01_Print");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

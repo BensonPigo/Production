@@ -1,40 +1,38 @@
 ﻿using Ict;
 using Ict.Win;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P01_Cutpartcheck : Sci.Win.Subs.Base
+    public partial class P01_Cutpartcheck : Win.Subs.Base
     {
         private string _cutid;
         private string _WorkType;
 
         public P01_Cutpartcheck(string cID, string WorkType)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             this.Text = string.Format("Cut Parts Check<SP:{0}>)", cID);
-            _cutid = cID;
-            _WorkType = WorkType;
-            requery();
-            gridSetup();
+            this._cutid = cID;
+            this._WorkType = WorkType;
+            this.requery();
+            this.gridSetup();
             this.gridCutpartcheck.AutoResizeColumns();
         }
 
         private void requery()
         {
             #region CUTTING_P01_CutPartsCheck  [Prd Qty]數量計算
-            string sql = "", sql2 = "";
-            if (_WorkType == "1")
+            string sql = string.Empty, sql2 = string.Empty;
+            if (this._WorkType == "1")
             {
-                sql = string.Format(@";with a as (
+                sql = string.Format(
+                    @";with a as (
 	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
                            ,( select sum(OQ.qty)
 		                    from order_Qty OQ WITH (NOLOCK) 
@@ -46,18 +44,20 @@ namespace Sci.Production.Cutting
                             and c.FabricCode is not null and c.FabricCode != ''
                             and c.FabricPanelCode in (select distinct FabricPanelCode from Order_EachCons WITH (NOLOCK) WHERE ID='{0}' and CuttingPiece = 0)  --排除外裁
 	                    where a.cuttingsp = '{0}'
-                    ) ", _cutid);
-                sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
+                    ) ", this._cutid);
+                sql2 = string.Format(
+                    @"Select x.poid,y.ID,y.Article,y.SizeCode
                                            ,( select sum(OQ.qty)
 		                                    from order_Qty OQ WITH (NOLOCK) 
 		                                    where OQ.ID=y.ID and OQ.Article=y.Article and OQ.SizeCode=y.SizeCode ) QTY
                                             ,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
 	                                    from (Select id,POID from Orders z WITH (NOLOCK) where z.cuttingsp = '{0}') as x,order_Qty y 
-	                                    where y.id = x.id", _cutid);
+	                                    where y.id = x.id", this._cutid);
             }
-            else if (_WorkType == "2") //WorkType == "2"
+            else if (this._WorkType == "2") // WorkType == "2"
             {
-                sql = string.Format(@"with a as (
+                sql = string.Format(
+                    @"with a as (
 	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
                             ,( select sum(OQ.qty)
 		                    from order_Qty OQ WITH (NOLOCK) 
@@ -69,19 +69,20 @@ namespace Sci.Production.Cutting
                             and c.FabricCode is not null and c.FabricCode != ''
                             and c.FabricPanelCode in (select distinct FabricPanelCode from Order_EachCons WITH (NOLOCK) WHERE ID='{0}' and CuttingPiece = 0)  --排除外裁
 	                    where a.cuttingsp = '{0}'
-                    )  ", _cutid);
-                sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
+                    )  ", this._cutid);
+                sql2 = string.Format(
+                    @"Select x.poid,y.ID,y.Article,y.SizeCode
                                             ,( select sum(OQ.qty)
 		                                    from order_Qty OQ WITH (NOLOCK) 
 		                                    where OQ.ID=y.ID and OQ.Article=y.Article and OQ.SizeCode=y.SizeCode ) QTY
                                             ,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
 	                                    from (Select id,POID from Orders z WITH (NOLOCK) where z.cuttingsp = '{0}') as x,order_Qty y 
-	                                    where y.id = x.id", _cutid);
+	                                    where y.id = x.id", this._cutid);
             }
             #endregion
-            if (sql != "" && sql2 != "")
+            if (sql != string.Empty && sql2 != string.Empty)
             {
-                string sqlcmd = sql + String.Format(
+                string sqlcmd = sql + string.Format(
             @"
         , b as (
 	        Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel
@@ -106,7 +107,7 @@ namespace Sci.Production.Cutting
         select c.*,z.seq
         from c
         inner join Order_SizeCode z WITH (NOLOCK) on z.id = c.CuttingSP and z.SizeCode = c.SizeCode
-        order by c.id,article,z.seq,PatternPanel", _cutid, sql2);
+        order by c.id,article,z.seq,PatternPanel", this._cutid, sql2);
                 DataTable gridtb;
                 DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
 
@@ -127,13 +128,14 @@ namespace Sci.Production.Cutting
                         }
                     }
                 }
-                gridCutpartcheck.DataSource = gridtb;
+
+                this.gridCutpartcheck.DataSource = gridtb;
             }
         }
 
         private void gridSetup()
         {
-            Helper.Controls.Grid.Generator(this.gridCutpartcheck)
+            this.Helper.Controls.Grid.Generator(this.gridCutpartcheck)
                 .Text("id", header: "SP #", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -144,21 +146,24 @@ namespace Sci.Production.Cutting
                 .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(7), iseditingreadonly: true);
 
             #region Grid 變色規則
-            Color backDefaultColor = gridCutpartcheck.DefaultCellStyle.BackColor;
+            Color backDefaultColor = this.gridCutpartcheck.DefaultCellStyle.BackColor;
 
-            gridCutpartcheck.RowsAdded += (s, e) =>
+            this.gridCutpartcheck.RowsAdded += (s, e) =>
             {
-                if (e.RowIndex < 0) return;
+                if (e.RowIndex < 0)
+                {
+                    return;
+                }
 
                 int index = e.RowIndex;
                 for (int i = 0; i < e.RowCount; i++)
                 {
-                    DataGridViewRow dr = gridCutpartcheck.Rows[index];
-                    dr.DefaultCellStyle.BackColor = (dr.Cells[4].Value.ToString().EqualString("=")) ? Color.Pink : backDefaultColor;
+                    DataGridViewRow dr = this.gridCutpartcheck.Rows[index];
+                    dr.DefaultCellStyle.BackColor = dr.Cells[4].Value.ToString().EqualString("=") ? Color.Pink : backDefaultColor;
                     index++;
-                }    
+                }
             };
-            #endregion 
+            #endregion
         }
 
         private void btnClose_Click(object sender, EventArgs e)

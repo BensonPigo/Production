@@ -45,7 +45,7 @@
             this.labelReason = new Sci.Win.UI.Label();
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.btnPrintFabricSticker = new Sci.Win.UI.Button();
-            this.txtwhseReason = new Sci.Production.Class.txtwhseReason();
+            this.txtwhseReason = new Sci.Production.Class.TxtwhseReason();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -405,7 +405,7 @@
         private Win.UI.EditBox editRemark;
         private Win.UI.Label labelRemark;
         private Win.UI.Label labelReason;
-        private Class.txtwhseReason txtwhseReason;
+        private Class.TxtwhseReason txtwhseReason;
         private Win.UI.Button btnAccumulatedQty;
         private Win.UI.Button btnPrintFabricSticker;
     }

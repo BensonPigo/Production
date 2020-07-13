@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Data;
 using Ict.Win;
 using Ict;
 using Sci.Data;
@@ -14,7 +8,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P01_AirPPList
     /// </summary>
-    public partial class P01_AirPPList : Sci.Win.Subs.Base
+    public partial class P01_AirPPList : Win.Subs.Base
     {
         private string orderID;
 

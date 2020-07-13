@@ -1,26 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 using Sci.Win.UI;
-using Sci.Data;
-using Ict;
-using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
-    public partial class txtcdcode : Sci.Win.UI.TextBox
+    /// <summary>
+    /// Txtcdcode
+    /// </summary>
+    public partial class Txtcdcode : Win.UI.TextBox
     {
-        public txtcdcode() 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtcdcode"/> class.
+        /// </summary>
+        public Txtcdcode()
         {
             this.Size = new System.Drawing.Size(54, 23);
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -30,7 +27,7 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(textValue, "CDCode", "Id"))
                 {
-                    this.Text = "";
+                    this.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< CD Code : {0} > not found!!!", textValue));
                     return;
@@ -38,14 +35,19 @@ namespace Sci.Production.Class
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select ID, convert(nvarchar(5),Cpu) Cpu, Description from CDCode WITH (NOLOCK) where Junk = 0 order by ID", "7,6,45", this.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, convert(nvarchar(5),Cpu) Cpu, Description from CDCode WITH (NOLOCK) where Junk = 0 order by ID", "7,6,45", this.Text);
 
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
         }
     }

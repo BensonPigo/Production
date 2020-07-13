@@ -1,56 +1,54 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class R05 : Sci.Win.Tems.PrintForm
+    public partial class R05 : Win.Tems.PrintForm
     {
         DataTable printData;
-        string WorkOrder, factory;
-        DateTime? Est_CutDate1, Est_CutDate2;
+        string WorkOrder;
+        string factory;
+        DateTime? Est_CutDate1;
+        DateTime? Est_CutDate2;
 
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable WorkOrder;
             DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
-            MyUtility.Tool.SetupCombox(comboM, 1, WorkOrder);           
-            comboM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboM, 1, WorkOrder);
+            this.comboM.Text = Env.User.Keyword;
 
-             DataTable factory;
-             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.SelectedIndex = 0;
+            DataTable factory;
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
-        {            
-            WorkOrder = comboM.Text;
-            factory = comboFactory.Text;
-            Est_CutDate1 = dateEstCutDate.Value1;
-            Est_CutDate2 = dateEstCutDate.Value2;
+        {
+            this.WorkOrder = this.comboM.Text;
+            this.factory = this.comboFactory.Text;
+            this.Est_CutDate1 = this.dateEstCutDate.Value1;
+            this.Est_CutDate2 = this.dateEstCutDate.Value2;
 
-            //if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2))
-            //{
+            // if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2))
+            // {
             //    MyUtility.Msg.WarningBox("Can't all empty!!");
             //    return false;
-            //}
-
+            // }
             return base.ValidateInput();
         }
 
-        //非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        // 非同步取資料
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
@@ -136,55 +134,59 @@ outer apply(
 where 1=1
 ");
             #region Append條件字串
-            if (!MyUtility.Check.Empty(WorkOrder))
+            if (!MyUtility.Check.Empty(this.WorkOrder))
             {
-                sqlCmd.Append(string.Format(" and wo.MDivisionID = '{0}'", WorkOrder));
+                sqlCmd.Append(string.Format(" and wo.MDivisionID = '{0}'", this.WorkOrder));
             }
-            if (!MyUtility.Check.Empty(factory))
+
+            if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
-            }            
-            if (!MyUtility.Check.Empty(Est_CutDate1))
-            {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate >= '{0}' ", Convert.ToDateTime(Est_CutDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", this.factory));
             }
-            if (!MyUtility.Check.Empty(Est_CutDate2))
+
+            if (!MyUtility.Check.Empty(this.Est_CutDate1))
             {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' ", Convert.ToDateTime(Est_CutDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and wo.EstCutDate >= '{0}' ", Convert.ToDateTime(this.Est_CutDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.Est_CutDate2))
+            {
+                sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' ", Convert.ToDateTime(this.Est_CutDate2).ToString("d")));
             }
             #endregion
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-         
-            return Result.True;
+
+            return Ict.Result.True;
         }
 
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R05_CuttingMonthlyForecast.xltx"); //預先開啟excel app
-            foreach (DataRow dr in printData.Rows)
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R05_CuttingMonthlyForecast.xltx"); // 預先開啟excel app
+            foreach (DataRow dr in this.printData.Rows)
             {
                 dr["Fab Desc"] = dr["Fab Desc"].ToString().Trim();
             }
-            MyUtility.Excel.CopyToXls(printData, "", "Cutting_R05_CuttingMonthlyForecast.xltx", 2, false, null, objApp);      // 將datatable copy to excel
+
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Cutting_R05_CuttingMonthlyForecast.xltx", 2, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[1, 2] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d"));// 條件字串寫入excel
-            objSheets.Cells[1, 6] = WorkOrder.ToString();   // 條件字串寫入excel
-            objSheets.Cells[1, 8] = factory.ToString();   // 條件字串寫入excel
+            objSheets.Cells[1, 2] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(this.Est_CutDate1).ToString("d"), Convert.ToDateTime(this.Est_CutDate2).ToString("d")); // 條件字串寫入excel
+            objSheets.Cells[1, 6] = this.WorkOrder.ToString();   // 條件字串寫入excel
+            objSheets.Cells[1, 8] = this.factory.ToString();   // 條件字串寫入excel
             objSheets.Columns[8].ColumnWidth = 13.5;
             objSheets.Columns[14].ColumnWidth = 12.85;
             objSheets.Columns[15].ColumnWidth = 13.5;
@@ -192,13 +194,20 @@ where 1=1
             objSheets.Columns[19].ColumnWidth = 67;
             objSheets.Rows.AutoFit();
 
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R05_CuttingMonthlyForecast");
+            string strExcelName = Class.MicrosoftFile.GetName("Cutting_R05_CuttingMonthlyForecast");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            if (objSheets != null)
+            {
+                Marshal.FinalReleaseComObject(objSheets);    // 釋放sheet
+            }
+
+            if (objApp != null)
+            {
+                Marshal.FinalReleaseComObject(objApp);          // 釋放objApp
+            }
 
             strExcelName.OpenFile();
             return true;

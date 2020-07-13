@@ -105,11 +105,11 @@
             this.displayUnit = new Sci.Win.UI.DisplayBox();
             this.btnComboType = new Sci.Win.UI.Button();
             this.displayStyleApprove2 = new Sci.Win.UI.DisplayBox();
-            this.comboGender = new Sci.Production.Class.txtdropdownlist();
-            this.txtuserLocalMR = new Sci.Production.Class.txtuser();
-            this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
-            this.txtcdcode = new Sci.Production.Class.txtcdcode();
+            this.comboGender = new Sci.Production.Class.Txtdropdownlist();
+            this.txtuserLocalMR = new Sci.Production.Class.Txtuser();
+            this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserSMR = new Sci.Production.Class.Txttpeuser();
+            this.txtcdcode = new Sci.Production.Class.Txtcdcode();
             this.label3 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.txtTPEEditBy = new Sci.Win.UI.TextBox();
@@ -1268,9 +1268,9 @@
         private Win.UI.Label labelSpecialMark;
         private Win.UI.CheckBox checkRainwearTestRequest;
         private Win.UI.CheckBox checkNoneedPPMeeting;
-        private Class.txtuser txtuserLocalMR;
-        private Class.txttpeuser txttpeuserHandle;
-        private Class.txttpeuser txttpeuserSMR;
+        private Class.Txtuser txtuserLocalMR;
+        private Class.Txttpeuser txttpeuserHandle;
+        private Class.Txttpeuser txttpeuserSMR;
         private Win.UI.NumericBox numCPUAdjusted;
         private Win.UI.TextBox txtCareCode;
         private Win.UI.TextBox txtSizePage;
@@ -1295,7 +1295,7 @@
         private Win.UI.ComboBox comboSizeUnit;
         private Win.UI.DisplayBox displayModularParent;
         private Win.UI.NumericBox numGarmentLT;
-        private Class.txtcdcode txtcdcode;
+        private Class.Txtcdcode txtcdcode;
         private Win.UI.TextBox txtStyleName;
         private Win.UI.TextBox txtDescription;
         private Win.UI.TextBox txtProgram;
@@ -1332,7 +1332,7 @@
         private Win.UI.DisplayBox displayUnit;
         private Win.UI.Label labelUnit;
         private Win.UI.Button btnComboType;
-        private Class.txtdropdownlist comboGender;
+        private Class.Txtdropdownlist comboGender;
         private Win.UI.DisplayBox displayStyleApprove2;
         private Win.UI.Label label3;
         private Win.UI.Label label1;

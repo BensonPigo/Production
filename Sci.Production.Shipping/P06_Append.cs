@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// P06_Append
     /// </summary>
-    public partial class P06_Append : Sci.Win.Subs.Base
+    public partial class P06_Append : Win.Subs.Base
     {
         private DateTime pulloutDate;
 

@@ -1,72 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
+﻿using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Win.UI;
 using Sci.Data;
 using Ict.Win;
 using Ict;
-using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCFALocation : Sci.Win.UI.TextBox
+    /// <summary>
+    /// TxtCFALocation
+    /// </summary>
+    public partial class TxtCFALocation : Win.UI.TextBox
     {
-        public txtCFALocation()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtCFALocation"/> class.
+        /// </summary>
+        public TxtCFALocation()
         {
             this.Size = new System.Drawing.Size(80, 23);
             this.IsSupportSytsemContextMenu = false;
         }
 
-        private Control mDivisionObject;
+        /// <summary>
+        /// MDivision ID
+        /// </summary>
         [Category("Custom Properties")]
-        public Control MDivisionObjectName
-        {
-            set { this.mDivisionObject = value; }
-            get { return this.mDivisionObject; }
-        }
-        private string m;
-        [Category("Custom Properties")]
-        public string M
-        {
-            set { this.m = value; }
-            get { return this.m; }
-        }
+        public Control MDivisionObjectName { get; set; }
 
+        /// <summary>
+        /// MDivision ID
+        /// </summary>
+        [Category("Custom Properties")]
+        public string M { get; set; }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
-        {            
+        {
             base.OnPopUp(e);
-            if (e.IsHandled) return;
+            if (e.IsHandled)
+            {
+                return;
+            }
 
-            Sci.Win.Tems.Base myform = (Sci.Win.Tems.Base)this.FindForm();
+            Win.Tems.Base myform = (Win.Tems.Base)this.FindForm();
             if (myform.EditMode)
             {
                 string sql = "select ID,Description from CFALocation WITH (NOLOCK) order by ID";
-                if (this.mDivisionObject != null && !string.IsNullOrWhiteSpace((string)this.mDivisionObject.Text))
+                if (this.MDivisionObjectName != null && !string.IsNullOrWhiteSpace((string)this.MDivisionObjectName.Text))
                 {
-                    sql = string.Format("select ID,Description from CFALocation WITH (NOLOCK) where MDivisionID = '{0}' and junk=0 order by ID", this.mDivisionObject.Text);
+                    sql = string.Format("select ID,Description from CFALocation WITH (NOLOCK) where MDivisionID = '{0}' and junk=0 order by ID", this.MDivisionObjectName.Text);
                 }
 
                 if (!MyUtility.Check.Empty(this.M))
                 {
                     sql = string.Format("select ID,Description from CFALocation WITH (NOLOCK) where MDivisionID = '{0}' and junk=0 order by ID", this.M);
                 }
+
                 DataTable tbCFALocation;
                 DBProxy.Current.Select("Production", sql, out tbCFALocation);
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbCFALocation, "ID,Description", "10,40,10", this.Text, "ID,Description");
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbCFALocation, "ID,Description", "10,40,10", this.Text, "ID,Description");
 
                 DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
                 this.Text = item.GetSelectedString();
                 e.IsHandled = true;
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -78,7 +84,7 @@ namespace Sci.Production.Class
                 {
                     if (MyUtility.Check.Seek(str, "CFALocation", "id") == false)
                     {
-                        this.Text = "";
+                        this.Text = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< CFALocation : {0} > not found!!!", str));
                         return;
@@ -86,28 +92,29 @@ namespace Sci.Production.Class
                 }
                 else
                 {
-                    if (this.mDivisionObject != null)
+                    if (this.MDivisionObjectName != null)
                     {
-                        if (!string.IsNullOrWhiteSpace((string)this.mDivisionObject.Text))
+                        if (!string.IsNullOrWhiteSpace((string)this.MDivisionObjectName.Text))
                         {
-                            string selectCommand = string.Format("select ID from CFALocation WITH (NOLOCK) where MDivisionID = '{0}' and ID = '{1}'", (string)this.mDivisionObject.Text, str);
+                            string selectCommand = string.Format("select ID from CFALocation WITH (NOLOCK) where MDivisionID = '{0}' and ID = '{1}'", (string)this.MDivisionObjectName.Text, str);
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
-                                this.Text = "";
+                                this.Text = string.Empty;
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox(string.Format("< CFALocation : {0} > not found!!!", str));
                                 return;
                             }
                         }
                     }
+
                     if (!MyUtility.Check.Empty(this.M))
                     {
-                        if (!string.IsNullOrWhiteSpace((string)this.mDivisionObject.Text))
+                        if (!string.IsNullOrWhiteSpace((string)this.MDivisionObjectName.Text))
                         {
                             string selectCommand = string.Format("select ID from CFALocation WITH (NOLOCK) where MDivisionID = '{0}' and ID = '{1}'", this.M, str);
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
-                                this.Text = "";
+                                this.Text = string.Empty;
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox(string.Format("< CFALocation : {0} > not found!!!", str));
                                 return;
@@ -117,12 +124,20 @@ namespace Sci.Production.Class
                 }
             }
         }
-        
+
+        /// <summary>
+        /// CellCFALocation
+        /// </summary>
         public class CellCFALocation : DataGridViewGeneratorTextColumnSettings
         {
+            /// <summary>
+            /// GetGridCell
+            /// </summary>
+            /// <param name="mdivisionID">Mdivision</param>
+            /// <returns>DataGridViewGeneratorTextColumnSettings</returns>
             public static DataGridViewGeneratorTextColumnSettings GetGridCell(string mdivisionID)
             {
-                //pur 為ture 表示需判斷PurchaseFrom
+                // pur 為ture 表示需判斷PurchaseFrom
                 CellCFALocation ts = new CellCFALocation();
                 ts.EditingMouseDown += (s, e) =>
                 {
@@ -130,29 +145,44 @@ namespace Sci.Production.Class
                     if (e.Button == MouseButtons.Right)
                     {
                         DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                        // Parent form 若是非編輯狀態就 return 
-                        if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+
+                        // Parent form 若是非編輯狀態就 return
+                        if (!((Win.Forms.Base)grid.FindForm()).EditMode)
+                        {
+                            return;
+                        }
+
                         DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                         DataTable tbCFALocation;
                         string sql = $@"select ID,Description from CFALocation WITH (NOLOCK) where MDivisionID = '{mdivisionID.ToString().Trim()}' and junk=0 order by ID ";
                         DBProxy.Current.Select("Production", sql, out tbCFALocation);
-                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbCFALocation, "ID,Description", "10,40", row["CFALocationID"].ToString(), "ID,Description,M");
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbCFALocation, "ID,Description", "10,40", row["CFALocationID"].ToString(), "ID,Description,M");
                         DialogResult result = item.ShowDialog();
-                        if (result == DialogResult.Cancel) { return; }
+                        if (result == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
                         var sellist = item.GetSelecteds();
                         e.EditingControl.Text = item.GetSelectedString();
                     }
                 };
+
                 // 正確性檢查
                 ts.CellValidating += (s, e) =>
                 {
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                    // Parent form 若是非編輯狀態就 return 
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+
+                    // Parent form 若是非編輯狀態就 return
+                    if (!((Win.Forms.Base)grid.FindForm()).EditMode)
+                    {
+                        return;
+                    }
+
                     // 右鍵彈出功能
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                    String oldValue = row["CFALocationID"].ToString();
-                    String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
+                    string oldValue = row["CFALocationID"].ToString();
+                    string newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
                     string sql;
 
                     sql = $@"select ID from CFALocation WITH (NOLOCK) where MDivisionID = '{mdivisionID.ToString().Trim()}' and ID = '{newValue}' and junk=0 ";
@@ -160,7 +190,7 @@ namespace Sci.Production.Class
                     {
                         if (!MyUtility.Check.Seek(sql))
                         {
-                            row["CFALocationID"] = "";
+                            row["CFALocationID"] = string.Empty;
                             row.EndEdit();
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox($"< CFALocation : {newValue}> not found.");
@@ -170,7 +200,6 @@ namespace Sci.Production.Class
                 };
                 return ts;
             }
-
         }
     }
 }

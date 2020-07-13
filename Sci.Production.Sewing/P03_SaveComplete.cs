@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
@@ -13,7 +7,7 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// P03_SaveComplete
     /// </summary>
-    public partial class P03_SaveComplete : Sci.Win.Tems.QueryForm
+    public partial class P03_SaveComplete : Win.Tems.QueryForm
     {
         /// <summary>
         /// P03_SaveComplete

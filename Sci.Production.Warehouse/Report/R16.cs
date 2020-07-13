@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -13,40 +8,44 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R16 : Sci.Win.Tems.PrintForm
+    public partial class R16 : Win.Tems.PrintForm
     {
-        string mdivision, factory, request1, request2;
-        DateTime? issueDate1, issueDate2;
+        string mdivision;
+        string factory;
+        string request1;
+        string request2;
+        DateTime? issueDate1;
+        DateTime? issueDate2;
         DataTable printData;
 
         public R16(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            txtMdivision.Text = Sci.Env.User.Keyword;
+            this.InitializeComponent();
+            this.txtMdivision.Text = Env.User.Keyword;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateIssueDate.Value1) && MyUtility.Check.Empty(dateIssueDate.Value2)) 
+            if (MyUtility.Check.Empty(this.dateIssueDate.Value1) && MyUtility.Check.Empty(this.dateIssueDate.Value2))
             {
                 MyUtility.Msg.WarningBox("Issue date can't be empty!!");
                 return false;
             }
 
-            this.issueDate1 = dateIssueDate.Value1;
-            this.issueDate2 = dateIssueDate.Value2;
-            this.mdivision = txtMdivision.Text;
-            this.factory = txtfactory.Text;
-            this.request1 = txtRquest1.Text;
-            this.request2 = txtRquest2.Text;
+            this.issueDate1 = this.dateIssueDate.Value1;
+            this.issueDate2 = this.dateIssueDate.Value2;
+            this.mdivision = this.txtMdivision.Text;
+            this.factory = this.txtfactory.Text;
+            this.request1 = this.txtRquest1.Text;
+            this.request2 = this.txtRquest2.Text;
 
             return base.ValidateInput();
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region where
             string where = string.Empty;
@@ -54,22 +53,27 @@ namespace Sci.Production.Warehouse
             {
                 where += $@" and i.IssueDate >= '{((DateTime)this.issueDate1).ToString("yyyy/MM/dd")}'";
             }
+
             if (!MyUtility.Check.Empty(this.issueDate2))
             {
                 where += $@" and i.IssueDate <= '{((DateTime)this.issueDate2).ToString("yyyy/MM/dd")}'";
             }
+
             if (!MyUtility.Check.Empty(this.mdivision))
             {
                 where += $@" and o.MDivisionID ='{this.mdivision}' ";
             }
+
             if (!MyUtility.Check.Empty(this.factory))
             {
                 where += $@" and o.FactoryID ='{this.factory}' ";
             }
+
             if (!MyUtility.Check.Empty(this.request1))
             {
                 where += $@" and i.cutplanID >='{this.request1}' ";
             }
+
             if (!MyUtility.Check.Empty(this.request2))
             {
                 where += $@" and i.cutplanID <='{this.request2}' ";
@@ -77,7 +81,7 @@ namespace Sci.Production.Warehouse
 
             #endregion
 
-            string sqlcmd =$@"
+            string sqlcmd = $@"
 select
 	i.Id
 	,o.MDivisionID 
@@ -146,25 +150,27 @@ AND i.Status = 'Confirmed'
 order by IssueDate, ID, SP, Seq, Roll, Dyelot
 ";
 
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, null, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, null, out this.printData);
             if (!result)
             {
                 return result;
             }
-            foreach (DataRow row in printData.Rows)
+
+            foreach (DataRow row in this.printData.Rows)
             {
                 row["DescDetail"] = MyUtility.Convert.GetString(row["DescDetail"]).Trim();
             }
-            return Result.True;
+
+            return Ict.Result.True;
         }
 
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -172,7 +178,7 @@ order by IssueDate, ID, SP, Seq, Roll, Dyelot
 
             this.ShowWaitMessage("Starting EXCEL...");
             string reportName = "Warehouse_R16.xltx";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{reportName}");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{reportName}");
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, reportName, 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
 
             #region 釋放上面開啟過excel物件

@@ -2,20 +2,16 @@
 using Ict;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Sci.Data;
 using System.Transactions;
 using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P14_BatchUpdate : Sci.Win.Forms.Base
+    public partial class P14_BatchUpdate : Win.Forms.Base
     {
         private DataTable dtBatchUpdate = new DataTable();
 

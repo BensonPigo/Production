@@ -41,7 +41,7 @@
             this.txtSewingLineEnd = new Sci.Win.UI.TextBox();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.checkForPrintOut = new Sci.Win.UI.CheckBox();
             this.labSummeryBy = new Sci.Win.UI.Label();
             this.comboSummaryBy = new Sci.Win.UI.ComboBox();
@@ -400,7 +400,7 @@
         private Win.UI.TextBox txtSewingLineEnd;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.DateRange dateSCIDelivery;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.CheckBox checkForPrintOut;
         private Win.UI.Label labSummeryBy;
         private Win.UI.ComboBox comboSummaryBy;

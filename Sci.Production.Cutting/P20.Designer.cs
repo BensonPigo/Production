@@ -56,7 +56,7 @@
             this.txtCutref = new Sci.Win.UI.TextBox();
             this.btnCopyBal = new Sci.Win.UI.Button();
             this.btnRemove = new Sci.Win.UI.Button();
-            this.txtfactoryByM1 = new Sci.Production.Class.txtfactory();
+            this.txtfactoryByM1 = new Sci.Production.Class.Txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -510,7 +510,7 @@
             // txtfactoryByM1
             // 
             this.txtfactoryByM1.BackColor = System.Drawing.Color.White;
-            this.txtfactoryByM1.boolFtyGroupList = true;
+            this.txtfactoryByM1.BoolFtyGroupList = true;
             this.txtfactoryByM1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtfactoryByM1.FilteMDivision = true;
             this.txtfactoryByM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -589,7 +589,7 @@
         private Win.UI.Label label9;
         private Win.UI.Button btnImportfromRealtimeBundleTracking;
         private Win.UI.Button btnImportfromWorkOrder;
-        private Class.txtfactory txtfactoryByM1;
+        private Class.Txtfactory txtfactoryByM1;
         private Win.UI.Label label1;
         private Win.UI.NumericBox numTTCPU;
         private Win.UI.Label label2;

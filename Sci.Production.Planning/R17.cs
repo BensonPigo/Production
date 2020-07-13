@@ -16,7 +16,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R17
     /// </summary>
-    public partial class R17 : Sci.Win.Tems.PrintForm
+    public partial class R17 : Win.Tems.PrintForm
     {
         private DataTable gdtOrderDetail;
         private DataTable gdtPullOut;
@@ -42,7 +42,7 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.EditMode = true;
             this.print.Visible = false;
-            this.txtFactory.Text = Sci.Env.User.Factory;
+            this.txtFactory.Text = Env.User.Factory;
             this.dateFactoryKPIDate.Select();
         }
 
@@ -51,7 +51,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="report">report</param>
         /// <returns>bool</returns>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             return true;
         }
@@ -518,7 +518,7 @@ WHERE 1 = 0 ";
                 #endregion Fail Order List by SP
 
                 #region get Order_QtyShip Data
-                System.Data.DataTable dtOrder_QtyShip;
+                DataTable dtOrder_QtyShip;
                 strSQL = @"
 Select Order_QS.ID
 , Convert(varchar, Order_QS.ShipmodeID) + '-' + Convert(varchar, Order_QS.Qty) + '(' +  convert(varchar(10),Order_QS.BuyerDelivery,111) + ')' as strData
@@ -566,7 +566,7 @@ Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.
                 #endregion get Order_QtyShip Data
 
                 #region Get TradeHis_Order Data
-                System.Data.DataTable dtTradeHis_Order;
+                DataTable dtTradeHis_Order;
                 strSQL = @"Select o.ID
 , TH_Order.ReasonID 
 , r.Name
@@ -619,14 +619,14 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     OrderQty = row.Field<int>("OrderQty"),
                     PullQty = row.Field<int>("OnTimeQty"),
                     FailQty = row.Field<int>("FailQty"),
-                    P = row.Field<int>("P")
+                    P = row.Field<int>("P"),
                 }).GroupBy(group => new { group.PoId, group.P }).Select(g => new
                 {
                     PoID = g.Key.PoId,
                     sumOrderQty = g.Sum(r => r.OrderQty),
                     sumPullQty = g.Sum(r => r.PullQty),
                     sumFailQty = g.Sum(r => r.FailQty),
-                    sumP = g.Key.P // 出貨次數, 在SQL撈取時改為OrderID去計算次數, 不論OrderShipmodeSeq有沒有被撈出來
+                    sumP = g.Key.P, // 出貨次數, 在SQL撈取時改為OrderID去計算次數, 不論OrderShipmodeSeq有沒有被撈出來
                 }).ToArray();
 
                 IDictionary<string, IList<DataRow>> dictionary_TradeHis_OrderIDs = dtTradeHis_Order.ToDictionaryList((x) => x.Val<string>("ID"));
@@ -774,22 +774,22 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
         /// <returns>DualResult</returns>
         private DualResult TransferToExcel()
         {
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             string temfile = string.Empty;
 
             if (this.checkExportDetailData.Checked)
             {
-                temfile = Sci.Env.Cfg.XltPathDir + "\\Planning_R17_Detail.xltx";
+                temfile = Env.Cfg.XltPathDir + "\\Planning_R17_Detail.xltx";
             }
             else
             {
-                temfile = Sci.Env.Cfg.XltPathDir + "\\Planning_R17.xltx";
+                temfile = Env.Cfg.XltPathDir + "\\Planning_R17.xltx";
             }
 
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(temfile);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(temfile);
             try
             {
-                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+                Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
                 // order by M
                 this.gdtSDP = this.gdtSDP.AsEnumerable().OrderBy(s => s["MDivisionID"]).CopyToDataTable();
@@ -1132,7 +1132,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                                             isDevSample = data.Field<string>("isDevSample"),
                                             FOC = data.Field<int>("FOC"),
                                             SewLastDate = data.Field<string>("SewLastDate"),
-                                            CTNLastReceiveDate = data.Field<string>("CTNLastReceiveDate")
+                                            CTNLastReceiveDate = data.Field<string>("CTNLastReceiveDate"),
                                         };
                     if ((gdtFailDetail != null) && (gdtFailDetail.Count() > 0))
                     {
@@ -1198,8 +1198,8 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 #endregion
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R17");
-                Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+                string strExcelName = MicrosoftFile.GetName("Planning_R17");
+                Excel.Workbook workbook = excel.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 excel.Quit();
@@ -1209,7 +1209,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                 strExcelName.OpenFile();
                 #endregion
-                return Result.True;
+                return Ict.Result.True;
             }
             catch (Exception ex)
             {
@@ -1222,6 +1222,4 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
             }
         }
     }
-
-
 }

@@ -9,14 +9,12 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P40 : Sci.Win.Tems.QueryForm
+    public partial class P40 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewTextBoxColumn col_StatusColor;
         List<string> sqlWhere = new List<string>();
@@ -32,9 +30,9 @@ namespace Sci.Production.Subcon
         public P40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            EditMode = true;
-            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.InitializeComponent();
+            this.EditMode = true;
+            this.txtfactory.Text = Env.User.Factory;
             this.displaySubProcess.Text = "Loading";
         }
 
@@ -58,7 +56,6 @@ namespace Sci.Production.Subcon
                 }
 
                 this.ShowBundleGroupDetailQty(drSelected);
-
             };
 
             bundleGroup.CellMouseDoubleClick += (s, d) =>
@@ -90,9 +87,9 @@ namespace Sci.Production.Subcon
             .Text("OrderQty", header: "Order Qty per Size", width: Widths.Auto(true))
             .Numeric("LoadingQty", header: "Accu. Loading Qty" + Environment.NewLine + "per Parts", width: Widths.Auto(true), decimal_places: 2)
             .Numeric("Balance", header: "Balance Qty", width: Widths.Auto(true), decimal_places: 2)
-            .Text("Status", header: "Status", width: Widths.AnsiChars(8)).Get(out col_StatusColor)
+            .Text("Status", header: "Status", width: Widths.AnsiChars(8)).Get(out this.col_StatusColor)
             ;
-            Change_Color();
+            this.Change_Color();
         }
 
         private void Change_Color()
@@ -129,18 +126,17 @@ namespace Sci.Production.Subcon
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            if ((MyUtility.Check.Empty(txtSp1.Text) || MyUtility.Check.Empty(txtSp2.Text)) &&
-               (MyUtility.Check.Empty(dateRangeInlineDate.Value1) || MyUtility.Check.Empty(dateRangeInlineDate.Value2)) &&
-               MyUtility.Check.Empty(txtLocation.Text)
-               )
+            if ((MyUtility.Check.Empty(this.txtSp1.Text) || MyUtility.Check.Empty(this.txtSp2.Text)) &&
+               (MyUtility.Check.Empty(this.dateRangeInlineDate.Value1) || MyUtility.Check.Empty(this.dateRangeInlineDate.Value2)) &&
+               MyUtility.Check.Empty(this.txtLocation.Text))
             {
                 MyUtility.Msg.WarningBox(@"SP#, Inline Date and Location cannot all be empty.");
                 return;
             }
 
-            if (!MyUtility.Check.Empty(txtSp1.Text) || !MyUtility.Check.Empty(txtSp2.Text))
+            if (!MyUtility.Check.Empty(this.txtSp1.Text) || !MyUtility.Check.Empty(this.txtSp2.Text))
             {
-                if (MyUtility.Check.Empty(txtSp1.Text) || MyUtility.Check.Empty(txtSp2.Text))
+                if (MyUtility.Check.Empty(this.txtSp1.Text) || MyUtility.Check.Empty(this.txtSp2.Text))
                 {
                     MyUtility.Msg.WarningBox(@"Must enter SP# value1 and value2");
                     return;
@@ -148,11 +144,11 @@ namespace Sci.Production.Subcon
             }
 
             // Query時,判斷sql並非Cancel狀態
-            cancel = false;
+            this.cancel = false;
 
             if (!this.bgWorkerUpdateInfo.IsBusy)
             {
-                // 子執行緒開始執行 
+                // 子執行緒開始執行
                 this.btnQuery.Enabled = false;
                 this.bgWorkerUpdateInfo.RunWorkerAsync();
                 this.bgWorkerUpdateInfo.WorkerReportsProgress = true;
@@ -167,7 +163,7 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                Query();
+                this.Query();
                 this.bgWorkerUpdateInfo.ReportProgress(1);
             }
         }
@@ -181,49 +177,49 @@ namespace Sci.Production.Subcon
             this.InlineDate2 = this.dateRangeInlineDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateRangeInlineDate.Value2).ToString("yyyy/MM/dd");
 
             #region SqlWhere
-            if (!MyUtility.Check.Empty(InlineDate1) && !MyUtility.Check.Empty(InlineDate2))
+            if (!MyUtility.Check.Empty(this.InlineDate1) && !MyUtility.Check.Empty(this.InlineDate2))
             {
-                this.sqlWhere.Add($@"and o.SewInLine between '{InlineDate1}' and '{InlineDate2}'");
+                this.sqlWhere.Add($@"and o.SewInLine between '{this.InlineDate1}' and '{this.InlineDate2}'");
             }
 
-            if (!MyUtility.Check.Empty(txtSp1.Text) && !MyUtility.Check.Empty(txtSp2.Text))
+            if (!MyUtility.Check.Empty(this.txtSp1.Text) && !MyUtility.Check.Empty(this.txtSp2.Text))
             {
-                this.sqlWhere.Add($@"and b.Orderid between '{txtSp1.Text}' and '{txtSp2.Text}'");
+                this.sqlWhere.Add($@"and b.Orderid between '{this.txtSp1.Text}' and '{this.txtSp2.Text}'");
             }
 
-            if (!MyUtility.Check.Empty(txtLocation.Text))
+            if (!MyUtility.Check.Empty(this.txtLocation.Text))
             {
-                this.sqlWhere.Add($@"and bio.LocationID = '{txtLocation.Text}' ");
+                this.sqlWhere.Add($@"and bio.LocationID = '{this.txtLocation.Text}' ");
             }
 
-            if (!MyUtility.Check.Empty(txtfactory.Text))
+            if (!MyUtility.Check.Empty(this.txtfactory.Text))
             {
-                this.sqlWhere.Add($@"and o.FtyGroup = '{txtfactory.Text}'");
+                this.sqlWhere.Add($@"and o.FtyGroup = '{this.txtfactory.Text}'");
             }
 
-            if (!MyUtility.Check.Empty(txtsewingline.Text))
+            if (!MyUtility.Check.Empty(this.txtsewingline.Text))
             {
                 this.sqlWhere.Add($@"
 and exists (select 1
 from SewingSchedule_Detail ssd
 where b.Orderid = ssd.OrderID
 		and bd.SizeCode = ssd.SizeCode
-		and ssd.SewingLineID = '{txtsewingline.Text}')");
+		and ssd.SewingLineID = '{this.txtsewingline.Text}')");
             }
 
-            if (!MyUtility.Check.Empty(txtCombo.Text))
+            if (!MyUtility.Check.Empty(this.txtCombo.Text))
             {
-                this.sqlWhere.Add($@"and b.PatternPanel = '{txtCombo.Text}'");
+                this.sqlWhere.Add($@"and b.PatternPanel = '{this.txtCombo.Text}'");
             }
 
-            if (!MyUtility.Check.Empty(txtArticle.Text))
+            if (!MyUtility.Check.Empty(this.txtArticle.Text))
             {
-                this.sqlWhere.Add($@"and b.Article = '{txtArticle.Text}' ");
+                this.sqlWhere.Add($@"and b.Article = '{this.txtArticle.Text}' ");
             }
 
-            if (!MyUtility.Check.Empty(txtSize.Text))
+            if (!MyUtility.Check.Empty(this.txtSize.Text))
             {
-                this.sqlWhere.Add($@"and bd.SizeCode = '{txtSize.Text}' ");
+                this.sqlWhere.Add($@"and bd.SizeCode = '{this.txtSize.Text}' ");
             }
             #endregion
 
@@ -441,24 +437,24 @@ where	1=1
 drop table #BasBundleInfo
 ";
             #endregion
-            
-            ds= new DataSet();
+
+            this.ds = new DataSet();
 
             try
             {
                 SqlConnection sqlConnection = null;
                 DBProxy.Current.OpenConnection(null, out sqlConnection);
                 this.cmd = new SqlCommand(sqlcmd, sqlConnection);
-                cmd.CommandTimeout = 3000; // 設定time out 50分鐘
-                SqlDataAdapter sqad = new SqlDataAdapter(cmd);
-                sqad.Fill(ds);
+                this.cmd.CommandTimeout = 3000; // 設定time out 50分鐘
+                SqlDataAdapter sqad = new SqlDataAdapter(this.cmd);
+                sqad.Fill(this.ds);
 
-                cmd.Dispose();
+                this.cmd.Dispose();
                 sqlConnection.Close();
             }
             catch (SqlException ex)
             {
-                if (!cancel)
+                if (!this.cancel)
                 {
                     MyUtility.Msg.WarningBox(ex.Message);
                 }
@@ -476,19 +472,19 @@ drop table #BasBundleInfo
             {
                 this.bgWorkerUpdateInfo.WorkerSupportsCancellation = true;
                 this.bgWorkerUpdateInfo.CancelAsync();
-                cancel = true;
+                this.cancel = true;
                 this.cmd.Cancel();
                 this.btnQuery.Enabled = true;
             }
 
-            if ((this.dtFormGrid == null || this.dtExcel.Rows.Count==0) || ds.Tables.Count != 3)
+            if ((this.dtFormGrid == null || this.dtExcel.Rows.Count == 0) || this.ds.Tables.Count != 3)
             {
-                MyUtility.Msg.WarningBox("Data not found!");               
+                MyUtility.Msg.WarningBox("Data not found!");
                 return;
             }
 
             Excel.Application objApp = new Excel.Application();
-            Sci.Utility.Report.ExcelCOM com= new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Subcon_P40.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Subcon_P40.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
 
             com.WriteTable(this.dtExcel, 2);
@@ -500,8 +496,9 @@ drop table #BasBundleInfo
             {
                 worksheet.Columns["G:G"].ColumnWidth = 50;
             }
+
             objApp.Rows.AutoFit();
-            string Excelfile = Sci.Production.Class.MicrosoftFile.GetName("Subcon_P40");
+            string Excelfile = Class.MicrosoftFile.GetName("Subcon_P40");
             objApp.ActiveWorkbook.SaveAs(Excelfile);
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);
@@ -512,40 +509,39 @@ drop table #BasBundleInfo
             this.HideLoadingText();
             this.grid.Cursor = Cursors.Default;
             this.UseWaitCursor = false;
-            
+
             this.btnQuery.Enabled = true;
-            if (ds != null)
+            if (this.ds != null)
             {
-                listControlBindingSource1.DataSource = null;
-                if (ds.Tables.Count == 0)
+                this.listControlBindingSource1.DataSource = null;
+                if (this.ds.Tables.Count == 0)
                 {
                     return;
                 }
 
-                if ((ds.Tables[0] == null || ds.Tables[0].Rows.Count == 0) ||
-                    (ds.Tables.Count != 3)
-                    )
+                if ((this.ds.Tables[0] == null || this.ds.Tables[0].Rows.Count == 0) ||
+                    (this.ds.Tables.Count != 3))
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
-                    if (dtFormGrid != null)
+                    if (this.dtFormGrid != null)
                     {
                         this.dtFormGrid.Clear();
                         this.dtExcel.Clear();
                         this.dtBundleGroupQty.Clear();
                     }
+
                     return;
                 }
 
-                this.dtFormGrid = ds.Tables[0].AsEnumerable().CopyToDataTable();
-                this.dtExcel = ds.Tables[1].AsEnumerable().CopyToDataTable();
-                if (ds.Tables[2].Rows.Count > 0)
+                this.dtFormGrid = this.ds.Tables[0].AsEnumerable().CopyToDataTable();
+                this.dtExcel = this.ds.Tables[1].AsEnumerable().CopyToDataTable();
+                if (this.ds.Tables[2].Rows.Count > 0)
                 {
-                    this.dtBundleGroupQty = ds.Tables[2].AsEnumerable().CopyToDataTable();
+                    this.dtBundleGroupQty = this.ds.Tables[2].AsEnumerable().CopyToDataTable();
                 }
 
                 this.listControlBindingSource1.DataSource = this.dtFormGrid;
             }
-         
         }
 
         private void P40_FormClosing(object sender, FormClosingEventArgs e)
@@ -553,9 +549,9 @@ drop table #BasBundleInfo
             if (this.bgWorkerUpdateInfo.IsBusy)
             {
                 this.bgWorkerUpdateInfo.CancelAsync();
-                if (cmd != null)
+                if (this.cmd != null)
                 {
-                    cancel = true;
+                    this.cancel = true;
                     this.cmd.Cancel();
                 }
             }
@@ -581,7 +577,7 @@ drop table #BasBundleInfo
                                                                            .CopyToDataTable();
                     MyUtility.Msg.ShowMsgGrid_LockScreen(dtResult, msg: msgIsPair, caption: "Group Detail Qty", shownColumns: "BundleGroup,Qty");
                 }
-            }            
+            }
         }
     }
 }

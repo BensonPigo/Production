@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Sci.Andy;
 using Sci.Andy.ExtensionMethods;
 using Ict.Win;
 using Ict;
@@ -18,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P31_FTYRegularSendingSchedule
     /// </summary>
-    internal partial class P02_FTYRegularSendingSchedule : Sci.Win.Subs.Base
+    internal partial class P02_FTYRegularSendingSchedule : Win.Subs.Base
     {
         /// <summary>
         /// P31_FTYRegularSendingSchedule

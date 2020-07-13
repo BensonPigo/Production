@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.labBrand = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.datePulloutDate = new Sci.Win.UI.DateRange();
@@ -156,7 +156,7 @@
 
         #endregion
         private Win.UI.Label labBrand;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label labelBuyerDelivery;
         private Win.UI.DateRange datePulloutDate;

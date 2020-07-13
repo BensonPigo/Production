@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
@@ -18,7 +17,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P10
     /// </summary>
-    public partial class P10 : Sci.Win.Tems.Input6
+    public partial class P10 : Win.Tems.Input6
     {
         private Ict.Win.UI.DataGridViewDateBoxColumn col_inspdate;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_pulloutdate;
@@ -153,7 +152,7 @@ order by g.ID", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.btnUpdatePulloutDate.Enabled = !this.EditMode && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Confirmed" && PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P10. Ship Plan", "CanEdit");
+            this.btnUpdatePulloutDate.Enabled = !this.EditMode && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Confirmed" && Prgs.GetAuthority(Env.User.UserID, "P10. Ship Plan", "CanEdit");
             this.SumData();
             string sqlctnr = $@"
 declare @ShipPlanID varchar(25) = '{this.CurrentMaintain["id"]}'
@@ -196,7 +195,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
 
             if (tmp_dt.Rows.Count > 0)
             {
-                this.numericBoxTTLCTN.Value =  MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCTNQty)", string.Empty));
+                this.numericBoxTTLCTN.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCTNQty)", string.Empty));
                 this.numericBoxTTLQTY.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalShipQty)", string.Empty));
                 this.numericBoxTTLCBM.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCBM)", string.Empty)), 2);
                 this.numericBoxTTLGW.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalGW)", string.Empty)), 2);
@@ -226,7 +225,6 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
             {
                 this.numericBoxAIRGW.Value = 0;
             }
-
         }
 
         /// <inheritdoc/>
@@ -357,7 +355,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
             base.ClickNewAfter();
             this.CurrentMaintain["CDate"] = DateTime.Today;
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.listControlBindingSource1.DataSource = this.plData;
         }
 
@@ -402,7 +400,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SH", "ShipPlan", DateTime.Today, 3, "Id", null);
+                string id = MyUtility.GetValue.GetID(Env.User.Keyword + "SH", "ShipPlan", DateTime.Today, 3, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -425,14 +423,14 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
             DataTable packingListDt = (DataTable)this.listControlBindingSource1.DataSource;
 
             // 避免ISP20181052的狀況發生，因此從修改PackingList的語法要跟GMTBooking綁在一起，分開作
-            //foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
-            //{
+            // foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+            // {
             //    if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
             //    {
             //        this.UpdatePLCmd(dr);
             //        continue;
             //    }
-            //}
+            // }
 
             // 未篩選過的packingList
             DataTable packingList_List = (DataTable)this.listControlBindingSource1.DataSource;
@@ -518,6 +516,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
             if (this.updateCmds.Count != 0)
             {
                 DualResult result;
+
                 // 2018/11/09 Benson 加上Transaction
                 using (TransactionScope scope = new TransactionScope())
                 {
@@ -529,6 +528,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
                             DualResult failResult = new DualResult(false, "Update fail!!\r\n" + result.ToString());
                             return failResult;
                         }
+
                         scope.Complete();
                     }
                     catch (Exception ex)
@@ -538,10 +538,9 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
                         return failResult;
                     }
                 }
-
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -605,7 +604,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P10.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P10.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -628,7 +627,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
                 objArray[0, 4] = dr["Forwarder"];
                 objArray[0, 5] = dr["CYCFS"];
                 objArray[0, 6] = dr["SONo"];
-                objArray[0, 7] = MyUtility.Check.Empty(dr["CutOffDate"]) ? string.Empty : Convert.ToDateTime(dr["CutOffDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                objArray[0, 7] = MyUtility.Check.Empty(dr["CutOffDate"]) ? string.Empty : Convert.ToDateTime(dr["CutOffDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                 objArray[0, 8] = dr["WhseNo"];
                 objArray[0, 9] = dr["Status"];
                 objArray[0, 10] = dr["TotalCTNQty"];
@@ -648,7 +647,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P10");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_P10");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -694,14 +693,14 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
         // Import Data
         private void BtnImportData_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P10_ImportData callNextForm = new Sci.Production.Shipping.P10_ImportData(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, (DataTable)this.listControlBindingSource1.DataSource);
+            P10_ImportData callNextForm = new P10_ImportData(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, (DataTable)this.listControlBindingSource1.DataSource);
             callNextForm.ShowDialog(this);
         }
 
         // Update Pullout Date
         private void BtnUpdatePulloutDate_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P10_UpdatePulloutDate callNextForm = new Sci.Production.Shipping.P10_UpdatePulloutDate(this.CurrentMaintain);
+            P10_UpdatePulloutDate callNextForm = new P10_UpdatePulloutDate(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
             this.RenewData();
         }
@@ -743,7 +742,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
                 return;
             }
 
-            string updateCmd = string.Format("update ShipPlan set Status = 'Checked', CFMDate = '{0}', EditName = '{1}', EditDate = GETDATE() where ID = '{2}'", DateTime.Today.ToString("d"), Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ShipPlan set Status = 'Checked', CFMDate = '{0}', EditName = '{1}', EditDate = GETDATE() where ID = '{2}'", DateTime.Today.ToString("d"), Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -757,7 +756,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
         protected override void ClickUncheck()
         {
             base.ClickUncheck();
-            string updateCmd = string.Format("update ShipPlan set Status = 'New', CFMDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ShipPlan set Status = 'New', CFMDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -1024,14 +1023,14 @@ select STUFF((
             #endregion
 
             // 有Cancel Order 不能confirmed
-            string errmsg = PublicPrg.Prgs.ChkCancelOrder(this.CurrentMaintain["id"].ToString());
+            string errmsg = Prgs.ChkCancelOrder(this.CurrentMaintain["id"].ToString());
             if (!MyUtility.Check.Empty(errmsg))
             {
                 MyUtility.Msg.WarningBox(errmsg);
                 return;
             }
 
-            string updateCmd = string.Format("update ShipPlan set Status = 'Confirmed',CFMDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ShipPlan set Status = 'Confirmed',CFMDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -1045,7 +1044,7 @@ select STUFF((
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            string updateCmd = string.Format("update ShipPlan set Status = 'Checked',CFMDate =Null ,EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ShipPlan set Status = 'Checked',CFMDate =Null ,EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -1123,7 +1122,7 @@ GB#:{dr["ID"]},   Shipping Mode:{dr["ShipModeID"]}
             }
 
             bool edit = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToLower().EqualString("new") && this.Perm.Edit;
-            P10_ContainerTruck callNextForm = new P10_ContainerTruck(edit, null, null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), reload);
+            P10_ContainerTruck callNextForm = new P10_ContainerTruck(edit, null, null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.reload);
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
             this.Refresh();

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 
@@ -12,7 +10,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// B07
     /// </summary>
-    public partial class B07 : Sci.Win.Tems.Input1
+    public partial class B07 : Win.Tems.Input1
     {
         /// <summary>
         /// B07
@@ -21,7 +19,7 @@ namespace Sci.Production.PPIC
         public B07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            string sqlCommand = "select UseAPS from factory WITH (NOLOCK) where ID = '" + Sci.Env.User.Factory + "'";
+            string sqlCommand = "select UseAPS from factory WITH (NOLOCK) where ID = '" + Env.User.Factory + "'";
             string useAPS = MyUtility.GetValue.Lookup(sqlCommand, null);
             if (useAPS.ToUpper() == "TRUE")
             {
@@ -31,7 +29,7 @@ namespace Sci.Production.PPIC
             }
 
             this.InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
+            this.DefaultFilter = "FactoryID = '" + Env.User.Factory + "'";
         }
 
         /// <inheritdoc/>
@@ -66,9 +64,9 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool ClickNewBefore()
         {
-            Sci.Production.PPIC.B07_Add callNextForm = new Sci.Production.PPIC.B07_Add();
+            B07_Add callNextForm = new B07_Add();
             DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 this.ReloadDatas();
             }
@@ -92,15 +90,15 @@ namespace Sci.Production.PPIC
 
         private void BtnBatchEdit_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.B07_BatchAdd callNextForm = new Sci.Production.PPIC.B07_BatchAdd(this.CurrentMaintain);
+            B07_BatchAdd callNextForm = new B07_BatchAdd(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 // 紀錄目前畫面資料，Reload Data後，資料要保留在Reload前的那一筆
                 DataRow currentData = this.CurrentMaintain;
                 this.ReloadDatas();
-                IList<DataRow> list = this.DataRows.ToList<DataRow>();
-                DataRow dr = list.FirstOrDefault<DataRow>(x => x["FactoryID"].ToString() == currentData["FactoryID"].ToString() && Convert.ToDateTime(x["Date"]).ToString("d") == Convert.ToDateTime(currentData["Date"]).ToString("d") && x["SewingLineID"].ToString() == currentData["SewingLineID"].ToString());
+                IList<DataRow> list = this.DataRows.ToList();
+                DataRow dr = list.FirstOrDefault(x => x["FactoryID"].ToString() == currentData["FactoryID"].ToString() && Convert.ToDateTime(x["Date"]).ToString("d") == Convert.ToDateTime(currentData["Date"]).ToString("d") && x["SewingLineID"].ToString() == currentData["SewingLineID"].ToString());
                 if (dr != null)
                 {
                     int pos = list.IndexOf(dr);

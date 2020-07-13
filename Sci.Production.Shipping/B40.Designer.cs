@@ -43,7 +43,7 @@
             this.editDescription2 = new Sci.Win.UI.EditBox();
             this.comboType = new Sci.Win.UI.ComboBox();
             this.displayMaterialType = new Sci.Win.UI.DisplayBox();
-            this.txtUnitUsageUnit = new Sci.Production.Class.txtunit();
+            this.txtUnitUsageUnit = new Sci.Production.Class.Txtunit();
             this.txtNLCode = new Sci.Win.UI.TextBox();
             this.displayHSCode = new Sci.Win.UI.DisplayBox();
             this.displayCustomsUnit = new Sci.Win.UI.DisplayBox();
@@ -566,7 +566,7 @@
         private Win.UI.DisplayBox displayCustomsUnit;
         private Win.UI.DisplayBox displayHSCode;
         private Win.UI.TextBox txtNLCode;
-        private Class.txtunit txtUnitUsageUnit;
+        private Class.Txtunit txtUnitUsageUnit;
         private Win.UI.DisplayBox displayMaterialType;
         private Win.UI.ComboBox comboType;
         private Win.UI.EditBox editDescription2;

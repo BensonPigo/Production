@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci;
 using Sci.Data;
 
 namespace Sci.Production.Centralized
@@ -15,7 +8,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// WH_B03
     /// </summary>
-    public partial class WH_B03 : Sci.Win.Tems.Input1
+    public partial class WH_B03 : Win.Tems.Input1
     {
         /// <summary>
         /// WH_B03
@@ -84,7 +77,7 @@ namespace Sci.Production.Centralized
 
         private void TxtActionCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select id,description from whseReason WITH (NOLOCK) where type='RA' and junk = 0", "10,20", this.txtDesc.Text, true, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select id,description from whseReason WITH (NOLOCK) where type='RA' and junk = 0", "10,20", this.txtDesc.Text, true, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

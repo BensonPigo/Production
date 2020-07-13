@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
@@ -14,7 +12,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P11
     /// </summary>
-    public partial class P11 : Sci.Win.Tems.Input6
+    public partial class P11 : Win.Tems.Input6
     {
         private string sqlCmd;
         private string masterID;
@@ -22,9 +20,9 @@ namespace Sci.Production.Packing
         private DataRow dr1;
         private DialogResult buttonResult;
         private DualResult result;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings reason = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings article = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings size = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings reason = new DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// P11
@@ -34,7 +32,7 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
+            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "'";
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
         }
@@ -99,13 +97,13 @@ where od.ID = '{0}'", this.masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             this.dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             this.sqlCmd = string.Format("Select Article,SizeCode from Order_Qty WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "8", this.dr["Article"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.sqlCmd, "8", this.dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -170,13 +168,13 @@ where od.ID = '{0}'", this.masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             this.dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             this.sqlCmd = string.Format("Select distinct SizeCode from Order_Qty WITH (NOLOCK) where ID = '{0}' and Article = '{1}'", this.CurrentMaintain["ID"].ToString(), this.dr["Article"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "8", this.dr["SizeCode"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.sqlCmd, "8", this.dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -232,12 +230,12 @@ where od.ID = '{0}'", this.masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             this.dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select ID, Description from PackingReason WITH (NOLOCK) where Type = 'OG' and Junk = 0", "8,30", this.dr["PackingReasonID"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, Description from PackingReason WITH (NOLOCK) where Type = 'OG' and Junk = 0", "8,30", this.dr["PackingReasonID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -289,7 +287,7 @@ where od.ID = '{0}'", this.masterID);
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["CloseDate"] = DateTime.Today;
         }
@@ -392,7 +390,7 @@ where od.ID = '{0}'", this.masterID);
                     {
                         // sql參數
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", this.txtSP.Text);
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Env.User.Keyword);
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                         cmds.Add(sp1);
@@ -439,7 +437,7 @@ where od.ID = '{0}'", this.masterID);
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            this.sqlCmd = string.Format("update OverrunGMT set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            this.sqlCmd = string.Format("update OverrunGMT set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
             this.result = DBProxy.Current.Execute(null, this.sqlCmd);
             if (!this.result)
@@ -457,12 +455,12 @@ where od.ID = '{0}'", this.masterID);
 
             // 問是否要做Unconfirm，確定才繼續往下做
             this.buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (this.buttonResult == System.Windows.Forms.DialogResult.No)
+            if (this.buttonResult == DialogResult.No)
             {
                 return;
             }
 
-            this.sqlCmd = string.Format("update OverrunGMT set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            this.sqlCmd = string.Format("update OverrunGMT set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
             this.result = DBProxy.Current.Execute(null, this.sqlCmd);
             if (!this.result)

@@ -1,23 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
-using System.Data.SqlClient;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Runtime.InteropServices;
 using System.IO;
 using Sci.Utility.Excel;
 
 namespace Sci.Production.PPIC
 {
     /// <inheritdoc/>
-    public partial class R15 : Sci.Win.Tems.PrintForm
+    public partial class R15 : Win.Tems.PrintForm
     {
         private SaveXltReportCls sxc;
         private DataTable dtPrint;

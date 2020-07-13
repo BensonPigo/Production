@@ -15,13 +15,13 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P13
     /// </summary>
-    public partial class P13 : Sci.Win.Tems.QueryForm
+    public partial class P13 : Win.Tems.QueryForm
     {
         private DataTable gridData;
-        private DataGridViewGeneratorTextColumnSettings sewLine = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private DataGridViewGeneratorDateColumnSettings sewInLine = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
-        private DataGridViewGeneratorDateColumnSettings sewOffLine = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
-        private DataGridViewGeneratorDateColumnSettings cutReadyDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings sewLine = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings sewInLine = new DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings sewOffLine = new DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings cutReadyDate = new DataGridViewGeneratorDateColumnSettings();
 
         /// <summary>
         /// P13
@@ -31,14 +31,14 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.displayFactory.Value = Sci.Env.User.Factory;
+            this.displayFactory.Value = Env.User.Factory;
         }
 
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            if (MyUtility.GetValue.Lookup(string.Format("select UseAPS from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Factory)) == "True")
+            if (MyUtility.GetValue.Lookup(string.Format("select UseAPS from Factory WITH (NOLOCK) where ID = '{0}'", Env.User.Factory)) == "True")
             {
                 MyUtility.Msg.WarningBox("Please use APS system to assign schedule.");
                 this.Close();
@@ -96,12 +96,12 @@ namespace Sci.Production.PPIC
 
             this.sewLine.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("Select ID,Description From SewingLine WITH (NOLOCK) Where FactoryId = '{0}'", Sci.Env.User.Factory), "2,16", MyUtility.Convert.GetString(dr["SewLine"]));
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("Select ID,Description From SewingLine WITH (NOLOCK) Where FactoryId = '{0}'", Env.User.Factory), "2,16", MyUtility.Convert.GetString(dr["SewLine"]));
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {
@@ -117,7 +117,7 @@ namespace Sci.Production.PPIC
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 if (!MyUtility.Check.Empty(MyUtility.Convert.GetString(e.FormattedValue)))
                 {
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", Sci.Env.User.Factory);
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", Env.User.Factory);
                     System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@sewinglineid", MyUtility.Convert.GetString(e.FormattedValue));
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -198,7 +198,7 @@ namespace Sci.Production.PPIC
 
         private string PopUpTPEUser(string userID)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) ", "10,23,5", userID);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) ", "10,23,5", userID);
             item.Width = 510;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -297,7 +297,7 @@ as
  from Orders o WITH (NOLOCK) 
  where o.Finished = 0 and o.category in ('B','S')
  and o.IsForecast = 0
- and o.FtyGroup = '{0}'", Sci.Env.User.Factory));
+ and o.FtyGroup = '{0}'", Env.User.Factory));
             if (!MyUtility.Check.Empty(this.txtSPStart.Text))
             {
                 sqlCmd.Append(string.Format(" and o.ID >= '{0}'", this.txtSPStart.Text));
@@ -413,9 +413,9 @@ select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLin
                             updateCmds.Add(string.Format(
                                 @"insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
 values ('{0}','SewInOffLine',{1},{2},'Sewing Inline Update','{3}',GETDATE()) ", MyUtility.Convert.GetString(dr["ID"]),
-                            MyUtility.Check.Empty(dr["OInline"]) ? "null" : "'" + Convert.ToDateTime(dr["OInline"]).ToString("d") + "'",
-                            MyUtility.Check.Empty(dr["TInLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TInLine"]).ToString("d") + "'",
-                            Sci.Env.User.UserID));
+                                MyUtility.Check.Empty(dr["OInline"]) ? "null" : "'" + Convert.ToDateTime(dr["OInline"]).ToString("d") + "'",
+                                MyUtility.Check.Empty(dr["TInLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TInLine"]).ToString("d") + "'",
+                                Env.User.UserID));
                         }
 
                         if (MyUtility.Convert.GetString(dr["OfflineDiff"]) == "1")
@@ -423,9 +423,9 @@ values ('{0}','SewInOffLine',{1},{2},'Sewing Inline Update','{3}',GETDATE()) ", 
                             updateCmds.Add(string.Format(
                                 @"insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
 values ('{0}','SewInOffLine',{1},{2},'Sewing Offline Update','{3}',GETDATE()) ", MyUtility.Convert.GetString(dr["ID"]),
-                            MyUtility.Check.Empty(dr["OOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["OOffLine"]).ToString("d") + "'",
-                            MyUtility.Check.Empty(dr["TOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TOffLine"]).ToString("d") + "'",
-                            Sci.Env.User.UserID));
+                                MyUtility.Check.Empty(dr["OOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["OOffLine"]).ToString("d") + "'",
+                                MyUtility.Check.Empty(dr["TOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TOffLine"]).ToString("d") + "'",
+                                Env.User.UserID));
                         }
                     }
 
@@ -539,7 +539,7 @@ where o.ID in ({0})",
                 return;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P13.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_P13.xltx");
             MyUtility.Excel.CopyToXls(excelTable, string.Empty, "PPIC_P13.xltx", 1, true, string.Empty, objApp);
         }
 
@@ -641,7 +641,7 @@ ORDER  BY ord.cuttingsp ",
                     sewof = Convert.ToDateTime(dr["offlinea"]).ToShortDateString();
                 }
 
-                updsql = updsql + string.Format("insert into cutting(ID,sewInline,sewoffline,mDivisionid,FactoryID,AddName,AddDate) Values('{0}','{1}','{2}','{3}','{4}','{5}',GetDate()); ", dr["cuttingsp"].ToString(), sewin, sewof, Sci.Env.User.Keyword, Sci.Env.User.Factory, Sci.Env.User.UserID);
+                updsql = updsql + string.Format("insert into cutting(ID,sewInline,sewoffline,mDivisionid,FactoryID,AddName,AddDate) Values('{0}','{1}','{2}','{3}','{4}','{5}',GetDate()); ", dr["cuttingsp"].ToString(), sewin, sewof, Env.User.Keyword, Env.User.Factory, Env.User.UserID);
             }
 
             if (!MyUtility.Check.Empty(updsql))
@@ -695,7 +695,7 @@ DROP TABLE #updatetemp  ",
             if (!dresult)
             {
                  this.ShowErr(updsql, dresult);
-                        return;
+                 return;
             }
             #endregion
             MyUtility.Msg.InfoBox("Update is Completed!");

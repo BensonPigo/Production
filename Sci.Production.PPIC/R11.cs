@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -8,14 +7,13 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Win;
 using Sci.Data;
-using Excel = Microsoft.Office.Interop.Excel;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using Sci.Utility.Excel;
 
 namespace Sci.Production.PPIC
 {
     /// <inheritdoc/>
-    public partial class R11 : Sci.Win.Tems.PrintForm
+    public partial class R11 : Win.Tems.PrintForm
     {
         private string F;
         private string M;
@@ -676,7 +674,7 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
 
             DBProxy.Current.DefaultTimeout = 300;
             #endregion
-            return new Ict.DualResult(true);
+            return new DualResult(true);
         }
 
         /// <inheritdoc/>
@@ -690,7 +688,7 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
             }
             #endregion
             this.SetCount(this.dtList[0].Rows.Count);
-            string xltPath = System.IO.Path.Combine(Sci.Env.Cfg.XltPathDir + "\\PPIC_R11.xltx");
+            string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir + "\\PPIC_R11.xltx");
             sxrc sxr = new sxrc(xltPath, keepApp: true);
             sxr.BoOpenFile = true;
             sxrc.XltRptTable xrtSummery1 = new sxrc.XltRptTable(this.dtList[1]);
@@ -707,7 +705,7 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
 
             #region Save Excel
             string excelFile = string.Empty;
-            excelFile = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R11");
+            excelFile = Class.MicrosoftFile.GetName("PPIC_R11");
             sxr.Save(excelFile);
             #endregion
 
@@ -769,7 +767,7 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
                 }
             }
 
-            //畫框線
+            // 畫框線
             Microsoft.Office.Interop.Excel.Range rg1;
             rg1 = wkcolor.Range["I1", $"{MyExcelPrg.GetExcelColumnName(9 + this.dtFty.Rows.Count)}{range + 1}"];
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
@@ -798,12 +796,12 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
 
                 if (this.dtList[1].Rows[i]["Fty"].ToString() == "Grand Total")
                 {
-                    wkcolor.Cells[i + 2, 2].Value = "";
+                    wkcolor.Cells[i + 2, 2].Value = string.Empty;
                     wkcolor.Range[$"C{i + 2}", $"G{i + 2}"].Font.Bold = true;
                 }
             }
 
-            //畫框線
+            // 畫框線
             Microsoft.Office.Interop.Excel.Range rg2;
             rg2 = wkcolor.Range["A1", $"G{this.dtList[1].Rows.Count + 1}"];
             rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;

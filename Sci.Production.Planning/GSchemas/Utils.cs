@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 
 using Ict;
@@ -35,7 +34,7 @@ namespace Sci.Production.Report.GSchemas
             }
 
             helper = new DropDownListHelper(datas);
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -72,7 +71,7 @@ namespace Sci.Production.Report.GSchemas
                 return new DualResult(false, "Get Ap Qty value error.", ex);
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

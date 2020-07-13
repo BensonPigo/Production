@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -17,7 +16,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P04
     /// </summary>
-    public partial class P04 : Sci.Win.Tems.Input6
+    public partial class P04 : Win.Tems.Input6
     {
         private Ict.Win.UI.DataGridViewTextBoxColumn col_orderid;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_seq;
@@ -33,11 +32,11 @@ namespace Sci.Production.Packing
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_gw;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_nnw;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_nwpcs;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings shipQtySetting = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings orderid = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings article = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings size = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings shipQtySetting = new DataGridViewGeneratorNumericColumnSettings();
         private DialogResult buttonResult;
         private DualResult result;
         private DataRow dr;
@@ -63,7 +62,7 @@ namespace Sci.Production.Packing
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             this.masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = Prgs.QueryPackingListSQLCmd(this.masterID);
@@ -137,7 +136,7 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             this.numAppBookingVW.Value = MyUtility.Convert.GetDecimal(dt.Compute("sum(APPBookingVW)", string.Empty));
             this.numAppEstAmtVW.Value = MyUtility.Convert.GetDecimal(dt.Compute("sum(APPEstAmtVW)", string.Empty));
 
-            Color_Change();
+            this.Color_Change();
         }
 
         /// <summary>
@@ -222,7 +221,7 @@ where o.ID = @orderid
                                     else
                                     {
                                         sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", this.dr["OrderID"].ToString());
-                                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+                                        Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
                                         DialogResult returnResult = item.ShowDialog();
                                         if (returnResult == DialogResult.Cancel)
                                         {
@@ -251,13 +250,13 @@ where o.ID = @orderid
             {
                 if (this.EditMode & MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             this.sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", dr["OrderID"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -287,13 +286,13 @@ where o.ID = @orderid
             {
                 if (this.EditMode & MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             this.sqlCmd = string.Format("Select Distinct Article from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "8", dr["Article"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.sqlCmd, "8", dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -363,7 +362,7 @@ where o.ID = @orderid
             {
                 if (this.EditMode & MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -385,7 +384,7 @@ left join Order_SizeCode os WITH (NOLOCK) on os.ID = o.POID and os.SizeCode = a.
 order by os.Seq", dr["OrderID"].ToString(),
                                 dr["OrderShipmodeSeq"].ToString(),
                                 dr["Article"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "8", dr["SizeCode"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.sqlCmd, "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -531,10 +530,10 @@ order by os.Seq", dr["OrderID"].ToString(),
         {
             base.ClickNewAfter();
             this.txtshipmode.ReadOnly = false;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Type"] = "S";
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["QueryDate"] = DateTime.Now.ToShortDateString();
 
             this.gridicon.Append.Enabled = true;
@@ -694,6 +693,7 @@ order by os.Seq", dr["OrderID"].ToString(),
                 if (drCtnQty > 0)
                 {
                     ctnCBM = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
+
                     // ISP20181015 CBM抓到小數點後4位
                     cbm = MyUtility.Math.Round(cbm + (MyUtility.Convert.GetDouble(ctnCBM) * drCtnQty), 4);
                 }
@@ -795,10 +795,10 @@ where pl.ID != '{0}'
       and pld.OrderShipmodeSeq = '{2}'
       and pld.Article = '{3}'
       and pld.SizeCode = '{4}'", dr["ID"],
-                               dr["OrderID"],
-                               dr["OrderShipmodeSeq"],
-                               dr["Article"],
-                               dr["SizeCode"]);
+                    dr["OrderID"],
+                    dr["OrderShipmodeSeq"],
+                    dr["Article"],
+                    dr["SizeCode"]);
 
                 string strInvAdjustSQL = string.Format(
                     @"
@@ -809,9 +809,9 @@ where InvA.OrderID = '{0}'
       and InvA.OrderShipmodeSeq = '{1}'
       and InvAQ.Article = '{2}'
       and InvAQ.SizeCode = '{3}'", dr["OrderID"],
-                                 dr["OrderShipmodeSeq"],
-                                 dr["Article"],
-                                 dr["SizeCode"]);
+                    dr["OrderShipmodeSeq"],
+                    dr["Article"],
+                    dr["SizeCode"]);
 
                 dr["OtherConfirmQty"] = MyUtility.GetValue.Lookup(strOtherConfirmSQL);
                 dr["InvAdjustQty"] = MyUtility.GetValue.Lookup(strInvAdjustSQL);
@@ -875,7 +875,7 @@ where InvA.OrderID = '{0}'
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PS", "PackingList", DateTime.Today, 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(Env.User.Keyword + "PS", "PackingList", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -888,14 +888,14 @@ where InvA.OrderID = '{0}'
             // Get表身 SCICtnNo
             if (this.IsDetailInserting)
             {
-                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), "IsDetailInserting"))
+                if (!Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), "IsDetailInserting"))
                 {
                     return false;
                 }
             }
             else
             {
-                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), ""))
+                if (!Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), string.Empty))
                 {
                     return false;
                 }
@@ -958,7 +958,7 @@ where InvA.OrderID = '{0}'
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -988,7 +988,7 @@ where InvA.OrderID = '{0}'
         /// <returns>bool</returns>
         protected override bool ClickPrint()
         {
-            Sci.Production.Packing.P04_Print callNextForm = new Sci.Production.Packing.P04_Print(this.CurrentMaintain);
+            P04_Print callNextForm = new P04_Print(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -1052,7 +1052,7 @@ where InvA.OrderID = '{0}'
         // Carton Summary
         private void BtnCartonSummary_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P04_CartonSummary callNextForm = new Sci.Production.Packing.P04_CartonSummary(this.CurrentMaintain["ID"].ToString());
+            P04_CartonSummary callNextForm = new P04_CartonSummary(this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
@@ -1065,7 +1065,7 @@ where InvA.OrderID = '{0}'
                 return;
             }
 
-            Sci.Production.Packing.P04_BatchImport callNextForm = new Sci.Production.Packing.P04_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            P04_BatchImport callNextForm = new P04_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
         }
 
@@ -1156,11 +1156,10 @@ AND s.ShipGroup <> (
                 try
                 {
                     // PackingList狀態改為Confirm
-                    this.sqlCmd = string.Format("update PackingList set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+                    this.sqlCmd = string.Format("update PackingList set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
                     this.result = DBProxy.Current.Execute(null, this.sqlCmd);
                     if (!this.result)
                     {
-
                         transactionScope.Dispose();
                         MyUtility.Msg.WarningBox("Confirm fail !\r\n" + this.result.ToString());
                         return;
@@ -1193,11 +1192,10 @@ AND s.ShipGroup <> (
                             iNVNo.ParameterName = "@INVNo";
                             iNVNo.Value = this.CurrentMaintain["INVNo"].ToString();
 
-
                             IList<System.Data.SqlClient.SqlParameter> parameters = new List<System.Data.SqlClient.SqlParameter>();
                             parameters.Add(ttlCBM);
                             parameters.Add(iNVNo);
-                            this.result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, parameters);
+                            this.result = DBProxy.Current.Execute(null, updateCmd, parameters);
                             if (!this.result)
                             {
                                 transactionScope.Dispose();
@@ -1223,7 +1221,6 @@ AND s.ShipGroup <> (
 
                     transactionScope.Complete();
                     transactionScope.Dispose();
-
                 }
                 catch (Exception ex)
                 {
@@ -1233,6 +1230,7 @@ AND s.ShipGroup <> (
                 }
             }
         }
+
         /// <summary>
         /// ClickUnconfirm
         /// </summary>
@@ -1270,12 +1268,12 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
 
             // 問是否要做Unconfirm，確定才繼續往下做
             this.buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (this.buttonResult == System.Windows.Forms.DialogResult.No)
+            if (this.buttonResult == DialogResult.No)
             {
                 return;
             }
 
-            this.sqlCmd = string.Format("update PackingList set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            this.sqlCmd = string.Format("update PackingList set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
             this.result = DBProxy.Current.Execute(null, this.sqlCmd);
             if (!this.result)
@@ -1287,7 +1285,7 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
         // Download excel format
         private void BtnDownloadExcelFormat_Click(object sender, EventArgs e)
         {
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P04_ImportExcelFormat.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Packing_P04_ImportExcelFormat.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -1312,7 +1310,7 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
                 return;
             }
 
-            Sci.Production.Packing.P04_ExcelImport callNextForm = new Sci.Production.Packing.P04_ExcelImport((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString());
+            P04_ExcelImport callNextForm = new P04_ExcelImport((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
@@ -1359,7 +1357,7 @@ select oqd.Id as OrderID
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 where oqd.Id = '{0}'
       and oqd.Seq = '{1}'", dr["OrderID"].ToString(),
-                          dr["OrderShipmodeSeq"].ToString());
+                        dr["OrderShipmodeSeq"].ToString());
                     if (!(selectResult = DBProxy.Current.Select(null, this.sqlCmd, out tmpPackData)))
                     {
                         MyUtility.Msg.WarningBox("Query pack qty fail!");
@@ -1405,10 +1403,10 @@ where pl.ID != '{0}'
       and pld.OrderShipmodeSeq = '{2}'
       and pld.Article = '{3}'
       and pld.SizeCode = '{4}'", dr["ID"],
-                               dr["OrderID"],
-                               dr["OrderShipmodeSeq"],
-                               dr["Article"],
-                               dr["SizeCode"]);
+                    dr["OrderID"],
+                    dr["OrderShipmodeSeq"],
+                    dr["Article"],
+                    dr["SizeCode"]);
 
                 string strInvAdjustSQL = string.Format(
                     @"
@@ -1419,9 +1417,9 @@ where InvA.OrderID = '{0}'
       and InvA.OrderShipmodeSeq = '{1}'
       and InvAQ.Article = '{2}'
       and InvAQ.SizeCode = '{3}'", dr["OrderID"],
-                                 dr["OrderShipmodeSeq"],
-                                 dr["Article"],
-                                 dr["SizeCode"]);
+                    dr["OrderShipmodeSeq"],
+                    dr["Article"],
+                    dr["SizeCode"]);
 
                 dr["OtherConfirmQty"] = MyUtility.GetValue.Lookup(strOtherConfirmSQL);
                 dr["InvAdjustQty"] = MyUtility.GetValue.Lookup(strInvAdjustSQL);

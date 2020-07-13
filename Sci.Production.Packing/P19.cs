@@ -7,11 +7,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -176,7 +174,7 @@ where Type='TP' and Junk=0";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string importFileName = openFileDialog.FileName;
-                using (StreamReader reader = new StreamReader(importFileName, System.Text.Encoding.UTF8))
+                using (StreamReader reader = new StreamReader(importFileName, Encoding.UTF8))
                 {
                     this.ShowWaitMessage("Processing....");
                     string line;
@@ -389,7 +387,7 @@ order by pd.ID,pd.Seq
                 keyWhere = $"   and pd.CustCTN = @CustCTN";
                 listPar = new List<SqlParameter>()
                                             {
-                                                new SqlParameter("@CustCTN", packID + cartonStartNo)
+                                                new SqlParameter("@CustCTN", packID + cartonStartNo),
                                             };
             }
             else
@@ -399,7 +397,7 @@ order by pd.ID,pd.Seq
                 listPar = new List<SqlParameter>()
                                             {
                                                 new SqlParameter("@ID", packID),
-                                                new SqlParameter("@CTNStartNo", cartonStartNo)
+                                                new SqlParameter("@CTNStartNo", cartonStartNo),
                                             };
             }
 

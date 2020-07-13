@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
-using Sci;
 using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
@@ -16,7 +8,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_EditFromPO
     /// </summary>
-    public partial class P02_EditFromPO : Sci.Win.Subs.Input2A
+    public partial class P02_EditFromPO : Win.Subs.Input2A
     {
         /// <summary>
         /// P02_EditFromPO
@@ -83,14 +75,14 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override DualResult OnSavePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
+            DualResult result = DBProxy.Current.Execute(null, Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnDeleteBefore()
@@ -107,14 +99,14 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override DualResult OnDeletePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
+            DualResult result = DBProxy.Current.Execute(null, Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

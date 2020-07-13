@@ -2,12 +2,7 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -15,17 +10,22 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R44 : Sci.Win.Tems.PrintForm
+    public partial class R44 : Win.Tems.PrintForm
     {
-        string Factory, SewingStart, SewingEnd, SP, Category;
+        string Factory;
+        string SewingStart;
+        string SewingEnd;
+        string SP;
+        string Category;
         DataTable printData;
+
         public R44(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.print.Visible = false;
 
-            //set ComboFactory
+            // set ComboFactory
             DataTable dtFactory;
             DBProxy.Current.Select(null, @"
 select ID = ''
@@ -34,46 +34,47 @@ union all
 Select ID 
 from Factory WITH (NOLOCK)
 where Junk != 1", out dtFactory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, dtFactory);
-            comboFactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, dtFactory);
+            this.comboFactory.Text = Env.User.Factory;
 
-            comboDropDownList1.SelectedIndex = 2;
+            this.comboDropDownList1.SelectedIndex = 2;
         }
 
         protected override bool ValidateInput()
         {
             #region check Sewing Date
-            if (dateSewingDate.Value1.Empty() || dateSewingDate.Value2.Empty())
+            if (this.dateSewingDate.Value1.Empty() || this.dateSewingDate.Value2.Empty())
             {
                 MyUtility.Msg.InfoBox("Sewinbg Date can't be empty!");
                 return false;
             }
             #endregion
             #region set Data
-            Factory = comboFactory.Text;
-            SewingStart = ((DateTime)dateSewingDate.Value1).ToString("yyyy-MM-dd");
-            SewingEnd = ((DateTime)dateSewingDate.Value2).ToString("yyyy-MM-dd");
-            SP = txtSP.Text;
-            Category = MyUtility.Convert.GetString(comboDropDownList1.SelectedValue);
+            this.Factory = this.comboFactory.Text;
+            this.SewingStart = ((DateTime)this.dateSewingDate.Value1).ToString("yyyy-MM-dd");
+            this.SewingEnd = ((DateTime)this.dateSewingDate.Value2).ToString("yyyy-MM-dd");
+            this.SP = this.txtSP.Text;
+            this.Category = MyUtility.Convert.GetString(this.comboDropDownList1.SelectedValue);
             #endregion
             return true;
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region SQLParameter
             List<SqlParameter> sqlParameter = new List<SqlParameter>();
-            sqlParameter.Add(new SqlParameter("@Factory", Factory));
-            sqlParameter.Add(new SqlParameter("@SewingStart", SewingStart));
-            sqlParameter.Add(new SqlParameter("@SewingEnd", SewingEnd));
-            sqlParameter.Add(new SqlParameter("@SPNO", SP));
-            sqlParameter.Add(new SqlParameter("@ToExcelBy", (radioByFactory.Checked) ? 1 : 0));
+            sqlParameter.Add(new SqlParameter("@Factory", this.Factory));
+            sqlParameter.Add(new SqlParameter("@SewingStart", this.SewingStart));
+            sqlParameter.Add(new SqlParameter("@SewingEnd", this.SewingEnd));
+            sqlParameter.Add(new SqlParameter("@SPNO", this.SP));
+            sqlParameter.Add(new SqlParameter("@ToExcelBy", this.radioByFactory.Checked ? 1 : 0));
             #endregion
 
             #region SQL cmd
             string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間加長為30分鐘
-            string strSQL = string.Format(@"
+            string strSQL = string.Format(
+                @"
 declare @StartDate Date = @SewingStart;
 declare @EndDate Date = @SewingEnd;
 declare @SP char(20) = @SPNO;
@@ -136,11 +137,11 @@ begin
 
 	set @StartInLine =  DATEADD(day, 1, @StartInLine) 
 end 
-"
-                , (SP.Empty()) ? "" : "and o.id = @SP"
-                , (Factory.Empty()) ? "" : "and f.ID = @FactoryID"
-                , Category
-                , whereIncludeCancelOrder);
+",
+                this.SP.Empty() ? string.Empty : "and o.id = @SP",
+                this.Factory.Empty() ? string.Empty : "and f.ID = @FactoryID",
+                this.Category,
+                whereIncludeCancelOrder);
 
             strSQL += $@"
 select distinct t.orderID,
@@ -152,7 +153,6 @@ into #enn
 from #tsp t
 cross join #CBDate cb
 ";
-
 
             string[] subprocessIDs = new string[] { "Loading", };
             string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
@@ -245,53 +245,55 @@ DROP TABLE #print0
 ";
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, strSQL, sqlParameter, out printData);
+            DualResult result = DBProxy.Current.Select(null, strSQL, sqlParameter, out this.printData);
             if (!result)
             {
                 return result;
             }
+
             DBProxy.Current.DefaultTimeout = 300;  // timeout時間調回為5分鐘
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (printData == null || printData.Rows.Count == 0)
+            if (this.printData == null || this.printData.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found.");
                 return false;
             }
-            this.SetCount(printData.Rows.Count);
+
+            this.SetCount(this.printData.Rows.Count);
             this.ShowWaitMessage("Excel Processing...");
 
             Excel.Application objApp = null;
             Excel.Worksheet worksheet = null;
-            if (radioByFactory.Checked)
+            if (this.radioByFactory.Checked)
             {
                 #region By Factory
-                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R44_ByFactory.xltx");
+                objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R44_ByFactory.xltx");
                 worksheet = objApp.Sheets[1];
-                worksheet.Name = "cutting bcs base on std" + (DateTime.Now).ToString("yyyyMMdd");
+                worksheet.Name = "cutting bcs base on std" + DateTime.Now.ToString("yyyyMMdd");
                 #region set CheckDate & Factory
-                worksheet.Cells[2, 2] = SewingStart + " - " + SewingEnd;
-                worksheet.Cells[2, 5] = Factory;
+                worksheet.Cells[2, 2] = this.SewingStart + " - " + this.SewingEnd;
+                worksheet.Cells[2, 5] = this.Factory;
                 #endregion
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R44_ByFactory.xltx", 3, showExcel: true, excelApp: objApp);                
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R44_ByFactory.xltx", 3, showExcel: true, excelApp: objApp);
                 #endregion
             }
             else
             {
                 #region By SPNO
-                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R44_BySPNO.xltx");
+                objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R44_BySPNO.xltx");
                 worksheet = objApp.Sheets[1];
-                worksheet.Name = "cutting bcs base on std" + (DateTime.Now).ToString("yyyyMMdd");
+                worksheet.Name = "cutting bcs base on std" + DateTime.Now.ToString("yyyyMMdd");
                 #region set CheckDate & Factory
-                worksheet.Cells[2, 3] = SewingStart + " - " + SewingEnd;
-                worksheet.Cells[2, 6] = Factory;
+                worksheet.Cells[2, 3] = this.SewingStart + " - " + this.SewingEnd;
+                worksheet.Cells[2, 6] = this.Factory;
                 #endregion
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R44_BySPNO.xltx", 3, showExcel: true, excelApp: objApp);                
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R44_BySPNO.xltx", 3, showExcel: true, excelApp: objApp);
                 #endregion
-                
+
             }
 
             Marshal.ReleaseComObject(worksheet);

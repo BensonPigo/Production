@@ -51,15 +51,15 @@
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.txtCutplanID = new Sci.Win.UI.TextBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.txtfactoryByM = new Sci.Production.Class.txtfactory();
+            this.txtfactoryByM = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.txtShift = new Sci.Production.Class.txtDropDownList();
+            this.txtShift = new Sci.Production.Class.TxtDropDownList();
             this.label5 = new Sci.Win.UI.Label();
-            this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
+            this.txtSpreadingNo1 = new Sci.Production.Class.TxtSpreadingNo();
             this.label4 = new Sci.Win.UI.Label();
-            this.txtCell1 = new Sci.Production.Class.txtCell();
-            this.txtcutReason = new Sci.Production.Class.txtcutReason();
+            this.txtCell1 = new Sci.Production.Class.TxtCell();
+            this.txtcutReason = new Sci.Production.Class.TxtcutReason();
             this.label2 = new Sci.Win.UI.Label();
             this.btnSave = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
@@ -289,7 +289,7 @@
             // txtfactoryByM
             // 
             this.txtfactoryByM.BackColor = System.Drawing.Color.White;
-            this.txtfactoryByM.boolFtyGroupList = true;
+            this.txtfactoryByM.BoolFtyGroupList = true;
             this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactoryByM.IsProduceFty = false;
@@ -479,17 +479,17 @@
         private Win.UI.GroupBox groupBox2;
         private Win.UI.Button btnSave;
         private Win.UI.Button btnClose;
-        private Class.txtcutReason txtcutReason;
+        private Class.TxtcutReason txtcutReason;
         private Win.UI.ListControlBindingSource gridbs;
-        private Class.txtfactory txtfactoryByM;
+        private Class.Txtfactory txtfactoryByM;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
-        private Class.txtCell txtCell1;
+        private Class.TxtCell txtCell1;
         private Win.UI.TextBox txtCutplanID;
         private Win.UI.Label label3;
         private Win.UI.Label label4;
-        private Class.txtSpreadingNo txtSpreadingNo1;
-        private Class.txtDropDownList txtShift;
+        private Class.TxtSpreadingNo txtSpreadingNo1;
+        private Class.TxtDropDownList txtShift;
         private Win.UI.Label label5;
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
@@ -19,7 +17,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P08_ShareExpense
     /// </summary>
-    public partial class P08_ShareExpense : Sci.Win.Subs.Base
+    public partial class P08_ShareExpense : Win.Subs.Base
     {
         private DataRow apData;
         private DataTable SEData;
@@ -48,9 +46,9 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings bLNo = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings bL2No = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings wKNO = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings bLNo = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings bL2No = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings wKNO = new DataGridViewGeneratorTextColumnSettings();
 
             #region BLNo
             bLNo.CellValidating += (s, e) =>
@@ -618,7 +616,7 @@ when not matched by target then
             // 重新計算
             result = DBProxy.Current.Execute(
                 "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
+                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID));
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Calcute share expense failed.\r\n" + result.ToString());
@@ -776,20 +774,20 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
             if (MyUtility.Convert.GetString(this.apData["SubType"]) == "OTHER" && MyUtility.Convert.GetString(this.apData["Type"]) == "EXPORT")
             {
                 DialogResult buttonResult = MyUtility.Msg.InfoBox("If you want to import \"Garment Data\" please click 'Yes'.\r\nIf you want to import \"Material Data\" please click 'No'.\r\nIf you don't want to import data please click 'Cancel'.", "Warning", MessageBoxButtons.YesNoCancel);
-                if (buttonResult == System.Windows.Forms.DialogResult.Cancel)
+                if (buttonResult == DialogResult.Cancel)
                 {
                     return;
                 }
                 else
                 {
-                    if (buttonResult == System.Windows.Forms.DialogResult.Yes)
+                    if (buttonResult == DialogResult.Yes)
                     {
-                        Sci.Production.Shipping.P08_ShareExpense_ImportGarment callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportGarment(this.SEGroupData, t);
+                        P08_ShareExpense_ImportGarment callNextForm = new P08_ShareExpense_ImportGarment(this.SEGroupData, t);
                         callNextForm.ShowDialog(this);
                     }
                     else
                     {
-                        Sci.Production.Shipping.P08_ShareExpense_ImportMaterial callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportMaterial(this.SEGroupData, this.apData);
+                        P08_ShareExpense_ImportMaterial callNextForm = new P08_ShareExpense_ImportMaterial(this.SEGroupData, this.apData);
                         callNextForm.ShowDialog(this);
                     }
                 }
@@ -798,12 +796,12 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
             {
                 if (MyUtility.Convert.GetString(this.apData["SubType"]) == "GARMENT")
                 {
-                    Sci.Production.Shipping.P08_ShareExpense_ImportGarment callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportGarment(this.SEGroupData, t);
+                    P08_ShareExpense_ImportGarment callNextForm = new P08_ShareExpense_ImportGarment(this.SEGroupData, t);
                     callNextForm.ShowDialog(this);
                 }
                 else
                 {
-                    Sci.Production.Shipping.P08_ShareExpense_ImportMaterial callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportMaterial(this.SEGroupData, this.apData);
+                    P08_ShareExpense_ImportMaterial callNextForm = new P08_ShareExpense_ImportMaterial(this.SEGroupData, this.apData);
                     callNextForm.ShowDialog(this);
                 }
             }
@@ -813,7 +811,7 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
         private void BtnDelete_Click(object sender, EventArgs e)
         {
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Do you want to delete this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1073,7 +1071,6 @@ where   ShippingAPID = '{3}'
                     }
                 }
 
-
                 SqlConnection sqlConn = null;
                 DBProxy.Current.OpenConnection(null, out sqlConn);
                 using (TransactionScope transactionScope = new TransactionScope())
@@ -1115,7 +1112,7 @@ where   ShippingAPID = '{3}'
 
                         result = DBProxy.Current.ExecuteByConn(
                             sqlConn,
-                            string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
+                            string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID));
                         if (!result)
                         {
                             errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result.ToString();
@@ -1156,7 +1153,7 @@ select IsFactory = iif(IsFactory = 1, 'True', 'False')
 from LocalSupp
 where ID = '{0}'
 and Junk = 0",
-                       this.LocalSuppID);
+                        this.LocalSuppID);
 
                     // 當AP-Supplier 如果是SCI的工廠 跳過此判斷
                     bool chkIsFactory = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(sqlGBchk));
@@ -1308,7 +1305,7 @@ select [resultType] = 'OK',
                     listCheckResult.Add(new CheckResult()
                     {
                         resultType = item["resultType"].ToString(),
-                        resultValue = item["resultValue"].ToString()
+                        resultValue = item["resultValue"].ToString(),
                     });
                 }
             }
@@ -1326,7 +1323,7 @@ select [resultType] = 'OK',
             else
             {
                 DialogResult buttonResult = MyUtility.Msg.WarningBox("Discard changes?", "Warning", MessageBoxButtons.YesNo);
-                if (buttonResult == System.Windows.Forms.DialogResult.No)
+                if (buttonResult == DialogResult.No)
                 {
                     return;
                 }
@@ -1342,7 +1339,7 @@ select [resultType] = 'OK',
         {
             DualResult result = DBProxy.Current.Execute(
                 "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
+                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID));
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
@@ -1370,7 +1367,7 @@ select [resultType] = 'OK',
         private void BtnDeleteAll_Click(object sender, EventArgs e)
         {
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Do you want to delete all this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }

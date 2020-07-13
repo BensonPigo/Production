@@ -35,14 +35,14 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.labelCutCell = new Sci.Win.UI.Label();
             this.labelEstCutDate = new Sci.Win.UI.Label();
-            this.txtCutCell = new Sci.Production.Class.txtCell();
+            this.txtCutCell = new Sci.Production.Class.TxtCell();
             this.dateEstCutDate = new Sci.Win.UI.DateBox();
             this.panelTop = new Sci.Win.UI.Panel();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.panelBottom = new Sci.Win.UI.Panel();
             this.panelMiddle = new Sci.Win.UI.Panel();
-            this.txtSpreadingNo = new Sci.Production.Class.txtSpreadingNo();
+            this.txtSpreadingNo = new Sci.Production.Class.TxtSpreadingNo();
             this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.panelTop.SuspendLayout();
@@ -248,14 +248,14 @@
         private Win.UI.Button btnClose;
         private Win.UI.Label labelCutCell;
         private Win.UI.Label labelEstCutDate;
-        private Class.txtCell txtCutCell;
+        private Class.TxtCell txtCutCell;
         private Win.UI.DateBox dateEstCutDate;
         private Win.UI.Panel panelTop;
         private Win.UI.Panel panelBottom;
         private Win.UI.Panel panelMiddle;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
-        private Class.txtSpreadingNo txtSpreadingNo;
+        private Class.TxtSpreadingNo txtSpreadingNo;
     }
 }

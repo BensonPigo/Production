@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using System.Data;
 using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
@@ -14,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P40_Detail
     /// </summary>
-    public partial class P40_Detail : Sci.Win.Subs.Base
+    public partial class P40_Detail : Win.Subs.Base
     {
         private DataRow masterData;
         private string nlCode;

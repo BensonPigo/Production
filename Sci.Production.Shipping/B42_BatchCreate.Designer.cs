@@ -35,11 +35,11 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.btnQuery = new Sci.Win.UI.Button();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.labelCategory = new Sci.Win.UI.Label();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.labelStyle = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
@@ -153,8 +153,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 3;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // labelStyle
             // 
@@ -366,11 +366,11 @@
         private Win.UI.Grid gridBatchCreate;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Button btnQuery;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelBrand;
         private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelCategory;
-        private Class.txtstyle txtstyle;
+        private Class.Txtstyle txtstyle;
         private Win.UI.Label labelStyle;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label labelBuyerDelivery;

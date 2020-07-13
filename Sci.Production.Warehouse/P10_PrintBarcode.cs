@@ -1,12 +1,8 @@
 ﻿using Sci.Win.Tems;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
@@ -52,16 +48,15 @@ isu.Colorid,
 from Issue_Detail isd with (nolock)
 left join Issue_Summary isu with (nolock) on isu.Ukey = isd.Issue_SummaryUkey
 left join orders o with (nolock) on o.ID = isd.POID
-where isd.Id >= '{issueIdFrom}' and isd.Id <= '{issueIdTo}'";
+where isd.Id >= '{this.issueIdFrom}' and isd.Id <= '{this.issueIdTo}'";
 
-            result = DBProxy.Current.Select(null, printDataSql, out printData);
-            
+            result = DBProxy.Current.Select(null, printDataSql, out this.printData);
+
             return result;
         }
 
         protected override bool OnToPrint(ReportDefinition report)
         {
-
             if (this.printData == null || this.printData.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found");
@@ -69,31 +64,33 @@ where isd.Id >= '{issueIdFrom}' and isd.Id <= '{issueIdTo}'";
             }
 
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(this.printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
             DataTable dtFirstColumn;
             DataTable dtSecondColumn;
 
             int count = 1;
-            dtFirstColumn = printData.Clone();
-            dtSecondColumn = printData.Clone();
+            dtFirstColumn = this.printData.Clone();
+            dtSecondColumn = this.printData.Clone();
 
             foreach (DataRow dr in this.printData.Rows)
             {
-                //第一列資料
+                // 第一列資料
                 if (count % 2 == 1)
                 {
                     dtFirstColumn.ImportRow(dr);
                 }
-                //第二列資料
+
+                // 第二列資料
                 if (count % 2 == 0)
                 {
                     dtSecondColumn.ImportRow(dr);
                 }
+
                 count++;
             }
 
-            // 傳 list 資料     
+            // 傳 list 資料
             List<P10_PrintBarcodeData> finalData = dtFirstColumn.AsEnumerable()
                 .Select(newRow => new P10_PrintBarcodeData
                 {
@@ -103,7 +100,7 @@ where isd.Id >= '{issueIdFrom}' and isd.Id <= '{issueIdTo}'";
                     Roll = newRow["Roll"].ToString(),
                     Colorid = newRow["Colorid"].ToString(),
                     Yardage = newRow["Yardage"].ToString(),
-                    BarcodeNo = newRow["BarcodeNo"].ToString()
+                    BarcodeNo = newRow["BarcodeNo"].ToString(),
                 }).ToList();
 
             finalData.AddRange(
@@ -116,9 +113,8 @@ where isd.Id >= '{issueIdFrom}' and isd.Id <= '{issueIdTo}'";
                     Roll2 = newRow["Roll"].ToString(),
                     Colorid2 = newRow["Colorid"].ToString(),
                     Yardage2 = newRow["Yardage"].ToString(),
-                    BarcodeNo2 = newRow["BarcodeNo"].ToString()
-                }).ToList()
-                );
+                    BarcodeNo2 = newRow["BarcodeNo"].ToString(),
+                }).ToList());
 
             report.ReportDataSource = finalData;
 
@@ -127,24 +123,27 @@ where isd.Id >= '{issueIdFrom}' and isd.Id <= '{issueIdTo}'";
             string ReportResourceName = "P10_PrintBarcode.rdlc";
 
             IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(this.result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
             {
-                this.ShowException(result);
-                return result;
+                this.ShowException(this.result);
+                return this.result;
             }
 
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
-            frm.MdiParent = MdiParent;
+            var frm = new Win.Subs.ReportView(report);
+            frm.MdiParent = this.MdiParent;
+
             // frm.DirectPrint = true;
             frm.ShowDialog();
+
             // 關閉視窗
             if (frm.DialogResult == DialogResult.Cancel)
             {
                 this.Close();
             }
+
             return true;
         }
     }

@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.radioPanel = new Sci.Win.UI.RadioPanel();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.radioDetail = new Sci.Win.UI.RadioButton();
             this.radioSummary = new Sci.Win.UI.RadioButton();
             this.labelReportType = new Sci.Win.UI.Label();
@@ -207,7 +207,7 @@
         private Win.UI.Label labelCategory;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.Label labelSCIDelivery;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboCategory;
         private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

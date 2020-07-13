@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
@@ -14,7 +9,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_QtyCartonByCustCD
     /// </summary>
-    public partial class P04_QtyCartonByCustCD : Sci.Win.Subs.Base
+    public partial class P04_QtyCartonByCustCD : Win.Subs.Base
     {
         private string styleUkey;
 
@@ -44,20 +39,20 @@ LEFT JOIN Country C WITH (NOLOCK) ON S.CountryID=C.ID
 left join DropDownList d WITH (NOLOCK) on d.Type = 'Continent' and s.Continent = d.ID
 where s.StyleUkey = {0}", this.styleUkey);
 
-            DataTable selectDataTable;
-            DualResult selectResult1 = DBProxy.Current.Select(null, sqlCmd, out selectDataTable);
-            foreach (DataRow gridData in selectDataTable.Rows)
+           DataTable selectDataTable;
+           DualResult selectResult1 = DBProxy.Current.Select(null, sqlCmd, out selectDataTable);
+           foreach (DataRow gridData in selectDataTable.Rows)
             {
                 gridData["CreateBy"] = gridData["AddName"].ToString() + " " + (MyUtility.Check.Empty(gridData["AddDate"]) ? string.Empty : ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat)));
-                gridData["EditBy"] = gridData["EditName"].ToString() + "  " + (MyUtility.Check.Empty(gridData["EditDate"]) ? string.Empty : ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat)));
+                gridData["EditBy"] = gridData["EditName"].ToString() + "  " + (MyUtility.Check.Empty(gridData["EditDate"]) ? string.Empty : ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat)));
             }
 
-            this.listControlBindingSource1.DataSource = selectDataTable;
+           this.listControlBindingSource1.DataSource = selectDataTable;
 
             // 設定Grid1的顯示欄位
-            this.gridCustCD.IsEditingReadOnly = true;
-            this.gridCustCD.DataSource = this.listControlBindingSource1;
-            this.Helper.Controls.Grid.Generator(this.gridCustCD)
+           this.gridCustCD.IsEditingReadOnly = true;
+           this.gridCustCD.DataSource = this.listControlBindingSource1;
+           this.Helper.Controls.Grid.Generator(this.gridCustCD)
                  .Text("ContinentName", header: "Continent", width: Widths.AnsiChars(15))
                  .Text("CountryID", header: "Country Id", width: Widths.AnsiChars(2))
                  .Text("Alias", header: "Country", width: Widths.AnsiChars(10))

@@ -1,27 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Ict;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_Wkno : Sci.Win.Subs.Base
+    public partial class P03_Wkno : Win.Subs.Base
     {
         DataRow dr;
+
         public P03_Wkno(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
-            this.Text += string.Format(" ({0}-{1}- {2})", dr["id"].ToString()
-, dr["seq1"].ToString()
-, dr["seq2"].ToString());
+            this.InitializeComponent();
+            this.dr = data;
+            this.Text += string.Format(" ({0}-{1}- {2})", this.dr["id"].ToString(),
+this.dr["seq1"].ToString(),
+this.dr["seq2"].ToString());
         }
 
         protected override void OnFormLoaded()
@@ -42,18 +37,21 @@ From export a WITH (NOLOCK)
 Where a.id = b.id
 And b.poid = '{0}'
 And b.seq1 = '{1}'
-And b.seq2 = '{2}'", dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
+And b.seq2 = '{2}'", this.dr["id"].ToString(), this.dr["seq1"].ToString(), this.dr["seq2"].ToString());
 
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
-            if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
+            if (selectResult1 == false)
+            {
+                this.ShowErr(selectCommand1, selectResult1);
+            }
 
-            bindingSource1.DataSource = selectDataTable1;
+            this.bindingSource1.DataSource = selectDataTable1;
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridWkno.IsEditingReadOnly = true;
-            this.gridWkno.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.gridWkno)
+            this.gridWkno.DataSource = this.bindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridWkno)
                  .Text("id", header: "WK#", width: Widths.AnsiChars(18))
                  .Date("ETA", header: "ETA", width: Widths.AnsiChars(12))
                  .Date("WhseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(12))

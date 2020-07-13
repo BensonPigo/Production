@@ -49,7 +49,7 @@
             this.txtIntermediaryBankSWIFTCode = new Sci.Win.UI.TextBox();
             this.displayCreateBy = new Sci.Win.UI.DisplayBox();
             this.displayEditBy = new Sci.Win.UI.DisplayBox();
-            this.txtCountry = new Sci.Production.Class.txtcountry();
+            this.txtCountry = new Sci.Production.Class.Txtcountry();
             this.editRemark = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -374,7 +374,7 @@
         private Win.UI.TextBox txtIntermediaryBankSWIFTCode;
         private Win.UI.DisplayBox displayCreateBy;
         private Win.UI.DisplayBox displayEditBy;
-        private Class.txtcountry txtCountry;
+        private Class.Txtcountry txtCountry;
         private Win.UI.EditBox editRemark;
     }
 }

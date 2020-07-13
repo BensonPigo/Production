@@ -4,24 +4,21 @@ using Sci.Data;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P13_FabricSticker : Sci.Win.Subs.Base
+    public partial class P13_FabricSticker : Win.Subs.Base
     {
         private object strSubTransferID;
 
         public P13_FabricSticker(object strSubTransferID)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.strSubTransferID = strSubTransferID;
         }
 
@@ -142,7 +139,7 @@ order by NewRowNo";
                 Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
                 string ReportResourceName = "P13_FabricSticker_Print.rdlc";
 
-                Ict.Win.IReportResource reportresource;
+                IReportResource reportresource;
 
                 if ((result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)) == false)
                 {
@@ -153,14 +150,15 @@ order by NewRowNo";
                 report.ReportResource = reportresource;
 
                 // 開啟 report view
-                var frm = new Sci.Win.Subs.ReportView(report);
-                frm.MdiParent = MdiParent;
+                var frm = new Win.Subs.ReportView(report);
+                frm.MdiParent = this.MdiParent;
                 frm.ShowDialog();
+
                 // 關閉視窗
                 if (frm.DialogResult == DialogResult.Cancel)
                 {
                     this.Close();
-                }                
+                }
                 #endregion
             }
             else

@@ -6,7 +6,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_B01
     /// </summary>
-    public partial class B01 : Sci.Win.Tems.Input1
+    public partial class B01 : Win.Tems.Input1
     {
         /// <summary>
         /// B01
@@ -88,7 +88,7 @@ namespace Sci.Production.IE
         private void TxtBrand_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK)	WHERE Junk=0  ORDER BY Id";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,30,30", this.txtBrand.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlWhere, "10,30,30", this.txtBrand.Text, false, ",");
             item.Size = new System.Drawing.Size(750, 500);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

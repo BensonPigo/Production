@@ -94,14 +94,14 @@
             this.chkNonDeclare = new Sci.Win.UI.CheckBox();
             this.ChkDoortoDoorDelivery = new Sci.Win.UI.CheckBox();
             this.labelFormE = new Sci.Win.UI.Label();
-            this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
             this.chkSQCS = new Sci.Win.UI.CheckBox();
             this.btnCOInfo = new Sci.Win.UI.Button();
             this.chkCustomOT = new Sci.Win.UI.CheckBox();
             this.lbTruckFee = new Sci.Win.UI.Label();
             this.lbRespFty = new Sci.Win.UI.Label();
-            this.txtCustomOTRespFty1 = new Sci.Production.Class.txtfactory();
-            this.txtCustomOTRespFty2 = new Sci.Production.Class.txtfactory();
+            this.txtCustomOTRespFty1 = new Sci.Production.Class.Txtfactory();
+            this.txtCustomOTRespFty2 = new Sci.Production.Class.Txtfactory();
             this.numFtyTruckFee = new Sci.Win.UI.NumericBox();
             this.numOTFee = new Sci.Win.UI.NumericBox();
             this.labOTFee = new Sci.Win.UI.Label();
@@ -1134,7 +1134,7 @@
             // txtCustomOTRespFty1
             // 
             this.txtCustomOTRespFty1.BackColor = System.Drawing.Color.White;
-            this.txtCustomOTRespFty1.boolFtyGroupList = true;
+            this.txtCustomOTRespFty1.BoolFtyGroupList = true;
             this.txtCustomOTRespFty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CustomOTRespFty1", true));
             this.txtCustomOTRespFty1.FilteMDivision = false;
             this.txtCustomOTRespFty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -1150,7 +1150,7 @@
             // txtCustomOTRespFty2
             // 
             this.txtCustomOTRespFty2.BackColor = System.Drawing.Color.White;
-            this.txtCustomOTRespFty2.boolFtyGroupList = true;
+            this.txtCustomOTRespFty2.BoolFtyGroupList = true;
             this.txtCustomOTRespFty2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CustomOTRespFty2", true));
             this.txtCustomOTRespFty2.FilteMDivision = false;
             this.txtCustomOTRespFty2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -1288,7 +1288,7 @@
         private Win.UI.DateBox dateArriveWHDate;
         private Win.UI.DateBox dateArrivePortDate;
         private Win.UI.DateBox datePLRcvDate;
-        private Class.txttpeuser txttpeuserHandle;
+        private Class.Txttpeuser txttpeuserHandle;
         private Win.UI.Label labelDoxRcvDate;
         private Win.UI.Label labelArriveWHDate;
         private Win.UI.Label labelArrivePortDate;
@@ -1348,8 +1348,8 @@
         private Win.UI.Label lbTruckFee;
         private Win.UI.CheckBox chkCustomOT;
         private Win.UI.Label lbRespFty;
-        private Class.txtfactory txtCustomOTRespFty2;
-        private Class.txtfactory txtCustomOTRespFty1;
+        private Class.Txtfactory txtCustomOTRespFty2;
+        private Class.Txtfactory txtCustomOTRespFty1;
         private Win.UI.NumericBox numFtyTruckFee;
         private Win.UI.NumericBox numOTFee;
         private Win.UI.Label labOTFee;

@@ -1,18 +1,12 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
-using Sci.Production.Quality;
 using System.Runtime.InteropServices;
 using Sci.Production.PublicPrg;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -21,107 +15,106 @@ using System.Diagnostics;
 
 namespace Sci.Production.Quality
 {
-    public partial class P01_Weight : Sci.Win.Subs.Input4
+    public partial class P01_Weight : Win.Subs.Input4
     {
         private DataRow maindr;
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         string excelFile;
 
         public P01_Weight(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
-
         {
-            InitializeComponent();
-            maindr = mainDr;
+            this.InitializeComponent();
+            this.maindr = mainDr;
             this.textID.Text = keyvalue1;
         }
 
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
-            button_enable();
+            this.button_enable();
         }
-        
 
         protected override DualResult OnRequery()
         {
             #region Encode/Approve Enable
-            button_enable();
-            btnEncode.Text = MyUtility.Convert.GetBool(maindr["WeightEncode"]) ? "Amend" : "Encode";
-            btnApprove.Text = maindr["Status"].ToString() == "Approved" ? "Unapprove" : "Approve";
+            this.button_enable();
+            this.btnEncode.Text = MyUtility.Convert.GetBool(this.maindr["WeightEncode"]) ? "Amend" : "Encode";
+            this.btnApprove.Text = this.maindr["Status"].ToString() == "Approved" ? "Unapprove" : "Approve";
             #endregion
 
-            this.save.Enabled = !MyUtility.Convert.GetBool(maindr["WeightEncode"]);
+            this.save.Enabled = !MyUtility.Convert.GetBool(this.maindr["WeightEncode"]);
 
-            txtsupplier.TextBox1.IsSupportEditMode = false;
-            txtsupplier.TextBox1.ReadOnly = true;
-            txtuserApprover.TextBox1.IsSupportEditMode = false;
-            txtuserApprover.TextBox1.ReadOnly = true;
+            this.txtsupplier.TextBox1.IsSupportEditMode = false;
+            this.txtsupplier.TextBox1.ReadOnly = true;
+            this.txtuserApprover.TextBox1.IsSupportEditMode = false;
+            this.txtuserApprover.TextBox1.ReadOnly = true;
 
-            string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", maindr["POID"]);
+            string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
             DataRow order_dr;
             if (MyUtility.Check.Seek(order_cmd, out order_dr))
             {
-                displayBrand.Text = order_dr["Brandid"].ToString();
-                displayStyle.Text = order_dr["Styleid"].ToString();
+                this.displayBrand.Text = order_dr["Brandid"].ToString();
+                this.displayStyle.Text = order_dr["Styleid"].ToString();
             }
             else
             {
-                displayBrand.Text = "";
-                displayStyle.Text = "";
+                this.displayBrand.Text = string.Empty;
+                this.displayStyle.Text = string.Empty;
             }
-            string po_cmd = string.Format("Select * from po_supp WITH (NOLOCK) where id='{0}' and seq1 = '{1}'", maindr["POID"], maindr["seq1"]);
+
+            string po_cmd = string.Format("Select * from po_supp WITH (NOLOCK) where id='{0}' and seq1 = '{1}'", this.maindr["POID"], this.maindr["seq1"]);
             DataRow po_dr;
             if (MyUtility.Check.Seek(po_cmd, out po_dr))
             {
-                txtsupplier.TextBox1.Text = po_dr["suppid"].ToString();
-
+                this.txtsupplier.TextBox1.Text = po_dr["suppid"].ToString();
             }
             else
             {
-                txtsupplier.TextBox1.Text = "";
+                this.txtsupplier.TextBox1.Text = string.Empty;
             }
-            string Receiving_cmd = string.Format("select b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", maindr["id"]);
+
+            string Receiving_cmd = string.Format("select b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", this.maindr["id"]);
             DataRow rec_dr;
             if (MyUtility.Check.Seek(Receiving_cmd, out rec_dr))
             {
-                displayRefno.Text = rec_dr["Refno"].ToString();
+                this.displayRefno.Text = rec_dr["Refno"].ToString();
             }
             else
             {
-                displayRefno.Text = "";
-            }
-            string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}'", maindr["POID"], maindr["seq1"], maindr["seq2"]);
-            DataRow po_supp_detail_dr;
-            if (MyUtility.Check.Seek(po_supp_detail_cmd, out po_supp_detail_dr))
-            {                
-                displayColor.Text = po_supp_detail_dr["colorid"].ToString();
-            }
-            else
-            {
-                displayColor.Text = "";
+                this.displayRefno.Text = string.Empty;
             }
 
-            displaySCIRefno.Text = maindr["SCIRefno"].ToString();               
-            displayApprover.Text = maindr["ApproveDate"].ToString();
-            displayArriveQty.Text = maindr["arriveQty"].ToString();
-            dateArriveWHDate.Value = MyUtility.Convert.GetDate(maindr["whseArrival"]);
-            dateLastInspectionDate.Value = MyUtility.Convert.GetDate(maindr["WeightDate"]);
-            displaySCIRefno1.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
-            displaySEQ.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
-            displaySP.Text = maindr["POID"].ToString();
-            displayWKNo.Text = maindr["Exportid"].ToString();
-            checkNonWeightTest.Value = maindr["nonWeight"].ToString();
-            displayResult.Text = maindr["Weight"].ToString();
-            txtuserApprover.TextBox1.Text = maindr["Approve"].ToString();
-            txtWeightInspector.Text = maindr["WeightInspector"].ToString();
+            string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}'", this.maindr["POID"], this.maindr["seq1"], this.maindr["seq2"]);
+            DataRow po_supp_detail_dr;
+            if (MyUtility.Check.Seek(po_supp_detail_cmd, out po_supp_detail_dr))
+            {
+                this.displayColor.Text = po_supp_detail_dr["colorid"].ToString();
+            }
+            else
+            {
+                this.displayColor.Text = string.Empty;
+            }
+
+            this.displaySCIRefno.Text = this.maindr["SCIRefno"].ToString();
+            this.displayApprover.Text = this.maindr["ApproveDate"].ToString();
+            this.displayArriveQty.Text = this.maindr["arriveQty"].ToString();
+            this.dateArriveWHDate.Value = MyUtility.Convert.GetDate(this.maindr["whseArrival"]);
+            this.dateLastInspectionDate.Value = MyUtility.Convert.GetDate(this.maindr["WeightDate"]);
+            this.displaySCIRefno1.Text = MyUtility.GetValue.Lookup("Description", this.maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
+            this.displaySEQ.Text = this.maindr["Seq1"].ToString() + "-" + this.maindr["Seq2"].ToString();
+            this.displaySP.Text = this.maindr["POID"].ToString();
+            this.displayWKNo.Text = this.maindr["Exportid"].ToString();
+            this.checkNonWeightTest.Value = this.maindr["nonWeight"].ToString();
+            this.displayResult.Text = this.maindr["Weight"].ToString();
+            this.txtuserApprover.TextBox1.Text = this.maindr["Approve"].ToString();
+            this.txtWeightInspector.Text = this.maindr["WeightInspector"].ToString();
             return base.OnRequery();
         }
 
         protected override void OnRequeryPost(DataTable datas)
         {
-            
             base.OnRequeryPost(datas);
             datas.Columns.Add("Name", typeof(string));
             datas.Columns.Add("POID", typeof(string));
@@ -130,10 +123,10 @@ namespace Sci.Production.Quality
 
             foreach (DataRow dr in datas.Rows)
             {
-                dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");            
-                dr["poid"] = maindr["poid"];
-                dr["SEQ1"] = maindr["SEQ1"];
-                dr["SEQ2"] = maindr["SEQ2"];
+                dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");
+                dr["poid"] = this.maindr["poid"];
+                dr["SEQ1"] = this.maindr["SEQ1"];
+                dr["SEQ2"] = this.maindr["SEQ2"];
             }
         }
 
@@ -141,50 +134,75 @@ namespace Sci.Production.Quality
         {
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings averageWeightM2cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResulCell = Prgs.cellResult.GetGridCell();
             #region Roll
             Rollcell.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode == false) return;
-                if (e.RowIndex == -1) return;
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
                 if (e.Button == MouseButtons.Right)
                 {
-                    // Parent form 若是非編輯狀態就 return 
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    // Parent form 若是非編輯狀態就 return
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                    string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", this.maindr["Receivingid"], this.maindr["Poid"], this.maindr["seq1"], this.maindr["seq2"]);
 
                     if (!MyUtility.Check.Seek(roll_cmd))
                     {
-                        roll_cmd = string.Format("Select roll,dyelot from TransferIn_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                        roll_cmd = string.Format("Select roll,dyelot from TransferIn_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", this.maindr["Receivingid"], this.maindr["Poid"], this.maindr["seq1"], this.maindr["seq2"]);
                     }
 
-                    sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",");
+                    sele = new SelectItem(roll_cmd, "15,10,10", dr["roll"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     dr["Roll"] = sele.GetSelecteds()[0]["Roll"].ToString().Trim();
                     dr["Dyelot"] = sele.GetSelecteds()[0]["Dyelot"].ToString().Trim();
                 }
             };
             Rollcell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Roll"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return
-                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+                if (!this.EditMode)
                 {
-                    dr["Roll"] = "";
-                    dr["Dyelot"] = "";
+                    return; // 非編輯模式
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                {
+                    dr["Roll"] = string.Empty;
+                    dr["Dyelot"] = string.Empty;
                     return;
                 }
-                if (oldvalue == newvalue) return;
-                string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
+                string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", this.maindr["Receivingid"], this.maindr["Poid"], this.maindr["seq1"], this.maindr["seq2"], e.FormattedValue);
 
                 if (!MyUtility.Check.Seek(roll_cmd))
                 {
-                    roll_cmd = string.Format("Select roll,dyelot from TransferIn_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                    roll_cmd = string.Format("Select roll,dyelot from TransferIn_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", this.maindr["Receivingid"], this.maindr["Poid"], this.maindr["seq1"], this.maindr["seq2"], e.FormattedValue);
                 }
 
                 DataRow roll_dr;
@@ -196,38 +214,46 @@ namespace Sci.Production.Quality
                 }
                 else
                 {
-                    dr["Roll"] = "";
-                    dr["Dyelot"] = "";
+                    dr["Roll"] = string.Empty;
+                    dr["Dyelot"] = string.Empty;
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
                     return;
-                }  
+                }
             };
             #endregion
             #region Difference
             averageWeightM2cell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["averageWeightM2"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (this.EditMode == false) return;
-                if (oldvalue == newvalue) return;
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
                 decimal M2 = MyUtility.Convert.GetDecimal(dr["WeightM2"]);
                 decimal AvgM2 = MyUtility.Convert.GetDecimal(e.FormattedValue);
-                decimal diff = M2==0 ? 0 : Math.Round(((AvgM2 - M2) / M2) * 100, 2);
+                decimal diff = M2 == 0 ? 0 : Math.Round(((AvgM2 - M2) / M2) * 100, 2);
                 dr["averageWeightM2"] = AvgM2;
                 dr["Difference"] = diff;
                 dr.EndEdit();
             };
             #endregion
-          
-            Helper.Controls.Grid.Generator(this.grid)
+
+            this.Helper.Controls.Grid.Generator(this.grid)
             .Date("SubmitDate", header: "Submit Date", width: Widths.AnsiChars(10))
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("WeightM2", header: "DeclaredMass", width: Widths.AnsiChars(7), integer_places: 4, decimal_places: 1, iseditingreadonly: true)
-            .Numeric("averageWeightM2", header: "Average Mass", width: Widths.AnsiChars(7), integer_places: 4, decimal_places: 1,settings: averageWeightM2cell)
+            .Numeric("averageWeightM2", header: "Average Mass", width: Widths.AnsiChars(7), integer_places: 4, decimal_places: 1, settings: averageWeightM2cell)
             .Numeric("Difference", header: "Diff%", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2, iseditingreadonly: true)
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: ResulCell)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
@@ -235,39 +261,38 @@ namespace Sci.Production.Quality
             .Text("Name", header: "Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20));
 
-            grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns["averageWeightM2"].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns["Result"].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns["Result"].DefaultCellStyle.ForeColor = Color.Red;
+            this.grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.MistyRose;
+            this.grid.Columns["averageWeightM2"].DefaultCellStyle.BackColor = Color.MistyRose;
+            this.grid.Columns["Result"].DefaultCellStyle.BackColor = Color.MistyRose;
+            this.grid.Columns["Result"].DefaultCellStyle.ForeColor = Color.Red;
 
-            grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.MistyRose;
+            this.grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.MistyRose;
+            this.grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.MistyRose;
+            this.grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.MistyRose;
             return true;
-
         }
 
         protected override void OnInsert()
         {
-            DataTable Dt = (DataTable)gridbs.DataSource;
+            DataTable Dt = (DataTable)this.gridbs.DataSource;
             base.OnInsert();
-            
-            DataRow selectDr = ((DataRowView)grid.GetSelecteds(SelectedSort.Index)[0]).Row;
 
-            selectDr["Result"] = "";
+            DataRow selectDr = ((DataRowView)this.grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+
+            selectDr["Result"] = string.Empty;
             selectDr["Inspdate"] = DateTime.Now.ToShortDateString();
-            selectDr["Inspector"] = loginID;
-            selectDr["Name"] = MyUtility.GetValue.Lookup("Name", loginID, "Pass1", "ID");
-            selectDr["poid"] = maindr["poid"];
-            selectDr["SEQ1"] = maindr["SEQ1"];
-            selectDr["SEQ2"] = maindr["SEQ2"];
-            selectDr["WeightM2"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("WeightM2", maindr["SciRefno"].ToString(), "Fabric", "SciRefno"));
+            selectDr["Inspector"] = this.loginID;
+            selectDr["Name"] = MyUtility.GetValue.Lookup("Name", this.loginID, "Pass1", "ID");
+            selectDr["poid"] = this.maindr["poid"];
+            selectDr["SEQ1"] = this.maindr["SEQ1"];
+            selectDr["SEQ2"] = this.maindr["SEQ2"];
+            selectDr["WeightM2"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("WeightM2", this.maindr["SciRefno"].ToString(), "Fabric", "SciRefno"));
             selectDr["difference"] = 0;
         }
 
         protected override bool OnSaveBefore()
         {
-            DataTable gridTb = (DataTable)gridbs.DataSource;
+            DataTable gridTb = (DataTable)this.gridbs.DataSource;
             #region 判斷空白不可存檔
             DataRow[] drArray;
             drArray = gridTb.Select("Roll=''");
@@ -276,6 +301,7 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("<Roll> can not be empty.");
                 return false;
             }
+
             drArray = gridTb.Select("averageWeightM2=0");
             if (drArray.Length != 0)
             {
@@ -289,12 +315,14 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("<Rresult> can not be empty.");
                 return false;
             }
+
             drArray = gridTb.Select("Inspdate is null");
             if (drArray.Length != 0)
             {
                 MyUtility.Msg.WarningBox("<Insection Date> can not be empty.");
                 return false;
             }
+
             drArray = gridTb.Select("inspector=''");
             if (drArray.Length != 0)
             {
@@ -303,25 +331,25 @@ namespace Sci.Production.Quality
             }
             #endregion
 
-
             return base.OnSaveBefore();
         }
 
         private void btnEncode_Click(object sender, EventArgs e)
         {
-            string updatesql ="";
-            if (MyUtility.Check.Empty(CurrentData) && btnEncode.Text=="Encode")
+            string updatesql = string.Empty;
+            if (MyUtility.Check.Empty(this.CurrentData) && this.btnEncode.Text == "Encode")
             {
                 MyUtility.Msg.WarningBox("Data not found! ");
                 return;
             }
-            if (!MyUtility.Convert.GetBool(maindr["WeightEncode"])) //Encode
+
+            if (!MyUtility.Convert.GetBool(this.maindr["WeightEncode"])) // Encode
             {
-                if (!MyUtility.Convert.GetBool(maindr["nonWeight"])) //只要沒勾選就要判斷，有勾選就可直接Encode
+                if (!MyUtility.Convert.GetBool(this.maindr["nonWeight"])) // 只要沒勾選就要判斷，有勾選就可直接Encode
                 {
-                    if (MyUtility.GetValue.Lookup("WeaveTypeID", maindr["SCIRefno"].ToString(), "Fabric", "SciRefno") == "KNIT")
+                    if (MyUtility.GetValue.Lookup("WeaveTypeID", this.maindr["SCIRefno"].ToString(), "Fabric", "SciRefno") == "KNIT")
                     {
-                        //當Fabric.WeaveTypdID = 'Knit' 時必須每ㄧ缸都要有檢驗
+                        // 當Fabric.WeaveTypdID = 'Knit' 時必須每ㄧ缸都要有檢驗
                         DataTable dyeDt;
                         string cmd = string.Format(
                         @"
@@ -334,46 +362,52 @@ Select distinct dyelot from TransferIn_Detail a WITH (NOLOCK) where
 a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
 and not exists 
 (Select distinct dyelot from FIR_Weight b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)
-"
-                           , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
+",
+                        this.maindr["receivingid"], this.maindr["id"], this.maindr["POID"], this.maindr["seq1"], this.maindr["seq2"]);
                         DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);
                         if (dResult)
                         {
                             if (dyeDt.Rows.Count > 0)
                             {
-                                string dye = "";
+                                string dye = string.Empty;
                                 foreach (DataRow dr in dyeDt.Rows)
                                 {
                                     dye = dye + dr["Dyelot"].ToString() + ",";
                                 }
+
                                 MyUtility.Msg.WarningBox("<Dyelot>:" + dye + " Each Dyelot must be test!");
                                 return;
                             }
                         }
                     }
                 }
-                DataTable gridTb = (DataTable)gridbs.DataSource;
+
+                DataTable gridTb = (DataTable)this.gridbs.DataSource;
                 DataRow[] ResultAry = gridTb.Select("Result = 'Fail'");
                 string result = "Pass";
-                if (ResultAry.Length > 0) result = "Fail";
+                if (ResultAry.Length > 0)
+                {
+                    result = "Fail";
+                }
                 #region  寫入虛擬欄位
-                maindr["Weight"] = result;
-                maindr["WeightDate"] = DateTime.Now.ToShortDateString();
-                maindr["WeightEncode"] = true;
-                maindr["EditName"] = loginID;
-                maindr["EditDate"] = DateTime.Now.ToShortDateString();
-                maindr["WeightInspector"] = loginID;
-                #endregion 
+                this.maindr["Weight"] = result;
+                this.maindr["WeightDate"] = DateTime.Now.ToShortDateString();
+                this.maindr["WeightEncode"] = true;
+                this.maindr["EditName"] = this.loginID;
+                this.maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                this.maindr["WeightInspector"] = this.loginID;
+                #endregion
                 #region 判斷Result 是否要寫入
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
-                #endregion 
+                string[] returnstr = Prgs.GetOverallResult_Status(this.maindr);
+                #endregion
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set WeightDate = GetDate(),WeightEncode=1,EditName='{0}',EditDate = GetDate(),Weight = '{1}',Result ='{2}',Status='{4}',WeightInspector = '{0}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
+                @"Update Fir set WeightDate = GetDate(),WeightEncode=1,EditName='{0}',EditDate = GetDate(),Weight = '{1}',Result ='{2}',Status='{4}',WeightInspector = '{0}' where id ={3}", this.loginID, result, returnstr[0], this.maindr["ID"], returnstr[1]);
                 #endregion
                 #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
                 DataTable dt_Leader;
-                string cmd_leader = string.Format(@"
+                string cmd_leader = string.Format(
+                    @"
 select ToAddress = stuff ((select concat (';', tmp.email)
 						  from (
 							  select distinct email from pass1
@@ -381,8 +415,8 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 							         or id in (select Manager from Pass1 where id = '{0}')
 						  ) tmp
 						  for xml path('')
-						 ), 1, 1, '')", Sci.Env.User.UserID);
-                DBProxy.Current.Select("", cmd_leader, out dt_Leader);
+						 ), 1, 1, '')", Env.User.UserID);
+                DBProxy.Current.Select(string.Empty, cmd_leader, out dt_Leader);
                 if (!MyUtility.Check.Empty(dt_Leader)
                     && dt_Leader.Rows.Count > 0)
                 {
@@ -392,35 +426,36 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                     string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayRefno.Text, this.displayColor.Text)
                                      + Environment.NewLine
                                      + "Please Approve and Check Fabric Inspection";
-                    ToExcel(true);
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, excelFile, content, false, true);
+                    this.ToExcel(true);
+                    var email = new MailTo(Env.Cfg.MailFrom, mailto, ccAddress, subject, this.excelFile, content, false, true);
                     email.ShowDialog(this);
                 }
                 #endregion
 
-                maindr["Result"] = returnstr[0];
-                maindr["Status"] = returnstr[1];
+                this.maindr["Result"] = returnstr[0];
+                this.maindr["Status"] = returnstr[1];
             }
-            else //Amend
+            else // Amend
             {
-
                 #region  寫入虛擬欄位
-                maindr["Weight"] = "";
-                maindr["WeightDate"] = DBNull.Value;
-                maindr["WeightEncode"] = false;                
-                maindr["EditName"] = loginID;
-                maindr["EditDate"] = DateTime.Now.ToShortDateString();
-                maindr["WeightInspector"] = string.Empty;
-                //判斷Result and Status 必須先確認Weight="", 判斷才會正確
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
-                maindr["Result"] = returnstr[0];
-                maindr["Status"] = returnstr[1];
-                #endregion 
+                this.maindr["Weight"] = string.Empty;
+                this.maindr["WeightDate"] = DBNull.Value;
+                this.maindr["WeightEncode"] = false;
+                this.maindr["EditName"] = this.loginID;
+                this.maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                this.maindr["WeightInspector"] = string.Empty;
+
+                // 判斷Result and Status 必須先確認Weight="", 判斷才會正確
+                string[] returnstr = Prgs.GetOverallResult_Status(this.maindr);
+                this.maindr["Result"] = returnstr[0];
+                this.maindr["Status"] = returnstr[1];
+                #endregion
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set WeightDate = null,WeightEncode=0,EditName='{0}',EditDate = GetDate(),Weight = '',Result ='{2}',Status='{3}',WeightInspector = ''  where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
+                @"Update Fir set WeightDate = null,WeightEncode=0,EditName='{0}',EditDate = GetDate(),Weight = '',Result ='{2}',Status='{3}',WeightInspector = ''  where id ={1}", this.loginID, this.maindr["ID"], returnstr[0], returnstr[1]);
                 #endregion
             }
+
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -432,11 +467,13 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                         _transactionscope.Dispose();
                         return;
                     }
-                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{maindr["POID"].ToString()}'; ")))
+
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{this.maindr["POID"].ToString()}'; ")))
                     {
                         _transactionscope.Dispose();
                         return;
                     }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
@@ -444,42 +481,43 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            OnRequery();
+            this.OnRequery();
         }
 
         private void btnApprove_Click(object sender, EventArgs e)
         {
-            string updatesql = "";
+            string updatesql = string.Empty;
 
-            if (maindr["Status"].ToString() == "Confirmed")
+            if (this.maindr["Status"].ToString() == "Confirmed")
             {
-                maindr["Status"] = "Approved";
-                maindr["Approve"] = loginID;
-                maindr["ApproveDate"] = DateTime.Now.ToShortDateString();
-                maindr["EditName"] = loginID;
-                maindr["EditDate"] = DateTime.Now;
+                this.maindr["Status"] = "Approved";
+                this.maindr["Approve"] = this.loginID;
+                this.maindr["ApproveDate"] = DateTime.Now.ToShortDateString();
+                this.maindr["EditName"] = this.loginID;
+                this.maindr["EditDate"] = DateTime.Now;
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set Status = 'Approved',Approve='{0}',EditName='{0}',EditDate = GetDate(),ApproveDate = GetDate() where id ={1}", loginID, maindr["ID"]);
+                @"Update Fir set Status = 'Approved',Approve='{0}',EditName='{0}',EditDate = GetDate(),ApproveDate = GetDate() where id ={1}", this.loginID, this.maindr["ID"]);
                 #endregion
             }
             else
             {
-                maindr["Status"] = "Confirmed";
-                maindr["Approve"] = "";
-                maindr["ApproveDate"] = DBNull.Value;
-                maindr["EditName"] = loginID;
-                maindr["EditDate"] = DateTime.Now;
+                this.maindr["Status"] = "Confirmed";
+                this.maindr["Approve"] = string.Empty;
+                this.maindr["ApproveDate"] = DBNull.Value;
+                this.maindr["EditName"] = this.loginID;
+                this.maindr["EditDate"] = DateTime.Now;
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set Status = 'Confirmed',Approve='',EditName='{0}',EditDate = GetDate(),ApproveDate = null where id ={1}", loginID, maindr["ID"]);
+                @"Update Fir set Status = 'Confirmed',Approve='',EditName='{0}',EditDate = GetDate(),ApproveDate = null where id ={1}", this.loginID, this.maindr["ID"]);
                 #endregion
             }
+
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -491,6 +529,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                         _transactionscope.Dispose();
                         return;
                     }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
@@ -498,7 +537,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
@@ -511,43 +550,48 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayRefno.Text, this.displayColor.Text);
                 string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayRefno.Text, this.displayColor.Text);
 
-                ToExcel(true);
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, excelFile, content, false, true);
+                this.ToExcel(true);
+                var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, this.excelFile, content, false, true);
                 email.ShowDialog(this);
             }
             #endregion
-            OnRequery();
+            this.OnRequery();
         }
 
         private void button_enable()
         {
-            if (maindr == null) return;
-            btnEncode.Enabled = this.CanEdit && !this.EditMode && maindr["Status"].ToString() != "Approved";
+            if (this.maindr == null)
+            {
+                return;
+            }
+
+            this.btnEncode.Enabled = this.CanEdit && !this.EditMode && this.maindr["Status"].ToString() != "Approved";
             this.btnToExcel.Enabled = !this.EditMode;
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
-            string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
+            string pass0pk = MyUtility.GetValue.Lookup("FKPass0", this.loginID, "Pass1", "ID");
             DataRow pass2_dr;
             string pass2_cmd = string.Format("Select * from Pass2 WITH (NOLOCK) Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
-            int lApprove = 0; //有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
+            int lApprove = 0; // 有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
             int lCheck = 0;
             if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
             {
                 lApprove = pass2_dr["CanConfirm"].ToString() == "True" ? 1 : 0;
                 lCheck = pass2_dr["CanCheck"].ToString() == "True" ? 1 : 0;
             }
-            if (maindr["Result"].ToString() == "Pass")
+
+            if (this.maindr["Result"].ToString() == "Pass")
             {
-                btnApprove.Enabled = this.CanEdit && !this.EditMode && lApprove == 1 && !MyUtility.Check.Empty(maindr["Result"]) && !MyUtility.Check.Empty(maindr["Weight"]);
+                this.btnApprove.Enabled = this.CanEdit && !this.EditMode && lApprove == 1 && !MyUtility.Check.Empty(this.maindr["Result"]) && !MyUtility.Check.Empty(this.maindr["Weight"]);
             }
             else
             {
-                btnApprove.Enabled = this.CanEdit && !this.EditMode && lCheck == 1 && !MyUtility.Check.Empty(maindr["Result"]) && !MyUtility.Check.Empty(maindr["Weight"]);
+                this.btnApprove.Enabled = this.CanEdit && !this.EditMode && lCheck == 1 && !MyUtility.Check.Empty(this.maindr["Result"]) && !MyUtility.Check.Empty(this.maindr["Weight"]);
             }
         }
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            ToExcel(false);
+            this.ToExcel(false);
         }
 
         private bool ToExcel(bool isSendMail)
@@ -555,7 +599,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             #region Excel Grid Value
             DataTable dt;
             DualResult xresult;
-            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,WeightM2,averageWeightM2,Difference,Result,Inspdate,Inspector,Remark from FIR_Weight WITH (NOLOCK) where id='{0}'", textID.Text), out dt))
+            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,WeightM2,averageWeightM2,Difference,Result,Inspdate,Inspector,Remark from FIR_Weight WITH (NOLOCK) where id='{0}'", this.textID.Text), out dt))
             {
                 if (dt.Rows.Count <= 0)
                 {
@@ -566,46 +610,46 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             #endregion
             #region Excel 表頭值
             DataTable dt1;
-            string SeasonID = "";
-            string ContinuityEncode = "";
+            string SeasonID = string.Empty;
+            string ContinuityEncode = string.Empty;
             DualResult xresult1;
 
             if (xresult1 = DBProxy.Current.Select("Production", string.Format(
-               "select Roll,Dyelot,WeightM2,averageWeightM2,Difference,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID from FIR_Weight a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", textID.Text), out dt1))
+               "select Roll,Dyelot,WeightM2,averageWeightM2,Difference,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID from FIR_Weight a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", this.textID.Text), out dt1))
             {
                 if (dt1.Rows.Count > 0)
                 {
                     SeasonID = dt1.Rows[0]["SeasonID"].ToString();
                     ContinuityEncode = dt1.Rows[0]["ContinuityEncode"].ToString();
-                }                
+                }
             }
             #endregion
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P01_Weight_Report.xltx"); //預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P01_Weight_Report.xltx"); // 預先開啟excel app
             objApp.Visible = false;
-            MyUtility.Excel.CopyToXls(dt, "", "Quality_P01_Weight_Report.xltx", 5, false, null, objApp);      // 將datatable copy to excel
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[2, 2] = displaySP.Text.ToString();
-            objSheets.Cells[2, 4] = displaySEQ.Text.ToString();
-            objSheets.Cells[2, 6] = displayColor.Text.ToString();
-            objSheets.Cells[2, 8] = displayStyle.Text.ToString();
+            MyUtility.Excel.CopyToXls(dt, string.Empty, "Quality_P01_Weight_Report.xltx", 5, false, null, objApp);      // 將datatable copy to excel
+            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            objSheets.Cells[2, 2] = this.displaySP.Text.ToString();
+            objSheets.Cells[2, 4] = this.displaySEQ.Text.ToString();
+            objSheets.Cells[2, 6] = this.displayColor.Text.ToString();
+            objSheets.Cells[2, 8] = this.displayStyle.Text.ToString();
             objSheets.Cells[2, 10] = SeasonID;
-            objSheets.Cells[3, 2] = displaySCIRefno.Text.ToString();
+            objSheets.Cells[3, 2] = this.displaySCIRefno.Text.ToString();
             objSheets.Cells[3, 4] = ContinuityEncode;
-            objSheets.Cells[3, 6] = displayResult.Text.ToString();
-            objSheets.Cells[3, 8] = dateLastInspectionDate.Value;
-            objSheets.Cells[3, 10] = displayBrand.Text.ToString();
-            objSheets.Cells[4, 2] = displayRefno.Text.ToString();
-            objSheets.Cells[4, 4] = displayArriveQty.Text.ToString();
-            objSheets.Cells[4, 6] = dateArriveWHDate.Value;
-            objSheets.Cells[4, 8] = txtsupplier.DisplayBox1.Text.ToString();
-            objSheets.Cells[4, 10] = displayWKNo.Text.ToString();
+            objSheets.Cells[3, 6] = this.displayResult.Text.ToString();
+            objSheets.Cells[3, 8] = this.dateLastInspectionDate.Value;
+            objSheets.Cells[3, 10] = this.displayBrand.Text.ToString();
+            objSheets.Cells[4, 2] = this.displayRefno.Text.ToString();
+            objSheets.Cells[4, 4] = this.displayArriveQty.Text.ToString();
+            objSheets.Cells[4, 6] = this.dateArriveWHDate.Value;
+            objSheets.Cells[4, 8] = this.txtsupplier.DisplayBox1.Text.ToString();
+            objSheets.Cells[4, 10] = this.displayWKNo.Text.ToString();
 
-            objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
+            objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
             #region Save Excel
-            excelFile = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_Weight");
-            objApp.ActiveWorkbook.SaveAs(excelFile);
+            this.excelFile = Class.MicrosoftFile.GetName("QA_P01_Weight");
+            objApp.ActiveWorkbook.SaveAs(this.excelFile);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
             Marshal.ReleaseComObject(objSheets);
@@ -613,8 +657,9 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
             if (!isSendMail)
             {
-                excelFile.OpenFile();
+                this.excelFile.OpenFile();
             }
+
             return true;
         }
 
@@ -622,7 +667,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
         {
             DataTable dt;
             DualResult xresult;
-            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,WeightM2,averageWeightM2,Difference,Result,Inspdate,Inspector,Remark from FIR_Weight WITH (NOLOCK) where id='{0}'", textID.Text), out dt))
+            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,WeightM2,averageWeightM2,Difference,Result,Inspdate,Inspector,Remark from FIR_Weight WITH (NOLOCK) where id='{0}'", this.textID.Text), out dt))
             {
                 if (dt.Rows.Count <= 0)
                 {
@@ -630,6 +675,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                     return;
                 }
             }
+
             this.ShowWaitMessage("To PDF Processing...");
             Excel.Application objApp = new Excel.Application();
             objApp.DisplayAlerts = false;
@@ -638,28 +684,30 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             Excel.Worksheet newSheet = exlSheets.Item[1];
             exlSheets.Item[1].Delete();
             exlSheets.Item[1].Delete();
-            
+
             ExcelHeadData excelHeadData = new ExcelHeadData();
-            excelHeadData.SPNo = maindr["POID"].ToString();
-            excelHeadData.Brand = displayBrand.Text;
-            excelHeadData.StyleNo = displayStyle.Text;
+            excelHeadData.SPNo = this.maindr["POID"].ToString();
+            excelHeadData.Brand = this.displayBrand.Text;
+            excelHeadData.StyleNo = this.displayStyle.Text;
 
             DataRow drOrder;
-            MyUtility.Check.Seek($@"select o.CustPONo,s.StyleName from dbo.orders o WITH (NOLOCK) 
-left join dbo.style s on o.StyleUkey = s.ukey where o.ID = '{maindr["POID"].ToString()}'",out drOrder);
+            MyUtility.Check.Seek(
+                $@"select o.CustPONo,s.StyleName from dbo.orders o WITH (NOLOCK) 
+left join dbo.style s on o.StyleUkey = s.ukey where o.ID = '{this.maindr["POID"].ToString()}'", out drOrder);
             excelHeadData.PONumber = drOrder["CustPONo"].ToString();
             excelHeadData.StyleName = drOrder["StyleName"].ToString();
-            excelHeadData.ArriveQty = maindr["arriveQty"].ToString();
-            excelHeadData.FabricRefNo = displayRefno.Text;
-            excelHeadData.FabricColor = displayColor.Text;
-            excelHeadData.FabricDesc = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
-            //取得資料
-            //先取Article
+            excelHeadData.ArriveQty = this.maindr["arriveQty"].ToString();
+            excelHeadData.FabricRefNo = this.displayRefno.Text;
+            excelHeadData.FabricColor = this.displayColor.Text;
+            excelHeadData.FabricDesc = MyUtility.GetValue.Lookup("Description", this.maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
+
+            // 取得資料
+            // 先取Article
             string article_sql = $@"SELECT distinct(oc.article)  as article
 FROM [Order_BOF]  bof
 inner join PO_Supp_Detail p on p.id=bof.id and bof.SCIRefno=p.SCIRefno
 inner join Order_ColorCombo OC on oc.id=p.id and oc.FabricCode=bof.FabricCode
-where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString()}' and p.seq2='{maindr["Seq2"].ToString()}'
+where bof.id='{this.maindr["POID"].ToString()}' and p.seq1='{this.maindr["Seq1"].ToString()}' and p.seq2='{this.maindr["Seq2"].ToString()}'
  ";
             DataTable dt_article;
             DualResult result = DBProxy.Current.Select(null, article_sql, out dt_article);
@@ -668,42 +716,44 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                 MyUtility.Msg.ErrorBox(result.Messages.ToString());
                 return;
             }
-            //取得Header資料
-            
 
-            //產生excel
+            // 取得Header資料
+
+            // 產生excel
             using (dt_article)
             {
                 if (dt_article.Rows.Count != 0)
                 {
-                    //若有Article，PDF則分若有Article顯示，沒有的話則空白
+                    // 若有Article，PDF則分若有Article顯示，沒有的話則空白
                     foreach (DataRow articleDr in dt_article.Rows)
                     {
                         excelHeadData.ArticleNo = articleDr["article"].ToString();
-                        var detailbyDate = from r1 in Datas.AsEnumerable()
+                        var detailbyDate = from r1 in this.Datas.AsEnumerable()
                                       group r1 by new
                                       {
                                           SubmitDate = r1["SubmitDate"],
-                                          Inspdate = r1["Inspdate"]
-                                      } into g
+                                          Inspdate = r1["Inspdate"],
+                                      }
+                                        into g
                                       select new
                                       {
                                           SubmitDate = g.Key.SubmitDate,
-                                          Inspdate = g.Key.Inspdate
+                                          Inspdate = g.Key.Inspdate,
                                       };
-                 
+
                         foreach (var dateFilter in detailbyDate)
                         {
-                            excelHeadData.SubmitDate = dateFilter.SubmitDate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.SubmitDate).ToOADate().ToString();
-                            excelHeadData.ReportDate = dateFilter.Inspdate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.Inspdate).ToOADate().ToString();
-                            //產生新sheet並填入標題等資料
-                            exlSheets.Add();
-                        
-                            newSheet = exlSheets.Item[1];
-                            AddSheetAndHead(excelHeadData, newSheet);
+                            excelHeadData.SubmitDate = dateFilter.SubmitDate.Equals(DBNull.Value) ? string.Empty : ((DateTime)dateFilter.SubmitDate).ToOADate().ToString();
+                            excelHeadData.ReportDate = dateFilter.Inspdate.Equals(DBNull.Value) ? string.Empty : ((DateTime)dateFilter.Inspdate).ToOADate().ToString();
 
-                            //填入detail資料
-                            DataRow[] dr_detail = Datas.Where(s => s["SubmitDate"].Equals(dateFilter.SubmitDate) && s["Inspdate"].Equals(dateFilter.Inspdate)).ToArray();
+                            // 產生新sheet並填入標題等資料
+                            exlSheets.Add();
+
+                            newSheet = exlSheets.Item[1];
+                            this.AddSheetAndHead(excelHeadData, newSheet);
+
+                            // 填入detail資料
+                            DataRow[] dr_detail = this.Datas.Where(s => s["SubmitDate"].Equals(dateFilter.SubmitDate) && s["Inspdate"].Equals(dateFilter.Inspdate)).ToArray();
                             string signature = dr_detail.GroupBy(s => s["Inspector"]).Select(s => MyUtility.GetValue.Lookup("Name", s.Key.ToString(), "Pass1", "ID")).JoinToString(",");
                             int detail_start = 16;
                             foreach (DataRow dr in dr_detail)
@@ -719,13 +769,13 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                                 detail_start++;
                             }
 
-                            newSheet.get_Range($"A16:I{detail_start-1}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-                            newSheet.get_Range($"A16:I{detail_start-1}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
-                       
-                            //簽名欄
+                            newSheet.get_Range($"A16:I{detail_start - 1}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                            newSheet.get_Range($"A16:I{detail_start - 1}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+
+                            // 簽名欄
                             newSheet.Cells[detail_start + 1, 6].Value = "Signature";
                             newSheet.Cells[detail_start + 1, 6].Font.Bold = true;
-                            newSheet.Range[$"F{detail_start+1}", $"I{detail_start+1}"].Merge();
+                            newSheet.Range[$"F{detail_start + 1}", $"I{detail_start + 1}"].Merge();
                             newSheet.Cells[detail_start + 2, 6].Value = signature;
                             newSheet.Range[$"F{detail_start + 2}", $"I{detail_start + 2}"].Merge();
                             newSheet.Cells[detail_start + 3, 6].Value = "Checked by:";
@@ -733,54 +783,55 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                             newSheet.get_Range($"F{detail_start + 1}:I{detail_start + 3}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                             newSheet.get_Range($"F{detail_start + 1}:I{detail_start + 3}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
                             newSheet.get_Range($"F{detail_start + 1}:I{detail_start + 3}").Font.Size = 9;
-                            //全部置中
+
+                            // 全部置中
                             newSheet.get_Range($"A1:I{detail_start + 3}").HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
                             newSheet.get_Range($"A1:I{detail_start + 3}").Font.Name = "Arial";
 
-                            //版面保持一頁
+                            // 版面保持一頁
                             newSheet.PageSetup.Zoom = false;
                             newSheet.PageSetup.FitToPagesWide = 1;
 
-                            //針對merge後會過長的欄位作高度調整
+                            // 針對merge後會過長的欄位作高度調整
                             double newHeight;
-                            newSheet.Range["A7", "A7"].RowHeight = MeasureTextHeight(excelHeadData.StyleName, 54);
-                            newHeight = MeasureTextHeight(excelHeadData.FabricDesc, 59);
+                            newSheet.Range["A7", "A7"].RowHeight = this.MeasureTextHeight(excelHeadData.StyleName, 54);
+                            newHeight = this.MeasureTextHeight(excelHeadData.FabricDesc, 59);
                             newSheet.Range["A12", "A12"].RowHeight = newSheet.Rows[12].Height > newHeight ? newSheet.Rows[12].Height : newHeight;
-                            newHeight = MeasureTextHeight(excelHeadData.FabricRefNo, 13);
+                            newHeight = this.MeasureTextHeight(excelHeadData.FabricRefNo, 13);
                             newSheet.Range["A12", "A12"].RowHeight = newSheet.Rows[12].Height > newHeight ? newSheet.Rows[12].Height : newHeight;
                             newSheet.PageSetup.PrintArea = $"A1:I{detail_start + 3}";
                         }
-                                      
-
                     }
                 }
                 else
                 {
                     excelHeadData.ArticleNo = string.Empty;
-                    var detailbyDate = from r1 in Datas.AsEnumerable()
+                    var detailbyDate = from r1 in this.Datas.AsEnumerable()
                                        group r1 by new
                                        {
                                            SubmitDate = r1["SubmitDate"],
-                                           Inspdate = r1["Inspdate"]
-                                       } into g
+                                           Inspdate = r1["Inspdate"],
+                                       }
+                                        into g
                                        select new
                                        {
                                            SubmitDate = g.Key.SubmitDate,
-                                           Inspdate = g.Key.Inspdate
+                                           Inspdate = g.Key.Inspdate,
                                        };
 
                     foreach (var dateFilter in detailbyDate)
                     {
-                        excelHeadData.SubmitDate = dateFilter.SubmitDate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.SubmitDate).ToOADate().ToString();
-                        excelHeadData.ReportDate = dateFilter.Inspdate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.Inspdate).ToOADate().ToString();
-                        //產生新sheet並填入標題等資料
+                        excelHeadData.SubmitDate = dateFilter.SubmitDate.Equals(DBNull.Value) ? string.Empty : ((DateTime)dateFilter.SubmitDate).ToOADate().ToString();
+                        excelHeadData.ReportDate = dateFilter.Inspdate.Equals(DBNull.Value) ? string.Empty : ((DateTime)dateFilter.Inspdate).ToOADate().ToString();
+
+                        // 產生新sheet並填入標題等資料
                         exlSheets.Add();
 
                         newSheet = exlSheets.Item[1];
-                        AddSheetAndHead(excelHeadData, newSheet);
+                        this.AddSheetAndHead(excelHeadData, newSheet);
 
-                        //填入detail資料
-                        DataRow[] dr_detail = Datas.Where(s => s["SubmitDate"].Equals(dateFilter.SubmitDate) && s["Inspdate"].Equals(dateFilter.Inspdate)).ToArray();
+                        // 填入detail資料
+                        DataRow[] dr_detail = this.Datas.Where(s => s["SubmitDate"].Equals(dateFilter.SubmitDate) && s["Inspdate"].Equals(dateFilter.Inspdate)).ToArray();
                         string signature = dr_detail.GroupBy(s => s["Inspector"]).Select(s => MyUtility.GetValue.Lookup("Name", s.Key.ToString(), "Pass1", "ID")).JoinToString(",");
                         int detail_start = 16;
                         foreach (DataRow dr in dr_detail)
@@ -799,7 +850,7 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                         newSheet.get_Range($"A16:I{detail_start - 1}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                         newSheet.get_Range($"A16:I{detail_start - 1}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
 
-                        //簽名欄
+                        // 簽名欄
                         newSheet.Cells[detail_start + 1, 6].Value = "Signature";
                         newSheet.Cells[detail_start + 1, 6].Font.Bold = true;
                         newSheet.Range[$"F{detail_start + 1}", $"I{detail_start + 1}"].Merge();
@@ -810,48 +861,49 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                         newSheet.get_Range($"F{detail_start + 1}:I{detail_start + 3}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                         newSheet.get_Range($"F{detail_start + 1}:I{detail_start + 3}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
                         newSheet.get_Range($"F{detail_start + 1}:I{detail_start + 3}").Font.Size = 9;
-                        //全部置中
+
+                        // 全部置中
                         newSheet.get_Range($"A1:I{detail_start + 3}").HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
                         newSheet.get_Range($"A1:I{detail_start + 3}").Font.Name = "Arial";
 
-                        //版面保持一頁
+                        // 版面保持一頁
                         newSheet.PageSetup.Zoom = false;
                         newSheet.PageSetup.FitToPagesWide = 1;
 
-                        //針對merge後會過長的欄位作高度調整
+                        // 針對merge後會過長的欄位作高度調整
                         double newHeight;
-                        newSheet.Range["A7", "A7"].RowHeight = MeasureTextHeight(excelHeadData.StyleName, 54);
-                        newHeight = MeasureTextHeight(excelHeadData.FabricDesc, 59);
+                        newSheet.Range["A7", "A7"].RowHeight = this.MeasureTextHeight(excelHeadData.StyleName, 54);
+                        newHeight = this.MeasureTextHeight(excelHeadData.FabricDesc, 59);
                         newSheet.Range["A12", "A12"].RowHeight = newSheet.Rows[12].Height > newHeight ? newSheet.Rows[12].Height : newHeight;
-                        newHeight = MeasureTextHeight(excelHeadData.FabricRefNo, 13);
+                        newHeight = this.MeasureTextHeight(excelHeadData.FabricRefNo, 13);
                         newSheet.Range["A12", "A12"].RowHeight = newSheet.Rows[12].Height > newHeight ? newSheet.Rows[12].Height : newHeight;
                         newSheet.PageSetup.PrintArea = $"A1:I{detail_start + 3}";
                     }
                 }
             }
-            
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_Weight");
+
+            string strExcelName = Class.MicrosoftFile.GetName("QA_P01_Weight");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.ActiveWorkbook.Close(true, Type.Missing, Type.Missing);
             objApp.Quit();
             Marshal.ReleaseComObject(exlSheets);
             Marshal.ReleaseComObject(objApp);
-            
-            string strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_Weight", Sci.Production.Class.PDFFileNameExtension.PDF);
+
+            string strPDFFileName = Class.MicrosoftFile.GetName("QA_P01_Weight", Class.PDFFileNameExtension.PDF);
             if (ConvertToPDF.ExcelToPDF(strExcelName, strPDFFileName))
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo(strPDFFileName);
                 Process.Start(startInfo);
             }
+
             GC.Collect();
             GC.WaitForPendingFinalizers();
             this.HideWaitMessage();
         }
 
-        
         private void AddSheetAndHead(ExcelHeadData headData, Excel.Worksheet tmpSheet)
         {
-            //設定欄位寬度
+            // 設定欄位寬度
             tmpSheet.Columns[1].ColumnWidth = 13.63;
             tmpSheet.Columns[2].ColumnWidth = 10.5;
             tmpSheet.Columns[3].ColumnWidth = 12.80;
@@ -879,7 +931,6 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
             tmpSheet.Cells[1, 1].Value = "Fabric Weight Test Report";
             tmpSheet.Cells[1, 1].Font.Bold = true;
             tmpSheet.Cells[1, 1].Font.Size = 18;
-
 
             tmpSheet.Cells[4, 1].Value = "Submit Date";
             tmpSheet.Cells[4, 1].Font.Bold = true;
@@ -954,21 +1005,23 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
 
             tmpSheet.get_Range("A15:I15").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
             tmpSheet.get_Range("A15:I15").Borders.Weight = Excel.XlBorderWeight.xlMedium;
-
-     
         }
 
         private double MeasureTextHeight(string text, int width)
         {
-            if (string.IsNullOrEmpty(text)) return 0.0;
+            if (string.IsNullOrEmpty(text))
+            {
+                return 0.0;
+            }
+
             var bitmap = new Bitmap(1, 1);
             var graphics = Graphics.FromImage(bitmap);
 
-            var pixelWidth = Convert.ToInt32(width * 7.5);  //7.5 pixels per excel column width
+            var pixelWidth = Convert.ToInt32(width * 7.5);  // 7.5 pixels per excel column width
             var drawingFont = new Font("Arial", 11);
             var size = graphics.MeasureString(text, drawingFont, pixelWidth);
 
-            //72 DPI and 96 points per inch.  Excel height in points with max of 409 per Excel requirements.
+            // 72 DPI and 96 points per inch.  Excel height in points with max of 409 per Excel requirements.
             return Math.Min(Convert.ToDouble(size.Height) * 72 / 96, 409);
         }
 
@@ -986,8 +1039,6 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
             public string FabricRefNo;
             public string FabricColor;
             public string FabricDesc;
-
         }
     }
 }
-    

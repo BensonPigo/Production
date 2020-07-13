@@ -1,18 +1,12 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
-    public partial class SubCon_B02 : Sci.Win.Tems.Input1
+    public partial class SubCon_B02 : Win.Tems.Input1
     {
         public SubCon_B02(ToolStripMenuItem menuitem)
             : base(menuitem)

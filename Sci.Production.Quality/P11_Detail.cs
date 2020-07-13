@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
@@ -11,7 +9,6 @@ using Sci.Win.Tools;
 using Sci.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Data.SqlTypes;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
@@ -19,19 +16,20 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Quality
 {
-    public partial class P11_Detail : Sci.Win.Subs.Input4
+    public partial class P11_Detail : Win.Subs.Input4
     {
         private DataRow masterDr;
         private string reportNo;
         private string id;
         private bool isSee = false;
         private string status;
+
         public P11_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, string status)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
             this.id = id;
-            isSee = true;
+            this.isSee = true;
             this.reportNo = keyvalue2;
             this.status = status;
         }
@@ -49,15 +47,15 @@ namespace Sci.Production.Quality
             this.displayArticle.Text = this.masterDr["Article"].ToString();
             if (MyUtility.Check.Empty(Detaildr))
             {
-                this.txtCombineStyle.Text = "";
-                this.displayNo.Text = "";
-                this.displayReportNo.Text = "";
+                this.txtCombineStyle.Text = string.Empty;
+                this.displayNo.Text = string.Empty;
+                this.displayReportNo.Text = string.Empty;
                 this.dateBoxSubmitDate.Value = null;
                 this.dateBoxReceivedDate.Value = null;
                 this.dateBoxReleasedDate.Value = null;
-                this.displayResult.Text = "";
-                this.txtTechnician.Text = "";
-                this.txtMR.Text = "";
+                this.displayResult.Text = string.Empty;
+                this.txtTechnician.Text = string.Empty;
+                this.txtMR.Text = string.Empty;
             }
             else
             {
@@ -68,15 +66,15 @@ namespace Sci.Production.Quality
                 this.dateBoxReceivedDate.Value = MyUtility.Convert.GetDate(Detaildr["ReceivedDate"]);
                 this.dateBoxReleasedDate.Value = MyUtility.Convert.GetDate(Detaildr["ReleasedDate"]);
                 this.displayResult.Text = Detaildr["Result"].ToString();
-                this.txtTechnician.textbox1_text = Detaildr["Technician"].ToString();
-                this.txtMR.textbox1_text = Detaildr["MR"].ToString();
+                this.txtTechnician.Textbox1_text = Detaildr["Technician"].ToString();
+                this.txtMR.Textbox1_text = Detaildr["MR"].ToString();
             }
 
             #endregion
 
             return base.OnRequery();
         }
-        
+
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -102,6 +100,7 @@ namespace Sci.Production.Quality
                 {
                     colorName += MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{item}'  and BrandID =  '{this.masterDr["BrandID"]}'") + ",";
                 }
+
                 dr["ArtworkColorName"] = colorName.Substring(0, colorName.Length - 1);
 
                 string FabName = string.Empty;
@@ -110,6 +109,7 @@ namespace Sci.Production.Quality
                 {
                     FabName += MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{item}'  and BrandID =  '{this.masterDr["BrandID"]}'") + ",";
                 }
+
                 dr["FabricColorName"] = FabName.Substring(0, FabName.Length - 1);
             }
             #endregion
@@ -125,42 +125,47 @@ namespace Sci.Production.Quality
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
-            if (isSee)
+            if (this.isSee)
             {
                 this.btnPDF.Enabled = !this.EditMode;
                 this.btnSendMR.Enabled = !this.EditMode;
-
             }
-         
         }
 
         protected override bool OnGridSetup()
         {
-
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_DryScale;
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_WetScale;
-            DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResulCell = Prgs.cellResult.GetGridCell();
             #region Artwork event
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts_artwork = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts_artwork = new DataGridViewGeneratorTextColumnSettings();
             ts_artwork.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.RowIndex == -1)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = $"Select distinct ArtworkTypeID from Style_Artwork WITH (NOLOCK) where StyleUkey = (select ukey from style where ID = '{this.masterDr["StyleID"]}' and BrandID = '{this.masterDr["BrandID"]}' and SeasonID = '{this.masterDr["SeasonID"]}')";
-                    SelectItem item = new SelectItem(item_cmd, "", "");
+                    SelectItem item = new SelectItem(item_cmd, string.Empty, string.Empty);
 
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
                         return;
                     }
+
                     dr["ArtworkTypeID"] = item.GetSelecteds()[0]["ArtworkTypeID"].ToString();
                     dr.EndEdit();
                 }
-
             };
 
             ts_artwork.CellValidating += (s, e) =>
@@ -179,23 +184,31 @@ namespace Sci.Production.Quality
             };
             #endregion
             #region Artwork Color event
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts_artworkColor = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts_artworkColor = new DataGridViewGeneratorTextColumnSettings();
             ts_artworkColor.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.RowIndex == -1)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = $"Select BrandID,ID,Name from Color WITH (NOLOCK) where BrandID =  '{this.masterDr["BrandID"]}'";
-                    SelectItem2 item = new SelectItem2(item_cmd, "", "","",null,"ID");
+                    SelectItem2 item = new SelectItem2(item_cmd, string.Empty, string.Empty, string.Empty, null, "ID");
 
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
                         return;
                     }
-                    
+
                     dr["ArtworkColor"] = item.GetSelectedString().ToString().Replace(",", ";");
                     string colorName = string.Empty;
                     if (item.GetSelecteds().Count > 0)
@@ -204,11 +217,13 @@ namespace Sci.Production.Quality
                         {
                             colorName += its["Name"] + ",";
                         }
+
                         if (colorName.Length > 0)
                         {
                             dr["ArtworkColorName"] = colorName.Substring(0, colorName.Length - 1);
                         }
-                    }                                   
+                    }
+
                     dr.EndEdit();
                 }
             };
@@ -219,9 +234,18 @@ namespace Sci.Production.Quality
                 {
                     return;
                 }
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
 
                 string[] drArry = e.FormattedValue.ToString().Split(',');
                 string colorID = string.Empty;
@@ -234,24 +258,33 @@ namespace Sci.Production.Quality
                         MyUtility.Msg.WarningBox("Artwork Color not found!");
                         e.Cancel = true;
                         return;
-                    }               
+                    }
                 }
+
                 dr["ArtworkColor"] = colorID.Substring(0, colorID.Length - 1);
                 dr.EndEdit();
             };
             #endregion
 
             #region Fabric Color event
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts_fabricColor = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts_fabricColor = new DataGridViewGeneratorTextColumnSettings();
             ts_fabricColor.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.RowIndex == -1)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = $"Select BrandID,ID,Name from Color WITH (NOLOCK) where BrandID =  '{this.masterDr["BrandID"]}'";
-                    SelectItem2 item = new SelectItem2(item_cmd, "", "", "", null, "ID");
+                    SelectItem2 item = new SelectItem2(item_cmd, string.Empty, string.Empty, string.Empty, null, "ID");
 
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -267,14 +300,15 @@ namespace Sci.Production.Quality
                         {
                             colorName += its["Name"] + ",";
                         }
+
                         if (colorName.Length > 0)
                         {
                             dr["FabricColorName"] = colorName.Substring(0, colorName.Length - 1);
                         }
                     }
+
                     dr.EndEdit();
                 }
-
             };
 
             ts_fabricColor.CellValidating += (s, e) =>
@@ -283,14 +317,23 @@ namespace Sci.Production.Quality
                 {
                     return;
                 }
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string[] drArry = e.FormattedValue.ToString().Split(',');
                 string colorID = string.Empty;
                 foreach (var item in drArry)
                 {
-                    colorID += MyUtility.GetValue.Lookup($"select ID from Color WITH (NOLOCK) where Name = '{item}'  and BrandID =  '{this.masterDr["BrandID"]}' ")+";";
+                    colorID += MyUtility.GetValue.Lookup($"select ID from Color WITH (NOLOCK) where Name = '{item}'  and BrandID =  '{this.masterDr["BrandID"]}' ") + ";";
 
                     if (MyUtility.Check.Empty(colorID))
                     {
@@ -299,32 +342,34 @@ namespace Sci.Production.Quality
                         return;
                     }
                 }
+
                 dr["FabricColor"] = colorID.Substring(0, colorID.Length - 1);
                 dr.EndEdit();
             };
             #endregion
-            Helper.Controls.Grid.Generator(this.grid)
-            .Text("ArtworkTypeID", "Artwork", width: Widths.AnsiChars(17),settings: ts_artwork)
+            this.Helper.Controls.Grid.Generator(this.grid)
+            .Text("ArtworkTypeID", "Artwork", width: Widths.AnsiChars(17), settings: ts_artwork)
             .Text("Design", "Design", width: Widths.AnsiChars(15), iseditingreadonly: false)
-            .Text("ArtworkColorName", "Artwork Color", width: Widths.AnsiChars(18),settings: ts_artworkColor)
+            .Text("ArtworkColorName", "Artwork Color", width: Widths.AnsiChars(18), settings: ts_artworkColor)
             .Text("FabricRefNo", "Fabric Ref No.", width: Widths.AnsiChars(17))
             .Text("FabricColorName", "Fabric Color", width: Widths.AnsiChars(18), settings: ts_fabricColor)
             .ComboBox("DryScale", "Dry Scale", width: Widths.AnsiChars(3)).Get(out cbb_DryScale)
             .ComboBox("WetScale", "Wet Scale", width: Widths.AnsiChars(3)).Get(out cbb_WetScale)
-            .Text("Result", "Result", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ResulCell)            
+            .Text("Result", "Result", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ResulCell)
             .EditText("Remark", "Remark", width: Widths.AnsiChars(15))
-            .Text("LastUpdate", "Last Update", width: Widths.AnsiChars(28),iseditingreadonly: true);
+            .Text("LastUpdate", "Last Update", width: Widths.AnsiChars(28), iseditingreadonly: true);
 
-            Dictionary<string, string> ScaleSource = new Dictionary<string, string>() {
-                {"1","1" },
-                {"1-2","1-2" },
-                {"2","2" },
-                {"2-3","2-3" },
-                {"3","3" },
-                {"3-4","3-4" },
-                {"4","4" },
-                {"4-5","4-5" },
-                {"5","5" }
+            Dictionary<string, string> ScaleSource = new Dictionary<string, string>()
+            {
+                { "1", "1" },
+                { "1-2", "1-2" },
+                { "2", "2" },
+                { "2-3", "2-3" },
+                { "3", "3" },
+                { "3-4", "3-4" },
+                { "4", "4" },
+                { "4-5", "4-5" },
+                { "5", "5" },
             };
 
             cbb_DryScale.DataSource = new BindingSource(ScaleSource, null);
@@ -333,32 +378,33 @@ namespace Sci.Production.Quality
             cbb_WetScale.DataSource = new BindingSource(ScaleSource, null);
             cbb_WetScale.ValueMember = "Key";
             cbb_WetScale.DisplayMember = "Value";
-            
+
             return true;
         }
-        
+
         private void txtCombineStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string item_cmd = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
-            SelectItem2 item = new SelectItem2(item_cmd,"", "","");
+            SelectItem2 item = new SelectItem2(item_cmd, string.Empty, string.Empty, string.Empty);
             DialogResult dresult = item.ShowDialog();
             if (dresult == DialogResult.Cancel)
             {
                 return;
             }
 
-            txtCombineStyle.Text = item.GetSelectedString().Replace(",","/");
+            this.txtCombineStyle.Text = item.GetSelectedString().Replace(",", "/");
         }
 
         protected override bool OnSaveBefore()
         {
             if (this.status.Equals("New"))
             {
-                //取reporyID
+                // 取reporyID
                 string country = MyUtility.GetValue.Lookup("select top 1 CountryID from Factory");
                 this.KeyValue2 = MyUtility.GetValue.GetID(country + "CK", "MockupCrocking_Detail", DateTime.Today, 2, "ReportNo", null);
                 this.reportNo = this.KeyValue2;
             }
+
             return base.OnSaveBefore();
         }
 
@@ -366,16 +412,16 @@ namespace Sci.Production.Quality
         {
             DualResult execute_result;
             List<SqlParameter> sql_par = new List<SqlParameter>();
-            string submitDate = MyUtility.Check.Empty(this.dateBoxSubmitDate.Value) ? "null" : "'"  + this.dateBoxSubmitDate.Text + "'";
+            string submitDate = MyUtility.Check.Empty(this.dateBoxSubmitDate.Value) ? "null" : "'" + this.dateBoxSubmitDate.Text + "'";
             string receivedDate = MyUtility.Check.Empty(this.dateBoxReceivedDate.Value) ? "null" : "'" + this.dateBoxReceivedDate.Text + "'";
             string releasedDate = MyUtility.Check.Empty(this.dateBoxReleasedDate.Value) ? "null" : "'" + this.dateBoxReleasedDate.Text + "'";
             string sql_cmd = string.Empty;
             if (this.status.Equals("New"))
             {
-                //取No
+                // 取No
                 int no = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"select isnull(max(No),0) + 1 from MockupCrocking_Detail WITH (NOLOCK) where ID = '{this.id}'"));
 
-                //insert MockupCrocking_Detail
+                // insert MockupCrocking_Detail
                 sql_cmd = $@"insert into MockupCrocking_Detail(ID,ReportNo,No,SubmitDate,CombineStyle,Result,ReceivedDate,ReleasedDate,Technician,MR,AddDate,AddName) 
                                                                     values('{this.id}','{this.reportNo}',{no},{submitDate},'{this.txtCombineStyle.Text}',@Result,{receivedDate},{releasedDate},'{this.txtTechnician.TextBox1.Text}','{this.txtMR.TextBox1.Text}',GETDATE(),@USERID);";
 
@@ -388,8 +434,8 @@ namespace Sci.Production.Quality
                             where ReportNo = '{this.reportNo}';";
             }
 
-            //取Result
-            var group_result = ((DataTable)gridbs.DataSource).AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).GroupBy(s => s["Result"]).Select(group => new { Result = group.Key, count = group.Count() });
+            // 取Result
+            var group_result = ((DataTable)this.gridbs.DataSource).AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).GroupBy(s => s["Result"]).Select(group => new { Result = group.Key, count = group.Count() });
             string result = string.Empty;
             if (group_result.Count() > 1)
             {
@@ -407,10 +453,10 @@ namespace Sci.Production.Quality
                 }
             }
 
-            sql_par.AddRange( new List<SqlParameter>()
+            sql_par.AddRange(new List<SqlParameter>()
                 {
-                    new SqlParameter("@Result",result),
-                    new SqlParameter("@UserID",Env.User.UserID)
+                    new SqlParameter("@Result", result),
+                    new SqlParameter("@UserID", Env.User.UserID),
                 });
 
             string upd_master = $@"update MockupCrocking set ReceivedDate = mdReceivedDate ,ReleasedDate = mdReleasedDate
@@ -438,24 +484,25 @@ namespace Sci.Production.Quality
 
         private void btnSendMR_Click(object sender, EventArgs e)
         {
-            string pdf_path = CreatePDF();
+            string pdf_path = this.CreatePDF();
             this.HideWaitMessage();
             if (pdf_path.Equals(string.Empty))
             {
                 MyUtility.Msg.WarningBox("Create PDF fail");
                 return;
             }
-            string mailto = MyUtility.GetValue.Lookup("Email",this.txtMR.TextBox1.Text,"Pass1","ID");
+
+            string mailto = MyUtility.GetValue.Lookup("Email", this.txtMR.TextBox1.Text, "Pass1", "ID");
             string mailcc = Env.User.MailAddress;
             string subject = "Mockup Crocking Test – ReportNo:" + this.reportNo + @" – Style#: " + this.masterDr["StyleID"].ToString();
             string content = "Attachment is Mockup Crocking Test– ReportNo:" + this.reportNo + " detail data";
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailcc, subject, pdf_path, content.ToString(), false, true);
+            var email = new MailTo(Env.Cfg.MailFrom, mailto, mailcc, subject, pdf_path, content.ToString(), false, true);
             email.ShowDialog(this);
         }
 
         private void btnPDF_Click(object sender, EventArgs e)
         {
-            string pdf_path = CreatePDF();
+            string pdf_path = this.CreatePDF();
             this.HideWaitMessage();
             if (pdf_path.Equals(string.Empty))
             {
@@ -467,6 +514,7 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("Detail no data");
                 return;
             }
+
             ProcessStartInfo startInfo = new ProcessStartInfo(pdf_path);
             Process.Start(startInfo);
         }
@@ -474,26 +522,26 @@ namespace Sci.Production.Quality
         private string CreatePDF()
         {
             this.ShowWaitMessage("PDF Processing...");
-            DataTable gridData = (DataTable)gridbs.DataSource;
+            DataTable gridData = (DataTable)this.gridbs.DataSource;
             if (gridData.Rows.Count == 0)
             {
                 return "1";
             }
 
             string sql_cmd = string.Empty;
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P11_Detail_Report.xltx");
-            objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P11_Detail_Report.xltx");
+            objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
-            //設定表頭資料
-            worksheet.Cells[4,2] = this.displayReportNo.Text;
-            worksheet.Cells[5,2 ] = this.masterDr["T1Subcon"].ToString() + "-" + MyUtility.GetValue.Lookup("Abb", this.masterDr["T1Subcon"].ToString(),"LocalSupp","ID");
-            worksheet.Cells[6,2 ] = this.masterDr["BrandID"].ToString();
-            worksheet.Cells[4,6 ] = MyUtility.Check.Empty(this.dateBoxReleasedDate.Value) ? string.Empty : this.dateBoxReleasedDate.Text;
-            worksheet.Cells[5,6 ] = MyUtility.Check.Empty(this.dateBoxSubmitDate.Value) ? string.Empty : this.dateBoxSubmitDate.Text;
-            worksheet.Cells[6,6 ] = this.masterDr["SeasonID"].ToString();
+            // 設定表頭資料
+            worksheet.Cells[4, 2] = this.displayReportNo.Text;
+            worksheet.Cells[5, 2] = this.masterDr["T1Subcon"].ToString() + "-" + MyUtility.GetValue.Lookup("Abb", this.masterDr["T1Subcon"].ToString(), "LocalSupp", "ID");
+            worksheet.Cells[6, 2] = this.masterDr["BrandID"].ToString();
+            worksheet.Cells[4, 6] = MyUtility.Check.Empty(this.dateBoxReleasedDate.Value) ? string.Empty : this.dateBoxReleasedDate.Text;
+            worksheet.Cells[5, 6] = MyUtility.Check.Empty(this.dateBoxSubmitDate.Value) ? string.Empty : this.dateBoxSubmitDate.Text;
+            worksheet.Cells[6, 6] = this.masterDr["SeasonID"].ToString();
 
-            //插入圖片與Technician名字
+            // 插入圖片與Technician名字
             sql_cmd = $@"select p.name,[SignaturePic] = s.PicPath + t.SignaturePic
 from Technician t WITH (NOLOCK)
 inner join pass1 p WITH (NOLOCK) on t.ID = p.ID  
@@ -523,12 +571,13 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             }
 
             #region 表身資料
-            //插入表格資料
-            string styleNo = MyUtility.Check.Empty(this.txtCombineStyle.Text) ? this.masterDr["StyleID"].ToString() : this.masterDr["StyleID"].ToString() + "/ " + this.txtCombineStyle.Text.Replace("/","/ ");
+
+            // 插入表格資料
+            string styleNo = MyUtility.Check.Empty(this.txtCombineStyle.Text) ? this.masterDr["StyleID"].ToString() : this.masterDr["StyleID"].ToString() + "/ " + this.txtCombineStyle.Text.Replace("/", "/ ");
             string refColor = string.Empty;
             string printArtwork = string.Empty;
 
-            //插入多的row
+            // 插入多的row
             if (gridData.Rows.Count > 0)
             {
                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A10:G10", Type.Missing).EntireRow;
@@ -536,9 +585,11 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
                 {
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 }
+
                 Marshal.ReleaseComObject(rngToInsert);
             }
-            //塞進資料
+
+            // 塞進資料
             int start_row = 10;
             foreach (DataRow dr in gridData.Rows)
             {
@@ -553,20 +604,24 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
                 worksheet.Rows[start_row].Font.Bold = false;
                 worksheet.Rows[start_row].WrapText = true;
                 worksheet.Rows[start_row].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                //合併儲存格無法AutoFit()因此要自己算高度
+
+                // 合併儲存格無法AutoFit()因此要自己算高度
                 if ((remark.Length / 20) > 1)
                 {
                     worksheet.Range[$"E{start_row}", $"E{start_row}"].RowHeight = remark.Length / 20 * 16.5;
                 }
                 else
+                {
                     worksheet.Rows[start_row].AutoFit();
+                }
+
                 start_row++;
             }
             #endregion
             string strFileName = string.Empty;
             string strPDFFileName = string.Empty;
-            strFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P11_Detail_Report");
-            strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P11_Detail_Report", Sci.Production.Class.PDFFileNameExtension.PDF);
+            strFileName = Class.MicrosoftFile.GetName("Quality_P11_Detail_Report");
+            strPDFFileName = Class.MicrosoftFile.GetName("Quality_P11_Detail_Report", Class.PDFFileNameExtension.PDF);
             objApp.ActiveWorkbook.SaveAs(strFileName);
             objApp.Quit();
             Marshal.ReleaseComObject(worksheet);
@@ -578,7 +633,7 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             }
             else
             {
-                return "";
+                return string.Empty;
             }
         }
     }

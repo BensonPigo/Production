@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 
@@ -8,7 +7,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// B02
     /// </summary>
-    public partial class B02 : Sci.Win.Tems.Input1
+    public partial class B02 : Win.Tems.Input1
     {
         private bool NeedCheck = false;  // 存檔時是否要檢核。新增時要檢核。修改時，若[BEGIN][END]有異動，才要檢核。
         private bool BeginEndChange = false;  // 紀錄[BEGIN][END]是否有異動。
@@ -100,7 +99,7 @@ namespace Sci.Production.Planning
             #endregion
 
             bool flag = false;
-            Sci.Data.DBProxy.Current.Exists(null, s1, cmds, out flag);
+            Data.DBProxy.Current.Exists(null, s1, cmds, out flag);
             if (flag)
             {
                 this.NeedCheck = false;

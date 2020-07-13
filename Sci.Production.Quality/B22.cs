@@ -1,28 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class B22 : Sci.Win.Tems.Input1
+    public partial class B22 : Win.Tems.Input1
     {
         public B22(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            this.DefaultFilter = $"MDivisionID ='{Sci.Env.User.Keyword}'";
+            this.InitializeComponent();
+            this.DefaultFilter = $"MDivisionID ='{Env.User.Keyword}'";
         }
 
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.chkJunk.ReadOnly = !this.Perm.Junk;
         }
 

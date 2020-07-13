@@ -42,7 +42,7 @@
             this.numAmount = new Sci.Win.UI.NumericBox();
             this.labelAmount = new Sci.Win.UI.Label();
             this.labelAccountNo = new Sci.Win.UI.Label();
-            this.txtAccountNo = new Sci.Production.Class.txtAccountNo();
+            this.txtAccountNo = new Sci.Production.Class.TxtAccountNo();
             this.displayBoxTPECurrency = new Sci.Win.UI.DisplayBox();
             this.numericTaipeiAMT = new Sci.Win.UI.NumericBox();
             this.labOriDebit = new Sci.Win.UI.Label();
@@ -331,7 +331,7 @@
         private Win.UI.NumericBox numAmount;
         private Win.UI.Label labelAmount;
         private Win.UI.Label labelAccountNo;
-        private Class.txtAccountNo txtAccountNo;
+        private Class.TxtAccountNo txtAccountNo;
         private Win.UI.ListControlBindingSource mtbs;
         private Win.UI.DisplayBox displayBoxTPECurrency;
         private Win.UI.NumericBox numericTaipeiAMT;

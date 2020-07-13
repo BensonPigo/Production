@@ -545,8 +545,22 @@ Begin
 	Begin
 		SELECT * 
 		INTO #tmpCompleteCFAReceive
-		FROM CompleteCFAReceive
+		FROM CompleteCFAReceive c
 		WHERE SCIUpdate = 0
+		AND EXISTS( ----轉移到 CFA 的路上 的判斷，可參考QA P23的搜尋條件
+			SELECT 1
+			FROM Production.dbo.PackingList p WITH (NOLOCK)
+			INNER JOIN Production.dbo.PackingList_Detail pd WITH (NOLOCK) on p.id=pd.id
+			LEFT JOIN Production.dbo.Pullout po WITH (NOLOCK) on po.ID=p.PulloutID
+			WHERE 1=1
+			AND pd.SCICtnNo=c.SCICtnNo
+			AND p.Type in ('B','L')
+			AND pd.DisposeFromClog = 0
+			AND pd.TransferCFADate IS NOT NULL
+			AND pd.CFAReceiveDate IS NULL
+			AND (po.Status = 'New' or po.Status IS NULL)
+			AND pd.CTNStartNo != ''
+		)
 		;
 		----先拉出需要的資訊
 		SELECT DISTINCT 
@@ -599,8 +613,21 @@ Begin
 	Begin
 		SELECT * 
 		INTO #tmpCompleteCFAReturn
-		FROM CompleteCFAReturn
+		FROM CompleteCFAReturn c
 		WHERE SCIUpdate = 0
+		AND EXISTS( ----存在CFA的判斷，可參考QA P24的搜尋條件
+			SELECT 1
+			FROM Production.dbo.PackingList p WITH (NOLOCK)
+			INNER JOIN Production.dbo.PackingList_Detail pd WITH (NOLOCK) on p.id=pd.id
+			LEFT JOIN Production.dbo.Pullout po WITH (NOLOCK) on po.ID=p.PulloutID
+			WHERE 1=1
+			AND pd.SCICtnNo=c.SCICtnNo
+			AND p.Type in ('B','L')
+			AND pd.DisposeFromClog = 0
+			AND pd.CFAReceiveDate IS NOT NULL
+			AND (po.Status = 'New' or po.Status IS NULL)
+			AND pd.CTNStartNo != ''
+		)
 		;
 		----先拉出需要的資訊
 		SELECT DISTINCT 

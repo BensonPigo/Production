@@ -2,27 +2,26 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P13 : Sci.Win.Tems.QueryForm
+    /// <inheritdoc/>
+    public partial class P13 : Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
         public P13(ToolStripMenuItem menuitem)
-            :base(menuitem)
+            : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.grid.IsEditingReadOnly = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -49,32 +48,42 @@ namespace Sci.Production.Cutting
                 .Text("SizeRatio", header: "SizeRatio", iseditingreadonly: true)
                 .Date("PrintDate", header: "PrintDate", iseditingreadonly: true);
         }
-        
-        private void buttonQuery_Click(object sender, EventArgs e)
-        {            
-            if (this.textBoxPOID.Text.Empty())
+
+        private void ButtonQuery_Click(object sender, EventArgs e)
+        {
+            if (this.textBoxPOID.Text.Empty() && this.txtCutref.Text.Empty() &&
+                this.dateRangeCreateDate.Value1.Empty() && this.dateRangeCreateDate.Value2.Empty())
             {
-                MyUtility.Msg.WarningBox("POID can not be empty.");
+                MyUtility.Msg.WarningBox("[POID],[CutRef#],[Create Date] can not all be empty.");
                 this.bindingSource1.DataSource = null;
                 return;
             }
 
-            string strPatternPanelFilter = string.Empty;
-            string strCreateDateFilter = string.Empty;
+            string where = string.Empty;
 
-            if (this.textBoxPatterPanel.Text.Empty() == false)
+            if (!this.textBoxPOID.Text.Empty())
             {
-                strPatternPanelFilter = $"and b.PatternPanel = '{this.textBoxPatterPanel.Text}'";
+                where += "\r\n" + $"and b.POID = '{this.textBoxPOID.Text}'";
             }
 
-            if (this.dateRangeCreateDate.Value1.Empty() == false)
+            if (!this.txtCutref.Text.Empty())
             {
-                strCreateDateFilter = $"and '{((DateTime)this.dateRangeCreateDate.Value1).ToString("yyyy/MM/dd")}' <= b.CDate ";
+                where += "\r\n" + $"and b.CutRef  = '{this.txtCutref.Text}'";
             }
 
-            if (this.dateRangeCreateDate.Value2.Empty() == false)
+            if (!this.dateRangeCreateDate.Value1.Empty())
             {
-                strCreateDateFilter += $"and b.CDate <= '{((DateTime)this.dateRangeCreateDate.Value2).ToString("yyyy/MM/dd")}'";
+                where += $"and '{((DateTime)this.dateRangeCreateDate.Value1).ToString("yyyy/MM/dd")}' <= b.CDate ";
+            }
+
+            if (!this.dateRangeCreateDate.Value2.Empty())
+            {
+                where += $"and b.CDate <= '{((DateTime)this.dateRangeCreateDate.Value2).ToString("yyyy/MM/dd")}'";
+            }
+
+            if (!this.textBoxPatterPanel.Text.Empty())
+            {
+                where += "\r\n" + $"and b.PatternPanel = '{this.textBoxPatterPanel.Text}'";
             }
 
             string strQuerySQL = $@"
@@ -104,9 +113,9 @@ select Sel = 0
        , b.SewingCell
 from Bundle b
 inner join Orders O with(nolock) on  b.Orderid = o.id  and o.MDivisionID  = b.MDivisionID 
-where b.POID = '{this.textBoxPOID.Text}'
-      {strPatternPanelFilter}
-      {strCreateDateFilter}";
+where 1=1
+{where}
+";
 
             DataTable resultDt;
             DualResult result = DBProxy.Current.Select(null, strQuerySQL, out resultDt);
@@ -121,9 +130,9 @@ where b.POID = '{this.textBoxPOID.Text}'
             this.grid.ColumnsAutoSize();
         }
 
-        private void buttonPrint_Click(object sender, EventArgs e)
+        private void ButtonPrint_Click(object sender, EventArgs e)
         {
-            List<string> openExcelFile = ExcelProcess("Print Processing");
+            List<string> openExcelFile = this.ExcelProcess("Print Processing");
             if (openExcelFile != null)
             {
                 PrintDialog printDialog = new PrintDialog();
@@ -145,9 +154,9 @@ where b.POID = '{this.textBoxPOID.Text}'
             }
         }
 
-        private void buttonToExcel_Click(object sender, EventArgs e)
+        private void ButtonToExcel_Click(object sender, EventArgs e)
         {
-            List<string> openExcelFile = ExcelProcess("Excel Processing");
+            List<string> openExcelFile = this.ExcelProcess("Excel Processing");
             if (openExcelFile != null)
             {
                 foreach (string workBook in openExcelFile)
@@ -157,7 +166,7 @@ where b.POID = '{this.textBoxPOID.Text}'
             }
         }
 
-        private void buttonClose_Click(object sender, EventArgs e)
+        private void ButtonClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -179,7 +188,6 @@ where b.POID = '{this.textBoxPOID.Text}'
             {
                 printDt = printDt.AsEnumerable().Where(row => row["Sel"].EqualDecimal(1)).CopyToDataTable();
             }
-
 
             string strExcelDataSQL = string.Empty;
             string strExtend = string.Empty;
@@ -414,8 +422,8 @@ order by x.[Bundle]";
 
             int printSheetNum = 0;
             List<string> openWorkBook = new List<string>();
-            string printExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_P13");
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); //預先開啟excel app
+            string printExcelName = Class.MicrosoftFile.GetName("Cutting_P13");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
 
             foreach (DataRow printDr in printDt.Rows)
             {
@@ -432,8 +440,8 @@ order by x.[Bundle]";
                     objApp.Quit();
                     openWorkBook.Add(printExcelName);
 
-                    objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx");
-                    printExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_P13");
+                    objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx");
+                    printExcelName = Class.MicrosoftFile.GetName("Cutting_P13");
                 }
 
                 #region 取得每一個 ID 的資料
@@ -441,7 +449,7 @@ order by x.[Bundle]";
                 listSqlParameter.Add(new SqlParameter("@ID", printDr["ID"]));
                 listSqlParameter.Add(new SqlParameter("@extend", strExtend));
 
-                result = DBProxy.Current.Select("", strExcelDataSQL, listSqlParameter, out resultDt);
+                result = DBProxy.Current.Select(string.Empty, strExcelDataSQL, listSqlParameter, out resultDt);
                 if (result == false)
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
@@ -453,7 +461,7 @@ order by x.[Bundle]";
                 #endregion
 
                 // 取得工作表
-                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[printSheetNum % 255 + 1];
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[(printSheetNum % 255) + 1];
 
                 /*
                  * 新增資料前
@@ -464,7 +472,7 @@ order by x.[Bundle]";
                  */
                 if (printSheetNum % 255 != 254 && printSheetNum < printDt.Rows.Count - 1)
                 {
-                    objSheets.Copy(objApp.Sheets[printSheetNum % 255 + 2]);
+                    objSheets.Copy(objApp.Sheets[(printSheetNum % 255) + 2]);
                 }
 
                 objSheets.Name = printDr["ID"].ToString();
@@ -483,13 +491,13 @@ order by x.[Bundle]";
                 objSheets.Cells[4, 7] = "Cutting#: " + printDr["CutNo"].ToString();
                 objSheets.Cells[4, 9] = "MasterSP#: " + printDr["POID"].ToString();
                 objSheets.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
-                MyUtility.Excel.CopyToXls(resultDt, "", "Cutting_P10.xltx", 5, false, null, objApp, wSheet: objSheets);      // 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(resultDt, string.Empty, "Cutting_P10.xltx", 5, false, null, objApp, wSheet: objSheets);      // 將datatable copy to excel
                 objSheets.get_Range("D1:D1").ColumnWidth = 11;
                 objSheets.get_Range("E1:E1").Columns.AutoFit();
                 objSheets.get_Range("G1:H1").ColumnWidth = 9;
                 objSheets.get_Range("I1:L1").ColumnWidth = 15;
 
-                objSheets.Range[String.Format("A6:L{0}", resultDt.Rows.Count + 5)].Borders.Weight = 2;//設定全框線
+                objSheets.Range[string.Format("A6:L{0}", resultDt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
                 #endregion
 
                 Marshal.ReleaseComObject(objSheets);

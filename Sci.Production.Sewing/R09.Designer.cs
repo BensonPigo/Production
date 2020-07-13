@@ -33,8 +33,8 @@
             this.label3 = new Sci.Win.UI.Label();
             this.dateConfirm = new Sci.Win.UI.DateRange();
             this.chkOnlyshowBalanceQty = new Sci.Win.UI.CheckBox();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.label4 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
             this.txtSP1 = new Sci.Win.UI.TextBox();
@@ -132,7 +132,7 @@
             // txtfactory1
             // 
             this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.boolFtyGroupList = true;
+            this.txtfactory1.BoolFtyGroupList = true;
             this.txtfactory1.FilteMDivision = false;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory1.IsProduceFty = false;
@@ -238,8 +238,8 @@
         private Win.UI.Label label2;
         private Win.UI.Label label3;
         private Win.UI.DateRange dateConfirm;
-        private Class.txtMdivision txtMdivision1;
-        private Class.txtfactory txtfactory1;
+        private Class.TxtMdivision txtMdivision1;
+        private Class.Txtfactory txtfactory1;
         private Win.UI.CheckBox chkOnlyshowBalanceQty;
         private Win.UI.Label label4;
         private Win.UI.Label label9;

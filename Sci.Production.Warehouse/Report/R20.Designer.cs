@@ -40,12 +40,12 @@
             this.textStartSP = new Sci.Win.UI.TextBox();
             this.textEndSP = new Sci.Win.UI.TextBox();
             this.dateInventoryETA = new Sci.Win.UI.DateRange();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.textStartRefno = new Sci.Win.UI.TextBox();
             this.textEndRefno = new Sci.Win.UI.TextBox();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             this.checkQty = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
@@ -313,12 +313,12 @@
         private Win.UI.TextBox textStartSP;
         private Win.UI.TextBox textEndSP;
         private Win.UI.DateRange dateInventoryETA;
-        private Class.txtMdivision txtMdivision1;
+        private Class.TxtMdivision txtMdivision1;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Win.UI.TextBox textStartRefno;
         private Win.UI.TextBox textEndRefno;
-        private Class.txtfactory txtfactory1;
+        private Class.Txtfactory txtfactory1;
         private Win.UI.CheckBox checkQty;
     }
 }

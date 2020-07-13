@@ -37,7 +37,7 @@
             this.dateBundleCdate = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
             this.dateBundleScan = new Sci.Win.UI.DateRange();
-            this.txtsubprocess = new Sci.Production.Class.txtsubprocess();
+            this.txtsubprocess = new Sci.Production.Class.Txtsubprocess();
             this.labspno = new Sci.Win.UI.Label();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
@@ -256,7 +256,7 @@
         private Win.UI.DateRange dateBundleCdate;
         private Win.UI.Label label2;
         private Win.UI.DateRange dateBundleScan;
-        private Class.txtsubprocess txtsubprocess;
+        private Class.Txtsubprocess txtsubprocess;
         private Win.UI.Label labspno;
         private Win.UI.TextBox txtSPNo;
     }

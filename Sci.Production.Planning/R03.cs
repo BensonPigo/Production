@@ -11,7 +11,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R03
     /// </summary>
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DateTime? sciDate1;
@@ -54,7 +54,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"select distinct s.ID,s.BrandID,s.SeasonID,sa.ArtworkTypeID,sa.Article,sa.ArtworkID,sa.ArtworkName,
@@ -112,7 +112,7 @@ where 1 = 1");
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ where 1 = 1");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Planning_R03_LocalQuotationList.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Planning_R03_LocalQuotationList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -173,7 +173,7 @@ where 1 = 1");
             excel.Cells.EntireRow.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R03_LocalQuotationList");
+            string strExcelName = Class.MicrosoftFile.GetName("Planning_R03_LocalQuotationList");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

@@ -1,12 +1,8 @@
 ﻿using Ict;
 using Sci.Data;
-using Sci.Production.Class.Commons;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using System.Data.SqlClient;
@@ -213,7 +209,7 @@ order by FactoryID
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             // 把DataTable的值清空
             this.dtSummary = null;
@@ -249,7 +245,7 @@ order by FactoryID
                 }
 
                 var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-            connectionString.Add(connections);
+                connectionString.Add(connections);
             }
 
             if (connectionString == null || connectionString.Count == 0)
@@ -266,8 +262,8 @@ order by FactoryID
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                    i + 1,
-                    connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
 
                 // 跨資料庫連線，將所需資料存到TempTable，再給不同資料庫使用
                 SqlConnection pmsConn;
@@ -342,7 +338,7 @@ order by FactoryID
             this.dtSummary.Rows.Add(totalrow);
             #endregion
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -360,7 +356,7 @@ order by FactoryID
                 return false;
             }
             #region Save & Show Excel
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
             MyUtility.Excel.CopyToXls(this.dtSummary, null, "Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp, wSheet: objApp.Sheets[1]);
             MyUtility.Excel.CopyToXls(this.dtDetail, null, "Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
             for (int i = 1; i <= 2; i++)
@@ -369,7 +365,7 @@ order by FactoryID
             }
 
             Excel.Workbook workbook = objApp.Workbooks[1];
-            string strFileName = Sci.Production.Class.MicrosoftFile.GetName("Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
+            string strFileName = Class.MicrosoftFile.GetName("Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
             workbook.SaveAs(strFileName);
             workbook.Close();
             objApp.Quit();

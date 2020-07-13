@@ -8,7 +8,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P01
     /// </summary>
-    public partial class P01 : Sci.Win.Tems.Input1
+    public partial class P01 : Win.Tems.Input1
     {
         /// <summary>
         /// P01
@@ -20,7 +20,7 @@ namespace Sci.Production.Logistic
         {
             this.InitializeComponent();
             this.Text = type == "1" ? "P01. Clog Master List" : "P011. Clog Master List (History)";
-            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 0", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 1", Sci.Env.User.Keyword);
+            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 0", Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 1", Env.User.Keyword);
         }
 
         /// <summary>
@@ -98,42 +98,42 @@ SELECT isnull(sum(b.CTNQty),0)
         // Quantity breakdown
         private void BtnQuantityBreakdown_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(this.displayPOCombo.Value));
+            PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(this.displayPOCombo.Value));
             callNextForm.ShowDialog(this);
         }
 
         // Q'ty b'down by shipmode
         private void BtnQtyBDownByShipmode_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            PPIC.P01_QtyShip callNextForm = new PPIC.P01_QtyShip(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Production output
         private void BtnProductionOutput_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ProductionOutput callNextForm = new Sci.Production.PPIC.P01_ProductionOutput(this.CurrentMaintain);
+            PPIC.P01_ProductionOutput callNextForm = new PPIC.P01_ProductionOutput(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Garment Export
         private void BtnGarmentExport_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_GMTExport callNextForm = new Sci.Production.PPIC.P01_GMTExport(this.CurrentMaintain["ID"].ToString());
+            PPIC.P01_GMTExport callNextForm = new PPIC.P01_GMTExport(this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
         // Carton Size
         private void BtnCartonSize_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P01_CTNData callNextForm = new Sci.Production.Packing.P01_CTNData(this.CurrentMaintain);
+            Packing.P01_CTNData callNextForm = new Packing.P01_CTNData(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Carton Status
         private void BtnCartonStatus_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_CTNStatus callNextForm = new Sci.Production.PPIC.P01_CTNStatus(this.CurrentMaintain["ID"].ToString(), true);
+            PPIC.P01_CTNStatus callNextForm = new PPIC.P01_CTNStatus(this.CurrentMaintain["ID"].ToString(), true);
             callNextForm.ShowDialog(this);
             this.RenewData();
             this.numCtnQtyOnTransit.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(
@@ -168,7 +168,7 @@ SELECT isnull(sum(b.CTNQty),0)
         // Order remark
         private void BtnOrderRemark_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(this.CurrentMaintain["OrderRemark"].ToString(), "Order Remark", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(this.CurrentMaintain["OrderRemark"].ToString(), "Order Remark", false, null);
             callNextForm.ShowDialog(this);
         }
 
@@ -183,7 +183,7 @@ SELECT isnull(sum(b.CTNQty),0)
         // CFA && RFT list
         private void BtnCFARFTList_Click(object sender, EventArgs e)
         {
-            Sci.Production.Logistic.P01_CFAAndRFTList callNextForm = new Sci.Production.Logistic.P01_CFAAndRFTList(this.CurrentMaintain);
+            P01_CFAAndRFTList callNextForm = new P01_CFAAndRFTList(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 

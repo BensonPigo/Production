@@ -48,7 +48,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.numTemperature = new Sci.Win.UI.NumericBox();
             this.numTime = new Sci.Win.UI.NumericBox();
-            this.txtuserInspector = new Sci.Production.Class.txtuser();
+            this.txtuserInspector = new Sci.Production.Class.Txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -371,7 +371,7 @@
         private Win.UI.TextBox txtSP;
         private Win.UI.TextBox txtArticle;
         private Win.UI.ComboBox comboResult;
-        private Class.txtuser txtuserInspector;
+        private Class.Txtuser txtuserInspector;
         private Win.UI.TextBox txtRemark;
         private Win.UI.Button btnEncode;
         private Win.UI.DateBox dateTestDate;

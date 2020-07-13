@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Data;
 using Ict;
 using Ict.Win;
 using Sci.Data;
@@ -14,7 +8,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P01_ArtworkSummary
     /// </summary>
-    public partial class P01_ArtworkSummary : Sci.Win.Subs.Base
+    public partial class P01_ArtworkSummary : Win.Subs.Base
     {
         private string tableName;
 

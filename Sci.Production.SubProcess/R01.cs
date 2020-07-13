@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
@@ -19,11 +15,12 @@ namespace Sci.Production.SubProcess
     /// <summary>
     /// R01
     /// </summary>
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         private DataTable dtPrint = null;
         private int intRowHeaderCount = 2;
-        DateTime? date1, date2;
+        DateTime? date1;
+        DateTime? date2;
 
         /// <summary>
         /// R01
@@ -38,11 +35,11 @@ namespace Sci.Production.SubProcess
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            date1 = dateRange.Value1;
-            date2 = dateRange.Value2;
+            this.date1 = this.dateRange.Value1;
+            this.date2 = this.dateRange.Value2;
 
-            //Date 為必輸條件
-            if (MyUtility.Check.Empty(date1) || MyUtility.Check.Empty(date2))
+            // Date 為必輸條件
+            if (MyUtility.Check.Empty(this.date1) || MyUtility.Check.Empty(this.date2))
             {
                 MyUtility.Msg.InfoBox(" Date can't empty!!");
                 return false;
@@ -96,7 +93,7 @@ from (
         }
 
         /// <inheritdoc/>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dtPrint == null
                 || this.dtPrint.Rows.Count == 0)
@@ -109,10 +106,10 @@ from (
             this.ShowWaitMessage("Excel Processing...");
             this.SetCount(this.dtPrint.Rows.Count);
 
-            int intStdTms = Convert.ToInt32 (MyUtility.GetValue.Lookup("select top 1 stdTms from System"));
+            int intStdTms = Convert.ToInt32(MyUtility.GetValue.Lookup("select top 1 stdTms from System"));
             int intWorkingDate = this.dtPrint.AsEnumerable().Where(row => row["TotalCPU"].EqualDecimal(0) == false).Count();
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\SubProcess_R01.xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\SubProcess_R01.xltx");
             Excel.Worksheet workSheet = objApp.Sheets[1];
 
             for (int i = 1; i <= this.dtPrint.Rows.Count; i++)
@@ -134,7 +131,7 @@ from (
             workSheet.Cells[7, 11] = intWorkingDate;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("SubProcess_R01");
+            string strExcelName = Class.MicrosoftFile.GetName("SubProcess_R01");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

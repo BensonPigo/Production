@@ -4,21 +4,16 @@ using Sci.Data;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
     /// <summary>
     /// P21_BatchConfirmRespDept
     /// </summary>
-    public partial class P21_BatchConfirmRespDept : Sci.Win.Forms.Base
+    public partial class P21_BatchConfirmRespDept : Win.Forms.Base
     {
         private DataTable dtICR;
         private List<DataRow> listICR_ResponsibilityDept;
@@ -177,7 +172,7 @@ where   ID in (select ID from #tmp)
 Pls re-check and update responsibility information.
 {listSelectedICR.Select(s => s["ID"].ToString()).JoinToString(Environment.NewLine)}
 ";
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, mailTo, mailCC, subject, string.Empty, content, false, true);
+            var email = new MailTo(Env.Cfg.MailFrom, mailTo, mailCC, subject, string.Empty, content, false, true);
             email.ShowDialog(this);
         }
 

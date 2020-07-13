@@ -2,19 +2,18 @@
 using Sci.Data;
 using Sci.Win;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class R15 : Sci.Win.Tems.PrintForm
+    public partial class R15 : Win.Tems.PrintForm
     {
-        private DateTime? dateAddDate1, dateAddDate2;
-        private DateTime? dateApproveDate1, dateApproveDate2;
+        private DateTime? dateAddDate1;
+        private DateTime? dateAddDate2;
+        private DateTime? dateApproveDate1;
+        private DateTime? dateApproveDate2;
         private string strBrand;
         private string strStatus;
         private DataTable dtPrintTable;
@@ -144,7 +143,7 @@ where 1=1");
 
             #endregion
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)

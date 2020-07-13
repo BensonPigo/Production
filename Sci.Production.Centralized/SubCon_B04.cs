@@ -1,18 +1,12 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
-    public partial class SubCon_B04 : Sci.Win.Tems.Input1
+    public partial class SubCon_B04 : Win.Tems.Input1
     {
         public SubCon_B04(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -22,7 +16,7 @@ namespace Sci.Production.Centralized
 
         protected override bool ClickSaveBefore()
         {
-            if ( MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
             {
                 MyUtility.Msg.WarningBox("< Reason > can not be empty!");
                 return false;
@@ -60,7 +54,7 @@ namespace Sci.Production.Centralized
         protected override void ClickJunk()
         {
             base.ClickJunk();
-            DBProxy.Current.Execute("ProductionTPE", $"UPDATE SubconReason SET Status = 'Junked',Junk=1 ,EditDate=GETDATE() ,EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute("ProductionTPE", $"UPDATE SubconReason SET Status = 'Junked',Junk=1 ,EditDate=GETDATE() ,EditName='{Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }
@@ -68,7 +62,7 @@ namespace Sci.Production.Centralized
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();
-            DBProxy.Current.Execute("ProductionTPE", $"UPDATE SubconReason SET Status = 'New' ,Junk=0 ,EditDate=GETDATE() ,EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute("ProductionTPE", $"UPDATE SubconReason SET Status = 'New' ,Junk=0 ,EditDate=GETDATE() ,EditName='{Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }

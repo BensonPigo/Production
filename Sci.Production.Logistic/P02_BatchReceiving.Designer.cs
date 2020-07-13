@@ -57,7 +57,7 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.txtcloglocationLocationNo = new Sci.Production.Class.txtcloglocation();
+            this.txtcloglocationLocationNo = new Sci.Production.Class.Txtcloglocation();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.panel4 = new Sci.Win.UI.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -469,7 +469,7 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape5;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape4;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape3;
-        private Class.txtcloglocation txtcloglocationLocationNo;
+        private Class.Txtcloglocation txtcloglocationLocationNo;
         private Win.UI.Button btnUpdateAllLocation;
         //private Win.UI.BindingSource bindingSource1;
         private Win.UI.ListControlBindingSource bindingSource1;

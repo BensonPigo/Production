@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
@@ -15,7 +10,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_Print
     /// </summary>
-    public partial class P04_Print : Sci.Win.Tems.PrintForm
+    public partial class P04_Print : Win.Tems.PrintForm
     {
         private string style1;
         private string style2;
@@ -47,7 +42,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlCmd = string.Format(
                 @"select s.ID,s.SeasonID,s.BrandID,s.ProgramID,s.Model,s.Description,s.StyleName,
@@ -116,7 +111,7 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -131,7 +126,7 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P04_Print.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\PPIC_P04_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -230,7 +225,7 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
             excel.Cells.EntireRow.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P04_Print");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_P04_Print");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

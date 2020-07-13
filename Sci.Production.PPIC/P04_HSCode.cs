@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
@@ -14,7 +9,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_HSCode
     /// </summary>
-    public partial class P04_HSCode : Sci.Win.Subs.Base
+    public partial class P04_HSCode : Win.Subs.Base
     {
         private string styleUkey;
 
@@ -43,8 +38,8 @@ order by sh.Continent,sh.CountryID,sh.Article", this.styleUkey);
             DualResult selectResult1 = DBProxy.Current.Select(null, sqlCmd, out selectDataTable);
             foreach (DataRow gridData in selectDataTable.Rows)
             {
-                gridData["CreateBy"] = gridData["AddName"].ToString() + " " + (MyUtility.Check.Empty(gridData["AddDate"]) ? string.Empty : ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat)));
-                gridData["EditBy"] = gridData["EditName"].ToString() + "  " + (MyUtility.Check.Empty(gridData["EditDate"]) ? string.Empty : ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat)));
+                gridData["CreateBy"] = gridData["AddName"].ToString() + " " + (MyUtility.Check.Empty(gridData["AddDate"]) ? string.Empty : ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat)));
+                gridData["EditBy"] = gridData["EditName"].ToString() + "  " + (MyUtility.Check.Empty(gridData["EditDate"]) ? string.Empty : ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat)));
             }
 
             this.listControlBindingSource1.DataSource = selectDataTable;

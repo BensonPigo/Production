@@ -2,11 +2,9 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using Sci.Utility.Excel;
@@ -18,7 +16,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// R11
     /// </summary>
-    public partial class R11 : Sci.Win.Tems.PrintForm
+    public partial class R11 : Win.Tems.PrintForm
     {
         private string factoryid;
         private string countryid;
@@ -130,8 +128,8 @@ namespace Sci.Production.Centralized
             {
                 sqlWheres.Add(string.Format(
                     "e.CloseDate between '{0}' and '{1}' ",
-                   ((DateTime)this.dateCloseDate1.Value).ToShortDateString(),
-                   ((DateTime)this.dateCloseDate2.Value).ToShortDateString()));
+                    ((DateTime)this.dateCloseDate1.Value).ToShortDateString(),
+                    ((DateTime)this.dateCloseDate2.Value).ToShortDateString()));
                 close_Date = true;
             }
 
@@ -139,8 +137,8 @@ namespace Sci.Production.Centralized
             {
                 sqlWheres.Add(string.Format(
                     "ShippingAP.ApvDate between '{0}' and '{1}' ",
-                   ((DateTime)this.dateApproveDate1.Value).ToShortDateString(),
-                   ((DateTime)this.dateApproveDate2.Value).ToShortDateString()));
+                    ((DateTime)this.dateApproveDate1.Value).ToShortDateString(),
+                    ((DateTime)this.dateApproveDate2.Value).ToShortDateString()));
                 approve_Date = true;
             }
 
@@ -156,8 +154,8 @@ namespace Sci.Production.Centralized
             {
                 sqlWheres.Add(string.Format(
                     "e.ETA between '{0}' and '{1}' ",
-                   ((DateTime)this.dateETA1.Value).ToShortDateString(),
-                   ((DateTime)this.dateETA2.Value).ToShortDateString()));
+                    ((DateTime)this.dateETA1.Value).ToShortDateString(),
+                    ((DateTime)this.dateETA2.Value).ToShortDateString()));
             }
 
             if (!this.txtBrandBranadID.Text.Empty())
@@ -387,7 +385,7 @@ from #data";
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.dt_All = null;
             this.dt_Tmp = null;
@@ -450,8 +448,8 @@ from #data";
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                   i + 1,
-                   connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {
@@ -510,8 +508,8 @@ order by BrandID";
                     Logs.UI.LogInfo("listSummary");
                     listSummary = string.Format(
                         listSummary,
-                       string.Join(",", ftyAmt),
-                       string.Join(",", ftyList));
+                        string.Join(",", ftyAmt),
+                        string.Join(",", ftyList));
 
                     // 執行pivot
                     result = DBProxy.Current.SelectByConn(conn, listSummary, out this.dt_Tmp);
@@ -598,8 +596,8 @@ order by BrandID";
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                   i + 1,
-                   connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {
@@ -736,7 +734,7 @@ order by FactorySort
             }
             #endregion
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -768,7 +766,7 @@ order by FactorySort
             #endregion
 
             #region --匯出Excel
-            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Centralized_R11_Transportation_Cost_Material_Import_clearance.xltx");
+            SaveXltReportCls xl = new SaveXltReportCls("Centralized_R11_Transportation_Cost_Material_Import_clearance.xltx");
             xl.BoOpenFile = true;
             SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(this.dt_All);
             xdt_All.ShowHeader = true;
@@ -780,13 +778,13 @@ order by FactorySort
                 SaveXltReportCls.XltRptTable xdt_detail_All = new SaveXltReportCls.XltRptTable(this.dt_detail_All);
                 xdt_detail_All.ShowHeader = false;
                 xl.DicDatas.Add("##R20UNRLDETAIL", xdt_detail_All);
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R11_Transportation_Cost_Material_Import_clearance"));
+                xl.Save(Class.MicrosoftFile.GetName("Centralized_R11_Transportation_Cost_Material_Import_clearance"));
             }
             else
             {
                 Microsoft.Office.Interop.Excel.Application excel = xl.ExcelApp;
                 excel.Worksheets[2].Delete();
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R11_Transportation_Cost_Material_Import_clearance"));
+                xl.Save(Class.MicrosoftFile.GetName("Centralized_R11_Transportation_Cost_Material_Import_clearance"));
             }
             #endregion
 

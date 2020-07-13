@@ -33,8 +33,8 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
-            this.txtFactory = new Sci.Production.Class.txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.txtFactory = new Sci.Production.Class.Txtfactory();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.txtCutRef = new Sci.Win.UI.TextBox();
             this.comboSubPorcess = new Sci.Win.UI.ComboBox();
@@ -129,7 +129,7 @@
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
-            this.txtFactory.boolFtyGroupList = true;
+            this.txtFactory.BoolFtyGroupList = true;
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFactory.IsProduceFty = false;
@@ -251,8 +251,8 @@
         private Win.UI.Label label3;
         private Win.UI.Label label4;
         private Win.UI.Label label7;
-        private Class.txtMdivision txtMdivision;
-        private Class.txtfactory txtFactory;
+        private Class.TxtMdivision txtMdivision;
+        private Class.Txtfactory txtFactory;
         private Win.UI.TextBox txtSPNo;
         private Win.UI.TextBox txtCutRef;
         private Win.UI.ComboBox comboSubPorcess;

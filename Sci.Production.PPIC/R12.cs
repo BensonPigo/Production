@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
-using System.Linq;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -16,7 +14,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R12
     /// </summary>
-    public partial class R12 : Sci.Win.Tems.PrintForm
+    public partial class R12 : Win.Tems.PrintForm
     {
         private string season;
         private string brand;
@@ -49,8 +47,8 @@ namespace Sci.Production.PPIC
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
 
-            this.comboM.Text = Sci.Env.User.Keyword;
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
             this.checkBulk.Checked = true;
         }
 
@@ -84,7 +82,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlwhere = string.Empty;
             string sqlwhere2 = string.Empty;
@@ -129,12 +127,32 @@ namespace Sci.Production.PPIC
             }
 
             List<string> category = new List<string>();
-            if (this.bulk) category.Add("'B'");
-            if (this.sample) category.Add("'S'");
-            if (this.material) category.Add("'M'");
-            //if (this.forecast) category.Add("''");
-            if (this.garment) category.Add("'G'");
-            if (this.smtl) category.Add("'T'");
+            if (this.bulk)
+            {
+                category.Add("'B'");
+            }
+
+            if (this.sample)
+            {
+                category.Add("'S'");
+            }
+
+            if (this.material)
+            {
+                category.Add("'M'");
+            }
+
+            // if (this.forecast) category.Add("''");
+            if (this.garment)
+            {
+                category.Add("'G'");
+            }
+
+            if (this.smtl)
+            {
+                category.Add("'T'");
+            }
+
             string categorys = string.Join(",", category);
 
             if (category.Count > 0)
@@ -257,7 +275,7 @@ drop table #tmp,#tmp2,#tmp3,#mondt
             }
 
             this.printData[0].Columns.Remove("StyleUkey");
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private int nowRow;
@@ -277,12 +295,11 @@ drop table #tmp,#tmp2,#tmp3,#mondt
             this.ShowWaitMessage("Excel Processing...");
 
             string filename = "PPIC_R12_PadPrintInkForecast.xltx";
-            Excel.Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
             Excel.Worksheet worksheet;
             excel.DisplayAlerts = false;
 
             // excel.Visible = true;
-
             MyUtility.Excel.CopyToXls(this.printData[1], string.Empty, filename, 1, false, null, excel, wSheet: excel.Sheets[2]);
             MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, filename, 1, false, null, excel, wSheet: excel.Sheets[3]);
 
@@ -395,9 +412,9 @@ drop table #tmp,#tmp2,#tmp3,#mondt
                 worksheet.get_Range((Excel.Range)worksheet.Cells[row3 - 1, 3], (Excel.Range)worksheet.Cells[row3 - 1, 3 + this.printData[4].Rows.Count - 1]).Interior.Color = Color.FromArgb(217, 217, 217);
                 #endregion
                 #region 隱藏列
-                worksheet.Rows[$"{row2 + colorCount}:{row2 + (colorCount * 3) - 1}", System.Type.Missing].Hidden = true;
-                worksheet.Rows[$"{row3 + colorCount}:{row3 + (colorCount * 3) - 1}", System.Type.Missing].Hidden = true;
-                worksheet.Rows[$"{row4}:{row4 + (colorCount * 3) - 1}", System.Type.Missing].Hidden = true;
+                worksheet.Rows[$"{row2 + colorCount}:{row2 + (colorCount * 3) - 1}", Type.Missing].Hidden = true;
+                worksheet.Rows[$"{row3 + colorCount}:{row3 + (colorCount * 3) - 1}", Type.Missing].Hidden = true;
+                worksheet.Rows[$"{row4}:{row4 + (colorCount * 3) - 1}", Type.Missing].Hidden = true;
                 #endregion
             }
             #region
@@ -424,8 +441,8 @@ drop table #tmp,#tmp2,#tmp3,#mondt
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R12_PadPrintInkForecast");
-            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_R12_PadPrintInkForecast");
+            Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             excel.Quit();

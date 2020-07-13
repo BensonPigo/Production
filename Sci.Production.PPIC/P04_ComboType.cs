@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
@@ -14,7 +10,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_ComboType
     /// </summary>
-    public partial class P04_ComboType : Sci.Win.Subs.Input4
+    public partial class P04_ComboType : Win.Subs.Input4
     {
         private string styleUnit;
 
@@ -36,18 +32,18 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings combotype = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings combotype = new DataGridViewGeneratorTextColumnSettings();
             #region Artwork Type的Right Click & Validating
             combotype.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from DropDownList WITH (NOLOCK) where TYPE = 'Location' order by Seq", "5,10", dr["Location"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name from DropDownList WITH (NOLOCK) where TYPE = 'Location' order by Seq", "5,10", dr["Location"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {

@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel6 = new System.Windows.Forms.Panel();
-            this.txtUserID = new Sci.Production.Class.txtmulituser();
+            this.txtUserID = new Sci.Production.Class.Txtmulituser();
             this.btnReset = new Sci.Win.UI.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.chkSend = new System.Windows.Forms.CheckBox();
@@ -467,7 +467,7 @@
         private System.Windows.Forms.CheckBox chkPrint;
         private System.Windows.Forms.CheckBox chkDelete;
         private System.Windows.Forms.CheckBox chkEdit;
-        private Class.txtmulituser txtUserID;
+        private Class.Txtmulituser txtUserID;
         private Win.UI.Grid grid;
     }
 }

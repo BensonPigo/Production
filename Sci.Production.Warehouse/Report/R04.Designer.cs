@@ -35,16 +35,16 @@
             this.labelOperation = new Sci.Win.UI.Label();
             this.labelCFMDate = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
-            this.txtdropdownlistOperation = new Sci.Production.Class.txtdropdownlist();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.txtdropdownlistOperation = new Sci.Production.Class.Txtdropdownlist();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.txtSpStart = new Sci.Win.UI.TextBox();
             this.txtSpEnd = new Sci.Win.UI.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.comboFabricType = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboFabricType = new Sci.Production.Class.ComboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -161,7 +161,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -282,17 +282,17 @@
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelOperation;
-        private Class.txtdropdownlist txtdropdownlistOperation;
+        private Class.Txtdropdownlist txtdropdownlistOperation;
         private Win.UI.Label labelCFMDate;
         private Win.UI.Label labelM;
-        private Class.txtMdivision txtMdivision;
-        private Class.txtbrand txtbrand;
-        private Class.txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
+        private Class.Txtbrand txtbrand;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtSpStart;
         private Win.UI.TextBox txtSpEnd;
         private System.Windows.Forms.Label label2;
         private Win.UI.Label label3;
-        private Class.comboDropDownList comboFabricType;
+        private Class.ComboDropDownList comboFabricType;
     }
 }

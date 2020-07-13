@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
@@ -15,7 +12,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_CTNStatus
     /// </summary>
-    public partial class P01_CTNStatus : Sci.Win.Subs.Base
+    public partial class P01_CTNStatus : Win.Subs.Base
     {
         private string orderID;
         private bool canRecompute;

@@ -1,57 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Sci;
 using Sci.Data;
 using Ict;
 using System.Linq;
 using System.Data.SqlClient;
-using Sci.Win;
-using Sci.Utility.Excel;
 using System.Runtime.InteropServices;
-
-
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_RollTransaction : Sci.Win.Subs.Base
+    public partial class P03_RollTransaction : Win.Subs.Base
     {
         DataRow dr;
-        DataTable dtFtyinventory, dtTrans, dtSummary;
+        DataTable dtFtyinventory;
+        DataTable dtTrans;
+        DataTable dtSummary;
         DataSet data = new DataSet();
         decimal useQty = 0;
-        Boolean bUseQty = false; 
+        bool bUseQty = false;
+
         public P03_RollTransaction(DataRow data)
         {
-            InitializeComponent();
-            
-            dr = data;
+            this.InitializeComponent();
+
+            this.dr = data;
         }
 
         protected override void OnFormLoaded()
         {
-            base.OnFormLoaded();            
-            this.Text += string.Format(@" ({0}-{1}-{2})", dr["id"], dr["seq1"], dr["seq2"]);  //351: WAREHOUSE_P03_RollTransaction_Transaction Detail by Roll#，3.Tool bar要帶出SP# & Seq
-            this.displaySeqNo.Text = dr["seq1"].ToString() + "-" + dr["seq2"].ToString();
-            this.displayDescription.Text = MyUtility.GetValue.Lookup(string.Format("select dbo.getmtldesc('{0}','{1}','{2}',2,0)", dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString()));
-            this.numArrivedQtyBySeq.Value = MyUtility.Check.Empty( dr["inqty"]) ? decimal.Parse("0.00"): decimal.Parse(dr["inqty"].ToString());
-            this.numReleasedQtyBySeq.Value = MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString());
+            base.OnFormLoaded();
+            this.Text += string.Format(@" ({0}-{1}-{2})", this.dr["id"], this.dr["seq1"], this.dr["seq2"]);  // 351: WAREHOUSE_P03_RollTransaction_Transaction Detail by Roll#，3.Tool bar要帶出SP# & Seq
+            this.displaySeqNo.Text = this.dr["seq1"].ToString() + "-" + this.dr["seq2"].ToString();
+            this.displayDescription.Text = MyUtility.GetValue.Lookup(string.Format("select dbo.getmtldesc('{0}','{1}','{2}',2,0)", this.dr["id"].ToString(), this.dr["seq1"].ToString(), this.dr["seq2"].ToString()));
+            this.numArrivedQtyBySeq.Value = MyUtility.Check.Empty(this.dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["inqty"].ToString());
+            this.numReleasedQtyBySeq.Value = MyUtility.Check.Empty(this.dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["outqty"].ToString());
 
-            //this.numericBox3.Value = (MyUtility.Check.Empty(dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["inqty"].ToString())) -
+            // this.numericBox3.Value = (MyUtility.Check.Empty(dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["inqty"].ToString())) -
             //  ( MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString())) +(MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["adjustqty"].ToString()));
-            decimal IN = (MyUtility.Check.Empty(dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["inqty"].ToString()));
-            decimal OUT = (MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString()));
-            decimal ADJ = (MyUtility.Check.Empty(dr["adjustqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["adjustqty"].ToString()));
+            decimal IN = MyUtility.Check.Empty(this.dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["inqty"].ToString());
+            decimal OUT = MyUtility.Check.Empty(this.dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["outqty"].ToString());
+            decimal ADJ = MyUtility.Check.Empty(this.dr["adjustqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["adjustqty"].ToString());
             this.numBalQtyBySeq.Value = IN - OUT + ADJ;
 
             #region "顯示DTM"
             DataTable dtmDt;
-            string sql = string.Format(@"
+            string sql = string.Format(
+                @"
                 select id,seq1,seq2,qty,ShipQty,Refno,ColorID,iif(qty <= shipqty, 'True','False') bUseQty
                 into #tmp
                 from Po_Supp_Detail
@@ -66,20 +63,27 @@ namespace Sci.Production.Warehouse
                 and a.seq1 = 'A1' 
 
                 drop table #tmp
-            ", dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
+            ", this.dr["id"].ToString(), this.dr["seq1"].ToString(), this.dr["seq2"].ToString());
             DualResult dtmResult = DBProxy.Current.Select(null, sql, out dtmDt);
-            if (dtmResult == false) ShowErr(sql, dtmResult);
-            if (!MyUtility.Check.Empty(dtmDt)) {
-                if (dtmDt.Rows.Count > 0) {
-                    bUseQty = MyUtility.Convert.GetBool(dtmDt.Rows[0]["bUseQty"]);
-                    useQty = bUseQty ? MyUtility.Convert.GetDecimal(dtmDt.Rows[0]["useQty"]) : useQty;
+            if (dtmResult == false)
+            {
+                this.ShowErr(sql, dtmResult);
+            }
+
+            if (!MyUtility.Check.Empty(dtmDt))
+            {
+                if (dtmDt.Rows.Count > 0)
+                {
+                    this.bUseQty = MyUtility.Convert.GetBool(dtmDt.Rows[0]["bUseQty"]);
+                    this.useQty = this.bUseQty ? MyUtility.Convert.GetDecimal(dtmDt.Rows[0]["useQty"]) : this.useQty;
                 }
             }
             #endregion
 
             #region Grid1 - Sql command
             string selectCommand1
-                = string.Format(@"Select a.Roll,a.Dyelot
+                = string.Format(
+                    @"Select a.Roll,a.Dyelot
                                 ,[stocktype] = case when stocktype = 'B' then 'Bulk'
                                                     when stocktype = 'I' then 'Invertory'
 			                                        when stocktype = 'O' then 'Scrap' End
@@ -93,17 +97,18 @@ namespace Sci.Production.Warehouse
                                                 --and MDivisionPoDetailUkey is not null  --避免下面Relations發生問題
                                                 --and MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
                                                 and StockType <> 'O'  --C倉不用算
-                                            order by a.dyelot,a.roll,a.stocktype"
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword);
+                                            order by a.dyelot,a.roll,a.stocktype",
+                    this.dr["id"].ToString(),
+                    this.dr["seq1"].ToString(),
+                    this.dr["seq2"].ToString(),
+                    Env.User.Keyword);
             #endregion
 
             #region Grid2 - Sql Command
-            
+
             string selectCommand2
-                = string.Format(@"select tmp.Roll,
+                = string.Format(
+                    @"select tmp.Roll,
 [stocktype] = case when stocktype = 'B' then 'Bulk'
                    when stocktype = 'I' then 'Invertory'
 			       when stocktype = 'O' then 'Scrap' End
@@ -273,57 +278,65 @@ group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,a.type,b.roll,b.stocktype,b
 
 ) tmp where stocktype <> 'O'
 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot
-"
-                , dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword);
+",
+                    this.dr["id"].ToString(),
+                    this.dr["seq1"].ToString(),
+                    this.dr["seq2"].ToString(),
+                    Env.User.Keyword);
 
             #endregion
-            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out dtFtyinventory);
-            if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
-            dtFtyinventory.TableName = "dtFtyinventory";
-            dtSummary = dtFtyinventory.Clone();
-            dtSummary.Columns.Add("rollcount", typeof(int));
-            dtSummary.Columns.Add("DTM", typeof(decimal));
-            bindingSource3.DataSource = dtSummary;
+            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out this.dtFtyinventory);
+            if (selectResult1 == false)
+            {
+                this.ShowErr(selectCommand1, selectResult1);
+            }
 
-            DualResult selectResult2 = DBProxy.Current.Select(null, selectCommand2, out dtTrans);
-            if (selectResult2 == false) ShowErr(selectCommand2, selectResult2);
-            dtTrans.TableName = "dtTrans";
-            data.Tables.Add(dtFtyinventory);
-            data.Tables.Add(dtTrans);
-            data.Tables.Add("dtSummary");
+            this.dtFtyinventory.TableName = "dtFtyinventory";
+            this.dtSummary = this.dtFtyinventory.Clone();
+            this.dtSummary.Columns.Add("rollcount", typeof(int));
+            this.dtSummary.Columns.Add("DTM", typeof(decimal));
+            this.bindingSource3.DataSource = this.dtSummary;
 
-            //remove [Dyelot] DataRelation
-            //DataRelation relation = new DataRelation("rel1"
+            DualResult selectResult2 = DBProxy.Current.Select(null, selectCommand2, out this.dtTrans);
+            if (selectResult2 == false)
+            {
+                this.ShowErr(selectCommand2, selectResult2);
+            }
+
+            this.dtTrans.TableName = "dtTrans";
+            this.data.Tables.Add(this.dtFtyinventory);
+            this.data.Tables.Add(this.dtTrans);
+            this.data.Tables.Add("dtSummary");
+
+            // remove [Dyelot] DataRelation
+            // DataRelation relation = new DataRelation("rel1"
             //    , new DataColumn[] { dtFtyinventory.Columns["Roll"], dtFtyinventory.Columns["Dyelot"], dtFtyinventory.Columns["StockType"] }
             //    , new DataColumn[] { dtTrans.Columns["roll"], dtTrans.Columns["dyelot"], dtTrans.Columns["stocktype"] }
             //    );
-            //105.12.23 Jimmy
-            if (dtFtyinventory.Rows.Count == 0 || dtTrans.Rows.Count == 0)
+            // 105.12.23 Jimmy
+            if (this.dtFtyinventory.Rows.Count == 0 || this.dtTrans.Rows.Count == 0)
             {
-                //MyUtility.Msg.ErrorBox("Data not found!!");
+                // MyUtility.Msg.ErrorBox("Data not found!!");
                 return;
             }
 
             try
             {
-                DataRelation relation = new DataRelation("Rol1"
-               , new DataColumn[] { dtFtyinventory.Columns["Roll"], dtFtyinventory.Columns["StockType"],dtFtyinventory.Columns["Dyelot"] }
-               , new DataColumn[] { dtTrans.Columns["roll"], dtTrans.Columns["stocktype"],dtTrans.Columns["Dyelot"] }
-               );
+                DataRelation relation = new DataRelation(
+                    "Rol1",
+                    new DataColumn[] { this.dtFtyinventory.Columns["Roll"], this.dtFtyinventory.Columns["StockType"], this.dtFtyinventory.Columns["Dyelot"] },
+                    new DataColumn[] { this.dtTrans.Columns["roll"], this.dtTrans.Columns["stocktype"], this.dtTrans.Columns["Dyelot"] });
 
-                data.Relations.Add(relation);
-                bindingSource1.DataSource = data;
-                bindingSource1.DataMember = "dtFtyinventory";
-                bindingSource2.DataSource = bindingSource1;
-                bindingSource2.DataMember = "Rol1";
+                this.data.Relations.Add(relation);
+                this.bindingSource1.DataSource = this.data;
+                this.bindingSource1.DataMember = "dtFtyinventory";
+                this.bindingSource2.DataSource = this.bindingSource1;
+                this.bindingSource2.DataMember = "Rol1";
 
-                //設定Grid1的顯示欄位
+                // 設定Grid1的顯示欄位
                 this.gridFtyinventory.IsEditingReadOnly = true;
-                this.gridFtyinventory.DataSource = bindingSource1;
-                Helper.Controls.Grid.Generator(this.gridFtyinventory)
+                this.gridFtyinventory.DataSource = this.bindingSource1;
+                this.Helper.Controls.Grid.Generator(this.gridFtyinventory)
                      .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8))
                      .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8))
                      .Text("stocktype", header: "Stock Type", width: Widths.AnsiChars(10))
@@ -334,10 +347,10 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                      .Text("MtlLocationID", header: "Location", width: Widths.AnsiChars(10))
                      ;
 
-                //設定Grid2的顯示欄位
+                // 設定Grid2的顯示欄位
                 this.gridTrans.IsEditingReadOnly = true;
-                this.gridTrans.DataSource = bindingSource2;
-                Helper.Controls.Grid.Generator(this.gridTrans)
+                this.gridTrans.DataSource = this.bindingSource2;
+                this.Helper.Controls.Grid.Generator(this.gridTrans)
                     .Date("issuedate", header: "Date", width: Widths.AnsiChars(10))
                      .Text("id", header: "Transaction ID", width: Widths.AnsiChars(13))
                      .Text("name", header: "Name", width: Widths.AnsiChars(13))
@@ -346,10 +359,10 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                      .Numeric("Adjust", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2);
 
-                //設定Grid3的顯示欄位
+                // 設定Grid3的顯示欄位
                 this.gridSummary.IsEditingReadOnly = true;
-                this.gridSummary.DataSource = bindingSource3;
-                Helper.Controls.Grid.Generator(this.gridSummary)
+                this.gridSummary.DataSource = this.bindingSource3;
+                this.Helper.Controls.Grid.Generator(this.gridSummary)
                      .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8))
                      .Numeric("rollcount", header: "# of Rolls", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
                      .Text("roll", header: "Rolls", width: Widths.AnsiChars(13))
@@ -359,23 +372,24 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                      .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("DTM", header: "DTM", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      ;
-                gridSummary.Columns["DTM"].Visible = bUseQty;
+                this.gridSummary.Columns["DTM"].Visible = this.bUseQty;
             }
             catch
             {
                 MyUtility.Msg.ErrorBox("Data error ,Please doubleclick 'Balance' field to click 'Re-Calculate' button for recalculate inventory qty, then retry to doubleclick this 'Release Qty' field.!!");
                 return;
             }
+
             this.comboStockType.Text = "ALL";
-            change_Color();
+            this.change_Color();
         }
 
         private void change_Color()
-        {   
-            for (int i = 0; i < gridTrans.Rows.Count; i++)
+        {
+            for (int i = 0; i < this.gridTrans.Rows.Count; i++)
             {
-                DataRow dr = gridTrans.GetDataRow(i);
-                if (gridTrans.Rows.Count <= i || i < 0)
+                DataRow dr = this.gridTrans.GetDataRow(i);
+                if (this.gridTrans.Rows.Count <= i || i < 0)
                 {
                     return;
                 }
@@ -393,7 +407,6 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                     }
                 }
             }
-
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -403,31 +416,31 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 
         private void comboStockType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            bindingSource1_PositionChanged(sender, e);  //687: WAREHOUSE_P03_RollTransaction_Transaction Detail by Roll#，1.Grid3值不對
-            switch (comboStockType.SelectedIndex)
+            this.bindingSource1_PositionChanged(sender, e);  // 687: WAREHOUSE_P03_RollTransaction_Transaction Detail by Roll#，1.Grid3值不對
+            switch (this.comboStockType.SelectedIndex)
             {
                 case 0:
-                    bindingSource1.Filter = "";
+                    this.bindingSource1.Filter = string.Empty;
                     break;
                 case 1:
-                    bindingSource1.Filter = "stocktype='Bulk'";
+                    this.bindingSource1.Filter = "stocktype='Bulk'";
                     break;
                 case 2:
-                    bindingSource1.Filter = "stocktype='Invertory'";
+                    this.bindingSource1.Filter = "stocktype='Invertory'";
                     break;
             }
         }
 
         private void gridFtyinventory_SelectionChanged(object sender, EventArgs e)
         {
-            change_Color();
+            this.change_Color();
         }
 
         private void bindingSource1_PositionChanged(object sender, EventArgs e)
         {
-            string[] tmpStocktype = new string[] { "", "" };
-            
-            switch (comboStockType.SelectedIndex)
+            string[] tmpStocktype = new string[] { string.Empty, string.Empty };
+
+            switch (this.comboStockType.SelectedIndex)
             {
                 case -1:
                     tmpStocktype[0] = "Bulk";
@@ -445,12 +458,13 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                     break;
             }
 
-            var tmp = from b in dtFtyinventory.AsEnumerable()
+            var tmp = from b in this.dtFtyinventory.AsEnumerable()
                       where tmpStocktype.Contains(b.Field<string>("StockType"))
                        group b by new
                        {
-                           Dyelot = b.Field<string>("Dyelot")
-                       } into m
+                           Dyelot = b.Field<string>("Dyelot"),
+                       }
+                        into m
                        select new
                        {
                            dyelot = m.First().Field<string>("Dyelot"),
@@ -460,12 +474,11 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                            outQty = m.Sum(w => w.Field<decimal>("outqty")),
                            AdjustQty = m.Sum(i => i.Field<decimal>("AdjustQty")),
                            balance = m.Sum(w => w.Field<decimal>("inqty")) - m.Sum(w => w.Field<decimal>("outqty")) + m.Sum(i => i.Field<decimal>("AdjustQty")),
-                           DTM = numArrivedQtyBySeq.Value == 0 ? 0 : m.Sum(w => w.Field<decimal>("inqty")) / numArrivedQtyBySeq.Value * useQty
+                           DTM = this.numArrivedQtyBySeq.Value == 0 ? 0 : m.Sum(w => w.Field<decimal>("inqty")) / this.numArrivedQtyBySeq.Value * this.useQty,
                        };
 
-            dtSummary.Rows.Clear();
-            tmp.ToList().ForEach(q2 => dtSummary.Rows.Add(q2.roll, q2.dyelot, null, q2.inqty, q2.outQty, q2.AdjustQty, q2.balance, null, q2.rollcount, q2.DTM));
-            
+            this.dtSummary.Rows.Clear();
+            tmp.ToList().ForEach(q2 => this.dtSummary.Rows.Add(q2.roll, q2.dyelot, null, q2.inqty, q2.outQty, q2.AdjustQty, q2.balance, null, q2.rollcount, q2.DTM));
         }
 
         private void btnPrint_Click(object sender, EventArgs e)
@@ -496,13 +509,14 @@ inner join dbo.MDivisionPoDetail b WITH (NOLOCK) on a.id = b.POID
 where   a.id = @ID 
         and a.seq1 = @seq1 
         and a.seq2=@seq2");
-            result = DBProxy.Current.Select("", sqlcmd, pars, out dt);
+            result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out dt);
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
-            DBProxy.Current.Select("", @"
+
+            DBProxy.Current.Select(string.Empty, @"
 select  c.Roll[Roll]
         , c.Dyelot [Dyelot]
         , [Stock_Type] = Case c.StockType 
@@ -519,18 +533,19 @@ from dbo.FtyInventory c WITH (NOLOCK)
 where   c.poid = @ID 
         and c.seq1 = @seq1 
         and c.seq2 = @seq2", pars, out dtt);
-            if (dtt.Rows.Count==0)
+            if (dtt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_RollTransaction.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P03_RollTransaction.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(@"
+            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(
+                @"
 select NameEn
 from Factory
-where id = '{0}'", Sci.Env.User.Keyword));
+where id = '{0}'", Env.User.Keyword));
             objSheets.Cells[3, 2] = MyUtility.Convert.GetString(dt.Rows[0]["SP"].ToString());
             objSheets.Cells[3, 4] = MyUtility.Convert.GetString(dt.Rows[0]["SEQ"].ToString());
             objSheets.Cells[3, 6] = MyUtility.Convert.GetString(dt.Rows[0]["REF"].ToString());
@@ -540,10 +555,10 @@ where id = '{0}'", Sci.Env.User.Keyword));
             objSheets.Cells[4, 6] = MyUtility.Convert.GetString(dt.Rows[0]["Bal_Qty"].ToString());
             objSheets.Cells[5, 2] = MyUtility.Convert.GetString(dt.Rows[0]["Description"].ToString());
 
-            MyUtility.Excel.CopyToXls(dtt, "", "Warehouse_P03_RollTransaction.xltx", 6, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(dtt, string.Empty, "Warehouse_P03_RollTransaction.xltx", 6, true, null, objApp);      // 將datatable copy to excel
 
             Marshal.ReleaseComObject(objSheets);
-            return; 
+            return;
         }
     }
 }

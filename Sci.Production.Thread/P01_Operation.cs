@@ -1,18 +1,11 @@
 ﻿using Ict.Win;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Thread
 {
     /// <summary>
     /// P01_Operation
     /// </summary>
-    public partial class P01_Operation : Sci.Win.Subs.Input8A
+    public partial class P01_Operation : Win.Subs.Input8A
     {
         /// <summary>
         /// P01_Operation

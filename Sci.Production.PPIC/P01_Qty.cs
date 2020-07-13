@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
@@ -15,7 +12,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_Qty
     /// </summary>
-    public partial class P01_Qty : Sci.Win.Subs.Base
+    public partial class P01_Qty : Win.Subs.Base
     {
         private string orderID;
         private string poID;
@@ -1160,7 +1157,7 @@ EXEC sp_executesql @sql", this.poID);
                 columns4 = ptb4.Columns.Count;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P01_Qtybreakdown.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_P01_Qtybreakdown.xltx"); // 預先開啟excel app
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             if (ptb1 != null && ptb1.Rows.Count > 0)
@@ -1239,7 +1236,7 @@ EXEC sp_executesql @sql", this.poID);
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_Qtybreakdown");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_P01_Qtybreakdown");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

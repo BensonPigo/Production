@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.IE
@@ -11,7 +7,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_B05
     /// </summary>
-    public partial class B05 : Sci.Win.Tems.Input1
+    public partial class B05 : Win.Tems.Input1
     {
         /// <summary>
         /// B05
@@ -36,15 +32,15 @@ namespace Sci.Production.IE
             }
             else
             {
-                this.btnThreadRatio.ForeColor = Control.DefaultForeColor;
+                this.btnThreadRatio.ForeColor = DefaultForeColor;
             }
 
-            //this.displayGroupID.Text = this.grid.SelectedRows[0].Cells["MachineGroup"].Value.ToString();
+            // this.displayGroupID.Text = this.grid.SelectedRows[0].Cells["MachineGroup"].Value.ToString();
         }
 
         private void BtnThreadRatio_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.B05_ThreadRatio callNextForm = new Sci.Production.IE.B05_ThreadRatio(this.CurrentMaintain["ID"].ToString());
+            B05_ThreadRatio callNextForm = new B05_ThreadRatio(this.CurrentMaintain["ID"].ToString());
             DialogResult result = callNextForm.ShowDialog(this);
         }
     }

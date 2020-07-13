@@ -9,7 +9,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B04_AccountNo
     /// </summary>
-    public partial class B04_AccountNo : Sci.Win.Subs.Input4
+    public partial class B04_AccountNo : Win.Subs.Input4
     {
         private DataGridViewGeneratorMaskedTextColumnSettings accountNo = new DataGridViewGeneratorMaskedTextColumnSettings();
 
@@ -45,7 +45,7 @@ namespace Sci.Production.Basic
 from (select ID,Seq from ArtworkType WITH (NOLOCK) where IsSubprocess = 1 or Classify = 'P' or SystemType = 'P') a 
 left join (select ArtworkTypeID,AccountID,AddName,AddDate,EditName,EditDate from LocalSupp_AccountNo WITH (NOLOCK) where ID = @id) b on a.ID = b.ArtworkTypeID 
 order by a.Seq";
-            Ict.DualResult returnResult;
+            DualResult returnResult;
             DataTable artworkTable = new DataTable();
             returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out artworkTable);
             if (!returnResult)
@@ -54,7 +54,7 @@ order by a.Seq";
             }
 
             this.SetGrid(artworkTable);
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -123,7 +123,7 @@ order by a.Seq";
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

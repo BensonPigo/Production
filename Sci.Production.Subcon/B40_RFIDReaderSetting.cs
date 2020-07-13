@@ -1,10 +1,6 @@
 ﻿using Ict.Win;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
@@ -12,15 +8,16 @@ using System.Linq;
 
 namespace Sci.Production.Subcon
 {
-    public partial class B40_RFIDReaderSetting : Sci.Win.Subs.Input4
+    public partial class B40_RFIDReaderSetting : Win.Subs.Input4
     {
         private string ID;
         private DataRow Master;
         public DataTable DetailDT;
-        public B40_RFIDReaderSetting(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow master,DataTable dt) 
+
+        public B40_RFIDReaderSetting(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow master, DataTable dt)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.ID = keyvalue1;
             this.Master = master;
             this.DetailDT = dt;
@@ -29,27 +26,47 @@ namespace Sci.Production.Subcon
         protected override bool OnGridSetup()
         {
             #region Grid事件
-            Ict.Win.DataGridViewGeneratorTextColumnSettings CutCellID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings CutCellID = new DataGridViewGeneratorTextColumnSettings();
             CutCellID.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.RowIndex == -1)
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"select ID,Description from CutCell with(nolock)where Junk = 0 and MDivisionID = '{this.Master["MDivisionID"]}' ";
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "8,40", null);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "8,40", null);
                     DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     dr["CutCellID"] = item.GetSelectedString();
                     dr.EndEdit();
                 }
             };
             CutCellID.CellValidating += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
                     dr["CutCellID"] = string.Empty;
@@ -66,18 +83,19 @@ namespace Sci.Production.Subcon
                     MyUtility.Msg.WarningBox("data not found!");
                     dr["CutCellID"] = string.Empty;
                 }
+
                 dr.EndEdit();
             };
             #endregion
 
             this.grid.IsEditingReadOnly = true;
-            Helper.Controls.Grid.Generator(this.grid)
+            this.Helper.Controls.Grid.Generator(this.grid)
              .Text("PanelNo", header: "Panel No", width: Widths.AnsiChars(20))
              .Text("CutCellID", header: "Cut Cell", width: Widths.AnsiChars(8), settings: CutCellID, iseditingreadonly: false)
              .DateTime("addDate", header: "Add Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
              .Text("addName", header: "Add Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .DateTime("editDate", header: "Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
-             .Text("editName", header: "Edit Name", width: Widths.AnsiChars(10), iseditingreadonly: true);             
+             .Text("editName", header: "Edit Name", width: Widths.AnsiChars(10), iseditingreadonly: true);
             this.grid.Columns["PanelNo"].DefaultCellStyle.BackColor = Color.Pink;
             this.grid.Columns["CutCellID"].DefaultCellStyle.BackColor = Color.Pink;
             return true;
@@ -97,10 +115,12 @@ where rp.RFIDReaderID ='{this.ID}'
             {
                 this.ShowErr(result);
             }
+
             if (this.DetailDT != null && this.DetailDT.Rows.Count > 0)
             {
                 datas = this.DetailDT.Copy();
             }
+
             this.gridbs.DataSource = datas;
         }
 
@@ -112,16 +132,18 @@ where rp.RFIDReaderID ='{this.ID}'
                 MyUtility.Msg.WarningBox("Panel No cannot empty");
                 return false;
             }
+
             return base.OnSaveBefore();
         }
 
         protected override DualResult OnSave()
         {
-            return Result.True;
+            return Ict.Result.True;
         }
+
         protected override DualResult OnSavePost()
         {
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override void OnSaveAfter()

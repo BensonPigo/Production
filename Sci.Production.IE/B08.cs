@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
@@ -15,7 +12,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_B08
     /// </summary>
-    public partial class B08 : Sci.Win.Tems.Input1
+    public partial class B08 : Win.Tems.Input1
     {
         /// <summary>
         /// B08
@@ -25,7 +22,7 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
+            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "'";
         }
 
         /// <summary>
@@ -36,7 +33,7 @@ namespace Sci.Production.IE
             base.OnFormLoaded();
 
             // 新增Import From Barcode按鈕
-            Sci.Win.UI.Button btn = new Sci.Win.UI.Button();
+            Win.UI.Button btn = new Win.UI.Button();
             btn.Text = "Import From Excel";
             btn.Click += new EventHandler(this.Btn_Click);
             this.browsetop.Controls.Add(btn);
@@ -62,7 +59,7 @@ namespace Sci.Production.IE
             string sqlCmd = "select MDIVISIONID,FactoryID,ID,Name,Skill,OnBoardDate,ResignationDate,SewingLineID,SPACE(250) as ErrorMsg from Employee WITH (NOLOCK)	where 1 = 0";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out excelDataTable);
 
-            sqlCmd = string.Format("select * from Factory WITH (NOLOCK)	where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            sqlCmd = string.Format("select * from Factory WITH (NOLOCK)	where MDivisionID = '{0}'", Env.User.Keyword);
             result = DBProxy.Current.Select(null, sqlCmd, out mFactory);
             mFactory.PrimaryKey = new DataColumn[] { mFactory.Columns["ID"] };
 
@@ -122,8 +119,8 @@ namespace Sci.Production.IE
                         newRow["OnBoardDate"] = dr["OnBoardDate"];
                         newRow["ResignationDate"] = dr["ResignationDate"];
                         newRow["SewingLineID"] = dr["SewingLineID"];
-                        newRow["MDivisionID"] = Sci.Env.User.Keyword;
-                        newRow["AddName"] = Sci.Env.User.UserID;
+                        newRow["MDivisionID"] = Env.User.Keyword;
+                        newRow["AddName"] = Env.User.UserID;
                         newRow["AddDate"] = DateTime.Now;
                         newRow["EditName"] = string.Empty;
                         newRow["EditDate"] = DBNull.Value;
@@ -165,7 +162,7 @@ namespace Sci.Production.IE
             {
                 MyUtility.Msg.WarningBox("There is some error, please check result!");
 
-                string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P08_ImportResult.xltx";
+                string strXltName = Env.Cfg.XltPathDir + "\\IE_P08_ImportResult.xltx";
                 Microsoft.Office.Interop.Excel.Application exportExcel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (exportExcel == null)
                 {
@@ -202,8 +199,8 @@ namespace Sci.Production.IE
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.txtSkill.BackColor = Color.White;
         }
 
@@ -275,7 +272,7 @@ namespace Sci.Production.IE
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P08.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\IE_P08.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -302,7 +299,7 @@ namespace Sci.Production.IE
                 worksheet.Range[string.Format("A{0}:G{0}", rownum)].Value2 = objArray;
             }
 
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_P08");
+            string strExcelName = Class.MicrosoftFile.GetName("IE_P08");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -329,8 +326,8 @@ namespace Sci.Production.IE
             if (this.EditMode)
             {
                 DataTable machineGroup;
-                Ict.DualResult returnResule = DBProxy.Current.Select("Machine", "select ID,Description from MachineGroup WITH (NOLOCK)	where Junk = 0 order by ID", out machineGroup);
-                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(machineGroup, "ID,Description", "Group ID,Description", "2,35", this.txtSkill.Text);
+                DualResult returnResule = DBProxy.Current.Select("Machine", "select ID,Description from MachineGroup WITH (NOLOCK)	where Junk = 0 order by ID", out machineGroup);
+                Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(machineGroup, "ID,Description", "Group ID,Description", "2,35", this.txtSkill.Text);
 
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)

@@ -46,7 +46,7 @@
             this.checkIsSSCC = new Sci.Win.UI.CheckBox();
             this.label11 = new Sci.Win.UI.Label();
             this.comboStickerSize = new Sci.Win.UI.ComboBox();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -382,7 +382,7 @@
         private Win.UI.NumericBox numFromBottom;
         private Win.UI.NumericBox numFromRight;
         private Win.UI.TextBox txtCTNRefno;
-        private Class.txtbrand txtbrand1;
+        private Class.Txtbrand txtbrand1;
         private Win.UI.ComboBox cmbSide;
         private Win.UI.NumericBox numSeq;
         private Win.UI.Label lblSeq;

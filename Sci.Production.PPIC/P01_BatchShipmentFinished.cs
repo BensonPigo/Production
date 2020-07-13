@@ -1,25 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
 using System.Transactions;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Data.SqlClient;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.PPIC
 {
     /// <summary>
     /// P01_BatchShipmentFinished
     /// </summary>
-    public partial class P01_BatchShipmentFinished : Sci.Win.Subs.Base
+    public partial class P01_BatchShipmentFinished : Win.Subs.Base
     {
         private bool haveupdate = false;
 
@@ -70,9 +65,9 @@ namespace Sci.Production.PPIC
         // Style#
         private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item;
+            Win.Tools.SelectItem item;
             string sqlCmd = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
-            item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,8,35,10@760,500", this.Text);
+            item = new Win.Tools.SelectItem(sqlCmd, "16,8,35,10@760,500", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -87,7 +82,7 @@ namespace Sci.Production.PPIC
         private void TxtBuyer_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,30,30@755,500", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,30,30@755,500", this.Text, false, ",");
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -197,7 +192,7 @@ inner join dbo.Factory F WITH (NOLOCK) on F.id = A.factoryid
 										  and F.MDivisionID = '{0}'
 where A.ID = '{1}' 
 	  and (A.Complete = 0 or B.InQty <> B.OutQty - B.AdjustQty)",
-                            Sci.Env.User.Keyword,
+                            Env.User.Keyword,
                             item["POID"]);
 
                         if (MyUtility.Check.Seek(sqlCmds))
@@ -295,7 +290,7 @@ select SP = (select ID + ','
                 return;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P01_BatchShipmentFinished.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\PPIC_P01_BatchShipmentFinished.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -321,7 +316,7 @@ select SP = (select ID + ','
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_BatchShipmentFinished");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_P01_BatchShipmentFinished");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -437,7 +432,7 @@ from (
 left join Orders o WITH (NOLOCK) on a.POID = o.ID
 left join Brand b WITH (NOLOCK) on o.BrandID = b.ID
 left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle",
-                Sci.Env.User.Keyword);
+                Env.User.Keyword);
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)
@@ -474,6 +469,5 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle",
 
             ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = stringFilter.ToString();
         }
-
     }
 }

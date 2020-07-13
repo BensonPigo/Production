@@ -57,7 +57,7 @@
             this.editDelay = new Sci.Win.UI.EditBox();
             this.dateLockDate = new Sci.Win.UI.DateBox();
             this.dateDelay = new Sci.Win.UI.DateBox();
-            this.txtCountry = new Sci.Production.Class.txtcountry();
+            this.txtCountry = new Sci.Production.Class.Txtcountry();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -476,6 +476,6 @@
         private Win.UI.EditBox editAddressEnglish;
         private Win.UI.DateBox dateDelay;
         private Win.UI.DateBox dateLockDate;
-        private Class.txtcountry txtCountry;
+        private Class.Txtcountry txtCountry;
     }
 }

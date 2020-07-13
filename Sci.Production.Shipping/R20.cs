@@ -10,7 +10,7 @@ using Sci.Win;
 
 namespace Sci.Production.Shipping
 {
-    public partial class R20 : Sci.Win.Tems.PrintForm
+    public partial class R20 : Win.Tems.PrintForm
     {
         private DataTable[] PrintTable;
         private string arrivePortDate_s;
@@ -195,7 +195,7 @@ drop table #tmp_FtyExport;
 
             this.ShowWaitMessage("Excel processing...");
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Shipping_R20.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Shipping_R20.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.PrintTable[0], string.Empty, "Shipping_R20.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]); // 將datatable copy to excel
             MyUtility.Excel.CopyToXls(this.PrintTable[1], string.Empty, "Shipping_R20.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[2]); // 將datatable copy to excel
 

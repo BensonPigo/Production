@@ -4,7 +4,6 @@ using Sci.Utility.Excel;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -13,7 +12,7 @@ using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
 namespace Sci.Production.Quality
 {
-    public partial class R23 : Sci.Win.Tems.PrintForm
+    public partial class R23 : Win.Tems.PrintForm
     {
         private string F;
         private string M;
@@ -36,7 +35,7 @@ namespace Sci.Production.Quality
         public R23(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.numDateGap.Text = "2";
             this.numInsGap.Text = "1";
         }
@@ -86,7 +85,7 @@ namespace Sci.Production.Quality
 
             #region Summery
 
-            sbFtycode = new StringBuilder();
+            this.sbFtycode = new StringBuilder();
             string sqlFty = $@"
 select distinct o.FtyGroup from  PackingList_Detail pd
 inner join Order_QtyShip os on pd.OrderID=os.Id	 and pd.OrderShipmodeSeq=os.Seq
@@ -99,11 +98,11 @@ and pd.ReceiveDate between '{this.dateRangeReady1}' and '{this.dateRangeReady2}'
             {
                 for (int i = 0; i < this.dtFty.Rows.Count; i++)
                 {
-                    sbFtycode.Append($@"[{this.dtFty.Rows[i]["FtyGroup"].ToString().TrimEnd()}],");
+                    this.sbFtycode.Append($@"[{this.dtFty.Rows[i]["FtyGroup"].ToString().TrimEnd()}],");
                 }
             }
 
-            if (sbFtycode.Length == 0)
+            if (this.sbFtycode.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -395,7 +394,7 @@ select * from
 ) as a
 pivot 
 (
-	sum(rating) for factory in ({sbFtycode.ToString().Substring(0, sbFtycode.ToString().Length - 1)})
+	sum(rating) for factory in ({this.sbFtycode.ToString().Substring(0, this.sbFtycode.ToString().Length - 1)})
 ) AS PT
 
 drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
@@ -412,7 +411,7 @@ drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
                 return result;
             }
             #endregion
-            return new Ict.DualResult(true);
+            return new DualResult(true);
         }
 
         protected override bool OnToExcel(ReportDefinition report)
@@ -425,7 +424,7 @@ drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
             }
             #endregion
             this.SetCount(this.dtList[0].Rows.Count);
-            string xltPath = System.IO.Path.Combine(Sci.Env.Cfg.XltPathDir + "\\Quality_R23.xltx");
+            string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir + "\\Quality_R23.xltx");
             sxrc sxr = new sxrc(xltPath, keepApp: true);
             sxr.BoOpenFile = true;
             sxrc.XltRptTable xrtSummery1 = new sxrc.XltRptTable(this.dtList[1]);
@@ -442,11 +441,12 @@ drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
 
             #region Save Excel
             string excelFile = string.Empty;
-            excelFile = Sci.Production.Class.MicrosoftFile.GetName("Quality_R23");
+            excelFile = Class.MicrosoftFile.GetName("Quality_R23");
             sxr.Save(excelFile);
             #endregion
 
             #region Summery by ReadyDate 變色及調整excel格式邊框
+
             // 變色
             int cntSummery = this.dtList[2].Rows.Count;
 
@@ -455,6 +455,7 @@ drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
             TimeSpan ts2 = new TimeSpan(((DateTime)this.dateRangeReadyDate.Value2).Ticks);
             TimeSpan ts = ts1.Subtract(ts2).Duration();
             int range = ts.Days + 1;
+
             // Summery header
             wkcolor.Cells[1, 9].Value = "Date";
             wkcolor.Cells[1, 9].Interior.Color = this.BackGray;
@@ -502,7 +503,7 @@ drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
                 }
             }
 
-            //畫框線
+            // 畫框線
             Microsoft.Office.Interop.Excel.Range rg1;
             rg1 = wkcolor.Range["I1", $"{MyExcelPrg.GetExcelColumnName(9 + this.dtFty.Rows.Count)}{range + 1}"];
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
@@ -531,12 +532,12 @@ drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
 
                 if (this.dtList[1].Rows[i]["Fty"].ToString() == "Grand Total")
                 {
-                    wkcolor.Cells[i + 2, 2].Value = "";
+                    wkcolor.Cells[i + 2, 2].Value = string.Empty;
                     wkcolor.Range[$"C{i + 2}", $"G{i + 2}"].Font.Bold = true;
                 }
             }
 
-            //畫框線
+            // 畫框線
             Microsoft.Office.Interop.Excel.Range rg2;
             rg2 = wkcolor.Range["A1", $"G{this.dtList[1].Rows.Count + 1}"];
             rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;

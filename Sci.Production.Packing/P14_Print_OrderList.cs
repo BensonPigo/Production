@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Sci;
-using Sci.Data;
 using Ict;
 using Ict.Win;
 using Sci.Win;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -21,7 +15,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P14_Print_OrderList
     /// </summary>
-    public partial class P14_Print_OrderList : Sci.Win.Tems.QueryForm
+    public partial class P14_Print_OrderList : Win.Tems.QueryForm
     {
         private DataTable dt;
         private string date1;
@@ -71,7 +65,7 @@ namespace Sci.Production.Packing
             if (this.radioTransferSlip.Checked)
             {
                 #region SlipCheck
-                this.TransferSlipNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "TC", "TransferToClog", DateTime.Today, 2, "TransferSlipNo", null);
+                this.TransferSlipNo = MyUtility.GetValue.GetID(Env.User.Keyword + "TC", "TransferToClog", DateTime.Today, 2, "TransferSlipNo", null);
                 #region 存TransferSlipNo
                 DataTable a;
                 string update_TransferSlipNo = string.Format(
@@ -114,7 +108,7 @@ from (
 
 ",
                     this.TransferSlipNo,
-                    Sci.Env.User.Keyword);
+                    Env.User.Keyword);
                 MyUtility.Tool.ProcessWithDatatable(this.dt, "tid,TransferSlipNo", update_TransferSlipNo, out a);
                 #endregion
                 DataTable b;
@@ -127,7 +121,7 @@ from (
                             {
                                 PackingListID = p["PackingListID"].ToString(),
                                 OrderID = p["OrderID"].ToString(),
-                                TransferSlipNo = p["TransferSlipNo"].ToString()
+                                TransferSlipNo = p["TransferSlipNo"].ToString(),
                             }
 
 into m
@@ -140,7 +134,7 @@ into m
                                 Dest = m.First()["Dest"].ToString(),
                                 BuyerDelivery = m.First()["BuyerDelivery"].ToString(),
                                 CartonNum = string.Join(", ", m.Select(r => r["CTNStartNo"].ToString().Trim())),
-                                TransferSlipNo = m.First()["TransferSlipNo"].ToString()
+                                TransferSlipNo = m.First()["TransferSlipNo"].ToString(),
                             }).ToList();
                 string sql = @"
 select  t.TTL_Qty, 
@@ -177,7 +171,7 @@ outer apply(
 
         private void ToRdlc()
         {
-            string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from MDivision where ID = '{0}'", Sci.Env.User.Keyword));
+            string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from MDivision where ID = '{0}'", Env.User.Keyword));
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title", strLoginM));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TransferDate", this.date1 + " ~ " + this.date2));
@@ -204,7 +198,7 @@ outer apply(
                    Dest = row1["Dest"].ToString().Trim(),
                    Factory = row1["FactoryID"].ToString().Trim(),
                    BuyerDelivery = row1["BuyerDelivery"].ToString().Trim(),
-                   AddDate = ((DateTime)row1["AddDate"]).ToString("yyyy/MM/dd").Trim()
+                   AddDate = ((DateTime)row1["AddDate"]).ToString("yyyy/MM/dd").Trim(),
                }).ToList();
 
                 report.ReportDataSource = data;
@@ -216,7 +210,7 @@ outer apply(
             else
             {
                 #region SlipCheck
-                this.TransferSlipNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "TC", "TransferToClog", DateTime.Today, 2, "TransferSlipNo", null);
+                this.TransferSlipNo = MyUtility.GetValue.GetID(Env.User.Keyword + "TC", "TransferToClog", DateTime.Today, 2, "TransferSlipNo", null);
                 #region 存TransferSlipNo
                 DataTable dtTransferSlipNo, dtTransferSlipNoDetail, dtFinal;
                 string sqlcmd = string.Format(
@@ -266,7 +260,7 @@ from (
 
 ",
                     this.TransferSlipNo,
-                    Sci.Env.User.Keyword);
+                    Env.User.Keyword);
                 MyUtility.Tool.ProcessWithDatatable(this.dt, "tid,TransferSlipNo", sqlcmd, out dtTransferSlipNo);
                 #endregion
                 sqlcmd = @"
@@ -280,7 +274,7 @@ from #tmp";
                             {
                                 PackingListID = p["PackingListID"].ToString(),
                                 OrderID = p["OrderID"].ToString(),
-                                TransferSlipNo = p["TransferSlipNo"].ToString()
+                                TransferSlipNo = p["TransferSlipNo"].ToString(),
                             }
 
                             into m
@@ -296,7 +290,7 @@ from #tmp";
                                 CartonNum = string.Join(", ", m.Select(r => r["CTNStartNo"].ToString().Trim())),
                                 TransferSlipNo = m.First()["TransferSlipNo"].ToString(),
                                 Customize1 = m.First()["Customize1"].ToString(),
-                                SeasonID = m.First()["SeasonID"].ToString()
+                                SeasonID = m.First()["SeasonID"].ToString(),
                             }).ToList();
 
                 sqlcmd = @"
@@ -346,7 +340,7 @@ outer apply(
                   SeasonID = row1["SeasonID"].ToString().Trim(),
               }).ToList();
 
-            report.ReportDataSource = data;
+                report.ReportDataSource = data;
 
                 reportResourceNamespace = typeof(P14_PrintData_SLIP);
 
@@ -361,7 +355,7 @@ outer apply(
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
         }
@@ -377,7 +371,7 @@ outer apply(
 
             this.ShowWaitMessage("Excel Processing...");
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltFile);
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + xltFile);
 
             // 預先開啟excel app
             // objApp.Visible = true;
@@ -387,7 +381,7 @@ outer apply(
 
                 #region Set Login M & Transfer Date
 
-                string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Sci.Env.User.Keyword));
+                string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Env.User.Keyword));
                 if (!strLoginM.Empty())
                 {
                     objSheets.Cells[1, 1] = strLoginM;
@@ -407,7 +401,7 @@ outer apply(
                 {
                     if (i > 0)
                     {
-                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
+                        Excel.Worksheet worksheet1 = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
                         Excel.Worksheet worksheetn = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
                         worksheet1.Copy(worksheetn);
                     }
@@ -441,7 +435,7 @@ outer apply(
                         }
                     }
 
-                    objSheets.get_Range(string.Format("A5:I{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                    objSheets.get_Range(string.Format("A5:I{0}", r + 4)).Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                     objSheets.Cells[r + headerRow + 1, 1] = "Sub. TTL CTN:";
                     objSheets.Cells[r + headerRow + 1, 2] = sumTTL;
@@ -454,8 +448,8 @@ outer apply(
 
                 strExcelProcessName = "Packing_P14_TransferSlip";
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(strExcelProcessName);
-                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                string strExcelName = Class.MicrosoftFile.GetName(strExcelProcessName);
+                Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 objApp.Quit();
@@ -491,7 +485,7 @@ outer apply(
 
                 #region Set Login M & Transfer Date
 
-                string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Sci.Env.User.Keyword));
+                string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Env.User.Keyword));
                 if (!strLoginM.Empty())
                 {
                     objSheets.Cells[1, 1] = strLoginM;
@@ -504,12 +498,12 @@ outer apply(
 
                 strExcelProcessName = "Packing_P14";
                 int r = excelTable.Rows.Count;
-                objSheets.get_Range(string.Format("A5:M{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                objSheets.get_Range(string.Format("A5:M{0}", r + 4)).Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                 objSheets.Columns.AutoFit();
                 objSheets.Rows.AutoFit();
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(strExcelProcessName);
-                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                string strExcelName = Class.MicrosoftFile.GetName(strExcelProcessName);
+                Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 objApp.Quit();
@@ -578,7 +572,6 @@ outer apply(
             /// Dest
             /// </summary>
             public string Dest { get; set; }
-
 
             /// <summary>
             /// Dest

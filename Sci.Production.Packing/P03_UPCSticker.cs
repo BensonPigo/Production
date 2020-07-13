@@ -2,19 +2,15 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
     /// <summary>
     /// P03_UPCSticker
     /// </summary>
-    public partial class P03_UPCSticker : Sci.Win.Forms.Base
+    public partial class P03_UPCSticker : Win.Forms.Base
     {
         private string ID;
         private DataTable dt;

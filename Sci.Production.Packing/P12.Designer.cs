@@ -32,7 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboDropDownListCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.labelExpPoutDate = new Sci.Win.UI.Label();
             this.dateExpPoutDate = new Sci.Win.UI.DateBox();
             this.btnFindNow = new Sci.Win.UI.Button();
@@ -290,6 +290,6 @@
         private Win.UI.Button btnToExcel;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
-        private Class.comboDropDownList comboDropDownListCategory;
+        private Class.ComboDropDownList comboDropDownListCategory;
     }
 }

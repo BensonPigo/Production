@@ -1,23 +1,18 @@
 ﻿using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P05_FoundryList : Sci.Win.Subs.Base
+    public partial class P05_FoundryList : Win.Subs.Base
     {
         private string GMTBookingID;
         private string ShipModeID;
 
-        public P05_FoundryList(string _GMTBookingID,string _ShipModeID)
+        public P05_FoundryList(string _GMTBookingID, string _ShipModeID)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.GMTBookingID = _GMTBookingID;
             this.ShipModeID = _ShipModeID;
         }

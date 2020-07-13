@@ -2,10 +2,6 @@
 using Ict.Win;
 using System;
 using System.Data;
-using System.Linq;
-using Sxrc = Sci.Utility.Excel.SaveXltReportCls;
-using Excel = Microsoft.Office.Interop.Excel;
-using Sci.Utility.Excel;
 using Sci.Data;
 
 namespace Sci.Production.PublicForm
@@ -13,7 +9,7 @@ namespace Sci.Production.PublicForm
     /// <summary>
     /// CIPF
     /// </summary>
-    public partial class CIPF : Sci.Win.Subs.Input4
+    public partial class CIPF : Win.Subs.Input4
     {
         private DataTable Detaildt;
 
@@ -43,7 +39,7 @@ namespace Sci.Production.PublicForm
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
-            base.OnFormLoaded();           
+            base.OnFormLoaded();
             string sqlcmd = $@"
 select ArtworkTypeID = ArtworkTypeID +' - '+ 
 	case when CIPF = 'C' then 'Cutting'

@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Ict;
 using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_InspectionList : Sci.Win.Subs.Base
+    public partial class P03_InspectionList : Win.Subs.Base
     {
         DataRow dr;
+
         public P03_InspectionList(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
-            this.Text += string.Format(" [Fabric Type : {0} SP# : {3} Seq : {1}-{2}]", dr["fabrictype2"], dr["seq1"], dr["seq2"], dr["id"]);
+            this.InitializeComponent();
+            this.dr = data;
+            this.Text += string.Format(" [Fabric Type : {0} SP# : {3} Seq : {1}-{2}]", this.dr["fabrictype2"], this.dr["seq1"], this.dr["seq2"], this.dr["id"]);
         }
 
-        private void open_QA_program(string this_inv, string inp_type,string receivingid) {
+        private void open_QA_program(string this_inv, string inp_type, string receivingid)
+        {
             string sql = @"
 Select 
 a.id,
@@ -72,10 +70,11 @@ a.PhysicalInspector,a.WeightInspector,a.ShadeboneInspector,a.ContinuityInspector
 From FIR a WITH (NOLOCK) Left join dbo.View_AllReceiving c WITH (NOLOCK) on c.id = a.receivingid
 Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2  and a.receivingid = @receivingid  order by seq1,seq2 ";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
-            sqlPar.Add(new SqlParameter("@poid", dr["id"].ToString()));
-            sqlPar.Add(new SqlParameter("@seq1", dr["seq1"].ToString()));
-            sqlPar.Add(new SqlParameter("@seq2", dr["seq2"].ToString()));            
-            //sqlPar.Add(new SqlParameter("@InvNo", this_inv.ToString()));
+            sqlPar.Add(new SqlParameter("@poid", this.dr["id"].ToString()));
+            sqlPar.Add(new SqlParameter("@seq1", this.dr["seq1"].ToString()));
+            sqlPar.Add(new SqlParameter("@seq2", this.dr["seq2"].ToString()));
+
+            // sqlPar.Add(new SqlParameter("@InvNo", this_inv.ToString()));
             sqlPar.Add(new SqlParameter("@receivingid", receivingid));
 
             DataTable dt;
@@ -94,56 +93,55 @@ Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2  and a.receivingid = 
             {
                 DataRow data = dt.Rows[0];
 
-                if (inp_type.Equals("inspection")) {
-                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, data["ID"].ToString(), null, null, data);
+                if (inp_type.Equals("inspection"))
+                {
+                    var frm = new Quality.P01_PhysicalInspection(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
-                else if (inp_type.Equals("weight")) {
-                    var frm = new Sci.Production.Quality.P01_Weight(false, data["ID"].ToString(), null, null, data);
+                else if (inp_type.Equals("weight"))
+                {
+                    var frm = new Quality.P01_Weight(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("shadebond"))
                 {
-                    var frm = new Sci.Production.Quality.P01_ShadeBond(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P01_ShadeBond(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("continuity"))
                 {
-                    var frm = new Sci.Production.Quality.P01_Continuity(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P01_Continuity(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("Odor"))
                 {
-                    var frm = new Sci.Production.Quality.P01_Odor(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P01_Odor(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("crocking"))
                 {
-                    var frm = new Sci.Production.Quality.P03_Crocking(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P03_Crocking(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("heat"))
                 {
-                    var frm = new Sci.Production.Quality.P03_Heat(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P03_Heat(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("wash"))
                 {
-                    var frm = new Sci.Production.Quality.P03_Wash(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P03_Wash(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
-
-
-            };
-
+            }
         }
 
         protected override void OnFormLoaded()
@@ -152,9 +150,10 @@ Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2  and a.receivingid = 
             DataTable dtFIR_AIR;
             DualResult selectResult1;
             base.OnFormLoaded();
-            if (dr["fabrictype"].ToString().ToUpper() == "F")
+            if (this.dr["fabrictype"].ToString().ToUpper() == "F")
             {
-                sqlcmd.Append(string.Format(@"select b.MDivisionID,b.InvNo,b.ExportId,b.ETA,a.ArriveQty
+                sqlcmd.Append(string.Format(
+                    @"select b.MDivisionID,b.InvNo,b.ExportId,b.ETA,a.ArriveQty
 ,CASE 
     when a.result !='' then a.result
 	when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 and a.nonOdor=1 then 'N/A'
@@ -185,88 +184,87 @@ outer apply (
 	where c.id = a.id
 	group by c.ID 
 )c
-where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr["seq2"]));
+where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", this.dr["id"], this.dr["seq1"], this.dr["seq2"]));
 
                 selectResult1 = DBProxy.Current.Select(null, sqlcmd.ToString(), out dtFIR_AIR);
-                if (selectResult1 == false) ShowErr(sqlcmd.ToString(), selectResult1);
+                if (selectResult1 == false)
+                {
+                    this.ShowErr(sqlcmd.ToString(), selectResult1);
+                }
 
-                bsAIR_FIR.DataSource = dtFIR_AIR;
+                this.bsAIR_FIR.DataSource = dtFIR_AIR;
 
                 #region  開窗
-                //Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
-                //ts1.CellMouseDoubleClick += (s, e) =>
-                //{
-                //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
-                //    if (null == data) return;
-                //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
-                //    frm.ShowDialog(this);
-                //};
 
-                //Ict.Win.DataGridViewGeneratorNumericColumnSettings ns1 = new DataGridViewGeneratorNumericColumnSettings();
-                //ns1.CellMouseDoubleClick += (s, e) =>
-                //{
+                // Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
+                // ts1.CellMouseDoubleClick += (s, e) =>
+                // {
                 //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
                 //    if (null == data) return;
                 //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
                 //    frm.ShowDialog(this);
-                //};
+                // };
 
-                //Ict.Win.DataGridViewGeneratorDateColumnSettings ds1 = new DataGridViewGeneratorDateColumnSettings();
-                //ds1.CellMouseDoubleClick += (s, e) =>
-                //{
+                // Ict.Win.DataGridViewGeneratorNumericColumnSettings ns1 = new DataGridViewGeneratorNumericColumnSettings();
+                // ns1.CellMouseDoubleClick += (s, e) =>
+                // {
                 //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
                 //    if (null == data) return;
                 //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
                 //    frm.ShowDialog(this);
-                //};
+                // };
+
+                // Ict.Win.DataGridViewGeneratorDateColumnSettings ds1 = new DataGridViewGeneratorDateColumnSettings();
+                // ds1.CellMouseDoubleClick += (s, e) =>
+                // {
+                //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
+                //    if (null == data) return;
+                //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
+                //    frm.ShowDialog(this);
+                // };
                 DataGridViewGeneratorNumericColumnSettings inspection = new DataGridViewGeneratorNumericColumnSettings();
                 inspection.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
                 DataGridViewGeneratorTextColumnSettings physical = new DataGridViewGeneratorTextColumnSettings();
                 physical.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
                 DataGridViewGeneratorTextColumnSettings weight = new DataGridViewGeneratorTextColumnSettings();
                 weight.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "weight", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "weight", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
                 DataGridViewGeneratorTextColumnSettings shadebond = new DataGridViewGeneratorTextColumnSettings();
                 shadebond.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "shadebond", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
-
+                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "shadebond", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
                 DataGridViewGeneratorTextColumnSettings continuity = new DataGridViewGeneratorTextColumnSettings();
                 continuity.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "continuity", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "continuity", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
-
 
                 DataGridViewGeneratorTextColumnSettings Odor = new DataGridViewGeneratorTextColumnSettings();
                 Odor.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "Odor", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "Odor", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
                 #endregion
 
-
-
-
-
-                //設定gridFirAir的顯示欄位
+                // 設定gridFirAir的顯示欄位
                 this.gridFirAir.IsEditingReadOnly = true;
-                this.gridFirAir.DataSource = bsAIR_FIR;
-                Helper.Controls.Grid.Generator(this.gridFirAir)
-                     //.Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
+                this.gridFirAir.DataSource = this.bsAIR_FIR;
+                this.Helper.Controls.Grid.Generator(this.gridFirAir)
+
+                     // .Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
                      .Text("InvNo", header: "Invoice#", width: Widths.AnsiChars(20))
                      .Text("ExportId", header: "Wk#", width: Widths.AnsiChars(15))
                      .Date("ETA", header: "ETA", width: Widths.AnsiChars(11))
@@ -281,14 +279,15 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                      .Date("WeightDate", header: "WeightDate", width: Widths.AnsiChars(13))
                      .Text("ShadeBond", header: "ShadeBond", width: Widths.AnsiChars(8), settings: shadebond)
                      .Date("ShadeBondDate", header: "ShadeBondDate", width: Widths.AnsiChars(13))
-                     .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(8),settings : continuity)
+                     .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(8), settings: continuity)
                      .Date("ContinuityDate", header: "ContinuityDate", width: Widths.AnsiChars(13))
                      .Text("Odor", header: "Odor", width: Widths.AnsiChars(8), settings: Odor)
                      .Date("OdorDate", header: "OdorDate", width: Widths.AnsiChars(13))
                      ;
 
                 sqlcmd.Clear();
-                sqlcmd.Append(string.Format(@"select c.MDivisionID,c.InvNo,c.ExportId
+                sqlcmd.Append(string.Format(
+                    @"select c.MDivisionID,c.InvNo,c.ExportId
 ,iif(c.InvNo = '' or c.InvNo is null,c.ETA,(select export.eta from dbo.export WITH (NOLOCK) where export.id= c.exportid )) as [ETA]
 ,b.ArriveQty
 ,a.ReceiveSampleDate
@@ -323,89 +322,95 @@ outer apply(select (case when  sum(iif(cd.Result = 'Fail' ,1,0)) > 0 then 'Fail'
 				inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
 				where CF.Status = 'Confirmed' and CF.POID=a.POID 
 				and cd.SEQ1=a.Seq1 and cd.seq2=a.Seq2) as ColorFastness
-where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr["seq2"]));
+where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", this.dr["id"], this.dr["seq1"], this.dr["seq2"]));
                 DataTable dtFIR_Laboratory;
                 selectResult1 = DBProxy.Current.Select(null, sqlcmd.ToString(), out dtFIR_Laboratory);
-                if (selectResult1 == false) ShowErr(sqlcmd.ToString(), selectResult1);
+                if (selectResult1 == false)
+                {
+                    this.ShowErr(sqlcmd.ToString(), selectResult1);
+                }
 
-                bsFIR_Laboratory.DataSource = dtFIR_Laboratory;
+                this.bsFIR_Laboratory.DataSource = dtFIR_Laboratory;
                 #region  開窗
-                //Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
-                //ts2.CellMouseDoubleClick += (s, e) =>
-                //{
+
+                // Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+                // ts2.CellMouseDoubleClick += (s, e) =>
+                // {
                 //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
                 //    if (null == data) return;
                 //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
                 //    frm.ShowDialog(this);
-                //};
+                // };
 
-                //Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
-                //ns2.CellMouseDoubleClick += (s, e) =>
-                //{
+                // Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+                // ns2.CellMouseDoubleClick += (s, e) =>
+                // {
                 //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
                 //    if (null == data) return;
                 //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
                 //    frm.ShowDialog(this);
-                //};
+                // };
 
-                //Ict.Win.DataGridViewGeneratorDateColumnSettings ds2 = new DataGridViewGeneratorDateColumnSettings();
-                //ds2.CellMouseDoubleClick += (s, e) =>
-                //{
+                // Ict.Win.DataGridViewGeneratorDateColumnSettings ds2 = new DataGridViewGeneratorDateColumnSettings();
+                // ds2.CellMouseDoubleClick += (s, e) =>
+                // {
                 //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
                 //    if (null == data) return;
                 //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
                 //    frm.ShowDialog(this);
-                //};
-
+                // };
                 DataGridViewGeneratorTextColumnSettings crocking = new DataGridViewGeneratorTextColumnSettings();
                 crocking.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "crocking", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "crocking", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
                 DataGridViewGeneratorTextColumnSettings heat = new DataGridViewGeneratorTextColumnSettings();
                 heat.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "heat", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "heat", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
                 DataGridViewGeneratorTextColumnSettings wash = new DataGridViewGeneratorTextColumnSettings();
                 wash.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "wash", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "wash", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
                 #endregion
-                //設定gridFir_Laboratory的顯示欄位
+
+                // 設定gridFir_Laboratory的顯示欄位
                 this.gridFir_Laboratory.IsEditingReadOnly = true;
-                this.gridFir_Laboratory.DataSource = bsFIR_Laboratory;
-                Helper.Controls.Grid.Generator(this.gridFir_Laboratory)
-                    //.Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
+                this.gridFir_Laboratory.DataSource = this.bsFIR_Laboratory;
+                this.Helper.Controls.Grid.Generator(this.gridFir_Laboratory)
+
+                    // .Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
                      .Text("InvNo", header: "Invoice#", width: Widths.AnsiChars(20))
                      .Text("ExportId", header: "Wk#", width: Widths.AnsiChars(15))
                      .Date("ETA", header: "ETA", width: Widths.AnsiChars(11))
                      .Numeric("ArriveQty", header: "Total" + Environment.NewLine + "Ship Qty", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2)
                      .Date("ReceiveSampleDate", header: "Date", width: Widths.AnsiChars(13))
-                     .Text("Crocking", header: "Crocking" + Environment.NewLine + "Test", width: Widths.AnsiChars(8),settings : crocking)
+                     .Text("Crocking", header: "Crocking" + Environment.NewLine + "Test", width: Widths.AnsiChars(8), settings: crocking)
                      .Date("CrockingDate", header: "Crocking Date", width: Widths.AnsiChars(13))
-                     .Text("Heat", header: "Heat" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8),settings : heat)
+                     .Text("Heat", header: "Heat" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8), settings: heat)
                      .Date("HeatDate", header: "Heat Date", width: Widths.AnsiChars(13))
-                     .Text("Wash", header: "Wash" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8),settings : wash)
+                     .Text("Wash", header: "Wash" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8), settings: wash)
                      .Date("WashDate", header: "Wash Date", width: Widths.AnsiChars(13))
                      .Text("Oven", header: "Oven" + Environment.NewLine + "Test", width: Widths.AnsiChars(8), settings: wash)
                      .Date("OvenDate", header: "Oven Test Date", width: Widths.AnsiChars(13))
                      .Text("ColorFastness", header: "Color" + Environment.NewLine + "Fastness", width: Widths.AnsiChars(8), settings: wash)
                      .Date("ColorFastnessDate", header: "Color Fastness Date", width: Widths.AnsiChars(13))
                      ;
-                     //.Date("ReceiveSampleDate", header: "Date", width: Widths.AnsiChars(13),settings:ds2)
-                     //.Text("Crocking", header: "Crocking" + Environment.NewLine + "Test", width: Widths.AnsiChars(8), settings: ts2)
-                     //.Date("CrockingDate", header: "Crocking Date", width: Widths.AnsiChars(13), settings: ds2)
-                     //.Text("Heat", header: "Heat" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8), settings: ts2)
-                     //.Date("HeatDate", header: "Heat Date", width: Widths.AnsiChars(13), settings: ds2)
-                     //.Text("Wash", header: "Wash" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8), settings: ts2)
-                     //.Date("WashDate", header: "Wash Date", width: Widths.AnsiChars(13), settings: ds2)
-                     
+
+                     // .Date("ReceiveSampleDate", header: "Date", width: Widths.AnsiChars(13),settings:ds2)
+                     // .Text("Crocking", header: "Crocking" + Environment.NewLine + "Test", width: Widths.AnsiChars(8), settings: ts2)
+                     // .Date("CrockingDate", header: "Crocking Date", width: Widths.AnsiChars(13), settings: ds2)
+                     // .Text("Heat", header: "Heat" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8), settings: ts2)
+                     // .Date("HeatDate", header: "Heat Date", width: Widths.AnsiChars(13), settings: ds2)
+                     // .Text("Wash", header: "Wash" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8), settings: ts2)
+                     // .Date("WashDate", header: "Wash Date", width: Widths.AnsiChars(13), settings: ds2)
             }
             else
             {
-                sqlcmd.Append(string.Format(@"select b.MDivisionID,b.InvNo,b.ExportId,b.ETA
+                sqlcmd.Append(string.Format(
+                    @"select b.MDivisionID,b.InvNo,b.ExportId,b.ETA
 ,CASE 
 	when a.result = 'P' then 'Pass'
 	when a.result = 'L' then 'L/G'
@@ -421,18 +426,22 @@ END as [Result]--,a.seq1,a.seq2
 ,a.id
  from dbo.AIR a WITH (NOLOCK) 
 inner join dbo.View_AllReceiving b WITH (NOLOCK) on b.Id= a.ReceivingID
-where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr["seq2"]));
+where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", this.dr["id"], this.dr["seq1"], this.dr["seq2"]));
                 DataTable dtFIR_Laboratory;
                 selectResult1 = DBProxy.Current.Select(null, sqlcmd.ToString(), out dtFIR_Laboratory);
-                if (selectResult1 == false) ShowErr(sqlcmd.ToString(), selectResult1);
+                if (selectResult1 == false)
+                {
+                    this.ShowErr(sqlcmd.ToString(), selectResult1);
+                }
 
-                bsAIR_FIR.DataSource = dtFIR_Laboratory;
+                this.bsAIR_FIR.DataSource = dtFIR_Laboratory;
 
-                //設定Grid1的顯示欄位
+                // 設定Grid1的顯示欄位
                 this.gridFirAir.IsEditingReadOnly = true;
-                this.gridFirAir.DataSource = bsAIR_FIR;
-                Helper.Controls.Grid.Generator(this.gridFirAir)
-                     //.Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
+                this.gridFirAir.DataSource = this.bsAIR_FIR;
+                this.Helper.Controls.Grid.Generator(this.gridFirAir)
+
+                     // .Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
                      .Text("InvNo", header: "Invoice#", width: Widths.AnsiChars(20))
                      .Text("ExportId", header: "Wk#", width: Widths.AnsiChars(15))
                      .Date("ETA", header: "ETA", width: Widths.AnsiChars(11))
@@ -442,7 +451,7 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                      .Numeric("InspQty", header: "Inspected" + Environment.NewLine + "Qty", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2)
                      .Numeric("RejectQty", header: "Rejected" + Environment.NewLine + "Qty", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2)
                      .Text("Defect", header: "Defect Type", width: Widths.AnsiChars(30))
-                     
+
                      ;
             }
         }

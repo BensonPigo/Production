@@ -38,7 +38,7 @@
             this.txtSPStart = new Sci.Win.UI.TextBox();
             this.txtSPEnd = new Sci.Win.UI.TextBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.radioSummary = new Sci.Win.UI.RadioButton();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();

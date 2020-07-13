@@ -33,7 +33,7 @@
             this.dateSewingInline = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
+            this.txtstyle1 = new Sci.Production.Class.Txtstyle();
             this.dateEarliestBuyerDelivery = new Sci.Win.UI.DateRange();
             this.txtCuttingSPEnd = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
@@ -204,8 +204,8 @@
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
             this.txtstyle1.TabIndex = 9;
-            this.txtstyle1.tarBrand = null;
-            this.txtstyle1.tarSeason = null;
+            this.txtstyle1.TarBrand = null;
+            this.txtstyle1.TarSeason = null;
             // 
             // dateEarliestBuyerDelivery
             // 
@@ -520,7 +520,7 @@
         private Win.UI.DateRange dateSewingInline;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.DateRange dateBuyerDelivery;
-        private Class.txtstyle txtstyle1;
+        private Class.Txtstyle txtstyle1;
         private Win.UI.DateRange dateActCuttingDate;
         private Win.UI.Label lbActCuttingDate;
         private Win.UI.Label lbEstCutDate;

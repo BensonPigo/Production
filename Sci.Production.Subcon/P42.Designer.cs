@@ -48,8 +48,8 @@
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.label8 = new Sci.Win.UI.Label();
             this.cmbSummaryBy = new Sci.Win.UI.ComboBox();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid2 = new Sci.Win.UI.Grid();
             this.label9 = new Sci.Win.UI.Label();
@@ -287,7 +287,7 @@
             // txtfactory1
             // 
             this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.boolFtyGroupList = true;
+            this.txtfactory1.BoolFtyGroupList = true;
             this.txtfactory1.FilteMDivision = false;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory1.IsProduceFty = false;
@@ -470,9 +470,9 @@
         private Win.UI.CheckBox chkSample;
         private Win.UI.Label label3;
         private Win.UI.Label label4;
-        private Class.txtMdivision txtMdivision1;
+        private Class.TxtMdivision txtMdivision1;
         private Win.UI.Label label5;
-        private Class.txtfactory txtfactory1;
+        private Class.Txtfactory txtfactory1;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label label8;

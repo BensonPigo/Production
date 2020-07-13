@@ -1,14 +1,9 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
@@ -16,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R43
     /// </summary>
-    public partial class R43 : Sci.Win.Tems.PrintForm
+    public partial class R43 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DateTime? dateOnBoardDate1;
@@ -45,7 +40,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             string sqlwhere_GMTBooking = string.Empty;
@@ -118,10 +113,10 @@ namespace Sci.Production.Shipping
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
-                return new DualResult(false, "Query data fail\r\n" + result.ToString()); ;
+                return new DualResult(false, "Query data fail\r\n" + result.ToString());
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -138,7 +133,7 @@ namespace Sci.Production.Shipping
 
             this.ShowWaitMessage("Starting EXCEL...");
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R43_NonDeclarationReportExport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_R43_NonDeclarationReportExport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {

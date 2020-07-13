@@ -31,13 +31,13 @@
             this.labelStyleNo = new Sci.Win.UI.Label();
             this.labelbrand = new Sci.Win.UI.Label();
             this.labelSeason = new Sci.Win.UI.Label();
-            this.txtstyleStart = new Sci.Production.Class.txtstyle();
-            this.txtstyleEnd = new Sci.Production.Class.txtstyle();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtstyleStart = new Sci.Production.Class.Txtstyle();
+            this.txtstyleEnd = new Sci.Production.Class.Txtstyle();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.label4 = new Sci.Win.UI.Label();
             this.labelLocalMR = new Sci.Win.UI.Label();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txtuserLocalMR = new Sci.Production.Class.txtuser();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.txtuserLocalMR = new Sci.Production.Class.Txtuser();
             this.SuspendLayout();
             // 
             // print
@@ -90,8 +90,8 @@
             this.txtstyleStart.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
             this.txtstyleStart.Size = new System.Drawing.Size(130, 23);
             this.txtstyleStart.TabIndex = 1;
-            this.txtstyleStart.tarBrand = null;
-            this.txtstyleStart.tarSeason = null;
+            this.txtstyleStart.TarBrand = null;
+            this.txtstyleStart.TarSeason = null;
             // 
             // txtstyleEnd
             // 
@@ -104,8 +104,8 @@
             this.txtstyleEnd.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
             this.txtstyleEnd.Size = new System.Drawing.Size(130, 23);
             this.txtstyleEnd.TabIndex = 2;
-            this.txtstyleEnd.tarBrand = null;
-            this.txtstyleEnd.tarSeason = null;
+            this.txtstyleEnd.TarBrand = null;
+            this.txtstyleEnd.TarSeason = null;
             // 
             // txtbrand
             // 
@@ -203,12 +203,12 @@
         private Win.UI.Label labelStyleNo;
         private Win.UI.Label labelbrand;
         private Win.UI.Label labelSeason;
-        private Class.txtstyle txtstyleStart;
-        private Class.txtstyle txtstyleEnd;
-        private Class.txtbrand txtbrand;
+        private Class.Txtstyle txtstyleStart;
+        private Class.Txtstyle txtstyleEnd;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label label4;
         private Win.UI.Label labelLocalMR;
-        private Class.txtseason txtseason;
-        private Class.txtuser txtuserLocalMR;
+        private Class.Txtseason txtseason;
+        private Class.Txtuser txtuserLocalMR;
     }
 }

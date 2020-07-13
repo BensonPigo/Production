@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
@@ -14,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_Artwork
     /// </summary>
-    public partial class P04_Artwork : Sci.Win.Subs.Input4
+    public partial class P04_Artwork : Win.Subs.Input4
     {
         /// <summary>
         /// P04_Artwork
@@ -35,10 +32,10 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings artworktype = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings cutpartdesc = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings patterndesc = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings remark = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings artworktype = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings cutpartdesc = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings patterndesc = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings remark = new DataGridViewGeneratorTextColumnSettings();
             cutpartdesc.CharacterCasing = CharacterCasing.Normal;
             patterndesc.CharacterCasing = CharacterCasing.Normal;
             remark.CharacterCasing = CharacterCasing.Normal;
@@ -47,12 +44,12 @@ namespace Sci.Production.PPIC
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,ArtworkUnit from ArtworkType WITH (NOLOCK) where Junk = 0 and IsArtwork = 1", "20", dr["ArtworkTypeID"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,ArtworkUnit from ArtworkType WITH (NOLOCK) where Junk = 0 and IsArtwork = 1", "20", dr["ArtworkTypeID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -155,10 +152,10 @@ where StyleUkey = {0}", this.KeyValue1);
             datas.Columns.Add("EditBy");
             foreach (DataRow gridData in datas.Rows)
             {
-                gridData["CreateBy"] = gridData["AddName"].ToString() + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-                if (gridData["EditDate"] != System.DBNull.Value)
+                gridData["CreateBy"] = gridData["AddName"].ToString() + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
+                if (gridData["EditDate"] != DBNull.Value)
                 {
-                    gridData["EditBy"] = gridData["EditName"].ToString() + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                    gridData["EditBy"] = gridData["EditName"].ToString() + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                 }
 
                 DataRow[] findrow = artworkUnit.Select(string.Format("ArtworkTypeID = '{0}'", gridData["ArtworkTypeID"].ToString()));
@@ -266,7 +263,7 @@ select * from UpdateData", this.KeyValue1);
                             dr["Price"].ToString(),
                             dr["Cost"].ToString(),
                             dr["Remark"].ToString(),
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             "(select min(Ukey)-1 from Order_Artwork)"));
                     }
                 }
@@ -283,7 +280,7 @@ select * from UpdateData", this.KeyValue1);
                             dr["Price"].ToString(),
                             dr["Cost"].ToString(),
                             dr["Remark"].ToString(),
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             dr["Ukey"].ToString()));
                     }
                     else
@@ -373,7 +370,7 @@ select * from StyleTMSCost", this.KeyValue1);
                             dr["ArtworkUnit"].ToString(),
                             dr["TMS"].ToString(),
                             dr["Cost"].ToString(),
-                            Sci.Env.User.UserID));
+                            Env.User.UserID));
                     }
                     else
                     {
@@ -382,7 +379,7 @@ select * from StyleTMSCost", this.KeyValue1);
                             dr["Stitch"].ToString(),
                             dr["TMS"].ToString(),
                             dr["Cost"].ToString(),
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             dr["OrderID"].ToString(),
                             dr["ArtworkTypeID"].ToString()));
                     }
@@ -400,7 +397,7 @@ select * from StyleTMSCost", this.KeyValue1);
                             dr["ArtworkUnit"].ToString(),
                             dr["TMS"].ToString(),
                             dr["Cost"].ToString(),
-                            Sci.Env.User.UserID));
+                            Env.User.UserID));
                     }
                     else
                     {
@@ -409,7 +406,7 @@ select * from StyleTMSCost", this.KeyValue1);
                             dr["Stitch"].ToString(),
                             dr["TMS"].ToString(),
                             dr["Cost"].ToString(),
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             this.KeyValue1,
                             dr["ArtworkTypeID"].ToString()));
                     }
@@ -427,7 +424,7 @@ select * from StyleTMSCost", this.KeyValue1);
             }
             #endregion
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

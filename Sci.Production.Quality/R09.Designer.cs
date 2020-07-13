@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.txtRefno = new Sci.Win.UI.TextBox();
             this.label13 = new Sci.Win.UI.Label();
             this.txtSPEnd = new Sci.Win.UI.TextBox();
@@ -218,7 +218,7 @@
         private Win.UI.Label labelSP;
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.Label labelArriveWHDate;
-        private Class.txtsupplier txtsupplier;
+        private Class.Txtsupplier txtsupplier;
         private Win.UI.TextBox txtRefno;
         private Win.UI.Label label13;
         private Win.UI.TextBox txtSPEnd;

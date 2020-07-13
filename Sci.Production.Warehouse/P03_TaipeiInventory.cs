@@ -1,35 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Ict;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_TaipeiInventory : Sci.Win.Subs.Base
+    public partial class P03_TaipeiInventory : Win.Subs.Base
     {
         DataRow dr;
         DataTable selectDataTable1;
+
         public P03_TaipeiInventory(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
-            comboSortBy.SelectedIndex = 0;
-            this.Text += string.Format(" ({0}-{1}- {2})", dr["id"].ToString()
-, dr["seq1"].ToString()
-, dr["seq2"].ToString());
+            this.InitializeComponent();
+            this.dr = data;
+            this.comboSortBy.SelectedIndex = 0;
+            this.Text += string.Format(" ({0}-{1}- {2})", this.dr["id"].ToString(),
+this.dr["seq1"].ToString(),
+this.dr["seq2"].ToString());
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string selectCommand1 = string.Format(@"
+            string selectCommand1 = string.Format(
+                @"
 SELECT  *, 
         sum(TMP.inqty - TMP.Allocated) over ( order by ID,SEQ,sum(TMP.inqty - TMP.Allocated) desc ) as [balance]
 FROM (
@@ -144,30 +141,36 @@ FROM (
 			and inv.type in ('4')    
 ) TMP 
 GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, TMP.factoryid, TMP.seq70
-            , TMP.ReasonEN, TMP.SEQ, TMP.inqty, TMP.Allocated, Tmp.remark, Tmp.ukey, Tmp.UseFactory"
-                                                , dr["id"].ToString()
-                                                , dr["seq1"].ToString()
-                                                , dr["seq2"].ToString());
+            , TMP.ReasonEN, TMP.SEQ, TMP.inqty, TMP.Allocated, Tmp.remark, Tmp.ukey, Tmp.UseFactory",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString());
 
-            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
-            if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
+            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out this.selectDataTable1);
+            if (selectResult1 == false)
+            {
+                this.ShowErr(selectCommand1, selectResult1);
+            }
             else
             {
-                string remark = "";
-                foreach (DataRow dr2 in selectDataTable1.Rows)
+                string remark = string.Empty;
+                foreach (DataRow dr2 in this.selectDataTable1.Rows)
                 {
                     if (!MyUtility.Check.Empty(dr2["remark"].ToString()))
                     {
                         remark += dr2["remark"].ToString().TrimEnd() + Environment.NewLine;
                     }
                 }
+
                 this.editRemark.Text = remark;
             }
-            bindingSource1.DataSource = selectDataTable1;
-            //設定Grid1的顯示欄位
+
+            this.bindingSource1.DataSource = this.selectDataTable1;
+
+            // 設定Grid1的顯示欄位
             this.gridTaipeiInventoryList.IsEditingReadOnly = true;
-            this.gridTaipeiInventoryList.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.gridTaipeiInventoryList)
+            this.gridTaipeiInventoryList.DataSource = this.bindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridTaipeiInventoryList)
                 .Text("id", header: "Transaction ID", width: Widths.AnsiChars(13))
                 .Text("factoryid", header: "Factory", width: Widths.AnsiChars(8))
                 .Text("typeName", header: "Type", width: Widths.AnsiChars(13))
@@ -189,20 +192,27 @@ GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, 
 
         private void grid1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
         }
 
         private void comboSortBy_SelectedIndexChanged(object sender, EventArgs e)
         {
-            switch (comboSortBy.SelectedIndex)
+            switch (this.comboSortBy.SelectedIndex)
             {
                 case 0:
-                    if (MyUtility.Check.Empty(selectDataTable1)) break;
-                    selectDataTable1.DefaultView.Sort = "confirmdate , id";
+                    if (MyUtility.Check.Empty(this.selectDataTable1))
+                    {
+                        break;
+                    }
+
+                    this.selectDataTable1.DefaultView.Sort = "confirmdate , id";
                     break;
                 case 1:
-                    if (MyUtility.Check.Empty(selectDataTable1)) break;
-                    selectDataTable1.DefaultView.Sort = "type , id";
+                    if (MyUtility.Check.Empty(this.selectDataTable1))
+                    {
+                        break;
+                    }
+
+                    this.selectDataTable1.DefaultView.Sort = "type , id";
                     break;
 
                 default:

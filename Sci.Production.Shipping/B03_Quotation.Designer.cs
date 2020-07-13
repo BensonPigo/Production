@@ -33,8 +33,8 @@
             this.displayCode = new Sci.Win.UI.DisplayBox();
             this.labelCode = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtCurrency1 = new Sci.Production.Class.txtcurrency();
-            this.txtsubconSupplier1 = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtCurrency1 = new Sci.Production.Class.Txtcurrency();
+            this.txtsubconSupplier1 = new Sci.Production.Class.TxtsubconNoConfirm();
             this.label2 = new Sci.Win.UI.Label();
             this.dateQuotation1 = new Sci.Win.UI.DateBox();
             this.label6 = new Sci.Win.UI.Label();
@@ -177,9 +177,9 @@
             this.txtsubconSupplier1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID1", true));
             this.txtsubconSupplier1.DisplayBox1Binding = "";
             this.txtsubconSupplier1.IsIncludeJunk = false;
-            this.txtsubconSupplier1.isMisc = false;
-            this.txtsubconSupplier1.isShipping = false;
-            this.txtsubconSupplier1.isSubcon = false;
+            this.txtsubconSupplier1.IsMisc = false;
+            this.txtsubconSupplier1.IsShipping = false;
+            this.txtsubconSupplier1.IsSubcon = false;
             this.txtsubconSupplier1.Location = new System.Drawing.Point(137, 52);
             this.txtsubconSupplier1.Name = "txtsubconSupplier1";
             this.txtsubconSupplier1.Size = new System.Drawing.Size(159, 23);
@@ -240,8 +240,8 @@
         private Win.UI.Label labelPrice1;
         private Win.UI.DisplayBox displayCode;
         private Win.UI.Label labelCode;
-        private Class.txtcurrency txtCurrency1;
-        private Class.txtsubconNoConfirm txtsubconSupplier1;
+        private Class.Txtcurrency txtCurrency1;
+        private Class.TxtsubconNoConfirm txtsubconSupplier1;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Win.UI.DateBox dateQuotation1;

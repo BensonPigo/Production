@@ -1,30 +1,19 @@
 ﻿using Ict.Win;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Sci.Data;
-using Sci.Win.UI;
-using Ict.Data;
 using Ict;
-using Sci.Win.Tools;
-using System.Linq;
-using Sci.Production.PublicPrg;
-using System.Transactions;
-using System.Text.RegularExpressions;
-using System.Reflection;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P02_WKETA : Sci.Win.Tems.QueryForm
+    public partial class P02_WKETA : Win.Tems.QueryForm
     {
         DataRow CurrentRow;
+
         public P02_WKETA(DataRow currentRow)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
             this.CurrentRow = currentRow;
         }
@@ -35,7 +24,7 @@ namespace Sci.Production.Cutting
 
             this.grid1.CellClick += (s, e) =>
             {
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid1.GetDataRow(e.RowIndex);
                 if (e.ColumnIndex == 0 && e.RowIndex != -1)
                 {
                     itemx.WKETA = MyUtility.Convert.GetDate(dr["WKETA"]);
@@ -56,8 +45,8 @@ namespace Sci.Production.Cutting
             };
 
             this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.grid1)
-            .CheckBox("Selected", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
+            this.Helper.Controls.Grid.Generator(this.grid1)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("WK", header: "WK#", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Date("WKETA", header: "WKETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -90,7 +79,7 @@ ORDER BY ETA
                 }
             }
 
-            this.listControlBindingSource1.DataSource = dt;            
+            this.listControlBindingSource1.DataSource = dt;
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)

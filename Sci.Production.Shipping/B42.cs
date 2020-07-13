@@ -8,17 +8,14 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using System.Data.SqlClient;
-using Sci.Win.Tems;
 using Sci.Production.PublicPrg;
-using System.Linq;
 
 namespace Sci.Production.Shipping
 {
     /// <summary>
     /// B42
     /// </summary>
-    public partial class B42 : Sci.Win.Tems.Input6
+    public partial class B42 : Win.Tems.Input6
     {
         private DataTable tmpConsumptionArticle;
         private DataTable tmpConsumptionSizecode;
@@ -44,18 +41,18 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
 
             // 新增Import From Barcode按鈕
-            Sci.Win.UI.Button btn = new Sci.Win.UI.Button();
+            Win.UI.Button btn = new Win.UI.Button();
             btn.Text = "Batch Create";
             btn.Click += new EventHandler(this.Btn_Click);
             this.browsetop.Controls.Add(btn);
 
             // 預設是(80,30)
             btn.Size = new Size(120, 30);
-            btn.Enabled = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "B42. Custom SP# and Consumption", "CanNew");
+            btn.Enabled = Prgs.GetAuthority(Env.User.UserID, "B42. Custom SP# and Consumption", "CanNew");
             this.grid.Columns[0].Visible = false;
 
             // 新增Import From Batch按鈕
-            Sci.Win.UI.Button btn2 = new Sci.Win.UI.Button();
+            Win.UI.Button btn2 = new Win.UI.Button();
             btn2.Text = "Batch Import";
             btn2.Click += this.Btn2_Click;
             this.browsetop.Controls.Add(btn2);
@@ -81,7 +78,7 @@ where vdd.ID = '{0}'
 
         private void Btn2_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.B42_BatchImport callNextForm = new Sci.Production.Shipping.B42_BatchImport();
+            B42_BatchImport callNextForm = new B42_BatchImport();
             DialogResult result = callNextForm.ShowDialog(this);
 
             this.ReloadDatas();
@@ -90,7 +87,7 @@ where vdd.ID = '{0}'
         // Batch Create按鈕的Click事件
         private void Btn_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.B42_BatchCreate callNextForm = new Sci.Production.Shipping.B42_BatchCreate();
+            B42_BatchCreate callNextForm = new B42_BatchCreate();
             DialogResult result = callNextForm.ShowDialog(this);
 
             this.ReloadDatas();
@@ -384,7 +381,6 @@ where vdd.ID = '{0}'
                     dr["StockQty"] = drNLCode["StockQty"];
                     dr["UsageQty"] = newvalue;
                 }
-
             };
             #endregion
 
@@ -727,7 +723,7 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            Sci.Production.Shipping.B42_Print callPurchaseForm = new Sci.Production.Shipping.B42_Print();
+            B42_Print callPurchaseForm = new B42_Print();
             callPurchaseForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -737,7 +733,7 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
         {
             if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed'", "15,10,10", this.txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date");
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed'", "15,10,10", this.txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date");
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -775,7 +771,7 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
         {
             if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, SeasonID, BrandID,Ukey,CPU from Style WITH (NOLOCK) Order By BrandID, ID, SeasonID", "15,10,10,0", this.txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date,");
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, SeasonID, BrandID,Ukey,CPU from Style WITH (NOLOCK) Order By BrandID, ID, SeasonID", "15,10,10,0", this.txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date,");
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -796,7 +792,7 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
         {
             if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(this.CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"])), "15,10,10,0", this.txtStyle.Text, headercaptions: "Size");
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(this.CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"])), "15,10,10,0", this.txtStyle.Text, headercaptions: "Size");
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -812,7 +808,7 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
         {
             if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select Article from Style_Article WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(this.CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"])), "Color Way", "8", this.editColorway.Text, null, null, null);
+                Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select Article from Style_Article WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(this.CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"])), "Color Way", "8", this.editColorway.Text, null, null, null);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -828,7 +824,7 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
         {
             if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(this.CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"])), "Color Way", "8", this.editSizeGroup.Text, null, null, null);
+                Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(this.CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"])), "Color Way", "8", this.editSizeGroup.Text, null, null, null);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -855,7 +851,7 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
                 return;
             }
 
-            DataTable queryDetailData, queryDetail2Data, fixDeclareData, necessaryItem, invalidData;
+            DataTable queryDetail2Data, necessaryItem, invalidData;
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder needItem = new StringBuilder();
             StringBuilder emptyNLCode = new StringBuilder();
@@ -1156,7 +1152,7 @@ select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'",
 
             string updateCmds = string.Format(
                 "update VNConsumption set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             result = DBProxy.Current.Execute(null, updateCmds);
@@ -1174,7 +1170,7 @@ select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'",
 
             string updateCmds = string.Format(
                 "update VNConsumption set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);

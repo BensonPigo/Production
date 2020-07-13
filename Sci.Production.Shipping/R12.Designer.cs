@@ -33,9 +33,9 @@
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
             this.dateFCRDate = new Sci.Win.UI.DateRange();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
-            this.txtcustcd = new Sci.Production.Class.txtcustcd();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtcountryDestination = new Sci.Production.Class.Txtcountry();
+            this.txtcustcd = new Sci.Production.Class.Txtcustcd();
             this.labelDestination = new Sci.Win.UI.Label();
             this.labelCustCD = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
@@ -46,9 +46,9 @@
             this.labelInvoiceDate = new Sci.Win.UI.Label();
             this.datePulloutDate = new Sci.Win.UI.DateRange();
             this.labelPulloutDate = new Sci.Win.UI.Label();
-            this.txtbuyer = new Sci.Production.Class.txtbuyer();
+            this.txtbuyer = new Sci.Production.Class.Txtbuyer();
             this.labelBuyer = new Sci.Win.UI.Label();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -342,9 +342,9 @@
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelCategory;
         private Win.UI.DateRange dateFCRDate;
-        private Class.txtbrand txtbrand;
-        private Class.txtcountry txtcountryDestination;
-        private Class.txtcustcd txtcustcd;
+        private Class.Txtbrand txtbrand;
+        private Class.Txtcountry txtcountryDestination;
+        private Class.Txtcustcd txtcustcd;
         private Win.UI.Label labelDestination;
         private Win.UI.Label labelCustCD;
         private Win.UI.Label label7;
@@ -355,8 +355,8 @@
         private Win.UI.Label labelInvoiceDate;
         private Win.UI.DateRange datePulloutDate;
         private Win.UI.Label labelPulloutDate;
-        private Class.txtbuyer txtbuyer;
+        private Class.Txtbuyer txtbuyer;
         private Win.UI.Label labelBuyer;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboCategory;
     }
 }

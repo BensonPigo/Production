@@ -34,15 +34,15 @@
             this.btnImport = new Sci.Win.UI.Button();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtlocalitemEnd = new Sci.Production.Class.txtlocalitem();
+            this.txtlocalitemEnd = new Sci.Production.Class.Txtlocalitem();
             this.label6 = new Sci.Win.UI.Label();
-            this.txtthreadcolorEnd = new Sci.Production.Class.txtthreadcolor();
+            this.txtthreadcolorEnd = new Sci.Production.Class.Txtthreadcolor();
             this.label8 = new Sci.Win.UI.Label();
-            this.txtthreadcolorStart = new Sci.Production.Class.txtthreadcolor();
+            this.txtthreadcolorStart = new Sci.Production.Class.Txtthreadcolor();
             this.labelColor = new Sci.Win.UI.Label();
-            this.txtthreadlocationEnd = new Sci.Production.Class.txtthreadlocation();
-            this.txtthreadlocationStart = new Sci.Production.Class.txtthreadlocation();
-            this.txtlocalitemStart = new Sci.Production.Class.txtlocalitem();
+            this.txtthreadlocationEnd = new Sci.Production.Class.Txtthreadlocation();
+            this.txtthreadlocationStart = new Sci.Production.Class.Txtthreadlocation();
+            this.txtlocalitemStart = new Sci.Production.Class.Txtlocalitem();
             this.checkAllThread = new Sci.Win.UI.CheckBox();
             this.numCountOfRadom = new Sci.Win.UI.NumericBox();
             this.labelCountOfRadom = new Sci.Win.UI.Label();
@@ -345,14 +345,14 @@
         private Win.UI.CheckBox checkAllThread;
         private Win.UI.NumericBox numCountOfRadom;
         private Win.UI.Label labelCountOfRadom;
-        private Production.Class.txtlocalitem txtlocalitemStart;
+        private Production.Class.Txtlocalitem txtlocalitemStart;
         private Win.UI.Label label6;
-        private Class.txtthreadlocation txtthreadlocationEnd;
-        private Class.txtthreadlocation txtthreadlocationStart;
+        private Class.Txtthreadlocation txtthreadlocationEnd;
+        private Class.Txtthreadlocation txtthreadlocationStart;
         private Win.UI.Label labelColor;
-        private Class.txtthreadcolor txtthreadcolorEnd;
+        private Class.Txtthreadcolor txtthreadcolorEnd;
         private Win.UI.Label label8;
-        private Class.txtthreadcolor txtthreadcolorStart;
-        private Class.txtlocalitem txtlocalitemEnd;
+        private Class.Txtthreadcolor txtthreadcolorStart;
+        private Class.Txtlocalitem txtlocalitemEnd;
     }
 }

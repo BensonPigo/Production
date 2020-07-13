@@ -1,21 +1,16 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Transactions;
-using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
     /// <inheritdoc/>
-    public partial class B03_BatchApprove : Sci.Win.Forms.Base
+    public partial class B03_BatchApprove : Win.Forms.Base
     {
         Action reloadParant;
 
@@ -53,7 +48,7 @@ namespace Sci.Production.Shipping
                 .Numeric("NewPrice", header: "New Price", width: Widths.AnsiChars(7), decimal_places: 5, iseditingreadonly: true)
                 ;
 
-            //this.Helper.Controls.Grid.Generator(this.grid2)
+            // this.Helper.Controls.Grid.Generator(this.grid2)
             //    .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out this.col_chk2)
             //    .Text("LocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
             //    .Text("SuppAbb", header: "Supp Abb", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -62,12 +57,10 @@ namespace Sci.Production.Shipping
             //    .Date("QuotDate", header: "QuotDate", width: Widths.AnsiChars(10), iseditingreadonly: true)
             //    ;
 
-
-            //for (int i = 0; i < this.grid2.Columns.Count; i++)
-            //{
+            // for (int i = 0; i < this.grid2.Columns.Count; i++)
+            // {
             //    this.grid2.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            //}
-
+            // }
             this.Query();
             this.listControlBindingSource1.Filter = "IsApproved='N'";
         }
@@ -360,7 +353,6 @@ when matched then update set
                 {
                     this.grid1.Rows[i].DefaultCellStyle.BackColor = Color.White;
                 }
-
             }
         }
 
@@ -381,7 +373,7 @@ when matched then update set
             DataTable selectdt = this.master.Select("Selected = 1").CopyToDataTable();
 
             this.ShowWaitMessage("Starting Excel");
-            Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Shipping_B03.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Shipping_B03.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];   // 取得工作表
             worksheet.Cells[3, 1] = MyUtility.GetValue.Lookup("select RgCode from System", "Production");
             Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range("A7:A7").EntireRow; // 複製格式後插入
@@ -419,7 +411,7 @@ when matched then update set
 
             worksheet.Columns.AutoFit();
             #region Save Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_B03");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_B03");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

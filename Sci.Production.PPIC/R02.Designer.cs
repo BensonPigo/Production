@@ -45,13 +45,13 @@
             this.dateFtyMRRcvDate = new Sci.Win.UI.DateRange();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboPrintType = new Sci.Win.UI.ComboBox();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txttpeuser_caneditMR = new Sci.Production.Class.txttpeuser_canedit();
-            this.txttpeuser_caneditSMR = new Sci.Production.Class.txttpeuser_canedit();
-            this.txttpeuser_caneditPOHandle = new Sci.Production.Class.txttpeuser_canedit();
-            this.txttpeuser_caneditPOSMR = new Sci.Production.Class.txttpeuser_canedit();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txttpeuser_caneditMR = new Sci.Production.Class.Txttpeuser_canedit();
+            this.txttpeuser_caneditSMR = new Sci.Production.Class.Txttpeuser_canedit();
+            this.txttpeuser_caneditPOHandle = new Sci.Production.Class.Txttpeuser_canedit();
+            this.txttpeuser_caneditPOSMR = new Sci.Production.Class.Txttpeuser_canedit();
             this.SuspendLayout();
             // 
             // print
@@ -369,14 +369,14 @@
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.DateRange dateProvideDate;
         private Win.UI.DateRange dateFtyMRRcvDate;
-        private Class.txtbrand txtbrand;
-        private Class.txtstyle txtstyle;
-        private Class.txtseason txtseason;
+        private Class.Txtbrand txtbrand;
+        private Class.Txtstyle txtstyle;
+        private Class.Txtseason txtseason;
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboPrintType;
-        private Class.txttpeuser_canedit txttpeuser_caneditMR;
-        private Class.txttpeuser_canedit txttpeuser_caneditSMR;
-        private Class.txttpeuser_canedit txttpeuser_caneditPOHandle;
-        private Class.txttpeuser_canedit txttpeuser_caneditPOSMR;
+        private Class.Txttpeuser_canedit txttpeuser_caneditMR;
+        private Class.Txttpeuser_canedit txttpeuser_caneditSMR;
+        private Class.Txttpeuser_canedit txttpeuser_caneditPOHandle;
+        private Class.Txttpeuser_canedit txttpeuser_caneditPOSMR;
     }
 }

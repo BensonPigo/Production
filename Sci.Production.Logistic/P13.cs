@@ -2,20 +2,13 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Logistic
 {
     /// <inheritdoc/>
-    public partial class P13 : Sci.Win.Tems.QueryForm
+    public partial class P13 : Win.Tems.QueryForm
     {
         /// <inheritdoc/>
         public P13(ToolStripMenuItem menuitem)
@@ -110,7 +103,7 @@ inner join orders o WITH (NOLOCK) on o.id	= pld.orderid
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 left join DropDownList dl on dl.Type = 'Pms_PulloutTransport' and dl.ID = pld.PulloutTransport
 where 1=1
-        and pl.MDivisionID = '{Sci.Env.User.Keyword}'  
+        and pl.MDivisionID = '{Env.User.Keyword}'  
         and pld.ClogPulloutDate is not null
         {where}
 order by pld.ID,pld.CTNStartNo

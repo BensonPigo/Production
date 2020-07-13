@@ -6,11 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Packing
@@ -18,12 +13,11 @@ namespace Sci.Production.Packing
     /// <summary>
     /// B03
     /// </summary>
-    public partial class B03 : Sci.Win.Tems.Input1
+    public partial class B03 : Win.Tems.Input1
     {
         private Hashtable ht = new Hashtable();
         private DataTable sizes;
         private DataTable sizesAll;
-
 
         /// <summary>
         /// B03
@@ -98,7 +92,7 @@ FROM StickerSize WITH (NOLOCK)
 
         private void TxtCTNRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select RefNo  from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' ", null, this.txtCTNRefno.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select RefNo  from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' ", null, this.txtCTNRefno.Text);
 
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -215,7 +209,6 @@ and Seq = '{this.CurrentMaintain["Seq"]}'
 
         private void ComboStickerSize_SelectedValueChanged(object sender, EventArgs e)
         {
-
             if (this.comboStickerSize.SelectedIndex == -1)
             {
                 return;

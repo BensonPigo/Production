@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using Sci.Data;
-using Sci;
 using Ict;
-using Ict.Win;
-using System.Configuration;
 using PostJobLog;
-using Newtonsoft.Json;
 using Sci.Production.Prg;
 
 namespace Sci.Production.PublicPrg
@@ -18,14 +10,18 @@ namespace Sci.Production.PublicPrg
     public class OrderChangeModel
     {
         public string ID { get; set; }
+
         public string Status { get; set; }
+
         public string EditName { get; set; }
+
         public string FTYComments { get; set; }
     }
 
     public static partial class Prgs
     {
         #region GetExcelEnglishColumnName
+
         /// <summary>
         /// GetExcelEnglishColumnName(int)
         /// </summary>
@@ -33,21 +29,29 @@ namespace Sci.Production.PublicPrg
         /// <returns>string</returns>
         public static string GetExcelEnglishColumnName(int column)
         {
-            string strReturn = "";
+            string strReturn = string.Empty;
 
-            int iQuotient = column / 26;//商數
-            int iRemainder = column % 26;//餘數
+            int iQuotient = column / 26; // 商數
+            int iRemainder = column % 26; // 餘數
 
             if (iRemainder == 0)
+            {
                 iQuotient--;  // 剛好整除的時候，商數要減一
+            }
 
             if (iQuotient > 0)
-                strReturn = Convert.ToChar(64 + iQuotient).ToString();//A 65 利用ASCII做轉換
+            {
+                strReturn = Convert.ToChar(64 + iQuotient).ToString(); // A 65 利用ASCII做轉換
+            }
 
             if (iRemainder == 0)
+            {
                 strReturn += "Z";
+            }
             else
-                strReturn += Convert.ToChar(64 + iRemainder).ToString();    //A 65 利用ASCII做轉換
+            {
+                strReturn += Convert.ToChar(64 + iRemainder).ToString();    // A 65 利用ASCII做轉換
+            }
 
             return strReturn;
         }
@@ -123,11 +127,12 @@ from ReplacementReport_Detail where ID = '{replacementID}'
             DataTable dtReplacementReport;
             DataTable dtReplacementReportDetail;
             DualResult result;
-            result = DBProxy.Current.Select(null, sqlReplacementReport,out dtReplacementReport);
+            result = DBProxy.Current.Select(null, sqlReplacementReport, out dtReplacementReport);
             if (!result)
             {
                 return result;
             }
+
             result = DBProxy.Current.Select(null, sqlReplacementReportDetail, out dtReplacementReportDetail);
             if (!result)
             {
@@ -147,14 +152,14 @@ from ReplacementReport_Detail where ID = '{replacementID}'
         {
             OrderChangeModel orderChangeModel = new OrderChangeModel()
             {
-                ID = _ID
-                , Status = _status
-                , EditName = Env.User.UserID
-                , FTYComments = ftyComments
+                ID = _ID,
+                Status = _status,
+                EditName = Env.User.UserID,
+                FTYComments = ftyComments,
             };
 
             DualResult result;
-            string tradeWebApiUri = PmsWebAPI.TradeWebApiUri; 
+            string tradeWebApiUri = PmsWebAPI.TradeWebApiUri;
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(tradeWebApiUri);
 
             result = callTPEWebAPI.CallWebApiPost("api/OrderChange/Receive", orderChangeModel);
@@ -171,7 +176,5 @@ where OrderID = '{orderid}' and od.Seq = '{seq}' and status != 'Confirmed' and s
 ";
             return !MyUtility.Check.Seek(sqlcmd);
         }
-
-
     }
 }
