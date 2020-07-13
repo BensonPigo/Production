@@ -26,10 +26,11 @@ namespace Sci.Production.Cutting
         DataTable detailTb2, alltmpTb2, bundle_detail_artTb2, qtyTb2;
         DataTable f_codeTb;
         DataTable garmentarRC;
+        bool ByToneGenerate;
         public P10_Generate(DataRow maindr, DataTable table_bundle_Detail, DataTable bundle_Detail_allpart_Tb, DataTable bundle_Detail_Art_Tb, DataTable bundle_Detail_Qty_Tb)
         {
+            ByToneGenerate = MyUtility.Convert.GetBool(maindr["ByToneGenerate"]);
             InitializeComponent();
-            chkTone.Checked = MyUtility.Convert.GetBool(maindr["ByToneGenerate"]);
             #region 準備要處理的table 和原本的table
             detailTb = table_bundle_Detail.Copy();
             alltmpTb = bundle_Detail_allpart_Tb.Copy();
@@ -159,6 +160,11 @@ order by ArticleGroup", patternukey);
         //第一次產生時需全部重新撈值
         public void noexist_Table_Query()
         {
+            chkTone.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select AutoGenerateByTone from System"));
+            if (chkTone.Checked)
+            {
+                this.numTone.Value = 1;
+            }
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
             StringBuilder w = new StringBuilder();
@@ -274,6 +280,7 @@ order by ArticleGroup", patternukey);
         //當bundle_allPart, bundle_art 存在時的對應資料
         public void exist_Table_Query()
         {
+            chkTone.Checked = ByToneGenerate;
             //將Bundle_Detial_Art distinct PatternCode,
             DataTable tmp;
             //用來當判斷條件的DataTable,避免DetailTB dataRow被刪除後無法用index撈出資料
