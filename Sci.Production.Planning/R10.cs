@@ -954,8 +954,7 @@ namespace Sci.Production.Planning
 
                     // 5 By non-sister
                     int nonSisStart = sheetStart;
-                    string zoneFilter = MyUtility.Check.Empty(zone) ? string.Empty : $" and zone = '{zone}'";
-                    DataTable dtByNonSister = SafeGetDt(dt2, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + zoneFilter);
+                    DataTable dtByNonSister = SafeGetDt(dt2, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
                     SetTableToRow(wks, intYear, sheetStart, "non-sister sub-in", dtByNonSister, "OrderCapacity");
                     DrawBottomLine(wks, sheetStart, 1);
                     sheetStart += 1;
@@ -964,7 +963,7 @@ namespace Sci.Production.Planning
 
                     // Shortage
                     int shortageStart = sheetStart;
-                    DataTable dtByShortage = SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + zoneFilter);
+                    DataTable dtByShortage = SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
                     SetTableToRow(wks, intYear, sheetStart, "Shortage", dtByShortage, "OrderShortage");
                     DrawBottomLine(wks, sheetStart, 1);
                     shortageLis.Add(sheetStart.ToString());
