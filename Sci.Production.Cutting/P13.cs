@@ -10,8 +10,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P13 : Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
         public P13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -19,6 +21,7 @@ namespace Sci.Production.Cutting
             this.grid.IsEditingReadOnly = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -46,31 +49,41 @@ namespace Sci.Production.Cutting
                 .Date("PrintDate", header: "PrintDate", iseditingreadonly: true);
         }
 
-        private void buttonQuery_Click(object sender, EventArgs e)
+        private void ButtonQuery_Click(object sender, EventArgs e)
         {
-            if (this.textBoxPOID.Text.Empty())
+            if (this.textBoxPOID.Text.Empty() && this.txtCutref.Text.Empty() &&
+                this.dateRangeCreateDate.Value1.Empty() && this.dateRangeCreateDate.Value2.Empty())
             {
-                MyUtility.Msg.WarningBox("POID can not be empty.");
+                MyUtility.Msg.WarningBox("[POID],[CutRef#],[Create Date] can not all be empty.");
                 this.bindingSource1.DataSource = null;
                 return;
             }
 
-            string strPatternPanelFilter = string.Empty;
-            string strCreateDateFilter = string.Empty;
+            string where = string.Empty;
 
-            if (this.textBoxPatterPanel.Text.Empty() == false)
+            if (!this.textBoxPOID.Text.Empty())
             {
-                strPatternPanelFilter = $"and b.PatternPanel = '{this.textBoxPatterPanel.Text}'";
+                where += "\r\n" + $"and b.POID = '{this.textBoxPOID.Text}'";
             }
 
-            if (this.dateRangeCreateDate.Value1.Empty() == false)
+            if (!this.txtCutref.Text.Empty())
             {
-                strCreateDateFilter = $"and '{((DateTime)this.dateRangeCreateDate.Value1).ToString("yyyy/MM/dd")}' <= b.CDate ";
+                where += "\r\n" + $"and b.CutRef  = '{this.txtCutref.Text}'";
             }
 
-            if (this.dateRangeCreateDate.Value2.Empty() == false)
+            if (!this.dateRangeCreateDate.Value1.Empty())
             {
-                strCreateDateFilter += $"and b.CDate <= '{((DateTime)this.dateRangeCreateDate.Value2).ToString("yyyy/MM/dd")}'";
+                where += $"and '{((DateTime)this.dateRangeCreateDate.Value1).ToString("yyyy/MM/dd")}' <= b.CDate ";
+            }
+
+            if (!this.dateRangeCreateDate.Value2.Empty())
+            {
+                where += $"and b.CDate <= '{((DateTime)this.dateRangeCreateDate.Value2).ToString("yyyy/MM/dd")}'";
+            }
+
+            if (!this.textBoxPatterPanel.Text.Empty())
+            {
+                where += "\r\n" + $"and b.PatternPanel = '{this.textBoxPatterPanel.Text}'";
             }
 
             string strQuerySQL = $@"
@@ -100,9 +113,9 @@ select Sel = 0
        , b.SewingCell
 from Bundle b
 inner join Orders O with(nolock) on  b.Orderid = o.id  and o.MDivisionID  = b.MDivisionID 
-where b.POID = '{this.textBoxPOID.Text}'
-      {strPatternPanelFilter}
-      {strCreateDateFilter}";
+where 1=1
+{where}
+";
 
             DataTable resultDt;
             DualResult result = DBProxy.Current.Select(null, strQuerySQL, out resultDt);
@@ -117,7 +130,7 @@ where b.POID = '{this.textBoxPOID.Text}'
             this.grid.ColumnsAutoSize();
         }
 
-        private void buttonPrint_Click(object sender, EventArgs e)
+        private void ButtonPrint_Click(object sender, EventArgs e)
         {
             List<string> openExcelFile = this.ExcelProcess("Print Processing");
             if (openExcelFile != null)
@@ -141,7 +154,7 @@ where b.POID = '{this.textBoxPOID.Text}'
             }
         }
 
-        private void buttonToExcel_Click(object sender, EventArgs e)
+        private void ButtonToExcel_Click(object sender, EventArgs e)
         {
             List<string> openExcelFile = this.ExcelProcess("Excel Processing");
             if (openExcelFile != null)
@@ -153,7 +166,7 @@ where b.POID = '{this.textBoxPOID.Text}'
             }
         }
 
-        private void buttonClose_Click(object sender, EventArgs e)
+        private void ButtonClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
