@@ -292,7 +292,7 @@
             this.comboFactory.FilteMDivision = false;
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IssupportJunk = true;
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(123, 173);
             this.comboFactory.Name = "comboFactory";

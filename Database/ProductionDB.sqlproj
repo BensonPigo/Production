@@ -2505,6 +2505,7 @@
     <Build Include="dbo\Tables\FtyStdRate_EMB.sql" />
     <Build Include="dbo\Functions\GetEmboideryCost.sql" />
     <Build Include="dbo\Functions\GetPrintingCost.sql" />
+    <Build Include="dbo\Stored Procedures\GetProductionOutputSummary.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
