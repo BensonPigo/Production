@@ -78,5 +78,6 @@
     <Build Include="dbo\Tables\WhseReason.sql" />
     <Build Include="dbo\Tables\OperationDesc.sql" />
     <Build Include="dbo\Tables\MeasurementTranslate.sql" />
+    <Build Include="dbo\Tables\AccountNoSetting.sql" />
   </ItemGroup>
 </Project>

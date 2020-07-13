@@ -40,6 +40,7 @@
             this.TextBox1.TabIndex = 0;
             this.TextBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TextBox1_PopUp);
             this.TextBox1.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
+            this.TextBox1.Leave += new System.EventHandler(this.TextBox1_Leave);
             this.TextBox1.Validating += new System.ComponentModel.CancelEventHandler(this.TextBox1_Validating);
             // 
             // displayBox1
