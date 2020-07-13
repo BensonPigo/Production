@@ -44,6 +44,7 @@ namespace Sci.Production.Shipping
             this.checkLiquidationDataOnly.Checked = true;
             this.dtImportEcusData.Columns.Add("NLCode", typeof(string));
             this.dtImportEcusData.Columns.Add("StockQty", typeof(decimal));
+            this.dateGenerate.Value = DateTime.Now;
         }
 
         /// <inheritdoc/>
@@ -324,7 +325,7 @@ where   o.Category <>''
                 where o.id = orf.id
             )
 
-            or o.CFMDate >= @GenerateDate --訂單的關單日在『特定日期（含當天）』之後
+            or o.WhseClose >= @GenerateDate --訂單的關單日在『特定日期（含當天）』之後
         )
         and o.Qty<>0
         and o.LocalOrder = 0 
@@ -462,7 +463,7 @@ full outer join (
 ----------------------------------------------------------------
 -- 01在途物料(已報關但還在途)(On Road Material Qty新增報表)-----
 ----------------------------------------------------------------
-Declare @EtaRange date = GETDATE() - 31
+Declare @EtaRange date = dateadd(day,-31, @GenerateDate)
 select * 
 into #tmpOnRoadMaterial
 from (
@@ -513,6 +514,7 @@ from (
 	        and vd.blno<>''
             and e.Eta between @EtaRange and @GenerateDate --WK#, FtyWK#（物料進口 - 到貨（港）日在『特定日期（含當天）』 的 30 天內）
             and vd.CDate <= @GenerateDate -- 特定日期（含當天）』前已完成進口報關
+			and CONVERT(date, e.AddDate) <= @GenerateDate -- 排除資料建立日期在『特定日期（含當天）』後的 WK#, Fty WK# 
             {whereftys}
     
     union all
@@ -587,14 +589,14 @@ from (
                     and IssueDate <= @GenerateDate -- 特定日期沒有倉庫收料紀錄
             )
             and fe.PortArrival between @EtaRange and @GenerateDate --WK#, FtyWK#（物料進口 - 到貨（港）日在『特定日期（含當天）』 的 30 天內）
-            AND CONVERT(date, fe.AddDate) < @GenerateDate --排除資料建立日期在『特定日期（含當天）』後的 WK#, Fty WK# 
+            AND CONVERT(date, fe.AddDate) <= @GenerateDate --排除資料建立日期在『特定日期（含當天）』後的 WK#, Fty WK# 
             {whereftys}
 ) a				
 
 ----------------------------------------------------------------
 ------------ 02 料倉(AB)( W/House Qty Detail) ------------------
 ----------------------------------------------------------------
---撈W/House資料
+--撈今天 W/House資料
 select * 
 into #tmpWHQty1
 from (
@@ -640,91 +642,7 @@ from (
                                                   and psd.SEQ1 = fi.Seq1 
                                                   and psd.SEQ2 = fi.Seq2
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
-	where (fi.StockType = 'B' or fi.StockType = 'I')
-		  and exists (
-			select 1 from Receiving a
-			inner join Receiving_Detail b on a.Id=b.Id
-			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
-			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
-			and a.WhseArrival <= @GenerateDate--特定日期到 A, B 倉有收發紀錄的訂單
-			and a.Status='Confirmed'
-			union all
-			select 1 from ReturnReceipt a
-			inner join ReturnReceipt_Detail b on a.id=b.id
-			where b.POID = fi.POID and b.Seq1=fi.Seq1 and b.Seq2=fi.Seq2
-			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
-			and a.IssueDate <= @GenerateDate --特定日期到 A, B 倉有收發紀錄的訂單
-			and a.Status = 'Confirmed'
-			union all
-			select 1 from Issue a
-			inner join Issue_Detail b on a.Id=b.Id
-			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
-			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
-			and a.IssueDate <= @GenerateDate  --特定日期到 A, B 倉有收發紀錄的訂單
-			and a.Status='Confirmed'
-			and a.Type in ('A','B','C','D')
-			union all
-			select 1 from Issuelack a
-			inner join Issuelack_Detail b on a.Id=b.Id
-			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
-			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
-			and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-			and a.Type='R' and a.FabricType in ('F','A')
-			and a.Status !='New'
-			union all
-			select 1 from IssueReturn a
-			inner join IssueReturn_Detail b on a.Id=b.Id
-			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
-			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
-			and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-			and a.Status='Confirmed'
-			union all
-			select 1 from Adjust a
-			inner join Adjust_Detail b on a.Id=b.Id
-			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
-			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
-			and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-			and a.Status='Confirmed'
-			and a.Type in ('A','B')
-			union all
-			select 1 from SubTransfer a
-			inner join SubTransfer_Detail b on a.Id=b.Id
-			where b.FromPOID = fi.POID and b.FromSeq1=fi.seq1 and b.FromSeq2=fi.Seq2
-			and b.FromStockType = fi.StockType and b.FromRoll = fi.Roll and b.FromDyelot = fi.Dyelot
-			and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-			and a.Status='Confirmed'
-			and a.Type in ('E','D','C')
-			union all
-			select 1 from TransferIn a
-			inner join TransferIn_Detail b on a.Id=b.Id
-			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
-			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
-			and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-			and a.Status='Confirmed'
-			union all
-			select 1 from TransferOut a
-			inner join TransferOut_Detail b on a.Id=b.Id
-			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
-			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
-			and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-			and a.Status='Confirmed'
-			union all
-			select 1 from BorrowBack a
-			inner join BorrowBack_Detail b on a.Id=b.Id
-			where b.FromPoId = fi.POID and b.FromSeq1=fi.seq1 and b.FromSeq2=fi.Seq2
-			and b.FromStockType = fi.StockType and b.FromRoll = fi.Roll and b.FromDyelot = fi.Dyelot
-			and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-			and a.Status='Confirmed'
-			and a.Type in ('A','B')
-			union all
-			select 1 from BorrowBack a
-			inner join BorrowBack_Detail b on a.Id=b.Id
-			where b.ToPoId = fi.POID and b.ToSeq1=fi.seq1 and b.ToSeq2=fi.Seq2
-			and b.ToStockType = fi.StockType and b.ToRoll = fi.Roll and b.ToDyelot = fi.Dyelot
-			and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-			and a.Status='Confirmed'
-			and a.Type in ('A','B')
-		  )
+	where (fi.StockType = 'B' or fi.StockType = 'I')		 
           {whereftys}
     
     union all
@@ -781,35 +699,6 @@ from (
         inner join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
         inner join Orders o WITH (NOLOCK) on o.id= l.OrderID
         where 1=1
-              and exists(
-				select 1 from LocalReceiving a
-				inner join LocalReceiving_Detail b on a.Id=b.Id
-				where b.OrderId = o.ID
-				and b.Refno = l.Refno and b.ThreadColorID=l.ThreadColorID 
-				and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-				union all
-				select 1 from LocalIssue a
-				inner join LocalIssue_Detail b on a.Id=b.Id
-				where b.OrderID = o.ID
-				and b.Refno = l.Refno and b.ThreadColorID=l.ThreadColorID 
-				and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-				union all
-				select 1 from AdjustLocal a
-				inner join AdjustLocal_Detail b on a.Id=b.Id
-				where b.POID = l.OrderID
-				and b.Refno = l.Refno and b.Color = l.ThreadColorID
-				and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-				and a.Status = 'Confirmed'
-				and a.Type='A'
-				union all
-				select 1 from SubTransferLocal a
-				inner join SubTransferLocal_Detail b on a.Id=b.Id
-				where b.POID = l.OrderID
-				and b.Refno = l.Refno and b.Color = l.ThreadColorID
-				and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-				and a.Status = 'Confirmed'
-				and a.Type='D'
-			  )
               {whereftys}
     )x
 	group by HSCode,NLCode,POID,FactoryID,Seq,RefNo,MaterialType,Description,Roll,Dyelot,StockType,Location,[W/House Unit],[Customs Unit]
@@ -1207,17 +1096,20 @@ a.HSCode
 , a.Dyelot
 , a.StockType
 , a.Location
-, [Qty] = a.Qty + b.Qty
+, [Qty] = a.Qty + isnull(b.Qty,0)
 , [W/House Unit] = a.[W/House Unit]
-, [W/House Qty(Stock Unit)] = a.[W/House Qty(Stock Unit)] + b.[W/House Qty(Stock Unit)]
+, [W/House Qty(Stock Unit)] = a.[W/House Qty(Stock Unit)] + isnull(b.[W/House Qty(Stock Unit)],0)
 , a.[Stock Unit]
 into #tmpWHQty
 from #tmpWHQty1 a
 left join #tmpWHQty2 b on a.POID = b.POID
 and a.FactoryID = b.FactoryID and a.Seq=b.Seq 
 and a.Roll = b.Roll and a.Dyelot = b.Dyelot
-and a.Refno = b.Refno and a.Dyelot = b.Dyelot 
-where a.[W/House Qty(Stock Unit)] + b.[W/House Qty(Stock Unit)] != 0
+and a.Refno = b.Refno and a.MaterialType = b.MaterialType 
+and a.HSCode = b.HSCode and a.NLCode = b.NLCode
+and a.StockType = b.StockType and a.Location = b.Location
+and a.[Stock Unit] = b.[Stock Unit]
+where a.[W/House Qty(Stock Unit)] + isnull(b.[W/House Qty(Stock Unit)],0) != 0
 
 
 ----------------------------------------------------------------
@@ -1265,48 +1157,7 @@ from (
     left join Color c WITH (NOLOCK) on psd.BrandID = c.BrandID 
                                        and psd.ColorID = c.ID
     where t.WhseClose is null
-    and exists(
-		select 1 from Issue a
-		inner join Issue_Detail b on a.Id = b.Id
-		where b.POID = psd.ID and b.Seq1 = psd.SEQ1 and b.Seq2 = psd.SEQ2
-		and IssueDate <= @GenerateDate
-		and a.status = 'Confirmed'
-		and a.Type in ('A','B','C','D','H')
-		union all
-		select 1 from Issuelack a
-		inner join Issuelack_Detail b on a.Id = b.Id
-		where b.POID = psd.ID and b.Seq1 = psd.SEQ1 and b.Seq2 = psd.SEQ2
-		and IssueDate <= @GenerateDate
-		and a.Type='R' and a.FabricType in ('F','A')
-		and a.Status !='New'
-		union all
-		select 1 from IssueReturn a
-		inner join IssueReturn_Detail b on a.Id = b.Id
-		where b.POID = psd.ID and b.Seq1 = psd.SEQ1 and b.Seq2 = psd.SEQ2
-		and IssueDate <= @GenerateDate
-		and a.status ='Confirmed'
-		union all
-		select 1 from SubTransfer a
-		inner join SubTransfer_Detail b on a.Id=b.Id
-		where b.FromPOID = mdp.POID and b.FromSeq1=mdp.seq1 and b.FromSeq2=mdp.Seq2
-		and a.IssueDate <= @GenerateDate 
-		and a.Status='Confirmed'
-		and a.Type in ('E','D','C')
-		union all
-		select 1 from TransferOut a
-		inner join TransferOut_Detail b on a.Id=b.Id
-		where b.PoId = mdp.POID and b.Seq1=mdp.seq1 and b.Seq2=mdp.Seq2
-		and a.IssueDate <= @GenerateDate 
-		and a.Status='Confirmed'
-		union all
-		select 1 from BorrowBack a
-		inner join BorrowBack_Detail b on a.Id=b.Id
-		where b.FromPoId = mdp.POID and b.FromSeq1=mdp.seq1 and b.FromSeq2=mdp.Seq2
-		and a.IssueDate <= @GenerateDate 
-		and a.Status='Confirmed'
-		and a.Type in ('A','B')
-	)    
-
+   
     union all
     
     --工廠採購的物料
@@ -1343,13 +1194,7 @@ from (
 	inner join LocalInventory l WITH (NOLOCK) on t.ID = l.OrderID 
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
     where t.WhseClose is null
-    and exists(
-		select * from LocalIssue a
-		inner join LocalIssue_Detail b on a.Id = b.Id
-		where b.OrderID = t.ID and b.Refno = l.Refno
-		and IssueDate <= @GenerateDate
-		and a.status = 'Confirmed'
-	)
+    
 ) a
 
 /*特定日期區間*/
@@ -1568,21 +1413,27 @@ select
 , a.FactoryID
 , [ID] = a.ID
 , [POID] = a.POID
-, [Qty] = a.Qty+b.Qty
+, [Qty] = sum(a.Qty) + sum(isnull(b.Qty,0))
 , a.Refno
 , [MaterialType] = a.MaterialType
 , a.Description
 , [CustomsUnit] = a.CustomsUnit
-, [StockQty] = a.StockQty
+, [StockQty] = sum(a.StockQty) + sum(isnull(b.stockQty,0))
 , [StockUnit] = a.StockUnit
 , [StyleID] = a.StyleID
 , [Color] = a.Color
 into #tmpIssueQty
 from #tmpIssueQty1 a
-left join #tmpIssueQty2 b on a.POID = b.POID
+left join #tmpIssueQty2 b on 
+a.POID = b.POID
 and a.FactoryID = b.FactoryID 
 and a.Refno = b.Refno and a.Color = b.Color
-where a.StockQty + b.StockQty != 0
+and a.ID=b.ID and a.StyleID = b.StyleID
+and a.HSCode = b.HSCode and a.NLCode = b.NLCode
+and a.MaterialType = b.MaterialType and a.CustomsUnit = b.CustomsUnit
+and a.StockUnit = b.StockUnit
+where a.StockQty + isnull(b.StockQty,0) != 0
+group by a.id, a.POID, a.FactoryID, a.Refno, a.Color, a.Description, a.NLCode, a.CustomsUnit, a.StockUnit,a.MaterialType,a.HSCode,a.StyleID
 
 drop Table #tmpIssueQty1,#tmpIssueQty2
 ----------------------------------------------------------------
@@ -2036,22 +1887,6 @@ from (
     inner join orders o WITH (NOLOCK) on o.id=ft.POID
 	where 1=1 
             and ft.StockType='O'
-            and exists(
-					select 1 from Adjust a
-				inner join Adjust_Detail b on a.ID=b.ID
-				where b.FtyInventoryUkey = ft.Ukey
-				and a.IssueDate <= @GenerateDate -- 特定日期前的訂單
-				and a.Type in ('O','R')
-				and a.Status = 'Confirmed'
-				union all
-				select 1 from SubTransfer a
-				inner join SubTransfer_Detail b on a.ID=b.ID
-				where b.FromPOID = ft.POID and b.FromSeq1=ft.seq1 and b.FromSeq2=ft.Seq2
-				and b.FromStockType = ft.StockType and b.FromRoll = ft.Roll and b.FromDyelot = ft.Dyelot
-				and a.IssueDate <= @GenerateDate -- 特定日期前訂單
-				and a.Status = 'Confirmed'
-				and a.Type in ('C','D','E')
-			)
             {whereftys}
 
     union all
@@ -2089,21 +1924,7 @@ from (
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
 	where 1=1
-          and exists(
-				select 1 from SubTransferLocal a
-				inner join SubTransferLocal_Detail b on a.ID=b.ID
-				where b.PoId = l.OrderID and b.Refno = l.Refno and b.Color = l.ThreadColorID 
-				and a.IssueDate <= @GenerateDate -- 特定日期前訂單
-				and a.Status = 'Confirmed'
-				and a.Type='D'
-				union all 
-				select 1 from AdjustLocal a
-				inner join AdjustLocal_Detail b on a.ID=b.ID
-				where b.PoId = l.OrderID and b.Refno = l.Refno and b.Color = l.ThreadColorID 
-				and a.IssueDate <= @GenerateDate -- 特定日期前訂單
-				and a.Status = 'Confirmed'
-				and a.Type in ('R','C')
-			)
+          
           {whereftys}
 ) a
 
@@ -2299,17 +2120,19 @@ a.HSCode
 , a.Dyelot
 , a.StockType
 , a.Location
-, [Qty] = a.Qty + b.Qty
+, [Qty] = a.Qty + isnull(b.Qty,0)
 , a.CustomsUnit 
-, [ScrapQty] = a.ScrapQty + b.ScrapQty
+, [ScrapQty] = a.ScrapQty + isnull(b.ScrapQty,0)
 , a.StockUnit
 into #tmpScrapQty
 from #tmpScrapQty1 a
 left join #tmpScrapQty2 b on a.POID = b.POID
 and a.FactoryID = b.FactoryID and a.Seq=b.Seq 
 and a.Roll = b.Roll and a.Dyelot = b.Dyelot
-and a.Refno = b.Refno 
-where a.ScrapQty + b.ScrapQty != 0
+and a.Refno = b.Refno  and a.MaterialType = b.MaterialType
+and a.StockType = b.StockType and a.Location = b.Location
+and a.CustomsUnit = b.CustomsUnit and a.StockUnit = b.StockUnit
+where a.ScrapQty + isnull(b.ScrapQty,0) != 0
 
 drop table #tmpScrapQty1,#tmpScrapQty2
 ----------------------------------------------------------------
@@ -2872,6 +2695,14 @@ drop table  #tmpContract
 
         private void DateGenerate_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (MyUtility.Check.Empty(this.dateGenerate.Value))
+            {
+                MyUtility.Msg.WarningBox("Generate date cannot be empty");
+                this.dateGenerate.Value = DateTime.Now;
+                return;
+            }
+
+            // Generate日期不可晚於今天
             if (DateTime.Compare((DateTime)this.dateGenerate.Value, DateTime.Now.Date) > 0)
             {
                 MyUtility.Msg.WarningBox("Generate date cannot later than Today!");
