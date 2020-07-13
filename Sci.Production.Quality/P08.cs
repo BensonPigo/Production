@@ -241,7 +241,7 @@ select
 	, fs.Dyelot
 	, psd.Refno
 	, psd.ColorID
-	, [Qty] = rd.ActualQty
+	, [Qty] = rd.StockQty
 	, fs.CutTime
 	, fs.PasteTime
 	, fs.PassQATime

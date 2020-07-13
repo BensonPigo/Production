@@ -123,7 +123,7 @@ namespace Sci.Production.Warehouse
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Numeric("ActualQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                 .Numeric("StockQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                  .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Location", header: "Location", width: Widths.AnsiChars(12), settings: cellLocation)
                  .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
@@ -288,7 +288,7 @@ rd.Roll,
 rd.Dyelot,
 [Description] = dbo.getmtldesc(rd.POID, rd.Seq1, rd.Seq2, 2, 0),
 [Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' , psd.SuppColor, psd.ColorID),
-rd.ActualQty,
+rd.StockQty,
 [StockTypeDesc] = st.Name,
 rd.StockType,
 --rd.Location,
@@ -350,7 +350,7 @@ SELECT
 ,td.Dyelot
 ,[Description] = dbo.getmtldesc(td.POID, td.Seq1, td.Seq2, 2, 0)
 ,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' , psd.SuppColor, psd.ColorID)
-,[ActualQty]=td.Qty
+,[StockQty]=td.Qty
 ,[StockTypeDesc] = st.Name
 ,td.StockType
 ,[Location]=Location.MtlLocationID 
