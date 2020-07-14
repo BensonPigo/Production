@@ -109,7 +109,9 @@ select ART.id
        , Amount = format(A.Amount,'#,###,###,##0.00')
        , computeAmount = A.Amount
        , a.PatternDesc
-       ,ART.apvName
+       , ART.apvName
+       , A.Article
+       , A.SizeCode
 from DBO.artworkpo ART WITH (NOLOCK) 
 LEFT JOIN dbo.factory F WITH (NOLOCK) ON  F.ID = ART.factoryid
 LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) ON  L.ID = ART.LocalSuppID
@@ -160,7 +162,9 @@ order by ID", masterData["LocalSuppID"]);
                         QtyGMT = row1["Qtygarment"].ToString(),
                         Amount = row1["Amount"].ToString(),
                         CutParts = row1["PatternDesc"].ToString(),
-                        ID = row1["ID"].ToString()
+                        ID = row1["ID"].ToString(),
+                        Article = row1["Article"].ToString(),
+                        Size = row1["SizeCode"].ToString()
                     }).ToList();
 
                 data[0].ApvName = Production.Class.UserESignature.getUserESignature(masterData["apvname"].ToString(), 207, 83);

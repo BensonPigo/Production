@@ -79,8 +79,10 @@ namespace Sci.Production.Subcon
                                         ,c.SewInLine
                                         ,c.SciDelivery
                                         ,c.StyleID
+                                        ,b.Article
                                         ,b.ArtworkId
                                         ,RTrim(b.PatternCode) + '-' + b.PatternDesc
+                                        ,b.SizeCode
                                         ,b.PoQty
                                         ,b.UnitPrice
                                         ,b.PoQty*b.UnitPrice as poamt

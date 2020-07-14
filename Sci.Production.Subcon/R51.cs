@@ -74,13 +74,14 @@ namespace Sci.Production.Subcon
 //            #endregion
             #region SQL CMD
             string sqlCmd = string.Format(@"
-select	AP.ID
+select	distinct
+        AP.ID
 		,O.poid
 		, AP.FactoryId
 		, AP.Remark
 		, AP.Handle
 		, AP.CurrencyId
-		, Amount = Sum(APD.PoQty * OA.Cost) over(partition by AP.ID)
+		, Amount = Sum(APD.PoQty * APD.Cost) over(partition by AP.ID)
 		, AP.VatRate
 		, AP.Vat
 		, AP.AddName
@@ -99,19 +100,22 @@ select	AP.ID
 		, APD.ArtworkTypeID
 		, FirstCutDate = isnull(C.FirstCutDate,O.CutInLine)
 		, [Delivery] = o2.SciDelivery
-		, OA.Article
+		, OQ.Article
+        , APD.SizeCode
 		, QTY = APD.PoQty
-		, UnitPrice = OA.Cost 
-		, Detail_Amount = APD.PoQty * OA.Cost		
+		, UnitPrice = APD.Cost 
+		, Detail_Amount = APD.PoQty * APD.Cost		
 		, O.AddDate as OrderAdddate
 		, O.EditDate as OrderEditDate
         , [BuyerDelivery] = o2.BuyerDelivery
+        into #tmpArtworkPOBySize
 From ArtworkPO AP
 Inner join ArtworkPO_Detail APD on AP.ID=APD.ID
 Inner join Orders O on APD.OrderID=O.ID
 left join Cutting C on O.ID=C.ID    
-Inner join dbo.View_Order_Artworks OA on  OA.ID=APD.OrderID and OA.PatternCode=APD.PatternCode and OA.ArtworkID=APD.ArtworkId and OA.ArtworkTypeID=APD.ArtworkTypeID
-Inner join Order_Qty OQ on OQ.ID=OA.ID and OQ.SizeCode=OA.SizeCode and OQ.Article=OA.Article
+Inner join Order_Qty OQ on  OQ.ID = APD.OrderID and 
+                            (OQ.SizeCode = APD.SizeCode or APD.SizeCode = '') and 
+                            (OQ.Article = APD.Article or APD.Article = '')
 outer apply (
 	select [BuyerDelivery] = max(o2.BuyerDelivery), [SciDelivery] = min(o2.SciDelivery)
 	from Orders o2 with (nolock)
@@ -126,9 +130,66 @@ Where	AP.POType='O'
             (Convert (date, AP.AddDate)  >= Convert(date, DATEADD(m, -2, GETDATE()))
 		Or Convert (date, AP.EditDate) >=Convert(date, DATEADD(d, -7, GETDATE())) )
 
-group by AP.ID, O.poid,AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.VatRate, AP.Vat, AP.AddName, AP.AddDate, AP.EditName, AP.EditDate 
-		 , APD.OrderID, O.StyleID, O.BrandID, O.SeasonID, APD.PatternCode, APD.PatternDesc, APD.Farmout, APD.Farmin, APD.PoQty, APD.ArtworkTypeID
-		 , isnull(C.FirstCutDate,O.CutInLine), o2.SciDelivery, OA.Article,OA.Cost,O.AddDate,O.EditDate, o2.BuyerDelivery");
+--By Article作最後呈現
+select  ID
+		, poid
+		, FactoryId
+		, Remark
+		, Handle
+		, CurrencyId
+		, Amount = sum(Amount)
+		, VatRate
+		, Vat
+		, AddName
+		, APAddDate
+		, EditName
+		, APEditDate
+		, OrderID
+		, StyleID
+		, BrandID
+		, SeasonID
+		, PatternCode
+		, PatternDesc
+		, Farmout = sum(Farmout)
+		, Farmin = sum(Farmin)
+		, PoQty = sum(PoQty)
+		, ArtworkTypeID
+		, FirstCutDate
+		, Delivery
+		, Article
+		, QTY = sum(QTY)
+		, UnitPrice = AVG(UnitPrice)
+		, Detail_Amount = sum(Detail_Amount)	
+		, OrderAdddate
+		, OrderEditDate
+        , BuyerDelivery
+from #tmpArtworkPOBySize
+group by    ID
+		    , poid
+		    , FactoryId
+		    , Remark
+		    , Handle
+		    , CurrencyId
+            , VatRate
+		    , Vat
+		    , AddName
+		    , APAddDate
+		    , EditName
+		    , APEditDate
+		    , OrderID
+		    , StyleID
+		    , BrandID
+		    , SeasonID
+		    , PatternCode
+		    , PatternDesc
+            , ArtworkTypeID
+		    , FirstCutDate
+		    , Delivery
+		    , Article
+			, OrderAdddate
+			, OrderEditDate
+            , BuyerDelivery
+");
                 //, (filte.Count > 0) ? "and " + filte.JoinToString("\n\r and ") : "");
             #endregion
             #region Get Data

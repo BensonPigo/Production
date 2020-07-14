@@ -11,6 +11,8 @@ namespace Sci.Production.Subcon
         public string OrderID { get; set; }
         public string ID { get; set; }
         public string StyleID { get; set; }
+        public string Article { get; set; }
+        public string Size { get; set; }
         public string ReqQTY { get; set; }
         public string ArtworkID { get; set; }
         public string PCS { get; set; }

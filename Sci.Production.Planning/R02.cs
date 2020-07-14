@@ -125,7 +125,6 @@ namespace Sci.Production.Planning
 	select o1.MDivisionID,o1.ID,o1.StyleID,o1.StyleUkey,o1.FactoryID,o1.SewLine,o1.SewInLine,o1.SewOffLine
 	,o1.SciDelivery,o1.BuyerDelivery,o1.MTLETA,o1.CutInLine
 	,o2.ArtworkTypeID,o2.Qty stitch,o2.Price,o2.Cost,o2.TMS
-	,(select Article +',' from (select rtrim(article) article from dbo.Order_Article WITH (NOLOCK) where id = o1.ID) tmp for xml path('')) articles
 	,o2.ArtworkID,o2.PatternCode,o2.PatternDesc,sum(o2.PoQty) OrderQty 
 ,DBO.GETSTDQTY(o1.id,'A',null,null) as stdqty
 ,DBO.getMinCompleteSewQty(o1.id,null,null) as garments
@@ -218,7 +217,7 @@ namespace Sci.Production.Planning
  artworkpoData as -- 撈出artworkpo
 (
 	select a1.ID poid,a1.status,a1.LocalSuppID
-	,b1.PoQty poqty ,b1.Farmout,b1.Farmin,b1.ApQty,b1.ukey po_detailukey
+	,b1.PoQty poqty ,b1.Farmout,b1.Farmin,b1.ApQty,b1.ukey po_detailukey, b1.Article, b1.SizeCode
 	,orderData.*
 	from dbo.ArtworkPO a1 WITH (NOLOCK) 
 	inner join dbo.ArtworkPO_Detail b1 WITH (NOLOCK) on b1.ID= a1.ID
@@ -264,7 +263,7 @@ left join (select NULL FarmInDate,0 FarmInQty,FarmOut.IssueDate FarmOutDate,Farm
             if (this.checkIncludeFarmOutInDate.Checked)
             {
                 sqlCmd.Append(@"select k.FactoryID,k.ID,k.SewLine,k.StyleID,k.stitch,k.ArtworkTypeID,k.PatternCode+'-'+k.PatternDesc pattern
-,k.supplier,k.articles,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery,k.BuyerDelivery
+,k.supplier,k.article,k.SizeCode,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery,k.BuyerDelivery
 ,iif(k.oven='1900-01-01','1',convert(varchar,k.oven)) as Oven
 ,iif(k.Wash='1900-01-01','1',convert(varchar,k.Wash)) as Wash
 ,iif(k.Wash='1900-01-01','1',convert(varchar,k.Wash)) as Wash
@@ -279,7 +278,7 @@ order by k.FactoryID,k.ID,isnull(FarmOutDate,'99991231')");
             else
             {
                 sqlCmd.Append(@"select k.FactoryID,k.ID,k.SewLine,k.StyleID,k.stitch,k.ArtworkTypeID,k.PatternCode+'-'+k.PatternDesc pattern
-,k.supplier,k.articles,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery,k.BuyerDelivery
+,k.supplier,k.article,k.SizeCode,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery,k.BuyerDelivery
 ,iif(k.oven='1900-01-01','1',convert(varchar,k.oven)) as Oven
 ,iif(k.Wash='1900-01-01','1',convert(varchar,k.Wash)) as Wash
 ,iif(k.Wash='1900-01-01','1',convert(varchar,k.Wash)) as Wash

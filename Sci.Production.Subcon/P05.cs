@@ -80,6 +80,8 @@ namespace Sci.Production.Subcon
 select 
 ap.OrderID
 ,o.StyleID
+,ap.Article
+,ap.SizeCode
 ,o.SewInLine
 ,o.SciDelivery
 ,ap.ArtworkID
@@ -99,6 +101,8 @@ from dbo.ArtworkReq_Detail ap
 left join dbo.Orders o on ap.OrderID = o.id
 left join dbo.ArtworkPO_Detail apo on apo.ID = ap.ArtworkPOID
 	AND apo.OrderID = ap.OrderID 
+    AND apo.Article = ap.Article 
+    AND apo.SizeCode = ap.SizeCode    
 	AND AP.ArtworkID = APO.ArtworkId 
 	AND AP.PatternCode = APO.PatternCode
 	and apo.ArtworkReqID = ap.ID
@@ -338,7 +342,9 @@ group by ReqQty.value,PoQty.value";
             .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("sewinline", header: "Sewing Inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("scidelivery", header: "SCI Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(17), iseditingreadonly: true)
+            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("patterncode", header: "Cut Part", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("PatternDesc", header: "Cut Part Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Numeric("ReqQty", header: "Req. Qty", width: Widths.AnsiChars(6) , settings: col_ReqQty) // 可編輯
@@ -445,12 +451,11 @@ group by ReqQty.value,PoQty.value";
                 return false;
             }
 
-            this.UpdateExceedStatus();
-
             // 判斷irregular Reason沒寫不能存檔
             var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)detailgridbs.DataSource);
 
             DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
+            this.UpdateExceedStatus(dtIrregular);
             if (dtIrregular != null)
             {
                 bool isReasonEmpty = dtIrregular.AsEnumerable().Any(s => MyUtility.Check.Empty(s["SubconReasonID"]));
@@ -876,11 +881,11 @@ where id = '{CurrentMaintain["id"]}'";
             DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
             this.HideWaitMessage();
 
-            this.UpdateExceedStatus();
+            this.UpdateExceedStatus(dtIrregular);
             this.btnIrrQtyReason.Enabled = false;
             if (dtIrregular != null)
             {
-                if (dtIrregular.Rows.Count > 0 && CurrentMaintain["Exceed"].ToString().ToUpper() == "TRUE")
+                if (dtIrregular.Rows.Count > 0)
                 {
                     this.btnIrrQtyReason.Enabled = true;
                     this.btnIrrQtyReason.ForeColor = Color.Red;
@@ -927,10 +932,20 @@ where id = '{CurrentMaintain["id"]}'";
             this.RefreshIrregularQtyReason();
         }
 
-        private void UpdateExceedStatus()
+        private void UpdateExceedStatus(DataTable dtIrregular)
         {
+            bool hasIrregular = false;
+
+            if (dtIrregular != null)
+            {
+                if (dtIrregular.Rows.Count > 0)
+                {
+                    hasIrregular = true;
+                }
+            }
+
             bool isDetailExceedQtyNotZero = this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["ExceedQty"]));
-            if (isDetailExceedQtyNotZero)
+            if (isDetailExceedQtyNotZero || hasIrregular)
             {
                 CurrentMaintain["Exceed"] = 1;
             }

@@ -90,7 +90,7 @@
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelPONo);
             this.masterpanel.Controls.Add(this.dateReqDate);
-            this.masterpanel.Size = new System.Drawing.Size(1061, 149);
+            this.masterpanel.Size = new System.Drawing.Size(892, 149);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateReqDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
@@ -115,7 +115,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 149);
-            this.detailpanel.Size = new System.Drawing.Size(1061, 305);
+            this.detailpanel.Size = new System.Drawing.Size(892, 136);
             // 
             // gridicon
             // 
@@ -129,7 +129,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1061, 305);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 136);
             // 
             // detail2
             // 
@@ -143,13 +143,9 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1061, 556);
-            // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1061, 454);
+            this.detailcont.Size = new System.Drawing.Size(892, 285);
             // 
             // detailbtm
             // 
@@ -159,8 +155,8 @@
             this.detailbtm.Controls.Add(this.labMGMgrApv);
             this.detailbtm.Controls.Add(this.dispDeptApv);
             this.detailbtm.Controls.Add(this.labDeptMgrApv);
-            this.detailbtm.Location = new System.Drawing.Point(0, 454);
-            this.detailbtm.Size = new System.Drawing.Size(1061, 102);
+            this.detailbtm.Location = new System.Drawing.Point(0, 285);
+            this.detailbtm.Size = new System.Drawing.Size(892, 102);
             this.detailbtm.TabIndex = 1;
             this.detailbtm.Controls.SetChildIndex(this.labDeptMgrApv, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -491,7 +487,7 @@
             this.DefaultControlForEdit = "txtsubconSupplier";
             this.ExpressQuery = true;
             this.GridAlias = "ArtworkReq_Detail";
-            this.GridUniqueKey = "id,artworkid,patterncode,PatternDesc,OrderId";
+            this.GridUniqueKey = "id,artworkid,patterncode,PatternDesc,OrderId,Article,SizeCode";
             this.IsSupportCheck = true;
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;

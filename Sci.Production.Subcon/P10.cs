@@ -268,6 +268,8 @@ select a.*
 , PoQty=isnull(b.PoQty,0)
 , [balance]=isnull(b.PoQty,0) - a.AccumulatedQty
 ,[LocalSuppCtn]=LocalSuppCtn.Val
+,b.Article
+,b.SizeCode
 from ArtworkAP_detail a
 left join artworkpo_detail b on a.ArtworkPo_DetailUkey=b.Ukey
 OUTER APPLY(
@@ -380,7 +382,9 @@ where a.id='{0}'
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Artworkpoid", header: "Artwork PO", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)   //1
+            .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: true)    //2
+            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(5), iseditingreadonly: true)    //3
             .Text("patterncode", header: "CutpartID", width: Widths.AnsiChars(10), iseditingreadonly: true) //4
             .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15), iseditingreadonly: true)   //5

@@ -53,6 +53,8 @@ namespace Sci.Production.Subcon
                 strSQLCmd += $@"
 SELECT  bd.QTY 
 	,bdl.Orderid 
+    ,bdl.Article
+    ,bd.SizeCode
 	,s.ArtworkTypeId
 	,bio.OutGoing 
 	,bio.InComing
@@ -127,12 +129,16 @@ Select 1 as Selected
         ,'' id
         ,[Amount] = 1.0 * IIF(MinQty.Val - b.ApQty < 0 , 0 ,MinQty.Val - b.ApQty ) * b.price --0.0 amount
         ,[LocalSuppCtn]=LocalSuppCtn.Val
+        ,b.Article
+        ,b.SizeCode
 from ArtworkPO a WITH (NOLOCK) 
 INNER JOIN ArtworkPO_Detail b WITH (NOLOCK)  ON  a.id = b.id 
 OUTER APPLY(
 	SELECT  [Value]= SUM( bd.QTY)
 	FROM #Bundle bd
 	WHERE bd.Orderid=b.OrderID 
+    AND (bd.SizeCode = b.SizeCode or b.SizeCode = '')
+    AND (bd.Article = b.Article or b.Article = '')
 	AND bd.ArtworkTypeId=a.ArtworkTypeID 
 	AND bd.Patterncode=b.PatternCode 
 	AND bd.PatternDesc =b.PatternDesc
@@ -142,6 +148,8 @@ OUTER APPLY(
 	SELECT  [Value]= SUM( bd.QTY)
 	FROM #Bundle bd
 	WHERE bd.Orderid=b.OrderID 
+    AND (bd.SizeCode = b.SizeCode or b.SizeCode = '')
+    AND (bd.Article = b.Article or b.Article = '')
 	AND bd.ArtworkTypeId=a.ArtworkTypeID 
 	AND bd.Patterncode=b.PatternCode 
 	AND bd.PatternDesc =b.PatternDesc
@@ -288,9 +296,11 @@ DROP TABLE #Bundle
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("artworkpoid", header: "Artwork PO", iseditingreadonly: true)
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
-                 .Text("artworkid", header: "Artwork", iseditingreadonly: true)      //3
-                 .Numeric("Stitch", header: "Stitch", iseditable: true)    //4
-                 .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
+                .Text("Article", header: "Article", iseditingreadonly: true)
+                .Text("artworkid", header: "Artwork", iseditingreadonly: true)      //3
+                .Text("SizeCode", header: "Size", iseditingreadonly: true)
+                .Numeric("Stitch", header: "Stitch", iseditable: true)    //4
+                .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)
                 .Numeric("UnitPrice", header: "Unit Price", iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //7
                 .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true, integer_places: 2) //8

@@ -424,27 +424,29 @@ update ArtworkReq_Detail set ArtworkPOID = ''
             this.DetailSelectCommand = string.Format(@"
 select 
 		 a.[ID]
-		,[OrderID]
-		,[ArtworkId]
-		,[PatternCode]
-		,[PatternDesc]
-		,[CostStitch]
-		,[Stitch]
-		,[UnitPrice]
-		,[Cost]
-		,[QtyGarment]=IIF([QtyGarment] IS NULL OR [QtyGarment]=0,1,[QtyGarment])
-		,[Price]
-		,[Amount]
-		,[Farmout]
-		,[Farmin]
-		,[ApQty]
-		,[PoQty]
-		,[Ukey]
-		,[ArtworkTypeID]
-		,[ExceedQty]
-        ,[ArtworkReqID]
+		,a.[OrderID]
+        ,a.[Article]
+        ,a.[SizeCode]
+		,a.[ArtworkId]
+		,a.[PatternCode]
+		,a.[PatternDesc]
+		,a.[CostStitch]
+		,a.[Stitch]
+		,a.[UnitPrice]
+		,a.[Cost]
+		,[QtyGarment]=IIF(a.[QtyGarment] IS NULL OR a.[QtyGarment]=0,1,a.[QtyGarment])
+		,a.[Price]
+		,a.[Amount]
+		,a.[Farmout]
+		,a.[Farmin]
+		,a.[ApQty]
+		,a.[PoQty]
+		,a.[Ukey]
+		,a.[ArtworkTypeID]
+		,a.[ExceedQty]
+        ,a.[ArtworkReqID]
 		,o.*
-		, Price = unitprice * qtygarment
+		, Price = a.unitprice * a.qtygarment
 		, Style = o.styleid
 		, sewinline = o.sewinline
 		, scidelivery = o.scidelivery
@@ -621,7 +623,9 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             .Numeric("PoQty", header: "PO Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //2
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //3
             .Date("scidelivery", header: "SciDelivery", width: Widths.AnsiChars(10), iseditingreadonly: true)   //4
+            .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: true)    //5
+            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("coststitch", header: "Cost" + Environment.NewLine + "(PCS/Stitch)", width: Widths.AnsiChars(3), iseditingreadonly: true)//6
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3))    //7
             .Text("patterncode", header: "Cutpart" + Environment.NewLine + "ID", width: Widths.AnsiChars(5), iseditingreadonly: true) //8

@@ -103,7 +103,9 @@ namespace Sci.Production.Subcon
                 .Numeric("ReqQty", header: "Req. Qty", iseditable: true)
                 .Date("sewinline", header: "Sew. Inline", iseditingreadonly: true)
                 .Date("SciDelivery", header: "SCI Delivery", iseditingreadonly: true)
+                .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ArtworkID", header: "Artwork", iseditingreadonly: true, width: Widths.AnsiChars(13))      //5
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("stitch", header: "PCS/Stitch", iseditingreadonly: true)
                 .Text("PatternCode", header: "Cut. Part", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cut. Part Name", iseditingreadonly: true, width: Widths.AnsiChars(15))
@@ -119,7 +121,7 @@ namespace Sci.Production.Subcon
 
         private void checkBoxReqQtyHasValue_CheckedChanged(object sender, EventArgs e)
         {
-            this.FilterResult();
+            listControlBindingSource1.DataSource = this.FilterResult();
         }
 
         // Cancel
@@ -223,6 +225,8 @@ namespace Sci.Production.Subcon
                                              t4 = row.Field<string>("PatternCode"),
                                              t5 = row.Field<string>("PatternDesc"),
                                              t7 = row.Field<int>("stitch"),
+                                             t8 = row.Field<string>("Article"),
+                                             t9 = row.Field<string>("SizeCode"),
                                              t10 = (row.Field<decimal>("QtyGarment") == 0 ? 1 : row.Field<decimal>("QtyGarment"))
                                              
                                          } into m
@@ -234,6 +238,8 @@ namespace Sci.Production.Subcon
                                              PatternCode = m.Key.t4,
                                              PatternDesc = m.Key.t5,
                                              stitch = m.Key.t7,
+                                             Article = m.Key.t8,
+                                             SizeCode = m.Key.t9,
                                              QtyGarment = m.Key.t10,
                                              ExceedQty =
                                              MyUtility.Convert.GetDecimal(
@@ -268,7 +274,9 @@ namespace Sci.Production.Subcon
                                     sqlcmd2.Append($@"
                                     INSERT INTO [dbo].[ArtworkReq_Detail]
                                     ([ID]
-                                    ,[OrderID]    
+                                    ,[OrderID]   
+                                    ,[Article]    
+                                    ,[SizeCode]    
                                     ,[ArtworkId]  
                                     ,[PatternCode]
                                     ,[PatternDesc]
@@ -280,6 +288,8 @@ namespace Sci.Production.Subcon
                                     VALUES    
                                     ('{id}'  
                                     ,'{q2.orderid}'  
+                                    ,'{q2.Article}'  
+                                    ,'{q2.SizeCode}'  
                                     ,'{q2.artworkid}'  
                                     ,'{q2.PatternCode}'  
                                     ,'{q2.PatternDesc}'  
@@ -300,6 +310,8 @@ namespace Sci.Production.Subcon
                                     INSERT INTO [dbo].[ArtworkReq_Detail]
                                     ([ID]
                                     ,[OrderID]    
+                                    ,[Article]    
+                                    ,[SizeCode]    
                                     ,[ArtworkId]  
                                     ,[PatternCode]
                                     ,[PatternDesc]
@@ -311,6 +323,8 @@ namespace Sci.Production.Subcon
                                     VALUES    
                                     ('{id}'  
                                     ,'{q2.orderid}'  
+                                    ,'{q2.Article}'  
+                                    ,'{q2.SizeCode}'  
                                     ,'{q2.artworkid}'  
                                     ,'{q2.PatternCode}'  
                                     ,'{q2.PatternDesc}'  
@@ -414,14 +428,37 @@ namespace Sci.Production.Subcon
                 return null;
             }
 
-            if (this.checkBoxReqQtyHasValue.Checked)
+            var filterResult = this.dtArtwork.AsEnumerable();
+
+            if (this.chkArticle.Checked && this.chkSize.Checked)
             {
-                var filterResult = this.dtArtwork.AsEnumerable().Where(s => (decimal)s["ReqQty"] > 0);
-                return filterResult.Any() ? filterResult.CopyToDataTable() : null;
+                filterResult = filterResult.Where(s => !MyUtility.Check.Empty(s["Article"]) && !MyUtility.Check.Empty(s["SizeCode"]));
+            }
+            else if (this.chkArticle.Checked)
+            {
+                filterResult = filterResult.Where(s => !MyUtility.Check.Empty(s["Article"]) && MyUtility.Check.Empty(s["SizeCode"]));
+            }
+            else if (this.chkSize.Checked)
+            {
+                filterResult = filterResult.Where(s => MyUtility.Check.Empty(s["Article"]) && !MyUtility.Check.Empty(s["SizeCode"]));
             }
             else
             {
-                return this.dtArtwork;
+                filterResult = filterResult.Where(s => MyUtility.Check.Empty(s["Article"]) && MyUtility.Check.Empty(s["SizeCode"]));
+            }
+
+            if (this.checkBoxReqQtyHasValue.Checked)
+            {
+                filterResult = filterResult.Where(s => (decimal)s["ReqQty"] > 0);
+            }
+
+            if (filterResult.Any())
+            {
+                return filterResult.CopyToDataTable();
+            }
+            else
+            {
+                return null;
             }
         }
         private string QuoteFromTmsCost()
@@ -458,9 +495,9 @@ select Selected = 0
         , LocalSuppID = isnull(rtrim(sao.LocalSuppId),'')
         , o.FTYGroup
 		, [orderID] = o.ID
-        , OrderQty = sum(oa.poqty)  
-        , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) 
-        , ReqQty = iif(sum(oa.poqty)  -(ReqQty.value + PoQty.value) < 0, 0, sum(oa.poqty)  - (ReqQty.value + PoQty.value))
+        , oa.Article
+        , oa.SizeCode
+        , OrderQty = oa.poqty
 		, o.SewInLIne
 		, o.SciDelivery
 		, [ArtworkID] = oa.ArtworkID
@@ -472,38 +509,17 @@ select Selected = 0
 		, o.POID
         , [ExceedQty] = 0
         , [ArtworkTypeID] = oa.ArtworkTypeID
+into #baseArtworkReq
 from  orders o WITH (NOLOCK) 
-inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
+inner join dbo.View_Order_Artworks oa on oa.ID = o.ID 
 left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID and
 														vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID and vsa.PatternCode = oa.PatternCode and
 														vsa.PatternDesc = oa.PatternDesc 
 left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.PriceApv = 'Y' and 
-                                                    sao.Price > 0 
+                                                    sao.Price > 0 and
+                                                    sao.SizeCode = ''
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
-outer apply (
-        select value = ISNULL(sum(ReqQty),0)
-        from ArtworkReq_Detail AD, ArtworkReq a
-        where ad.ID=a.ID
-		and a.ArtworkTypeID = oa.ArtworkTypeID
-		and OrderID = o.ID 
-        and ad.PatternCode = oa.PatternCode
-        and ad.PatternDesc = oa.PatternDesc
-        and ad.ArtworkID = oa.ArtworkID
-        and a.status != 'Closed'
-) ReqQty
-outer apply (
-        select value = ISNULL(sum(PoQty),0)
-        from ArtworkPO_Detail AD,ArtworkPO A
-        where a.ID=ad.ID
-		and a.ArtworkTypeID = oa.ArtworkTypeID
-		and OrderID = o.ID 
-        and ad.PatternCode = oa.PatternCode
-        and ad.PatternDesc = oa.PatternDesc
-        and ad.ArtworkID = oa.ArtworkID
-		and ad.ArtworkReqID=''
-) PoQty
 where f.IsProduceFty=1
 and oa.ArtworkTypeID = '{this.txtartworktype_ftyArtworkType.Text}'
 and o.category in ('B','S')
@@ -511,8 +527,179 @@ and o.MDivisionID='{Sci.Env.User.Keyword}'
 and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 and sao.LocalSuppId is not null
 {sqlWhere}
-group by o.ID,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
-            ,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,PoQty.value,ReqQty.value,o.FTYGroup,vsa.ActStitch
+
+select  * into #FinalArtworkReq
+from (
+select  LocalSuppID
+        , FTYGroup
+		, orderID
+        , Article
+        , SizeCode
+        , OrderQty
+		, SewInLIne
+		, SciDelivery
+		, ArtworkID
+		, stitch
+		, PatternCode
+		, PatternDesc
+		, qtygarment
+        , StyleID
+		, POID
+        , ExceedQty
+        , ArtworkTypeID
+from #baseArtworkReq
+union all
+select    LocalSuppID
+        , FTYGroup
+		, orderID
+        , [Article] = ''
+        , SizeCode
+        , [OrderQty] = sum(OrderQty)
+		, SewInLIne
+		, SciDelivery
+		, ArtworkID
+		, stitch
+		, PatternCode
+		, PatternDesc
+		, qtygarment
+        , StyleID
+		, POID
+        , ExceedQty
+        , ArtworkTypeID
+from #baseArtworkReq
+group by  LocalSuppID
+        , FTYGroup
+		, orderID
+        , SizeCode
+		, SewInLIne
+		, SciDelivery
+		, ArtworkID
+		, stitch
+		, PatternCode
+		, PatternDesc
+		, qtygarment
+        , StyleID
+		, POID
+        , ExceedQty
+        , ArtworkTypeID
+union all
+select    LocalSuppID
+        , FTYGroup
+		, orderID
+        , Article
+        , [SizeCode] = ''
+        , [OrderQty] = sum(OrderQty)
+		, SewInLIne
+		, SciDelivery
+		, ArtworkID
+		, stitch
+		, PatternCode
+		, PatternDesc
+		, qtygarment
+        , StyleID
+		, POID
+        , ExceedQty
+        , ArtworkTypeID
+from #baseArtworkReq
+group by  LocalSuppID
+        , FTYGroup
+		, orderID
+        , Article
+		, SewInLIne
+		, SciDelivery
+		, ArtworkID
+		, stitch
+		, PatternCode
+		, PatternDesc
+		, qtygarment
+        , StyleID
+		, POID
+        , ExceedQty
+        , ArtworkTypeID
+union all
+select    LocalSuppID
+        , FTYGroup
+		, orderID
+        , [Article] = ''
+        , [SizeCode] = ''
+        , [OrderQty] = sum(OrderQty)
+		, SewInLIne
+		, SciDelivery
+		, ArtworkID
+		, stitch
+		, PatternCode
+		, PatternDesc
+		, qtygarment
+        , StyleID
+		, POID
+        , ExceedQty
+        , ArtworkTypeID
+from #baseArtworkReq
+group by  LocalSuppID
+        , FTYGroup
+		, orderID
+		, SewInLIne
+		, SciDelivery
+		, ArtworkID
+		, stitch
+		, PatternCode
+		, PatternDesc
+		, qtygarment
+        , StyleID
+		, POID
+        , ExceedQty
+        , ArtworkTypeID
+
+) a
+
+select  [Selected] = 0
+        , fr.LocalSuppID
+        , fr.FTYGroup
+		, fr.orderID
+        , fr.Article
+        , fr.SizeCode
+        , fr.OrderQty
+        , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) 
+        , ReqQty = iif(fr.OrderQty  - (ReqQty.value + PoQty.value) < 0, 0, fr.OrderQty  - (ReqQty.value + PoQty.value))
+		, fr.SewInLIne
+		, fr.SciDelivery
+		, fr.ArtworkID
+		, fr.stitch
+		, fr.PatternCode
+		, fr.PatternDesc
+		, fr.qtygarment
+        , fr.StyleID
+		, fr.POID
+        , fr.ExceedQty
+        , fr.ArtworkTypeID
+from #FinalArtworkReq fr
+outer apply (
+        select value = ISNULL(sum(ReqQty),0)
+        from ArtworkReq_Detail AD
+        inner join ArtworkReq a with (nolock) on ad.ID = a.ID
+        where a.ArtworkTypeID = fr.ArtworkTypeID
+		and ad.OrderID = fr.OrderID
+        and ad.Article = fr.Article
+        and ad.SizeCode = fr.SizeCode
+        and ad.PatternCode = fr.PatternCode
+        and ad.PatternDesc = fr.PatternDesc
+        and ad.ArtworkID = fr.ArtworkID
+        and a.status != 'Closed'
+) ReqQty
+outer apply (
+        select value = ISNULL(sum(PoQty),0)
+        from ArtworkPO_Detail AD with (nolock)
+        inner join ArtworkPO A with (nolock) on a.ID = ad.ID
+        where a.ArtworkTypeID = fr.ArtworkTypeID
+		and ad.OrderID = fr.OrderID
+        and ad.Article = fr.Article
+        and ad.SizeCode = fr.SizeCode
+        and ad.PatternCode = fr.PatternCode
+        and ad.PatternDesc = fr.PatternDesc
+        and ad.ArtworkID = fr.ArtworkID
+		and ad.ArtworkReqID = ''
+) PoQty
+
 		" ;
 
 

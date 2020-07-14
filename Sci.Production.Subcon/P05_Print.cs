@@ -86,6 +86,8 @@ select ART.id
        , L.fax
        , A.Orderid
        , O.styleID
+       , A.Article
+       , A.SizeCode
        , A.ReqQty
        , A.artworkid	
        , A.Stitch
@@ -138,6 +140,8 @@ order by ID", masterData["LocalSuppID"]);
                     {
                         OrderID = row1["Orderid"].ToString(),
                         StyleID = row1["styleID"].ToString(),
+                        Article = row1["Article"].ToString(),
+                        Size = row1["SizeCode"].ToString(),
                         ReqQTY = row1["ReqQty"].ToString(),
                         ArtworkID = row1["artworkid"].ToString(),
                         PCS = row1["Stitch"].ToString(),

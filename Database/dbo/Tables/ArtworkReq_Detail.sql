@@ -10,6 +10,8 @@
     [Stitch] NUMERIC(6) NOT NULL DEFAULT ((0)), 
     [QtyGarment] NUMERIC(2) NOT NULL DEFAULT ((0)), 
     [ExceedQty] NUMERIC(6) NOT NULL DEFAULT ((0)), 
-    [ArtworkPOID] VARCHAR(13) NOT NULL DEFAULT ('') 
-    
+    [ArtworkPOID] VARCHAR(13) NOT NULL DEFAULT (''), 
+    [Article] VARCHAR(8) NOT NULL CONSTRAINT [DF_ArtworkReq_Detail_Article] DEFAULT (''), 
+    [SizeCode] VARCHAR(8) NOT NULL CONSTRAINT [DF_ArtworkReq_Detail_SizeCode] DEFAULT (''), 
+    CONSTRAINT [PK_ArtworkReq_Detail] PRIMARY KEY CLUSTERED ([uKey]) 
 )

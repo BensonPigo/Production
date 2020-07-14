@@ -71,8 +71,10 @@ namespace Sci.Production.Subcon
 ,convert(varchar(10),a.Delivery,111) Delivery
 , b.ORDERID
 , c.styleid
+, b.Article
 , b.patternDesc
-,a.ArtworkTypeID
+, b.SizeCode
+, a.ArtworkTypeID
 , b.artworkid
 , b.CostStitch
 , b.Stitch
