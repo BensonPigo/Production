@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using System;
 using System.Data;
 using System.Drawing;
@@ -9,38 +10,43 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P02_AutoDistToSP : Sci.Win.Tems.QueryForm
     {
-        DataRow Detailrow;
-        DataTable SizeratioTb;
-        DataTable DistqtyTb;
-        DataTable PatternPanel_Current;
-        DataTable PatternPanel_notCurrent;
-        DataTable SourceDt;
+        private DataRow Detailrow;
+        private DataTable SizeratioTb;
+        private DataTable DistqtyTb;
+        private DataTable PatternPanel_Current;
+        private DataTable PatternPanel_notCurrent;
+        private DataTable SourceDt;
 
-        public P02_AutoDistToSP(DataRow detailrow, DataTable sizeratioTb, DataTable distqtyTb, DataTable patternPanel_Current, DataTable patternPanel_notCurrent)
+        /// <inheritdoc/>
+        public P02_AutoDistToSP(DataRow detailrow, DataTable sizeratioTb, DataTable distqtyTb, DataTable patternPanel)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             this.EditMode = true;
-            Detailrow = detailrow;
-            SizeratioTb = sizeratioTb;
-            DistqtyTb = distqtyTb;
-            PatternPanel_Current = patternPanel_Current;
-            PatternPanel_notCurrent = patternPanel_notCurrent;
+            this.Detailrow = detailrow;
+            this.SizeratioTb = sizeratioTb;
+            this.DistqtyTb = distqtyTb;
+            this.PatternPanel_Current = patternPanel.Select($@"Workorderukey = {detailrow["Ukey"]} and newkey = {detailrow["NewKey"]}")
+                .TryCopyToDataTable(patternPanel);
+            this.PatternPanel_notCurrent = patternPanel.Select($@"not(Workorderukey = {detailrow["Ukey"]} and newkey = {detailrow["NewKey"]})")
+                .TryCopyToDataTable(patternPanel);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.numDistQty.Value = MyUtility.Convert.GetInt(Detailrow["layer"]) * MyUtility.Convert.GetInt(SizeratioTb.Compute("Sum(Qty)", $@"Workorderukey = '{Detailrow["ukey"]}' and newkey = {Detailrow["newkey"]}"));
+            this.numDistQty.Value = MyUtility.Convert.GetInt(this.Detailrow["layer"]) * MyUtility.Convert.GetInt(this.SizeratioTb.Compute("Sum(Qty)", $@"Workorderukey = '{this.Detailrow["ukey"]}' and newkey = {this.Detailrow["newkey"]}"));
             this.GridSetup();
             this.Query();
         }
 
         private void Query()
         {
-            string sizes = SizeratioTb.Select($@"Workorderukey = '{Detailrow["ukey"]}' and newkey = {Detailrow["newkey"]}")
+            string sizes = this.SizeratioTb.Select($@"Workorderukey = '{this.Detailrow["ukey"]}' and newkey = {this.Detailrow["newkey"]}")
                 .AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).ToList().JoinToString("','");
 
             string sqlcmd = $@"
@@ -57,22 +63,22 @@ SELECT
     
     -- 分配時才寫入欄位
     Qty = 0,
-    WorkOrderUkey = cast({Detailrow["Ukey"]} as bigint),
-    NewKey = cast({Detailrow["NewKey"]} as bigint),
-    ID = '{Detailrow["ID"]}'
+    WorkOrderUkey = cast({this.Detailrow["Ukey"]} as bigint),
+    NewKey = cast({this.Detailrow["NewKey"]} as bigint),
+    ID = '{this.Detailrow["ID"]}'
 FROM order_qty oq 
 INNER JOIN orders o ON o.id = oq.id 
-WHERE o.poid = '{Detailrow["ID"]}' and oq.SizeCode in ('{sizes}')
+WHERE o.poid = '{this.Detailrow["ID"]}' and oq.SizeCode in ('{sizes}')
 ORDER BY OQ.sizecode,oq.id,OQ.article 
 ";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out SourceDt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.SourceDt);
             if (!result)
             {
                 this.ShowErr(result);
                 return;
             }
 
-            this.listControlBindingSource1.DataSource = SourceDt;
+            this.listControlBindingSource1.DataSource = this.SourceDt;
 
             this.CalColumnsQty();
         }
@@ -84,16 +90,16 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
             DataGridViewGeneratorNumericColumnSettings balQty = new DataGridViewGeneratorNumericColumnSettings();
             sel.CellValidating += (s, e) =>
             {
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid1.GetDataRow(e.RowIndex);
                 dr["Sel"] = e.FormattedValue;
                 dr.EndEdit();
-                ReWriteSeq();
+                this.ReWriteSeq();
                 this.CalTtlBal();
             };
 
             balQty.CellValidating += (s, e) =>
             {
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                DataRow dr = this.grid1.GetDataRow(e.RowIndex);
                 dr["BalQty"] = e.FormattedValue;
                 dr.EndEdit();
                 this.CalTtlBal();
@@ -101,8 +107,8 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
             #endregion
 
             this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.grid1)
-            .CheckBox("Sel", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: sel)
+            this.Helper.Controls.Grid.Generator(this.grid1)
+            .CheckBox("Sel", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: sel)
             .Numeric("Seq", header: "Dist. Seq", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Text("OrderId", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -119,24 +125,24 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
             }
             #endregion
 
-            grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns["BalQty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["BalQty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void ReWriteSeq()
         {
             // 清空沒勾選
-            foreach (DataRow dr in SourceDt.Select("Sel = 0"))
+            foreach (DataRow dr in this.SourceDt.Select("Sel = 0"))
             {
                 dr["Seq"] = string.Empty;
             }
 
             // 按原本Seq順序重編已有Seq
-            foreach (string size in SourceDt.Select("Sel = 1 and Seq <> ''").AsEnumerable()
+            foreach (string size in this.SourceDt.Select("Sel = 1 and Seq <> ''").AsEnumerable()
                 .Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList())
             {
                 int seq = 1;
-                foreach (DataRow dr in SourceDt.Select($"Sel = 1 and Seq <> '' and SizeCode = '{size}'").AsEnumerable()
+                foreach (DataRow dr in this.SourceDt.Select($"Sel = 1 and Seq <> '' and SizeCode = '{size}'").AsEnumerable()
                     .OrderBy(o => MyUtility.Convert.GetInt(o["Seq"])))
                 {
                     dr["Seq"] = seq;
@@ -145,11 +151,12 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
             }
 
             DataRow[] drs;
+
             // 寫入勾選且Seq空白
-            foreach (DataRow dr in SourceDt.Select("Sel = 1 and Seq = ''"))
+            foreach (DataRow dr in this.SourceDt.Select("Sel = 1 and Seq = ''"))
             {
                 int sizeMaxSeq = 0;
-                drs = SourceDt.Select($"Sel = 1 and Seq <> '' and SizeCode = '{dr["SizeCode"]}'");
+                drs = this.SourceDt.Select($"Sel = 1 and Seq <> '' and SizeCode = '{dr["SizeCode"]}'");
                 if (drs.Count() > 0)
                 {
                     sizeMaxSeq = drs.AsEnumerable().Select(s => MyUtility.Convert.GetInt(s["Seq"])).Max();
@@ -166,10 +173,10 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
             // Accu. Dist. Qty 其它WorkOrder (組合相同[WorkOrder_PatternPanel]),[Size Ratio],[SP#],[Article],[Color] 發的件數總和
 
             // 這次 WorkOrder 底下的 PatternPanel
-            var patternPanelList = PatternPanel_Current.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PatternPanel"])).ToList();
+            var patternPanelList = this.PatternPanel_Current.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PatternPanel"])).ToList();
 
             // 非此 WorkOrder 底下的 PatternPanel
-            var notThisPP = PatternPanel_notCurrent
+            var notThisPP = this.PatternPanel_notCurrent
                 .AsEnumerable().Select(s => new
                 {
                     Workorderukey = MyUtility.Convert.GetLong(s["Workorderukey"]),
@@ -194,10 +201,10 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
                 }
             }
 
-            foreach (DataRow dr in SourceDt.Rows)
+            foreach (DataRow dr in this.SourceDt.Rows)
             {
                 // 找相同 OrderID, Article, SizeCode
-                var asList = DistqtyTb
+                var asList = this.DistqtyTb
                     .Select($@"OrderID ='{dr["OrderID"]}' and Article = '{dr["Article"]}' and SizeCode = '{dr["SizeCode"]}'")
                     .AsEnumerable()
                     .Select(s => new
@@ -223,67 +230,77 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
 
         private void CalTtlBal()
         {
-            if (SourceDt == null || SourceDt.Rows.Count == 0) return;
+            if (this.SourceDt == null || this.SourceDt.Rows.Count == 0)
+            {
+                return;
+            }
 
-            this.numBalQty.Value = this.numDistQty.Value - MyUtility.Convert.GetInt(SourceDt.Compute("sum(balQty)", "Sel = 1"));
+            this.numBalQty.Value = this.numDistQty.Value - MyUtility.Convert.GetInt(this.SourceDt.Compute("sum(balQty)", "Sel = 1"));
         }
 
         private void BtnDist_Click(object sender, EventArgs e)
         {
             this.grid1.ValidateControl();
-            DataRow[] drs = SourceDt.Select("Sel = 1");
-            if (drs.Count() == 0)
+            DataTable processDT = this.SourceDt.Select("Sel = 1").TryCopyToDataTable(this.SourceDt);
+            if (processDT.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Please selected datas first!");
                 return;
             }
 
-            DataTable processDT = drs.CopyToDataTable();
-
             // 準備每個 SizeCode 能分配總數的清單
             var sList = processDT.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).ToList();
-            var sizeTtlQty = SizeratioTb.Select($"WorkOrderUkey = '{Detailrow["Ukey"]}' and newkey = '{Detailrow["NewKey"]}'").AsEnumerable()
+            var sizeTtlQty = this.SizeratioTb.Select($"WorkOrderUkey = '{this.Detailrow["Ukey"]}' and newkey = '{this.Detailrow["NewKey"]}'")
+                .AsEnumerable()
                 .Select(s => new
                 {
                     SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
-                    Qty = MyUtility.Convert.GetInt(Detailrow["Layer"]) * MyUtility.Convert.GetInt(s["Qty"])
+                    Qty = MyUtility.Convert.GetInt(this.Detailrow["Layer"]) * MyUtility.Convert.GetInt(s["Qty"]),
                 }).ToList();
 
-            #region 分配每個 SizeCoode 
+            #region 分配每個 SizeCoode
             foreach (var item in sizeTtlQty)
             {
                 int sizeTTlQty = item.Qty;
+
                 // 依 Seq 順序分配
                 var processSize = processDT.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["SizeCode"]) == item.SizeCode).ToList();
                 if (processSize.Count() == 0)
                 {
-                    string artile = SourceDt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["SizeCode"]) == item.SizeCode)
+                    string artile = this.SourceDt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["SizeCode"]) == item.SizeCode)
                         .Select(s => MyUtility.Convert.GetString(s["Article"])).FirstOrDefault();
-                    AddEXCESS(processDT, artile, item.SizeCode, item.Qty);
+                    this.AddEXCESS(processDT, artile, item.SizeCode, item.Qty);
                 }
 
                 foreach (DataRow bySeq in processSize.OrderBy(o => MyUtility.Convert.GetInt(o["Seq"])))
                 {
                     if (sizeTTlQty <= MyUtility.Convert.GetInt(bySeq["BalQty"]))
+                    {
                         bySeq["Qty"] = sizeTTlQty;
+                    }
                     else
+                    {
                         bySeq["Qty"] = bySeq["BalQty"];
+                    }
 
                     sizeTTlQty -= MyUtility.Convert.GetInt(bySeq["BalQty"]);
 
-                    if (sizeTTlQty < 0) break;
+                    if (sizeTTlQty < 0)
+                    {
+                        break;
+                    }
 
                     // 若還有剩下
                     if (MyUtility.Convert.GetInt(bySeq["Seq"]) == processSize.Max(s => MyUtility.Convert.GetInt(s["Seq"])) && sizeTTlQty > 0)
                     {
-                        AddEXCESS(processDT, MyUtility.Convert.GetString(bySeq["Article"]), MyUtility.Convert.GetString(bySeq["SizeCode"]), sizeTTlQty);
+                        this.AddEXCESS(processDT, MyUtility.Convert.GetString(bySeq["Article"]), MyUtility.Convert.GetString(bySeq["SizeCode"]), sizeTTlQty);
                     }
                 }
             }
             #endregion
 
             // 先清除此 WorkOrder 的 WorkOrder_Distribute
-            P02.DeleteThirdDatas(this.DistqtyTb, MyUtility.Convert.GetLong(Detailrow["Ukey"]), MyUtility.Convert.GetLong(Detailrow["NewKey"]));
+            P02.DeleteThirdDatas(this.DistqtyTb, MyUtility.Convert.GetLong(this.Detailrow["Ukey"]), MyUtility.Convert.GetLong(this.Detailrow["NewKey"]));
 
             foreach (DataRow row in processDT.Select($"Qty > 0"))
             {
@@ -298,9 +315,9 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
         private void AddEXCESS(DataTable processDT, string article, string sizeCode, int qty)
         {
             DataRow excessRow = processDT.NewRow();
-            excessRow["WorkOrderUkey"] = Detailrow["Ukey"];
-            excessRow["NewKey"] = Detailrow["NewKey"];
-            excessRow["ID"] = Detailrow["ID"];
+            excessRow["WorkOrderUkey"] = this.Detailrow["Ukey"];
+            excessRow["NewKey"] = this.Detailrow["NewKey"];
+            excessRow["ID"] = this.Detailrow["ID"];
             excessRow["OrderID"] = "EXCESS";
             excessRow["Article"] = article;
             excessRow["SizeCode"] = sizeCode;
