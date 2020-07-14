@@ -32,9 +32,9 @@ from
 	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
 	where   IsProduceFty = 1 and o.Category !=''
 			 and (
-				@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year 
+				(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 				or 
-				@DateType = 2 and Year(o.BuyerDelivery) = @Year 
+				(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
 
 			 )
 			 and (o.BrandID = @Brand or @Brand = '')
@@ -55,9 +55,9 @@ from
 	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
 	where   IsProduceFty = 1 and o.Category =''
 			 and (
-				@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year 
+				(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 				or 
-				@DateType = 2 and Year(o.BuyerDelivery) = @Year 
+				(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
 
 			 )
 			 and (o.BrandID = @Brand or @Brand = '')

@@ -23,13 +23,9 @@ namespace Sci.Production.Planning
         {
             this.InitializeComponent();
             this.numYear.Value = MyUtility.Convert.GetDecimal(DateTime.Now.Year);
-            //this.comboMDivision.SetDefalutIndex(Sci.Env.User.Keyword);
-            //this.comboFactory.SetDefalutIndex(Sci.Env.User.Factory, true);
-
             MyUtility.Tool.SetupCombox(this.cmbDate, 2, 1, "1,SCI Delivery Date,2,Buyer Delivery Date");
             this.cmbDate.SelectedValue = "1";
             this.comboFtyZone.IsIncludeSampleRoom = false;
-            //this.comboFtyZone.setDataSourceAllFty();
             this.comboFtyZone.setDataSource(Sci.Env.User.Keyword);
             this.comboMDivision.setDefalutIndex(true);
             this.comboFactory.setDataSource();
@@ -86,7 +82,7 @@ namespace Sci.Production.Planning
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
             this.dtAllData = null;
             this.Summarydt = new List<DataTable>();
-            this.listFtyZone = new List<string>();          
+            this.listFtyZone = new List<string>();
 
             StringBuilder sqlcmdSP = new StringBuilder();
 
