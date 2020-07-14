@@ -523,6 +523,11 @@ order by x.[Bundle]";
 
         private void TxtCutNo_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (this.txtCutNo.Text == string.Empty)
+            {
+                return;
+            }
+
             int n = 0;
             if (!int.TryParse(this.txtCutNo.Text, out n))
             {
