@@ -51,10 +51,10 @@ namespace Sci.Production.Cutting
 
         private void ButtonQuery_Click(object sender, EventArgs e)
         {
-            if (this.textBoxPOID.Text.Empty() && this.txtCutref.Text.Empty() &&
+            if (this.textBoxPOID.Text.Empty() && this.txtCutNo.Text.Empty() &&
                 this.dateRangeCreateDate.Value1.Empty() && this.dateRangeCreateDate.Value2.Empty())
             {
-                MyUtility.Msg.WarningBox("[POID],[CutRef#],[Create Date] can not all be empty.");
+                MyUtility.Msg.WarningBox("[POID],[CutNo],[Create Date] can not all be empty.");
                 this.bindingSource1.DataSource = null;
                 return;
             }
@@ -66,9 +66,9 @@ namespace Sci.Production.Cutting
                 where += "\r\n" + $"and b.POID = '{this.textBoxPOID.Text}'";
             }
 
-            if (!this.txtCutref.Text.Empty())
+            if (!this.txtCutNo.Text.Empty())
             {
-                where += "\r\n" + $"and b.CutRef  = '{this.txtCutref.Text}'";
+                where += "\r\n" + $@"and b.cutno  = '{this.txtCutNo.Text}'";
             }
 
             if (!this.dateRangeCreateDate.Value1.Empty())
@@ -519,6 +519,20 @@ order by x.[Bundle]";
             }
 
             return openWorkBook;
+        }
+
+        private void TxtCutNo_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            int n = 0;
+            if (!int.TryParse(this.txtCutNo.Text, out n))
+            {
+                this.txtCutNo.Text = string.Empty;
+                MyUtility.Msg.WarningBox("[Cutno] must enter number");
+            }
+            else
+            {
+                this.txtCutNo.Text = n.ToString();
+            }
         }
     }
 }
