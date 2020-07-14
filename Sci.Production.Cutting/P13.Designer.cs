@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.checkBoxExtendAllParts = new Sci.Win.UI.CheckBox();
             this.buttonQuery = new Sci.Win.UI.Button();
             this.textBoxPOID = new Sci.Win.UI.TextBox();
@@ -41,10 +41,10 @@
             this.labelPatternPanel = new Sci.Win.UI.Label();
             this.textBoxPatterPanel = new Sci.Win.UI.TextBox();
             this.dateRangeCreateDate = new Sci.Win.UI.DateRange();
-            this.labelSewingDate = new Sci.Win.UI.Label();
+            this.labelCutNo = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtCutref = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
+            this.txtCutNo = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -131,14 +131,14 @@
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid.Location = new System.Drawing.Point(9, 45);
             this.grid.Name = "grid";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
@@ -186,19 +186,19 @@
             this.dateRangeCreateDate.Size = new System.Drawing.Size(280, 23);
             this.dateRangeCreateDate.TabIndex = 2;
             // 
-            // labelSewingDate
+            // labelCutNo
             // 
-            this.labelSewingDate.Location = new System.Drawing.Point(187, 12);
-            this.labelSewingDate.Name = "labelSewingDate";
-            this.labelSewingDate.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelSewingDate.RectStyle.BorderWidth = 1F;
-            this.labelSewingDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.labelSewingDate.RectStyle.ExtBorderWidth = 1F;
-            this.labelSewingDate.Size = new System.Drawing.Size(62, 23);
-            this.labelSewingDate.TabIndex = 97;
-            this.labelSewingDate.Text = "CutRef#";
-            this.labelSewingDate.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelSewingDate.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelCutNo.Location = new System.Drawing.Point(187, 12);
+            this.labelCutNo.Name = "labelCutNo";
+            this.labelCutNo.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelCutNo.RectStyle.BorderWidth = 1F;
+            this.labelCutNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelCutNo.RectStyle.ExtBorderWidth = 1F;
+            this.labelCutNo.Size = new System.Drawing.Size(62, 23);
+            this.labelCutNo.TabIndex = 97;
+            this.labelCutNo.Text = "CutNo";
+            this.labelCutNo.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelCutNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // label1
             // 
@@ -214,15 +214,6 @@
             this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label1.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // txtCutref
-            // 
-            this.txtCutref.BackColor = System.Drawing.Color.White;
-            this.txtCutref.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutref.Location = new System.Drawing.Point(252, 12);
-            this.txtCutref.Name = "txtCutref";
-            this.txtCutref.Size = new System.Drawing.Size(100, 23);
-            this.txtCutref.TabIndex = 1;
-            // 
             // label2
             // 
             this.label2.Location = new System.Drawing.Point(355, 12);
@@ -237,15 +228,25 @@
             this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label2.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // txtCutNo
+            // 
+            this.txtCutNo.BackColor = System.Drawing.Color.White;
+            this.txtCutNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutNo.Location = new System.Drawing.Point(252, 12);
+            this.txtCutNo.Name = "txtCutNo";
+            this.txtCutNo.Size = new System.Drawing.Size(100, 23);
+            this.txtCutNo.TabIndex = 1;
+            this.txtCutNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCutNo_Validating);
+            // 
             // P13
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1244, 599);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.txtCutref);
+            this.Controls.Add(this.txtCutNo);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.labelSewingDate);
+            this.Controls.Add(this.labelCutNo);
             this.Controls.Add(this.dateRangeCreateDate);
             this.Controls.Add(this.textBoxPatterPanel);
             this.Controls.Add(this.grid);
@@ -270,9 +271,9 @@
             this.Controls.SetChildIndex(this.grid, 0);
             this.Controls.SetChildIndex(this.textBoxPatterPanel, 0);
             this.Controls.SetChildIndex(this.dateRangeCreateDate, 0);
-            this.Controls.SetChildIndex(this.labelSewingDate, 0);
+            this.Controls.SetChildIndex(this.labelCutNo, 0);
             this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.txtCutref, 0);
+            this.Controls.SetChildIndex(this.txtCutNo, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
@@ -293,9 +294,9 @@
         private Win.UI.Label labelPatternPanel;
         private Win.UI.TextBox textBoxPatterPanel;
         private Win.UI.DateRange dateRangeCreateDate;
-        private Win.UI.Label labelSewingDate;
+        private Win.UI.Label labelCutNo;
         private Win.UI.Label label1;
-        private Win.UI.TextBox txtCutref;
         private Win.UI.Label label2;
+        private Win.UI.TextBox txtCutNo;
     }
 }
