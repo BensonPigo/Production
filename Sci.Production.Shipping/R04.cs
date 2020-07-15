@@ -44,7 +44,7 @@ namespace Sci.Production.Shipping
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out DataTable factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            MyUtility.Tool.SetupCombox(this.comboSummaryBy, 2, 1, "0,SP and Seq,1,PackingList");
+            MyUtility.Tool.SetupCombox(this.comboSummaryBy, 2, 1, "0,SP# and Seq,1,PL#");
             this.comboM.Text = Env.User.Keyword;
             this.comboFactory.SelectedIndex = -1;
             this.comboSummaryBy.SelectedIndex = 0;
