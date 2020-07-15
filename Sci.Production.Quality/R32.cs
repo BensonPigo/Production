@@ -95,10 +95,20 @@ SELECT
 	,[SQR] = IIF( c.InspectQty = 0,0 , (c.DefectQty * 1.0 / c.InspectQty) * 100)
 	,c.Remark
 	,c.ID
+	,[InsCtn]=InsCtn.Val
 INTO #tmp
 FROm CFAInspectionRecord  c
 INNER JOIN Order_QtyShip oq ON c.OrderID = oq.ID AND c.Seq = oq.Seq
 INNER JOIN Orders o  On o.ID = oq.ID
+OUTER APPLY(
+	SELECT [Val]= COUNT(1) + 1
+	FROM CFAInspectionRecord cr
+	WHERE cr.OrderID=c.OrderID AND cr.SEQ=c.SEQ
+	    AND cr.Status = 'Confirmed'
+	    AND cr.Stage=c.Stage
+	    AND cr.AuditDate <= c.AuditDate
+	    AND cr.ID  != c.ID
+)InsCtn
 WHERE 1=1
 ");
             #endregion
@@ -185,7 +195,8 @@ SELECT  AuditDate
 		,[Inspected PoQty]=InspectedPoQty.Val
 		,Carton
 		,CFA
-		,stage
+		,Stage
+		,InsCtn
 		,Result
 		,InspectQty
 		,DefectQty

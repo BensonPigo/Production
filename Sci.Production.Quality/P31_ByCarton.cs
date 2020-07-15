@@ -74,6 +74,7 @@ SELECT * FROM (
 		    ,pd.SizeCode 
 			,[ShipQty]=SUM(pd.ShipQty)
 		    ,[Result]=IIF(ResultPass.Data IS NOT NULL , 'Pass',IIF(ResultFail.Data IS NOT NULL ,'Fail',''))
+			,[InsCtn]=InsCtn.Val
 		    ,[ReceiveDate]=Max(pd.ReceiveDate)	
 	FROM PackingList_Detail pd
     LEFT JOIN CFAInspectionRecord  CFA  ON pd.OrderID=cfa.OrderID AND pd.OrderShipmodeSeq = cfa.SEQ AND CFA.Carton = pd.CTNStartNo AND CFA.Status='Confirmed' 
@@ -82,7 +83,12 @@ SELECT * FROM (
 			SELECT TOP 1 Carton 
 			FROM CFAInspectionRecord cfa2 
 			WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
-			AND Status='Confirmed' AND Result='Pass' AND (Carton LIKE '%'+pd.CTNStartNo +'%' OR Carton LIKE '%,'+pd.CTNStartNo +',%')
+			AND Status='Confirmed' AND Result='Pass'  AND (
+				   Carton = pd.CTNStartNo 
+				OR Carton LIKE pd.CTNStartNo +',%' 
+				OR Carton LIKE '%,'+ pd.CTNStartNo +',%' 
+				OR Carton LIKE '%,'+pd.CTNStartNo
+			)
 		),',') WHERE Data=pd.CTNStartNo
     )ResultPass
     OUTER APPLY (
@@ -90,9 +96,20 @@ SELECT * FROM (
 			SELECT TOP 1 Carton 
 			FROM CFAInspectionRecord cfa2 
 			WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
-			AND Status='Confirmed' AND Result='Fail' AND (Carton LIKE '%'+pd.CTNStartNo +'%' OR Carton LIKE '%,'+pd.CTNStartNo +',%')
+			AND Status='Confirmed' AND Result='Fail'  AND (
+				   Carton = pd.CTNStartNo 
+				OR Carton LIKE pd.CTNStartNo +',%' 
+				OR Carton LIKE '%,'+ pd.CTNStartNo +',%' 
+				OR Carton LIKE '%,'+pd.CTNStartNo
+			)
 		),',') WHERE Data=pd.CTNStartNo
     )ResultFail
+	OUTER APPLY(
+		SELECT [Val]=COUNT(1)
+		FROM CFAInspectionRecord cfa2
+		WHERE cfa2.OrderID=pd.OrderID AND cfa2.Seq=pd.OrderShipmodeSeq AND cfa2.Status='Confirmed' 
+		AND (cfa2.Carton Like pd.CTNStartNo+',%' OR cfa2.Carton Like '%,'+pd.CTNStartNo+',%' OR cfa2. Carton Like'%,'+pd.CTNStartNo OR cfa2.Carton = pd.CTNStartNo )
+	)InsCtn
 	WHERE pd.OrderID= '{this._OrderID}'
 	AND pd.OrderShipmodeSeq = '{this._OrderShipmodeSeq}'
 	AND NOT EXISTS(
@@ -101,7 +118,7 @@ SELECT * FROM (
 		WHERE t.ID = pd.ID AND t.OrderID = pd.OrderID 
 		AND t.OrderShipmodeSeq=pd.OrderShipmodeSeq AND t.CTNStartNo=pd.CTNStartNo
 	)
-	GROUP BY CTNStartNo,Article ,SizeCode ,ResultPass.Data ,ResultFail.Data
+	GROUP BY CTNStartNo,Article ,SizeCode ,ResultPass.Data ,ResultFail.Data ,InsCtn.Val
 	UNION
     ----混尺碼分開處理
 	SELECt t.CTNStartNo
@@ -109,6 +126,7 @@ SELECT * FROM (
 		,[SizeCode]=MixSizeCode.Val
 		,[ShipQty]=ShipQty.Val
 		,[Result]=Result.Result
+		,[InsCtn]=InsCtn.Val
 		,[ReceiveDate]=IIF(t.ReceiveDate='1999/07/20',NULL,t.ReceiveDate)
 	FROM #Mix_MAX_ReceiveDate t
 	OUTER APPLY(
@@ -154,7 +172,12 @@ SELECT * FROM (
 				SELECT TOP 1 Carton 
 				FROM CFAInspectionRecord cfa2 
 				WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
-				AND Status='Confirmed' AND Result='Pass'  AND (Carton LIKE '%'+pd.CTNStartNo +'%' OR Carton LIKE '%,'+pd.CTNStartNo +',%')
+				AND Status='Confirmed' AND Result='Pass' AND (
+				                                            Carton = pd.CTNStartNo 
+				                                            OR Carton LIKE pd.CTNStartNo +',%' 
+				                                            OR Carton LIKE '%,'+ pd.CTNStartNo +',%' 
+				                                            OR Carton LIKE '%,'+pd.CTNStartNo
+			                                            )
 			),',') WHERE Data=pd.CTNStartNo
 		)ResultPass
 		OUTER APPLY (
@@ -162,13 +185,24 @@ SELECT * FROM (
 				SELECT TOP 1 Carton 
 				FROM CFAInspectionRecord cfa2 
 				WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
-				AND Status='Confirmed' AND Result='Fail'  AND (Carton LIKE '%'+pd.CTNStartNo +'%' OR Carton LIKE '%,'+pd.CTNStartNo +',%')
+				AND Status='Confirmed' AND Result='Fail'  AND (
+				                                            Carton = pd.CTNStartNo 
+				                                            OR Carton LIKE pd.CTNStartNo +',%' 
+				                                            OR Carton LIKE '%,'+ pd.CTNStartNo +',%' 
+				                                            OR Carton LIKE '%,'+pd.CTNStartNo
+			                                            )
 			),',') WHERE Data=pd.CTNStartNo
 		)ResultFail
 		WHERE pd.ID = t.ID 
 		AND pd.OrderID = t.OrderID 			AND pd.OrderShipmodeSeq = t.OrderShipmodeSeq
 		AND pd.CTNStartNo = t.CTNStartNo			AND ISNULL(pd.ReceiveDate,'1999/07/20') = t.ReceiveDate
 	)Result
+	OUTER APPLY(
+		SELECT [Val]=COUNT(1)
+		FROM CFAInspectionRecord cfa2
+		WHERE cfa2.OrderID=t.OrderID AND cfa2.Seq=t.OrderShipmodeSeq AND cfa2.Status='Confirmed' 
+		AND (cfa2.Carton Like t.CTNStartNo+',%' OR cfa2.Carton Like '%,'+t.CTNStartNo+',%' OR cfa2. Carton Like'%,'+t.CTNStartNo OR cfa2.Carton = t.CTNStartNo )
+	)InsCtn
 ) a
 ORDER BY Cast(CTNStartNo as int)
 
@@ -190,6 +224,7 @@ DROP TABLE #MixCTNStartNo ,#Mix_MAX_ReceiveDate
                  .Text("SizeCode", header: "Size", width: Widths.AnsiChars(25), iseditingreadonly: true)
                  .Numeric("ShipQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 0, iseditingreadonly: true)
                  .Text("Result", header: "Staggered Result", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Numeric("InsCtn", header: "No. of Staggered inspection", width: Widths.AnsiChars(10), decimal_places: 0, iseditingreadonly: true)
                  .Date("ReceiveDate", header: "CLOG"+Environment.NewLine+ "received", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  ;
 

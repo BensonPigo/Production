@@ -71,7 +71,23 @@ namespace Sci.Production.Class
             }
             List<SqlParameter> paras = new List<SqlParameter>();
             paras.Add(new SqlParameter("@ID", OrderID));
-            bool IsSameM = MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID=@ID AND MDivisionID = '{Sci.Env.User.Keyword}'",paras);
+
+            bool exists = MyUtility.Check.Seek($@"
+SELECT 1 
+FROM Orders o
+INNER JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
+WHERE o.ID=@ID 
+AND o.Category IN('B', 'S', 'G')
+AND ISNULL(ot.IsGMTMaster,0) = 0
+",paras);
+            if (!exists)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!");
+                e.Cancel = true;
+                return;
+            }
+
+            bool IsSameM = MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID=@ID AND MDivisionID = '{Sci.Env.User.Keyword}'", paras);
 
             if (!IsSameM)
             {

@@ -33,7 +33,18 @@ namespace Sci.Production.Quality
             this._Type = type;
 
             string Isfinished = type == "1" ? "0" : "1";
-            string defaultFilter = $" EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE MDivisionID='{Sci.Env.User.Keyword}' AND Finished = {Isfinished} AND ID = Order_QtyShip.ID)";
+            string defaultFilter = $@" 
+EXISTS (
+    SELECT 1 
+    FROM Orders o WITH (NOLOCK) 
+	INNER JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
+    WHERE MDivisionID='{Sci.Env.User.Keyword}' 
+    AND Finished = {Isfinished} 
+	AND o.Finished = 0 
+	AND o.ID = Order_QtyShip.ID
+	AND isnull(ot.IsGMTMaster,0) = 0
+    AND o.Category IN ('B','S','G')
+)";
             this.DefaultFilter = defaultFilter;
 
             if (type != "1")
@@ -78,8 +89,23 @@ namespace Sci.Production.Quality
             this.txtSpSeq.TextBoxSP.ReadOnly = true;
             this.txtSpSeq.TextBoxSeq.ReadOnly = true;
 
-            //this.txtSpSeq.TextBoxSP.Text = this.CurrentMaintain["ID"].ToString();
-            //this.txtSpSeq.TextBoxSeq.Text = this.CurrentMaintain["Seq"].ToString();
+            this.disFinalCtn.Value =MyUtility.GetValue.Lookup($@"
+select COUNT(1)
+from CFAInspectionRecord
+where Status='Confirmed'
+AND Stage='Final'
+AND OrderID='{this.CurrentMaintain["ID"].ToString()}'
+AND Seq='{this.CurrentMaintain["Seq"].ToString()}'
+");
+
+            this.dis3rdPartyCtn.Value = MyUtility.GetValue.Lookup($@"
+select COUNT(1)
+from CFAInspectionRecord
+where Status='Confirmed'
+AND Stage='3rd party'
+AND OrderID='{this.CurrentMaintain["ID"].ToString()}'
+AND Seq='{this.CurrentMaintain["Seq"].ToString()}'
+");
 
             this.disPO.Value = MyUtility.GetValue.Lookup($@"
 SELECT  CustPoNo

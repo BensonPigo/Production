@@ -43,6 +43,11 @@
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
+            this.chkExSis = new Sci.Win.UI.CheckBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.chkBulk = new Sci.Win.UI.CheckBox();
+            this.chkSample = new Sci.Win.UI.CheckBox();
+            this.chkGarment = new Sci.Win.UI.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,7 +59,7 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(490, 57);
-            this.toexcel.TabIndex = 7;
+            this.toexcel.TabIndex = 99;
             // 
             // close
             // 
@@ -188,6 +193,11 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkGarment);
+            this.groupBox1.Controls.Add(this.chkSample);
+            this.groupBox1.Controls.Add(this.chkBulk);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.chkExSis);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.dateBuyerDev);
@@ -202,7 +212,7 @@
             this.groupBox1.Controls.Add(this.txtSP_e);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(422, 225);
+            this.groupBox1.Size = new System.Drawing.Size(422, 257);
             this.groupBox1.TabIndex = 108;
             this.groupBox1.TabStop = false;
             // 
@@ -243,11 +253,70 @@
             this.label10.TabIndex = 109;
             this.label10.Text = "Paper Size A4";
             // 
+            // chkExSis
+            // 
+            this.chkExSis.AutoSize = true;
+            this.chkExSis.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExSis.Location = new System.Drawing.Point(12, 232);
+            this.chkExSis.Name = "chkExSis";
+            this.chkExSis.Size = new System.Drawing.Size(191, 21);
+            this.chkExSis.TabIndex = 10;
+            this.chkExSis.Text = "Exclude sister transfer out";
+            this.chkExSis.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label1.Location = new System.Drawing.Point(12, 204);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(99, 23);
+            this.label1.TabIndex = 118;
+            this.label1.Text = "Category";
+            // 
+            // chkBulk
+            // 
+            this.chkBulk.AutoSize = true;
+            this.chkBulk.Checked = true;
+            this.chkBulk.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkBulk.Location = new System.Drawing.Point(123, 206);
+            this.chkBulk.Name = "chkBulk";
+            this.chkBulk.Size = new System.Drawing.Size(54, 21);
+            this.chkBulk.TabIndex = 7;
+            this.chkBulk.Text = "Bulk";
+            this.chkBulk.UseVisualStyleBackColor = true;
+            // 
+            // chkSample
+            // 
+            this.chkSample.AutoSize = true;
+            this.chkSample.Checked = true;
+            this.chkSample.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSample.Location = new System.Drawing.Point(183, 206);
+            this.chkSample.Name = "chkSample";
+            this.chkSample.Size = new System.Drawing.Size(74, 21);
+            this.chkSample.TabIndex = 8;
+            this.chkSample.Text = "Sample";
+            this.chkSample.UseVisualStyleBackColor = true;
+            // 
+            // chkGarment
+            // 
+            this.chkGarment.AutoSize = true;
+            this.chkGarment.Checked = true;
+            this.chkGarment.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkGarment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkGarment.Location = new System.Drawing.Point(263, 206);
+            this.chkGarment.Name = "chkGarment";
+            this.chkGarment.Size = new System.Drawing.Size(82, 21);
+            this.chkGarment.TabIndex = 9;
+            this.chkGarment.Text = "Garment";
+            this.chkGarment.UseVisualStyleBackColor = true;
+            // 
             // R31
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(582, 286);
+            this.ClientSize = new System.Drawing.Size(582, 307);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.groupBox1);
             this.IsSupportPrint = false;
@@ -284,5 +353,10 @@
         private Win.UI.Label label10;
         private Win.UI.Label label7;
         private Win.UI.Label label8;
+        private Win.UI.CheckBox chkExSis;
+        private Win.UI.Label label1;
+        private Win.UI.CheckBox chkGarment;
+        private Win.UI.CheckBox chkSample;
+        private Win.UI.CheckBox chkBulk;
     }
 }

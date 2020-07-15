@@ -20,6 +20,8 @@ namespace Sci.Production.Quality
 
         DateTime? Buyerdelivery1, Buyerdelivery2;
         string sp1, sp2, MDivisionID, FactoryID, Brand;
+        bool exSis,bulk,sample,garment;
+        List<string> categoryList = new List<string>();
 
         public R31(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -33,7 +35,7 @@ namespace Sci.Production.Quality
 
         protected override bool ValidateInput()
         {
-
+            this.categoryList.Clear();
             this.sp1 = txtSP_s.Text;
             this.sp2 = txtSP_e.Text;
             this.MDivisionID = comboM.Text;
@@ -41,6 +43,20 @@ namespace Sci.Production.Quality
             this.Brand = txtBrand.Text;
             this.Buyerdelivery1 = dateBuyerDev.Value1;
             this.Buyerdelivery2 = dateBuyerDev.Value2;
+            this.exSis = this.chkExSis.Checked;
+
+            if (this.chkBulk.Checked)
+            {
+                categoryList.Add("B");
+            }
+            if (this.chkSample.Checked)
+            {
+                categoryList.Add("S");
+            }
+            if (this.chkGarment.Checked)
+            {
+                categoryList.Add("G");
+            }
 
             if (MyUtility.Check.Empty(Buyerdelivery1) && 
                     MyUtility.Check.Empty(Buyerdelivery2) &&
@@ -66,13 +82,21 @@ namespace Sci.Production.Quality
 
 SELECT  
 oq.CFAFinalInspectResult
+,[FinalInsCtn]=FinalInsCtn.Val
 ,[CFAIs3rdInspect] = IIF(oq.CFAIs3rdInspect = 1, 'Y','N')
 ,oq.CFA3rdInspectResult 
+,[ThirdInsCtn]=ThirdInsCtn.Val
 ,o.MDivisionID
 ,o.FactoryID
 ,oq.BuyerDelivery
 ,o.BrandID
 ,oq.ID
+,Category = CASE   WHEN o.Category='B' THEN 'Bulk'
+                   WHEN o.Category='S' THEN 'Sample'
+                   WHEN o.Category='G' THEN 'Garment'
+                   ELSE ''
+              END
+,o.OrderTypeID
 ,o.CustPoNo
 ,o.StyleID
 ,s.StyleName
@@ -111,6 +135,8 @@ oq.CFAFinalInspectResult
 
 FROM Order_QtyShip oq
 INNER JOIN Orders o ON o.ID = oq.Id
+INNER JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
+INNER JOIN Factory f ON o.FactoryID = f.ID
 LEFT JOIN Country c ON o.Dest = c.ID
 INNER JOIN Style s ON o.StyleID=s.ID AND s.SeasonID = o.SeasonID
 OUTER APPLY(
@@ -178,7 +204,24 @@ OUTER APPLY(
 				and pdCheck.ReceiveDate is null
 	)
 )LastReceived 
+OUTER APPLY (
+	select Val=COUNT(1)
+	from CFAInspectionRecord
+	where Status='Confirmed'
+		AND Stage='Final'
+		AND OrderID=oq.Id
+		AND Seq=oq.Seq
+)FinalInsCtn
+OUTER APPLY (
+	select Val=COUNT(1)
+	from CFAInspectionRecord
+	where Status='Confirmed'
+		AND Stage='3rd party'
+		AND OrderID=oq.Id
+		AND Seq=oq.Seq
+)ThirdInsCtn
 WHERE 1=1
+AND ISNULL(ot.IsGMTMaster,0) = 0
 ");
             #endregion
 
@@ -219,6 +262,27 @@ WHERE 1=1
                 paramList.Add(new SqlParameter("@Brand", Brand));
 
             }
+
+            if (this.exSis)
+            {
+                sqlCmd.Append($"AND f.IsProduceFty = 1" + Environment.NewLine);
+            }
+            else
+            {
+                sqlCmd.Append($"AND f.IsProduceFty = 0 " + Environment.NewLine);
+            }
+
+            if (categoryList.Count > 0)
+            {
+                sqlCmd.Append($"AND o.Category IN ('{categoryList.JoinToString("','")}') " + Environment.NewLine);
+            }
+            else
+            {
+                // 如果全部勾選，則無資料
+                sqlCmd.Append($"AND 1=0 " + Environment.NewLine);
+
+            }
+
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),paramList, out printData);

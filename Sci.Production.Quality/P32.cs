@@ -101,6 +101,7 @@ namespace Sci.Production.Quality
 
             this.comboStage_Change(CurrentMaintain["Stage"].ToString());
 
+            this.CalInsepectionCtn(this.IsDetailInserting);
         }
 
         protected override void OnDetailGridSetup()
@@ -356,6 +357,7 @@ WHERE a.ID ='{masterID}'
             CurrentMaintain["SewingLineID"] = "";
             CurrentMaintain["Result"] = "";
             CurrentMaintain["Team"] = "";
+            this.disInsCtn.Value = 0;
 
             comboStage_Change(CurrentMaintain["Stage"].ToString());
 
@@ -767,11 +769,6 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
 
         private void comboStage_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //string nowStage = this.comboStage.SelectedItem.ToString();
-            //if (this.EditMode && (this.CurrentMaintain["Stage"].ToString() != nowStage))
-            //{
-            //    this.CurrentMaintain["Result"] = string.Empty;
-            //}
             this._oldStage = this.CurrentMaintain["Stage"].ToString();
             this.CurrentMaintain["Stage"] = this.comboStage.SelectedItem.ToString();
             comboStage_Change(this.comboStage.SelectedItem.ToString());
@@ -780,6 +777,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
                 this.CurrentMaintain["Result"] = string.Empty;
                 this._oldStage = this.CurrentMaintain["Stage"].ToString();
             }
+            this.CalInsepectionCtn(this.IsDetailInserting);
         }
 
         private void txtSpSeq_Leave(object sender, EventArgs e)
@@ -801,6 +799,9 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
                     this.CurrentMaintain["Result"] = string.Empty;
                     this.CurrentMaintain["Carton"] = string.Empty;
                 }
+
+                // 開始計算檢驗次數
+                this.CalInsepectionCtn(this.IsDetailInserting);
             }
             bool IsSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["OrderID"].ToString()}' "));
 
@@ -1273,6 +1274,36 @@ SELECT STUFF(
             }
 
             comboResult.SelectedItem = CurrentMaintain["Result"].ToString();
+        }
+
+        private void CalInsepectionCtn(bool isClickNew)
+        {
+            string cmd = string.Empty;
+
+            // 必須條件
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderID"]) || MyUtility.Check.Empty(this.CurrentMaintain["SEQ"]) || MyUtility.Check.Empty(this.CurrentMaintain["Stage"]) || MyUtility.Check.Empty(this.CurrentMaintain["AuditDate"]))
+            {
+                this.disInsCtn.Value = 0;
+                return;
+            }
+
+            // Final和3rd才需要計算
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Stage"]) != "Final" && MyUtility.Convert.GetString(this.CurrentMaintain["Stage"]) != "3rd party")
+            {
+                this.disInsCtn.Value = 0;
+                return;
+            }
+                cmd = $@"
+SELECT COUNT(1) + 1
+FROM CFAInspectionRecord
+WHERE OrderID='{this.CurrentMaintain["OrderID"]}' AND SEQ='{this.CurrentMaintain["Seq"]}'
+AND Status = 'Confirmed'
+AND Stage='{this.CurrentMaintain["Stage"]}'
+AND AuditDate <= '{MyUtility.Convert.GetDate(this.CurrentMaintain["AuditDate"]).Value.ToString("yyyy/MM/dd")}'
+AND ID  != '{this.CurrentMaintain["ID"]}'
+";
+
+            this.disInsCtn.Value = MyUtility.GetValue.Lookup(cmd);
         }
     }
 
