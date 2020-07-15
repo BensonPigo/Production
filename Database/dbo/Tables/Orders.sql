@@ -168,6 +168,7 @@
     [BuyBackReason] varchar(20) NOT NULL CONSTRAINT [DF_Orders_BuyBackReason] DEFAULT (''),
     [IsBuyBackCrossArticle] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossArticle] DEFAULT (0), 
     [IsBuyBackCrossSizeCode] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossSizeCode] DEFAULT (0), 
+    [KpiEachConsCheck] DATE NULL, 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -832,3 +833,13 @@ CREATE NONCLUSTERED INDEX [IDX_Orders_MES_EndlineR01]
     ON [dbo].[Orders]([CustPONo] ASC, [StyleUkey] ASC)
     INCLUDE([StyleUnit]);
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Each Cons KPI檢查日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Orders',
+    @level2type = N'COLUMN',
+    @level2name = N'KpiEachConsCheck'
