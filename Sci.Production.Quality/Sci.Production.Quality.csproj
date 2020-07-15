@@ -1,11 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <ItemDefinitionGroup Condition="$(BuildingInsideVisualStudio)=='True' OR ($(OutDirWasSpecified)!='True' AND $(WebProjectOutputDirInsideProject)!='True')">
-    <ProjectReference>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemDefinitionGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -57,21 +52,27 @@
   <ItemGroup>
     <Reference Include="Ict">
       <HintPath>..\_Dll\Ict.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Ict.Report2012">
       <HintPath>..\_Dll\Ict.Report2012.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Ict.Win">
       <HintPath>..\_Dll\Ict.Win.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Ict.Win.App">
       <HintPath>..\_Dll\Ict.Win.App.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Ict.Win.UI">
       <HintPath>..\_Dll\Ict.Win.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\_Dll\log4net.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -79,19 +80,26 @@
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.Common.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.ProcessingObjectModel.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.WinForms.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.SqlServer.Smo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Smo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -99,10 +107,12 @@
     <Reference Include="Sci, Version=1.0.1607.1800, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Sci.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Sci.Proj, Version=1.0.1505.1800, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
