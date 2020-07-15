@@ -267,11 +267,6 @@ AND ISNULL(ot.IsGMTMaster,0) = 0
             {
                 sqlCmd.Append($"AND f.IsProduceFty = 1" + Environment.NewLine);
             }
-            else
-            {
-                sqlCmd.Append($"AND f.IsProduceFty = 0 " + Environment.NewLine);
-            }
-
             if (categoryList.Count > 0)
             {
                 sqlCmd.Append($"AND o.Category IN ('{categoryList.JoinToString("','")}') " + Environment.NewLine);
