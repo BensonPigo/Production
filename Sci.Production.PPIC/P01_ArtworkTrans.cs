@@ -30,7 +30,7 @@ namespace Sci.Production.PPIC
             DataTable gridData;
             string sqlCmd = string.Format(
                 @"select iif(a.POType = 'O','Subcon','Inhouse') as Type,a.ID,a.IssueDate,l.Abb,a.ArtworkTypeID,
-ad.ArtworkId,ad.PatternCode,ad.PoQty,ad.Farmout,ad.Farmin,ad.ApQty
+ad.ArtworkId,ad.PatternCode,ad.PoQty,ad.Farmout,ad.Farmin,ad.ApQty, ad.Article, ad.SizeCode
 from ArtworkPO a WITH (NOLOCK) , ArtworkPO_Detail ad WITH (NOLOCK) , LocalSupp l WITH (NOLOCK) 
 where a.ID = ad.ID
 and a.LocalSuppID = l.ID
@@ -51,7 +51,9 @@ and ad.OrderID = '{0}'", this.orderID);
                 .Text("Abb", header: "Supplier", width: Widths.AnsiChars(12))
                 .Text("ArtworkTypeID", header: "Artwork Type", width: Widths.AnsiChars(20))
                 .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(20))
+                .Text("Article", header: "Article", width: Widths.AnsiChars(10))
                 .Text("PatternCode", header: "Cutpart Id", width: Widths.AnsiChars(10))
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10))
                 .Numeric("PoQty", header: "Qty", width: Widths.AnsiChars(6))
                 .Numeric("Farmout", header: "Farm Out", width: Widths.AnsiChars(6))
                 .Numeric("Farmin", header: "Farm In", width: Widths.AnsiChars(6))

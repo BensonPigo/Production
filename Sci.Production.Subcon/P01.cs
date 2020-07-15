@@ -8,20 +8,24 @@ using System.Windows.Forms;
 
 using Ict;
 using Ict.Win;
+using Sci;
 using Sci.Data;
+using Sci.Production;
 
 using Sci.Production.PublicPrg;
 using System.Linq;
+using System.Data.SqlClient;
+using Sci.Win;
+using System.Reflection;
+using System.Transactions;
 
 namespace Sci.Production.Subcon
 {
+    /// <summary>
+    /// P01
+    /// </summary>
     public partial class P01 : Win.Tems.Input6
     {
-        string artworkunit;
-        bool isNeedPlanningB03Quote = false;
-        int IrregularPriceReason_ReasonNullCount = 0;
-        Form batchapprove;
-
         /// <summary>
         ///  異常價格視窗Grid的異動後DataSource，僅提供P01新增模式下使用
         /// </summary>
@@ -32,11 +36,20 @@ namespace Sci.Production.Subcon
         /// </summary>
         public static DataTable tmp_OriginDT_FromDB;
 
+        private string artworkunit;
+        private bool isNeedPlanningB03Quote = false;
+        private int IrregularPriceReason_ReasonNullCount = 0;
+        private Form batchapprove;
+
+        /// <summary>
+        /// P01
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MdivisionID = '" + Env.User.Keyword + "' and POTYPE='O'";
+            this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "' and POTYPE='O'";
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
@@ -58,14 +71,16 @@ namespace Sci.Production.Subcon
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MdivisionID"] = Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
-            this.CurrentMaintain["issuedate"] = DateTime.Today;
+            this.CurrentMaintain["MdivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["issuedate"] = System.DateTime.Today;
             this.CurrentMaintain["potype"] = "O";
-            this.CurrentMaintain["handle"] = Env.User.UserID;
+            this.CurrentMaintain["handle"] = Sci.Env.User.UserID;
             this.CurrentMaintain["VatRate"] = 0;
             this.CurrentMaintain["Status"] = "New";
             ((DataTable)this.detailgridbs.DataSource).Rows[0].Delete();
@@ -74,6 +89,8 @@ namespace Sci.Production.Subcon
         }
 
         // delete前檢查 CurrentMaintain["id"]的FarmOut_Detail/FarmIn_Detail有data則不能刪除
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].ToString() != "New")
@@ -127,6 +144,7 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePre()
         {
             string sqlClearArtworkPOID = $"update ArtworkReq_Detail set ArtworkPOID = '' where ArtworkPOID = '{this.CurrentMaintain["ID"]}'";
@@ -140,12 +158,14 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             // !EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
             if (this.CurrentMaintain["Status"].ToString() != "New")
             {
-                var frm = new PublicForm.EditRemark("artworkpo", "remark", this.CurrentMaintain);
+                var frm = new Sci.Production.PublicForm.EditRemark("artworkpo", "remark", this.CurrentMaintain);
                 frm.ShowDialog(this);
                 this.RenewData();
                 return false;
@@ -154,6 +174,7 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -180,6 +201,8 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
         }
 
         // save前檢查 & 取id
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 必輸檢查
@@ -269,32 +292,18 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
                 MyUtility.Msg.WarningBox("There is Irregular Price!! Please fix it.");
                 return false;
             }
-            ////若是新增，則異常價格原因必填
-            // if ((P01.tmp_ModifyTable != null && MyUtility.Check.Empty(this.CurrentMaintain["ID"])) || IrregularPriceReason_ReasonNullCount > 0 )
-            // {
-            //    if (P01.tmp_ModifyTable.Rows.Count > 0)
-            //    {
-            //        int noReasonDatas = P01.tmp_ModifyTable.AsEnumerable().Where(o => o["SubconReasonID"].ToString() == "").Count();
-            //        if (noReasonDatas > 0)
-            //        {
-            //            MyUtility.Msg.WarningBox("There is Irregular Price!! Please fix it.");
-            //            return false;
-            //        }
-
-            // }
-            // }
 
             // 取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                string factorykeyword = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["factoryid"]));
+                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
                     return false;
                 }
 
-                this.CurrentMaintain["id"] = MyUtility.GetValue.GetID(Env.User.Keyword + "OS", "artworkpo", (DateTime)this.CurrentMaintain["issuedate"]);
+                this.CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "OS", "artworkpo", (DateTime)this.CurrentMaintain["issuedate"]);
             }
 
             #region 加總明細金額至表頭
@@ -311,56 +320,56 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
             this.CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)this.CurrentMaintain["vatrate"] / 100, exact);
 
             #endregion
-
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            if (tmp_ModifyTable != null && tmp_OriginDT_FromDB != null)
+            if (P01.tmp_ModifyTable != null && P01.tmp_OriginDT_FromDB != null)
             {
                 // 新增模式下的異常價格紀錄寫入DB，是在這裡執行，內容與 P01_IrregularPriceReason 一樣
                 StringBuilder sql = new StringBuilder();
 
                 // ModifyTable 去掉 OriginDT_FromDB，剩下的不是新增就是修改
-                var Insert_Or_Update = tmp_ModifyTable.AsEnumerable().Except(tmp_OriginDT_FromDB.AsEnumerable(), DataRowComparer.Default).Where(o => o.Field<string>("SubconReasonID").Trim() != string.Empty);
+                var insert_Or_Update = tmp_ModifyTable.AsEnumerable().Except(tmp_OriginDT_FromDB.AsEnumerable(), DataRowComparer.Default).Where(o => o.Field<string>("SubconReasonID").Trim() != string.Empty);
 
                 // 抓出ReasonID為空的出來刪除
-                var Delete = tmp_ModifyTable.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() == string.Empty);
+                var delete = tmp_ModifyTable.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() == string.Empty);
 
-                foreach (var item in Delete)
+                foreach (var item in delete)
                 {
-                    string POID = item.Field<string>("POID");
-                    string ArtworkType = item.Field<string>("Type");
-                    sql.Append($"DELETE FROM [ArtworkPO_IrregularPrice] WHERE POID='{POID}' AND ArtworkTypeID='{ArtworkType}'" + Environment.NewLine);
+                    string pOID = item.Field<string>("POID");
+                    string artworkType = item.Field<string>("Type");
+                    sql.Append($"DELETE FROM [ArtworkPO_IrregularPrice] WHERE POID='{pOID}' AND ArtworkTypeID='{artworkType}'" + Environment.NewLine);
                     sql.Append(" " + Environment.NewLine);
                 }
 
-                foreach (var item in Insert_Or_Update)
+                foreach (var item in insert_Or_Update)
                 {
-                    string POID = item.Field<string>("POID");
-                    string ArtworkType = item.Field<string>("Type");
-                    string SubconReasonID = item.Field<string>("SubconReasonID");
-                    decimal POPrice = item.Field<decimal>("POPrice");
-                    decimal StandardPrice = item.Field<decimal>("StdPrice");
+                    string pOID = item.Field<string>("POID");
+                    string artworkType = item.Field<string>("Type");
+                    string subconReasonID = item.Field<string>("SubconReasonID");
+                    decimal pOPrice = item.Field<decimal>("POPrice");
+                    decimal standardPrice = item.Field<decimal>("StdPrice");
 
                     DataTable dt;
 
-                    DualResult result = DBProxy.Current.Select(null, $"SELECT * FROM ArtworkPO_IrregularPrice WHERE POID='{POID}' AND ArtworkTypeID='{ArtworkType}'", out dt);
+                    DualResult result = DBProxy.Current.Select(null, $"SELECT * FROM ArtworkPO_IrregularPrice WHERE POID='{pOID}' AND ArtworkTypeID='{artworkType}'", out dt);
                     if (result)
                     {
                         if (dt.Rows.Count > 0)
                         {
-                            if (dt.Rows[0]["SubconReasonID"].ToString() != SubconReasonID && !string.IsNullOrEmpty(SubconReasonID))
+                            if (dt.Rows[0]["SubconReasonID"].ToString() != subconReasonID && !string.IsNullOrEmpty(subconReasonID))
                             {
-                                sql.Append($"UPDATE [ArtworkPO_IrregularPrice] SET [SubconReasonID]='{SubconReasonID}',EditDate=GETDATE(),EditName='{Env.User.UserID}'" + Environment.NewLine);
-                                sql.Append($"                                  WHERE [POID]='{POID}' AND [ArtworkTypeID]='{ArtworkType}'" + Environment.NewLine);
+                                sql.Append($"UPDATE [ArtworkPO_IrregularPrice] SET [SubconReasonID]='{subconReasonID}',EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'" + Environment.NewLine);
+                                sql.Append($"                                  WHERE [POID]='{pOID}' AND [ArtworkTypeID]='{artworkType}'" + Environment.NewLine);
                             }
                         }
                         else
                         {
                             sql.Append("INSERT INTO [ArtworkPO_IrregularPrice]([POID],[ArtworkTypeID],[POPrice],[StandardPrice],[SubconReasonID],[AddDate],[AddName])" + Environment.NewLine);
-                            sql.Append($"                              VALUES ('{POID}','{ArtworkType}',{POPrice},{StandardPrice},'{SubconReasonID}',GETDATE(),'{Env.User.UserID}')" + Environment.NewLine);
+                            sql.Append($"                              VALUES ('{pOID}','{artworkType}',{pOPrice},{standardPrice},'{subconReasonID}',GETDATE(),'{Sci.Env.User.UserID}')" + Environment.NewLine);
                         }
                     }
 
@@ -378,8 +387,8 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
                     }
                 }
 
-                tmp_ModifyTable = null;
-                tmp_OriginDT_FromDB = null;
+                P01.tmp_ModifyTable = null;
+                P01.tmp_OriginDT_FromDB = null;
             }
 
             #region update ArtworkReq_Detail.ArtworkPOID
@@ -420,6 +429,7 @@ update ArtworkReq_Detail set ArtworkPOID = ''
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -428,27 +438,29 @@ update ArtworkReq_Detail set ArtworkPOID = ''
                 @"
 select 
 		 a.[ID]
-		,[OrderID]
-		,[ArtworkId]
-		,[PatternCode]
-		,[PatternDesc]
-		,[CostStitch]
-		,[Stitch]
-		,[UnitPrice]
-		,[Cost]
-		,[QtyGarment]=IIF([QtyGarment] IS NULL OR [QtyGarment]=0,1,[QtyGarment])
-		,[Price]
-		,[Amount]
-		,[Farmout]
-		,[Farmin]
-		,[ApQty]
-		,[PoQty]
-		,[Ukey]
-		,[ArtworkTypeID]
-		,[ExceedQty]
-        ,[ArtworkReqID]
+		,a.[OrderID]
+        ,a.[Article]
+        ,a.[SizeCode]
+		,a.[ArtworkId]
+		,a.[PatternCode]
+		,a.[PatternDesc]
+		,a.[CostStitch]
+		,a.[Stitch]
+		,a.[UnitPrice]
+		,a.[Cost]
+		,[QtyGarment]=IIF(a.[QtyGarment] IS NULL OR a.[QtyGarment]=0,1,a.[QtyGarment])
+		,a.[Price]
+		,a.[Amount]
+		,a.[Farmout]
+		,a.[Farmin]
+		,a.[ApQty]
+		,a.[PoQty]
+		,a.[Ukey]
+		,a.[ArtworkTypeID]
+		,a.[ExceedQty]
+        ,a.[ArtworkReqID]
 		,o.*
-		, Price = unitprice * qtygarment
+		, Price = a.unitprice * a.qtygarment
 		, Style = o.styleid
 		, sewinline = o.sewinline
 		, scidelivery = o.scidelivery
@@ -459,6 +471,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -520,16 +533,16 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 }
             }
 
-            var frm = new P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
+            var frm = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
 
             // 取得價格異常DataTable，如果有，則存在 P30的_Irregular_Price_Table，  開啟P30_IrregularPriceReason時後直接丟進去，避免再做一次查詢
             this.ShowWaitMessage("Data Loading...");
 
-            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
+            bool has_Irregular_Price = frm.Check_Irregular_Price(false);
 
             this.HideWaitMessage();
 
-            if (Has_Irregular_Price)
+            if (has_Irregular_Price)
             {
                 this.btnIrrPriceReason.ForeColor = Color.Red;
             }
@@ -538,10 +551,12 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
         }
 
         // Detail Grid 設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region farm out qty 開窗
-            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -552,14 +567,14 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                         return;
                     }
 
-                    var frm = new P01_FarmOutList(dr);
+                    var frm = new Sci.Production.Subcon.P01_FarmOutList(dr);
                     frm.ShowDialog(this);
                     this.RenewData();
                 }
             };
             #endregion
             #region Farm In qty 開窗
-            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -570,14 +585,14 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                         return;
                     }
 
-                    var frm = new P01_FarmInList(dr);
+                    var frm = new Sci.Production.Subcon.P01_FarmInList(dr);
                     frm.ShowDialog(this);
                     this.RenewData();
                 }
             };
             #endregion
             #region AP qty 開窗
-            DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
             ts3.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -588,14 +603,14 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                         return;
                     }
 
-                    var frm = new P01_Ap(dr);
+                    var frm = new Sci.Production.Subcon.P01_Ap(dr);
                     frm.ShowDialog(this);
                     this.RenewData();
                 }
             };
             #endregion
             #region Unit Price Valid
-            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -611,7 +626,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             #endregion
 
             #region qtygarment Valid
-            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -637,7 +652,9 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             .Numeric("PoQty", header: "PO Qty", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true) // 3
             .Date("scidelivery", header: "SciDelivery", width: Widths.AnsiChars(10), iseditingreadonly: true) // 4
+            .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: true) // 5
+            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("coststitch", header: "Cost" + Environment.NewLine + "(PCS/Stitch)", width: Widths.AnsiChars(3), iseditingreadonly: true) // 6
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3)) // 7
             .Text("patterncode", header: "Cutpart" + Environment.NewLine + "ID", width: Widths.AnsiChars(5), iseditingreadonly: true) // 8
@@ -658,6 +675,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void ClickCheck()
         {
             base.ClickCheck();
@@ -666,7 +684,8 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
             sqlcmd = string.Format(
                 "update artworkpo set status='Locked', LockName='{0}', LockDate=GETDATE(), editname='{0}', editdate=GETDATE() " +
-                            "where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
+                            "where id = '{1}'", Env.User.UserID,
+                this.CurrentMaintain["id"].ToString());
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
                 this.ShowErr(sqlcmd, result);
@@ -674,6 +693,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickUncheck()
         {
             base.ClickUncheck();
@@ -688,7 +708,8 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
             sqlcmd = string.Format(
                 "update artworkpo set Status='New', LockName='', LockDate=null, editname='{0}', editdate=GETDATE() " +
-                            "where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
+                            "where id = '{1}'", Env.User.UserID,
+                this.CurrentMaintain["id"]);
 
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
@@ -697,6 +718,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             DualResult result;
@@ -705,7 +727,8 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
             sqlcmd = string.Format(
                 "update artworkpo set status='Approved', apvname='{0}', apvdate=GETDATE(), editname='{0}', editdate=GETDATE() " +
-                            "where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
+                            "where id = '{1}'", Env.User.UserID,
+                this.CurrentMaintain["id"]);
 
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
@@ -716,6 +739,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             base.ClickConfirm();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -729,13 +753,10 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 return;
             }
 
-            if (checkdt.Rows.Count > 0)
+            if (checkdt.Rows.Count > 0 && checkdt.AsEnumerable().Any(row => MyUtility.Convert.GetInt(row["ApQty"]) > 0))
             {
-                if (checkdt.AsEnumerable().Any(row => MyUtility.Convert.GetInt(row["ApQty"]) > 0)) // subconP01需要檢查,P02不會有ApQty
-                {
-                    MessageBox.Show("Can not unconfirm");
-                    return;
-                }
+                MessageBox.Show("Can not unconfirm");
+                return;
             }
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
@@ -752,6 +773,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickClose()
         {
             base.ClickClose();
@@ -765,7 +787,8 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             string sqlcmd;
             sqlcmd = string.Format(
                 "update artworkpo set status='Closed', CloseName='{0}', CloseDate=GETDATE(), editname='{0}', editdate=GETDATE() " +
-                            "where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
+                            "where id = '{1}'", Env.User.UserID,
+                this.CurrentMaintain["id"]);
 
             DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
@@ -775,6 +798,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnclose()
         {
             base.ClickUnclose();
@@ -793,7 +817,8 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
             sqlcmd = string.Format(
                 "update artworkpo set Status='Approved', CloseName='', CloseDate=null, editname='{0}', editdate=GETDATE() " +
-                            "where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
+                            "where id = '{1}'", Env.User.UserID,
+                this.CurrentMaintain["id"]);
 
             DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
@@ -803,6 +828,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickUndo()
         {
             base.ClickUndo();
@@ -810,7 +836,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
         }
 
         // batch import
-        private void btnBatchImport_Click(object sender, EventArgs e)
+        private void BtnBatchImport_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -832,7 +858,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 return;
             }
 
-            var frm = new P01_Import(dr, (DataTable)this.detailgridbs.DataSource, "P01", this.isNeedPlanningB03Quote);
+            var frm = new Sci.Production.Subcon.P01_Import(dr, (DataTable)this.detailgridbs.DataSource, "P01", this.isNeedPlanningB03Quote);
             frm.ShowDialog(this);
 
             DataTable dg = (DataTable)this.detailgridbs.DataSource;
@@ -882,31 +908,33 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
         }
 
         // batch create
-        private void btnBatchCreate_Click(object sender, EventArgs e)
+        private void BtnBatchCreate_Click(object sender, EventArgs e)
         {
             if (this.EditMode)
             {
                 return;
             }
 
-            var frm = new P01_BatchCreate("P01");
+            var frm = new Sci.Production.Subcon.P01_BatchCreate("P01");
             frm.ShowDialog(this);
             this.ReloadDatas();
         }
 
         // print
+
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             // 跳轉至PrintForm
-            P01_Print callPrintForm = new P01_Print(this.CurrentMaintain, this.numTotal.Text, this.numTotalPOQty.Text);
+            Sci.Production.Subcon.P01_Print callPrintForm = new Sci.Production.Subcon.P01_Print(this.CurrentMaintain, this.numTotal.Text, this.numTotalPOQty.Text);
             callPrintForm.ShowDialog(this);
             return true;
         }
 
-        private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
+        private void Txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
         {
-            Class.Txtartworktype_fty o;
-            o = (Class.Txtartworktype_fty)sender;
+            Production.Class.Txtartworktype_fty o;
+            o = (Production.Class.Txtartworktype_fty)sender;
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
@@ -935,6 +963,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridDelete()
         {
             if (((DataTable)this.detailgridbs.DataSource).Rows.Count == 0)
@@ -951,10 +980,11 @@ from ArtworkPO_detail apd with(nolock)
 inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
 where  apd.id = '{0}' and apd.ukey = '{1}'
 ",
-                this.CurrentMaintain["id"], this.CurrentDetailData["Ukey"]);
-            DualResult Result;
+                this.CurrentMaintain["id"],
+                this.CurrentDetailData["Ukey"]);
+            DualResult result;
             DataTable dt;
-            if (Result = DBProxy.Current.Select(null, chkp10exists, out dt))
+            if (result = DBProxy.Current.Select(null, chkp10exists, out dt))
             {
                 if (dt.Rows.Count > 0)
                 {
@@ -970,21 +1000,21 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
             }
             else
             {
-                MyUtility.Msg.ErrorBox(Result.ToString());
+                MyUtility.Msg.ErrorBox(result.ToString());
                 return;
             }
 
             // 表身被刪除的資料，暫存的異常價格原因也要刪掉
             if (P01_IrregularPriceReason.tmp_IrregularPriceReason_List.Count > 0)
             {
-                string POID = this.CurrentDetailData["POID"].ToString();
-                string ArtworktypeID = this.CurrentMaintain["ArtworktypeID"].ToString();
+                string pOID = this.CurrentDetailData["POID"].ToString();
+                string artworktypeID = this.CurrentMaintain["ArtworktypeID"].ToString();
 
-                if (P01_IrregularPriceReason.tmp_IrregularPriceReason_List.Where(o => o.POID == POID && o.ArtWorkType_ID == ArtworktypeID).FirstOrDefault() != null)
+                if (P01_IrregularPriceReason.tmp_IrregularPriceReason_List.Where(o => o.POID == pOID && o.ArtWorkType_ID == artworktypeID).FirstOrDefault() != null)
                 {
                     P01_IrregularPriceReason.tmp_IrregularPriceReason_List.RemoveAt(
                         P01_IrregularPriceReason.tmp_IrregularPriceReason_List.IndexOf(
-                            P01_IrregularPriceReason.tmp_IrregularPriceReason_List.Where(o => o.POID == POID && o.ArtWorkType_ID == ArtworktypeID).FirstOrDefault()));
+                            P01_IrregularPriceReason.tmp_IrregularPriceReason_List.Where(o => o.POID == pOID && o.ArtWorkType_ID == artworktypeID).FirstOrDefault()));
                 }
             }
 
@@ -996,7 +1026,7 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
 
         }
 
-        private void btnIrrPriceReason_Click(object sender, EventArgs e)
+        private void BtnIrrPriceReason_Click(object sender, EventArgs e)
         {
             DataTable detailDatas = ((DataTable)this.detailgridbs.DataSource).Clone();
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
@@ -1007,41 +1037,41 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
                 }
             }
 
-            var frm = new P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
+            var frm = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
             frm.ShowDialog(this);
 
             // 畫面關掉後，再檢查一次有無價格異常
             this.btnIrrPriceReason.ForeColor = Color.Black;
             this.ShowWaitMessage("Data Loading...");
 
-            bool Has_Irregular_Price = false;
+            bool has_Irregular_Price = false;
 
             // 新增模式使用不同function
             if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
-                Has_Irregular_Price = frm.Check_Irregular_Price_Without_PO(false);
+                has_Irregular_Price = frm.Check_Irregular_Price_Without_PO(false);
             }
             else
             {
-                Has_Irregular_Price = frm.Check_Irregular_Price(false);
+                has_Irregular_Price = frm.Check_Irregular_Price(false);
             }
 
             this.IrregularPriceReason_ReasonNullCount = frm.ReasonNullCount;
             this.HideWaitMessage();
 
-            if (Has_Irregular_Price)
+            if (has_Irregular_Price)
             {
                 this.btnIrrPriceReason.ForeColor = Color.Red;
             }
         }
 
-        private void btnBatchApprove_Click(object sender, EventArgs e)
+        private void BtnBatchApprove_Click(object sender, EventArgs e)
         {
             if (this.Perm.Confirm)
             {
                 if (this.batchapprove == null || this.batchapprove.IsDisposed)
                 {
-                    this.batchapprove = new P01_BatchApprove(this.reload);
+                    this.batchapprove = new Sci.Production.Subcon.P01_BatchApprove(this.Reload);
                     this.batchapprove.Show();
                 }
                 else
@@ -1055,7 +1085,10 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
             }
         }
 
-        public void reload()
+        /// <summary>
+        /// Reload
+        /// </summary>
+        public void Reload()
         {
             if (this.CurrentDataRow != null)
             {
@@ -1106,7 +1139,7 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
             #endregion
         }
 
-        private void txtsubconSupplier_Validating(object sender, CancelEventArgs e)
+        private void TxtsubconSupplier_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtsubconSupplier.TextBox1.Text))
             {
@@ -1143,7 +1176,7 @@ where id = '{spNo}' and Category = 'S'
         /// <summary>
         /// 異常價格紀錄重新整理
         /// </summary>
-        /// <param name="showMSG"></param>
+        /// <param name="showMSG">showMSG</param>
         private void RefreshIrregularPriceReason(bool showMSG = false)
         {
             DataTable detailDatas = ((DataTable)this.detailgridbs.DataSource).Clone();
@@ -1156,26 +1189,26 @@ where id = '{spNo}' and Category = 'S'
                 }
             }
 
-            var IrregularPriceReason = new P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
+            var irregularPriceReason = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
 
-            tmp_ModifyTable = null;
+            P01.tmp_ModifyTable = null;
 
             // P01_IrregularPriceReason.tmp_IrregularPriceReason_List.Clear();
-            bool Has_Irregular_Price = false;
+            bool has_Irregular_Price = false;
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
-                Has_Irregular_Price = IrregularPriceReason.Check_Irregular_Price_Without_PO(false);
+                has_Irregular_Price = irregularPriceReason.Check_Irregular_Price_Without_PO(false);
             }
             else
             {
-                Has_Irregular_Price = IrregularPriceReason.Check_Irregular_Price(false);
+                has_Irregular_Price = irregularPriceReason.Check_Irregular_Price(false);
             }
 
-            this.IrregularPriceReason_ReasonNullCount = IrregularPriceReason.ReasonNullCount;
+            this.IrregularPriceReason_ReasonNullCount = irregularPriceReason.ReasonNullCount;
             this.HideWaitMessage();
 
-            if (Has_Irregular_Price)
+            if (has_Irregular_Price)
             {
                 this.btnIrrPriceReason.Enabled = true;
                 this.btnIrrPriceReason.ForeColor = Color.Red;
@@ -1192,7 +1225,7 @@ where id = '{spNo}' and Category = 'S'
             }
         }
 
-        private void txtartworktype_ftyArtworkType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void Txtartworktype_ftyArtworkType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             this.txtartworktype_ftyArtworkType.ValidateControl();
         }

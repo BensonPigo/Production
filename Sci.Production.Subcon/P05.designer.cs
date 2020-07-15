@@ -90,7 +90,7 @@
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelPONo);
             this.masterpanel.Controls.Add(this.dateReqDate);
-            this.masterpanel.Size = new System.Drawing.Size(1061, 149);
+            this.masterpanel.Size = new System.Drawing.Size(892, 149);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateReqDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
@@ -115,7 +115,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 149);
-            this.detailpanel.Size = new System.Drawing.Size(1061, 305);
+            this.detailpanel.Size = new System.Drawing.Size(892, 136);
             // 
             // gridicon
             // 
@@ -129,7 +129,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1061, 305);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 136);
             // 
             // detail2
             // 
@@ -143,13 +143,9 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1061, 556);
-            // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1061, 454);
+            this.detailcont.Size = new System.Drawing.Size(892, 285);
             // 
             // detailbtm
             // 
@@ -159,8 +155,8 @@
             this.detailbtm.Controls.Add(this.labMGMgrApv);
             this.detailbtm.Controls.Add(this.dispDeptApv);
             this.detailbtm.Controls.Add(this.labDeptMgrApv);
-            this.detailbtm.Location = new System.Drawing.Point(0, 454);
-            this.detailbtm.Size = new System.Drawing.Size(1061, 102);
+            this.detailbtm.Location = new System.Drawing.Point(0, 285);
+            this.detailbtm.Size = new System.Drawing.Size(892, 102);
             this.detailbtm.TabIndex = 1;
             this.detailbtm.Controls.SetChildIndex(this.labDeptMgrApv, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -294,7 +290,7 @@
             this.btnBatchImport.TabIndex = 8;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
-            this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
+            this.btnBatchImport.Click += new System.EventHandler(this.BtnBatchImport_Click);
             // 
             // displayReqID
             // 
@@ -335,7 +331,7 @@
             this.btnBatchCreate.TabIndex = 0;
             this.btnBatchCreate.Text = "Batch Create";
             this.btnBatchCreate.UseVisualStyleBackColor = true;
-            this.btnBatchCreate.Click += new System.EventHandler(this.btnBatchCreate_Click);
+            this.btnBatchCreate.Click += new System.EventHandler(this.BtnBatchCreate_Click);
             // 
             // btnIrrQtyReason
             // 
@@ -346,7 +342,7 @@
             this.btnIrrQtyReason.TabIndex = 9;
             this.btnIrrQtyReason.Text = "Irregular Qty Reason";
             this.btnIrrQtyReason.UseVisualStyleBackColor = true;
-            this.btnIrrQtyReason.Click += new System.EventHandler(this.btnIrrPriceReason_Click);
+            this.btnIrrQtyReason.Click += new System.EventHandler(this.BtnIrrPriceReason_Click);
             // 
             // btnBatchApprove
             // 
@@ -357,7 +353,7 @@
             this.btnBatchApprove.TabIndex = 4;
             this.btnBatchApprove.Text = "Batch Approve";
             this.btnBatchApprove.UseVisualStyleBackColor = true;
-            this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
+            this.btnBatchApprove.Click += new System.EventHandler(this.BtnBatchApprove_Click);
             // 
             // labDeptMgrApv
             // 
@@ -452,7 +448,7 @@
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(165, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 1;
-            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
+            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.Txtartworktype_ftyArtworkType_Validating);
             // 
             // txtsubconSupplier
             // 
@@ -467,7 +463,7 @@
             this.txtsubconSupplier.Size = new System.Drawing.Size(165, 23);
             this.txtsubconSupplier.TabIndex = 0;
             this.txtsubconSupplier.TextBox1Binding = "";
-            this.txtsubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.txtsubconSupplier_Validating);
+            this.txtsubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.TxtsubconSupplier_Validating);
             // 
             // btnSpecialRecord
             // 
@@ -478,7 +474,7 @@
             this.btnSpecialRecord.TabIndex = 20;
             this.btnSpecialRecord.Text = "Special Record";
             this.btnSpecialRecord.UseVisualStyleBackColor = true;
-            this.btnSpecialRecord.Click += new System.EventHandler(this.btnSpecialRecord_Click);
+            this.btnSpecialRecord.Click += new System.EventHandler(this.BtnSpecialRecord_Click);
             // 
             // P05
             // 
@@ -491,7 +487,7 @@
             this.DefaultControlForEdit = "txtsubconSupplier";
             this.ExpressQuery = true;
             this.GridAlias = "ArtworkReq_Detail";
-            this.GridUniqueKey = "id,artworkid,patterncode,PatternDesc,OrderId";
+            this.GridUniqueKey = "id,artworkid,patterncode,PatternDesc,OrderId,Article,SizeCode";
             this.IsSupportCheck = true;
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;

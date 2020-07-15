@@ -1,10 +1,23 @@
-﻿namespace Sci.Production.Subcon
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Sci.Production.Subcon
 {
-    class P01_PrintData
+    /// <summary>
+    /// P01_PrintData
+    /// </summary>
+    internal class P01_PrintData
     {
         public string OrderID { get; set; }
 
         public string ID { get; set; }
+
+        public string Article { get; set; }
+
+        public string Size { get; set; }
 
         public string StyleID { get; set; }
 

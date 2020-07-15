@@ -307,12 +307,12 @@ BEGIN
 			OUTPUT $action,Inserted.BundleNo INTO @BundleNoTB;  
 			
 			--更新ArtworkPO_Detail FarmIn準備資料
-			SELECT FarmIn = SUM(LBD.Qty),LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc
+			SELECT FarmIn = SUM(LBD.Qty),LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc,LBD.SizeCode,LB.Article
 			into #FarmIn_tmp
-			from Bundle_Detail LBD
-			INNER JOIN Bundle LB ON LB.ID = LBD.ID
-			INNER JOIN BundleInOut LBIO ON LBIO.BundleNo= LBD.BundleNo
-			INNER JOIN SubProcess LS ON LS.ID = LBIO.SubProcessId
+			from Bundle_Detail LBD with (nolock)
+			INNER JOIN Bundle LB with (nolock) ON LB.ID = LBD.ID
+			INNER JOIN BundleInOut LBIO with (nolock) ON LBIO.BundleNo= LBD.BundleNo
+			INNER JOIN SubProcess LS with (nolock) ON LS.ID = LBIO.SubProcessId
 			where LB.Orderid in(
 				select distinct b.Orderid
 				from Bundle_Detail bd with(nolock)
@@ -321,15 +321,15 @@ BEGIN
 			)
 			AND LBIO.InComing IS NOT NULL
 			AND LBIO.RFIDProcessLocationID=''''
-			group by LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc
+			group by LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc,LBD.SizeCode,LB.Article
 			 
 			--更新ArtworkPO_Detail FarmOut準備資料
-			SELECT FarmOut = SUM(LBD.Qty),LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc
+			SELECT FarmOut = SUM(LBD.Qty),LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc,LBD.SizeCode,LB.Article
 			into #FarmOut_tmp
-			from Bundle_Detail LBD
-			INNER JOIN Bundle LB ON LB.ID = LBD.ID
-			INNER JOIN BundleInOut LBIO ON LBIO.BundleNo= LBD.BundleNo
-			INNER JOIN SubProcess LS ON LS.ID = LBIO.SubProcessId
+			from Bundle_Detail LBD with (nolock)
+			INNER JOIN Bundle LB with (nolock) ON LB.ID = LBD.ID
+			INNER JOIN BundleInOut LBIO with (nolock) ON LBIO.BundleNo= LBD.BundleNo
+			INNER JOIN SubProcess LS with (nolock) ON LS.ID = LBIO.SubProcessId
 			where LB.Orderid in(
 				select distinct b.Orderid
 				from Bundle_Detail bd with(nolock)
@@ -338,15 +338,37 @@ BEGIN
 			)
 			AND LBIO.OutGoing IS NOT NULL
 			AND LBIO.RFIDProcessLocationID=''''
-			group by LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc
+			group by LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc,LBD.SizeCode,LB.Article
 
-			update apd set FarmIn = t.FarmIn
+			select apd.Ukey,FarmIn = sum(t.FarmIn) 
+			into #ArtworkPO_DetailFarmIn
+			from ArtworkPO_Detail apd with (nolock)
+			inner join #FarmIn_tmp t on apd.OrderID = t.Orderid and 
+										apd.ArtworkTypeID = t.ArtworkTypeId and 
+										apd.PatternCode = t.Patterncode and 
+										apd.PatternDesc = t.PatternDesc and 
+										(apd.Article = t.Article or apd.Article = '') and 
+										(apd.SizeCode = t.SizeCode or apd.SizeCode = '')
+			group by apd.Ukey
+
+			select apd.Ukey,FarmOut = sum(t.FarmOut) 
+			into #ArtworkPO_DetailFarmOut
+			from ArtworkPO_Detail apd with (nolock)
+			inner join #FarmOut_tmp t on apd.OrderID = t.Orderid and 
+										apd.ArtworkTypeID = t.ArtworkTypeId and 
+										apd.PatternCode = t.Patterncode and 
+										apd.PatternDesc = t.PatternDesc and 
+										(apd.Article = t.Article or apd.Article = '') and 
+										(apd.SizeCode = t.SizeCode or apd.SizeCode = '')
+			group by apd.Ukey
+
+			update apd set FarmIn = apdo.FarmIn
 			from ArtworkPO_Detail apd
-			inner join #FarmIn_tmp t on apd.OrderID = t.Orderid and apd.ArtworkTypeID = t.ArtworkTypeId and apd.PatternCode = t.Patterncode and apd.PatternDesc = t.PatternDesc
+			inner join #ArtworkPO_DetailFarmIn apdo on apd.Ukey = apdo.Ukey
 			
-			update apd set Farmout = t.FarmOut
+			update apd set FarmOut = apdo.FarmOut
 			from ArtworkPO_Detail apd
-			inner join #FarmOut_tmp t on apd.OrderID = t.Orderid and apd.ArtworkTypeID = t.ArtworkTypeId and apd.PatternCode = t.Patterncode and apd.PatternDesc = t.PatternDesc
+			inner join #ArtworkPO_DetailFarmOut apdo on apd.Ukey = apdo.Ukey
 
 			Commit tran
 

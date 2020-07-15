@@ -1,28 +1,43 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 using Ict;
 using Ict.Win;
+using Sci;
 using Sci.Data;
+using Sci.Production;
 
 using Sci.Production.PublicPrg;
 using System.Linq;
+using System.Data.SqlClient;
+using Sci.Win;
+using System.Reflection;
+using System.Transactions;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P05 : Win.Tems.Input6
+    /// <summary>
+    /// P05
+    /// </summary>
+    public partial class P05 : Sci.Win.Tems.Input6
     {
-        string artworkunit;
-        Form batchapprove;
+        private string artworkunit;
+        private Form batchapprove;
 
+        /// <summary>
+        /// P05
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = $"MdivisionID = '{Env.User.Keyword}'";
+            this.DefaultFilter = $"MdivisionID = '{Sci.Env.User.Keyword}'";
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
@@ -34,6 +49,7 @@ namespace Sci.Production.Subcon
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -41,8 +57,8 @@ namespace Sci.Production.Subcon
             #region 權限控管
 
             // 檢查是否擁有Confirm or Check權限
-            bool canConfrim = Prgs.GetAuthority(Env.User.UserID, "P05. Sub-con Requisition", "CanConfirm");
-            bool canCheck = Prgs.GetAuthority(Env.User.UserID, "P05. Sub-con Requisition", "CanCheck");
+            bool canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanConfirm");
+            bool canCheck = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanCheck");
 
             if (canConfrim || canCheck || Env.User.IsAdmin)
             {
@@ -55,6 +71,7 @@ namespace Sci.Production.Subcon
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -62,6 +79,7 @@ namespace Sci.Production.Subcon
             this.txtartworktype_ftyArtworkType.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -71,6 +89,8 @@ namespace Sci.Production.Subcon
 select 
 ap.OrderID
 ,o.StyleID
+,ap.Article
+,ap.SizeCode
 ,o.SewInLine
 ,o.SciDelivery
 ,ap.ArtworkID
@@ -90,6 +110,8 @@ from dbo.ArtworkReq_Detail ap
 left join dbo.Orders o on ap.OrderID = o.id
 left join dbo.ArtworkPO_Detail apo on apo.ID = ap.ArtworkPOID
 	AND apo.OrderID = ap.OrderID 
+    AND apo.Article = ap.Article 
+    AND apo.SizeCode = ap.SizeCode    
 	AND AP.ArtworkID = APO.ArtworkId 
 	AND AP.PatternCode = APO.PatternCode
 	and apo.ArtworkReqID = ap.ID
@@ -99,6 +121,7 @@ ORDER BY ap.OrderID   ", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -145,6 +168,7 @@ ORDER BY ap.OrderID   ", masterID);
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -187,9 +211,11 @@ ORDER BY ap.OrderID   ", masterID);
         }
 
         // Detail Grid 設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
-            DataGridViewGeneratorNumericColumnSettings col_ReqQty = new DataGridViewGeneratorNumericColumnSettings();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings col_ReqQty = new DataGridViewGeneratorNumericColumnSettings();
             col_ReqQty.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -295,7 +321,7 @@ outer apply (
 ) PoQty
 where f.IsProduceFty=1
 and o.category in ('B','S')
-and o.MDivisionID='{Env.User.Keyword}' 
+and o.MDivisionID='{Sci.Env.User.Keyword}' 
 and ot.ArtworkTypeID like '{this.CurrentMaintain["artworktypeid"]}%' 
 and o.Junk=0
 and o.id = '{dr["OrderID"]}'
@@ -324,7 +350,9 @@ group by ReqQty.value,PoQty.value";
             .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("sewinline", header: "Sewing Inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("scidelivery", header: "SCI Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(17), iseditingreadonly: true)
+            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("patterncode", header: "Cut Part", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("PatternDesc", header: "Cut Part Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Numeric("ReqQty", header: "Req. Qty", width: Widths.AnsiChars(6), settings: col_ReqQty) // 可編輯
@@ -346,18 +374,22 @@ group by ReqQty.value,PoQty.value";
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MdivisionID"] = Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
-            this.CurrentMaintain["Reqdate"] = DateTime.Today;
-            this.CurrentMaintain["handle"] = Env.User.UserID;
+            this.CurrentMaintain["MdivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["Reqdate"] = System.DateTime.Today;
+            this.CurrentMaintain["handle"] = Sci.Env.User.UserID;
             this.CurrentMaintain["Status"] = "New";
             ((DataTable)this.detailgridbs.DataSource).Rows[0].Delete();
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].ToString() != "New")
@@ -370,6 +402,8 @@ group by ReqQty.value,PoQty.value";
         }
 
         // save前檢查 & 取id
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 必輸檢查
@@ -430,12 +464,11 @@ group by ReqQty.value,PoQty.value";
                 return false;
             }
 
-            this.UpdateExceedStatus();
-
             // 判斷irregular Reason沒寫不能存檔
-            var IrregularQtyReason = new P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var irregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
 
-            DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
+            DataTable dtIrregular = irregularQtyReason.Check_Irregular_Qty();
+            this.UpdateExceedStatus(dtIrregular);
             if (dtIrregular != null)
             {
                 bool isReasonEmpty = dtIrregular.AsEnumerable().Any(s => MyUtility.Check.Empty(s["SubconReasonID"]));
@@ -448,12 +481,13 @@ group by ReqQty.value,PoQty.value";
 
             if (this.IsDetailInserting)
             {
-                this.CurrentMaintain["id"] = MyUtility.GetValue.GetID(Env.User.Factory + "OR", "artworkReq", (DateTime)this.CurrentMaintain["ReqDate"]);
+                this.CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "OR", "artworkReq", (DateTime)this.CurrentMaintain["ReqDate"]);
             }
 
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickCheck()
         {
             base.ClickCheck();
@@ -479,9 +513,9 @@ group by ReqQty.value,PoQty.value";
             }
 
             // 判斷irregular Reason沒寫不能存檔
-            var IrregularQtyReason = new P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var irregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
 
-            DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
+            DataTable dtIrregular = irregularQtyReason.Check_Irregular_Qty();
             if (dtIrregular != null)
             {
                 bool isReasonEmpty = dtIrregular.AsEnumerable().Any(s => MyUtility.Check.Empty(s["SubconReasonID"]));
@@ -507,6 +541,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             MyUtility.Msg.InfoBox("Successfully");
         }
 
+        /// <inheritdoc/>
         protected override void ClickUncheck()
         {
             base.ClickUncheck();
@@ -536,6 +571,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             MyUtility.Msg.InfoBox("Successfully");
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             #region 檢查LocalSupp_Bank
@@ -566,6 +602,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             base.ClickConfirm();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -594,6 +631,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             MyUtility.Msg.InfoBox("Successfully");
         }
 
+        /// <inheritdoc/>
         protected override void ClickClose()
         {
             base.ClickClose();
@@ -616,6 +654,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             MyUtility.Msg.InfoBox("Successfully");
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnclose()
         {
             base.ClickUnclose();
@@ -638,12 +677,14 @@ where id = '{this.CurrentMaintain["id"]}'";
             MyUtility.Msg.InfoBox("Successfully");
         }
 
+        /// <inheritdoc/>
         protected override void ClickUndo()
         {
             base.ClickUndo();
             this.RenewData();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].ToString() != "New")
@@ -656,6 +697,8 @@ where id = '{this.CurrentMaintain["id"]}'";
         }
 
         // print
+
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             decimal totalReqQty = 0;
@@ -670,13 +713,13 @@ where id = '{this.CurrentMaintain["id"]}'";
             #endregion
 
             // 跳轉至PrintForm
-            P05_Print callPrintForm = new P05_Print(this.CurrentMaintain, totalReqQty.ToString());
+            Sci.Production.Subcon.P05_Print callPrintForm = new Sci.Production.Subcon.P05_Print(this.CurrentMaintain, totalReqQty.ToString());
             callPrintForm.ShowDialog(this);
             return true;
         }
 
         // batch import
-        private void btnBatchImport_Click(object sender, EventArgs e)
+        private void BtnBatchImport_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -698,7 +741,7 @@ where id = '{this.CurrentMaintain["id"]}'";
                 return;
             }
 
-            var frm = new P05_Import(dr, (DataTable)this.detailgridbs.DataSource);
+            var frm = new Sci.Production.Subcon.P05_Import(dr, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
 
             DataTable dg = (DataTable)this.detailgridbs.DataSource;
@@ -747,22 +790,22 @@ where id = '{this.CurrentMaintain["id"]}'";
         }
 
         // batch create
-        private void btnBatchCreate_Click(object sender, EventArgs e)
+        private void BtnBatchCreate_Click(object sender, EventArgs e)
         {
             if (this.EditMode)
             {
                 return;
             }
 
-            var frm = new P05_BatchCreate();
+            var frm = new Sci.Production.Subcon.P05_BatchCreate();
             frm.ShowDialog(this);
             this.ReloadDatas();
         }
 
-        private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
+        private void Txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
         {
-            Class.Txtartworktype_fty o;
-            o = (Class.Txtartworktype_fty)sender;
+            Production.Class.Txtartworktype_fty o;
+            o = (Production.Class.Txtartworktype_fty)sender;
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
@@ -785,7 +828,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             #endregion
         }
 
-        private void btnIrrPriceReason_Click(object sender, EventArgs e)
+        private void BtnIrrPriceReason_Click(object sender, EventArgs e)
         {
             if ((DataTable)this.detailgridbs.DataSource == null)
             {
@@ -801,7 +844,7 @@ where id = '{this.CurrentMaintain["id"]}'";
                 }
             }
 
-            var frm = new P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
+            var frm = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
             frm.ShowDialog(this);
 
             // 畫面關掉後，再檢查一次有無價格異常
@@ -809,13 +852,13 @@ where id = '{this.CurrentMaintain["id"]}'";
             this.RefreshIrregularQtyReason();
         }
 
-        private void btnBatchApprove_Click(object sender, EventArgs e)
+        private void BtnBatchApprove_Click(object sender, EventArgs e)
         {
             if (this.Perm.Confirm || this.Perm.Check)
             {
                 if (this.batchapprove == null || this.batchapprove.IsDisposed)
                 {
-                    this.batchapprove = new P05_BatchApprove(this.reload);
+                    this.batchapprove = new Sci.Production.Subcon.P05_BatchApprove(this.Reload);
                     this.batchapprove.Show();
                 }
                 else
@@ -829,7 +872,10 @@ where id = '{this.CurrentMaintain["id"]}'";
             }
         }
 
-        public void reload()
+        /// <summary>
+        /// Reload
+        /// </summary>
+        public void Reload()
         {
             if (this.CurrentDataRow != null)
             {
@@ -859,7 +905,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             }
         }
 
-        private void txtsubconSupplier_Validating(object sender, CancelEventArgs e)
+        private void TxtsubconSupplier_Validating(object sender, CancelEventArgs e)
         {
             if (this.CurrentMaintain["LocalSuppID"].ToString() != this.txtsubconSupplier.TextBox1.Text)
             {
@@ -879,7 +925,6 @@ where id = '{this.CurrentMaintain["id"]}'";
         /// <summary>
         /// 異常價格紀錄重新整理
         /// </summary>
-        /// <param name="showMSG"></param>
         private void RefreshIrregularQtyReason()
         {
             if ((DataTable)this.detailgridbs.DataSource == null)
@@ -898,16 +943,16 @@ where id = '{this.CurrentMaintain["id"]}'";
             }
 
             this.btnIrrQtyReason.ForeColor = Color.Black;
-            var IrregularQtyReason = new P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
+            var irregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
 
-            DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
+            DataTable dtIrregular = irregularQtyReason.Check_Irregular_Qty();
             this.HideWaitMessage();
 
-            this.UpdateExceedStatus();
+            this.UpdateExceedStatus(dtIrregular);
             this.btnIrrQtyReason.Enabled = false;
             if (dtIrregular != null)
             {
-                if (dtIrregular.Rows.Count > 0 && this.CurrentMaintain["Exceed"].ToString().ToUpper() == "TRUE")
+                if (dtIrregular.Rows.Count > 0)
                 {
                     this.btnIrrQtyReason.Enabled = true;
                     this.btnIrrQtyReason.ForeColor = Color.Red;
@@ -937,7 +982,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             };
         }
 
-        private void btnSpecialRecord_Click(object sender, EventArgs e)
+        private void BtnSpecialRecord_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -952,7 +997,7 @@ where id = '{this.CurrentMaintain["id"]}'";
                 return;
             }
 
-            var frm = new P05_SpecialRecord(dr, (DataTable)this.detailgridbs.DataSource);
+            var frm = new Sci.Production.Subcon.P05_SpecialRecord(dr, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
             this.detailgridbs.EndEdit();
@@ -960,10 +1005,20 @@ where id = '{this.CurrentMaintain["id"]}'";
             this.RefreshIrregularQtyReason();
         }
 
-        private void UpdateExceedStatus()
+        private void UpdateExceedStatus(DataTable dtIrregular)
         {
+            bool hasIrregular = false;
+
+            if (dtIrregular != null)
+            {
+                if (dtIrregular.Rows.Count > 0)
+                {
+                    hasIrregular = true;
+                }
+            }
+
             bool isDetailExceedQtyNotZero = this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["ExceedQty"]));
-            if (isDetailExceedQtyNotZero)
+            if (isDetailExceedQtyNotZero || hasIrregular)
             {
                 this.CurrentMaintain["Exceed"] = 1;
             }

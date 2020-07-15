@@ -12,11 +12,19 @@ using System.Reflection;
 
 namespace Sci.Production.Subcon
 {
+    /// <summary>
+    /// P05_Print
+    /// </summary>
     public partial class P05_Print : Win.Forms.Base
     {
-        DataRow masterData;
-        string TotalReqQty;
+        private DataRow masterData;
+        private string TotalReqQty;
 
+        /// <summary>
+        /// P05_Print
+        /// </summary>
+        /// <param name="mainData">mainData</param>
+        /// <param name="numTotalReqQty">numTotalReqQty</param>
         public P05_Print(DataRow mainData, string numTotalReqQty)
         {
             this.InitializeComponent();
@@ -25,16 +33,16 @@ namespace Sci.Production.Subcon
             this.TotalReqQty = numTotalReqQty;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnPrint_Click(object sender, EventArgs e)
+        private void BtnPrint_Click(object sender, EventArgs e)
         {
             string id = this.masterData["ID"].ToString();
-            string Reqdate = ((DateTime)MyUtility.Convert.GetDate(this.masterData["Reqdate"])).ToShortDateString();
-            string Remark = this.masterData["Remark"].ToString();
+            string reqdate = ((DateTime)MyUtility.Convert.GetDate(this.masterData["Reqdate"])).ToShortDateString();
+            string remark = this.masterData["Remark"].ToString();
             string handle = MyUtility.GetValue.Lookup("Name", this.masterData["handle"].ToString(), "Pass1", "ID");
             string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", this.masterData["artworktypeid"])).ToString().Trim();
             string orderID = MyUtility.GetValue.Lookup(
@@ -49,8 +57,8 @@ where a.id='{0}' ", this.masterData["ID"].ToString()));
             DualResult result;
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Reqdate", Reqdate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Reqdate", reqdate));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("artworkunit", artworkunit));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("handle", handle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("orderID", orderID.Substring(0, 10)));
@@ -78,6 +86,8 @@ select ART.id
        , L.fax
        , A.Orderid
        , O.styleID
+       , A.Article
+       , A.SizeCode
        , A.ReqQty
        , A.artworkid	
        , A.Stitch
@@ -110,22 +120,22 @@ order by ID", this.masterData["LocalSuppID"]);
                     return;
                 }
 
-                string Title1 = dtDetail.Rows[0]["nameEn"].ToString().Trim();
-                string Title2 = dtDetail.Rows[0]["AddressEN"].ToString().Trim();
-                string Title3 = dtDetail.Rows[0]["Tel"].ToString().Trim();
-                string TO = dtDetail.Rows[0]["TITLETO"].ToString().Trim();
-                string TEL = dtDetail.Rows[0]["Tel"].ToString().Trim();
-                string ADDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
-                string FAX = dtDetail.Rows[0]["fax"].ToString().Trim().Trim();
+                string title1 = dtDetail.Rows[0]["nameEn"].ToString().Trim();
+                string title2 = dtDetail.Rows[0]["AddressEN"].ToString().Trim();
+                string title3 = dtDetail.Rows[0]["Tel"].ToString().Trim();
+                string tO = dtDetail.Rows[0]["TITLETO"].ToString().Trim();
+                string tEL = dtDetail.Rows[0]["Tel"].ToString().Trim();
+                string aDDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
+                string fAX = dtDetail.Rows[0]["fax"].ToString().Trim().Trim();
                 string style = dtDetail.Rows[0]["styleID"].ToString().Trim();
                 decimal totalQty = MyUtility.Convert.GetDecimal(dtDetail.Compute("sum(Reqqty)", "1=1"));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TO", TO));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", TEL));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", ADDRESS));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", FAX));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", title1));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", title2));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", title3));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TO", tO));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", tEL));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", aDDRESS));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", fAX));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", totalQty.ToString()));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("style", style));
 
@@ -135,6 +145,8 @@ order by ID", this.masterData["LocalSuppID"]);
                     {
                         OrderID = row1["Orderid"].ToString(),
                         StyleID = row1["styleID"].ToString(),
+                        Article = row1["Article"].ToString(),
+                        Size = row1["SizeCode"].ToString(),
                         ReqQTY = row1["ReqQty"].ToString(),
                         ArtworkID = row1["artworkid"].ToString(),
                         PCS = row1["Stitch"].ToString(),
@@ -148,12 +160,12 @@ order by ID", this.masterData["LocalSuppID"]);
                 report.ReportDataSource = data;
                 #endregion
 
-                Type ReportResourceNamespace = typeof(P05_PrintData);
-                Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-                string ReportResourceName = "P05_Print_Comb.rdlc";
+                Type reportResourceNamespace = typeof(P05_PrintData);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P05_Print_Comb.rdlc";
 
                 IReportResource reportresource;
-                if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+                if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
                 {
                     return;
                 }
@@ -214,20 +226,20 @@ WHERE  ART.id = @ID
                     return;
                 }
 
-                string Title1 = dtDetail.Rows[0]["nameEn"].ToString().Trim();
-                string Title2 = dtDetail.Rows[0]["AddressEN"].ToString().Trim();
-                string Title3 = dtDetail.Rows[0]["Tel"].ToString().Trim();
-                string TO = dtDetail.Rows[0]["TITLETO"].ToString().Trim();
-                string TEL = dtDetail.Rows[0]["Tel"].ToString().Trim();
-                string ADDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
-                string FAX = dtDetail.Rows[0]["fax"].ToString().Trim();
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TO", TO));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", TEL));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", ADDRESS));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", FAX));
+                string title1 = dtDetail.Rows[0]["nameEn"].ToString().Trim();
+                string title2 = dtDetail.Rows[0]["AddressEN"].ToString().Trim();
+                string title3 = dtDetail.Rows[0]["Tel"].ToString().Trim();
+                string tO = dtDetail.Rows[0]["TITLETO"].ToString().Trim();
+                string tEL = dtDetail.Rows[0]["Tel"].ToString().Trim();
+                string aDDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
+                string fAX = dtDetail.Rows[0]["fax"].ToString().Trim();
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", title1));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", title2));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", title3));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TO", tO));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", tEL));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", aDDRESS));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", fAX));
 
                 // 傳 list 資料
                 List<P05_PrintData> data = dtDetail.AsEnumerable()
@@ -246,12 +258,12 @@ WHERE  ART.id = @ID
                 report.ReportDataSource = data;
                 #endregion
 
-                Type ReportResourceNamespace = typeof(P05_PrintData);
-                Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-                string ReportResourceName = "P05_Print.rdlc";
+                Type reportResourceNamespace = typeof(P05_PrintData);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P05_Print.rdlc";
 
                 IReportResource reportresource;
-                if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+                if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
                 {
                     return;
                 }

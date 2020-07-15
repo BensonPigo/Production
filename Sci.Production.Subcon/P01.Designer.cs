@@ -411,7 +411,7 @@
             this.btnBatchImport.TabStop = false;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
-            this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
+            this.btnBatchImport.Click += new System.EventHandler(this.BtnBatchImport_Click);
             // 
             // displayPONo
             // 
@@ -589,7 +589,7 @@
             this.btnBatchCreate.TabIndex = 0;
             this.btnBatchCreate.Text = "Batch Create";
             this.btnBatchCreate.UseVisualStyleBackColor = true;
-            this.btnBatchCreate.Click += new System.EventHandler(this.btnBatchCreate_Click);
+            this.btnBatchCreate.Click += new System.EventHandler(this.BtnBatchCreate_Click);
             // 
             // dateApproveDate
             // 
@@ -647,8 +647,8 @@
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(165, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 4;
-            this.txtartworktype_ftyArtworkType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtartworktype_ftyArtworkType_PopUp);
-            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
+            this.txtartworktype_ftyArtworkType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.Txtartworktype_ftyArtworkType_PopUp);
+            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.Txtartworktype_ftyArtworkType_Validating);
             // 
             // txtsubconSupplier
             // 
@@ -663,7 +663,7 @@
             this.txtsubconSupplier.Size = new System.Drawing.Size(165, 23);
             this.txtsubconSupplier.TabIndex = 1;
             this.txtsubconSupplier.TextBox1Binding = "";
-            this.txtsubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.txtsubconSupplier_Validating);
+            this.txtsubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.TxtsubconSupplier_Validating);
             // 
             // labelTotalPoQty
             // 
@@ -704,7 +704,7 @@
             this.btnIrrPriceReason.TabStop = false;
             this.btnIrrPriceReason.Text = "Irregular Price Reason";
             this.btnIrrPriceReason.UseVisualStyleBackColor = true;
-            this.btnIrrPriceReason.Click += new System.EventHandler(this.btnIrrPriceReason_Click);
+            this.btnIrrPriceReason.Click += new System.EventHandler(this.BtnIrrPriceReason_Click);
             // 
             // btnBatchApprove
             // 
@@ -715,7 +715,7 @@
             this.btnBatchApprove.TabIndex = 4;
             this.btnBatchApprove.Text = "Batch Approve";
             this.btnBatchApprove.UseVisualStyleBackColor = true;
-            this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
+            this.btnBatchApprove.Click += new System.EventHandler(this.BtnBatchApprove_Click);
             // 
             // lbLockName
             // 

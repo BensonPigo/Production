@@ -1,21 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 using Ict;
 using Ict.Win;
+using Sci;
 using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P10_ImportFromPO : Win.Subs.Base
+    /// <summary>
+    /// P10_ImportFromPO
+    /// </summary>
+    public partial class P10_ImportFromPO : Sci.Win.Subs.Base
     {
-        DataRow dr_artworkAp;
-        DataTable dt_artworkApDetail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_artworkAp;
+        private DataTable dt_artworkApDetail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
-        protected DataTable dtArtwork;
+        private DataTable dtArtwork;
 
+        /// <summary>
+        /// P10_ImportFromPO
+        /// </summary>
+        /// <param name="master">master</param>
+        /// <param name="detail">detail</param>
         public P10_ImportFromPO(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -26,7 +38,7 @@ namespace Sci.Production.Subcon
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             string sp_b = this.txtSPNoStart.Text;
             string sp_e = this.txtSPNoEnd.Text;
@@ -47,6 +59,8 @@ namespace Sci.Production.Subcon
                 strSQLCmd += $@"
 SELECT  bd.QTY 
 	,bdl.Orderid 
+    ,bdl.Article
+    ,bd.SizeCode
 	,s.ArtworkTypeId
 	,bio.OutGoing 
 	,bio.InComing
@@ -122,12 +136,16 @@ Select 1 as Selected
         ,'' id
         ,[Amount] = 1.0 * IIF(MinQty.Val - b.ApQty < 0 , 0 ,MinQty.Val - b.ApQty ) * b.price --0.0 amount
         ,[LocalSuppCtn]=LocalSuppCtn.Val
+        ,b.Article
+        ,b.SizeCode
 from ArtworkPO a WITH (NOLOCK) 
 INNER JOIN ArtworkPO_Detail b WITH (NOLOCK)  ON  a.id = b.id 
 OUTER APPLY(
 	SELECT  [Value]= SUM( bd.QTY)
 	FROM #Bundle bd
 	WHERE bd.Orderid=b.OrderID 
+    AND (bd.SizeCode = b.SizeCode or b.SizeCode = '')
+    AND (bd.Article = b.Article or b.Article = '')
 	AND bd.ArtworkTypeId=a.ArtworkTypeID 
 	AND bd.Patterncode=b.PatternCode 
 	AND bd.PatternDesc =b.PatternDesc
@@ -137,6 +155,8 @@ OUTER APPLY(
 	SELECT  [Value]= SUM( bd.QTY)
 	FROM #Bundle bd
 	WHERE bd.Orderid=b.OrderID 
+    AND (bd.SizeCode = b.SizeCode or b.SizeCode = '')
+    AND (bd.Article = b.Article or b.Article = '')
 	AND bd.ArtworkTypeId=a.ArtworkTypeID 
 	AND bd.Patterncode=b.PatternCode 
 	AND bd.PatternDesc =b.PatternDesc
@@ -168,7 +188,7 @@ where a.status='Approved'
 --and b.apqty < b.farmin
 and a.artworktypeid = '{this.dr_artworkAp["artworktypeid"]}' 
 and a.localsuppid = '{this.dr_artworkAp["localsuppid"]}' 
-and a.mdivisionid='{Env.User.Keyword}'
+and a.mdivisionid='{Sci.Env.User.Keyword}'
 
 ";
                 if (!MyUtility.Check.Empty(sp_b))
@@ -219,7 +239,7 @@ DROP TABLE #Bundle
                 cmds.Add(sp4);
                 #endregion
 
-                DualResult result;
+                Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out this.dtArtwork))
                 {
                     if (this.dtArtwork.Rows.Count == 0)
@@ -247,11 +267,12 @@ DROP TABLE #Bundle
             this.gridImportFromPO.AutoResizeColumns();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -288,9 +309,11 @@ DROP TABLE #Bundle
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
                 .Text("artworkpoid", header: "Artwork PO", iseditingreadonly: true)
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
-                 .Text("artworkid", header: "Artwork", iseditingreadonly: true) // 3
-                 .Numeric("Stitch", header: "Stitch", iseditable: true) // 4
-                 .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
+                .Text("Article", header: "Article", iseditingreadonly: true)
+                .Text("artworkid", header: "Artwork", iseditingreadonly: true) // 3
+                .Text("SizeCode", header: "Size", iseditingreadonly: true)
+                .Numeric("Stitch", header: "Stitch", iseditable: true) // 4
+                .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)
                 .Numeric("UnitPrice", header: "Unit Price", iseditingreadonly: true, decimal_places: 4, integer_places: 4) // 7
                 .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true, integer_places: 2) // 8
@@ -308,12 +331,12 @@ DROP TABLE #Bundle
             this.gridImportFromPO.Columns["LocalSuppCtn"].Visible = false;
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             this.gridImportFromPO.ValidateControl();

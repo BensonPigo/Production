@@ -38,6 +38,12 @@
             this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
             this.labelNoSuppHint = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.chkSize = new Sci.Win.UI.CheckBox();
+            this.chkArticle = new Sci.Win.UI.CheckBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.lblFilter = new Sci.Win.UI.Label();
+            this.txtMasterSP = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.checkBoxAssignedSupp = new Sci.Win.UI.CheckBox();
             this.checkBoxReqQtyHasValue = new Sci.Win.UI.CheckBox();
             this.labSewingInline = new Sci.Win.UI.Label();
@@ -49,8 +55,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridBatchImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtMasterSP = new Sci.Win.UI.TextBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -68,7 +72,7 @@
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnImport
             // 
@@ -80,7 +84,7 @@
             this.btnImport.TabIndex = 0;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // btnFindNow
             // 
@@ -92,7 +96,7 @@
             this.btnFindNow.TabIndex = 7;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
             // 
             // txtSPNoStart
             // 
@@ -146,6 +150,10 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkSize);
+            this.groupBox1.Controls.Add(this.chkArticle);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.lblFilter);
             this.groupBox1.Controls.Add(this.txtMasterSP);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.checkBoxAssignedSupp);
@@ -166,19 +174,78 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
+            // chkSize
+            // 
+            this.chkSize.AutoSize = true;
+            this.chkSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSize.Location = new System.Drawing.Point(179, 79);
+            this.chkSize.Name = "chkSize";
+            this.chkSize.Size = new System.Drawing.Size(54, 21);
+            this.chkSize.TabIndex = 22;
+            this.chkSize.Text = "Size";
+            this.chkSize.UseVisualStyleBackColor = true;
+            this.chkSize.CheckedChanged += new System.EventHandler(this.CheckBoxReqQtyHasValue_CheckedChanged);
+            // 
+            // chkArticle
+            // 
+            this.chkArticle.AutoSize = true;
+            this.chkArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkArticle.Location = new System.Drawing.Point(107, 79);
+            this.chkArticle.Name = "chkArticle";
+            this.chkArticle.Size = new System.Drawing.Size(66, 21);
+            this.chkArticle.TabIndex = 21;
+            this.chkArticle.Text = "Article";
+            this.chkArticle.UseVisualStyleBackColor = true;
+            this.chkArticle.CheckedChanged += new System.EventHandler(this.CheckBoxReqQtyHasValue_CheckedChanged);
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(9, 77);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(95, 23);
+            this.label2.TabIndex = 20;
+            this.label2.Text = "Expand By";
+            // 
+            // lblFilter
+            // 
+            this.lblFilter.Location = new System.Drawing.Point(418, 77);
+            this.lblFilter.Name = "lblFilter";
+            this.lblFilter.Size = new System.Drawing.Size(95, 23);
+            this.lblFilter.TabIndex = 19;
+            this.lblFilter.Text = "Filter";
+            // 
+            // txtMasterSP
+            // 
+            this.txtMasterSP.BackColor = System.Drawing.Color.White;
+            this.txtMasterSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMasterSP.Location = new System.Drawing.Point(516, 15);
+            this.txtMasterSP.Name = "txtMasterSP";
+            this.txtMasterSP.Size = new System.Drawing.Size(122, 23);
+            this.txtMasterSP.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.SkyBlue;
+            this.label1.Location = new System.Drawing.Point(418, 15);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(95, 23);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "Master SP# ";
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // checkBoxAssignedSupp
             // 
             this.checkBoxAssignedSupp.AutoSize = true;
             this.checkBoxAssignedSupp.Checked = true;
             this.checkBoxAssignedSupp.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxAssignedSupp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBoxAssignedSupp.Location = new System.Drawing.Point(114, 80);
+            this.checkBoxAssignedSupp.Location = new System.Drawing.Point(616, 79);
             this.checkBoxAssignedSupp.Name = "checkBoxAssignedSupp";
             this.checkBoxAssignedSupp.Size = new System.Drawing.Size(380, 21);
             this.checkBoxAssignedSupp.TabIndex = 6;
             this.checkBoxAssignedSupp.Text = "Already assigned supplier({#supplier}) by planning team";
             this.checkBoxAssignedSupp.UseVisualStyleBackColor = true;
-            this.checkBoxAssignedSupp.CheckedChanged += new System.EventHandler(this.checkBoxReqQtyHasValue_CheckedChanged);
+            this.checkBoxAssignedSupp.CheckedChanged += new System.EventHandler(this.CheckBoxReqQtyHasValue_CheckedChanged);
             // 
             // checkBoxReqQtyHasValue
             // 
@@ -186,18 +253,18 @@
             this.checkBoxReqQtyHasValue.Checked = true;
             this.checkBoxReqQtyHasValue.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxReqQtyHasValue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBoxReqQtyHasValue.Location = new System.Drawing.Point(9, 80);
+            this.checkBoxReqQtyHasValue.Location = new System.Drawing.Point(516, 79);
             this.checkBoxReqQtyHasValue.Name = "checkBoxReqQtyHasValue";
             this.checkBoxReqQtyHasValue.Size = new System.Drawing.Size(99, 21);
             this.checkBoxReqQtyHasValue.TabIndex = 5;
             this.checkBoxReqQtyHasValue.Text = "Req. Qty>0";
             this.checkBoxReqQtyHasValue.UseVisualStyleBackColor = true;
-            this.checkBoxReqQtyHasValue.CheckedChanged += new System.EventHandler(this.checkBoxReqQtyHasValue_CheckedChanged);
+            this.checkBoxReqQtyHasValue.CheckedChanged += new System.EventHandler(this.CheckBoxReqQtyHasValue_CheckedChanged);
             // 
             // labSewingInline
             // 
             this.labSewingInline.BackColor = System.Drawing.Color.SkyBlue;
-            this.labSewingInline.Location = new System.Drawing.Point(9, 51);
+            this.labSewingInline.Location = new System.Drawing.Point(9, 46);
             this.labSewingInline.Name = "labSewingInline";
             this.labSewingInline.Size = new System.Drawing.Size(95, 23);
             this.labSewingInline.TabIndex = 15;
@@ -230,7 +297,7 @@
             this.dateInlineDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateInlineDate.DateBox2.TabIndex = 1;
             this.dateInlineDate.IsRequired = false;
-            this.dateInlineDate.Location = new System.Drawing.Point(107, 51);
+            this.dateInlineDate.Location = new System.Drawing.Point(107, 46);
             this.dateInlineDate.Name = "dateInlineDate";
             this.dateInlineDate.Size = new System.Drawing.Size(280, 23);
             this.dateInlineDate.TabIndex = 3;
@@ -252,7 +319,7 @@
             this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
-            this.dateSCIDelivery.Location = new System.Drawing.Point(516, 51);
+            this.dateSCIDelivery.Location = new System.Drawing.Point(516, 46);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateSCIDelivery.TabIndex = 4;
@@ -260,7 +327,7 @@
             // labelSCIDelivery
             // 
             this.labelSCIDelivery.BackColor = System.Drawing.Color.SkyBlue;
-            this.labelSCIDelivery.Location = new System.Drawing.Point(418, 51);
+            this.labelSCIDelivery.Location = new System.Drawing.Point(418, 46);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
             this.labelSCIDelivery.TabIndex = 7;
@@ -309,26 +376,7 @@
             this.gridBatchImport.Size = new System.Drawing.Size(1002, 367);
             this.gridBatchImport.TabIndex = 0;
             this.gridBatchImport.TabStop = false;
-            this.gridBatchImport.Sorted += new System.EventHandler(this.gridBatchImport_Sorted);
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.SkyBlue;
-            this.label1.Location = new System.Drawing.Point(418, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 23);
-            this.label1.TabIndex = 18;
-            this.label1.Text = "Master SP# ";
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // txtMasterSP
-            // 
-            this.txtMasterSP.BackColor = System.Drawing.Color.White;
-            this.txtMasterSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMasterSP.Location = new System.Drawing.Point(516, 15);
-            this.txtMasterSP.Name = "txtMasterSP";
-            this.txtMasterSP.Size = new System.Drawing.Size(122, 23);
-            this.txtMasterSP.TabIndex = 2;
+            this.gridBatchImport.Sorted += new System.EventHandler(this.GridBatchImport_Sorted);
             // 
             // P05_Import
             // 
@@ -374,5 +422,9 @@
         private Win.UI.CheckBox checkBoxAssignedSupp;
         private Win.UI.TextBox txtMasterSP;
         private Win.UI.Label label1;
+        private Win.UI.CheckBox chkSize;
+        private Win.UI.CheckBox chkArticle;
+        private Win.UI.Label label2;
+        private Win.UI.Label lblFilter;
     }
 }

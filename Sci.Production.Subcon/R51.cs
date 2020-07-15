@@ -1,78 +1,50 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R51 : Win.Tems.PrintForm
+    /// <summary>
+    /// R51
+    /// </summary>
+    public partial class R51 : Sci.Win.Tems.PrintForm
     {
-        // string DateFormate = "yyyy-MM-dd";
-        // string StartDate, EndDate, ID, Factory, LocalSupplier;
-        DataTable printData;
+        private DataTable printData;
 
+        /// <summary>
+        /// R51
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R51(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
-        // protected override bool ValidateInput()
-        // {
-        //    #region Set Value
-        //    StartDate = (dateDate.Value1.ToString().Empty()) ? "" : ((DateTime)dateDate.Value1).ToString(DateFormate);
-        //    EndDate = (dateDate.Value2.ToString().Empty()) ? "" : ((DateTime)dateDate.Value2).ToString(DateFormate);
-        //    ID = textID.Text;
-        //    Factory = txtfactory1.Text;
-        //    LocalSupplier = txtLocalSupp1.TextBox1.Text;
-        //    #endregion
-        //    return true;
-        // }
-        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        /// <inheritdoc/>
+        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            // #region SQl Parameters
-            // List<SqlParameter> listSqlPar = new List<SqlParameter>();
-            // listSqlPar.Add(new SqlParameter("@StartDate", StartDate));
-            // listSqlPar.Add(new SqlParameter("@EndDate", EndDate));
-            // listSqlPar.Add(new SqlParameter("@ID", ID));
-            // listSqlPar.Add(new SqlParameter("@Factory", Factory));
-            // listSqlPar.Add(new SqlParameter("@LocalSupplier", LocalSupplier));
-            // #endregion
-//            #region SQL Filte
-//            List<string> filte = new List<string>();
-//            if (!StartDate.Empty() && !EndDate.Empty())
-//            {
-//                filte.Add(@"
-//            (Convert (date, AP.AddDate)  >= @StartDate
-// Or Convert (date, AP.EditDate) >= @StartDate)
-// And (Convert (date, AP.AddDate)  <= @EndDate
-// Or Convert (date, AP.EditDate)  <= @EndDate)");
-//            }
-//            if (!ID.Empty())
-//            {
-//                filte.Add("AP.ID = @ID");
-//            }
-//            if (!Factory.Empty())
-//            {
-//                filte.Add("AP.FactoryId = @Factory");
-//            }
-//            if (!LocalSupplier.Empty())
-//            {
-//                filte.Add("AP.LocalSuppID = @LocalSupplier");
-//            }
-//            #endregion
             #region SQL CMD
             string sqlCmd = string.Format(@"
-select	AP.ID
+select	distinct
+        AP.ID
 		,O.poid
 		, AP.FactoryId
 		, AP.Remark
 		, AP.Handle
 		, AP.CurrencyId
-		, Amount = Sum(APD.PoQty * OA.Cost) over(partition by AP.ID)
+		, Amount = Sum(APD.PoQty * APD.Cost) over(partition by AP.ID)
 		, AP.VatRate
 		, AP.Vat
 		, AP.AddName
@@ -91,19 +63,22 @@ select	AP.ID
 		, APD.ArtworkTypeID
 		, FirstCutDate = isnull(C.FirstCutDate,O.CutInLine)
 		, [Delivery] = o2.SciDelivery
-		, OA.Article
+		, OQ.Article
+        , APD.SizeCode
 		, QTY = APD.PoQty
-		, UnitPrice = OA.Cost 
-		, Detail_Amount = APD.PoQty * OA.Cost		
+		, UnitPrice = APD.Cost 
+		, Detail_Amount = APD.PoQty * APD.Cost		
 		, O.AddDate as OrderAdddate
 		, O.EditDate as OrderEditDate
         , [BuyerDelivery] = o2.BuyerDelivery
+        into #tmpArtworkPOBySize
 From ArtworkPO AP
 Inner join ArtworkPO_Detail APD on AP.ID=APD.ID
 Inner join Orders O on APD.OrderID=O.ID
 left join Cutting C on O.ID=C.ID    
-Inner join dbo.View_Order_Artworks OA on  OA.ID=APD.OrderID and OA.PatternCode=APD.PatternCode and OA.ArtworkID=APD.ArtworkId and OA.ArtworkTypeID=APD.ArtworkTypeID
-Inner join Order_Qty OQ on OQ.ID=OA.ID and OQ.SizeCode=OA.SizeCode and OQ.Article=OA.Article
+Inner join Order_Qty OQ on  OQ.ID = APD.OrderID and 
+                            (OQ.SizeCode = APD.SizeCode or APD.SizeCode = '') and 
+                            (OQ.Article = APD.Article or APD.Article = '')
 outer apply (
 	select [BuyerDelivery] = max(o2.BuyerDelivery), [SciDelivery] = min(o2.SciDelivery)
 	from Orders o2 with (nolock)
@@ -118,11 +93,66 @@ Where	AP.POType='O'
             (Convert (date, AP.AddDate)  >= Convert(date, DATEADD(m, -2, GETDATE()))
 		Or Convert (date, AP.EditDate) >=Convert(date, DATEADD(d, -7, GETDATE())) )
 
-group by AP.ID, O.poid,AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.VatRate, AP.Vat, AP.AddName, AP.AddDate, AP.EditName, AP.EditDate 
-		 , APD.OrderID, O.StyleID, O.BrandID, O.SeasonID, APD.PatternCode, APD.PatternDesc, APD.Farmout, APD.Farmin, APD.PoQty, APD.ArtworkTypeID
-		 , isnull(C.FirstCutDate,O.CutInLine), o2.SciDelivery, OA.Article,OA.Cost,O.AddDate,O.EditDate, o2.BuyerDelivery");
-
-                // , (filte.Count > 0) ? "and " + filte.JoinToString("\n\r and ") : "");
+--By Article作最後呈現
+select  ID
+		, poid
+		, FactoryId
+		, Remark
+		, Handle
+		, CurrencyId
+		, Amount = sum(Amount)
+		, VatRate
+		, Vat
+		, AddName
+		, APAddDate
+		, EditName
+		, APEditDate
+		, OrderID
+		, StyleID
+		, BrandID
+		, SeasonID
+		, PatternCode
+		, PatternDesc
+		, Farmout = sum(Farmout)
+		, Farmin = sum(Farmin)
+		, PoQty = sum(PoQty)
+		, ArtworkTypeID
+		, FirstCutDate
+		, Delivery
+		, Article
+		, QTY = sum(QTY)
+		, UnitPrice = AVG(UnitPrice)
+		, Detail_Amount = sum(Detail_Amount)	
+		, OrderAdddate
+		, OrderEditDate
+        , BuyerDelivery
+from #tmpArtworkPOBySize
+group by    ID
+		    , poid
+		    , FactoryId
+		    , Remark
+		    , Handle
+		    , CurrencyId
+            , VatRate
+		    , Vat
+		    , AddName
+		    , APAddDate
+		    , EditName
+		    , APEditDate
+		    , OrderID
+		    , StyleID
+		    , BrandID
+		    , SeasonID
+		    , PatternCode
+		    , PatternDesc
+            , ArtworkTypeID
+		    , FirstCutDate
+		    , Delivery
+		    , Article
+			, OrderAdddate
+			, OrderEditDate
+            , BuyerDelivery
+");
             #endregion
             #region Get Data
             DualResult result;
@@ -131,9 +161,10 @@ group by AP.ID, O.poid,AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.Vat
                 return result;
             }
             #endregion
-            return Ict.Result.True;
+            return Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region check printData
@@ -146,7 +177,7 @@ group by AP.ID, O.poid,AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.Vat
             this.SetCount(this.printData.Rows.Count);
             this.ShowWaitMessage("Excel Processing");
             #region To Excel
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R51.xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R51.xltx");
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R51.xltx", 2, showExcel: false, excelApp: objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Cells[1, 2] = DateTime.Today.AddMonths(-2).ToShortDateString();
@@ -155,7 +186,7 @@ group by AP.ID, O.poid,AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.Vat
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName("Subcon_R51");
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R51");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

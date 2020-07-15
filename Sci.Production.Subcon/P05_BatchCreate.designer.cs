@@ -37,6 +37,11 @@
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.chkSize = new Sci.Win.UI.CheckBox();
+            this.chkArticle = new Sci.Win.UI.CheckBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.lblFilter = new Sci.Win.UI.Label();
+            this.checkBoxReqQtyHasValue = new Sci.Win.UI.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
             this.labelArtworkType = new Sci.Win.UI.Label();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.Txtartworktype_fty();
@@ -50,7 +55,6 @@
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.checkBoxReqQtyHasValue = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchCreateFromSubProcessData)).BeginInit();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -79,7 +83,7 @@
             this.gridBatchCreateFromSubProcessData.RowTemplate.Height = 24;
             this.gridBatchCreateFromSubProcessData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridBatchCreateFromSubProcessData.ShowCellToolTips = false;
-            this.gridBatchCreateFromSubProcessData.Size = new System.Drawing.Size(1024, 399);
+            this.gridBatchCreateFromSubProcessData.Size = new System.Drawing.Size(1024, 375);
             this.gridBatchCreateFromSubProcessData.TabIndex = 0;
             this.gridBatchCreateFromSubProcessData.TabStop = false;
             // 
@@ -100,7 +104,7 @@
             this.dateInlineDate.DateBox2.Size = new System.Drawing.Size(111, 23);
             this.dateInlineDate.DateBox2.TabIndex = 1;
             this.dateInlineDate.IsRequired = false;
-            this.dateInlineDate.Location = new System.Drawing.Point(89, 52);
+            this.dateInlineDate.Location = new System.Drawing.Point(88, 49);
             this.dateInlineDate.Name = "dateInlineDate";
             this.dateInlineDate.Size = new System.Drawing.Size(245, 23);
             this.dateInlineDate.TabIndex = 3;
@@ -130,7 +134,7 @@
             // labSewingInline
             // 
             this.labSewingInline.BackColor = System.Drawing.Color.SkyBlue;
-            this.labSewingInline.Location = new System.Drawing.Point(9, 52);
+            this.labSewingInline.Location = new System.Drawing.Point(9, 49);
             this.labSewingInline.Name = "labSewingInline";
             this.labSewingInline.Size = new System.Drawing.Size(77, 23);
             this.labSewingInline.TabIndex = 8;
@@ -151,7 +155,7 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(227, 14);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(227, 15);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(107, 23);
             this.txtSPNoEnd.TabIndex = 1;
@@ -160,13 +164,17 @@
             // 
             this.panel1.Controls.Add(this.gridBatchCreateFromSubProcessData);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 89);
+            this.panel1.Location = new System.Drawing.Point(0, 113);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1024, 399);
+            this.panel1.Size = new System.Drawing.Size(1024, 375);
             this.panel1.TabIndex = 23;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkSize);
+            this.groupBox1.Controls.Add(this.chkArticle);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.lblFilter);
             this.groupBox1.Controls.Add(this.checkBoxReqQtyHasValue);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.labelArtworkType);
@@ -182,9 +190,63 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1024, 89);
+            this.groupBox1.Size = new System.Drawing.Size(1024, 113);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
+            // 
+            // chkSize
+            // 
+            this.chkSize.AutoSize = true;
+            this.chkSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSize.Location = new System.Drawing.Point(161, 85);
+            this.chkSize.Name = "chkSize";
+            this.chkSize.Size = new System.Drawing.Size(54, 21);
+            this.chkSize.TabIndex = 24;
+            this.chkSize.Text = "Size";
+            this.chkSize.UseVisualStyleBackColor = true;
+            this.chkSize.CheckedChanged += new System.EventHandler(this.CheckBoxReqQtyHasValue_CheckedChanged);
+            // 
+            // chkArticle
+            // 
+            this.chkArticle.AutoSize = true;
+            this.chkArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkArticle.Location = new System.Drawing.Point(89, 85);
+            this.chkArticle.Name = "chkArticle";
+            this.chkArticle.Size = new System.Drawing.Size(66, 21);
+            this.chkArticle.TabIndex = 23;
+            this.chkArticle.Text = "Article";
+            this.chkArticle.UseVisualStyleBackColor = true;
+            this.chkArticle.CheckedChanged += new System.EventHandler(this.CheckBoxReqQtyHasValue_CheckedChanged);
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(9, 83);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(77, 23);
+            this.label2.TabIndex = 21;
+            this.label2.Text = "Expand By";
+            // 
+            // lblFilter
+            // 
+            this.lblFilter.Location = new System.Drawing.Point(346, 83);
+            this.lblFilter.Name = "lblFilter";
+            this.lblFilter.Size = new System.Drawing.Size(86, 23);
+            this.lblFilter.TabIndex = 20;
+            this.lblFilter.Text = "Filter";
+            // 
+            // checkBoxReqQtyHasValue
+            // 
+            this.checkBoxReqQtyHasValue.AutoSize = true;
+            this.checkBoxReqQtyHasValue.Checked = true;
+            this.checkBoxReqQtyHasValue.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxReqQtyHasValue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxReqQtyHasValue.Location = new System.Drawing.Point(435, 85);
+            this.checkBoxReqQtyHasValue.Name = "checkBoxReqQtyHasValue";
+            this.checkBoxReqQtyHasValue.Size = new System.Drawing.Size(99, 21);
+            this.checkBoxReqQtyHasValue.TabIndex = 17;
+            this.checkBoxReqQtyHasValue.Text = "Req. Qty>0";
+            this.checkBoxReqQtyHasValue.UseVisualStyleBackColor = true;
+            this.checkBoxReqQtyHasValue.CheckedChanged += new System.EventHandler(this.CheckBoxReqQtyHasValue_CheckedChanged);
             // 
             // label8
             // 
@@ -198,7 +260,7 @@
             // labelArtworkType
             // 
             this.labelArtworkType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.labelArtworkType.Location = new System.Drawing.Point(346, 52);
+            this.labelArtworkType.Location = new System.Drawing.Point(346, 49);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(86, 23);
             this.labelArtworkType.TabIndex = 12;
@@ -211,11 +273,11 @@
             this.txtartworktype_ftyArtworkType.CClassify = "";
             this.txtartworktype_ftyArtworkType.CSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(435, 52);
+            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(435, 49);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(132, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 4;
-            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
+            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.Txtartworktype_ftyArtworkType_Validating);
             // 
             // btnFindNow
             // 
@@ -227,13 +289,13 @@
             this.btnFindNow.TabIndex = 5;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
             // 
             // txtSPNoStart
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(88, 14);
+            this.txtSPNoStart.Location = new System.Drawing.Point(88, 15);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(107, 23);
             this.txtSPNoStart.TabIndex = 0;
@@ -273,7 +335,7 @@
             this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnImport
             // 
@@ -285,7 +347,7 @@
             this.btnImport.TabIndex = 2;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // groupBox2
             // 
@@ -311,21 +373,7 @@
             this.btnToExcel.TabIndex = 1;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
-            // 
-            // checkBoxReqQtyHasValue
-            // 
-            this.checkBoxReqQtyHasValue.AutoSize = true;
-            this.checkBoxReqQtyHasValue.Checked = true;
-            this.checkBoxReqQtyHasValue.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxReqQtyHasValue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBoxReqQtyHasValue.Location = new System.Drawing.Point(579, 52);
-            this.checkBoxReqQtyHasValue.Name = "checkBoxReqQtyHasValue";
-            this.checkBoxReqQtyHasValue.Size = new System.Drawing.Size(99, 21);
-            this.checkBoxReqQtyHasValue.TabIndex = 17;
-            this.checkBoxReqQtyHasValue.Text = "Req. Qty>0";
-            this.checkBoxReqQtyHasValue.UseVisualStyleBackColor = true;
-            this.checkBoxReqQtyHasValue.CheckedChanged += new System.EventHandler(this.checkBoxReqQtyHasValue_CheckedChanged);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // P05_BatchCreate
             // 
@@ -371,5 +419,9 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Label label8;
         private Win.UI.CheckBox checkBoxReqQtyHasValue;
+        private Win.UI.Label lblFilter;
+        private Win.UI.Label label2;
+        private Win.UI.CheckBox chkSize;
+        private Win.UI.CheckBox chkArticle;
     }
 }

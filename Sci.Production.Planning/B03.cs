@@ -201,6 +201,49 @@ order by ID
             };
             #endregion
 
+            #region Size column set
+            DataGridViewGeneratorTextColumnSettings colSize = new DataGridViewGeneratorTextColumnSettings();
+            colSize.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    Sci.Win.Tools.SelectItem item;
+                    string sqlcmd;
+
+                    sqlcmd = $@"
+select SizeCode
+from Style_Sizecode WITH (NOLOCK) 
+WHERE StyleUkey = '{this.CurrentMaintain["Ukey"]}'
+order by Seq ASC
+";
+                    item = new Sci.Win.Tools.SelectItem(sqlcmd, null, null);
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    var x = item.GetSelecteds();
+
+                    this.CurrentDetailData["SizeCode"] = x[0]["SizeCode"].ToString();
+                }
+            };
+
+            colSize.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    bool isSizeExists = MyUtility.Check.Seek($"Select 1 from Style_Sizecode WITH (NOLOCK) where StyleUkey = '{this.CurrentMaintain["Ukey"]}' and SizeCode = '{e.FormattedValue}'");
+                    if (!isSizeExists)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Size is not found!", "Warning");
+                        return;
+                    }
+                }
+            };
+            #endregion
+
             Ict.Win.UI.DataGridViewComboBoxColumn col_PriceApv;
             Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("Y", "Y");
@@ -212,6 +255,7 @@ order by ID
             .Text("localsuppid", header: "Supplier", width: Widths.AnsiChars(6), settings: ts4)
             .Text("suppname", header: "Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("currencyid", header: "Currency", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), settings: colSize)
             .Numeric("price", header: "Price", width: Widths.AnsiChars(8), decimal_places: 4, integer_places: 10)
             .Date("oven", header: "Oven Test", width: Widths.AnsiChars(10))
             .Date("wash", header: "Wash Test", width: Widths.AnsiChars(10))
