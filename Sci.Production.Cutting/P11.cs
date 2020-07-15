@@ -2399,6 +2399,8 @@ values
                     // 處理All Part筆數
                     if (a > 0)
                     {
+                        int ttlAllPartQty = dtAllPart.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
+                            .Sum(s => MyUtility.Convert.GetInt(s["Qty"]));
                         DataRow row = dtAllPart.Rows[0];
                         for (int i = 0; i < tone; i++)
                         {
@@ -2406,12 +2408,8 @@ values
                             new_startno = startno_bytone + i;
                             int notAllpart = PatternAry.Rows.Count - 1;
                             notAllpart = notAllpart == 0 ? 1 : notAllpart;
-                            row["Qty"] = tmpBundle_Detail.AsEnumerable().
-                                Where(w => w.RowState != DataRowState.Deleted &&
-                                MyUtility.Convert.GetString(w["PatternCode"]) != "ALLPARTS" &&
-                                MyUtility.Convert.GetInt(w["BundleGroup"]) == MyUtility.Convert.GetInt(row["BundleGroup"])).
-                                Sum(s => MyUtility.Convert.GetInt(s["Qty"]))
-                                / notAllpart;
+                            row["Qty"] = ttlAllPartQty / tone;
+
                             dtAllPart2.ImportRow(row);
                         }
 
