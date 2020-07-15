@@ -44,7 +44,7 @@ namespace Sci.Production.Shipping
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out DataTable factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            MyUtility.Tool.SetupCombox(this.comboSummaryBy, 2, 1, "0,SP and Seq,1,PL");
+            MyUtility.Tool.SetupCombox(this.comboSummaryBy, 2, 1, "0,SP and Seq,1,PackingList");
             this.comboM.Text = Env.User.Keyword;
             this.comboFactory.SelectedIndex = -1;
             this.comboSummaryBy.SelectedIndex = 0;
@@ -171,7 +171,7 @@ namespace Sci.Production.Shipping
 		,oq.Qty
 		,ShipQty = (select isnull(sum(ShipQty), 0) 
 					from Pullout_Detail WITH (NOLOCK) 
-					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) - [dbo].getInvAdjQty(o.ID,oq.Seq) 
+					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq)
 		,OrderTtlQty=o.Qty
 		,ShipTtlQty=isnull(plds.ShipQty,0)
         ,plds.CTNQty
