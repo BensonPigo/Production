@@ -543,7 +543,8 @@ BEGIN
 				t.IsBuyBack			   = isnull (s.IsBuyBack, 0),
 				t.BuyBackReason           = isnull (s.BuyBackReason, ''),
 				t.IsBuyBackCrossArticle           = isnull (s.IsBuyBackCrossArticle, 0),
-				t.IsBuyBackCrossSizeCode           = isnull (s.IsBuyBackCrossSizeCode, 0)
+				t.IsBuyBackCrossSizeCode           = isnull (s.IsBuyBackCrossSizeCode, 0),
+				t.KpiEachConsCheck	   = s.KpiEachConsCheck
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -575,6 +576,7 @@ BEGIN
 			, LastProductionDate	, EstPODD				, AirFreightByBrand		, AllowanceComboID      , ChangeMemoDate
 			, ForecastCategory		, OnSiteSample			, PulloutCmplDate		, NeedProduction		, KeepPanels
 			, IsBuyBack				, BuyBackReason			, IsBuyBackCrossArticle , IsBuyBackCrossSizeCode
+			, KpiEachConsCheck
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
 			, s.ProjectID			, s.Category			, s.OrderTypeID			, s.BuyMonth			, s.Dest 
@@ -605,6 +607,7 @@ BEGIN
 			, s.LastProductionDate	, s.EstPODD				, s.AirFreightByBrand	, s.AllowanceComboID    , s.ChangeMemoDate
 			, s.ForecastCategory	, s.OnSiteSample		, s.PulloutCmplDate		, isnull (s.NeedProduction, 0)		, isnull (s.KeepPanels, 0)
 			, isnull (s.IsBuyBack, 0), isnull (s.BuyBackReason, '')		, isnull (s.IsBuyBackCrossArticle, 0) , isnull (s.IsBuyBackCrossSizeCode, 0)
+			, s.KpiEachConsCheck
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
