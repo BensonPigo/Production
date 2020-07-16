@@ -40,7 +40,6 @@ EXISTS (
 	INNER JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
     WHERE MDivisionID='{Sci.Env.User.Keyword}' 
     AND Finished = {Isfinished} 
-	AND o.Finished = 0 
 	AND o.ID = Order_QtyShip.ID
 	AND isnull(ot.IsGMTMaster,0) = 0
     AND o.Category IN ('B','S','G')
