@@ -375,6 +375,49 @@ select distinct
             SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dtDetail">bool</param>
+        /// <param name="IsConfirmed">bool</param>
+        public void SentBorrowBackToGensongAutoWHFabric(DataTable dtDetail,bool IsConfirmed)
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            string apiThread = "SentBorrowBackToGensong";
+            string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject = dtDetail.AsEnumerable()
+                .Select(dr => new
+                {
+                    ID = dr["ID"].ToString(),
+                    FromPOID = dr["FromPOID"].ToString(),
+                    FromSeq1 = dr["FromSeq1"].ToString(),
+                    FromSeq2 = dr["FromSeq2"].ToString(),
+                    FromRoll = dr["FromRoll"].ToString(),
+                    FromDyelot = dr["FromDyelot"].ToString(),
+                    FromStockType = dr["FromStockType"].ToString(),
+                    ToPOID = dr["ToPOID"].ToString(),
+                    ToSeq1 = dr["ToSeq1"].ToString(),
+                    ToSeq2 = dr["ToSeq2"].ToString(),
+                    ToRoll = dr["ToRoll"].ToString(),
+                    ToDyelot = dr["ToDyelot"].ToString(),
+                    ToStockType = dr["ToStockType"].ToString(),
+                    Qty = (decimal)dr["Qty"],
+                    Ukey = (long)dr["Ukey"],
+                    Junk = IsConfirmed,
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                });
+
+            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("BorrowBack", bodyObject));
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
         public void SentReturnReceiptToGensongAutoWHFabric(DataTable dtMaster)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
