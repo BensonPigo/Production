@@ -45,6 +45,12 @@ namespace Sci.Production.Class
             set { this.DisplayBox1.Text = value; }
         }
 
+        /// <summary>
+        /// 是否要顯示 Junk 的資料
+        /// </summary>
+        [Description("是否被Shipping B03使用")]
+        public bool IsUnselectableShipB03 { get; set; } = false;
+
         private string oldValue = string.Empty;
 
         private void TextBox1_Validating(object sender, CancelEventArgs e)
@@ -62,10 +68,7 @@ namespace Sci.Production.Class
 
                 */
 
-                string cmd = $@"
-SELECT ID ,Name
-FROM SciFMS_AccountNo
-WHERE Junk = 0
+                string b03Filter = $@"
 AND ID NOT IN (
 		SELECT ID
 		FROM AccountNoSetting 
@@ -76,6 +79,13 @@ AND SUBSTRING(ID,1,4) NOT IN (
 	FROM AccountNoSetting 
 	WHERE  LEN(ID)=4 AND UnselectableShipB03 = 1
 )
+";
+
+                string cmd = $@"
+SELECT ID ,Name
+FROM SciFMS_AccountNo
+WHERE Junk = 0
+{(this.IsUnselectableShipB03 ? b03Filter : string.Empty)}
 AND ID = @ID
 ORDER BY ID
 ";
@@ -115,11 +125,7 @@ ORDER BY ID
                 2.	若統制科目沒有勾選則『依照子科目判斷是否有勾選』
 
             */
-
-            string cmd = @"
-SELECT ID ,Name
-FROM SciFMS_AccountNo
-WHERE Junk = 0
+            string b03Filter = $@"
 AND ID NOT IN (
 		SELECT ID
 		FROM AccountNoSetting 
@@ -128,8 +134,14 @@ AND ID NOT IN (
 AND SUBSTRING(ID,1,4) NOT IN (	
 	SELECT ID
 	FROM AccountNoSetting 
-	WHERE  LEN(ID) = 4 AND UnselectableShipB03 = 1
+	WHERE  LEN(ID)=4 AND UnselectableShipB03 = 1
 )
+";
+            string cmd = $@"
+SELECT ID ,Name
+FROM SciFMS_AccountNo
+WHERE Junk = 0
+{(this.IsUnselectableShipB03 ? b03Filter : string.Empty)}
 ORDER BY ID
 ";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "8,30", this.TextBox1.Text);
@@ -155,11 +167,7 @@ ORDER BY ID
                     this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                     return;
                 }
-
-                string cmd = $@"
-SELECT ID ,Name
-FROM SciFMS_AccountNo
-WHERE Junk = 0
+                string b03Filter = $@"
 AND ID NOT IN (
 		SELECT ID
 		FROM AccountNoSetting 
@@ -170,6 +178,12 @@ AND SUBSTRING(ID,1,4) NOT IN (
 	FROM AccountNoSetting 
 	WHERE  LEN(ID)=4 AND UnselectableShipB03 = 1
 )
+";
+                string cmd = $@"
+SELECT ID ,Name
+FROM SciFMS_AccountNo
+WHERE Junk = 0
+{(this.IsUnselectableShipB03 ? b03Filter : string.Empty)}
 AND ID = @ID
 ORDER BY ID
 ";
