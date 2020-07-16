@@ -95,7 +95,7 @@ SELECT
 	,[SQR] = IIF( c.InspectQty = 0,0 , (c.DefectQty * 1.0 / c.InspectQty) * 100)
 	,c.Remark
 	,c.ID
-	,[InsCtn]=InsCtn.Val
+	,[InsCtn]=IIF(c.stage = 'Final' OR c.Stage ='3rd party', InsCtn.Val,NULL)
 INTO #tmp
 FROm CFAInspectionRecord  c
 INNER JOIN Order_QtyShip oq ON c.OrderID = oq.ID AND c.Seq = oq.Seq
