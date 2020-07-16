@@ -338,6 +338,7 @@
             // 
             this.txtAccountNo.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "AccountID", true));
             this.txtAccountNo.DisplayBox1Binding = "";
+            this.txtAccountNo.IsUnselectableShipB03 = true;
             this.txtAccountNo.Location = new System.Drawing.Point(120, 292);
             this.txtAccountNo.Name = "txtAccountNo";
             this.txtAccountNo.Size = new System.Drawing.Size(308, 23);
