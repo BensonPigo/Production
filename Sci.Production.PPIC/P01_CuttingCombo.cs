@@ -27,7 +27,7 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             DataTable gridData;
-            string sqlCmd = string.Format("select CuttingSP,ID from Orders WITH (NOLOCK) where POID = '{0}'", this.poID);
+            string sqlCmd = string.Format("select CuttingSP,ID,KPILETA,PFETA,LETA,SewETA from Orders WITH (NOLOCK) where POID = '{0}'", this.poID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)
             {
@@ -41,7 +41,11 @@ namespace Sci.Production.PPIC
             this.gridCuttingCombo.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridCuttingCombo)
                 .Text("CuttingSP", header: "Cutting SP#", width: Widths.AnsiChars(13))
-                .Text("ID", header: "SP#", width: Widths.AnsiChars(15));
+                .Text("ID", header: "SP#", width: Widths.AnsiChars(15))
+                .Date("KPILETA", header: "KPI LETA]", width: Widths.AnsiChars(12))
+                .Date("PFETA", header: "PF ETA", width: Widths.AnsiChars(12))
+                .Date("LETA", header: "SCHD L/ETA", width: Widths.AnsiChars(12))
+                .Date("SewETA", header: "Sew. MTL ETA(SP)", width: Widths.AnsiChars(12));
         }
     }
 }
