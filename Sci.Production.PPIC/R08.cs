@@ -29,7 +29,9 @@ namespace Sci.Production.PPIC
         private string T;
         private string Status;
         private string Sharedept;
-        private string reportType;
+        private string rType;
+        private bool IncludeJunk;
+        private bool ReplacementReport;
 
         /// <summary>
         /// R08
@@ -70,7 +72,9 @@ namespace Sci.Production.PPIC
             this.T = MyUtility.Convert.GetString(this.comboType.SelectedValue);
             this.Status = this.cmbStatus.Text;
             this.Sharedept = this.txtSharedept.Text;
-            this.reportType = this.cmbReportType.Text;
+            this.rType = this.cmbReportType.Text;
+            this.IncludeJunk = this.chkJunk.Checked;
+            this.ReplacementReport = this.chkReplacementReport.Checked;
             return base.ValidateInput();
         }
 
@@ -83,88 +87,103 @@ namespace Sci.Production.PPIC
 
             #region where
             string where = string.Empty;
+            string whereSummary = string.Empty;
+            string whereDetail = string.Empty;
             if (!MyUtility.Check.Empty(this.Cdate1))
             {
-                where += $@"and rr.CDate >= @CDate1 " + "\r\n";
+                where += $@"and rr.CDate >= @CDate1 " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@CDate1", this.Cdate1));
             }
 
             if (!MyUtility.Check.Empty(this.Cdate2))
             {
-                where += $@"and rr.CDate <= @CDate2 " + "\r\n";
+                where += $@"and rr.CDate <= @CDate2 " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@CDate2", this.Cdate2));
             }
 
             if (!MyUtility.Check.Empty(this.Apvdate1))
             {
-                where += $@"and rr.ApvDate >= @ApvDate1 " + "\r\n";
+                where += $@"and rr.ApvDate >= @ApvDate1 " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@ApvDate1", this.Apvdate1));
             }
 
             if (!MyUtility.Check.Empty(this.Apvdate2))
             {
-                where += $@"and rr.ApvDate <= @ApvDate2 " + "\r\n";
+                where += $@"and rr.ApvDate <= @ApvDate2 " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@ApvDate2", this.Apvdate2));
             }
 
             if (!MyUtility.Check.Empty(this.Lockdate1))
             {
-                where += $@"and rr.LockDate >= @Lockdate1 " + "\r\n";
+                where += $@"and rr.LockDate >= @Lockdate1 " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@Lockdate1", this.Lockdate1));
             }
 
             if (!MyUtility.Check.Empty(this.Lockdate2))
             {
-                where += $@"and rr.LockDate <= @Lockdate2 " + "\r\n";
+                where += $@"and rr.LockDate <= @Lockdate2 " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@Lockdate2", this.Lockdate2));
             }
 
             if (!MyUtility.Check.Empty(this.Cfmdate1))
             {
-                where += $@"and cast(rr.RespDeptConfirmDate as date) >= @Cfmdate1 " + "\r\n";
+                where += $@"and cast(rr.RespDeptConfirmDate as date) >= @Cfmdate1 " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@Cfmdate1", this.Cfmdate1));
             }
 
             if (!MyUtility.Check.Empty(this.Cfmdate2))
             {
-                where += $@"and cast(rr.RespDeptConfirmDate as date) <= @Cfmdate2 " + "\r\n";
+                where += $@"and cast(rr.RespDeptConfirmDate as date) <= @Cfmdate2 " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@Cfmdate2", this.Cfmdate2));
             }
 
             if (!MyUtility.Check.Empty(this.MDivisionID))
             {
-                where += $@"and rr.MDivisionID = @MDivisionID " + "\r\n";
+                where += $@"and rr.MDivisionID = @MDivisionID " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@MDivisionID", this.MDivisionID));
             }
 
             if (!MyUtility.Check.Empty(this.FtyGroup))
             {
-                where += $@"and rr.FactoryID = @FactoryID " + "\r\n";
+                where += $@"and rr.FactoryID = @FactoryID " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@FactoryID", this.FtyGroup));
             }
 
             if (!MyUtility.Check.Empty(this.T))
             {
-                where += $@"and rr.Type = @Type " + "\r\n";
+                where += $@"and rr.Type = @Type " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@Type", this.T));
             }
 
             if (this.Status != "ALL")
             {
-                where += $@"and rr.Status = @Status " + "\r\n";
+                where += $@"and rr.Status = @Status " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@Status", this.Status));
             }
 
             if (!MyUtility.Check.Empty(this.Sharedept))
             {
-                where += $@"and exists(select 1 from ICR_ResponsibilityDept icr with(nolock) where icr.ID = rr.id and icr.DepartmentID =  @DepartmentID) " + "\r\n";
+                where += $@"and exists(select 1 from ICR_ResponsibilityDept icr with(nolock) where icr.ID = rr.id and icr.DepartmentID =  @DepartmentID) " + Environment.NewLine;
                 sqlpar.Add(new SqlParameter("@DepartmentID", this.Sharedept));
             }
+
+            if (!this.chkJunk.Checked)
+            {
+                whereSummary += "and exists (select 1 from ReplacementReport_Detail where Junk = 0 and rr.ID = ID)" + Environment.NewLine;
+                whereDetail += "and rrd.Junk = 0" + Environment.NewLine;
+            }
+
+            if (this.chkReplacementReport.Checked)
+            {
+                whereSummary += "and rr.Status != 'Auto.Lock' and exists (select 1 from ReplacementReport_Detail where Junk = 0 and rr.ID = ID)" + Environment.NewLine;
+                whereDetail += "and rr.Status != 'Auto.Lock' and rrd.Junk = 0" + Environment.NewLine;
+            }
+
             #endregion
 
             #region sqlcmd 主table
             string sqlcmd = string.Empty;
-            if (this.reportType == "Detail List")
+            if (this.rType == "Detail List")
             {
                 sqlcmd = $@"
 select
@@ -227,6 +246,7 @@ outer apply(
 )x
 where 1=1
 {where}
+{whereSummary}
 
 select
 	rr.ID,
@@ -300,6 +320,7 @@ outer apply (
 )x
 where 1=1
 {where}
+{whereDetail}
 ";
             }
             else
@@ -401,7 +422,7 @@ where 1=1
             }
 
             string filename = string.Empty;
-            if (this.reportType == "Detail List")
+            if (this.rType == "Detail List")
             {
                 filename = "PPIC_R08_DetailList";
             }
@@ -448,6 +469,16 @@ where 1=1
             }
 
             this.txtSharedept.Text = item.GetSelectedString();
+        }
+
+        private void CmbReportType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            bool isCheck = this.cmbReportType.SelectedIndex == 0;
+            this.chkJunk.Enabled = isCheck;
+            this.chkReplacementReport.Enabled = isCheck;
+
+            this.chkJunk.Checked = isCheck ? this.chkJunk.Checked : isCheck;
+            this.chkReplacementReport.Checked = isCheck ? this.chkReplacementReport.Checked : isCheck;
         }
     }
 }
