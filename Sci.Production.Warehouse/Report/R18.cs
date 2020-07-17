@@ -1,20 +1,23 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Data;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Sci.Data;
-using Ict;
-using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R18 : Win.Tems.PrintForm
     {
-        DataTable dt;
+        private DataTable PrintData;
 
         private string category;
 
+        /// <inheritdoc/>
         public R18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -22,6 +25,7 @@ namespace Sci.Production.Warehouse
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.txtSPNo.Text)
@@ -46,47 +50,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
-        protected override bool OnToExcel(Win.ReportDefinition report)
-        {
-            this.SetCount(this.dt.Rows.Count);
-            DualResult result = Ict.Result.True;
-            if (this.dt.Rows.Count == 0)
-            {
-                MyUtility.Msg.InfoBox("Data not found!!");
-                return result;
-            }
-
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R18_Material_Tracking.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_R18_Material_Tracking.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
-
-            this.ShowWaitMessage("Excel Processing...");
-            Excel.Worksheet worksheet = objApp.Sheets[1];
-            for (int i = 1; i <= this.dt.Rows.Count; i++)
-            {
-                string str = worksheet.Cells[i + 1, 20].Value;
-                if (!MyUtility.Check.Empty(str))
-                {
-                    worksheet.Cells[i + 1, 20] = str.Trim();
-                }
-            }
-
-            objApp.Columns.AutoFit();
-            objApp.Rows.AutoFit();
-            worksheet.Columns[20].ColumnWidth = 88;
-
-            #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R18_Material_Tracking");
-            objApp.ActiveWorkbook.SaveAs(strExcelName);
-            objApp.Quit();
-            Marshal.ReleaseComObject(objApp);
-            Marshal.ReleaseComObject(worksheet);
-
-            strExcelName.OpenFile();
-            #endregion
-            this.HideWaitMessage();
-            return false;
-        }
-
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             // return base.OnAsyncDataLoad(e);
@@ -104,79 +68,65 @@ namespace Sci.Production.Warehouse
             string sizespec = this.txtSizeCode.Text;
             bool chkbalance = this.checkBalanceQty.Checked;
 
-            DualResult result = Ict.Result.True;
+            DualResult result;
             StringBuilder sqlcmd = new StringBuilder();
             #region sql command
             sqlcmd.Append(string.Format(
                 @"
 with cte as (
-    select  isnull(x.FactoryID,y.FactoryID) factoryid
-            , pd.id
-            , pd.seq1
-            , pd.seq2
-            , supplier = (select supp.id+'-'+supp.AbbEN 
-                          from dbo.supp WITH (NOLOCK) 
-                          where po.suppid = supp.id)
-            , styleid = isnull(x.StyleID,y.StyleID) 
-            , SeasonID = ISNULL(x.SeasonID,y.SeasonID) 
-            , brandid = ISNULL(x.BrandID,y.BrandID) 
-            , x.Category
-            , [ExFactoryDate] = x.SciDelivery
-            , pd.ETA
-            , pd.FinalETA
-            , x.BuyerDelivery
-            , x.SciDelivery
-            , pd.Complete
-            , pd.Refno
-            , pd.Width
-            , pd.ColorID
-            , pd.SizeSpec
-            , [description] = isnull(ltrim(rtrim(dbo.getMtlDesc(pd.id,pd.seq1,pd.seq2,2,0))), '') 
-            , y.Deadline
-            , pd.Qty
-            , pd.ShipQty
-            , pd.InputQty
-            , pd.OutputQty
-            , taipeiBalance = pd.InputQty - pd.OutputQty
-            , mpd.InQty
-            , mpd.OutQty
-            , mpd.AdjustQty
-            , balanceqty = mpd.InQty-mpd.OutQty-mpd.AdjustQty
-            , mpd.ALocation
-            , mpd.LInvQty
-            , mpd.BLocation
-            , mpd.LObQty
-            , wkno = ( select t.id+',' 
-                       from (select distinct Export.id 
-                             from dbo.Export WITH (NOLOCK) 
-                             inner join dbo.Export_Detail WITH (NOLOCK) on Export_Detail.id = Export.id  
-                             where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2)t 
-                       for xml path(''))
-            , blno = (select t.Blno+',' 
-                      from (select distinct Blno 
-                            from dbo.Export WITH (NOLOCK) 
-                            inner join dbo.Export_Detail WITH (NOLOCK) on Export_Detail.id = Export.id  
-                            where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2 and Blno !='')t 
-                      for xml path(''))
+    select  isnull(o.FactoryID,y.FactoryID) factoryid
+		    , pd.id
+		    , pd.seq1
+		    , pd.seq2
+		    , supplier = (select supp.id+'-'+supp.AbbEN 
+						    from dbo.supp WITH (NOLOCK) 
+						    where po.suppid = supp.id)
+		    , styleid = isnull(o.StyleID,y.StyleID) 
+		    , SeasonID = ISNULL(o.SeasonID,y.SeasonID) 
+		    , brandid = ISNULL(o.BrandID,y.BrandID) 
+		    , o.Category
+		    , [ExFactoryDate] = o.SciDelivery
+		    , pd.ETA
+		    , pd.FinalETA
+		    , o.BuyerDelivery
+		    , o.SciDelivery
+		    , pd.Complete
+		    , pd.Refno
+		    , pd.Width
+		    , pd.ColorID
+		    , pd.SizeSpec
+		    , [description] = isnull(ltrim(rtrim(dbo.getMtlDesc(pd.id,pd.seq1,pd.seq2,2,0))), '') 
+		    , y.Deadline
+		    , pd.Qty
+		    , pd.ShipQty
+		    , pd.InputQty
+		    , pd.OutputQty
+		    , taipeiBalance = pd.InputQty - pd.OutputQty
+		    , mpd.InQty
+		    , mpd.OutQty
+		    , mpd.AdjustQty
+		    , balanceqty = mpd.InQty-mpd.OutQty-mpd.AdjustQty
+		    , mpd.ALocation
+		    , mpd.LInvQty
+		    , mpd.BLocation
+		    , mpd.LObQty
+		    , wkno = ( select t.id+',' 
+					    from (select distinct Export.id 
+							    from dbo.Export WITH (NOLOCK) 
+							    inner join dbo.Export_Detail WITH (NOLOCK) on Export_Detail.id = Export.id  
+							    where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2)t 
+					    for xml path(''))
+		    , blno = (select t.Blno+',' 
+					    from (select distinct Blno 
+						    from dbo.Export WITH (NOLOCK) 
+						    inner join dbo.Export_Detail WITH (NOLOCK) on Export_Detail.id = Export.id  
+						    where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2 and Blno !='')t 
+					    for xml path(''))
     from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
-    left join dbo.Po_Supp po with (NoLock) on pd.ID = po.ID
-                                               and pd.Seq1 = po.Seq1
-    left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.id 
-                                                          and mpd.seq1 = pd.seq1 
-                                                          and mpd.seq2= pd.SEQ2
-    outer apply
-    (
-        select  o.FactoryID
-                , o.StyleID
-                , o.SeasonID
-                , o.BrandID
-                , o.Category
-                , o.SciDelivery 
-                , o.BuyerDelivery
-        from dbo.orders o WITH (NOLOCK) 
-        inner join factory on o.FactoryID = factory.id
-        where o.id = pd.id
-    ) x
+    inner join dbo.Po_Supp po with (NoLock) on pd.ID = po.ID and pd.Seq1 = po.Seq1
+    inner join orders o with(nolock) on o.id = pd.id
+    inner join factory f with(nolock) on o.FactoryID = f.id
+    left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.id and mpd.seq1 = pd.seq1 and mpd.seq2= pd.SEQ2
     outer apply
     (
         select  i.FactoryID
@@ -190,6 +140,7 @@ with cte as (
               and i.seq2 = pd.SEQ2
         group by i.FactoryID,i.StyleID,i.SeasonID,i.BrandID
     ) y", Env.User.Keyword));
+
             if (!MyUtility.Check.Empty(location))
             {
                 sqlcmd.Append(@"
@@ -206,7 +157,7 @@ with cte as (
            and q.seq2 = pd.SEQ2");
             }
 
-            sqlcmd.Append(string.Format(@" where 1=1 "));
+            sqlcmd.Append(string.Format(@" where 1=1 and f.IsProduceFty = 1 "));
 
             if (!MyUtility.Check.Empty(spno))
             {
@@ -220,22 +171,22 @@ with cte as (
 
             if (MyUtility.Check.Empty(buyerDeliveryStart) == false)
             {
-                sqlcmd.Append($" and '{buyerDeliveryStart}' <= x.BuyerDelivery");
+                sqlcmd.Append($" and '{buyerDeliveryStart}' <= o.BuyerDelivery");
             }
 
             if (MyUtility.Check.Empty(buyerDeliveryEnd) == false)
             {
-                sqlcmd.Append($" and x.BuyerDelivery <= '{buyerDeliveryEnd}'");
+                sqlcmd.Append($" and o.BuyerDelivery <= '{buyerDeliveryEnd}'");
             }
 
             if (MyUtility.Check.Empty(sciDeliveryStart) == false)
             {
-                sqlcmd.Append($" and '{sciDeliveryStart}' <= x.SciDelivery");
+                sqlcmd.Append($" and '{sciDeliveryStart}' <= o.SciDelivery");
             }
 
             if (MyUtility.Check.Empty(sciDeliveryEnd) == false)
             {
-                sqlcmd.Append($" and x.SciDelivery <= '{sciDeliveryEnd}'");
+                sqlcmd.Append($" and o.SciDelivery <= '{sciDeliveryEnd}'");
             }
 
             if (MyUtility.Check.Empty(supplier) == false)
@@ -280,7 +231,7 @@ with cte as (
             try
             {
                 DBProxy.Current.DefaultTimeout = 600;
-                result = DBProxy.Current.Select(null, sqlcmd.ToString(), out this.dt);
+                result = DBProxy.Current.Select(null, sqlcmd.ToString(), out this.PrintData);
                 DBProxy.Current.DefaultTimeout = 30;
                 if (!result)
                 {
@@ -295,12 +246,36 @@ with cte as (
             return result;
         }
 
-        private void toexcel_Click(object sender, EventArgs e)
+        /// <inheritdoc/>
+        protected override bool OnToExcel(Win.ReportDefinition report)
         {
-        }
+            this.SetCount(this.PrintData.Rows.Count);
+            if (this.PrintData.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!");
+                return false;
+            }
 
-        private void R18_Load(object sender, EventArgs e)
-        {
+            this.PrintData.AsEnumerable().ToList().ForEach(row => row["description"] = MyUtility.Convert.GetString(row["description"]).Trim());
+            this.ShowWaitMessage("Excel Processing...");
+            string filename = "Warehouse_R18_Material_Tracking";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename + ".xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.PrintData, string.Empty, filename + ".xltx", 1, false, null, excelApp);
+            Excel.Worksheet worksheet = excelApp.Sheets[1];
+            excelApp.Columns.AutoFit();
+            excelApp.Rows.AutoFit();
+            worksheet.Columns[20].ColumnWidth = 88;
+
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName(filename);
+            excelApp.ActiveWorkbook.SaveAs(strExcelName);
+            excelApp.Visible = true;
+            Marshal.ReleaseComObject(excelApp);
+            Marshal.ReleaseComObject(worksheet);
+            #endregion
+
+            this.HideWaitMessage();
+            return false;
         }
     }
 }
