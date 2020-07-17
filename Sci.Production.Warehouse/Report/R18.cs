@@ -259,13 +259,13 @@ with cte as (
             this.PrintData.AsEnumerable().ToList().ForEach(row => row["description"] = MyUtility.Convert.GetString(row["description"]).Trim());
             this.ShowWaitMessage("Excel Processing...");
             string filename = "Warehouse_R18_Material_Tracking";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename + ".xltx"); // 預先開啟excel app
+            Excel.Application excelApp = new Excel.Application();
             Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename + ".xltx", excelApp);
             com.ColumnsAutoFit = false;
             com.WriteTable(this.PrintData, 2);
             Excel.Worksheet worksheet = excelApp.Sheets[1];
+            ((Excel.Range)worksheet.Rows["1:" + this.PrintData.Rows.Count, Type.Missing]).RowHeight = 15.75;
             worksheet.Columns[20].ColumnWidth = 88;
-
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName(filename);
             excelApp.ActiveWorkbook.SaveAs(strExcelName);
