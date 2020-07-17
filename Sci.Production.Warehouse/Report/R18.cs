@@ -264,8 +264,6 @@ with cte as (
             com.ColumnsAutoFit = false;
             com.WriteTable(this.PrintData, 2);
             Excel.Worksheet worksheet = excelApp.Sheets[1];
-            excelApp.Columns.AutoFit();
-            excelApp.Rows.AutoFit();
             worksheet.Columns[20].ColumnWidth = 88;
 
             #region Save & Show Excel
