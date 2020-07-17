@@ -2510,6 +2510,12 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Tables\AccountNoSetting.sql" />
+    <Build Include="dbo\Tables\SubProInsRecord_Defect.sql" />
+    <Build Include="dbo\Tables\SubProInsRecord.sql" />
+    <Build Include="dbo\Tables\SubProDefectCode.sql" />
+    <Build Include="dbo\Tables\CutInsRecord_RollDyelot.sql" />
+    <Build Include="dbo\Tables\CutInsRecord_Defect.sql" />
+    <Build Include="dbo\Tables\CutInsRecord.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
