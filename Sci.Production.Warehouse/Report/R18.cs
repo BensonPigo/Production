@@ -260,7 +260,9 @@ with cte as (
             this.ShowWaitMessage("Excel Processing...");
             string filename = "Warehouse_R18_Material_Tracking";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename + ".xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(this.PrintData, string.Empty, filename + ".xltx", 1, false, null, excelApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename + ".xltx", excelApp);
+            com.ColumnsAutoFit = false;
+            com.WriteTable(this.PrintData, 2);
             Excel.Worksheet worksheet = excelApp.Sheets[1];
             excelApp.Columns.AutoFit();
             excelApp.Rows.AutoFit();
@@ -270,12 +272,12 @@ with cte as (
             string strExcelName = Class.MicrosoftFile.GetName(filename);
             excelApp.ActiveWorkbook.SaveAs(strExcelName);
             excelApp.Visible = true;
-            Marshal.ReleaseComObject(excelApp);
             Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(excelApp);
             #endregion
 
             this.HideWaitMessage();
-            return false;
+            return true;
         }
     }
 }
