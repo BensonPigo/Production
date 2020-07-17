@@ -58,6 +58,7 @@
             this.lbMsg = new System.Windows.Forms.Label();
             this.lbPackage = new Sci.Win.UI.Label();
             this.txtPackage = new Sci.Win.UI.TextBox();
+            this.txtShadeandLocation = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -274,7 +275,7 @@
             // btnUpdate
             // 
             this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdate.Location = new System.Drawing.Point(950, 437);
+            this.btnUpdate.Location = new System.Drawing.Point(950, 442);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(80, 30);
             this.btnUpdate.TabIndex = 37;
@@ -285,7 +286,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(1049, 437);
+            this.btnClose.Location = new System.Drawing.Point(1049, 442);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 38;
@@ -309,7 +310,7 @@
             // btnUpdateTime
             // 
             this.btnUpdateTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnUpdateTime.Location = new System.Drawing.Point(361, 441);
+            this.btnUpdateTime.Location = new System.Drawing.Point(512, 442);
             this.btnUpdateTime.Name = "btnUpdateTime";
             this.btnUpdateTime.Size = new System.Drawing.Size(117, 30);
             this.btnUpdateTime.TabIndex = 41;
@@ -321,7 +322,7 @@
             // 
             this.dateTimePickerUpdateTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.dateTimePickerUpdateTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateTimePickerUpdateTime.Location = new System.Drawing.Point(12, 444);
+            this.dateTimePickerUpdateTime.Location = new System.Drawing.Point(12, 446);
             this.dateTimePickerUpdateTime.Name = "dateTimePickerUpdateTime";
             this.dateTimePickerUpdateTime.Size = new System.Drawing.Size(177, 23);
             this.dateTimePickerUpdateTime.TabIndex = 42;
@@ -329,9 +330,10 @@
             // 
             // lbMsg
             // 
+            this.lbMsg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbMsg.AutoSize = true;
             this.lbMsg.ForeColor = System.Drawing.Color.Red;
-            this.lbMsg.Location = new System.Drawing.Point(510, 449);
+            this.lbMsg.Location = new System.Drawing.Point(715, 449);
             this.lbMsg.Name = "lbMsg";
             this.lbMsg.Size = new System.Drawing.Size(229, 17);
             this.lbMsg.TabIndex = 43;
@@ -354,11 +356,24 @@
             this.txtPackage.Size = new System.Drawing.Size(70, 23);
             this.txtPackage.TabIndex = 45;
             // 
+            // txtShadeandLocation
+            // 
+            this.txtShadeandLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtShadeandLocation.BackColor = System.Drawing.Color.White;
+            this.txtShadeandLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShadeandLocation.Location = new System.Drawing.Point(361, 446);
+            this.txtShadeandLocation.Name = "txtShadeandLocation";
+            this.txtShadeandLocation.Size = new System.Drawing.Size(145, 23);
+            this.txtShadeandLocation.TabIndex = 46;
+            this.txtShadeandLocation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtShadeandLocation_PopUp);
+            this.txtShadeandLocation.Validating += new System.ComponentModel.CancelEventHandler(this.TxtShadeandLocation_Validating);
+            // 
             // P08
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1142, 479);
+            this.Controls.Add(this.txtShadeandLocation);
             this.Controls.Add(this.txtPackage);
             this.Controls.Add(this.lbPackage);
             this.Controls.Add(this.lbMsg);
@@ -416,6 +431,7 @@
             this.Controls.SetChildIndex(this.lbMsg, 0);
             this.Controls.SetChildIndex(this.lbPackage, 0);
             this.Controls.SetChildIndex(this.txtPackage, 0);
+            this.Controls.SetChildIndex(this.txtShadeandLocation, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -453,5 +469,6 @@
         private System.Windows.Forms.Label lbMsg;
         private Win.UI.Label lbPackage;
         private Win.UI.TextBox txtPackage;
+        private Win.UI.TextBox txtShadeandLocation;
     }
 }
