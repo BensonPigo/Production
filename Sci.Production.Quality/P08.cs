@@ -421,7 +421,10 @@ inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
                 foreach (DataRow dr in selectedListDataRow.ToList())
                 {
                     dr[comboUpdateTime] = updateTime;
-                    dr["ShadebandDocLocationID"] = this.txtShadeandLocation.Text;
+                    if (!MyUtility.Check.Empty(this.txtShadeandLocation.Text))
+                    {
+                        dr["ShadebandDocLocationID"] = this.txtShadeandLocation.Text;
+                    }
                 }
             }
         }
