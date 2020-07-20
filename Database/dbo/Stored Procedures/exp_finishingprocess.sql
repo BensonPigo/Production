@@ -18,6 +18,7 @@ BEGIN
 	[Category]			[varchar](1) NULL,
 	[OrderTypeID]		[varchar](20) NULL,
 	[Dest]				[varchar](2) NULL,
+	[DestCountry]		[varchar](30) NULL,
 	[CustCDID]			[varchar](16) NULL,
 	[StyleUnit]			[varchar](8) NULL,
 	[SetQty]			[int] NOT NULL,
@@ -396,11 +397,12 @@ where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate or conv
 
 MERGE Orders AS T
 USING(
-	SELECT id,BrandID,ProgramID,StyleID,SeasonID,ProjectID,Category,OrderTypeID,Dest,CustCDID,StyleUnit
+	SELECT o.id,BrandID,ProgramID,StyleID,SeasonID,ProjectID,Category,OrderTypeID,Dest,CustCDID,StyleUnit
 	,[SetQty] = (select count(1) cnt from Production.dbo.Style_Location where o.StyleUkey=StyleUkey)
 	,[Location] = sl.Location , o.PulloutComplete, o.Junk,[CmdTime] = GETDATE()
-	,[SunriseUpdated] = 0, [GenSongUpdated] = 0, [CustPONo], o.POID
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0, [CustPONo], o.POID ,[DestCountry] = c.Alias
 	FROM Production.dbo.Orders o
+	LEFT JOIN Production.dbo.Country c ON o.Dest = c.ID
 	outer apply(	
 	select Location = STUFF((
 		select distinct CONCAT(',',Location) 
@@ -432,14 +434,15 @@ UPDATE SET
 	t.SunriseUpdated = s.SunriseUpdated,
 	t.GenSongUpdated = s.GenSongUpdated,
 	t.CustPONo = s.CustPONo,
-	t.POID = s.POID
+	t.POID = s.POID,
+	t.DestCountry = s.DestCountry
 WHEN NOT MATCHED BY TARGET THEN
 INSERT(  id,   BrandID,   ProgramID,   StyleID,   SeasonID,   ProjectID,   Category,   OrderTypeID
 	,  Dest,   CustCDID,   StyleUnit,   SetQty,   Location,   PulloutComplete,   Junk
-	,  CmdTime,   SunriseUpdated,   GenSongUpdated, CustPONo, POID) 
+	,  CmdTime,   SunriseUpdated,   GenSongUpdated, CustPONo, POID	,DestCountry) 
 VALUES(s.id, s.BrandID, s.ProgramID, s.StyleID, s.SeasonID, s.ProjectID, s.Category, s.OrderTypeID
 	,s.Dest, s.CustCDID, s.StyleUnit, s.SetQty, s.Location, s.PulloutComplete, s.Junk
-	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated, s.CustPONo, s.POID)	;
+	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated, s.CustPONo, s.POID	,s.DestCountry)	;
 
 --02. 轉出區間 [Production].[dbo].[Order_QtyShip].ID 在本次有更新的 Orders 之中
 MERGE Order_QtyShip AS T
