@@ -334,7 +334,7 @@ select
 from style_artwork sa WITH (NOLOCK)
 LEFT JOIN ArtworkType B WITH (NOLOCK) ON sa.ArtworkTypeID=B.ID
 Left join Style on Style.Ukey =sa.StyleUkey
-left join Season on Season.ID = Style.SeasonID
+left join Season on Season.ID = Style.SeasonID and Season.BrandID = Style.BrandID
 Outer Apply (	
     Select Top 1 Cost = Isnull(CostWithRatio, 0) * sa.Qty
 	From dbo.GetPrintingCost(IsNull('{countryID}', ''), Isnull(Season.SeasonSCIID, '')
