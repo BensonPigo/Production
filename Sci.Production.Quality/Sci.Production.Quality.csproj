@@ -483,6 +483,30 @@
     <Compile Include="P30.Designer.cs">
       <DependentUpon>P30.cs</DependentUpon>
     </Compile>
+    <Compile Include="P32.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P32.Designer.cs">
+      <DependentUpon>P32.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P31.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31.Designer.cs">
+      <DependentUpon>P31.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P31_ByRecord.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31_ByRecord.Designer.cs">
+      <DependentUpon>P31_ByRecord.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P31_ByCarton.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31_ByCarton.Designer.cs">
+      <DependentUpon>P31_ByCarton.cs</DependentUpon>
+    </Compile>
     <Compile Include="P40.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -597,6 +621,18 @@
     </Compile>
     <Compile Include="R30.Designer.cs">
       <DependentUpon>R30.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R31.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R31.Designer.cs">
+      <DependentUpon>R31.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R32.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R32.Designer.cs">
+      <DependentUpon>R32.cs</DependentUpon>
     </Compile>
     <Compile Include="R40.cs">
       <SubType>Form</SubType>
@@ -818,6 +854,18 @@
     <EmbeddedResource Include="P30.resx">
       <DependentUpon>P30.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P32.resx">
+      <DependentUpon>P32.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P31.resx">
+      <DependentUpon>P31.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P31_ByRecord.resx">
+      <DependentUpon>P31_ByRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P31_ByCarton.resx">
+      <DependentUpon>P31_ByCarton.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P40.resx">
       <DependentUpon>P40.cs</DependentUpon>
     </EmbeddedResource>
@@ -865,6 +913,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R30.resx">
       <DependentUpon>R30.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R31.resx">
+      <DependentUpon>R31.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R32.resx">
+      <DependentUpon>R32.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R40.resx">
       <DependentUpon>R40.cs</DependentUpon>

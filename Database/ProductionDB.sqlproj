@@ -2510,6 +2510,8 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Tables\AccountNoSetting.sql" />
+    <Build Include="dbo\Tables\CFAInspectionRecord.sql" />
+    <Build Include="dbo\Tables\CFAInspectionRecord_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

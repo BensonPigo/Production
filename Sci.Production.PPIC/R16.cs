@@ -224,8 +224,12 @@ select main.KPICode
 	,[OST DQS Qty]=IIF(main.PartialShipment='Y' , 'NA' ,  CAST(( ISNULL(main.OrderQty,0) -  ISNULL(ins.DQSQty,0))  as varchar))
 	,[OST Clog Qty]=IIF(main.PartialShipment='Y' , 'NA' , CAST((  ISNULL(main.OrderQty,0) -  ISNULL(pd.ClogReceivedQty,0))  as varchar))
 	,[OST Clog Carton]= ISNULL(pd.PackingCarton,0) - ISNULL(pd.ClogReceivedCarton,0)
+	,[CFA Inspection result]=oq.CFAFinalInspectResult
+	,[3rd party Insp]=IIF(oq.CFAIs3rdInspect =1,'Y','N')
+	,[3rd party inspection result]=oq.CFA3rdInspectResult
 from #tmpOrderMain main
 left join #tmpPackingList_Detail pd on pd.OrderID = main.id and pd.OrderShipmodeSeq = main.Seq
+LEFT JOIN Order_QtyShip oq ON oq.ID = main.ID AND oq.Seq = main.Seq
 left join #tmpInspection ins on ins.OrderId = main.ID
 OUTER APPLY(
 	SELECT [Value]=MAX(s.OutputDate)
