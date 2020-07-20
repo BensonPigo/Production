@@ -65,12 +65,23 @@
             // 
             this.toexcel.Location = new System.Drawing.Point(484, 41);
             this.toexcel.TabIndex = 10;
-            this.toexcel.Click += new System.EventHandler(this.toexcel_Click);
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(484, 77);
             this.close.TabIndex = 11;
+            // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.Location = new System.Drawing.Point(438, 111);
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Location = new System.Drawing.Point(464, 147);
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(464, 174);
             // 
             // txtSPNo
             // 
@@ -218,10 +229,13 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(119, 255);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 115;
@@ -318,6 +332,7 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(116, 290);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(185, 24);
             this.comboCategory.TabIndex = 123;
             this.comboCategory.Type = "Pms_MtlCategory";
@@ -349,8 +364,11 @@
             this.Controls.Add(this.labelSPNo);
             this.Controls.Add(this.txtSPNo);
             this.Name = "R18";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R18. Material Tracking";
-            this.Load += new System.EventHandler(this.R18_Load);
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
