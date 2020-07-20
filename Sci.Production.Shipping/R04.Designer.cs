@@ -39,20 +39,22 @@
             this.checkIncludeLocalOrder = new Sci.Win.UI.CheckBox();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.dateEstimatePullout = new Sci.Win.UI.DateRange();
-            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.txtOrderNo = new Sci.Win.UI.TextBox();
-            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.lbBuyer = new Sci.Win.UI.Label();
             this.lbFCRDate = new Sci.Win.UI.Label();
             this.lbCustCD = new Sci.Win.UI.Label();
             this.lbDestinction = new Sci.Win.UI.Label();
             this.dateFCRDate = new Sci.Win.UI.DateRange();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
+            this.lbSummaryBy = new Sci.Win.UI.Label();
             this.txtbuyer = new Sci.Production.Class.Txtbuyer();
             this.txtcountryDestination = new Sci.Production.Class.Txtcountry();
             this.txtcustcd = new Sci.Production.Class.Txtcustcd();
-            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.comboSummaryBy = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
@@ -127,7 +129,7 @@
             // 
             this.checkIncludeLocalOrder.AutoSize = true;
             this.checkIncludeLocalOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkIncludeLocalOrder.Location = new System.Drawing.Point(13, 385);
+            this.checkIncludeLocalOrder.Location = new System.Drawing.Point(13, 419);
             this.checkIncludeLocalOrder.Name = "checkIncludeLocalOrder";
             this.checkIncludeLocalOrder.Size = new System.Drawing.Size(151, 21);
             this.checkIncludeLocalOrder.TabIndex = 101;
@@ -178,15 +180,6 @@
             this.dateEstimatePullout.Size = new System.Drawing.Size(280, 23);
             this.dateEstimatePullout.TabIndex = 103;
             // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(128, 149);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(84, 23);
-            this.txtbrand.TabIndex = 104;
-            // 
             // comboM
             // 
             this.comboM.BackColor = System.Drawing.Color.White;
@@ -219,19 +212,6 @@
             this.txtOrderNo.Name = "txtOrderNo";
             this.txtOrderNo.Size = new System.Drawing.Size(238, 23);
             this.txtOrderNo.TabIndex = 107;
-            // 
-            // comboCategory
-            // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(128, 355);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.OldText = "";
-            this.comboCategory.Size = new System.Drawing.Size(238, 24);
-            this.comboCategory.TabIndex = 139;
-            this.comboCategory.Type = "Pms_GMT_Simple";
             // 
             // lbBuyer
             // 
@@ -287,6 +267,25 @@
             this.dateFCRDate.Size = new System.Drawing.Size(280, 23);
             this.dateFCRDate.TabIndex = 144;
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 442);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 171;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
+            // lbSummaryBy
+            // 
+            this.lbSummaryBy.Location = new System.Drawing.Point(14, 386);
+            this.lbSummaryBy.Name = "lbSummaryBy";
+            this.lbSummaryBy.Size = new System.Drawing.Size(111, 23);
+            this.lbSummaryBy.TabIndex = 172;
+            this.lbSummaryBy.Text = "Summary By";
+            // 
             // txtbuyer
             // 
             this.txtbuyer.BackColor = System.Drawing.Color.White;
@@ -316,20 +315,45 @@
             this.txtcustcd.TabIndex = 149;
             this.txtcustcd.Validating += new System.ComponentModel.CancelEventHandler(this.Txtcustcd_Validating);
             // 
-            // chkIncludeCancelOrder
+            // txtbrand
             // 
-            this.chkIncludeCancelOrder.AutoSize = true;
-            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 408);
-            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
-            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
-            this.chkIncludeCancelOrder.TabIndex = 171;
-            this.chkIncludeCancelOrder.Text = "Include Cancel order";
-            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(128, 149);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(84, 23);
+            this.txtbrand.TabIndex = 104;
+            // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(128, 355);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
+            this.comboCategory.Size = new System.Drawing.Size(238, 24);
+            this.comboCategory.TabIndex = 139;
+            this.comboCategory.Type = "Pms_GMT_Simple";
+            // 
+            // comboSummaryBy
+            // 
+            this.comboSummaryBy.BackColor = System.Drawing.Color.White;
+            this.comboSummaryBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSummaryBy.FormattingEnabled = true;
+            this.comboSummaryBy.IsSupportUnselect = true;
+            this.comboSummaryBy.Location = new System.Drawing.Point(128, 385);
+            this.comboSummaryBy.Name = "comboSummaryBy";
+            this.comboSummaryBy.OldText = "";
+            this.comboSummaryBy.Size = new System.Drawing.Size(112, 24);
+            this.comboSummaryBy.TabIndex = 173;
             // 
             // R04
             // 
-            this.ClientSize = new System.Drawing.Size(540, 459);
+            this.ClientSize = new System.Drawing.Size(540, 505);
+            this.Controls.Add(this.comboSummaryBy);
+            this.Controls.Add(this.lbSummaryBy);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.txtbuyer);
             this.Controls.Add(this.txtcountryDestination);
@@ -388,6 +412,8 @@
             this.Controls.SetChildIndex(this.txtcountryDestination, 0);
             this.Controls.SetChildIndex(this.txtbuyer, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
+            this.Controls.SetChildIndex(this.lbSummaryBy, 0);
+            this.Controls.SetChildIndex(this.comboSummaryBy, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -419,5 +445,7 @@
         private Class.Txtcountry txtcountryDestination;
         private Class.Txtbuyer txtbuyer;
         private Win.UI.CheckBox chkIncludeCancelOrder;
+        private Win.UI.Label lbSummaryBy;
+        private Win.UI.ComboBox comboSummaryBy;
     }
 }

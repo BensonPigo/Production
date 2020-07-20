@@ -48,21 +48,23 @@
             this.txtSharedept = new Sci.Win.UI.TextBox();
             this.label5 = new Sci.Win.UI.Label();
             this.cmbReportType = new Sci.Win.UI.ComboBox();
+            this.chkJunk = new Sci.Win.UI.CheckBox();
+            this.chkReplacementReport = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(437, 12);
+            this.print.Location = new System.Drawing.Point(469, 12);
             this.print.TabIndex = 5;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(437, 48);
+            this.toexcel.Location = new System.Drawing.Point(469, 48);
             this.toexcel.TabIndex = 10;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(437, 84);
+            this.close.Location = new System.Drawing.Point(469, 84);
             this.close.TabIndex = 11;
             // 
             // labelCreateDate
@@ -300,10 +302,37 @@
             this.cmbReportType.OldText = "";
             this.cmbReportType.Size = new System.Drawing.Size(136, 24);
             this.cmbReportType.TabIndex = 9;
+            this.cmbReportType.SelectedIndexChanged += new System.EventHandler(this.CmbReportType_SelectedIndexChanged);
+            // 
+            // chkJunk
+            // 
+            this.chkJunk.AutoSize = true;
+            this.chkJunk.Enabled = false;
+            this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkJunk.Location = new System.Drawing.Point(14, 312);
+            this.chkJunk.Name = "chkJunk";
+            this.chkJunk.Size = new System.Drawing.Size(106, 21);
+            this.chkJunk.TabIndex = 10;
+            this.chkJunk.Text = "Include Junk";
+            this.chkJunk.UseVisualStyleBackColor = true;
+            // 
+            // chkReplacementReport
+            // 
+            this.chkReplacementReport.AutoSize = true;
+            this.chkReplacementReport.Enabled = false;
+            this.chkReplacementReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkReplacementReport.Location = new System.Drawing.Point(14, 339);
+            this.chkReplacementReport.Name = "chkReplacementReport";
+            this.chkReplacementReport.Size = new System.Drawing.Size(525, 21);
+            this.chkReplacementReport.TabIndex = 11;
+            this.chkReplacementReport.Text = "Outstanding(Replacement report not yet locked and all material isn\'t mark junk)";
+            this.chkReplacementReport.UseVisualStyleBackColor = true;
             // 
             // R08
             // 
-            this.ClientSize = new System.Drawing.Size(529, 344);
+            this.ClientSize = new System.Drawing.Size(561, 399);
+            this.Controls.Add(this.chkReplacementReport);
+            this.Controls.Add(this.chkJunk);
             this.Controls.Add(this.cmbReportType);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.txtSharedept);
@@ -356,6 +385,8 @@
             this.Controls.SetChildIndex(this.txtSharedept, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.cmbReportType, 0);
+            this.Controls.SetChildIndex(this.chkJunk, 0);
+            this.Controls.SetChildIndex(this.chkReplacementReport, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -383,5 +414,7 @@
         private Win.UI.TextBox txtSharedept;
         private Win.UI.Label label5;
         private Win.UI.ComboBox cmbReportType;
+        private Win.UI.CheckBox chkJunk;
+        private Win.UI.CheckBox chkReplacementReport;
     }
 }

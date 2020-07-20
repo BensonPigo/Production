@@ -20,6 +20,13 @@
     [EditName]            VARCHAR (10)   CONSTRAINT [DF_Order_QtyShip_EditName] DEFAULT ('') NULL,
     [EditDate]            DATETIME       NULL,
     [ReadyDate]           DATE           NULL,
+	[CFAIs3rdInspect]	  bit NOT NULL DEFAULT ((0)),
+	[CFA3rdInspectResult] varchar(15) CONSTRAINT [DF_CFA3rdInspectResult]  DEFAULT ('')  NULL,
+	[CFA3rdInspectDate]   date NULL,
+	[CFAFinalInspectResult] varchar(15) CONSTRAINT [DF_CFAFinalInspectResult]  DEFAULT ('') NULL ,
+	[CFAFinalInspectDate]   date NULL,
+	[CFAUpdateDate]			date  NULL,
+	[CFARemark]				nvarchar(500)  CONSTRAINT [DF_CFARemark]  DEFAULT ('') NULL,
     CONSTRAINT [PK_Order_QtyShip] PRIMARY KEY CLUSTERED ([Id] ASC, [Seq] ASC)
 );
 

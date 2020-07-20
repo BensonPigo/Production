@@ -1,26 +1,22 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using Ict.Win;
-using Sci.Win.Tools;
 using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    /// <summary>
-    /// P08
-    /// </summary>
+    /// <inheritdoc/>
     public partial class P08 : Win.Tems.QueryForm
     {
-        /// <summary>
-        /// P08
-        /// </summary>
+        /// <inheritdoc/>
         public P08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -74,22 +70,13 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                List<SqlParameter> cmds = new List<SqlParameter>()
-                {
-                    new SqlParameter("@ID", MyUtility.Convert.GetString(e.FormattedValue)),
-                };
-
-                string sqlcmd = "select ID, Description from ShadebandDocLocation where Junk = 0 and ID = @ID";
-                DataTable dt = new DataTable();
-                DBProxy.Current.Select(null, sqlcmd, cmds, out dt);
-                if (dt.Rows.Count == 0)
+                if (!this.ShadeandLocation_Validating(e.FormattedValue.ToString()))
                 {
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox($"Shadeband Location <{e.FormattedValue}> not Found");
                     return;
                 }
 
-                curDr["ShadebandDocLocationID"] = e.FormattedValue.ToString();
+                curDr["ShadebandDocLocationID"] = e.FormattedValue;
                 curDr.EndEdit();
             };
 
@@ -99,13 +86,13 @@ namespace Sci.Production.Quality
                  .Numeric("Packages", header: "Packages", width: Widths.AnsiChars(3), decimal_places: 0, iseditingreadonly: true)
                  .Date("ArriveDate", header: "Arrive W/H \r\n Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(8), iseditingreadonly: true)                 
+                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("WeaveTypeID", header: "Weave\r\nType", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), iseditingreadonly: true)
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true)
                  .Text("Refno", header: "Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                 .Text("ColorID", header: "Color \r\nName", width: Widths.AnsiChars(6), iseditingreadonly: true)                 
+                 .Text("ColorID", header: "Color \r\nName", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .DateTime("CutTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(20))
                  .DateTime("PasteTime", header: "Paste Shadeband Time", width: Widths.AnsiChars(20))
                  .DateTime("PassQATime", header: "Pass QA Time", width: Widths.AnsiChars(20))
@@ -117,16 +104,29 @@ namespace Sci.Production.Quality
             this.gridReceiving.Columns["ShadebandDocLocationID"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        /// <summary>
-        /// ShadebandDocLocationID Pop
-        /// </summary>
-        /// <param name="rowIndex"></param>
+        private void TxtShadeandLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            this.GridShadebandDocLocationIDCellPop(-2);
+        }
+
+        private void TxtShadeandLocation_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (this.txtShadeandLocation.Text.Empty())
+            {
+                return;
+            }
+
+            if (!this.ShadeandLocation_Validating(this.txtShadeandLocation.Text))
+            {
+                e.Cancel = true;
+                return;
+            }
+        }
+
         private void GridShadebandDocLocationIDCellPop(int rowIndex)
         {
-            DataRow curDr = this.gridReceiving.GetDataRow(rowIndex);
             string sqlcmd = "select ID, Description from ShadebandDocLocation where Junk = 0";
-            DataTable dt = new DataTable();
-            DBProxy.Current.Select(null, sqlcmd, out dt);
+            DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             SelectItem selectItem = new SelectItem(dt, "ID,Description", "10,25", "ID,Description")
             {
                 Width = 800,
@@ -139,8 +139,34 @@ namespace Sci.Production.Quality
             }
 
             DataRow dr = selectItem.GetSelecteds().FirstOrDefault();
-            curDr["ShadebandDocLocationID"] = MyUtility.Convert.GetString(dr["ID"]);
-            curDr.EndEdit();
+            if (rowIndex > -1)
+            {
+                DataRow curDr = this.gridReceiving.GetDataRow(rowIndex);
+                curDr["ShadebandDocLocationID"] = MyUtility.Convert.GetString(dr["ID"]);
+                curDr.EndEdit();
+            }
+            else
+            {
+                this.txtShadeandLocation.Text = MyUtility.Convert.GetString(dr["ID"]);
+            }
+        }
+
+        private bool ShadeandLocation_Validating(string eText)
+        {
+            List<SqlParameter> cmds = new List<SqlParameter>()
+            {
+                new SqlParameter("@ID", eText),
+            };
+
+            string sqlcmd = "select ID, Description from ShadebandDocLocation where Junk = 0 and ID = @ID";
+            DBProxy.Current.Select(null, sqlcmd, cmds, out DataTable dt);
+            if (dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox($"Shadeband Location <{eText}> not Found");
+                return false;
+            }
+
+            return true;
         }
 
         /// <inheritdoc/>
@@ -241,7 +267,7 @@ select
 	, fs.Dyelot
 	, psd.Refno
 	, psd.ColorID
-	, [Qty] = rd.ActualQty
+	, [Qty] = rd.StockQty
 	, fs.CutTime
 	, fs.PasteTime
 	, fs.PassQATime
@@ -327,24 +353,23 @@ from FIR_Shadebone fs
 inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
 ";
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             Exception errMsg = null;
-            DataTable dtUpdate;
-            using (_transactionscope)
+            using (transactionscope)
             {
                 try
                 {
                     DualResult result;
                     if (!MyUtility.Check.Empty(sqlcmd))
                     {
-                        result = MyUtility.Tool.ProcessWithDatatable(selectedListDataRow.CopyToDataTable(), "ID,Roll,Dyelot,CutTime,PasteTime,PassQATime,ShadebandDocLocationID", sqlcmd, out dtUpdate, temptablename: "#tmp");
+                        result = MyUtility.Tool.ProcessWithDatatable(selectedListDataRow.CopyToDataTable(), "ID,Roll,Dyelot,CutTime,PasteTime,PassQATime,ShadebandDocLocationID", sqlcmd, out DataTable dtUpdate, temptablename: "#tmp");
                         if (!result)
                         {
                             throw result.GetException();
                         }
                     }
 
-                    _transactionscope.Complete();
+                    transactionscope.Complete();
                 }
                 catch (Exception ex)
                 {
@@ -396,6 +421,10 @@ inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
                 foreach (DataRow dr in selectedListDataRow.ToList())
                 {
                     dr[comboUpdateTime] = updateTime;
+                    if (!MyUtility.Check.Empty(this.txtShadeandLocation.Text))
+                    {
+                        dr["ShadebandDocLocationID"] = this.txtShadeandLocation.Text;
+                    }
                 }
             }
         }
