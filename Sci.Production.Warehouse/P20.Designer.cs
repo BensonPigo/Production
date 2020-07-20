@@ -124,6 +124,7 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(736, 8);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(83, 24);
             this.comboFactory.TabIndex = 113;
             // 
@@ -154,7 +155,7 @@
             this.txtRefNo.IsSupportEditMode = false;
             this.txtRefNo.IsSupportSytsemContextMenu = false;
             this.txtRefNo.Location = new System.Drawing.Point(434, 9);
-            this.txtRefNo.MaxLength = 13;
+            this.txtRefNo.MaxLength = 20;
             this.txtRefNo.Name = "txtRefNo";
             this.txtRefNo.Size = new System.Drawing.Size(112, 23);
             this.txtRefNo.TabIndex = 2;
@@ -277,6 +278,7 @@
             this.gridStockList.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridStockList.RowTemplate.Height = 24;
             this.gridStockList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridStockList.ShowCellToolTips = false;
             this.gridStockList.Size = new System.Drawing.Size(1004, 175);
             this.gridStockList.TabIndex = 1;
             this.gridStockList.TabStop = false;
@@ -319,6 +321,7 @@
             this.gridTransactionID.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridTransactionID.RowTemplate.Height = 24;
             this.gridTransactionID.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridTransactionID.ShowCellToolTips = false;
             this.gridTransactionID.Size = new System.Drawing.Size(1004, 244);
             this.gridTransactionID.TabIndex = 6;
             this.gridTransactionID.TabStop = false;
@@ -343,6 +346,7 @@
             this.gridRoll.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridRoll.RowTemplate.Height = 24;
             this.gridRoll.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridRoll.ShowCellToolTips = false;
             this.gridRoll.Size = new System.Drawing.Size(1004, 145);
             this.gridRoll.TabIndex = 8;
             this.gridRoll.TabStop = false;
@@ -354,6 +358,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Name = "P20";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P20. Stock List";
             this.Controls.SetChildIndex(this.panel2, 0);
             this.Controls.SetChildIndex(this.panel3, 0);
