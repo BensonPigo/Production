@@ -1817,6 +1817,7 @@ OUTER APPLY(
 			FROM Export_Detail ed
 			WHERE ed.ID = b.ExportId
 		)
+		AND esc.ContainerType <> '' AND esc.ContainerNo <> ''
 		FOR XML PATH('')
 	),1,1,'')
 )Container

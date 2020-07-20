@@ -207,6 +207,7 @@ OUTER APPLY(
 		SELECT DISTINCT ','+esc.ContainerType
 		FROM Export_ShipAdvice_Container esc
 		WHERE esc.Export_Detail_Ukey=ed.Ukey
+		AND esc.ContainerType <> '' AND esc.ContainerNo <> ''
 		FOR XML PATH('')
 	),1,1,'')
 )ContainerType
@@ -215,6 +216,7 @@ OUTER APPLY(
 		SELECT DISTINCT ','+ esc.ContainerNo
 		FROM Export_ShipAdvice_Container esc
 		WHERE esc.Export_Detail_Ukey=ed.Ukey
+		AND esc.ContainerType <> '' AND esc.ContainerNo <> ''
 		FOR XML PATH('')
 	),1,1,'')
 )ContainerNo
