@@ -81,6 +81,7 @@ select
 ,ed.BalanceQty
 ,ed.NetKg
 ,ed.WeightKg
+, [ContainerType]= Container.Val
 ,iif(ed.IsFormA = 1,'Y','') as IsFormA
 ,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey
 ,[FindColumn] = rtrim(ed.PoID)+(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2)
@@ -95,6 +96,14 @@ left join Supp s WITH (NOLOCK) on s.id = ed.SuppID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join CertOfOrigin c WITH (NOLOCK) on c.SuppID=ed.SuppID and c.FormXPayINV=ed.FormXPayINV
+OUTER APPLY(
+		SELECT [Val] = STUFF((
+		SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
+		FROM Export_ShipAdvice_Container esc
+		WHERE esc.Export_Detail_Ukey=ed.Ukey
+		FOR XML PATH('')
+	),1,1,'')
+)Container
 where ed.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -216,6 +225,7 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
                 .Numeric("BalanceQty", header: "Balance", decimal_places: 2, width: Widths.AnsiChars(2))
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2)
                 .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2)
+                .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("FormXPayINV", header: "Payment Invoice#", width: Widths.AnsiChars(16))
                 .Text("COName", header: "Form C/O Name", width: Widths.AnsiChars(15))
                 .Date("ReceiveDate", header: "Form Rcvd Date", width: Widths.AnsiChars(10))

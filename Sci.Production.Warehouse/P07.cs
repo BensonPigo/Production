@@ -21,8 +21,11 @@ namespace Sci.Production.Warehouse
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewNumericBoxColumn Col_ActualW;
+        private Ict.Win.UI.DataGridViewTextBoxColumn Col_Remark;
 
         string UserID = Env.User.UserID;
+        private bool isSetZero = false;
+
 
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -1095,11 +1098,12 @@ WHERE   StockType='{0}'
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 11
             .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype) // 12
             .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false).Get(out this.Col_Location) // 13
-            .Text("remark", header: "Remark")
-            .Text("RefNo", header: "Ref#")
-            .Text("ColorID", header: "Color")
+            .Text("remark", header: "Remark", iseditingreadonly: false).Get(out this.Col_Remark)
+            .Text("RefNo", header: "Ref#", iseditingreadonly: true)
+            .Text("ColorID", header: "Color", iseditingreadonly: true)
             .Text("FactoryID", header: "Prod. Factory", iseditingreadonly: true) // 11
             .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(15), iseditingreadonly: true) // 11
+            .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true)
             ;
             cbb_Roll.MaxLength = 8;
             cbb_Dyelot.MaxLength = 8;
@@ -1138,6 +1142,13 @@ WHERE   StockType='{0}'
         {
             this.Col_ActualW.CellFormatting += (s, e) =>
             {
+                if (this.isSetZero)
+                {
+                    var rowIndex = this.detailgrid.CurrentCell.RowIndex;
+                    this.detailgrid.CurrentCell = this.detailgrid.Rows[rowIndex].Cells[0];
+                    this.isSetZero = false;
+                }
+
                 if (e.RowIndex == -1)
                 {
                     return;
@@ -1784,7 +1795,10 @@ select  a.id
         , a.ukey
         ,o.FactoryID
         ,o.OrderTypeID
+		,b.ExportId
+		, [ContainerType]= Container.Val
 from dbo.Receiving_Detail a WITH (NOLOCK) 
+INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join orders o WITH (NOLOCK) on o.id = a.PoId
 LEFT JOIN PO_Supp_Detail p  WITH (NOLOCK) ON p.ID=a.PoId AND p.SEQ1=a.Seq1 AND p.SEQ2 = a.Seq2
 LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
@@ -1794,6 +1808,18 @@ OUTER APPLY(
 		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
 	 END
 )Color
+OUTER APPLY(
+	SELECT [Val] = STUFF((
+		SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
+		FROM Export_ShipAdvice_Container esc
+		WHERE esc.Export_Detail_Ukey IN (
+			SELECT Ukey
+			FROM Export_Detail ed
+			WHERE ed.ID = b.ExportId
+		)
+		FOR XML PATH('')
+	),1,1,'')
+)Container
 
 Where a.id = '{0}'
 order by ukey", masterID);
@@ -1875,12 +1901,21 @@ select a.poid
         , '' as location
         ,c.FactoryID
         ,c.OrderTypeID
+		, [ContainerType]= Container.Val
 from dbo.Export_Detail a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
                                                  and a.Seq1 = b.SEQ1    
                                                  and a.Seq2 = b.SEQ2    
 inner join orders c WITH (NOLOCK) on c.id = a.poid
 inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U=dbo.GetStockUnitBySPSeq (b.id, b.seq1, b.seq2)
+OUTER APPLY(
+	SELECT [Val] = STUFF((
+		SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
+		FROM Export_ShipAdvice_Container esc
+		WHERE esc.Export_Detail_Ukey = a.Ukey
+		FOR XML PATH('')
+	),1,1,'')
+)Container
 where a.id='{0}'
 order by a.poid, a.seq1, a.seq2, b.FabricType
 ", this.CurrentMaintain["exportid"]);
@@ -2178,6 +2213,21 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                             if (columnIndex == 8)
                             {
                                 this.detailgrid.CurrentCell = this.detailgrid.Rows[currentCell.RowIndex].Cells[13];
+                            }
+
+                            if (columnIndex == 14)
+                            {
+                                int maxRow = this.detailgrid.Rows.Count;
+                                if (currentCell.RowIndex + 1 < maxRow)
+                                {
+                                    this.detailgrid.CurrentCell = this.detailgrid.Rows[currentCell.RowIndex + 1].Cells[0];
+                                }
+                                else
+                                {
+                                    this.detailgrid.CurrentCell = this.detailgrid.Rows[0].Cells[0];
+                                }
+
+                                this.isSetZero = true;
                             }
                         }
 

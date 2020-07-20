@@ -140,6 +140,7 @@ select  FactoryID = iif(ed.potype='M'
         , ed.BalanceQty
         , ed.NetKg
         , ed.WeightKg
+		, [ContainerType]= Container.Val
         , IsFormA = iif(ed.IsFormA = 1,'Y','')
         , ed.FormXType
         , ed.FormXReceived
@@ -159,6 +160,14 @@ left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+OUTER APPLY(
+		SELECT [Val] = STUFF((
+		SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
+		FROM Export_ShipAdvice_Container esc
+		WHERE esc.Export_Detail_Ukey=ed.Ukey
+		FOR XML PATH('')
+	),1,1,'')
+)Container
 where ed.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -231,6 +240,7 @@ where ed.ID = '{0}'", masterID);
 
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2)
                 .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2)
+                .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("IsFormA", header: "FormX Needed", width: Widths.AnsiChars(1))
                 .Text("FormXType", header: "FormX Type", width: Widths.AnsiChars(8))
                 .Date("FormXReceived", header: "FoemX Rcvd")

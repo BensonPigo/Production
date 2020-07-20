@@ -394,7 +394,7 @@
             this.labelContainerType.Name = "labelContainerType";
             this.labelContainerType.Size = new System.Drawing.Size(115, 23);
             this.labelContainerType.TabIndex = 6;
-            this.labelContainerType.Text = "Container Type";
+            this.labelContainerType.Text = "CY/CFS";
             // 
             // labelSONo
             // 

@@ -304,7 +304,7 @@
             this.labelContainerType.Name = "labelContainerType";
             this.labelContainerType.Size = new System.Drawing.Size(90, 23);
             this.labelContainerType.TabIndex = 6;
-            this.labelContainerType.Text = "Container Type";
+            this.labelContainerType.Text = "CY/CFS";
             // 
             // labelShipModeID
             // 
@@ -771,6 +771,7 @@
             this.IsSupportNew = false;
             this.KeyField1 = "ID";
             this.Name = "P02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input2";
             this.Text = "P02. Import schedule";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Export";
