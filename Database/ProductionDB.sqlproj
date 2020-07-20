@@ -2506,6 +2506,7 @@
     <Build Include="dbo\Functions\GetEmboideryCost.sql" />
     <Build Include="dbo\Functions\GetPrintingCost.sql" />
     <Build Include="dbo\Functions\GetWebApiURL.sql" />
+    <Build Include="dbo\Tables\AutomationReceivedMsg.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
