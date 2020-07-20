@@ -11,7 +11,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
-
 namespace Sci.Production.Quality
 {
     public partial class R31 : Sci.Win.Tems.PrintForm
@@ -26,36 +25,36 @@ namespace Sci.Production.Quality
         public R31(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            this.comboM.setDefalutIndex(true);
-            this.comboFactory.setDataSource();
+            this.InitializeComponent();
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource();
         }
-
-
 
         protected override bool ValidateInput()
         {
             this.categoryList.Clear();
-            this.sp1 = txtSP_s.Text;
-            this.sp2 = txtSP_e.Text;
-            this.MDivisionID = comboM.Text;
-            this.FactoryID = comboFactory.Text;
-            this.Brand = txtBrand.Text;
-            this.Buyerdelivery1 = dateBuyerDev.Value1;
-            this.Buyerdelivery2 = dateBuyerDev.Value2;
+            this.sp1 = this.txtSP_s.Text;
+            this.sp2 = this.txtSP_e.Text;
+            this.MDivisionID = this.comboM.Text;
+            this.FactoryID = this.comboFactory.Text;
+            this.Brand = this.txtBrand.Text;
+            this.Buyerdelivery1 = this.dateBuyerDev.Value1;
+            this.Buyerdelivery2 = this.dateBuyerDev.Value2;
             this.exSis = this.chkExSis.Checked;
 
             if (this.chkBulk.Checked)
             {
-                categoryList.Add("B");
+                this.categoryList.Add("B");
             }
+
             if (this.chkSample.Checked)
             {
-                categoryList.Add("S");
+                this.categoryList.Add("S");
             }
+
             if (this.chkGarment.Checked)
             {
-                categoryList.Add("G");
+                this.categoryList.Add("G");
             }
 
             if (MyUtility.Check.Empty(Buyerdelivery1) && 

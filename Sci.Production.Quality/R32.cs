@@ -26,8 +26,8 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
-            this.comboM.setDefalutIndex(true);
-            this.comboFactory.setDataSource();
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource();
         }
 
 

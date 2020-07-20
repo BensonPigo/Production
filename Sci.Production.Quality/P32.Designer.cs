@@ -74,8 +74,8 @@
             this.numDefectQty = new Sci.Win.UI.NumericBox();
             this.numSQR = new Sci.Win.UI.NumericBox();
             this.labelStatus = new Sci.Win.UI.Label();
-            this.txtshift = new Sci.Production.Class.txtDropDownList();
-            this.txtCFA = new Sci.Production.Class.txtuser();
+            this.txtshift = new Sci.Production.Class.TxtDropDownList();
+            this.txtCFA = new Sci.Production.Class.Txtuser();
             this.txtSpSeq = new Sci.Production.Class.txtSpSeq();
             this.disArticle = new Sci.Win.UI.DisplayBox();
             this.label9 = new Sci.Win.UI.Label();
@@ -841,7 +841,7 @@
         private Win.UI.ListControlBindingSource dataSourceQtyBreakdown;
         private Win.UI.ListControlBindingSource dataSourceCtnSummary;
         private Win.UI.Label label1;
-        private Class.txtuser txtCFA;
+        private Class.Txtuser txtCFA;
         private Win.UI.Label label22;
         private Win.UI.Label label27;
         private Win.UI.Label label26;
@@ -851,7 +851,7 @@
         private Win.UI.Label label6;
         private Win.UI.DisplayBox disSeason;
         private Win.UI.DisplayBox disM;
-        private Class.txtDropDownList txtshift;
+        private Class.TxtDropDownList txtshift;
         private Win.UI.TextBox txtSewingLine;
         private Win.UI.ComboBox comboTeam;
         private Win.UI.NumericBox numClogReceivedPercentage;

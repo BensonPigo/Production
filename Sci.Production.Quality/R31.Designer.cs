@@ -32,9 +32,9 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
-            this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
-            this.comboM = new Sci.Production.Class.comboMDivision(this.components);
-            this.txtBrand = new Sci.Production.Class.txtbrand();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
+            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.txtSP_s = new Sci.Win.UI.TextBox();
             this.txtSP_e = new Sci.Win.UI.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -342,9 +342,9 @@
         private Win.UI.Label label3;
         private Win.UI.Label label4;
         private Win.UI.Label label5;
-        private Class.comboFactory comboFactory;
-        private Class.comboMDivision comboM;
-        private Class.txtbrand txtBrand;
+        private Class.ComboFactory comboFactory;
+        private Class.ComboMDivision comboM;
+        private Class.Txtbrand txtBrand;
         private Win.UI.TextBox txtSP_s;
         private Win.UI.TextBox txtSP_e;
         private System.Windows.Forms.Label label6;
