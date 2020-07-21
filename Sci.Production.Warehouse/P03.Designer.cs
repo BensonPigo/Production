@@ -248,6 +248,7 @@
             "Seq"});
             this.comboSortBy.Location = new System.Drawing.Point(121, 15);
             this.comboSortBy.Name = "comboSortBy";
+            this.comboSortBy.OldText = "";
             this.comboSortBy.Size = new System.Drawing.Size(121, 24);
             this.comboSortBy.TabIndex = 0;
             this.comboSortBy.SelectedIndexChanged += new System.EventHandler(this.comboSortBy_SelectedIndexChanged);
@@ -306,6 +307,7 @@
             this.gridMaterialStatus.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridMaterialStatus.RowTemplate.Height = 24;
             this.gridMaterialStatus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridMaterialStatus.ShowCellToolTips = false;
             this.gridMaterialStatus.Size = new System.Drawing.Size(1002, 504);
             this.gridMaterialStatus.TabIndex = 0;
             this.gridMaterialStatus.TabStop = false;
@@ -319,6 +321,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
             this.Name = "P03";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P03. Material Status (With Local Material)";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel3, 0);

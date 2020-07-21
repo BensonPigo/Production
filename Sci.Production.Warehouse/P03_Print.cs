@@ -92,11 +92,7 @@ namespace Sci.Production.Warehouse
 			                                       ,iif(e.AbbCH is null, j.AbbCH, e.AbbCH) [Chinese Abb]
 			                                       --,f.HsCode [HS Code]
                                                     ,[HS Code]= FabricHsCode.value
-			                                       ,case a.FabricType 
-			                                             when 'F' then 'Fabric'
-			                                             when 'A'then 'Accessory'
-			                                             else a.FabricType
-			                                             end Material_Type
+			                                       ,concat(mt.fabrictype2,'-',Fabric.MtlTypeID) Material_Type
 			                                       ,dbo.GetColorMultipleID(b.BrandID,a.ColorID) [Color]
 			                                       ,a.SizeSpec [Size]
 			                                       ,h.Currencyid [Currency]
@@ -136,11 +132,17 @@ namespace Sci.Production.Warehouse
                                             from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 			                                left join dbo.Orders b WITH (NOLOCK) on a.id=b.id
 			                                left join dbo.PO_Supp c WITH (NOLOCK) on c.id=a.id and c.SEQ1=a.SEQ1
+                                            left join Fabric with(nolock) on Fabric.SCIRefno = a.SCIRefno
 			                                left join dbo.supp d WITH (NOLOCK) on d.id=c.SuppID
 			                                left join dbo.Fabric_Supp e WITH (NOLOCK) on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID
 		                                    left join dbo.supp h WITH (NOLOCK) on h.id=c.SuppID
 			                                left join dbo.MDivisionPoDetail i WITH (NOLOCK) on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
                                             left join PO_Supp_tmp j on a.ID = j.ID and a.SEQ1 = j.SEQ1 and a.SEQ2 = j.SEQ2
+                                            outer apply(select fabrictype2 = case a.FabricType 
+			                                             when 'F' then 'Fabric'
+			                                             when 'A'then 'Accessory'
+			                                             else a.FabricType
+			                                             end )mt
 	                                        outer apply(
 												  select top 1 [value] =IIF(
 														(
@@ -158,6 +160,7 @@ namespace Sci.Production.Warehouse
 												  where f.SCIRefno=a.SCIRefno and f.SuppID=c.SuppID and f.year=year(a.ETA) 
 											)FabricHsCode
 			                                where a.id=@ID  
+
                                             union all
                                             select 
                                                  [sp] = o.POID
@@ -271,11 +274,7 @@ namespace Sci.Production.Warehouse
                                               ,a.SEQ1+a.SEQ2 [SEQ]
                                               ,[Desc]=dbo.getMtlDesc(a.id,a.SEQ1,a.seq2,2,0)
                                               ,chinese_abb=d.AbbCH
-                                              ,case a.fabrictype
-                                                  when 'F' then 'Fabric'
-                                                  when 'A' THEN 'Accessory'
-                                                  Else a.FabricType
-                                                  end Material_Type
+			                                  ,concat(mt.fabrictype2,'-',Fabric.MtlTypeID) Material_Type
                                               --,Hs_code=e.HsCode
                                               ,[HS Code]= FabricHsCode.value
                                               ,supp=c.SuppID
@@ -301,8 +300,14 @@ namespace Sci.Production.Warehouse
                                        from dbo.PO_Supp_Detail a WITH (NOLOCK) 
                                        left join dbo.orders b WITH (NOLOCK) on a.id=b.id
                                        left join dbo.PO_Supp c WITH (NOLOCK) on a.id=c.id and a.SEQ1=c.SEQ1
+                                       left join Fabric with(nolock) on Fabric.SCIRefno = a.SCIRefno
                                        left join dbo.Fabric_Supp d WITH (NOLOCK) on d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID
                                        left join dbo.Supp f WITH (NOLOCK) on f.id=c.SuppID
+                                        outer apply(select fabrictype2 = case a.FabricType 
+			                                            when 'F' then 'Fabric'
+			                                            when 'A'then 'Accessory'
+			                                            else a.FabricType
+			                                            end )mt
                                         outer apply(
 		                                          select top 1 [value] = IIF(
                                                         (
