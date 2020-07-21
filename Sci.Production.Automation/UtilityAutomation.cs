@@ -113,10 +113,5 @@ namespace Sci.Production.Automation
         {
             return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{Sci}' and ModuleName = '{Sci}' and ModuleType = '{ModuleType}' ", "Production");
         }
-
-        public static string GetBaseUrl(string suppID, string moduleName)
-        {
-            return MyUtility.GetValue.Lookup($"select URL from Production.dbo.WebApiURL with (nolock) where SuppID = '{suppID}' and ModuleName = '{moduleName}' and ModuleType = '{ModuleType}' ", "Production");
-        }
     }
 }

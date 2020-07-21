@@ -66,7 +66,7 @@ namespace Sci.Production.Automation
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Receiving_Detail", bodyObject));
 
-            SendWebAPI(UtilityAutomation.GetBaseUrl(GensongSuppID, moduleName), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Sci.Production.Automation
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Issue_Detail", bodyObject));
 
-            SendWebAPI(UtilityAutomation.GetBaseUrl(GensongSuppID, moduleName), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace Sci.Production.Automation
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("WHClose", bodyObject));
-            SendWebAPI(UtilityAutomation.GetBaseUrl(GensongSuppID, moduleName), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -215,7 +215,7 @@ and s.Type in ('A','B','D')
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("SubTransfer_Detail", bodyObject));
 
-            SendWebAPI(UtilityAutomation.GetBaseUrl(GensongSuppID, moduleName), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ and s.Type in ('A','B','D')
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("MtlLocation", bodyObject));
-            SendWebAPI(UtilityAutomation.GetBaseUrl(GensongSuppID, moduleName), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ and s.Type in ('A','B','D')
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("RefnoRelaxtime", bodyObject));
-            SendWebAPI(UtilityAutomation.GetBaseUrl(GensongSuppID, moduleName), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -372,7 +372,7 @@ select distinct
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Cutplan_Detail", bodyObject));
-            SendWebAPI(UtilityAutomation.GetBaseUrl(GensongSuppID, moduleName), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -415,7 +415,7 @@ select distinct
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("BorrowBack", bodyObject));
-            SendWebAPI(UtilityAutomation.GetBaseUrl(GensongSuppID, moduleName), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -490,7 +490,7 @@ and exists(
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("ReturnReceipt", bodyObject));
-            SendWebAPI(UtilityAutomation.GetBaseUrl(GensongSuppID, moduleName), suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         private object CreateGensongStructure(string tableName, object structureID)
