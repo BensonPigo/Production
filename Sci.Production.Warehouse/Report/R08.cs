@@ -113,7 +113,7 @@ namespace Sci.Production.Warehouse
 
 SELECT
 	f.POID
-	,[Seq]=RD.Seq1 +RD.Seq2
+	,[Seq]=RD.Seq1+ '-'+RD.Seq2
 	,o.BrandID
 	,o.StyleID
 	,PSD.Refno
@@ -135,23 +135,23 @@ OUTER APPLY(
     FROM (
 	    SELECT a.EditDate
 	    FROM dbo.Issue a INNER JOIN dbo.Issue_Detail b ON b.id = a.id
-	    WHERE b.POID=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=rd.Roll AND b.Dyelot=rd.Dyelot AND b.StockType=rd.StockType 
+	    WHERE b.POID=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=rd.Roll AND b.Dyelot=rd.Dyelot AND b.StockType=rd.StockType AND a.status='Confirmed'
 	    UNION ALL
 	    SELECT a.EditDate
 	    FROM dbo.IssueLack a INNER JOIN dbo.IssueLack_Detail b ON b.id = a.id
-	    WHERE a.Type = 'R' AND b.POID=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=rd.Roll AND b.Dyelot=rd.Dyelot AND b.StockType=rd.StockType 
+	    WHERE a.Type = 'R' AND b.POID=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=rd.Roll AND b.Dyelot=rd.Dyelot AND b.StockType=rd.StockType AND a.status='Confirmed'
 	    UNION ALL
 	    SELECT a.EditDate
 	    FROM dbo.SubTransfer a INNER JOIN dbo.SubTransfer_Detail b ON b.id = a.id
-	    WHERE a.Type = 'A' AND b.FromPoId=o.ID AND b.FromSeq1=f.Seq1 AND b.FromSeq2=f.Seq2 AND b.FromRoll=rd.Roll AND b.FromDyelot=rd.Dyelot AND b.FromStockType=rd.StockType 
+	    WHERE a.Type = 'A' AND b.FromPoId=o.ID AND b.FromSeq1=f.Seq1 AND b.FromSeq2=f.Seq2 AND b.FromRoll=rd.Roll AND b.FromDyelot=rd.Dyelot AND b.FromStockType=rd.StockType AND a.status='Confirmed' 
 	    UNION ALL
 	    SELECT a.EditDate
 	    FROM dbo.BorrowBack a INNER JOIN dbo.BorrowBack_Detail b ON b.id = a.id
-	    WHERE b.FromPoId=o.ID AND b.FromSeq1=f.Seq1 AND b.FromSeq2=f.Seq2 AND b.FromRoll=rd.Roll AND b.FromDyelot=rd.Dyelot AND b.FromStockType=rd.StockType 
+	    WHERE b.FromPoId=o.ID AND b.FromSeq1=f.Seq1 AND b.FromSeq2=f.Seq2 AND b.FromRoll=rd.Roll AND b.FromDyelot=rd.Dyelot AND b.FromStockType=rd.StockType AND a.status='Confirmed' 
 	    UNION ALL
 	    SELECT a.EditDate
 	    FROM dbo.TransferOut a INNER JOIN dbo.TransferOut_Detail b ON b.id = a.id
-	    WHERE b.PoId=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=rd.Roll AND b.Dyelot=rd.Dyelot AND b.StockType=rd.StockType 
+	    WHERE b.PoId=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=rd.Roll AND b.Dyelot=rd.Dyelot AND b.StockType=rd.StockType AND a.status='Confirmed' 
     ) a 
 )LastReleaseDate
 
@@ -185,23 +185,23 @@ OUTER APPLY(
     FROM (
 	    SELECT a.EditDate
 	    FROM dbo.Issue a INNER JOIN dbo.Issue_Detail b ON b.id = a.id
-	    WHERE b.POID=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=TD.Roll AND b.Dyelot=td.Dyelot AND b.StockType=td.StockType 
+	    WHERE b.POID=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=TD.Roll AND b.Dyelot=td.Dyelot AND b.StockType=td.StockType AND a.status='Confirmed' 
 	    UNION ALL
 	    SELECT a.EditDate
 	    FROM dbo.IssueLack a INNER JOIN dbo.IssueLack_Detail b ON b.id = a.id
-	    WHERE a.Type = 'R' AND b.POID=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=TD.Roll AND b.Dyelot=td.Dyelot AND b.StockType=td.StockType 
+	    WHERE a.Type = 'R' AND b.POID=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=TD.Roll AND b.Dyelot=td.Dyelot AND b.StockType=td.StockType AND a.status='Confirmed' 
 	    UNION ALL
 	    SELECT a.EditDate
 	    FROM dbo.SubTransfer a INNER JOIN dbo.SubTransfer_Detail b ON b.id = a.id
-	    WHERE a.Type = 'A' AND b.FromPoId=o.ID AND b.FromSeq1=f.Seq1 AND b.FromSeq2=f.Seq2 AND b.FromRoll=TD.Roll AND b.FromDyelot=td.Dyelot AND b.FromStockType=td.StockType 
+	    WHERE a.Type = 'A' AND b.FromPoId=o.ID AND b.FromSeq1=f.Seq1 AND b.FromSeq2=f.Seq2 AND b.FromRoll=TD.Roll AND b.FromDyelot=td.Dyelot AND b.FromStockType=td.StockType AND a.status='Confirmed' 
 	    UNION ALL
 	    SELECT a.EditDate
 	    FROM dbo.BorrowBack a INNER JOIN dbo.BorrowBack_Detail b ON b.id = a.id
-	    WHERE b.FromPoId=o.ID AND b.FromSeq1=f.Seq1 AND b.FromSeq2=f.Seq2 AND b.FromRoll=TD.Roll AND b.FromDyelot=td.Dyelot AND b.FromStockType=td.StockType 
+	    WHERE b.FromPoId=o.ID AND b.FromSeq1=f.Seq1 AND b.FromSeq2=f.Seq2 AND b.FromRoll=TD.Roll AND b.FromDyelot=td.Dyelot AND b.FromStockType=td.StockType AND a.status='Confirmed' 
 	    UNION ALL
 	    SELECT a.EditDate
 	    FROM dbo.TransferOut a INNER JOIN dbo.TransferOut_Detail b ON b.id = a.id
-	    WHERE b.PoId=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=TD.Roll AND b.Dyelot=td.Dyelot AND b.StockType=td.StockType 
+	    WHERE b.PoId=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=TD.Roll AND b.Dyelot=td.Dyelot AND b.StockType=td.StockType AND a.status='Confirmed' 
     ) a 
 )LastReleaseDate
 
