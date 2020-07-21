@@ -131,11 +131,28 @@ Left join PO_Supp_Detail PSD on PSD.ID=F.POID and PSD.Seq1=F.Seq1 and PSD.Seq2=F
 Left join FtyInventory FIT on FIT.POID=RD.POID and FIT.Seq1=RD.Seq1 and FIT.Seq2=RD.Seq2 and FIT.Roll=RD.Roll and FIT.Dyelot=RD.Dyelot and FIT.StockType=RD.StockType
 Left join Fabric FC on PSD.SCIRefno=FC.SCIRefno
 OUTER APPLY(
-	SELECT [Date]=Max(EditDate)
-	FROM View_TransactionList
-	WHERE Status='Confirmed' AND POID=o.ID AND Seq1=f.Seq1 AND Seq2=f.Seq2 --AND Roll = rd.Roll AND Dyelot = rd.Dyelot
-	--AND StockType  = rd.StockType 
-	AND tbname  IN ('BorrowBack-From',' Issue',' IssueLack ',' SubTransfer-From','TransferOut')
+    SELECT [Date] = Max(EditDate)
+    FROM (
+	    SELECT a.EditDate
+	    FROM dbo.Issue a INNER JOIN dbo.Issue_Detail b ON b.id = a.id
+	    WHERE b.POID=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=rd.Roll AND b.Dyelot=rd.Dyelot AND b.StockType=rd.StockType 
+	    UNION ALL
+	    SELECT a.EditDate
+	    FROM dbo.IssueLack a INNER JOIN dbo.IssueLack_Detail b ON b.id = a.id
+	    WHERE a.Type = 'R' AND b.POID=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=rd.Roll AND b.Dyelot=rd.Dyelot AND b.StockType=rd.StockType 
+	    UNION ALL
+	    SELECT a.EditDate
+	    FROM dbo.SubTransfer a INNER JOIN dbo.SubTransfer_Detail b ON b.id = a.id
+	    WHERE a.Type = 'A' AND b.FromPoId=o.ID AND b.FromSeq1=f.Seq1 AND b.FromSeq2=f.Seq2 AND b.FromRoll=rd.Roll AND b.FromDyelot=rd.Dyelot AND b.FromStockType=rd.StockType 
+	    UNION ALL
+	    SELECT a.EditDate
+	    FROM dbo.BorrowBack a INNER JOIN dbo.BorrowBack_Detail b ON b.id = a.id
+	    WHERE b.FromPoId=o.ID AND b.FromSeq1=f.Seq1 AND b.FromSeq2=f.Seq2 AND b.FromRoll=rd.Roll AND b.FromDyelot=rd.Dyelot AND b.FromStockType=rd.StockType 
+	    UNION ALL
+	    SELECT a.EditDate
+	    FROM dbo.TransferOut a INNER JOIN dbo.TransferOut_Detail b ON b.id = a.id
+	    WHERE b.PoId=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=rd.Roll AND b.Dyelot=rd.Dyelot AND b.StockType=rd.StockType 
+    ) a 
 )LastReleaseDate
 
 WHERE {whereList.JoinToString(" AND ")}
@@ -164,11 +181,28 @@ Left join PO_Supp_Detail PSD on PSD.ID=F.POID and PSD.Seq1=F.Seq1 and PSD.Seq2=F
 Left join FtyInventory FIT on FIT.POID=TD.POID and FIT.Seq1=TD.Seq1 and FIT.Seq2=TD.Seq2 and FIT.Roll=TD.Roll and FIT.Dyelot=TD.Dyelot and FIT.StockType=TD.StockType
 Left join Fabric FC on PSD.SCIRefno=FC.SCIRefno
 OUTER APPLY(
-	SELECT [Date]=Max(EditDate)
-	FROM View_TransactionList
-	WHERE Status='Confirmed' AND POID=o.ID AND Seq1=f.Seq1 AND Seq2=f.Seq2 --AND Roll = TD.Roll AND Dyelot = TD.Dyelot
-	--AND StockType  = rd.StockType 
-	AND tbname  IN ('BorrowBack-From',' Issue',' IssueLack ',' SubTransfer-From','TransferOut')
+    SELECT [Date] = Max(EditDate)
+    FROM (
+	    SELECT a.EditDate
+	    FROM dbo.Issue a INNER JOIN dbo.Issue_Detail b ON b.id = a.id
+	    WHERE b.POID=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=TD.Roll AND b.Dyelot=td.Dyelot AND b.StockType=td.StockType 
+	    UNION ALL
+	    SELECT a.EditDate
+	    FROM dbo.IssueLack a INNER JOIN dbo.IssueLack_Detail b ON b.id = a.id
+	    WHERE a.Type = 'R' AND b.POID=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=TD.Roll AND b.Dyelot=td.Dyelot AND b.StockType=td.StockType 
+	    UNION ALL
+	    SELECT a.EditDate
+	    FROM dbo.SubTransfer a INNER JOIN dbo.SubTransfer_Detail b ON b.id = a.id
+	    WHERE a.Type = 'A' AND b.FromPoId=o.ID AND b.FromSeq1=f.Seq1 AND b.FromSeq2=f.Seq2 AND b.FromRoll=TD.Roll AND b.FromDyelot=td.Dyelot AND b.FromStockType=td.StockType 
+	    UNION ALL
+	    SELECT a.EditDate
+	    FROM dbo.BorrowBack a INNER JOIN dbo.BorrowBack_Detail b ON b.id = a.id
+	    WHERE b.FromPoId=o.ID AND b.FromSeq1=f.Seq1 AND b.FromSeq2=f.Seq2 AND b.FromRoll=TD.Roll AND b.FromDyelot=td.Dyelot AND b.FromStockType=td.StockType 
+	    UNION ALL
+	    SELECT a.EditDate
+	    FROM dbo.TransferOut a INNER JOIN dbo.TransferOut_Detail b ON b.id = a.id
+	    WHERE b.PoId=o.ID AND b.Seq1=f.Seq1 AND b.Seq2=f.Seq2 AND b.Roll=TD.Roll AND b.Dyelot=td.Dyelot AND b.StockType=td.StockType 
+    ) a 
 )LastReleaseDate
 
 WHERE {whereList_2.JoinToString(" AND ")}
