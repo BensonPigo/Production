@@ -722,7 +722,7 @@ from(
                     , a.Refno
                     , a.SCIRefno
                     , a.FabricType 
-                    , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
+                    , concat(mt.fabrictype2,'-'+Fabric.MtlTypeID) as fabrictype2
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
                     --, ColorID = dbo.GetColorMultipleID(Orders.BrandID,a.ColorID) 
                     , ColorID = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,a.SuppColor,dbo.GetColorMultipleID(Orders.BrandID,a.ColorID)) --------
@@ -812,6 +812,7 @@ from(
 
 			LEFT JOIN Order_BOF ob ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
 			LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = b.SuppID  
+            outer apply(select fabrictype2 = iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))))mt
 			OUTER APPLY(
 			SELECT [FabricCombo]=STUFF((
 				SELECT 
@@ -837,7 +838,8 @@ from(
                     , substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETA
                     , a.Refno
                     , a.SCIRefno
-                    , a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
+                    , a.FabricType 
+                    , concat(mt.fabrictype2,'-'+Fabric.MtlTypeID) as fabrictype2
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
                     --, ColorID = dbo.GetColorMultipleID(o.BrandID,a.ColorID) 
                     , ColorID = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,a.SuppColor,dbo.GetColorMultipleID(o.BrandID,a.ColorID)) --------
@@ -921,6 +923,7 @@ from(
 									a.SEQ1 like 'T%' 
 		LEFT JOIN Order_BOF ob ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
 		LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = b.SuppID 
+        outer apply(select fabrictype2 = iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))))mt
 		OUTER APPLY(
 		SELECT [FabricCombo]=STUFF((
 			SELECT 
@@ -1151,7 +1154,7 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
 
                         if (!MyUtility.Check.Empty(_Refno) && !MyUtility.Check.Empty(_Color) && !MyUtility.Check.Empty(_MaterialType))
                         {
-                            filter = $@" refno='{_Refno}' and ColorID='{_Color}' and fabrictype2='{_MaterialType}'";
+                            filter = $@" refno='{_Refno}' and ColorID='{_Color}' and fabrictype2 like'%{_MaterialType}%'";
                         }
                         else
                         {
@@ -1169,7 +1172,7 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
 
                         if (!MyUtility.Check.Empty(_Refno) && !MyUtility.Check.Empty(_Color) && !MyUtility.Check.Empty(_MaterialType))
                         {
-                            filter = $@" refno='{_Refno}' and ColorID='{_Color}' and fabrictype2='{_MaterialType}' and junk=0";
+                            filter = $@" refno='{_Refno}' and ColorID='{_Color}' and fabrictype2 like'%{_MaterialType}%' and junk=0";
                         }
                         else
                         {

@@ -137,6 +137,10 @@ namespace Sci.Production.Warehouse
                         @"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Transfer Out Qty can't be empty",
                         row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
+
+                List<string> seqList = Sci.Production.Warehouse.P19_Import.ToSeqSplit(MyUtility.Convert.GetString(row["ToSeq"]));
+                row["ToSeq1"] = seqList[0];
+                row["ToSeq2"] = seqList.Count > 1 ? seqList[1] : string.Empty;
             }
 
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
@@ -204,6 +208,9 @@ namespace Sci.Production.Warehouse
         protected override void OnDetailGridSetup()
         {
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ToPOID;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ToSeq;
+
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
@@ -215,13 +222,20 @@ namespace Sci.Production.Warehouse
             .Numeric("qty", header: "Out Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10) // 6
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype) // 7
             .Text("Location", header: "Location", iseditingreadonly: true) // 8
+            .Text("ToPOID", header: "To POID", width: Widths.AnsiChars(13), iseditingreadonly: false).Get(out cbb_ToPOID)
+            .Text("ToSeq", header: "To Seq", width: Widths.AnsiChars(6), iseditingreadonly: false).Get(out cbb_ToSeq)
             ;
             #endregion 欄位設定
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
 
+            cbb_ToPOID.MaxLength = 13;
+            cbb_ToSeq.MaxLength = 5;
+
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ToPOID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ToSeq"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         // Confirm
@@ -656,6 +670,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,a.ukey
 ,dbo.Getlocation(fi.ukey) location
 ,a.ftyinventoryukey
+,a.ToPOID
+,a.ToSeq1
+,a.ToSeq2
+,[ToSeq] = a.ToSeq1 +' ' + a.ToSeq2
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join FtyInventory FI on a.POID = FI.POID and a.Seq1 = FI.Seq1 and a.Seq2 = FI.Seq2 and a.Dyelot = FI.Dyelot
