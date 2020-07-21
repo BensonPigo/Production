@@ -50,6 +50,7 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(456, 48);
+            this.toexcel.TabIndex = 7;
             // 
             // close
             // 
@@ -136,7 +137,7 @@
             this.dateArrive.Location = new System.Drawing.Point(146, 12);
             this.dateArrive.Name = "dateArrive";
             this.dateArrive.Size = new System.Drawing.Size(280, 23);
-            this.dateArrive.TabIndex = 133;
+            this.dateArrive.TabIndex = 1;
             // 
             // txtSPNoEnd
             // 
@@ -145,7 +146,7 @@
             this.txtSPNoEnd.Location = new System.Drawing.Point(307, 48);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(128, 23);
-            this.txtSPNoEnd.TabIndex = 135;
+            this.txtSPNoEnd.TabIndex = 3;
             // 
             // txtSPNoStart
             // 
@@ -154,7 +155,7 @@
             this.txtSPNoStart.Location = new System.Drawing.Point(146, 48);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(128, 23);
-            this.txtSPNoStart.TabIndex = 134;
+            this.txtSPNoStart.TabIndex = 2;
             // 
             // label2
             // 
@@ -177,7 +178,7 @@
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 139;
+            this.txtfactory.TabIndex = 5;
             // 
             // txtMdivision
             // 
@@ -186,7 +187,7 @@
             this.txtMdivision.Location = new System.Drawing.Point(146, 84);
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision.TabIndex = 138;
+            this.txtMdivision.TabIndex = 4;
             // 
             // txtBrand
             // 
@@ -195,7 +196,7 @@
             this.txtBrand.Location = new System.Drawing.Point(146, 157);
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(66, 23);
-            this.txtBrand.TabIndex = 140;
+            this.txtBrand.TabIndex = 6;
             // 
             // R08
             // 
