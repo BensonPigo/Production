@@ -1,29 +1,30 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Windows.Forms;
-using Sci.Data;
-using System.Transactions;
-using Sci.Win.Tools;
 using System.Linq;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P20 : Win.Tems.Input8
     {
-        private string loginID = Env.User.UserID;
-        private string keyWord = Env.User.Keyword;
+        private readonly string LoginID = Env.User.UserID;
+        private readonly string KeyWord = Env.User.Keyword;
 
+        /// <inheritdoc/>
         public P20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", this.keyWord);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", this.KeyWord);
             this.DoSubForm = new P20_Detail();
-            DataTable queryDT;
             string querySql = string.Format(
                 @"
 select '' FTYGroup
@@ -33,7 +34,7 @@ select distinct FTYGroup
 from Factory 
 where MDivisionID = '{0}'", Env.User.Keyword);
             DualResult result;
-            result = DBProxy.Current.Select(null, querySql, out queryDT);
+            result = DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             if (!result)
             {
                 this.ShowErr(result);
@@ -57,6 +58,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             };
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
@@ -91,6 +93,7 @@ ORDER BY CutRef
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Detail == null) ? string.Empty : e.Detail["Ukey"].ToString();
@@ -102,6 +105,7 @@ ORDER BY CutRef
             return base.OnSubDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -114,6 +118,7 @@ ORDER BY CutRef
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -141,7 +146,6 @@ ORDER BY CutRef
                     return;
                 }
 
-                DataTable dt;
                 string cutrefsql = $@"
 Select
 	a.ID
@@ -201,7 +205,7 @@ and a.CutRef != ''
 --and a.Layer > isnull(acc.AccuCuttingLayer,0)
 and a.MDivisionId = '{Env.User.Keyword}'
 ";
-                DualResult result = DBProxy.Current.Select(null, cutrefsql, out dt);
+                DualResult result = DBProxy.Current.Select(null, cutrefsql, out DataTable dt);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -276,11 +280,11 @@ and a.MDivisionId = '{Env.User.Keyword}'
                             dt,
                             "this <Cut Ref#(" + e.FormattedValue + ")> already output finished \r\nPlease refer to the following information",
                             "Warning",
-                            null, MessageBoxButtons.OK);
-
-                        m.Width = 630;
+                            null,
+                            MessageBoxButtons.OK);
                         m.grid1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                         m.grid1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                        m.Width = 630;
                         m.text_Find.Width = 140;
                         m.btn_Find.Location = new Point(150, 6);
                         m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
@@ -320,8 +324,6 @@ and a.MDivisionId = '{Env.User.Keyword}'
                     dr["WorkOderLayer"] = seldr["WorkOderLayer"];
                     dr["AccuCuttingLayer"] = seldr["AccuCuttingLayer"];
                     dr["Layer"] = MyUtility.Convert.GetInt(seldr["CuttingLayer"]) - nowOutputRow_Layer;
-
-                    // dr["LackingLayers"] = seldr["LackingLayers"];
                     dr["LackingLayers"] = MyUtility.Convert.GetInt(seldr["WorkOderLayer"]) - MyUtility.Convert.GetInt(seldr["AccuCuttingLayer"]) - (MyUtility.Convert.GetInt(dr["Layer"]) + nowOutputRow_Layer);
                     dr["Cons"] = seldr["Cons"];
                     dr["FabricPanelCode"] = seldr["FabricPanelCode"];
@@ -346,8 +348,8 @@ and a.MDivisionId = '{Env.User.Keyword}'
             };
             #endregion
             #region Cutting Layer
-            DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
-            Layer.CellValidating += (s, e) =>
+            DataGridViewGeneratorNumericColumnSettings layer = new DataGridViewGeneratorNumericColumnSettings();
+            layer.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -361,14 +363,6 @@ and a.MDivisionId = '{Env.User.Keyword}'
 
                 var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                // if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
-                // {
-                //    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
-                //    dr["Layer"] = 0;
-                //    dr["Cons"] = 0;
-                //    dr.EndEdit();
-                //    return;
-                // }
                 dr["Layer"] = e.FormattedValue;
                 dr["Cons"] = MyUtility.Convert.GetDecimal(e.FormattedValue) * MyUtility.Convert.GetDecimal(dr["ConsPC"]) * MyUtility.Convert.GetDecimal(dr["SizeRatioQty"]);
                 dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["Layer"]);
@@ -388,7 +382,7 @@ and a.MDivisionId = '{Env.User.Keyword}'
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("WorkOderLayer", header: "WorkOrder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("AccuCuttingLayer", header: "Accu. Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
-            .Numeric("Layer", header: "Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, maximum: 99999, minimum: 0, settings: Layer)
+            .Numeric("Layer", header: "Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, maximum: 99999, minimum: 0, settings: layer)
             .Numeric("LackingLayers", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2, iseditingreadonly: true)
@@ -397,15 +391,17 @@ and a.MDivisionId = '{Env.User.Keyword}'
             this.detailgrid.Columns["Layer"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             this.CurrentMaintain["cDate"] = DateTime.Today.AddDays(-1);
-            this.CurrentMaintain["mDivisionid"] = this.keyWord;
+            this.CurrentMaintain["mDivisionid"] = this.KeyWord;
             this.CurrentMaintain["Status"] = "New";
             this.txtfactoryByM1.Text = Env.User.Factory;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].ToString() != "New")
@@ -417,6 +413,7 @@ and a.MDivisionId = '{Env.User.Keyword}'
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].ToString() != "New")
@@ -428,6 +425,7 @@ and a.MDivisionId = '{Env.User.Keyword}'
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.dateDate.Value))
@@ -485,9 +483,7 @@ and a.MDivisionId = '{Env.User.Keyword}'
                 return false;
             }
 
-            DataTable sumTb;
-
-            MyUtility.Tool.ProcessWithDatatable(dt, "Layer,cutref,workorderukey,cuttingid,id", "Select sum(Layer) as tlayer,cutref,workorderukey,cuttingid,id from #tmp group by cutref,workorderukey,cuttingid,id", out sumTb);
+            MyUtility.Tool.ProcessWithDatatable(dt, "Layer,cutref,workorderukey,cuttingid,id", "Select sum(Layer) as tlayer,cutref,workorderukey,cuttingid,id from #tmp group by cutref,workorderukey,cuttingid,id", out DataTable sumTb);
             string cutref, id, cuttingid, sumsql;
             int layer_cutting, layer_work;
             foreach (DataRow dr in sumTb.Rows)
@@ -517,7 +513,7 @@ and a.MDivisionId = '{Env.User.Keyword}'
                     layer_cutting = Convert.ToInt32(str);
                 }
 
-                layer_cutting = layer_cutting + Convert.ToInt32(dr["tlayer"]);
+                layer_cutting += Convert.ToInt32(dr["tlayer"]);
                 if (layer_cutting > layer_work)
                 {
                     MyUtility.Msg.WarningBox("<Refno>:" + cutref + ", the total layer cant not excess the total layer in workorder");
@@ -529,17 +525,16 @@ and a.MDivisionId = '{Env.User.Keyword}'
             this.CurrentMaintain["Actoutput"] = cons;
             if (this.IsDetailInserting)
             {
-                string cid = MyUtility.GetValue.GetID(this.keyWord + "CD", "CuttingOutput");
+                string cid = MyUtility.GetValue.GetID(this.KeyWord + "CD", "CuttingOutput");
                 this.CurrentMaintain["id"] = cid;
             }
             #region 掃表身找出有改變的寫入第三層
             DataTable detailTb = (DataTable)this.detailgridbs.DataSource;
-            DataTable subtb, SizeTb;
-            MyUtility.Tool.ProcessWithDatatable(detailTb, "WorkorderUkey", "Select b.* from #tmp a, workorder_SizeRatio b WITH (NOLOCK) where a.workorderukey = b.workorderukey", out SizeTb);
+            MyUtility.Tool.ProcessWithDatatable(detailTb, "WorkorderUkey", "Select b.* from #tmp a, workorder_SizeRatio b WITH (NOLOCK) where a.workorderukey = b.workorderukey", out DataTable sizeTb);
             DataRow[] dray;
             foreach (DataRow dr in this.DetailDatas)
             {
-                this.GetSubDetailDatas(dr, out subtb);
+                this.GetSubDetailDatas(dr, out DataTable subtb);
 
                 // 變更需刪除第三層資料
                 if (dr.RowState == DataRowState.Modified)
@@ -553,7 +548,7 @@ and a.MDivisionId = '{Env.User.Keyword}'
                 // 新增與變更需增加第三層
                 if ((dr.RowState == DataRowState.Added) || (dr.RowState == DataRowState.Modified))
                 {
-                    dray = SizeTb.Select(string.Format("WorkorderUkey ='{0}'", dr["WorkorderUkey"]));
+                    dray = sizeTb.Select(string.Format("WorkorderUkey ='{0}'", dr["WorkorderUkey"]));
                     if (dray.Length != 0)
                     {
                         foreach (DataRow dr2 in dray)
@@ -576,19 +571,19 @@ and a.MDivisionId = '{Env.User.Keyword}'
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
             DualResult result;
             #region 若前面的單子有尚未Confrim 則不可Confirm
 
-            string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) where cdate<'{0}' and Status='New' and mDivisionid = '{1}'", ((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd"), this.keyWord);
+            string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) where cdate<'{0}' and Status='New' and mDivisionid = '{1}'", ((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd"), this.KeyWord);
             string msg = string.Empty;
-            DataTable Dt;
-            result = DBProxy.Current.Select(null, sql, out Dt);
+            result = DBProxy.Current.Select(null, sql, out DataTable dt);
             if (result)
             {
-                foreach (DataRow dr in Dt.Rows)
+                foreach (DataRow dr in dt.Rows)
                 {
                     msg = msg + "<ID>:" + dr["ID"] + ",<Date>:" + ((DateTime)dr["cdate"]).ToString("yyyy/MM/dd") + Environment.NewLine;
                 }
@@ -604,59 +599,55 @@ and a.MDivisionId = '{Env.User.Keyword}'
                 this.ShowErr(result);
                 return;
             }
-
             #endregion
 
-            string update = string.Empty;
-            update = $@"update Cuttingoutput set status='Confirmed',editDate=getdate(),editname ='{this.loginID}' where id='{this.CurrentMaintain["ID"]}';
+            string update = $@"update Cuttingoutput set status='Confirmed',editDate=getdate(),editname ='{this.LoginID}' where id='{this.CurrentMaintain["ID"]}';
                         EXEC Cutting_P20_CFM_Update '{this.CurrentMaintain["ID"]}','{((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{this.CurrentMaintain["ManPower"]},{this.CurrentMaintain["ManHours"]},'Confirm';
 ";
 
             #region transaction
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionOptions oTranOpt = default;
+            oTranOpt.IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted;
+            oTranOpt.Timeout = new TimeSpan(0, 5, 0);
+            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt))
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(upResult);
                         return;
                     }
-
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
+
+                transactionscope.Complete();
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
-
+            MyUtility.Msg.InfoBox("Successfully");
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
             DualResult result;
             #region 若前面的單子有UnConfrim 則UnConfirm
 
-            string sql = string.Format("Select * from Cuttingoutput  WITH (NOLOCK) where cdate>'{0}' and Status!='New' and mDivisionid = '{1}'", ((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd"), this.keyWord);
+            string sql = string.Format("Select * from Cuttingoutput  WITH (NOLOCK) where cdate>'{0}' and Status!='New' and mDivisionid = '{1}'", ((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd"), this.KeyWord);
             string msg = string.Empty;
-            DataTable Dt;
-            result = DBProxy.Current.Select(null, sql, out Dt);
+            result = DBProxy.Current.Select(null, sql, out DataTable dt);
             if (result)
             {
-                foreach (DataRow dr in Dt.Rows)
+                foreach (DataRow dr in dt.Rows)
                 {
                     msg = msg + "<ID>:" + dr["ID"] + ",<Date>:" + ((DateTime)dr["cdate"]).ToString("yyyy/MM/dd") + Environment.NewLine;
                 }
@@ -673,45 +664,41 @@ and a.MDivisionId = '{Env.User.Keyword}'
                 return;
             }
             #endregion
-            string update = string.Empty;
-            update = $@"update Cuttingoutput set status='New',editDate=getdate(),editname ='{this.loginID}' where id='{this.CurrentMaintain["ID"]}';
+            string update = $@"update Cuttingoutput set status='New',editDate=getdate(),editname ='{this.LoginID}' where id='{this.CurrentMaintain["ID"]}';
                         EXEC Cutting_P20_CFM_Update '{this.CurrentMaintain["ID"]}','{((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{this.CurrentMaintain["ManPower"]},{this.CurrentMaintain["ManHours"]},'UnConfirm';
 ";
 
             #region transaction
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionOptions oTranOpt = default;
+            oTranOpt.IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted;
+            oTranOpt.Timeout = new TimeSpan(0, 5, 0);
+            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt))
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(upResult);
                         return;
                     }
-
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
+
+                transactionscope.Complete();
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
-
+            MyUtility.Msg.InfoBox("Successfully");
             #endregion
-
         }
 
-        private void btnImportfromWorkOrder_Click(object sender, EventArgs e)
+        private void BtnImportfromWorkOrder_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
@@ -719,12 +706,13 @@ and a.MDivisionId = '{Env.User.Keyword}'
             frm.ShowDialog(this);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
         }
 
-        private void btnImportfromRealtimeBundleTracking_Click(object sender, EventArgs e)
+        private void BtnImportfromRealtimeBundleTracking_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
@@ -732,9 +720,9 @@ and a.MDivisionId = '{Env.User.Keyword}'
             frm.ShowDialog(this);
         }
 
-        int index;
-        string find = string.Empty;
-        DataRow[] find_dr;
+        private int index;
+        private string find = string.Empty;
+        private DataRow[] find_dr;
 
         private void BtnFind_Click(object sender, EventArgs e)
         {
