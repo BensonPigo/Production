@@ -374,7 +374,7 @@
             this.btnImportfromWorkOrder.TabIndex = 7;
             this.btnImportfromWorkOrder.Text = "Import from WorkOrder";
             this.btnImportfromWorkOrder.UseVisualStyleBackColor = true;
-            this.btnImportfromWorkOrder.Click += new System.EventHandler(this.btnImportfromWorkOrder_Click);
+            this.btnImportfromWorkOrder.Click += new System.EventHandler(this.BtnImportfromWorkOrder_Click);
             // 
             // btnImportfromRealtimeBundleTracking
             // 
@@ -385,7 +385,7 @@
             this.btnImportfromRealtimeBundleTracking.TabIndex = 8;
             this.btnImportfromRealtimeBundleTracking.Text = "Import from RFID";
             this.btnImportfromRealtimeBundleTracking.UseVisualStyleBackColor = true;
-            this.btnImportfromRealtimeBundleTracking.Click += new System.EventHandler(this.btnImportfromRealtimeBundleTracking_Click);
+            this.btnImportfromRealtimeBundleTracking.Click += new System.EventHandler(this.BtnImportfromRealtimeBundleTracking_Click);
             // 
             // label1
             // 
