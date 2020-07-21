@@ -47,6 +47,7 @@ namespace Sci.Production.Centralized
         private List<DataTable> Summarydt;
         private List<string> listFtyZone;
         private DataTable dtAllDetail;
+        private bool IncludeCancelOrder;
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
@@ -61,6 +62,7 @@ namespace Sci.Production.Centralized
             this.Forecast = this.chkForecast.Checked;
             this.FtyLocalOrder = this.chkFtyLocalOrder.Checked;
             this.ExcludeSampleFactory = this.chkExcludeSampleFactory.Checked;
+            this.IncludeCancelOrder = this.chkIncludeCancelOrder.Checked;
 
             if (MyUtility.Check.Empty(this.Year))
             {
@@ -101,6 +103,7 @@ namespace Sci.Production.Centralized
             sqlcmdSP.Append(this.FtyLocalOrder ? $" 1," : "0,"); // ChkFtylocalOrder
             sqlcmdSP.Append(this.ExcludeSampleFactory ? $" 1," : "0,"); // ExcludeSampleFactory
             sqlcmdSP.Append(this.radioMonthly.Checked ? $" 1," : "0,"); // ChkMonthly
+            sqlcmdSP.Append(this.chkIncludeCancelOrder.Checked ? $" 1," : "0,"); // @IncludeCancelOrder
             #endregion
 
             #region --由 appconfig 抓各個連線路徑

@@ -48,6 +48,7 @@
             this.comboFtyZone = new Sci.Production.Class.comboFtyZone(this.components);
             this.radioMonthly = new Sci.Win.UI.RadioButton();
             this.radioSemiMonthly = new Sci.Win.UI.RadioButton();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
@@ -263,6 +264,7 @@
             this.comboFtyZone.FilteMDivision = false;
             this.comboFtyZone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFtyZone.FormattingEnabled = true;
+            this.comboFtyZone.IsIncludeSampleRoom = false;
             this.comboFtyZone.IssupportJunk = false;
             this.comboFtyZone.IsSupportUnselect = true;
             this.comboFtyZone.Location = new System.Drawing.Point(123, 141);
@@ -297,11 +299,25 @@
             this.radioSemiMonthly.Text = "Semi-monthly Report";
             this.radioSemiMonthly.UseVisualStyleBackColor = true;
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.Checked = true;
+            this.chkIncludeCancelOrder.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 348);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 117;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(591, 376);
+            this.ClientSize = new System.Drawing.Size(591, 400);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.radioSemiMonthly);
             this.Controls.Add(this.radioMonthly);
             this.Controls.Add(this.comboFtyZone);
@@ -349,6 +365,7 @@
             this.Controls.SetChildIndex(this.comboFtyZone, 0);
             this.Controls.SetChildIndex(this.radioMonthly, 0);
             this.Controls.SetChildIndex(this.radioSemiMonthly, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -376,5 +393,6 @@
         private Class.comboFtyZone comboFtyZone;
         private Win.UI.RadioButton radioMonthly;
         private Win.UI.RadioButton radioSemiMonthly;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }
