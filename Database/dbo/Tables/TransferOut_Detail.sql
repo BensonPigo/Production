@@ -10,6 +10,9 @@
     [StockType]        CHAR (1)        CONSTRAINT [DF_TransferOut_Detail_StockType] DEFAULT ('') NULL,
     [Qty]              NUMERIC (10, 2) CONSTRAINT [DF_TransferOut_Detail_Qty] DEFAULT ((0)) NULL,
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
+    [ToPOID] VARCHAR(13) NOT NULL CONSTRAINT [DF_TransferOut_Detail_ToPOID] DEFAULT ('') NULL,
+    [ToSeq1] VARCHAR(3) NOT NULL CONSTRAINT [DF_TransferOut_Detail_ToSeq1] DEFAULT ('') NULL,
+    [ToSeq12] VARCHAR(2) NOT NULL CONSTRAINT [DF_TransferOut_Detail_ToSeq2] DEFAULT ('') NULL,
     CONSTRAINT [PK_TransferOut_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
