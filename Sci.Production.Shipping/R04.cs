@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.ComponentModel;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
@@ -87,6 +87,18 @@ namespace Sci.Production.Shipping
             }
 
             sqlCmd = this.SQLWhere(sqlCmd);
+
+            if (this.summaryBy == 0)
+            {
+                // sqlCmd = this.SummaryBySP2(sqlCmd); // ISP20201243 先加但先不要
+            }
+            else
+            {
+                sqlCmd = this.SummaryByPL2(sqlCmd);
+                sqlCmd = this.SQLWhere(sqlCmd);
+            }
+
+            sqlCmd.Append(" order by oq.BuyerDelivery,o.ID,oq.seq");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
@@ -370,6 +382,100 @@ and o.PulloutComplete=0 and o.Qty > 0"));
             return sqlCmd;
         }
 
+        private StringBuilder SummaryBySP2(StringBuilder sqlCmd)
+        {
+            sqlCmd.Append(@"
+union
+
+select 	oq.BuyerDelivery
+		,oq.EstPulloutDate
+		,o.BrandID
+		,b.BuyerID
+		,o.ID
+        ,[Cancel] = IIF(o.Junk=1,'Y','N')
+		,Category = IIF(o.Category = 'B', 'Bulk'
+										, 'Sample')
+        ,oq.seq
+        ,[If Partial] = (select iif(count(1) > 1, 'Y', '') from Order_QtyShip with (nolock) where ID = o.ID)
+		,NULL
+		,NULL
+		,NULL
+		,NULL
+		,NULL
+		,o.CustPONo
+		,o.StyleID
+		,o.SeasonID
+		,oq.Qty
+		,ShipQty = isnull(ShipQty.ShipQty,0)
+		,OrderTtlQty=o.Qty
+		,NULL
+		,NULL
+		,NULL
+		,NULL
+		,NULL
+		,NULL
+        ,[Carton Qty at C-Log] = isnull(o.ClogCTN, 0)
+        ,[SP Prod. Output Qty] = [dbo].[getMinCompleteSewQty](o.ID, null, null)
+		,o.MDivisionID
+		,o.ftygroup
+        ,[KPI Factory] = f.Kpicode
+        ,o.CustCDID
+		,Alias = isnull(c.Alias,'')
+        ,o.OrderTypeID
+        ,[On Site] = iif(o.OnSiteSample = 1, 'Y', '')
+        ,[BuyBack] = iif(exists(select 1 from Order_BuyBack with (nolock) where ID = o.ID), 'Y', '')
+		,Payment = isnull((select Term 
+						   from PayTermAR WITH (NOLOCK) 
+						   where ID = o.PayTermARID), '')
+		,o.PoPrice
+		,o.Customize1
+		,o.Customize2
+		,NULL
+		,NULL
+		,oq.ShipmodeID
+		,NULL
+        ,OSReason = o.OutstandingReason + ' - ' + isnull((select Name 
+														   from Reason WITH (NOLOCK) 
+														   where ReasonTypeID = 'Delivery_OutStand' and Id = o.OutstandingReason), '') 
+		,o.OutstandingRemark
+        ,o.EstPODD
+		,SMP = IIF(o.ScanAndPack = 1,'Y','')
+		,VasShas = IIF(o.VasShas = 1,'Y','') 
+		,Handle = o.MRHandle+' - '+isnull((select Name + ' #' + ExtNo 
+										   from TPEPass1 WITH (NOLOCK) 
+										   where ID = o.MRHandle), '') 
+		,SMR = o.SMR+' - '+isnull((select Name + ' #' + ExtNo 
+								   from TPEPass1 WITH (NOLOCK) 
+								   where ID = o.SMR), '')
+		,LocalMR = o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo 
+										   from Pass1 WITH (NOLOCK) 
+										   where ID = o.LocalMR), '')
+        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(V:V,ROW()) = INDEX(AA:AA,ROW()), ""True"", """")'
+		,[ReturnedQtyBySeq] = [dbo].getInvAdjQty(o.ID, oq.Seq)
+		,NULL
+		,NULL
+
+from Orders o WITH(NOLOCK)
+inner join Factory f with(nolock) on o.FactoryID = f.ID and f.IsProduceFty= 1
+inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
+left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID
+left join Country c WITH (NOLOCK) on o.Dest = c.ID
+left join Brand b WITH (NOLOCK) on o.BrandID= b.id
+outer apply(select ShipQty = isnull(sum(ShipQty), 0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) ShipQty
+
+where 1=1 and isnull(ot.IsGMTMaster,0) != 1
+
+AND oq.Qty<>((select isnull(sum(ShipQty), 0) from Pullout_Detail WITH(NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) 
+				- [dbo].getInvAdjQty(o.ID, oq.Seq) )
+
+and o.PulloutComplete=0
+and o.Qty > 0
+and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
+");
+
+            return sqlCmd;
+        }
+
         private StringBuilder SummaryByPL(StringBuilder sqlCmd)
         {
             sqlCmd.Append(string.Format(
@@ -483,6 +589,99 @@ and o.PulloutComplete=0 and o.Qty > 0"));
             return sqlCmd;
         }
 
+        private StringBuilder SummaryByPL2(StringBuilder sqlCmd)
+        {
+            sqlCmd.Append(@"
+union
+
+select oq.BuyerDelivery
+        , oq.EstPulloutDate
+        , o.BrandID
+        , b.BuyerID
+        , o.ID
+        ,[Cancel] = IIF(o.Junk = 1, 'Y', 'N')
+        , Category = IIF(o.Category = 'B', 'Bulk'
+                                        , 'Sample')
+        , oq.seq
+        ,[If Partial] = (select iif(count(1) > 1, 'Y', '') from Order_QtyShip with (nolock) where ID = o.ID)
+		,NULL
+		,NULL
+		,NULL
+		,NULL
+		,NULL
+		,o.CustPONo
+		,o.StyleID
+		,o.SeasonID
+		,oq.Qty
+		,ShipQty.ShipQty
+		,OrderTtlQty = o.Qty
+		,NULL
+		,NULL
+		,NULL
+		,NULL
+		,NULL
+		,NULL
+        ,[Carton Qty at C-Log] = isnull(o.ClogCTN, 0)
+        ,[SP Prod.Output Qty] = [dbo].[getMinCompleteSewQty] (o.ID, null, null)
+		,o.MDivisionID
+		,o.ftygroup
+        ,[KPI Factory] = f.Kpicode
+        ,o.CustCDID
+		,Alias = isnull(c.Alias,'')
+        ,o.OrderTypeID
+        ,[On Site] = iif(o.OnSiteSample = 1, 'Y', '')
+        ,[BuyBack] = iif(exists(select 1 from Order_BuyBack with (nolock) where ID = o.ID), 'Y', '')
+		,Payment = isnull((select Term
+
+                           from PayTermAR WITH (NOLOCK)
+                           where ID = o.PayTermARID), '')
+		,o.PoPrice
+		,o.Customize1
+		,o.Customize2
+		,NULL
+		,NULL
+		,oq.ShipmodeID
+		,NULL
+        ,OSReason = o.OutstandingReason + ' - ' + isnull((select Name
+
+                                                           from Reason WITH (NOLOCK)
+                                                           where ReasonTypeID = 'Delivery_OutStand' and Id = o.OutstandingReason), '') 
+		,o.OutstandingRemark
+        ,o.EstPODD
+		,SMP = IIF(o.ScanAndPack = 1,'Y','')
+		,VasShas = IIF(o.VasShas = 1,'Y','')
+		,Handle = o.MRHandle+' - '+isnull((select Name + ' #' + ExtNo
+                                           from TPEPass1 WITH (NOLOCK)
+                                           where ID = o.MRHandle), '') 
+		,SMR = o.SMR+' - '+isnull((select Name + ' #' + ExtNo
+                                   from TPEPass1 WITH (NOLOCK)
+                                   where ID = o.SMR), '')
+		,LocalMR = o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo
+                                           from Pass1 WITH (NOLOCK)
+                                           where ID = o.LocalMR), '')
+        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(V:V,ROW()) = INDEX(AA:AA,ROW()), ""True"", """")'
+		,[ReturnedQtyBySeq] = [dbo].getInvAdjQty(o.ID, oq.Seq)
+		,NULL
+		,NULL
+from Orders o WITH(NOLOCK)
+inner join Factory f with(nolock) on o.FactoryID = f.ID and f.IsProduceFty= 1
+inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
+left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID
+left join Country c WITH (NOLOCK) on o.Dest = c.ID
+left join Brand b WITH (NOLOCK) on o.BrandID= b.id
+outer apply(select ShipQty = isnull(sum(ShipQty), 0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) ShipQty
+
+where 1=1 and isnull(ot.IsGMTMaster,0) != 1
+
+AND oq.Qty <>( (select isnull(sum(ShipQty), 0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) 
+				- [dbo].getInvAdjQty(o.ID,oq.Seq) )
+and o.PulloutComplete=0 and o.Qty > 0
+and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
+ ");
+
+            return sqlCmd;
+        }
+
         private StringBuilder SQLWhere(StringBuilder sqlCmd)
         {
             if (!MyUtility.Check.Empty(this.fCRDate1))
@@ -556,8 +755,6 @@ and o.PulloutComplete=0 and o.Qty > 0"));
             {
                 sqlCmd.Append(" and o.LocalOrder = 0");
             }
-
-            sqlCmd.Append(" order by oq.BuyerDelivery,o.ID,oq.seq");
 
             return sqlCmd;
         }
