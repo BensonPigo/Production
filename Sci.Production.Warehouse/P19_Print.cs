@@ -120,13 +120,19 @@ where a.id= @ID", pars, out this.dtResult);
             {
                 string sql = $@"
 select
-POID,
-Seq1,
-Seq2,
-Roll,
-Dyelot,
-[GW] = '',
-Qty
+	ToPOID,
+	ToSeq1,
+	ToSeq2,
+	Roll,
+	Dyelot,
+	[GW] = '',
+	Qty,	
+    [StockType]='',
+    [Location]='',
+    [Remark]='',
+	POID,
+	Seq1,
+	Seq2
 from TransferOut_Detail with (nolock)
 where ID = '{this.mainCurrentMaintain["ID"]}'
 

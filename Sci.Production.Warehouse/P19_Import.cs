@@ -87,6 +87,10 @@ select  0 as selected
         , FI.ukey as ftyinventoryukey
         , dbo.Getlocation(FI.ukey) location
         , FI.inqty - FI.outqty + FI.adjustqty as stockqty
+		, [ToPOID]=''
+		, [ToSeq]=''
+		, [ToSeq1]=''
+		, [ToSeq2]=''
 FROM FtyInventory FI 
 LEFT JOIN Orders O ON O.ID = FI.POID
 LEFT JOIN Factory F ON F.ID = O.FactoryID
@@ -168,6 +172,9 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
 
         protected override void OnFormLoaded()
         {
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ToPOID;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ToSeq;
+
             base.OnFormLoaded();
             MyUtility.Tool.SetupCombox(this.comboStockType, 2, 1, "B,Bulk,I,Inventory");
             this.comboStockType.SelectedIndex = 0;
@@ -226,9 +233,16 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
                 .Numeric("balance", header: "Balance", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 8
                 .Text("location", header: "Location", iseditingreadonly: true) // 9
                 .ComboBox("stocktype", header: "Stock Type", iseditable: false).Get(out cbb_stocktype)
+                .Text("ToPOID", header: "To POID", iseditingreadonly: false).Get(out cbb_ToPOID)
+                .Text("ToSeq", header: "To Seq", iseditingreadonly: false).Get(out cbb_ToSeq)
                ;
 
             nb_qty.DefaultCellStyle.BackColor = Color.Pink;
+            cbb_ToPOID.DefaultCellStyle.BackColor = Color.Pink;
+            cbb_ToSeq.DefaultCellStyle.BackColor = Color.Pink;
+
+            cbb_ToPOID.MaxLength = 13;
+            cbb_ToSeq.MaxLength = 5;
 
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
@@ -280,6 +294,12 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
                 else
                 {
                     tmp["id"] = this.dr_master["id"];
+
+                    // 拆解ToSeq
+                    List<string> seqList = ToSeqSplit(MyUtility.Convert.GetString(tmp["ToSeq"]));
+                    tmp["ToSeq1"] = seqList[0];
+                    tmp["ToSeq2"] = seqList.Count > 1 ? seqList[1] : string.Empty;
+
                     tmp.AcceptChanges();
                     tmp.SetAdded();
                     this.dt_detail.ImportRow(tmp);
@@ -287,6 +307,36 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
             }
 
             this.Close();
+        }
+
+        public static List<string> ToSeqSplit(string toSeq)
+        {
+            List<string> result = new List<string>();
+            toSeq = toSeq.Replace(" ", string.Empty);
+
+            if (toSeq.Length == 4)
+            {
+                // ToSeq1
+                result.Add(toSeq.Substring(0, 2).Replace(" ", string.Empty));
+
+                // ToSeq2
+                result.Add(toSeq.Substring(2, 2).Replace(" ", string.Empty));
+            }
+            else if (toSeq.Length > 4)
+            {
+                // ToSeq1
+                result.Add(toSeq.Substring(0, 3).Replace(" ", string.Empty));
+
+                // ToSeq2
+                result.Add(toSeq.Substring(3, 2).Replace(" ", string.Empty));
+            }
+            else
+            {
+                // ToSeq1
+                result.Add(toSeq.Replace(" ", string.Empty));
+            }
+
+            return result;
         }
     }
 }
