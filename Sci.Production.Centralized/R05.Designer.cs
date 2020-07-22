@@ -42,13 +42,13 @@
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.comboCentralizedFactory1 = new Sci.Production.Class.ComboCentralizedFactory(this.components);
-            this.comboCentralizedM1 = new Sci.Production.Class.ComboCentralizedM(this.components);
-            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
-            this.comboFtyZone = new Sci.Production.Class.ComboFtyZone(this.components);
             this.radioMonthly = new Sci.Win.UI.RadioButton();
             this.radioSemiMonthly = new Sci.Win.UI.RadioButton();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
+            this.comboFtyZone = new Sci.Production.Class.ComboFtyZone(this.components);
+            this.comboCentralizedFactory1 = new Sci.Production.Class.ComboCentralizedFactory(this.components);
+            this.comboCentralizedM1 = new Sci.Production.Class.ComboCentralizedM(this.components);
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
@@ -225,55 +225,6 @@
             this.label7.TabIndex = 113;
             this.label7.Text = "Source";
             // 
-            // comboCentralizedFactory1
-            // 
-            this.comboCentralizedFactory1.BackColor = System.Drawing.Color.White;
-            this.comboCentralizedFactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCentralizedFactory1.FormattingEnabled = true;
-            this.comboCentralizedFactory1.IsSupportUnselect = true;
-            this.comboCentralizedFactory1.Location = new System.Drawing.Point(123, 172);
-            this.comboCentralizedFactory1.Name = "comboCentralizedFactory1";
-            this.comboCentralizedFactory1.OldText = "";
-            this.comboCentralizedFactory1.Size = new System.Drawing.Size(80, 24);
-            this.comboCentralizedFactory1.TabIndex = 101;
-            // 
-            // comboCentralizedM1
-            // 
-            this.comboCentralizedM1.BackColor = System.Drawing.Color.White;
-            this.comboCentralizedM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCentralizedM1.FormattingEnabled = true;
-            this.comboCentralizedM1.IsSupportUnselect = true;
-            this.comboCentralizedM1.Location = new System.Drawing.Point(123, 112);
-            this.comboCentralizedM1.Name = "comboCentralizedM1";
-            this.comboCentralizedM1.OldText = "";
-            this.comboCentralizedM1.Size = new System.Drawing.Size(80, 24);
-            this.comboCentralizedM1.TabIndex = 99;
-            // 
-            // txtbrand1
-            // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(123, 83);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(80, 23);
-            this.txtbrand1.TabIndex = 98;
-            // 
-            // comboFtyZone
-            // 
-            this.comboFtyZone.BackColor = System.Drawing.Color.White;
-            this.comboFtyZone.FilteMDivision = false;
-            this.comboFtyZone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFtyZone.FormattingEnabled = true;
-            this.comboFtyZone.IsIncludeSampleRoom = false;
-            this.comboFtyZone.IssupportJunk = false;
-            this.comboFtyZone.IsSupportUnselect = true;
-            this.comboFtyZone.Location = new System.Drawing.Point(123, 141);
-            this.comboFtyZone.Name = "comboFtyZone";
-            this.comboFtyZone.OldText = "";
-            this.comboFtyZone.SelectTable = "Factory";
-            this.comboFtyZone.Size = new System.Drawing.Size(80, 24);
-            this.comboFtyZone.TabIndex = 114;
-            // 
             // radioMonthly
             // 
             this.radioMonthly.AutoSize = true;
@@ -311,6 +262,56 @@
             this.chkIncludeCancelOrder.TabIndex = 117;
             this.chkIncludeCancelOrder.Text = "Include Cancel order";
             this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
+            // comboFtyZone
+            // 
+            this.comboFtyZone.BackColor = System.Drawing.Color.White;
+            this.comboFtyZone.FilteMDivision = false;
+            this.comboFtyZone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFtyZone.FormattingEnabled = true;
+            this.comboFtyZone.IsIncludeSampleRoom = false;
+            this.comboFtyZone.IsProduceFty = true;
+            this.comboFtyZone.IssupportJunk = false;
+            this.comboFtyZone.IsSupportUnselect = true;
+            this.comboFtyZone.Location = new System.Drawing.Point(123, 141);
+            this.comboFtyZone.Name = "comboFtyZone";
+            this.comboFtyZone.OldText = "";
+            this.comboFtyZone.SelectTable = "Factory";
+            this.comboFtyZone.Size = new System.Drawing.Size(80, 24);
+            this.comboFtyZone.TabIndex = 114;
+            // 
+            // comboCentralizedFactory1
+            // 
+            this.comboCentralizedFactory1.BackColor = System.Drawing.Color.White;
+            this.comboCentralizedFactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCentralizedFactory1.FormattingEnabled = true;
+            this.comboCentralizedFactory1.IsSupportUnselect = true;
+            this.comboCentralizedFactory1.Location = new System.Drawing.Point(123, 172);
+            this.comboCentralizedFactory1.Name = "comboCentralizedFactory1";
+            this.comboCentralizedFactory1.OldText = "";
+            this.comboCentralizedFactory1.Size = new System.Drawing.Size(80, 24);
+            this.comboCentralizedFactory1.TabIndex = 101;
+            // 
+            // comboCentralizedM1
+            // 
+            this.comboCentralizedM1.BackColor = System.Drawing.Color.White;
+            this.comboCentralizedM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCentralizedM1.FormattingEnabled = true;
+            this.comboCentralizedM1.IsSupportUnselect = true;
+            this.comboCentralizedM1.Location = new System.Drawing.Point(123, 112);
+            this.comboCentralizedM1.Name = "comboCentralizedM1";
+            this.comboCentralizedM1.OldText = "";
+            this.comboCentralizedM1.Size = new System.Drawing.Size(80, 24);
+            this.comboCentralizedM1.TabIndex = 99;
+            // 
+            // txtbrand1
+            // 
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(123, 83);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(80, 23);
+            this.txtbrand1.TabIndex = 98;
             // 
             // R05
             // 

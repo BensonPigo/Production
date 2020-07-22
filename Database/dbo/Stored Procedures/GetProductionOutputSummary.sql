@@ -31,7 +31,7 @@ from
 	from Orders o with(nolock)
 	inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
-	where   IsProduceFty = 1 and o.Category !='' and o.IsBuyBack ! =1 and o.BuyBackReason != 'Garment'
+	where   IsProduceFty = 1 and o.Category !='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
 			 and (
 				(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 				or 
@@ -59,7 +59,7 @@ from
 	from Orders o with(nolock)
 	inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
-	where   IsProduceFty = 1 and o.Category ='' and o.IsBuyBack ! =1 and o.BuyBackReason != 'Garment'
+	where   IsProduceFty = 1 and o.Category ='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
 			 and (
 				(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 				or 
@@ -96,7 +96,7 @@ from (
 	select  o.ID,[TransFtyZone] = f.FtyZone
 	from Orders o with(nolock)
 	left join Factory f with(nolock) on f.ID = o.ProgramID and f.junk = 0
-	where   o.LocalOrder = 1 and o.SubconInType = 2 and o.Category !='' and o.IsBuyBack ! =1 and o.BuyBackReason != 'Garment'
+	where   o.LocalOrder = 1 and o.SubconInType = 2 and o.Category !='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
 		and (
 				(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 				or 
@@ -116,7 +116,7 @@ from (
 	select  o.ID,[TransFtyZone] = f.FtyZone
 	from Orders o with(nolock)
 	left join Factory f with(nolock) on f.ID = o.ProgramID and f.junk = 0
-	where   o.LocalOrder = 1 and o.SubconInType = 2 and o.Category='' and o.IsBuyBack ! =1 and o.BuyBackReason != 'Garment'
+	where   o.LocalOrder = 1 and o.SubconInType = 2 and o.Category='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
 		 and (
 				(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 				or 

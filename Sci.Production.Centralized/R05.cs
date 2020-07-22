@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Text;
 
 namespace Sci.Production.Centralized
 {

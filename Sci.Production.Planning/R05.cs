@@ -26,9 +26,9 @@ namespace Sci.Production.Planning
             MyUtility.Tool.SetupCombox(this.cmbDate, 2, 1, "1,SCI Delivery Date,2,Buyer Delivery Date");
             this.cmbDate.SelectedValue = "1";
             this.comboFtyZone.IsIncludeSampleRoom = false;
-            this.comboFtyZone.setDataSource(Sci.Env.User.Keyword);
-            this.comboMDivision.setDefalutIndex(true);
-            this.comboFactory.setDataSource();
+            this.comboFtyZone.SetDataSource(Sci.Env.User.Keyword);
+            this.comboMDivision.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource();
         }
 
         private int Year;
@@ -352,7 +352,7 @@ drop table #tmp
             worksheet.Columns[11].ColumnWidth = 12.75;
             worksheet.Columns[12].ColumnWidth = 14;
             worksheet.Columns[13].ColumnWidth = 14;
-            worksheet.Columns[14].ColumnWidth = 12; ///Buyback
+            worksheet.Columns[14].ColumnWidth = 12;
             worksheet.Columns[15].ColumnWidth = 14;
             worksheet.Columns[16].ColumnWidth = 15;
             worksheet.Columns[17].ColumnWidth = 25;

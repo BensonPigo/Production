@@ -42,12 +42,12 @@
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.comboFtyZone = new Sci.Production.Class.comboFtyZone(this.components);
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
+            this.comboFtyZone = new Sci.Production.Class.ComboFtyZone(this.components);
             this.radioMonthly = new Sci.Win.UI.RadioButton();
             this.radioSemiMonthly = new Sci.Win.UI.RadioButton();
-            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
-            this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
+            this.comboMDivision = new Sci.Production.Class.ComboMDivision(this.components);
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
@@ -241,6 +241,7 @@
             this.comboFtyZone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFtyZone.FormattingEnabled = true;
             this.comboFtyZone.IsIncludeSampleRoom = false;
+            this.comboFtyZone.IsProduceFty = true;
             this.comboFtyZone.IssupportJunk = false;
             this.comboFtyZone.IsSupportUnselect = true;
             this.comboFtyZone.Location = new System.Drawing.Point(123, 141);
@@ -377,7 +378,7 @@
         #endregion
 
         private Win.UI.NumericUpDown numYear;
-        private Class.txtbrand txtbrand1;
+        private Class.Txtbrand txtbrand1;
         private Win.UI.ComboBox cmbDate;
         private Win.UI.CheckBox chkOrder;
         private Win.UI.CheckBox chkForecast;
@@ -390,11 +391,11 @@
         private Win.UI.Label label5;
         private Win.UI.Label label6;
         private Win.UI.Label label7;
-        private Class.comboFtyZone comboFtyZone;
+        private Class.ComboFtyZone comboFtyZone;
         private Win.UI.RadioButton radioMonthly;
         private Win.UI.RadioButton radioSemiMonthly;
-        private Class.comboMDivision comboMDivision;
-        private Class.comboFactory comboFactory;
+        private Class.ComboMDivision comboMDivision;
+        private Class.ComboFactory comboFactory;
         private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

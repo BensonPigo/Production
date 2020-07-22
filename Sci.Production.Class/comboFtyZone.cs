@@ -37,6 +37,11 @@ namespace Sci.Production.Class
         public bool IsIncludeSampleRoom { get; set; } = false;
 
         /// <summary>
+        /// Is Filter Factory.IsProduceFty = 1
+        /// </summary>
+        public bool IsProduceFty { get; set; } = false;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ComboFtyZone"/> class.
         /// </summary>
         public ComboFtyZone()
@@ -92,6 +97,11 @@ namespace Sci.Production.Class
             if (!this.IsIncludeSampleRoom && this.SelectTable == "Factory")
             {
                 listFilte.Add("IsSampleRoom = 0 ");
+            }
+
+            if (this.IsProduceFty && this.SelectTable == "Factory")
+            {
+                listFilte.Add("IsProduceFty = 1");
             }
 
             if (this.FilteMDivision)
