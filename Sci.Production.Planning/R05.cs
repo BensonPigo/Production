@@ -46,6 +46,7 @@ namespace Sci.Production.Planning
         private List<DataTable> Summarydt;
         private List<string> listFtyZone;
         private DataTable dtAllDetail;
+        private bool IncludeCancelOrder;
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
@@ -60,6 +61,7 @@ namespace Sci.Production.Planning
             this.Forecast = this.chkForecast.Checked;
             this.FtyLocalOrder = this.chkFtyLocalOrder.Checked;
             this.ExcludeSampleFactory = this.chkExcludeSampleFactory.Checked;
+            this.IncludeCancelOrder = this.chkIncludeCancelOrder.Checked;
 
             if (MyUtility.Check.Empty(this.Year))
             {
@@ -100,6 +102,7 @@ namespace Sci.Production.Planning
             sqlcmdSP.Append(this.FtyLocalOrder ? $" 1," : "0,"); // ChkFtylocalOrder
             sqlcmdSP.Append(this.ExcludeSampleFactory ? $" 1," : "0,"); // ExcludeSampleFactory
             sqlcmdSP.Append(this.radioMonthly.Checked ? $" 1," : "0,"); // ChkMonthly
+            sqlcmdSP.Append(this.chkIncludeCancelOrder.Checked ? $" 1," : "0,"); // @IncludeCancelOrder
             sqlcmdSP.Append($" 1,"); // IsFtySide 工廠端限制ForeCast單 僅顯示SCI delivery or buyer delivery 小於等於 當月份+4個月的月底+7天
             #endregion
 
@@ -317,6 +320,7 @@ drop table #tmp
             {
                 worksheet.Cells[3, 1] = "Buyer delivery";
             }
+
             // 複製分頁
             Excel.Worksheet worksheet1 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
             Excel.Worksheet newSummarySheet;
@@ -348,32 +352,33 @@ drop table #tmp
             worksheet.Columns[11].ColumnWidth = 12.75;
             worksheet.Columns[12].ColumnWidth = 14;
             worksheet.Columns[13].ColumnWidth = 14;
-            worksheet.Columns[14].ColumnWidth = 14;
-            worksheet.Columns[15].ColumnWidth = 15;
-            worksheet.Columns[16].ColumnWidth = 25;
-            worksheet.Columns[17].ColumnWidth = 11.13;
-            worksheet.Columns[18].ColumnWidth = 25.25;
-            worksheet.Columns[19].ColumnWidth = 20;
-            worksheet.Columns[20].ColumnWidth = 7.63;
-            worksheet.Columns[21].ColumnWidth = 13.38;
-            worksheet.Columns[22].ColumnWidth = 11.88;
-            worksheet.Columns[23].ColumnWidth = 15.25;
+            worksheet.Columns[14].ColumnWidth = 12; ///Buyback
+            worksheet.Columns[15].ColumnWidth = 14;
+            worksheet.Columns[16].ColumnWidth = 15;
+            worksheet.Columns[17].ColumnWidth = 25;
+            worksheet.Columns[18].ColumnWidth = 11.13;
+            worksheet.Columns[19].ColumnWidth = 25.25;
+            worksheet.Columns[20].ColumnWidth = 20;
+            worksheet.Columns[21].ColumnWidth = 7.63;
+            worksheet.Columns[22].ColumnWidth = 13.38;
+            worksheet.Columns[23].ColumnWidth = 11.88;
             worksheet.Columns[24].ColumnWidth = 15.25;
             worksheet.Columns[25].ColumnWidth = 15.25;
-            worksheet.Columns[26].ColumnWidth = 25.75;
-            worksheet.Columns[27].ColumnWidth = 16.38;
-            worksheet.Columns[28].ColumnWidth = 17.5;
+            worksheet.Columns[26].ColumnWidth = 15.25;
+            worksheet.Columns[27].ColumnWidth = 25.75;
+            worksheet.Columns[28].ColumnWidth = 16.38;
             worksheet.Columns[29].ColumnWidth = 17.5;
             worksheet.Columns[30].ColumnWidth = 17.5;
-            worksheet.Columns[31].ColumnWidth = 18.13;
-            worksheet.Columns[32].ColumnWidth = 8;
-            worksheet.Columns[33].ColumnWidth = 22;
-            worksheet.Columns[34].ColumnWidth = 16.38;
-            worksheet.Columns[35].ColumnWidth = 6.5;
-            worksheet.Columns[36].ColumnWidth = 19.88;
-            worksheet.Columns[37].ColumnWidth = 16.38;
+            worksheet.Columns[31].ColumnWidth = 17.5;
+            worksheet.Columns[32].ColumnWidth = 18.13;
+            worksheet.Columns[33].ColumnWidth = 8;
+            worksheet.Columns[34].ColumnWidth = 22;
+            worksheet.Columns[35].ColumnWidth = 16.38;
+            worksheet.Columns[36].ColumnWidth = 6.5;
+            worksheet.Columns[37].ColumnWidth = 19.88;
             worksheet.Columns[38].ColumnWidth = 16.38;
             worksheet.Columns[39].ColumnWidth = 16.38;
+            worksheet.Columns[40].ColumnWidth = 16.38;
             #endregion
 
             for (int j = 1; j <= this.listFtyZone.Count; j++)

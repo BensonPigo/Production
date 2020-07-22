@@ -12,6 +12,7 @@ CREATE PROCEDURE [dbo].[GetProductionOutputSummary]
 	@ChkFtylocalOrder bit = 0,
 	@ExcludeSampleFactory bit = 0,
 	@ChkMonthly bit = 0,
+	@IncludeCancelOrder bit = 0,
 	@IsFtySide bit = 0
 	
 AS
@@ -30,7 +31,7 @@ from
 	from Orders o with(nolock)
 	inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
-	where   IsProduceFty = 1 and o.Category !=''
+	where   IsProduceFty = 1 and o.Category !='' and o.IsBuyBack ! =1 and o.BuyBackReason != 'Garment'
 			 and (
 				(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 				or 
@@ -46,6 +47,11 @@ from
 				or
 				(@ExcludeSampleFactory = 0)
 			 )
+			 and (
+				@IncludeCancelOrder = 0 and o.Junk = 0
+				or
+				@IncludeCancelOrder = 1 and 1 = 1
+			)
 
 	union all
 
@@ -53,7 +59,7 @@ from
 	from Orders o with(nolock)
 	inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
-	where   IsProduceFty = 1 and o.Category =''
+	where   IsProduceFty = 1 and o.Category ='' and o.IsBuyBack ! =1 and o.BuyBackReason != 'Garment'
 			 and (
 				(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 				or 
@@ -74,6 +80,11 @@ from
 				or 
 				(@IsFtySide = 0)
 			)
+			and (
+				@IncludeCancelOrder = 0 and o.Junk = 0
+				or
+				@IncludeCancelOrder = 1 and 1 = 1
+			)
 ) a
 
 
@@ -85,18 +96,39 @@ from (
 	select  o.ID,[TransFtyZone] = f.FtyZone
 	from Orders o with(nolock)
 	left join Factory f with(nolock) on f.ID = o.ProgramID and f.junk = 0
-	where   o.LocalOrder = 1 and o.SubconInType = 2 and o.Category !=''
-		 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year -- between '2020/01/01' and '2020/12/31' 
-		 and (o.BrandID = @Brand or @Brand = '')
-		 and o.ProgramID in (select distinct FactoryID from #tmpBaseOrderID)
+	where   o.LocalOrder = 1 and o.SubconInType = 2 and o.Category !='' and o.IsBuyBack ! =1 and o.BuyBackReason != 'Garment'
+		and (
+				(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
+				or 
+				(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
+
+		 )
+		and (o.BrandID = @Brand or @Brand = '')
+		and (
+				@IncludeCancelOrder = 0 and o.Junk = 0
+				or
+				@IncludeCancelOrder = 1 and 1 = 1
+		)
+		and o.ProgramID in (select distinct FactoryID from #tmpBaseOrderID)
 
 	union all
 
 	select  o.ID,[TransFtyZone] = f.FtyZone
 	from Orders o with(nolock)
 	left join Factory f with(nolock) on f.ID = o.ProgramID and f.junk = 0
-	where   o.LocalOrder = 1 and o.SubconInType = 2 and o.Category=''
-		 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year -- between '2020/01/01' and '2020/12/31' 
+	where   o.LocalOrder = 1 and o.SubconInType = 2 and o.Category='' and o.IsBuyBack ! =1 and o.BuyBackReason != 'Garment'
+		 and (
+				(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
+				or 
+				(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
+
+		 )
+		 and (o.BrandID = @Brand or @Brand = '')
+		 and (
+				@IncludeCancelOrder = 0 and o.Junk = 0
+				or
+				@IncludeCancelOrder = 1 and 1 = 1
+		 )
 		 and (
 				(@IsFtySide = 1 and (O.SciDelivery < @SpecialDay or o.BuyerDelivery < @SpecialDay))
 				or 
@@ -125,8 +157,8 @@ select
     [OutputDate] = FORMAT(s.OutputDate,'yyyyMM'),
     [OrderCPU] = o.Qty * gcRate.CpuRate * o.CPU,
     [OrderShortageCPU] = iif(o.GMTComplete = 'S' ,(o.Qty - GetPulloutData.Qty)  * gcRate.CpuRate * o.CPU ,0),
-    [SewingOutput] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) / 100,
-    [SewingOutputCPU] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) * gcRate.CpuRate * o.CPU / 100,
+    [SewingOutput] =(isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) / 100) + (isnull(fromTransfer.Qty,0) - isnull(ToTransfer.Qty,0))/100,
+    [SewingOutputCPU] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) * gcRate.CpuRate * o.CPU / 100 + ( ((isnull(fromTransfer.Qty,0) - isnull(ToTransfer.Qty,0)) )* gcRate.CpuRate * o.CPU/100),
     o.Junk,
     o.Qty,
     o.Category,
@@ -155,6 +187,27 @@ outer apply (select [CpuRate] = case when o.IsForecast = 1 then (select CpuRate 
 outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = o.id) GetPulloutData
 outer apply (select [SCI] = dateadd(day,-7,o.SciDelivery),
                     [Buyer] = o.BuyerDelivery) KeyDate
+outer apply(
+	select Qty = sum(b.TransferQty * isnull(ol.Rate, sl.Rate))
+	from SewingOutputTransfer a
+	inner join SewingOutputTransfer_Detail b on a.id=b.ID
+	left join Order_Location ol with (nolock) on ol.OrderId = b.FromOrderID and ol.Location = b.FromComboType
+	left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = b.FromComboType
+	where a.Status= 'confirmed'
+	and b.FromOrderID = o.ID 
+	and o.Junk=1 and o.NeedProduction=1
+) fromTransfer
+outer apply(
+	select Qty = sum(b.TransferQty * isnull(ol.Rate, sl.Rate)) 
+	from SewingOutputTransfer a
+	inner join SewingOutputTransfer_Detail b on a.id=b.ID
+	left join Order_Location ol with (nolock) on ol.OrderId = b.ToOrderID and ol.Location = b.ToComboType
+	left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = b.ToComboType
+	where a.Status= 'confirmed'
+	and b.ToOrderID = o.ID
+	and o.Junk=1 and o.NeedProduction=1
+) ToTransfer
+
 group by o.ID,
 KeyDate.SCI,
 KeyDate.Buyer,
@@ -176,7 +229,9 @@ GetPulloutData.Qty,
 o.GMTComplete,
 f.FtyZone,
 o.ProgramID,
-tbs.TransFtyZone
+tbs.TransFtyZone,
+fromTransfer.Qty,ToTransfer.Qty
+
 
 select  ID,
         FactoryID,
@@ -262,6 +317,7 @@ select
 				end,
 	Cancelled=iif(o.Junk=1,'Y',''),
     tb.IsCancelNeedProduction,
+	[Buyback] = IIF(o.IsBuyBack = 1,'Y',''),
     toq.PartialShipment,
     toq.LastBuyerDelivery,
 	o.StyleID,
@@ -297,6 +353,7 @@ left join #tmpPullout_Detail tpd on tpd.OrderID = tb.ID
 left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
 outer apply (select [val] = iif(tb.IsCancelNeedProduction = 'N' and o.Junk = 1, 0, isnull(tb.OrderCPU, 0))) TotalCPU
 outer apply (select [val] =  TotalCPU.val - isnull(tb.SewingOutputCPU, 0) - isnull(tb.OrderShortageCPU, 0)) BalanceCPU
+
 
 select  FtyGroup,
 		[Date] = iif(@ChkMonthly = 1, SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),DateByHalfMonth),

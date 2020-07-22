@@ -48,6 +48,7 @@
             this.radioSemiMonthly = new Sci.Win.UI.RadioButton();
             this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
             this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
@@ -300,11 +301,25 @@
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
             this.comboFactory.TabIndex = 118;
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.Checked = true;
+            this.chkIncludeCancelOrder.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(12, 348);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 119;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(591, 376);
+            this.ClientSize = new System.Drawing.Size(591, 405);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboMDivision);
             this.Controls.Add(this.radioSemiMonthly);
@@ -352,6 +367,7 @@
             this.Controls.SetChildIndex(this.radioSemiMonthly, 0);
             this.Controls.SetChildIndex(this.comboMDivision, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -379,5 +395,6 @@
         private Win.UI.RadioButton radioSemiMonthly;
         private Class.comboMDivision comboMDivision;
         private Class.comboFactory comboFactory;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }
