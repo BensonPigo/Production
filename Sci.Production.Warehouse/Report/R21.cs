@@ -425,7 +425,7 @@ where 1=1
                 }
                 else
                 {
-                    this.sqlcmd.Append(" and round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)>0");
+                    this.sqlcmd.Append(" and ((round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)>0) or mpd.LInvQty >0 or mpd.LObQty >0)  ");
                 }
             }
 
