@@ -182,7 +182,40 @@ BEGIN
 Te2.InvoiceNo)
 	  when not matched by source and PE2.id in (select id from @T)then
 	  	delete;
-		
+
+
+					
+-----------------------Export_ShipAdvice_Container-----------------------------
+
+
+INSERT INTO Production.dbo.Export_ShipAdvice_Container
+        (Export_Detail_Ukey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate)
+SELECT *
+FROM Trade_To_Pms.dbo.Export_ShipAdvice_Container s
+WHERE NOT EXISTS (SELECT 1 FROM Production.dbo.Export_ShipAdvice_Container WHERE Ukey = s.Ukey)
+
+UPDATE t
+SET  t.Export_Detail_Ukey = s.Export_Detail_Ukey
+    ,t.ContainerType = s.ContainerType
+    ,t.ContainerNo = s.ContainerNo
+    ,t.AddName = s.AddName
+    ,t.AddDate = s.AddDate
+    ,t.EditName = s.EditName
+    ,t.EditDate = s.EditDate
+FROM Production.dbo.Export_ShipAdvice_Container t
+INNER JOIN Trade_To_Pms.dbo.Export_ShipAdvice_Container s ON t.Ukey = s.Ukey
+
+
+DELETE t 
+FROM Production.dbo.Export_ShipAdvice_Container t 
+WHERE NOT EXISTS(SELECT 1 FROM Trade_To_Pms.dbo.Export_ShipAdvice_Container s where t.Ukey = s.Ukey)
+----只刪除轉出區間內，有少的Export_Detail_Ukey
+AND t.Export_Detail_Ukey IN (		
+			SELECT a.Ukey
+			FROM Trade_To_Pms.dbo.Export_Detail a WITH (NOLOCK) 
+			WHERE a.ID in (SELECT ID FROM @T)		
+	)
+
 -----------------------Export_Detail_Carton-----------------------------
 	RAISERROR('Import Export_Detail_Carton - Starts',0,0)
 	Merge Production.dbo.Export_Detail_Carton as t
@@ -513,31 +546,6 @@ insert into Production.dbo.FormType(	ID		,
 					from Trade_To_Pms.dbo.FormType a
 					where not exists (select 1 from Production.dbo.FormType b where a.ID = b.ID)
 
-					
------------------------Export_ShipAdvice_Container-----------------------------
-
-
-INSERT INTO Production.dbo.Export_ShipAdvice_Container
-        (Export_Detail_Ukey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate)
-SELECT *
-FROM Trade_To_Pms.dbo.Export_ShipAdvice_Container s
-WHERE NOT EXISTS (SELECT 1 FROM Production.dbo.Export_ShipAdvice_Container WHERE Ukey = s.Ukey)
-
-UPDATE t
-SET  t.Export_Detail_Ukey = s.Export_Detail_Ukey
-    ,t.ContainerType = s.ContainerType
-    ,t.ContainerNo = s.ContainerNo
-    ,t.AddName = s.AddName
-    ,t.AddDate = s.AddDate
-    ,t.EditName = s.EditName
-    ,t.EditDate = s.EditDate
-FROM Production.dbo.Export_ShipAdvice_Container t
-INNER JOIN Trade_To_Pms.dbo.Export_ShipAdvice_Container s ON t.Ukey = s.Ukey
-
-
-DELETE t 
-FROM Production.dbo.Export_ShipAdvice_Container t 
-WHERE NOT EXISTS(SELECT 1 FROM Trade_To_Pms.dbo.Export_ShipAdvice_Container s where t.Ukey = s.Ukey)
 
 END
 

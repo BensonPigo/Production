@@ -607,9 +607,11 @@ and a.MDivisionId = '{Env.User.Keyword}'
 
             #region transaction
             DualResult upResult;
-            TransactionOptions oTranOpt = default;
-            oTranOpt.IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted;
-            oTranOpt.Timeout = new TimeSpan(0, 5, 0);
+            TransactionOptions oTranOpt = new TransactionOptions
+            {
+                IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted,
+                Timeout = new TimeSpan(0, 5, 0),
+            };
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt))
             {
                 try
@@ -670,9 +672,11 @@ and a.MDivisionId = '{Env.User.Keyword}'
 
             #region transaction
             DualResult upResult;
-            TransactionOptions oTranOpt = default;
-            oTranOpt.IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted;
-            oTranOpt.Timeout = new TimeSpan(0, 5, 0);
+            TransactionOptions oTranOpt = new TransactionOptions
+            {
+                IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted,
+                Timeout = new TimeSpan(0, 5, 0),
+            };
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt))
             {
                 try
