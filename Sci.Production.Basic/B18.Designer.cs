@@ -42,10 +42,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(768, 388);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtAccountNo);
@@ -54,12 +50,6 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(768, 350);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 350);
-            this.detailbtm.Size = new System.Drawing.Size(768, 38);
             // 
             // browse
             // 
@@ -136,7 +126,6 @@
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
             this.IsSupportNew = false;
-            this.IsSupportPrint = false;
             this.Name = "B18";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B18. A/C Setting";

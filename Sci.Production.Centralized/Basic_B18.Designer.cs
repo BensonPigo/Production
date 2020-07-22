@@ -42,10 +42,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(768, 388);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtAccountNo);
@@ -54,16 +50,10 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(768, 350);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 350);
-            this.detailbtm.Size = new System.Drawing.Size(768, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(792, 388);
+            this.browse.Size = new System.Drawing.Size(768, 388);
             // 
             // tabs
             // 
@@ -134,7 +124,6 @@
             this.ConnectionName = "ProductionTPE";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
-            this.IsSupportPrint = false;
             this.Name = "Basic_B18";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "Basic_B18. A/C Setting";
