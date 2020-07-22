@@ -1,4 +1,4 @@
-﻿namespace Sci.Production.Centralized
+﻿namespace Sci.Production.Planning
 {
     partial class R05
     {
@@ -42,12 +42,12 @@
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.comboCentralizedFactory1 = new Sci.Production.Class.ComboCentralizedFactory(this.components);
-            this.comboCentralizedM1 = new Sci.Production.Class.ComboCentralizedM(this.components);
-            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
-            this.comboFtyZone = new Sci.Production.Class.ComboFtyZone(this.components);
+            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.comboFtyZone = new Sci.Production.Class.comboFtyZone(this.components);
             this.radioMonthly = new Sci.Win.UI.RadioButton();
             this.radioSemiMonthly = new Sci.Win.UI.RadioButton();
+            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
+            this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
@@ -225,30 +225,6 @@
             this.label7.TabIndex = 113;
             this.label7.Text = "Source";
             // 
-            // comboCentralizedFactory1
-            // 
-            this.comboCentralizedFactory1.BackColor = System.Drawing.Color.White;
-            this.comboCentralizedFactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCentralizedFactory1.FormattingEnabled = true;
-            this.comboCentralizedFactory1.IsSupportUnselect = true;
-            this.comboCentralizedFactory1.Location = new System.Drawing.Point(123, 172);
-            this.comboCentralizedFactory1.Name = "comboCentralizedFactory1";
-            this.comboCentralizedFactory1.OldText = "";
-            this.comboCentralizedFactory1.Size = new System.Drawing.Size(80, 24);
-            this.comboCentralizedFactory1.TabIndex = 101;
-            // 
-            // comboCentralizedM1
-            // 
-            this.comboCentralizedM1.BackColor = System.Drawing.Color.White;
-            this.comboCentralizedM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCentralizedM1.FormattingEnabled = true;
-            this.comboCentralizedM1.IsSupportUnselect = true;
-            this.comboCentralizedM1.Location = new System.Drawing.Point(123, 112);
-            this.comboCentralizedM1.Name = "comboCentralizedM1";
-            this.comboCentralizedM1.OldText = "";
-            this.comboCentralizedM1.Size = new System.Drawing.Size(80, 24);
-            this.comboCentralizedM1.TabIndex = 99;
-            // 
             // txtbrand1
             // 
             this.txtbrand1.BackColor = System.Drawing.Color.White;
@@ -299,16 +275,42 @@
             this.radioSemiMonthly.Text = "Semi-monthly Report";
             this.radioSemiMonthly.UseVisualStyleBackColor = true;
             // 
+            // comboMDivision
+            // 
+            this.comboMDivision.BackColor = System.Drawing.Color.White;
+            this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMDivision.FormattingEnabled = true;
+            this.comboMDivision.IsSupportUnselect = true;
+            this.comboMDivision.Location = new System.Drawing.Point(123, 111);
+            this.comboMDivision.Name = "comboMDivision";
+            this.comboMDivision.OldText = "";
+            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
+            this.comboMDivision.TabIndex = 117;
+            // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = false;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(123, 173);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(80, 24);
+            this.comboFactory.TabIndex = 118;
+            // 
             // chkIncludeCancelOrder
             // 
             this.chkIncludeCancelOrder.AutoSize = true;
             this.chkIncludeCancelOrder.Checked = true;
             this.chkIncludeCancelOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 348);
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(12, 348);
             this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
             this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
-            this.chkIncludeCancelOrder.TabIndex = 117;
+            this.chkIncludeCancelOrder.TabIndex = 119;
             this.chkIncludeCancelOrder.Text = "Include Cancel order";
             this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
             // 
@@ -316,8 +318,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(591, 400);
+            this.ClientSize = new System.Drawing.Size(591, 405);
             this.Controls.Add(this.chkIncludeCancelOrder);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.comboMDivision);
             this.Controls.Add(this.radioSemiMonthly);
             this.Controls.Add(this.radioMonthly);
             this.Controls.Add(this.comboFtyZone);
@@ -333,8 +337,6 @@
             this.Controls.Add(this.chkForecast);
             this.Controls.Add(this.chkOrder);
             this.Controls.Add(this.cmbDate);
-            this.Controls.Add(this.comboCentralizedFactory1);
-            this.Controls.Add(this.comboCentralizedM1);
             this.Controls.Add(this.txtbrand1);
             this.Controls.Add(this.numYear);
             this.Name = "R05";
@@ -348,8 +350,6 @@
             this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.numYear, 0);
             this.Controls.SetChildIndex(this.txtbrand1, 0);
-            this.Controls.SetChildIndex(this.comboCentralizedM1, 0);
-            this.Controls.SetChildIndex(this.comboCentralizedFactory1, 0);
             this.Controls.SetChildIndex(this.cmbDate, 0);
             this.Controls.SetChildIndex(this.chkOrder, 0);
             this.Controls.SetChildIndex(this.chkForecast, 0);
@@ -365,6 +365,8 @@
             this.Controls.SetChildIndex(this.comboFtyZone, 0);
             this.Controls.SetChildIndex(this.radioMonthly, 0);
             this.Controls.SetChildIndex(this.radioSemiMonthly, 0);
+            this.Controls.SetChildIndex(this.comboMDivision, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
@@ -375,9 +377,7 @@
         #endregion
 
         private Win.UI.NumericUpDown numYear;
-        private Class.Txtbrand txtbrand1;
-        private Class.ComboCentralizedM comboCentralizedM1;
-        private Class.ComboCentralizedFactory comboCentralizedFactory1;
+        private Class.txtbrand txtbrand1;
         private Win.UI.ComboBox cmbDate;
         private Win.UI.CheckBox chkOrder;
         private Win.UI.CheckBox chkForecast;
@@ -390,9 +390,11 @@
         private Win.UI.Label label5;
         private Win.UI.Label label6;
         private Win.UI.Label label7;
-        private Class.ComboFtyZone comboFtyZone;
+        private Class.comboFtyZone comboFtyZone;
         private Win.UI.RadioButton radioMonthly;
         private Win.UI.RadioButton radioSemiMonthly;
+        private Class.comboMDivision comboMDivision;
+        private Class.comboFactory comboFactory;
         private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }
