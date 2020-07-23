@@ -33,7 +33,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.RunTime = new Sci.Win.UI.NumericBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.btnFilter = new Sci.Win.UI.Button();
             this.btnEditSave = new Sci.Win.UI.Button();
             this.label2 = new Sci.Win.UI.Label();
@@ -272,7 +272,7 @@
 
         private Win.UI.Panel panel1;
         private System.Windows.Forms.Label label3;
-        private Class.txtsupplier txtsupplier;
+        private Class.Txtsupplier txtsupplier;
         private Win.UI.Button btnFilter;
         private Win.UI.Button btnEditSave;
         private Win.UI.Label label2;
