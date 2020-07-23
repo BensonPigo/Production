@@ -178,11 +178,6 @@ outer apply(
 	from PackingList p with(nolock)
 	where p.ShipPlanID = s.ID and p.InvNo = g.ID 
 )pp
-outer apply(
-	select p.PulloutDate
-	from PackingList p with(nolock)
-	where p.ShipPlanID = s.ID and p.InvNo = g.ID
-)ppd
 where 1=1
 {where}
 
@@ -253,11 +248,6 @@ select s.ID,g.ID,g.CYCFS,gc.Type,gc.CTNRNo,gc.SealNo,gc.TruckNo,g.SONo
 from ShipPlan s with(nolock)
 inner join GMTBooking g with(nolock) on g.ShipPlanID = s.ID
 inner join GMTBooking_CTNR gc with(nolock) on gc.ID = g.ID
-outer apply(
-	select p.PulloutDate
-	from PackingList p with(nolock)
-	where p.ShipPlanID = s.ID and p.InvNo = g.ID
-)ppd
 where 1=1
 {where}
 order by s.ID,g.ID
