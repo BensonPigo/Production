@@ -155,6 +155,12 @@
     <Compile Include="AuthorityByPosition_History.Designer.cs">
       <DependentUpon>AuthorityByPosition_History.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01.Designer.cs">
+      <DependentUpon>P01.cs</DependentUpon>
+    </Compile>
     <Compile Include="PasswordByUser.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -193,6 +199,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AuthorityByPosition_History.resx">
       <DependentUpon>AuthorityByPosition_History.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01.resx">
+      <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PasswordByUser.resx">
       <DependentUpon>PasswordByUser.cs</DependentUpon>
