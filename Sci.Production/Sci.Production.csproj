@@ -259,6 +259,9 @@
     <None Include="XLT\AuthorityByPosition.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Basic_B18.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Basic_R01.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

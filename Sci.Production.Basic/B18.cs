@@ -1,4 +1,5 @@
-﻿using Sci.Data;
+﻿using Ict;
+using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,9 +7,11 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Basic
 {
@@ -22,6 +25,7 @@ namespace Sci.Production.Basic
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             this.oldID = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
@@ -87,6 +91,61 @@ namespace Sci.Production.Basic
                 string sqlCmd = $"SELECT Name FROM SciFMS_AccountNo WHERE ID='{this.CurrentMaintain["ID"]}' ";
                 this.disAccountNoname.Text = MyUtility.GetValue.Lookup(sqlCmd);
             }
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickPrint()
+        {
+            string sqlcmd = @"
+SELECT b.ID ,b.Name ,[Unselectable]=
+	IIF(b.ID IN  (
+			SELECT ID 
+			FROM SciFMS_AccountNo
+			WHERE Junk = 0
+			AND (ID  IN (
+					SELECT ID
+					FROM AccountNoSetting 
+					WHERE  LEN(ID) > 4 AND UnselectableShipB03 = 1
+				)
+			OR SUBSTRING(ID,1,4)  IN (	
+				SELECT ID
+				FROM AccountNoSetting 
+				WHERE  LEN(ID)=4 AND UnselectableShipB03 = 1
+			))
+		)
+	,'Y','')
+FROM SciFMS_AccountNo b
+WHERE b.Junk=0 
+";
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, sqlcmd,  out dt);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            this.ToExcel(dt);
+            return base.ClickPrint();
+        }
+
+        private bool ToExcel(DataTable excelDt)
+        {
+            string strXltName = "Basic_B18";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{strXltName}.xltx");
+
+            MyUtility.Excel.CopyToXls(excelDt, string.Empty, $"{strXltName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1], DisplayAlerts_ForSaveFile: false);
+
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName(strXltName);
+            excelApp.ActiveWorkbook.SaveAs(strExcelName);
+            excelApp.Quit();
+            Marshal.ReleaseComObject(excelApp);
+
+            strExcelName.OpenFile();
+            #endregion
+            return true;
         }
     }
 }
