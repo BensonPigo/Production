@@ -5,8 +5,10 @@ using System.Data;
 
 namespace Sci.Production.Prg
 {
+    /// <inheritdoc/>
     public static class ProjExts
     {
+        /// <inheritdoc/>
         public static T Val<T>(this DataRow row, string name)
         {
             var v = row[name];
@@ -18,6 +20,7 @@ namespace Sci.Production.Prg
             return (T)v;
         }
 
+        /// <inheritdoc/>
         public static T Val<T>(this DataRow row, DataColumn col)
         {
             var v = row[col];
@@ -29,8 +32,8 @@ namespace Sci.Production.Prg
             return (T)v;
         }
 
-        public static IDictionary<KEY, DataRow> ToDictionary<KEY>(this DataTable datas, Func<DataRow, KEY> keyselector,
-            bool ignore_deleted = false)
+        /// <inheritdoc/>
+        public static IDictionary<TKEY, DataRow> ToDictionary<TKEY>(this DataTable datas, Func<DataRow, TKEY> keyselector, bool ignore_deleted = false)
         {
             if (keyselector == null)
             {
@@ -42,7 +45,7 @@ namespace Sci.Production.Prg
                 return null;
             }
 
-            var dic = new Dictionary<KEY, DataRow>();
+            var dic = new Dictionary<TKEY, DataRow>();
             foreach (DataRow it in datas.Rows)
             {
                 if (ignore_deleted && it.RowState == DataRowState.Deleted)
@@ -58,8 +61,8 @@ namespace Sci.Production.Prg
             return dic;
         }
 
-        public static IDictionary<KEY, IList<DataRow>> ToDictionaryList<KEY>(this DataTable datas, Func<DataRow, KEY> keyselector,
-            bool ignore_deleted = false)
+        /// <inheritdoc/>
+        public static IDictionary<TKEY, IList<DataRow>> ToDictionaryList<TKEY>(this DataTable datas, Func<DataRow, TKEY> keyselector, bool ignore_deleted = false)
         {
             if (keyselector == null)
             {
@@ -71,7 +74,7 @@ namespace Sci.Production.Prg
                 return null;
             }
 
-            var dic = new Dictionary<KEY, IList<DataRow>>();
+            var dic = new Dictionary<TKEY, IList<DataRow>>();
             foreach (DataRow it in datas.Rows)
             {
                 if (ignore_deleted && it.RowState == DataRowState.Deleted)
@@ -93,6 +96,7 @@ namespace Sci.Production.Prg
             return dic;
         }
 
+        /// <inheritdoc/>
         public static bool CompareDataRowVersionValue(this DataRow dr, string compareColumns)
         {
             if (MyUtility.Check.Empty(compareColumns))
@@ -150,6 +154,14 @@ namespace Sci.Production.Prg
             {
                 return srcTableForSchema.Clone();
             }
+        }
+
+        /// <inheritdoc/>
+        public static void ImportRowAdded(this DataTable dt, DataRow row)
+        {
+            row.AcceptChanges();
+            row.SetAdded();
+            dt.ImportRow(row);
         }
     }
 }

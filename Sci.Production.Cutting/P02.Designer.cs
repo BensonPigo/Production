@@ -109,10 +109,7 @@
             this.lbshc = new System.Windows.Forms.Label();
             this.btnCutplanChangeHistory = new Sci.Win.UI.Button();
             this.btnStdQtyWIP = new Sci.Win.UI.Button();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.numLeadTime = new Sci.Win.UI.NumericBox();
-            this.dispSubprocess = new Sci.Win.UI.DisplayBox();
+            this.btnDist = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -145,10 +142,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.dispSubprocess);
-            this.masterpanel.Controls.Add(this.numLeadTime);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.btnStdQtyWIP);
             this.masterpanel.Controls.Add(this.numBalanceLayer);
             this.masterpanel.Controls.Add(this.numTotalLayer);
@@ -167,7 +160,7 @@
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelCuttingSP);
             this.masterpanel.Dock = System.Windows.Forms.DockStyle.None;
-            this.masterpanel.Size = new System.Drawing.Size(833, 93);
+            this.masterpanel.Size = new System.Drawing.Size(631, 93);
             this.masterpanel.Controls.SetChildIndex(this.labelCuttingSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLine, 0);
@@ -184,12 +177,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelBalanceLayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTotalLayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.numBalanceLayer, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnStdQtyWIP, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numLeadTime, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dispSubprocess, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnStdQtyWIP, 0);
             // 
             // detailpanel
             // 
@@ -197,7 +186,7 @@
             this.detailpanel.Controls.Add(this.masterpanel);
             this.detailpanel.Controls.Add(this.detailbtm);
             this.detailpanel.Location = new System.Drawing.Point(0, 0);
-            this.detailpanel.Size = new System.Drawing.Size(1206, 713);
+            this.detailpanel.Size = new System.Drawing.Size(1004, 713);
             this.detailpanel.Controls.SetChildIndex(this.detailbtm, 0);
             this.detailpanel.Controls.SetChildIndex(this.masterpanel, 0);
             this.detailpanel.Controls.SetChildIndex(this.splitContainer1, 0);
@@ -211,7 +200,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(7214, 561);
+            this.refresh.Location = new System.Drawing.Point(7057, 561);
             // 
             // detailgridcont
             // 
@@ -220,18 +209,19 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(833, 585);
+            this.detailgridcont.Size = new System.Drawing.Size(627, 585);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1206, 713);
+            this.detail.Size = new System.Drawing.Size(1004, 713);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1206, 713);
+            this.detailcont.Size = new System.Drawing.Size(1004, 713);
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.btnDist);
             this.detailbtm.Controls.Add(this.btn_Refresh);
             this.detailbtm.Controls.Add(this.AutoCut);
             this.detailbtm.Controls.Add(this.comboBox1);
@@ -242,7 +232,7 @@
             this.detailbtm.Controls.Add(this.btnQuantityBreakdown);
             this.detailbtm.Controls.Add(this.label2);
             this.detailbtm.Location = new System.Drawing.Point(0, 678);
-            this.detailbtm.Size = new System.Drawing.Size(1206, 35);
+            this.detailbtm.Size = new System.Drawing.Size(1004, 35);
             this.detailbtm.Controls.SetChildIndex(this.label2, 0);
             this.detailbtm.Controls.SetChildIndex(this.btnQuantityBreakdown, 0);
             this.detailbtm.Controls.SetChildIndex(this.textbox_LastCutRef, 0);
@@ -257,6 +247,7 @@
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
             this.detailbtm.Controls.SetChildIndex(this.btn_Refresh, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnDist, 0);
             // 
             // browse
             // 
@@ -264,7 +255,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1214, 742);
+            this.tabs.Size = new System.Drawing.Size(1012, 742);
             this.tabs.SelectedIndexChanged += new System.EventHandler(this.Tabs_SelectedIndexChanged);
             // 
             // createby
@@ -473,18 +464,18 @@
             // btnQuantityBreakdown
             // 
             this.btnQuantityBreakdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuantityBreakdown.Location = new System.Drawing.Point(1019, 3);
+            this.btnQuantityBreakdown.Location = new System.Drawing.Point(812, 4);
             this.btnQuantityBreakdown.Name = "btnQuantityBreakdown";
-            this.btnQuantityBreakdown.Size = new System.Drawing.Size(181, 30);
+            this.btnQuantityBreakdown.Size = new System.Drawing.Size(109, 30);
             this.btnQuantityBreakdown.TabIndex = 23;
-            this.btnQuantityBreakdown.Text = "Quantity Breakdown";
+            this.btnQuantityBreakdown.Text = "Qty B\'down";
             this.btnQuantityBreakdown.UseVisualStyleBackColor = true;
             this.btnQuantityBreakdown.Click += new System.EventHandler(this.Qtybreak_Click);
             // 
             // btnPackingMethod
             // 
             this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPackingMethod.Location = new System.Drawing.Point(863, 4);
+            this.btnPackingMethod.Location = new System.Drawing.Point(661, 4);
             this.btnPackingMethod.Name = "btnPackingMethod";
             this.btnPackingMethod.Size = new System.Drawing.Size(145, 30);
             this.btnPackingMethod.TabIndex = 24;
@@ -709,6 +700,7 @@
             this.gridSizeRatio.Size = new System.Drawing.Size(137, 156);
             this.gridSizeRatio.TabIndex = 44;
             this.gridSizeRatio.TabStop = false;
+            this.gridSizeRatio.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridSizeRatio_EditingKeyProcessing);
             // 
             // sizeratioMenuStrip
             // 
@@ -1016,7 +1008,7 @@
             // btn_Refresh
             // 
             this.btn_Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Refresh.Location = new System.Drawing.Point(777, 4);
+            this.btn_Refresh.Location = new System.Drawing.Point(575, 4);
             this.btn_Refresh.Name = "btn_Refresh";
             this.btn_Refresh.Size = new System.Drawing.Size(80, 30);
             this.btn_Refresh.TabIndex = 49;
@@ -1028,7 +1020,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.Location = new System.Drawing.Point(833, 0);
+            this.splitContainer1.Location = new System.Drawing.Point(631, 0);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -1174,55 +1166,20 @@
             this.btnStdQtyWIP.UseVisualStyleBackColor = true;
             this.btnStdQtyWIP.Click += new System.EventHandler(this.BtnStdQtyWIP_Click);
             // 
-            // label3
+            // btnDist
             // 
-            this.label3.Location = new System.Drawing.Point(628, 7);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(79, 23);
-            this.label3.TabIndex = 55;
-            this.label3.Text = "Lead Time";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(628, 33);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(79, 23);
-            this.label4.TabIndex = 56;
-            this.label4.Text = "Subprocess";
-            // 
-            // numLeadTime
-            // 
-            this.numLeadTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numLeadTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numLeadTime.IsSupportEditMode = false;
-            this.numLeadTime.Location = new System.Drawing.Point(710, 7);
-            this.numLeadTime.Name = "numLeadTime";
-            this.numLeadTime.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numLeadTime.ReadOnly = true;
-            this.numLeadTime.Size = new System.Drawing.Size(61, 23);
-            this.numLeadTime.TabIndex = 57;
-            this.numLeadTime.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // dispSubprocess
-            // 
-            this.dispSubprocess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispSubprocess.Location = new System.Drawing.Point(710, 33);
-            this.dispSubprocess.Name = "dispSubprocess";
-            this.dispSubprocess.Size = new System.Drawing.Size(120, 23);
-            this.dispSubprocess.TabIndex = 58;
+            this.btnDist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDist.Location = new System.Drawing.Point(927, 4);
+            this.btnDist.Name = "btnDist";
+            this.btnDist.Size = new System.Drawing.Size(74, 30);
+            this.btnDist.TabIndex = 50;
+            this.btnDist.Text = "Dist.";
+            this.btnDist.UseVisualStyleBackColor = true;
+            this.btnDist.Click += new System.EventHandler(this.BtnDist_Click);
             // 
             // P02
             // 
-            this.ClientSize = new System.Drawing.Size(1214, 775);
+            this.ClientSize = new System.Drawing.Size(1012, 775);
             this.Controls.Add(this.btnCutplanChangeHistory);
             this.DefaultControlForEdit = "numMarkerLengthY";
             this.DefaultDetailOrder = "Markname";
@@ -1236,8 +1193,8 @@
             this.KeyField1 = "id";
             this.Name = "P02";
             this.OnLineHelpID = "Sci.Win.Tems.Input8";
-            this.SubDetailKeyField1 = "ukey";
-            this.SubDetailKeyField2 = "WorkOrderUkey";
+            this.SubDetailKeyField1 = "id,ukey";
+            this.SubDetailKeyField2 = "id,WorkOrderUkey";
             this.SubGridAlias = "WorkOrder_PatternPanel";
             this.Text = "() () () ";
             this.WorkAlias = "Cutting";
@@ -1359,9 +1316,6 @@
         private Win.UI.Button btnAdditionalrevisedmarker;
         private Win.UI.Button btnCutplanChangeHistory;
         private Win.UI.Button btnStdQtyWIP;
-        private Win.UI.DisplayBox dispSubprocess;
-        private Win.UI.NumericBox numLeadTime;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
+        private Win.UI.Button btnDist;
     }
 }
