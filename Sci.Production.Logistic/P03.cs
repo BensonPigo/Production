@@ -791,7 +791,7 @@ from #tmp t ;
             DataTable resulttb;
             DualResult result1 = Ict.Result.True, result2 = Ict.Result.True;
 
-            using (TransactionScope transactionScope = new TransactionScope())
+            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 5, 0)))
             {
                 try
                 {
