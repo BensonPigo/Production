@@ -125,7 +125,7 @@ select
 			 when FromSP.junk=1 and isnull(FromSP.needproduction,0)<>1 and isnull(FromSP.keeppanels,0) <> 1 then 'N'
 			 else ''
 			 end
-    ,ob.BuyBackReason
+    ,o.BuyBackReason
 	,o.StyleID
     ,o.StyleUnit
 	,o.SeasonID
