@@ -109,6 +109,9 @@
       <HintPath>..\_Dll\Sci.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sci.Andy">
+      <HintPath>..\_Dll\Sci.Andy.dll</HintPath>
+    </Reference>
     <Reference Include="Sci.Proj">
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
       <Private>False</Private>
