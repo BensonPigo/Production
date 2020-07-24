@@ -32,6 +32,7 @@
             this.checkExtendAllParts = new System.Windows.Forms.CheckBox();
             this.radioBundleChecklist = new System.Windows.Forms.RadioButton();
             this.radioBundleCard = new System.Windows.Forms.RadioButton();
+            this.radioBundleCardRF = new System.Windows.Forms.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,14 +53,15 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.radioBundleCardRF);
             this.radioPanel1.Controls.Add(this.checkExtendAllParts);
             this.radioPanel1.Controls.Add(this.radioBundleChecklist);
             this.radioPanel1.Controls.Add(this.radioBundleCard);
             this.radioPanel1.Location = new System.Drawing.Point(12, 11);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(350, 100);
+            this.radioPanel1.Size = new System.Drawing.Size(350, 113);
             this.radioPanel1.TabIndex = 0;
-            this.radioPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.radioPanel1_Paint);
+            this.radioPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.RadioPanel1_Paint);
             // 
             // checkExtendAllParts
             // 
@@ -75,7 +77,7 @@
             // radioBundleChecklist
             // 
             this.radioBundleChecklist.AutoSize = true;
-            this.radioBundleChecklist.Location = new System.Drawing.Point(28, 57);
+            this.radioBundleChecklist.Location = new System.Drawing.Point(28, 89);
             this.radioBundleChecklist.Name = "radioBundleChecklist";
             this.radioBundleChecklist.Size = new System.Drawing.Size(134, 21);
             this.radioBundleChecklist.TabIndex = 4;
@@ -93,6 +95,16 @@
             this.radioBundleCard.TabStop = true;
             this.radioBundleCard.Text = "Bundle Card(A4)";
             this.radioBundleCard.UseVisualStyleBackColor = true;
+            // 
+            // radioBundleCardRF
+            // 
+            this.radioBundleCardRF.AutoSize = true;
+            this.radioBundleCardRF.Location = new System.Drawing.Point(28, 53);
+            this.radioBundleCardRF.Name = "radioBundleCardRF";
+            this.radioBundleCardRF.Size = new System.Drawing.Size(132, 21);
+            this.radioBundleCardRF.TabIndex = 6;
+            this.radioBundleCardRF.Text = "Bundle Card(RF)";
+            this.radioBundleCardRF.UseVisualStyleBackColor = true;
             // 
             // P10_Print
             // 
@@ -122,6 +134,6 @@
         private System.Windows.Forms.CheckBox checkExtendAllParts;
         private System.Windows.Forms.RadioButton radioBundleChecklist;
         private System.Windows.Forms.RadioButton radioBundleCard;
-
+        private System.Windows.Forms.RadioButton radioBundleCardRF;
     }
 }
