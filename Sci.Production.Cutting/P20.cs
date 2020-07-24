@@ -575,31 +575,27 @@ and a.MDivisionId = '{Env.User.Keyword}'
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            DualResult result;
+            string cdate = ((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd");
             #region 若前面的單子有尚未Confrim 則不可Confirm
-
-            string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) where cdate<'{0}' and Status='New' and mDivisionid = '{1}'", ((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd"), this.KeyWord);
-            string msg = string.Empty;
-            result = DBProxy.Current.Select(null, sql, out DataTable dt);
-            if (result)
-            {
-                foreach (DataRow dr in dt.Rows)
-                {
-                    msg = msg + "<ID>:" + dr["ID"] + ",<Date>:" + ((DateTime)dr["cdate"]).ToString("yyyy/MM/dd") + Environment.NewLine;
-                }
-
-                if (!MyUtility.Check.Empty(msg))
-                {
-                    MyUtility.Msg.WarningBox("The record not yet confirm, you can not confirm.Please see below list." + Environment.NewLine + msg);
-                    return;
-                }
-            }
-            else
+            string sqlcmd = $"Select * from Cuttingoutput WITH (NOLOCK) where cdate<'{cdate}' and Status='New' and mDivisionid = '{this.KeyWord}'";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            if (!result)
             {
                 this.ShowErr(result);
                 return;
             }
+
+            if (!this.CheckMsg(dt, "The record not yet confirm, you can not confirm.Please see below list."))
+            {
+                return;
+            }
+
             #endregion
+
+            if (!this.CheckAfterCdate("confirm"))
+            {
+                return;
+            }
 
             string update = $@"update Cuttingoutput set status='Confirmed',editDate=getdate(),editname ='{this.LoginID}' where id='{this.CurrentMaintain["ID"]}';
                         EXEC Cutting_P20_CFM_Update '{this.CurrentMaintain["ID"]}','{((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{this.CurrentMaintain["ManPower"]},{this.CurrentMaintain["ManHours"]},'Confirm';
@@ -639,31 +635,11 @@ and a.MDivisionId = '{Env.User.Keyword}'
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            DualResult result;
-            #region 若前面的單子有UnConfrim 則UnConfirm
-
-            string sql = string.Format("Select * from Cuttingoutput  WITH (NOLOCK) where cdate>'{0}' and Status!='New' and mDivisionid = '{1}'", ((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd"), this.KeyWord);
-            string msg = string.Empty;
-            result = DBProxy.Current.Select(null, sql, out DataTable dt);
-            if (result)
+            if (!this.CheckAfterCdate("Unconfirm"))
             {
-                foreach (DataRow dr in dt.Rows)
-                {
-                    msg = msg + "<ID>:" + dr["ID"] + ",<Date>:" + ((DateTime)dr["cdate"]).ToString("yyyy/MM/dd") + Environment.NewLine;
-                }
-
-                if (!MyUtility.Check.Empty(msg))
-                {
-                    MyUtility.Msg.WarningBox("The record not yet Unconfirm, you can not Unconfirm.Please see below list." + Environment.NewLine + msg);
-                    return;
-                }
-            }
-            else
-            {
-                this.ShowErr(result);
                 return;
             }
-            #endregion
+
             string update = $@"update Cuttingoutput set status='New',editDate=getdate(),editname ='{this.LoginID}' where id='{this.CurrentMaintain["ID"]}';
                         EXEC Cutting_P20_CFM_Update '{this.CurrentMaintain["ID"]}','{((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{this.CurrentMaintain["ManPower"]},{this.CurrentMaintain["ManHours"]},'UnConfirm';
 ";
@@ -696,6 +672,43 @@ and a.MDivisionId = '{Env.User.Keyword}'
 
             MyUtility.Msg.InfoBox("Successfully");
             #endregion
+        }
+
+        private bool CheckAfterCdate(string c)
+        {
+            // 該日期之後的單據是否有狀態不在 New 的資料
+            string cdate = ((DateTime)this.CurrentMaintain["cdate"]).ToString("yyyy/MM/dd");
+            string sqlcmd = $@"Select * from Cuttingoutput WITH (NOLOCK) where cdate>'{cdate}' and Status<>'New' and mDivisionid = '{this.KeyWord}'";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (!this.CheckMsg(dt, $"The record not yet Unconfirm, you can not {c}.Please see below list."))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool CheckMsg(DataTable dt, string headermag)
+        {
+            string msg = string.Empty;
+            foreach (DataRow dr in dt.Rows)
+            {
+                msg = msg + "<ID>:" + dr["ID"] + ",<Date>:" + ((DateTime)dr["cdate"]).ToString("yyyy/MM/dd") + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(msg))
+            {
+                MyUtility.Msg.WarningBox(headermag + Environment.NewLine + msg);
+                return false;
+            }
+
+            return true;
         }
 
         private void BtnImportfromWorkOrder_Click(object sender, EventArgs e)
