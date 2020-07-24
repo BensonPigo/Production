@@ -879,16 +879,26 @@ and s.StyleUnit='PCS'
             #endregion
 
             #region 寫表頭的Total Sewing Time與表身的Sewer，只把ArtworkTypeID = 'SEWING'的秒數抓進來加總
+            bool isLocalStyle = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT LocalStyle FROM Style WHERE ID='{this.CurrentMaintain["StyleID"]}' AND SeasonID='{this.CurrentMaintain["SeasonID"]}' AND BrandID='{this.CurrentMaintain["BrandID"]}'"));
+
             var machineSMV_List = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).Select(o => new { MachineTypeID = o["MachineTypeID"].ToString(), SMV = MyUtility.Convert.GetDecimal(o["SMV"]) }).ToList();
+            decimal ttlSewingTime = 0;
+            if (!isLocalStyle)
+            {
+                DataTable tmp;
+                DBProxy.Current.Select(null, " SELECT ID FROM Machinetype WHERE ArtworkTypeID = 'SEWING' ", out tmp);
+                List<string> sewingMachine_List = tmp.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
 
-            DataTable tmp;
+                ttlSewingTime = machineSMV_List.Where(o => sewingMachine_List.Contains(o.MachineTypeID)).Sum(o => o.SMV);
 
-            DBProxy.Current.Select(null, " SELECT ID FROM Machinetype WHERE ArtworkTypeID = 'SEWING' ", out tmp);
-            List<string> sewingMachine_List = tmp.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
+                this.CurrentMaintain["TotalSewingTime"] = MyUtility.Convert.GetInt(ttlSewingTime);
+            }
+            else
+            {
+                ttlSewingTime = machineSMV_List.Sum(o => o.SMV);
 
-            decimal ttlSewingTime = machineSMV_List.Where(o => sewingMachine_List.Contains(o.MachineTypeID)).Sum(o => o.SMV);
-
-            this.CurrentMaintain["TotalSewingTime"] = Convert.ToInt32(ttlSewingTime); // MyUtility.Convert.GetInt(ttlSewingTime);
+                this.CurrentMaintain["TotalSewingTime"] = MyUtility.Convert.GetInt(ttlSewingTime);
+            }
 
             string totalSewing = this.CurrentMaintain["TotalSewingTime"].ToString();
             this.numTotalSewingTimePc.Text = totalSewing;
@@ -947,8 +957,6 @@ group by id.Location,M.ArtworkTypeID";
                         MyUtility.Msg.ErrorBox("Check <Total Sewing Time/pc> fail!\r\n" + result.ToString());
                     }
                 }
-
-                bool isLocalStyle = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT LocalStyle FROM Style WHERE ID='{this.CurrentMaintain["StyleID"]}' AND SeasonID='{this.CurrentMaintain["SeasonID"]}' AND BrandID='{this.CurrentMaintain["BrandID"]}'"));
 
                 // Local Style，才進行以下判斷
                 if (!isLocalStyle)
