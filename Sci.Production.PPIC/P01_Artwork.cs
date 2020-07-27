@@ -59,7 +59,15 @@ ORDER BY ArtworkTypeID,Article";
 
             foreach (DataRow gridData in artworkUnit.Rows)
             {
-                gridData["CreateBy"] = gridData["AddName"].ToString() + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
+                if (gridData["AddDate"] != DBNull.Value)
+                {
+                    gridData["CreateBy"] = gridData["AddName"].ToString() + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
+                }
+                else
+                {
+                    gridData["CreateBy"] = gridData["AddName"].ToString();
+                }
+
                 if (gridData["EditDate"] != DBNull.Value)
                 {
                     gridData["EditBy"] = gridData["EditName"].ToString() + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
