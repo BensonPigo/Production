@@ -13,6 +13,8 @@ using System.Runtime.InteropServices;
 using System.Data.SqlClient;
 using System.Transactions;
 using System.Linq;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Packing
 {
@@ -2684,6 +2686,10 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
                     return;
                 }
             }
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
         }
 
         // Packing Method

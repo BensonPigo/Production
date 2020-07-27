@@ -465,11 +465,14 @@ order by bundlegroup",
             * 先刪除原有資料
             * 再新增更改的資料
             */
-            Art_cmd = Art_cmd + string.Format(@"delete from bundle_Detail_Art where id='{0}'", masterID);
+            Art_cmd = Art_cmd + string.Format(
+                @"
+select ID,Ukey into #tmpOldBundle_Detail_Art from bundle_Detail_Art with (nolock) where  id='{0}'
+delete from bundle_Detail_Art where id='{0}'", masterID);
 
             // 將SubProcessID不是單一筆的資料拆開
             DataTable bundle_Detail_Art_Tb_copy = this.bundle_Detail_Art_Tb.Copy();
-            bundle_Detail_Art_Tb_copy.Clear(); // 只有結構,沒有資料
+            bundle_Detail_Art_Tb_copy.Clear();// 只有結構,沒有資料
             int ukey = 1;
             foreach (DataRow dr1 in this.bundle_Detail_Art_Tb.Rows)
             {
@@ -491,7 +494,8 @@ order by bundlegroup",
             }
 
             // 新增資料
-            foreach (DataRow dr in bundle_Detail_Art_Tb_copy.Rows) // 處理Bundle_Detail_Art
+            // 處理Bundle_Detail_Art
+            foreach (DataRow dr in bundle_Detail_Art_Tb_copy.Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
@@ -502,6 +506,9 @@ order by bundlegroup",
                 }
             }
 
+            Art_cmd = Art_cmd + $@"select Ukey  
+from #tmpOldBundle_Detail_Art tda
+where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID = bda.ID and tda.Ukey = bda.Ukey) ";
             #endregion
             #region 處理Bundle_Detail_Art
 
@@ -602,7 +609,7 @@ order by bundlegroup",
             //    }
             // }
             #endregion
-
+            DataTable deleteBundle_Detail_Art = new DataTable();
             using (TransactionScope scope = new TransactionScope())
             {
                 DualResult upResult;
@@ -616,7 +623,7 @@ order by bundlegroup",
 
                 if (!MyUtility.Check.Empty(Art_cmd))
                 {
-                    if (!(upResult = DBProxy.Current.Execute(null, Art_cmd)))
+                    if (!(upResult = DBProxy.Current.Select(null, Art_cmd, out deleteBundle_Detail_Art)))
                     {
                         return upResult;
                     }
@@ -631,11 +638,12 @@ order by bundlegroup",
                 }
 
                 scope.Complete();
+
             }
 
             #region sent data to GZ WebAPI
             string compareCol = "CutRef,OrderID,Article,PatternPanel,FabricPanelCode,SewingLineID,AddDate";
-            string compareDetailCol = "ID,BundleNo,PatternCode,PatternDesc,BundleGroup,SizeCode,Qty";
+            string compareDetailCol = "ID,BundleNo,PatternCode,PatternDesc,BundleGroup,SizeCode,Qty,SubProcessID";
             var listChangedDetail = ((DataTable)this.detailgridbs.DataSource).AsEnumerable();
             if (this.CurrentMaintain.CompareDataRowVersionValue(compareCol))
             {
@@ -670,7 +678,29 @@ order by bundlegroup",
                     })
                     .ToList();
 
-                Task.Run(() => new Guozi_AGV().SentBundleToAGV(() => listBundleToAGV_PostBody));
+                Task.Run(() => new Guozi_AGV().SentBundleToAGV(() => listBundleToAGV_PostBody))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
+            var listDeletedDetail = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Deleted && s["BundleNo", DataRowVersion.Original] != DBNull.Value);
+
+            if (listDeletedDetail.Any())
+            {
+                DataTable deletedDetail = ((DataTable)this.detailgridbs.DataSource).Clone();
+
+                deletedDetail = listDeletedDetail.Select(s =>
+                {
+                    DataRow dr = deletedDetail.NewRow();
+                    dr["BundleNo"] = s["BundleNo", DataRowVersion.Original];
+                    return dr;
+                }
+                ).CopyToDataTable();
+                Task.Run(() => new Guozi_AGV().SentDeleteBundle(deletedDetail));
+            }
+
+            if (deleteBundle_Detail_Art.Rows.Count > 0)
+            {
+                Task.Run(() => new Guozi_AGV().SentDeleteBundle_SubProcess(deleteBundle_Detail_Art));
             }
             #endregion
 
@@ -1312,10 +1342,14 @@ AND DD.id = LIST.kind ";
             this.dispFabricKind.Text = MyUtility.GetValue.Lookup(sqlcmd);
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             string id = this.CurrentMaintain["ID"].ToString();
+            DataTable dtBundle_Detail_Art;
             string deleteBundleDetailQty = $@"
+select Ukey from Bundle_Detail_Art with (nolock) where id = '{id}'
+
 delete 
 from Bundle_Detail_Qty
 where id = '{id}'
@@ -1327,13 +1361,15 @@ from Bundle_Detail_Art
 where id = '{id}'
 ";
 
-            DualResult result = DBProxy.Current.Execute(null, deleteBundleDetailQty);
+            DualResult result = DBProxy.Current.Select(null, deleteBundleDetailQty, out dtBundle_Detail_Art);
 
             if (result == false)
             {
                 return result;
             }
 
+            Task.Run(() => new Guozi_AGV().SentDeleteBundle((DataTable)this.detailgridbs.DataSource));
+            Task.Run(() => new Guozi_AGV().SentDeleteBundle_SubProcess(dtBundle_Detail_Art));
             return base.ClickDeletePost();
         }
     }

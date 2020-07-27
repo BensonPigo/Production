@@ -628,6 +628,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Automation\Sci.Production.Automation.csproj">
+      <Project>{cb61a07f-7d72-490e-aeb6-ba5080f8d652}</Project>
+      <Name>Sci.Production.Automation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
       <Name>Sci.Production.Class</Name>

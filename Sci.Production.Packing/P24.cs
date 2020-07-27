@@ -13,6 +13,8 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Data.SqlClient;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Packing
 {
@@ -474,6 +476,8 @@ when not matched by source and t.ShippingMarkPicUkey in (select ShippingMarkPicU
         {
             base.ClickSaveAfter();
             this.ChangCell();
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["PackingListID"].ToString(), string.Empty))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
         }
 
         protected override DualResult ClickDelete()
@@ -509,6 +513,10 @@ delete ShippingMarkPic_Detail where ShippingMarkPicUkey = {this.CurrentMaintain[
         protected override void ClickDeleteAfter()
         {
             base.ClickDeleteAfter();
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["PackingListID"].ToString(), string.Empty))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
             this.ReloadDatas();
         }
 

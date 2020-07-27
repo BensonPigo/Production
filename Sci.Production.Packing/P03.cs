@@ -10,6 +10,10 @@ using Sci.Data;
 using Sci.Production.PublicPrg;
 using System.Transactions;
 using System.Linq;
+using System.Data.SqlClient;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Packing
 {
@@ -1163,6 +1167,10 @@ WHERE ID =  '{this.CurrentMaintain["ID"]}'";
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
         }
 
         /// <summary>
@@ -1218,7 +1226,12 @@ WHERE ID =  '{this.CurrentMaintain["ID"]}'";
                 return failResult;
             }
 
-            return Ict.Result.True;
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), "delete"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
+
+            return Result.True;
         }
 
         /// <summary>

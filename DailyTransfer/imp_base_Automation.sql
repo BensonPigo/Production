@@ -11,6 +11,12 @@ BEGIN
 		return
 	end
 
+	Declare @Url varchar(100)
 	--¶Ç°eSubProcess
-	exec SentSubprocessToAGV
+	select @Url = [dbo].[GetWebApiURL]('3A0197', 'AGV') 
+	if(isnull(@Url, '') <> '')
+	begin
+		exec SentSubprocessToAGV
+	end
+	
 END
