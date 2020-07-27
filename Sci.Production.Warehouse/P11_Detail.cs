@@ -1,26 +1,30 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.Data;
 using System.Drawing;
-using Ict.Win;
-using Ict;
-using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P11_Detail : Win.Subs.Input8A
     {
-        Win.MatrixHelper _matrix;
-        string Orderid;
-        public bool combo;
-        public bool isSave;
-        bool openFromAutoPick = false;
+        private Win.MatrixHelper _matrix;
+        private string Orderid;
 
-        public DataRow master
-        {
-            get;
-            set;
-        }
+        /// <inheritdoc/>
+        public bool Combo { get; set; }
 
+        /// <inheritdoc/>
+        public bool IsSave { get; set; }
+
+        /// <inheritdoc/>
+        public DataRow Master { get; set; }
+
+        private bool openFromAutoPick = false;
+
+        /// <inheritdoc/>
         public P11_Detail(bool openFromAutoPick = false)
         {
             this.InitializeComponent();
@@ -34,25 +38,28 @@ namespace Sci.Production.Warehouse
             this.btmcont.Controls.Remove(this.delete);
         }
 
+        /// <inheritdoc/>
         protected override bool OnSave()
         {
             base.OnSave();
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.computeTotalIssueQty();
+            this.ComputeTotalQty();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetached()
         {
             this.listControlBindingSource1.DataSource = null;
             base.OnDetached();
         }
 
-        private DualResult matrix_Reload()
+        private DualResult Matrix_Reload()
         {
             DualResult result;
             DataTable dtIssueBreakdown, dtX, dtY;
@@ -72,7 +79,7 @@ namespace Sci.Production.Warehouse
             this._matrix.IsXColEditable = false;  // X 顯示的欄位可否編輯?
             this._matrix.IsYColEditable = false;  // Y 顯示的欄位可否編輯?
             #endregion
-            if (this.combo)
+            if (this.Combo)
             {
                 DBProxy.Current.Select(null, string.Format(
                     @"
@@ -177,10 +184,10 @@ where id='{0}' ", this.Orderid), out dtY);
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override void OnAttached()
         {
             base.OnAttached();
-            DataRow dr;
             if (MyUtility.Check.Seek(
                 string.Format(
                 @"
@@ -197,7 +204,7 @@ select  p.*
                           )t for xml path('')) 
 from dbo.po_supp_detail p WITH (NOLOCK) 
 where p.id='{0}' and p.seq1='{1}' and p.seq2='{2}'",
-                this.CurrentDetailData["poid"], this.CurrentDetailData["seq1"], this.CurrentDetailData["seq2"]), out dr))
+                this.CurrentDetailData["poid"], this.CurrentDetailData["seq1"], this.CurrentDetailData["seq2"]), out DataRow dr))
             {
                 this.displySeqNo.Text = dr["seq"].ToString();
                 this.displyUnit.Text = dr["StockUnit"].ToString();
@@ -210,15 +217,15 @@ where p.id='{0}' and p.seq1='{1}' and p.seq2='{2}'",
             }
 
             #region -- matrix breakdown
-            this.Orderid = this.master["orderid"].ToString();
+            this.Orderid = this.Master["orderid"].ToString();
             DualResult result;
-            if (!(result = this.matrix_Reload()))
+            if (!(result = this.Matrix_Reload()))
             {
                 this.ShowErr(result);
             }
 
             string sql = string.Empty;
-            if (this.combo)
+            if (this.Combo)
             {
                 sql = $@"
 select sizes = stuff((
@@ -255,65 +262,56 @@ select sizes = stuff((
             this.gridbs.Filter = f;
 
             #endregion
-            #region 重新計算 Total Issue Qty
-            this.computeTotalIssueQty();
-            #endregion
+
+            this.ComputeTotalQty();
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             #region issueQtySet
             DataGridViewGeneratorNumericColumnSettings issueQtySet = new DataGridViewGeneratorNumericColumnSettings();
             issueQtySet.CellValidating += (s, e) =>
             {
-                this.grid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = e.FormattedValue;
-                if (e.ColumnIndex == 1)
-                {
-                    this.computeTotalIssueQty();
-                }
+                DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
+                dr["Qty"] = e.FormattedValue;
+                dr["Diffqty"] = MyUtility.Convert.GetDecimal(dr["Autopickqty"]) - MyUtility.Convert.GetDecimal(dr["Qty"]);
+                dr.EndEdit();
+                this.ComputeTotalQty();
             };
             #endregion
-            /*
-             * 請注意 如果以後 grid 有追加欄位
-             * 1. 請確認 computTotalIssueQty => Cells 所指定的欄位是 QTY
-             * 2. 確認 issueQtySet 中 ColumnIndex 判斷的是 QTY 欄位
-            */
+
             this.Helper.Controls.Grid.Generator(this.grid)
-            .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(10), iseditingreadonly: true) // 1
-            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: issueQtySet) // 2
-            ;
-            #region computTotalIssueQty
-            this.computeTotalIssueQty();
-            #endregion
+                .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("Autopickqty", header: "Autopick qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
+                .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: issueQtySet)
+                .Numeric("Diffqty", header: "Diff. Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
+                ;
+
+            this.ComputeTotalQty();
 
             this.grid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             return true;
         }
 
-        private void computeTotalIssueQty()
+        private void ComputeTotalQty()
         {
-            /*
-             * 請注意 如果以後 grid 有追加欄位
-             * 請把確認 Cells 所指定的欄位是 QTY
-            */
-            decimal totalQty = 0;
-            for (int i = 0; i < this.grid.Rows.Count; i++)
+            if (this.gridbs.DataSource != null)
             {
-                totalQty += decimal.Parse(this.grid.Rows[i].Cells[1].Value.ToString());
+                this.displayTotalIssueQty.Value = MyUtility.Convert.GetDecimal(((DataTable)this.gridbs.DataSource).Compute("sum(Qty)", string.Empty));
+                this.displayDiffqty.Value = MyUtility.Convert.GetDecimal(((DataTable)this.gridbs.DataSource).Compute("sum(Diffqty)", string.Empty));
             }
-
-            this.displayTotalIssueQty.Value = totalQty;
         }
 
-        private void save_Click(object sender, EventArgs e)
+        private void Save_Click(object sender, EventArgs e)
         {
-            this.isSave = true;
+            this.IsSave = true;
         }
 
-        private void undo_Click(object sender, EventArgs e)
+        private void Undo_Click(object sender, EventArgs e)
         {
-            this.isSave = false;
+            this.IsSave = false;
         }
     }
 }

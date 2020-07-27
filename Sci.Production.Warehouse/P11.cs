@@ -83,8 +83,8 @@ namespace Sci.Production.Warehouse
                 this.DoSubForm.IsSupportDelete = false;
                 this.DoSubForm.IsSupportNew = false;
 
-                this.subform.master = this.CurrentMaintain;
-                this.subform.combo = this.checkByCombo.Checked;
+                this.subform.Master = this.CurrentMaintain;
+                this.subform.Combo = this.checkByCombo.Checked;
                 #endregion
                 #region keep SubDt
                 /*
@@ -113,7 +113,7 @@ namespace Sci.Production.Warehouse
 
                 #region Final
                 this.GetSubDetailDatas(out DataTable finalSubDt);
-                if (!this.subform.isSave)
+                if (!this.subform.IsSave)
                 {
                     /*
                      * 第三層做 undo 則實現 Reject
@@ -167,7 +167,8 @@ namespace Sci.Production.Warehouse
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     string sqlcmd = string.Format(
-                        @"select  poid = b.ID
+                        @"
+select  poid = b.ID
         , a.Ukey
         , b.Seq1
         , b.Seq2
@@ -234,8 +235,6 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
                     this.CurrentDetailData["seq"] = x[0]["seq"];
                     this.CurrentDetailData["seq1"] = x[0]["seq1"];
                     this.CurrentDetailData["seq2"] = x[0]["seq2"];
-
-                    // CurrentDetailData["mdivisionid"] = x[0]["mdivisionid"];
                     this.CurrentDetailData["stocktype"] = x[0]["stocktype"];
                     this.CurrentDetailData["ftyinventoryukey"] = x[0]["ukey"];
                     this.CurrentDetailData["Colorid"] = x[0]["Colorid"];
@@ -373,7 +372,7 @@ seq[1]), out this.dr))
             .Text("output", header: "Pick Output", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: ts)
             .Numeric("balanceqty", header: "Balance", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Numeric("AutoPickqty", header: "Pick Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
-            .Text("OutputAutoPick", header: "Pick Output", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: ts)
+            .Text("OutputAutoPick", header: "Pick Output", width: Widths.AnsiChars(20), iseditingreadonly: true)
             ;
             #endregion 欄位設定
 
@@ -947,6 +946,7 @@ where a.id='{0}' order by Seq", this.poid,
         , isvirtual = IIF(b.Qty IS NULL , 1 ,0)
         , seq
         , AutoPickQty = isnull(AutoPickQty, 0)
+        , Diffqty = isnull(AutoPickQty, 0) - isnull(b.Qty,0)
     from  dbo.Issue_Size b WITH (NOLOCK) 
     inner join dbo.Order_SizeCode a WITH (NOLOCK) on b.SizeCode = a.SizeCode
     outer apply(select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{3}')poid1
@@ -962,14 +962,14 @@ where a.id='{0}' order by Seq", this.poid,
 
             this.SubDetailSelectCommand += $@"
 ,bbb as(
-	select distinct os.sizecode,ID = '{this.CurrentMaintain["orderid"]}',Issue_DetailUkey = '{ukey}',QTY=0,isvirtual = 1,seq, AutoPickQty=0
+	select distinct os.sizecode,ID = '{this.CurrentMaintain["orderid"]}',Issue_DetailUkey = '{ukey}',QTY=0,isvirtual = 1,seq, AutoPickQty=0,Diffqty = 0
 	from dbo.Order_SizeCode os WITH(NOLOCK)
 	inner join orders o WITH(NOLOCK) on o.POID = os.Id
 	inner join dbo.Order_Qty oq WITH(NOLOCK) on o.id = oq.ID and os.SizeCode = oq.SizeCode
 	where o.POID = '{this.poid}' 
 	and not exists(select SizeCode from aaa where aaa.SizeCode = os.sizecode)
 )
-select SizeCode,Id,Issue_DetailUkey,QTY,isvirtual,AutoPickQty
+select SizeCode,Id,Issue_DetailUkey,QTY,isvirtual,AutoPickQty,Diffqty
 from(
 	select * from aaa
 	union all
