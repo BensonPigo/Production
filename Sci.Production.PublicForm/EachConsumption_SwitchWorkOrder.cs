@@ -6,6 +6,10 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Transactions;
+using System.Configuration;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Sci.Production.PublicForm
 {
@@ -197,13 +201,20 @@ drop table #tmp1,#tmp2
             {
                 try
                 {
+                    DataTable[] tablesWorkorder;
                     cmd = string.Format(
-                    @"Delete Workorder where id='{0}';
+                    @"
+                      select Ukey from Workorder with (nolock) where id= '{0}' and CutRef <> '' and CutRef is not null;
+                      select WorkOrderUkey, OrderID, Article, SizeCode 
+                      from WorkOrder_Distribute  with (nolock)
+                      where WorkOrderUkey in (select Ukey from Workorder with (nolock) where id='{0}' and CutRef <> '' and CutRef is not null);
+
+                      Delete Workorder where id='{0}';
                       Delete WorkOrder_Distribute where id='{0}';
                       Delete WorkOrder_SizeRatio where id='{0}';
                       Delete WorkOrder_Estcutdate where id='{0}';
                       Delete WorkOrder_PatternPanel where id='{0}'", this.cuttingid);
-                    if (!(worRes = DBProxy.Current.Execute(null, cmd)))
+                    if (!(worRes = DBProxy.Current.Select(null, cmd, out tablesWorkorder)))
                     {
                         _transactionscope.Dispose();
                         this.ShowErr(cmd, worRes);
@@ -234,6 +245,30 @@ drop table #tmp1,#tmp2
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
+
+                    if (tablesWorkorder[0].Rows.Count > 0)
+                    {
+                        List<Guozi_AGV.WorkOrder_Distribute> deleteWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
+                        List<long> deleteWorkOrder = new List<long>();
+
+                        foreach (DataRow dr in tablesWorkorder[0].AsEnumerable())
+                        {
+                            deleteWorkOrder.Add((long)dr["Ukey"]);
+                        }
+
+                        foreach (DataRow dr in tablesWorkorder[1].AsEnumerable())
+                        {
+                            deleteWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                            {
+                                WorkOrderUkey = (long)dr["WorkOrderUkey"],
+                                SizeCode = (string)dr["SizeCode"],
+                                Article = (string)dr["Article"],
+                                OrderID = (string)dr["OrderID"],
+                            });
+                        }
+                        Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder(deleteWorkOrder));
+                        Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
+                    }
                     MyUtility.Msg.InfoBox("Switch successful");
                 }
                 catch (Exception ex)

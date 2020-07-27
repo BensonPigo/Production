@@ -8,6 +8,8 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Packing
 {
@@ -651,6 +653,24 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
+        }
+
+        protected override DualResult ClickDeletePost()
+        {
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), "delete"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
+            return base.ClickDeletePost();
         }
 
         /// <summary>

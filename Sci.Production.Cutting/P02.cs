@@ -57,6 +57,7 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_StraightLengthNew;
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_CurvedLengthNew;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_shift;
+
         #endregion
 
         /// <inheritdoc/>
@@ -102,6 +103,7 @@ namespace Sci.Production.Cutting
 
             this.sizeratioMenuStrip.Enabled = this.EditMode;
             this.distributeMenuStrip.Enabled = this.EditMode;
+
 
             if (history == "0")
             {
@@ -447,6 +449,7 @@ drop table #tmp
             // 用來檢查size是否存在
             string sqlsizechk = $@"select distinct w.SizeCode from Workorder_SizeRatio w  WITH (NOLOCK) where w.ID = '{masterID}'";
             DBProxy.Current.Select(null, sqlsizechk, out this.chksize);
+
             #endregion
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -2012,6 +2015,7 @@ drop table #tmp
                     }
 
                     sele = new SelectItem(this.artTb, "article", "15@300,300", dr["Article"].ToString(), false, ",", gridFilter: $"ID = '{dr["OrderID"].ToString()}'");
+
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -2492,9 +2496,14 @@ order by FabricCombo,cutno
             }
 
             string updatecutref = @"
+Create table #tmpWorkorder
+	(
+		Ukey bigint
+	)
+
 DECLARE @chk tinyint
 SET @chk = 0
-Begin Transaction [Trans_Name] -- Trans_Name 
+Begin Transaction[Trans_Name] --Trans_Name
 ";
 
             // 寫入空的Cutref
@@ -2527,7 +2536,10 @@ Begin Transaction [Trans_Name] -- Trans_Name
 		RAISERROR ('Duplicate Cutref. Please redo Auto Ref#',12, 1) 
 		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
 	end
-    Update Workorder set cutref = '{newcutref}' where ukey = '{dr["ukey"]}';");
+    Update Workorder set cutref = '{newcutref}' 
+    output	INSERTED.Ukey
+	into #tmpWorkorder
+    where ukey = '{dr["ukey"]}';");
             }
 
             updatecutref += @"
@@ -2536,16 +2548,21 @@ IF @chk <> 0 BEGIN -- 若是新增資料發生錯誤
     Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
 END
 ELSE BEGIN
+    select w.* 
+    from #tmpWorkorder tw
+    inner join WorkOrder w with (nolock) on tw.Ukey = w.Ukey
     Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
 END";
 
             DualResult upResult;
+            DataTable dtWorkorder = new DataTable();
+
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
             {
-                if (!MyUtility.Check.Empty(updatecutref))
+                if (!(upResult = DBProxy.Current.Select(null, updatecutref, out dtWorkorder)))
                 {
-                    if (!(upResult = DBProxy.Current.Execute(null, updatecutref)))
+                    if (upResult.ToString().Contains("Duplicate Cutref. Please redo Auto Ref#"))
                     {
                         if (upResult.ToString().Contains("Duplicate Cutref. Please redo Auto Ref#"))
                         {
@@ -2559,6 +2576,10 @@ END";
                     else
                     {
                         transactionscope.Complete();
+                        if (dtWorkorder.Rows.Count > 0)
+                        {
+                            Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkorder));
+                        }
                     }
                 }
             }
@@ -3261,6 +3282,10 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
+            List<Guozi_AGV.WorkOrder_Distribute> deleteWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
+            List<Guozi_AGV.WorkOrder_Distribute> editWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
+            List<long> deleteWorkOrder = new List<long>();
+
             #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 在此取拆出來資料的ukey,處理刪除的資料
             string sqlUpdateRevisedMarkerOriginalData = string.Empty;
             var listAdditionalRevisedMarkerSeparate = this.DetailDatas.Where(w => (w.RowState == DataRowState.Modified || w.RowState == DataRowState.Added) &&
@@ -3344,12 +3369,23 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
             #region 刪除
             foreach (DataRow dr in this.distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Deleted))
             {
-                delsql += string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and id='{4}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
+                deleteWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderUkey", DataRowVersion.Original],
+                    SizeCode = (string)dr["SizeCode", DataRowVersion.Original],
+                    Article = (string)dr["Article", DataRowVersion.Original],
+                    OrderID = (string)dr["OrderID", DataRowVersion.Original],
+                });
+                delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and id='{4}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
             }
             #endregion
             #region 修改
             foreach (DataRow dr in this.distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Modified))
             {
+                editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderUkey"],
+                });
                 updatesql += $@"
 Update WorkOrder_distribute
 set Qty = {dr["Qty"]},SizeCode = '{dr["SizeCode"]}',Article = '{dr["Article"]}',OrderID = '{dr["OrderID"]}'
@@ -3363,6 +3399,10 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
             #region 新增
             foreach (DataRow dr in this.distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Added))
             {
+                editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderUkey"],
+                });
                 insertsql += string.Format("Insert into WorkOrder_distribute(WorkOrderUkey,SizeCode,Qty,Article,OrderID,ID) values({0},'{1}',{2},'{3}','{4}','{5}'); ", dr["WorkOrderUkey"], dr["SizeCode"], dr["Qty"], dr["Article"], dr["OrderID"], cId);
             }
             #endregion
@@ -3427,15 +3467,56 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
 
             #region sent data to GZ WebAPI
             string compareCol = "CutRef,EstCutDate,ID,OrderID,CutCellID";
-            var listChangedDetail = ((DataTable)this.detailgridbs.DataSource)
-                .AsEnumerable()
-                .Where(s => s.RowState == DataRowState.Added || (s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue(compareCol)));
+
+            var listChangedDetail = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                .Where(s =>
+                {
+                    return (
+                                s.RowState == DataRowState.Added ||
+                                (s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue(compareCol)) ||
+                                editWorkOrder_Distribute.Any(ed => ed.WorkOrderUkey == (long)s["Ukey"]))
+                            &&
+                            !MyUtility.Check.Empty(s["CutRef"]);
+                });
 
             if (listChangedDetail.Any())
             {
-                DataTable dtWorkOrder = listChangedDetail.TryCopyToDataTable((DataTable)this.detailgridbs.DataSource);
-                Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkOrder));
+                DataTable dtWorkOrder = listChangedDetail.CopyToDataTable();
+                Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkOrder))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
+
+            // CutRef被清空要傳delete給廠商
+            var cutRefToEmpty = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Modified &&
+                                                             MyUtility.Check.Empty(s["CutRef", DataRowVersion.Current]) &&
+                                                             !MyUtility.Check.Empty(s["CutRef", DataRowVersion.Original]));
+
+            var workOrder_Distribute = this.distqtyTb.AsEnumerable();
+            foreach (var item in cutRefToEmpty)
+            {
+                deleteWorkOrder.Add((long)item["Ukey"]);
+                deleteWorkOrder_Distribute.AddRange(
+                    workOrder_Distribute.Where(x => x.RowState != DataRowState.Deleted && (long)x["WorkOrderUkey"] == (long)item["Ukey"]).Select(
+                    s => new Guozi_AGV.WorkOrder_Distribute
+                    {
+                        WorkOrderUkey = (long)s["WorkOrderUkey", DataRowVersion.Original],
+                        SizeCode = (string)s["SizeCode", DataRowVersion.Original],
+                        Article = (string)s["Article", DataRowVersion.Original],
+                        OrderID = (string)s["OrderID", DataRowVersion.Original],
+                    }
+                    ));
+
+            }
+
+            deleteWorkOrder.AddRange(
+                ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                .Where(s => s.RowState == DataRowState.Deleted)
+                .Select(s => (long)s["Ukey", DataRowVersion.Original])
+                );
+
+            Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder(deleteWorkOrder));
+            Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
+
             #endregion
 
             return base.ClickSavePost();

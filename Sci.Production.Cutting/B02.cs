@@ -36,7 +36,8 @@ namespace Sci.Production.Cutting
                 (this.CurrentMaintain.RowState == DataRowState.Modified && this.CurrentMaintain.CompareDataRowVersionValue("Junk")))
             {
                 DataTable dtCuttingCell = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Guozi_AGV().SentCutCellToAGV(dtCuttingCell));
+                Task.Run(() => new Guozi_AGV().SentCutCellToAGV(dtCuttingCell))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
             return base.ClickSavePost();
