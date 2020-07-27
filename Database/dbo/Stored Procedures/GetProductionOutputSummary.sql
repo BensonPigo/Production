@@ -149,7 +149,7 @@ from (
 
 select
     o.ID,
-    [Date]= format(iif('1' = '1', KeyDate.SCI, KeyDate.Buyer), 'yyyyMM'),
+    [Date]= format(iif(@DateType = '1', KeyDate.SCI, KeyDate.Buyer), 'yyyyMM'),
     [SCIKey] = format(KeyDate.SCI, 'yyyyMM'),
     [SCIKeyHalf] = iif(cast(format(KeyDate.SCI, 'dd') as int) between 1 and 15, format(KeyDate.SCI, 'yyyyMM01'), format(KeyDate.SCI, 'yyyyMM02')),
     [BuyerKey] = format(KeyDate.Buyer, 'yyyyMM'),
@@ -196,6 +196,10 @@ outer apply(
 	where a.Status= 'confirmed'
 	and b.FromOrderID = o.ID 
 	and o.Junk=1 and o.NeedProduction=1
+	and exists(
+		select 1 from Order_BuyBack_Qty
+		where OrderIDFrom = b.FromOrderID
+	)
 ) fromTransfer
 outer apply(
 	select Qty = sum(b.TransferQty * isnull(ol.Rate, sl.Rate)) 
@@ -206,6 +210,10 @@ outer apply(
 	where a.Status= 'confirmed'
 	and b.ToOrderID = o.ID
 	and o.Junk=1 and o.NeedProduction=1
+	and exists(
+		select 1 from Order_BuyBack_Qty
+		where OrderIDFrom = b.ToOrderID
+	)
 ) ToTransfer
 
 group by o.ID,
@@ -257,7 +265,7 @@ select  ID,
         ProgramID,
         TransFtyZone,
         IsCancelNeedProduction,
-        [DateByHalfMonth] = iif('1' = '1', SCIKeyHalf, BuyerKeyHalf)
+        [DateByHalfMonth] = iif(@DateType = '1', SCIKeyHalf, BuyerKeyHalf)
 into #tmpBaseBySource
 from #tmpBase
 where 1=1
@@ -358,7 +366,9 @@ outer apply (select [val] =  TotalCPU.val - isnull(tb.SewingOutputCPU, 0) - isnu
 select  FtyGroup,
 		[Date] = iif(@ChkMonthly = 1, SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),DateByHalfMonth),
 		ID,
-		OutputDate,
+		[OutputDate] = case when @IncludeCancelOrder = 1 and OutputDate is null 
+							then iif(@ChkMonthly = 1, SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),DateByHalfMonth) 
+			else OutputDate end,
 		[OrderCPU] = iif(IsCancelNeedProduction = 'N' and isNormalOrderCanceled = 1,0 ,OrderCPU - OrderShortageCPU),
 		[CanceledCPU] = iif(IsCancelNeedProduction = 'Y',OrderCPU, 0),
 		OrderShortageCPU,
