@@ -9,46 +9,52 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
+    /// <summary>
+    /// Cutting R03
+    /// </summary>
     public partial class R03 : Win.Tems.PrintForm
     {
-        DataTable[] printData;
-        string WorkOrder;
-        string factory;
-        string CuttingSP1;
-        string CuttingSP2;
-        string Style;
-        DateTime? Est_CutDate1;
-        DateTime? Est_CutDate2;
-        DateTime? EarliestSCIDelivery1;
-        DateTime? EarliestSCIDelivery2;
-        DateTime? EarliestSewingInline1;
-        DateTime? EarliestSewingInline2;
-        DateTime? EarliestBuyerDelivery1;
-        DateTime? EarliestBuyerDelivery2;
-        DateTime? ActCuttingDate1;
-        DateTime? ActCuttingDate2;
-        DateTime? BuyerDelivery1;
-        DateTime? BuyerDelivery2;
-        DateTime? SCIDelivery1;
-        DateTime? SCIDelivery2;
-        DateTime? SewingInline1;
-        DateTime? SewingInline2;
-        StringBuilder condition = new StringBuilder();
+        private DataTable[] printData;
+        private string WorkOrder;
+        private string factory;
+        private string CuttingSP1;
+        private string CuttingSP2;
+        private string Style;
+        private DateTime? Est_CutDate1;
+        private DateTime? Est_CutDate2;
+        private DateTime? EarliestSCIDelivery1;
+        private DateTime? EarliestSCIDelivery2;
+        private DateTime? EarliestSewingInline1;
+        private DateTime? EarliestSewingInline2;
+        private DateTime? EarliestBuyerDelivery1;
+        private DateTime? EarliestBuyerDelivery2;
+        private DateTime? ActCuttingDate1;
+        private DateTime? ActCuttingDate2;
+        private DateTime? BuyerDelivery1;
+        private DateTime? BuyerDelivery2;
+        private DateTime? SCIDelivery1;
+        private DateTime? SCIDelivery2;
+        private DateTime? SewingInline1;
+        private DateTime? SewingInline2;
+        private StringBuilder condition = new StringBuilder();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R03"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable WorkOrder, factory;
-            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, WorkOrder);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory); // 要預設空白
+            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out DataTable workOrder);
+            MyUtility.Tool.SetupCombox(this.comboM, 1, workOrder);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out DataTable factory); // 要預設空白
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboM.Text = Env.User.Keyword;
             this.comboFactory.SelectedIndex = 0;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.WorkOrder = this.comboM.Text;
@@ -93,7 +99,7 @@ namespace Sci.Production.Cutting
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -161,7 +167,8 @@ select
 	wo.Markername,
 	wo.SCIRefno,
 	wo.Seq1,
-	wo.Seq2
+	wo.Seq2,
+    [ActConsOutput] = cast(acc.AccuCuttingLayer as numeric(8,0)) - ML.YDSMarkerLength
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
@@ -266,7 +273,7 @@ outer apply(
 	)
 ) as ss
 outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',wo.MarkerNo,o.StyleUkey,ss.SizeGroup)p)p
-
+outer apply(select dbo.MarkerLengthToYDS(wo.MarkerLength) YDSMarkerLength) ML
 where 1=1
 
 ");
@@ -380,7 +387,7 @@ where 1=1
 select 
 [M],[Factory],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
 ,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
-,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption]
+,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption],[ActConsOutput]
 ,[Spreading Time (mins)],[Cutting Time (mins)]
 ,w.Width
 ,[Marker Length],ActCuttingPerimeter,ActCuttingPerimeterDecimal=0.0,SCIDelivery,BuyerDelivery
@@ -492,7 +499,7 @@ drop table #tmp,#tmpL");
             return Ict.Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -509,11 +516,11 @@ drop table #tmp,#tmpL");
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             // Perimeter(Decimal)
-            int PerimeterCol = this.printData[0].Columns.Count - 3;
-            objApp.Cells[3, PerimeterCol] = $"=IFERROR(LEFT(AJ3,SEARCH(\"yd\",AJ3,1)-1)+0+(IFERROR(RIGHT(LEFT(AJ3,SEARCH(\"\"\"\",AJ3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AJ3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
+            int perimeterCol = this.printData[0].Columns.Count - 3;
+            objApp.Cells[3, perimeterCol] = $"=IFERROR(LEFT(AJ3,SEARCH(\"yd\",AJ3,1)-1)+0+(IFERROR(RIGHT(LEFT(AJ3,SEARCH(\"\"\"\",AJ3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AJ3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
             int rowct = this.printData[0].Rows.Count + 2;
-            objApp.Range[objApp.Cells[3, PerimeterCol], objApp.Cells[3, PerimeterCol]].Copy();
-            objApp.Range[objApp.Cells[4, PerimeterCol], objApp.Cells[rowct, PerimeterCol]].PasteSpecial(Excel.XlPasteType.xlPasteAll, Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+            objApp.Range[objApp.Cells[3, perimeterCol], objApp.Cells[3, perimeterCol]].Copy();
+            objApp.Range[objApp.Cells[4, perimeterCol], objApp.Cells[rowct, perimeterCol]].PasteSpecial(Excel.XlPasteType.xlPasteAll, Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
             objApp.Range[objApp.Cells[2, 1], objApp.Cells[2, 1]].Select();
             objSheets.get_Range("Q2").ColumnWidth = 15.38;
             objSheets.get_Range("U2").ColumnWidth = 15.38;
