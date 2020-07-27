@@ -1,8 +1,5 @@
-﻿USE Production
-
-
-CREATE TABLE [dbo].[Export_ShipAdvice_Container](
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
+﻿CREATE TABLE [dbo].[Export_ShipAdvice_Container](
+	[Ukey] [bigint] NOT NULL,
 	[Export_Detail_Ukey] [bigint] NULL,
 	[ContainerType] [varchar](2) NOT NULL,
 	[ContainerNo] [varchar](20) NOT NULL,
