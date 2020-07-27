@@ -137,7 +137,7 @@ BEGIN
 	)D
 
 	where w.id = '''+@OrderID+N'''
-	order by w.FabricCombo, w.Cutno
+	order by w.FabricCombo,isnull(w.CutNo,9999),iif(t.ct>1,2,1), '+@cols2+N' ,w.Markername
 
 	select	distinct Info = concat(''<'', wOrder.FabricPanelCode, ''>#'', wOrder.Refno, '' '', F.Description)
 	from WorkOrder wOrder

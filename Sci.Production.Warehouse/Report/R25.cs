@@ -149,26 +149,14 @@ namespace Sci.Production.Warehouse
 select
 	WK=ed.ID,
 	e.eta,
-	e.WhseArrival,
-	o.KPILETA,
-	 (SELECT MinSciDelivery FROM DBO.GetSCI(ed.Poid,o.Category)) as [Earliest SCI Delivery],
-	EarlyDays=DATEDIFF(day,e.WhseArrival,o.KPILETA),
 	o.FactoryID,
-    po.styleid,
-	ed.PoID,
-	seq = ed.Seq1+' '+ed.Seq2,
-	ed.suppid,
-	suppname = supp.AbbEN,
-	ed.Refno,
-	f.WeaveTypeID,
-	[description] = dbo.getmtldesc(ed.POID,ed.seq1,ed.seq2,2,0),
-	[Color] = dbo.GetColorMultipleID(o.BrandID,psd.ColorID) ,
+    e.Consignee,
+    e.ShipModeID,
+    e.Blno,
+    e.Vessel,
+    [ProdFactory]=o.FactoryID,
+    o.OrderTypeID,
 	o.ProjectID,
-	[MtlType]=case when ed.FabricType = 'F' then 'Fabric'
-				   when ed.FabricType = 'A' then 'Accessory' end,
-	isnull(ed.Qty,0)+isnull(ed.foc,0),
-	ed.UnitId,
-	o.BrandID,
 	Category = case when o.Category = 'B' then 'Bulk'
 					when o.Category = 'M' then 'Material'
 					when o.Category = 'S' then 'Sample'
@@ -176,8 +164,34 @@ select
 					when o.Category = 'G' then 'Garment'
 					when o.Category = 'O' then 'Other'
 	end,
+	o.BrandID,
+    po.styleid,
+	ed.PoID,
+	seq = ed.Seq1+' '+ed.Seq2,
+	ed.Refno,
+	[Color] = dbo.GetColorMultipleID(o.BrandID,psd.ColorID) ,
+	[Description] = dbo.getmtldesc(ed.POID,ed.seq1,ed.seq2,2,0),
+	[MtlType]=case when ed.FabricType = 'F' then 'Fabric'
+				   when ed.FabricType = 'A' then 'Accessory' end,
+	f.WeaveTypeID,
+	ed.suppid,
+	[SuppName] = supp.AbbEN,
+	ed.UnitId,
+    psd.SizeSpec,
+    [ShipQty]=ed.Qty,
+    ed.FOC,
+    ed.NetKg,
+    ed.WeightKg,
+	[ArriveQty]=isnull(ed.Qty,0)+isnull(ed.foc,0),
+    [ContainerTypeNo] = Container.Val,
+    e.PortArrival,
+	e.WhseArrival,
+	o.KPILETA,
+	 (SELECT MinSciDelivery FROM DBO.GetSCI(ed.Poid,o.Category)) as [Earliest SCI Delivery],
+	EarlyDays=DATEDIFF(day,e.WhseArrival,o.KPILETA),
 	TEPPOHandle.Email,
-    TEPPOSMR.Email
+    TEPPOSMR.Email,
+    [EditName]=dbo.getTPEPass1(e.EditName)
 from Export e
 Inner join Export_Detail ed on e.ID = ed.ID
 inner join orders o on o.id = ed.poid
@@ -187,6 +201,15 @@ left join po on po.id = ed.PoID
 left join TPEPass1 TEPPOHandle on TEPPOHandle.id = po.POHandle
 left join TPEPass1 TEPPOSMR on TEPPOSMR.id = po.POSMR
 left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
+OUTER APPLY(
+		SELECT [Val] = STUFF((
+		SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
+		FROM Export_ShipAdvice_Container esc
+		WHERE esc.Export_Detail_Ukey=ed.Ukey
+		AND esc.ContainerType <> '' AND esc.ContainerNo <> ''
+		FOR XML PATH('')
+	),1,1,'')
+)Container
 where exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 and ed.PoType = 'G' 
 

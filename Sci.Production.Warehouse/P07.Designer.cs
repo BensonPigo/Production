@@ -491,7 +491,6 @@
             // 
             // btnFind
             // 
-            this.btnFind.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.btnFind.Location = new System.Drawing.Point(352, 174);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(98, 30);
@@ -538,6 +537,7 @@
             "Accessory"});
             this.comboTypeFilter.Location = new System.Drawing.Point(535, 177);
             this.comboTypeFilter.Name = "comboTypeFilter";
+            this.comboTypeFilter.OldText = "";
             this.comboTypeFilter.Size = new System.Drawing.Size(100, 24);
             this.comboTypeFilter.TabIndex = 16;
             this.comboTypeFilter.SelectedIndexChanged += new System.EventHandler(this.comboTypeFilter_SelectedIndexChanged);
@@ -594,6 +594,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P07";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P07. Material Receiving";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";

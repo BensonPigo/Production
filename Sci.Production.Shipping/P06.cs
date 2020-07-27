@@ -10,6 +10,8 @@ using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Linq;
 using Sci.Production.PublicPrg;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Shipping
 {
@@ -341,11 +343,11 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                     {
                         if (dr.RowState == DataRowState.Added)
                         {
-                                result = this.WriteRevise("Missing", dr);
-                                if (!result)
-                                {
-                                    return result;
-                                }
+                            result = this.WriteRevise("Missing", dr);
+                            if (!result)
+                            {
+                                return result;
+                            }
                         }
                         else if (dr.RowState == DataRowState.Modified)
                         {
@@ -377,17 +379,17 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                         }
                         else if (dr.RowState == DataRowState.Deleted)
                         {
-                                result = this.WriteRevise("Delete", dr);
+                            result = this.WriteRevise("Delete", dr);
 
-                                #region update PulloutID 到PackingList
-                                string updatePklst = string.Format(@"Update PackingList set pulloutID = '' where id='{0}'", dr["PackingListID"]);
-                                DBProxy.Current.Execute(null, updatePklst);
-                                #endregion
+                            #region update PulloutID 到PackingList
+                            string updatePklst = string.Format(@"Update PackingList set pulloutID = '' where id='{0}'", dr["PackingListID"]);
+                            DBProxy.Current.Execute(null, updatePklst);
+                            #endregion
 
-                                if (!result)
-                                {
-                                    return result;
-                                }
+                            if (!result)
+                            {
+                                return result;
+                            }
                         }
                     }
                 }
@@ -716,6 +718,15 @@ where	exists (
                 MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
                 return;
             }
+
+            #region ISP20200757 資料交換 - Sunrise
+            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            {
+                string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
+                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip'"))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -796,6 +807,16 @@ where ID = '{orderid}'
                 MyUtility.Msg.WarningBox("Amend fail!!\r\n" + result.ToString());
                 return;
             }
+
+            #region ISP20200757 資料交換 - Sunrise
+            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            {
+                string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
+                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip'"))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
+
         }
 
         // History

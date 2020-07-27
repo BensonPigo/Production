@@ -10,6 +10,8 @@ using Sci.Data;
 using Sci.Production.PublicPrg;
 using System.Linq;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Packing
 {
@@ -585,6 +587,19 @@ where InvA.OrderID = '{0}'
             }
 
             this.ComputeOrderQty();
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
+        }
+
+        protected override DualResult ClickDeletePost()
+        {
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), "delete"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
+            return base.ClickDeletePost();
         }
 
         private void ComputeOrderQty()

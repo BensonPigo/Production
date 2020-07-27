@@ -1,0 +1,86 @@
+﻿using Ict;
+using Newtonsoft.Json;
+using Sci.Data;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Dynamic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static Sci.Production.Automation.UtilityAutomation;
+
+namespace Sci.Production.Automation
+{
+    public class Sunrise_FinishingProcesses
+    {
+        private static readonly string sunriseSuppID = "3A0134";
+        private static readonly string moduleName = "FinishingProcesses";
+        private AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS();
+
+        public static bool IsSunrise_FinishingProcessesEnable
+        {
+            get { return IsModuleAutomationEnable(sunriseSuppID, moduleName); }
+        }
+
+        /// <summary>
+        /// SentSubprocessToAGV
+        /// </summary>
+        /// <param name="dtSubprocess">dtSubprocess</param>
+        public void SentPackingToFinishingProcesses(string listID, string actionType)
+        {
+            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            {
+                return;
+            }
+
+            string apiThread = "SentPackingToFinishingProcesses";
+            string suppAPIThread = "api/SunriseFinishingProcesses/SentDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            string tableName = actionType == "delete" ? "PackingList_Delete" : "PackingList_Detail";
+
+            Dictionary<string, object> dataTable = new Dictionary<string, object>();
+
+            var structureID = listID.Split(',').Select(s => new { ID = s });
+
+            string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure(tableName, structureID));
+
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        public void SentLocalItemToFinishingProcesses(string listRefNo)
+        {
+            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            {
+                return;
+            }
+
+            string apiThread = "SentLocalItemToFinishingProcesses";
+            string suppAPIThread = "api/SunriseFinishingProcesses/SentDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            Dictionary<string, object> dataTable = new Dictionary<string, object>();
+
+            var structureID = listRefNo.Split(',').Select(s => new { RefNo = s });
+
+            string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure("LocalItem", structureID));
+
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        private object CreateSunriseStructure(string tableName, object structureID)
+        {
+            Dictionary<string, object> resultObj = new Dictionary<string, object>();
+            resultObj.Add("TableArray", new string[] { tableName });
+
+            Dictionary<string, object> dataStructure = new Dictionary<string, object>();
+            dataStructure.Add(tableName, structureID);
+            resultObj.Add("DataTable", dataStructure);
+
+            return resultObj;
+        }
+
+    }
+}

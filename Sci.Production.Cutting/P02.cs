@@ -1,30 +1,30 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.Class;
+using Sci.Production.Prg;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Windows.Forms;
-using Sci.Data;
-using System.Transactions;
-using Sci.Win.Tools;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Sci.Production.Automation;
-using Sci.Production.Prg;
-using Sci.Production.PublicPrg;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P02 : Win.Tems.Input8
     {
         #region
-        private string loginID = Env.User.UserID;
-        private string keyWord = Env.User.Keyword;
-
+        private readonly string loginID = Sci.Env.User.UserID;
+        private readonly string keyWord = Sci.Env.User.Keyword;
+        private DataTable PatternPanelTb;
         private DataTable sizeratioTb;
         private DataTable layersTb;
         private DataTable distqtyTb;
@@ -32,53 +32,53 @@ namespace Sci.Production.Cutting
         private DataTable sizeGroup;
         private DataTable spTb;
         private DataTable artTb;
-        private DataTable PatternPanelTb;
-        private DataTable PatternPanelTb_Copy;
         private DataTable chksize;
         private DataRow drTEMP;  // 紀錄目前表身選擇的資料，避免按列印時模組會重LOAD資料，導致永遠只能印到第一筆資料
         private string Poid;
         private Win.UI.BindingSource2 bindingSource2 = new Win.UI.BindingSource2();
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Markername;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_sp;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_seq1;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_seq2;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_cutcell;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_cutno;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_layer;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_wketa;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_estcutdate;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_cutref;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_sizeRatio_size;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_sizeRatio_qty;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_dist_size;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_dist_article;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_dist_sp;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_dist_qty;
+        private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_ActCuttingPerimeterNew;
+        private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_StraightLengthNew;
+        private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_CurvedLengthNew;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_shift;
 
-        Ict.Win.UI.DataGridViewTextBoxColumn col_Markername;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_sp;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_seq1;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_seq2;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_cutcell;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_cutno;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_layer;
-        Ict.Win.UI.DataGridViewDateBoxColumn col_wketa;
-        Ict.Win.UI.DataGridViewDateBoxColumn col_estcutdate;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_cutref;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_sizeRatio_size;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_sizeRatio_qty;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_dist_size;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_dist_article;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_dist_sp;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_dist_qty;
-        Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_ActCuttingPerimeterNew;
-        Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_StraightLengthNew;
-        Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_CurvedLengthNew;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_shift;
         #endregion
 
+        /// <inheritdoc/>
         public P02(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
         {
             this.InitializeComponent();
-            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("FabricPanelCode", "Pattern Panel");
-            comboBox1_RowSource.Add("SP", "SP");
-            comboBox1_RowSource.Add("Cut#", "Cut#");
-            comboBox1_RowSource.Add("Ref#", "Ref#");
-            comboBox1_RowSource.Add("Cutplan#", "Cutplan#");
-            comboBox1_RowSource.Add("MarkerName", "MarkerName");
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>
+            {
+                { "FabricPanelCode", "Pattern Panel" },
+                { "SP", "SP" },
+                { "Cut#", "Cut#" },
+                { "Ref#", "Ref#" },
+                { "Cutplan#", "Cutplan#" },
+                { "MarkerName", "MarkerName" },
+            };
             this.comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
             this.comboBox1.ValueMember = "Key";
             this.comboBox1.DisplayMember = "Value";
-            this.txtCutCell.MDivisionID = Env.User.Keyword;
+            this.txtCutCell.MDivisionID = Sci.Env.User.Keyword;
 
-            this.DoSubForm = new P02_PatternPanel();
             /*
              *設定Binding Source for Text
             */
@@ -91,7 +91,6 @@ namespace Sci.Production.Cutting
             this.txtFabricPanelCode.DataBindings.Add(new Binding("Text", this.bindingSource2, "FabricPanelCode", true));
             this.editDescription.DataBindings.Add(new Binding("Text", this.bindingSource2, "Description", true));
             this.displayFabricType_Refno.DataBindings.Add(new Binding("Text", this.bindingSource2, "MtlTypeID_SCIRefno", true));
-
             this.displayCutplanNo.DataBindings.Add(new Binding("Text", this.bindingSource2, "Cutplanid", true));
             this.displayTotalCutQty.DataBindings.Add(new Binding("Text", this.bindingSource2, "CutQty", true));
             this.displayTime.DataBindings.Add(new Binding("Text", this.bindingSource2, "SandCTime", true));
@@ -104,6 +103,7 @@ namespace Sci.Production.Cutting
 
             this.sizeratioMenuStrip.Enabled = this.EditMode;
             this.distributeMenuStrip.Enabled = this.EditMode;
+
 
             if (history == "0")
             {
@@ -121,7 +121,7 @@ namespace Sci.Production.Cutting
             this.detailgrid.Click += this.Detailgrid_Click;
         }
 
-        void Detailgrid_Click(object sender, EventArgs e)
+        private void Detailgrid_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgrid.CurrentCell))
             {
@@ -132,19 +132,18 @@ namespace Sci.Production.Cutting
             this.detailgrid.BeginEdit(true);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable queryDT;
-            string querySql = string.Format(
-                @"
+            this.gridSizeRatio.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.Default;
+            string querySql = $@"
 select '' FTYGroup
-
 union 
 select distinct FTYGroup 
 from Factory  WITH (NOLOCK)
-where MDivisionID = '{0}'", Env.User.Keyword);
-            DBProxy.Current.Select(null, querySql, out queryDT);
+where MDivisionID = '{this.keyWord}'";
+            DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
             this.queryfors.SelectedIndexChanged += (s, e) =>
@@ -177,12 +176,12 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             #region 主Table 左邊grid
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
-            string cmdsql = string.Format(
-                @"
+            string cmdsql = $@"
 Select
 	a.*
 	,article.article
@@ -344,8 +343,8 @@ outer apply(
 	where psd.ID = a.id and psd.SCIRefno = a.SCIRefno
 	and fi.InQty is not null
 ) as fi
-where a.id = '{0}'            
-            ", masterID);
+where a.id = '{masterID}'            
+";
             this.DetailSelectCommand = cmdsql;
             #endregion
 
@@ -358,9 +357,25 @@ where a.id = '{0}'
             }
             #endregion
 
+            #region distqtyTb
+            cmdsql = string.Format(@"Select *,0 as newKey From Workorder_distribute WITH (NOLOCK) Where id='{0}'", masterID);
+            dr = DBProxy.Current.Select(null, cmdsql, out this.distqtyTb);
+            if (!dr)
+            {
+                this.ShowErr(cmdsql, dr);
+            }
+            #endregion
+
+            #region PatternPanelTb
+            cmdsql = string.Format(@"Select *,0 as newKey From WorkOrder_PatternPanel WITH (NOLOCK) Where id='{0}'", masterID);
+            dr = DBProxy.Current.Select(null, cmdsql, out this.PatternPanelTb);
+            if (!dr)
+            {
+                this.ShowErr(cmdsql, dr);
+            }
+            #endregion
             #region layer
-            cmdsql = string.Format(
-                @"
+            cmdsql = $@"
 Select a.MarkerName,a.Colorid,a.Order_EachconsUkey
 	,layer = isnull(sum(a.layer),0)
     ,TotallayerUkey =             
@@ -378,10 +393,10 @@ Select a.MarkerName,a.Colorid,a.Order_EachconsUkey
 	    where b.id = a.id and b.Markername = a.MarkerName and c.Colorid = a.Colorid
     )
 From WorkOrder a WITH (NOLOCK) 
-Where a.id = '{0}' 
+Where a.id = '{masterID}' 
 group by a.MarkerName,a.Colorid,a.Order_EachconsUkey,a.id 
 Order by a.MarkerName,a.Colorid,a.Order_EachconsUkey
-                ", masterID);
+";
             dr = DBProxy.Current.Select(null, cmdsql, out this.layersTb);
             if (!dr)
             {
@@ -389,35 +404,8 @@ Order by a.MarkerName,a.Colorid,a.Order_EachconsUkey
             }
             #endregion
 
-            #region distqtyTb / PatternPanelTb / PatternPanelTb_Copy
-            cmdsql = string.Format(@"Select *,0 as newKey From Workorder_distribute WITH (NOLOCK) Where id='{0}'", masterID);
-            dr = DBProxy.Current.Select(null, cmdsql, out this.distqtyTb);
-            if (!dr)
-            {
-                this.ShowErr(cmdsql, dr);
-            }
-
-            // cmdsql = string.Format(@"Select *,0 as newKey From Workorder_PatternPanel WITH (NOLOCK) Where id='{0}'", masterID);
-            // dr = DBProxy.Current.Select(null, cmdsql, out PatternPanelTb);
-            cmdsql = string.Format(@"Select *,0 as newKey From Workorder_PatternPanel WITH (NOLOCK) Where id='{0}'", masterID);
-            dr = DBProxy.Current.Select(null, cmdsql, out this.PatternPanelTb);
-            if (!dr)
-            {
-                this.ShowErr(cmdsql, dr);
-            }
-
-            cmdsql = @"Select *,0 as newKey From Workorder_PatternPanel WITH (NOLOCK) Where 1=0";
-            dr = DBProxy.Current.Select(null, cmdsql, out this.PatternPanelTb_Copy);
-
-            if (!dr)
-            {
-                this.ShowErr(cmdsql, dr);
-            }
-            #endregion
-
             #region 建立要使用右鍵開窗Grid
-            string settbsql = string.Format(
-                @"
+            string settbsql = $@"
 select wo.id,FabricCombo,wd.article,wd.SizeCode,wd.OrderID,sum(qty) qty --min(qty) as minQty
 into #tmp
 from Workorder wo WITH (NOLOCK) 
@@ -442,47 +430,32 @@ select min(qty) as minQty from (
 	Where t.id = b.cuttingsp and t.article =a.Article and t.SizeCode=a.SizeCode and t.OrderID=a.ID
 	) a
 ) balc
-Where b.cuttingsp ='{0}'
+Where b.cuttingsp ='{masterID}'
 order by id,article,sizecode
-drop table #tmp",
-                masterID);
-            DualResult gridResult = DBProxy.Current.Select(null, settbsql, out this.qtybreakTb);
-            this.sizeGroup = this.qtybreakTb.DefaultView.ToTable(true, "sizecode");
-            this.artTb = this.qtybreakTb.DefaultView.ToTable(true, new string[] { "article", "ID" });
-            this.spTb = this.qtybreakTb.DefaultView.ToTable(true, "id");
+drop table #tmp
+";
+            DualResult result = DBProxy.Current.Select(null, settbsql, out this.qtybreakTb);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+            else
+            {
+                this.sizeGroup = this.qtybreakTb.DefaultView.ToTable(true, "sizecode");
+                this.artTb = this.qtybreakTb.DefaultView.ToTable(true, new string[] { "article", "ID" });
+                this.spTb = this.qtybreakTb.DefaultView.ToTable(true, "id");
+            }
 
-            //// 若訂單數量超過裁切分配數量，則更新balance
-            // foreach (DataRow dr2 in qtybreakTb.Rows)
-            // {
-            //    if (MyUtility.Convert.GetDecimal(dr2["qty"]) > MyUtility.Convert.GetDecimal(dr2["workorder_Distribute_Qty"]))
-            //    {
-            //        dr2["balance"] = MyUtility.Convert.GetDecimal(dr2["qty"]) - MyUtility.Convert.GetDecimal(dr2["workorder_Distribute_Qty"]);
-            //    }
-            // }
             // 用來檢查size是否存在
-            string sqlsizechk = string.Format(
-                @"
-select distinct w.SizeCode
-from Workorder_SizeRatio w  WITH (NOLOCK) 
-where w.ID = '{0}'", masterID);
+            string sqlsizechk = $@"select distinct w.SizeCode from Workorder_SizeRatio w  WITH (NOLOCK) where w.ID = '{masterID}'";
             DBProxy.Current.Select(null, sqlsizechk, out this.chksize);
+
             #endregion
 
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        // 撈第三層資料
-        protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
-        {
-            string masterID = (e.Detail == null) ? "0" : MyUtility.Convert.GetString(e.Detail["UKey"]);
-            this.SubDetailSelectCommand = string.Format(
-                @"
-select * from WorkOrder_PatternPanel  WITH (NOLOCK)
-where WorkOrderUkey={0}", masterID);
-
-            return base.OnSubDetailSelectCommandPrepare(e);
-        }
-
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -498,8 +471,7 @@ where WorkOrderUkey={0}", masterID);
             this.qtybreakTb.DefaultView.RowFilter = string.Empty;
             this.OnDetailGridRowChanged();
 
-            DataRow orderdr;
-            MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) where id='{0}'", this.CurrentMaintain["ID"]), out orderdr);
+            MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) where id='{0}'", this.CurrentMaintain["ID"]), out DataRow orderdr);
 
             this.txtStyle.Text = orderdr == null ? string.Empty : orderdr["Styleid"].ToString();
             this.txtLine.Text = orderdr == null ? string.Empty : orderdr["SewLine"].ToString();
@@ -520,14 +492,6 @@ where WorkOrderUkey={0}", masterID);
             this.col_wketa.Width = 77;
             this.btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
-            #region 取得 LeadTime 和 Subprocess
-            var orders = this.distqtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["OrderID"])).Distinct().ToList();
-            string annotationStr;
-            var leadTimeList = Prgs.GetLeadTimeList(orders, out annotationStr);
-            this.dispSubprocess.Text = annotationStr;
-            this.numLeadTime.Value = leadTimeList.Count > 0 ? leadTimeList[0].LeadTimeDay : 0;
-            #endregion
-
             #region 檢查MarkerNo ,MarkerVersion ,MarkerDownloadID是否與Order_Eachcons不同
             if (this.DetailDatas.Where(s => !s["MarkerNo"].Equals(s["EachconsMarkerNo"]) ||
                                            !s["MarkerVersion"].Equals(s["EachconsMarkerVersion"]) ||
@@ -544,6 +508,7 @@ where WorkOrderUkey={0}", masterID);
             this.Poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", this.CurrentMaintain["ID"]));
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -556,14 +521,14 @@ where WorkOrderUkey={0}", masterID);
                 }
 
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                Regex NumberPattern = new Regex("^[0-9]{1,6}$");
-                if (!NumberPattern.IsMatch(e.FormattedValue.ToString()))
+                Regex numberPattern = new Regex("^[0-9]{1,6}$");
+                if (!numberPattern.IsMatch(e.FormattedValue.ToString()))
                 {
                     dr["Cutno"] = DBNull.Value;
                 }
             };
-            DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
-            EstCutDate.CellValidating += (s, e) =>
+            DataGridViewGeneratorDateColumnSettings estCutDate = new DataGridViewGeneratorDateColumnSettings();
+            estCutDate.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -585,8 +550,8 @@ where WorkOrderUkey={0}", masterID);
                     }
                 }
             };
-            DataGridViewGeneratorDateColumnSettings WKETA = new DataGridViewGeneratorDateColumnSettings();
-            WKETA.EditingMouseDown += (s, e) =>
+            DataGridViewGeneratorDateColumnSettings wKETA = new DataGridViewGeneratorDateColumnSettings();
+            wKETA.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (e.Button == MouseButtons.Right)
@@ -622,8 +587,8 @@ where WorkOrderUkey={0}", masterID);
             };
 
             #region ActCuttingPerimeter,StraightLength,CurvedLength 處理遮罩字串, 存檔字串要包含遮罩字元
-            DataGridViewGeneratorMaskedTextColumnSettings ActCuttingPerimeter = new DataGridViewGeneratorMaskedTextColumnSettings();
-            ActCuttingPerimeter.CellValidating += (s, e) =>
+            DataGridViewGeneratorMaskedTextColumnSettings actCuttingPerimeter = new DataGridViewGeneratorMaskedTextColumnSettings();
+            actCuttingPerimeter.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -637,8 +602,8 @@ where WorkOrderUkey={0}", masterID);
 
                 this.SetMaskString(e.FormattedValue.ToString().Replace(" ", "0"), "ActCuttingPerimeter");
             };
-            DataGridViewGeneratorMaskedTextColumnSettings StraightLength = new DataGridViewGeneratorMaskedTextColumnSettings();
-            StraightLength.CellValidating += (s, e) =>
+            DataGridViewGeneratorMaskedTextColumnSettings straightLength = new DataGridViewGeneratorMaskedTextColumnSettings();
+            straightLength.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -652,8 +617,8 @@ where WorkOrderUkey={0}", masterID);
 
                 this.SetMaskString(e.FormattedValue.ToString().Replace(" ", "0"), "StraightLength");
             };
-            DataGridViewGeneratorMaskedTextColumnSettings CurvedLength = new DataGridViewGeneratorMaskedTextColumnSettings();
-            CurvedLength.CellValidating += (s, e) =>
+            DataGridViewGeneratorMaskedTextColumnSettings curvedLength = new DataGridViewGeneratorMaskedTextColumnSettings();
+            curvedLength.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -688,8 +653,8 @@ where WorkOrderUkey={0}", masterID);
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3)).Get(out this.col_seq1)
                 .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2)).Get(out this.col_seq2)
                 .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("WKETA", header: "WK ETA", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WKETA).Get(out this.col_wketa)
-                .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), settings: EstCutDate).Get(out this.col_estcutdate)
+                .Date("WKETA", header: "WK ETA", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: wKETA).Get(out this.col_wketa)
+                .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), settings: estCutDate).Get(out this.col_estcutdate)
                 .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
                 .Text("Cutcellid", header: "Cut Cell", width: Widths.AnsiChars(2)).Get(out this.col_cutcell)
@@ -707,9 +672,9 @@ where WorkOrderUkey={0}", masterID);
                 .Text("EachconsMarkerNo", header: "EachCons Apply #", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("EachconsMarkerVersion", header: "EachCons Apply ver", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("EachconsMarkerDownloadID", header: "EachCons Download ID", width: Widths.AnsiChars(25), iseditingreadonly: true)
-                .MaskedText("ActCuttingPerimeterNew", "000Yd00\"00", "ActCutting Perimeter", width: Widths.AnsiChars(16), settings: ActCuttingPerimeter).Get(out this.col_ActCuttingPerimeterNew)
-                .MaskedText("StraightLengthNew", "000Yd00\"00", "StraightLength", width: Widths.AnsiChars(16), settings: StraightLength).Get(out this.col_StraightLengthNew)
-                .MaskedText("CurvedLengthNew", "000Yd00\"00", "CurvedLength", width: Widths.AnsiChars(16), settings: CurvedLength).Get(out this.col_CurvedLengthNew)
+                .MaskedText("ActCuttingPerimeterNew", "000Yd00\"00", "ActCutting Perimeter", width: Widths.AnsiChars(16), settings: actCuttingPerimeter).Get(out this.col_ActCuttingPerimeterNew)
+                .MaskedText("StraightLengthNew", "000Yd00\"00", "StraightLength", width: Widths.AnsiChars(16), settings: straightLength).Get(out this.col_StraightLengthNew)
+                .MaskedText("CurvedLengthNew", "000Yd00\"00", "CurvedLength", width: Widths.AnsiChars(16), settings: curvedLength).Get(out this.col_CurvedLengthNew)
                 ;
             this.Helper.Controls.Grid.Generator(this.gridSizeRatio)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5)).Get(out this.col_sizeRatio_size)
@@ -893,10 +858,10 @@ where WorkOrderUkey={0}", masterID);
                 int sumlayer = 0;
                 if (MyUtility.Check.Empty(this.CurrentDetailData["Order_EachConsUkey"]))
                 {
-                    object O_sumLayer = ((DataTable)this.detailgridbs.DataSource).Compute("sum(layer)", string.Format("MarkerName = '{0}' and Colorid = '{1}'", this.CurrentDetailData["MarkerName"], this.CurrentDetailData["Colorid"]));
-                    if (!O_sumLayer.Empty())
+                    object o_sumLayer = ((DataTable)this.detailgridbs.DataSource).Compute("sum(layer)", string.Format("MarkerName = '{0}' and Colorid = '{1}'", this.CurrentDetailData["MarkerName"], this.CurrentDetailData["Colorid"]));
+                    if (!o_sumLayer.Empty())
                     {
-                        sumlayer = Convert.ToInt32(O_sumLayer);
+                        sumlayer = Convert.ToInt32(o_sumLayer);
                     }
 
                     DataRow[] drar = this.layersTb.Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", this.CurrentDetailData["MarkerName"], this.CurrentDetailData["Colorid"]));
@@ -907,10 +872,10 @@ where WorkOrderUkey={0}", masterID);
                 }
                 else
                 {
-                    object O_sumLayer = ((DataTable)this.detailgridbs.DataSource).Compute("sum(layer)", string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
-                    if (!O_sumLayer.Empty())
+                    object o_sumLayer = ((DataTable)this.detailgridbs.DataSource).Compute("sum(layer)", string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
+                    if (!o_sumLayer.Empty())
                     {
-                        sumlayer = Convert.ToInt32(O_sumLayer);
+                        sumlayer = Convert.ToInt32(o_sumLayer);
                     }
 
                     DataRow[] drar = this.layersTb.Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
@@ -925,10 +890,10 @@ where WorkOrderUkey={0}", masterID);
                 int newsumQty = 0;
                 if (this.sizeratiobs.DataSource != null)
                 {
-                    object Sq = ((DataTable)this.sizeratiobs.DataSource).DefaultView.ToTable().Compute("SUM(Qty)", string.Empty);
-                    if (!Sq.Empty())
+                    object sq = ((DataTable)this.sizeratiobs.DataSource).DefaultView.ToTable().Compute("SUM(Qty)", string.Empty);
+                    if (!sq.Empty())
                     {
-                        newsumQty = MyUtility.Convert.GetInt(this.CurrentDetailData["layer"]) * Convert.ToInt32(Sq);
+                        newsumQty = MyUtility.Convert.GetInt(this.CurrentDetailData["layer"]) * Convert.ToInt32(sq);
                     }
                 }
 
@@ -954,7 +919,9 @@ where WorkOrderUkey={0}", masterID);
                     foreach (DataRow drr in dist)
                     {
                         DataRow[] sizeR = this.sizeratioTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = '{1}' and SizeCode = '{2}'", this.CurrentDetailData["Ukey"].ToString(), this.CurrentDetailData["NewKey"].ToString(), drr["SizeCode"].ToString()));
-                        if (sizetmp == drr["SizeCode"].ToString()) // size是否和前一筆相同，判斷是否有重複的size
+
+                        // size是否和前一筆相同，判斷是否有重複的size
+                        if (sizetmp == drr["SizeCode"].ToString())
                         {
                             drr["Qty"] = 0;
                         }
@@ -1311,8 +1278,7 @@ where WorkOrderUkey={0}", masterID);
                     }
 
                     SelectItem sele;
-                    DataTable cellTb;
-                    DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.keyWord), out cellTb);
+                    DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.keyWord), out DataTable cellTb);
                     sele = new SelectItem(cellTb, "ID", "10@300,300", dr["CutCellid"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -1356,8 +1322,7 @@ where WorkOrderUkey={0}", masterID);
                     return;
                 }
 
-                DataTable cellTb;
-                DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.keyWord), out cellTb);
+                DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.keyWord), out DataTable cellTb);
 
                 DataRow[] seledr = cellTb.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
@@ -1477,10 +1442,9 @@ where WorkOrderUkey={0}", masterID);
                     }
 
                     SelectItem sele;
-                    DataTable SpreadingNoIDTb;
-                    DBProxy.Current.Select(null, $"Select id,CutCell = CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.keyWord}' and junk=0", out SpreadingNoIDTb);
+                    DBProxy.Current.Select(null, $"Select id,CutCell = CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.keyWord}' and junk=0", out DataTable spreadingNoIDTb);
 
-                    sele = new SelectItem(SpreadingNoIDTb, "ID,CutCell", "10@400,300", dr["SpreadingNoID"].ToString(), false, ",");
+                    sele = new SelectItem(spreadingNoIDTb, "ID,CutCell", "10@400,300", dr["SpreadingNoID"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -1526,9 +1490,8 @@ where WorkOrderUkey={0}", masterID);
                     return;
                 }
 
-                DataRow SpreadingNodr;
                 string sqlSpreading = $"Select CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.keyWord}' and  id = '{newvalue}' and junk=0";
-                if (!MyUtility.Check.Seek(sqlSpreading, out SpreadingNodr))
+                if (!MyUtility.Check.Seek(sqlSpreading, out DataRow spreadingNodr))
                 {
                     dr["SpreadingNoID"] = string.Empty;
                     dr.EndEdit();
@@ -1539,9 +1502,9 @@ where WorkOrderUkey={0}", masterID);
 
                 dr["SpreadingNoID"] = newvalue;
 
-                if (!MyUtility.Check.Empty(SpreadingNodr["CutCellID"]))
+                if (!MyUtility.Check.Empty(spreadingNodr["CutCellID"]))
                 {
-                    dr["cutCellid"] = SpreadingNodr["CutCellID"];
+                    dr["cutCellid"] = spreadingNodr["CutCellID"];
                 }
 
                 if (!col_SpreadingNoIDchk)
@@ -1946,8 +1909,7 @@ where WorkOrderUkey={0}", masterID);
                     }
 
                     DataTable srdt = ((DataTable)this.sizeratiobs.DataSource).DefaultView.ToTable();
-                    DataTable sizeGroup2;
-                    MyUtility.Tool.ProcessWithDatatable(srdt, "sizecode", "Select distinct SizeCode from #tmp", out sizeGroup2);
+                    MyUtility.Tool.ProcessWithDatatable(srdt, "sizecode", "Select distinct SizeCode from #tmp", out DataTable sizeGroup2);
                     sele = new SelectItem(sizeGroup2, "SizeCode", "15@300,300", dr["SizeCode"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -2053,6 +2015,7 @@ where WorkOrderUkey={0}", masterID);
                     }
 
                     sele = new SelectItem(this.artTb, "article", "15@300,300", dr["Article"].ToString(), false, ",", gridFilter: $"ID = '{dr["OrderID"].ToString()}'");
+
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -2189,8 +2152,7 @@ where WorkOrderUkey={0}", masterID);
             #endregion
         }
 
-        // 重組detailgrid的size
-        private void Redetailsize(int workorderukey, int newkey)
+        private void Redetailsize(int workorderukey, int newkey) // 重組detailgrid的size
         {
             DataRow[] dsr = this.sizeratioTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1}", workorderukey, newkey));
             string sizeqty = string.Empty;
@@ -2204,10 +2166,8 @@ where WorkOrderUkey={0}", masterID);
             dr[0]["SizeCode"] = sizeqty;
         }
 
-        // 計算Excess
-        private void UpdateExcess(int workorderukey, int newkey, string sizecode)
+        private void UpdateExcess(int workorderukey, int newkey, string sizecode) // 計算Excess
         {
-            // gridValid();
             DataRow[] sizeview = this.sizeratioTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode = '{2}'", workorderukey, newkey, sizecode));
             foreach (DataRow dr in sizeview)
             {
@@ -2240,7 +2200,7 @@ where WorkOrderUkey={0}", masterID);
                     {
                         if (dr2["OrderID"].ToString().Trim().ToUpper() != "EXCESS")
                         {
-                            now_distqty = now_distqty - Convert.ToInt32(dr2["Qty"]);
+                            now_distqty -= Convert.ToInt32(dr2["Qty"]);
                         }
                     }
 
@@ -2269,10 +2229,10 @@ where WorkOrderUkey={0}", masterID);
         {
             if (this.distributebs.DataSource != null)
             {
-                object Sq = ((DataTable)this.distributebs.DataSource).DefaultView.ToTable().Compute("SUM(Qty)", string.Empty);
-                if (!Sq.Empty())
+                object sq = ((DataTable)this.distributebs.DataSource).DefaultView.ToTable().Compute("SUM(Qty)", string.Empty);
+                if (!sq.Empty())
                 {
-                    this.numTotalDistributionQty.Value = Convert.ToInt32(Sq);
+                    this.numTotalDistributionQty.Value = Convert.ToInt32(sq);
                 }
             }
         }
@@ -2283,6 +2243,7 @@ where WorkOrderUkey={0}", masterID);
             this.gridDistributetoSPNo.ValidateControl();
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
@@ -2297,13 +2258,15 @@ where WorkOrderUkey={0}", masterID);
             }
         }
 
-        // 1394: CUTTING_P02_Cutting Work Order。KEEP當前的資料。
+        /// <inheritdoc/>
         protected override void DoPrint()
         {
+            // 1394: CUTTING_P02_Cutting Work Order。KEEP當前的資料。
             this.drTEMP = this.CurrentDetailData;
             base.DoPrint();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridRowChanged()
         {
             this.GridValid();
@@ -2318,29 +2281,20 @@ where WorkOrderUkey={0}", masterID);
             this.bindingSource2.SetRow(this.CurrentDetailData);
 
             #region 根據左邊Grid Filter 右邊資訊
+            string filter = $@"Workorderukey = {this.CurrentDetailData["Ukey"]} and NewKey = {this.CurrentDetailData["NewKey"]}";
+            this.sizeratioTb.DefaultView.RowFilter = filter;
+            this.distqtyTb.DefaultView.RowFilter = filter;
             if (!MyUtility.Check.Empty(this.CurrentDetailData["Ukey"]))
             {
-                this.sizeratioTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", this.CurrentDetailData["Ukey"]);
-                this.distqtyTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}' ", this.CurrentDetailData["Ukey"]);
-
                 this.gridDistributetoSPNo.SelectRowTo(0);
                 for (int i = 0; i < this.gridDistributetoSPNo.Rows.Count; i++)
                 {
                     if (this.gridDistributetoSPNo.Rows[i].Cells["OrderID"].Value.Equals(this.CurrentDetailData["OrderID"]))
                     {
                         this.gridDistributetoSPNo.SelectRowTo(i);
-
                         break;
                     }
                 }
-            }
-
-            if (MyUtility.Convert.GetString(this.CurrentDetailData["Ukey"]) == "0")
-            {
-                string ukey = this.CurrentDetailData["Ukey"].ToString();
-                string newkey = this.CurrentDetailData["newkey"].ToString();
-                this.sizeratioTb.DefaultView.RowFilter = string.Format("Workorderukey = {0} and newkey = {1}", ukey, newkey);
-                this.distqtyTb.DefaultView.RowFilter = string.Format("Workorderukey = {0} and newkey = {1}", ukey, newkey);
             }
             #endregion
 
@@ -2353,37 +2307,35 @@ where WorkOrderUkey={0}", masterID);
 
             if (MyUtility.Check.Empty(this.CurrentDetailData["Order_EachConsUkey"]))
             {
-                DataRow[] AA = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", this.CurrentDetailData["MarkerName"], this.CurrentDetailData["Colorid"]));
-                DataRow[] B = this.layersTb.Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", this.CurrentDetailData["MarkerName"], this.CurrentDetailData["Colorid"]));
-                foreach (DataRow l in AA)
+                DataRow[] aA = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", this.CurrentDetailData["MarkerName"], this.CurrentDetailData["Colorid"]));
+                DataRow[] b = this.layersTb.Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", this.CurrentDetailData["MarkerName"], this.CurrentDetailData["Colorid"]));
+                foreach (DataRow l in aA)
                 {
                     sumlayer += MyUtility.Convert.GetInt(l["layer"]);
                 }
 
-                foreach (DataRow l in B)
+                foreach (DataRow l in b)
                 {
                     sumlayer2 += MyUtility.Convert.GetInt(l["layer"]);
                 }
             }
             else
             {
-                DataRow[] AA = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
-                DataRow[] B = this.layersTb.Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
-                foreach (DataRow l in AA)
+                DataRow[] aA = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
+                DataRow[] b = this.layersTb.Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
+                foreach (DataRow l in aA)
                 {
                     sumlayer += MyUtility.Convert.GetInt(l["layer"]);
                 }
 
-                foreach (DataRow l in B)
+                foreach (DataRow l in b)
                 {
                     sumlayer2 += MyUtility.Convert.GetInt(l["layer"]);
                 }
             }
 
-            int order_EachConsTemp;
             if (this.CurrentDetailData["Order_EachConsUkey"] == DBNull.Value)
             {// old rule
-                order_EachConsTemp = 0;
                 string selectcondition = string.Format("MarkerName = '{0}' and Colorid = '{1}'", this.CurrentDetailData["MarkerName"], this.CurrentDetailData["Colorid"]);
                 DataRow[] laydr = this.layersTb.Select(selectcondition);
                 if (laydr.Length == 0)
@@ -2399,7 +2351,7 @@ where WorkOrderUkey={0}", masterID);
             }
             else
             { // New rule
-                order_EachConsTemp = Convert.ToInt32(this.CurrentDetailData["Order_EachConsUkey"]);
+                long order_EachConsTemp = MyUtility.Convert.GetLong(this.CurrentDetailData["Order_EachConsUkey"]);
                 string selectcondition = string.Format("Order_EachConsUkey = {0} and  Colorid = '{1}'", order_EachConsTemp, this.CurrentDetailData["Colorid"]);
                 DataRow[] laydr = this.layersTb.Select(selectcondition);
                 if (laydr.Length == 0)
@@ -2443,6 +2395,11 @@ where WorkOrderUkey={0}", masterID);
             }
             #endregion
             this.TotalDisQty();
+
+            #region 按鈕可否按
+            this.btnDist.Enabled = MyUtility.Check.Empty(this.CurrentDetailData["Cutplanid"]) && this.EditMode;
+            #endregion
+
             this.gridSizeRatio.AutoResizeColumns();
             this.gridQtyBreakdown.AutoResizeColumns();
 
@@ -2456,9 +2413,10 @@ where WorkOrderUkey={0}", masterID);
             this.detailgrid.BeginEdit(true);
         }
 
-        // 程式產生的BindingSource 必須自行Dispose, 以節省資源
+        /// <inheritdoc/>
         protected override void OnFormDispose()
         {
+            // 程式產生的BindingSource 必須自行Dispose, 以節省資源
             base.OnFormDispose();
             this.bindingSource2.Dispose();
         }
@@ -2500,56 +2458,62 @@ where WorkOrderUkey={0}", masterID);
             this.GridValid();
             this.detailgrid.ValidateControl();
             #region 變更先將同d,Cutref, FabricPanelCode, CutNo, MarkerName, estcutdate 且有cutref,Cuno無cutplanid 的cutref值找出來Group by→cutref 會相同
-            string cmdsql = string.Format(
-                @"
-            SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, CutNo,
-            isnull(MarkerName,'') as MarkerName, estcutdate
-            FROM Workorder WITH (NOLOCK) 
-            WHERE (cutplanid is null or cutplanid ='') AND (CutNo is not null )
-                    AND (cutref is not null and cutref !='') and id = '{0}' and mDivisionid = '{1}'
-            GROUP BY Cutref, FabricCombo, CutNo, MarkerName, estcutdate", this.CurrentMaintain["ID"], this.keyWord);
-            DataTable cutreftb;
-            DualResult cutrefresult = DBProxy.Current.Select(null, cmdsql, out cutreftb);
+            string cmdsql = $@"
+SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, CutNo,
+isnull(MarkerName,'') as MarkerName, estcutdate
+FROM Workorder WITH (NOLOCK) 
+WHERE (cutplanid is null or cutplanid ='') AND (CutNo is not null )
+        AND (cutref is not null and cutref !='') and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{this.keyWord}'
+GROUP BY Cutref, FabricCombo, CutNo, MarkerName, estcutdate
+";
+            DualResult cutrefresult = DBProxy.Current.Select(null, cmdsql, out DataTable cutreftb);
             if (!cutrefresult)
             {
                 this.ShowErr(cmdsql, cutrefresult);
                 return;
             }
             #endregion
-            DataTable workordertmp;
-            cmdsql = string.Format(
-                @"Select * 
-                  From workorder WITH (NOLOCK) 
-                  Where (CutNo is not null ) and (cutref is null or cutref ='') 
-                    and (estcutdate is not null and estcutdate !='' )
-                    and (CutCellid is not null and CutCellid !='' )
-                    and id = '{0}' and mDivisionid = '{1}'
-                order by FabricCombo,cutno", this.CurrentMaintain["ID"], this.keyWord); // 找出空的cutref
-            cutrefresult = DBProxy.Current.Select(null, cmdsql, out workordertmp);
+            cmdsql = $@"
+Select * 
+From workorder WITH (NOLOCK) 
+Where (CutNo is not null ) and (cutref is null or cutref ='') 
+and (estcutdate is not null and estcutdate !='' )
+and (CutCellid is not null and CutCellid !='' )
+and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{this.keyWord}'
+order by FabricCombo,cutno
+"; // 找出空的cutref
+            cutrefresult = DBProxy.Current.Select(null, cmdsql, out DataTable workordertmp);
             if (!cutrefresult)
             {
                 this.ShowErr(cmdsql, cutrefresult);
                 return;
             }
 
-            DataTable workorderdt = (DataTable)this.detailgridbs.DataSource;
             string maxref = MyUtility.GetValue.Lookup("Select isnull(Max(cutref),'000000') from Workorder WITH (NOLOCK)"); // 找最大Cutref
             if (MyUtility.Check.Empty(maxref))
             {
                 maxref = "000000";
             }
 
-            string updatecutref = string.Empty, newcutref = string.Empty;
-            updatecutref = @"
+            string updatecutref = @"
+Create table #tmpWorkorder
+	(
+		Ukey bigint
+	)
 
 DECLARE @chk tinyint
 SET @chk = 0
-Begin Transaction [Trans_Name] -- Trans_Name 
+Begin Transaction[Trans_Name] --Trans_Name
 ";
-            foreach (DataRow dr in workordertmp.Rows) // 寫入空的Cutref
+
+            // 寫入空的Cutref
+            foreach (DataRow dr in workordertmp.Rows)
             {
+                string newcutref = string.Empty;
                 DataRow[] findrow = cutreftb.Select(string.Format(@"MarkerName = '{0}' and FabricCombo = '{1}' and Cutno = {2} and estcutdate = '{3}' ", dr["MarkerName"], dr["FabricCombo"], dr["Cutno"], dr["estcutdate"]));
-                if (findrow.Length != 0) // 若有找到同馬克同部位同Cutno同裁剪日就寫入同cutref
+
+                // 若有找到同馬克同部位同Cutno同裁剪日就寫入同cutref
+                if (findrow.Length != 0)
                 {
                     newcutref = findrow[0]["cutref"].ToString();
                 }
@@ -2557,40 +2521,48 @@ Begin Transaction [Trans_Name] -- Trans_Name
                 {
                     maxref = MyUtility.GetValue.GetNextValue(maxref, 0);
                     DataRow newdr = cutreftb.NewRow();
-                    newdr["MarkerName"] = dr["MarkerName"] == null ? string.Empty : dr["MarkerName"];
-                    newdr["FabricCombo"] = dr["FabricCombo"] == null ? string.Empty : dr["FabricCombo"];
+                    newdr["MarkerName"] = dr["MarkerName"] ?? string.Empty;
+                    newdr["FabricCombo"] = dr["FabricCombo"] ?? string.Empty;
                     newdr["Cutno"] = dr["Cutno"];
-                    newdr["estcutdate"] = dr["estcutdate"] == null ? string.Empty : dr["estcutdate"];
+                    newdr["estcutdate"] = dr["estcutdate"] ?? string.Empty;
                     newdr["cutref"] = maxref;
                     cutreftb.Rows.Add(newdr);
                     newcutref = maxref;
                 }
 
-                updatecutref = updatecutref + string.Format($@"
+                updatecutref += string.Format($@"
     if (select COUNT(1) from Workorder WITH (NOLOCK) where cutref = '{newcutref}' and mDivisionid = '{this.keyWord}' and id != '{this.CurrentMaintain["id"]}')>0
 	begin
 		RAISERROR ('Duplicate Cutref. Please redo Auto Ref#',12, 1) 
 		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
 	end
-    Update Workorder set cutref = '{newcutref}' where ukey = '{dr["ukey"]}';");
+    Update Workorder set cutref = '{newcutref}' 
+    output	INSERTED.Ukey
+	into #tmpWorkorder
+    where ukey = '{dr["ukey"]}';");
             }
 
-            updatecutref = updatecutref + @"
+            updatecutref += @"
     IF @@Error <> 0 BEGIN SET @chk = 1 END
 IF @chk <> 0 BEGIN -- 若是新增資料發生錯誤
     Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
 END
 ELSE BEGIN
+    select w.* 
+    from #tmpWorkorder tw
+    inner join WorkOrder w with (nolock) on tw.Ukey = w.Ukey
     Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
 END";
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            DataTable dtWorkorder = new DataTable();
+
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
-                if (!MyUtility.Check.Empty(updatecutref))
+                if (!(upResult = DBProxy.Current.Select(null, updatecutref, out dtWorkorder)))
                 {
-                    if (!(upResult = DBProxy.Current.Execute(null, updatecutref)))
+                    if (upResult.ToString().Contains("Duplicate Cutref. Please redo Auto Ref#"))
                     {
                         if (upResult.ToString().Contains("Duplicate Cutref. Please redo Auto Ref#"))
                         {
@@ -2603,7 +2575,11 @@ END";
                     }
                     else
                     {
-                        _transactionscope.Complete();
+                        transactionscope.Complete();
+                        if (dtWorkorder.Rows.Count > 0)
+                        {
+                            Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkorder));
+                        }
                     }
                 }
             }
@@ -2635,27 +2611,28 @@ END";
                     decimal maxNo = 1 + MyUtility.Convert.GetDecimal(wk.Compute("Max(cutno)", $"FabricCombo ='{dr["FabricCombo"]}'"));
 
                     // 找合併組合相同資料, 且還沒產生Cutref
-                    DataRow[] sdr = wk.Select($"FabricCombo ='{dr["FabricCombo"]}' and FabricPanelCode ='{dr["FabricPanelCode"]}' and MarkerNo ='{dr["MarkerNo"]}' and Markername ='{dr["Markername"]}' and estcutdate ='{estcutdate}' and SizeCode ='{dr["SizeCode"]}' and isnull(CutRef,'') = ''");
+                    DataTable sdt = wk.Select($"FabricCombo ='{dr["FabricCombo"]}' and FabricPanelCode ='{dr["FabricPanelCode"]}' and MarkerNo ='{dr["MarkerNo"]}' and Markername ='{dr["Markername"]}' and estcutdate ='{estcutdate}' and SizeCode ='{dr["SizeCode"]}' and isnull(CutRef,'') = ''").TryCopyToDataTable(wk);
 
-                    decimal sumLayer = MyUtility.Convert.GetDecimal(sdr.CopyToDataTable().Compute("sum(Layer)", string.Empty));
+                    decimal sumLayer = MyUtility.Convert.GetDecimal(sdt.Compute("sum(Layer)", string.Empty));
 
-                    if (sumLayer > MyUtility.Convert.GetDecimal(dr["CuttingLayer"])) // 最大裁剪數看其中一筆即可
+                    // 最大裁剪數看其中一筆即可
+                    if (sumLayer > MyUtility.Convert.GetDecimal(dr["CuttingLayer"]))
                     {
                         dr["cutno"] = maxNo;
                     }
                     else
                     {
-                        decimal hm = sdr.AsEnumerable().Max(m => MyUtility.Convert.GetDecimal(m["cutno"]));
+                        decimal hm = sdt.AsEnumerable().Max(m => MyUtility.Convert.GetDecimal(m["cutno"]));
                         if (hm != 0)
                         {
-                            foreach (var item in sdr.AsEnumerable().Where(w => MyUtility.Check.Empty(w["cutno"])))
+                            foreach (DataRow item in sdt.AsEnumerable().Where(w => MyUtility.Check.Empty(w["cutno"])))
                             {
                                 item["cutno"] = hm;
                             }
                         }
                         else
                         {
-                            foreach (var item in sdr)
+                            foreach (DataRow item in sdt.Rows)
                             {
                                 item["cutno"] = maxNo;
                             }
@@ -2698,43 +2675,11 @@ END";
             frm.ShowDialog(this);
         }
 
-        /// <summary>
-        /// 產生SubDetail(PatternPanel)資料
-        /// </summary>
-        /// <param name="dr"></param>
-        private void CreateSubDetailDatas(DataRow dr)
-        {
-            // sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@ukey", dr["UKey"]);
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-            cmds.Add(sp1);
-            if (this.PatternPanelTb_Copy.Rows.Count > 0)
-            {
-                DataTable SubDetailData;
-                this.GetSubDetailDatas(dr, out SubDetailData);
-                foreach (DataRow ddr in this.PatternPanelTb_Copy.Rows)
-                {
-                    if (!SubDetailData.AsEnumerable().Any(row => row["ID"].EqualString(ddr["id"])
-                    && row["WorkOrderUkey"].Equals(ddr["WorkOrderUkey"])
-                    && row["PatternPanel"].Equals(ddr["PatternPanel"])
-                    && row["FabricPanelCode"].Equals(ddr["FabricPanelCode"])))
-                    {
-                        DataRow newDr = SubDetailData.NewRow();
-                        for (int i = 0; i < SubDetailData.Columns.Count; i++)
-                        {
-                            newDr[SubDetailData.Columns[i].ColumnName] = ddr[SubDetailData.Columns[i].ColumnName];
-                        }
-
-                        SubDetailData.Rows.Add(newDr);
-                    }
-                }
-            }
-        }
-
         // grid新增一筆的btn
-        bool flag = false;
-        bool isAdditionalrevisedmarker = false;
+        private bool flag = false;
+        private bool isAdditionalrevisedmarker = false;
 
+        /// <inheritdoc/>
         protected override void OnDetailGridAppendClick()
         {
             this.flag = true;
@@ -2742,48 +2687,38 @@ END";
             this.detailgrid.SelectRowTo(0);
         }
 
-        // grid插入的btn, override成複製功能
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
-            DataTable table = (DataTable)this.detailgridbs.DataSource;
-            DataRow newRow = table.NewRow();
-            DataRow OldRow = this.CurrentDetailData == null ? newRow : this.CurrentDetailData;  // 將游標停駐處的該筆資料複製起來
+            // grid插入的btn, override成複製功能
+            // 注意 index 值是底層帶入的, 而表身的排序會使 this.detailgridbs.Position 與 index 變得不對應
+            // base.OnDetailGridInsert(index);
+            // DataTable oriPatternPanel = null;
+            DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
+            DataRow oldRow = this.CurrentDetailData ?? newRow; // 游標停駐處的 WorKOrder 為複製來源
+            int maxkey = MyUtility.Convert.GetInt(((DataTable)this.detailgridbs.DataSource).Compute("Max(newkey)", string.Empty)) + 1; // 新值
+            if (index == -1)
+            {
+                index = ((DataTable)this.detailgridbs.DataSource).Rows.Count;
+            }
+
+            #region 基本資訊欄位, 新增 & 插入
+            newRow["ID"] = oldRow["ID"];
+            newRow["Type"] = oldRow["Type"];
+            newRow["MDivisionId"] = oldRow["MDivisionId"];
+            newRow["FactoryID"] = oldRow["FactoryID"];
+            newRow["SCIRefno"] = oldRow["SCIRefno"];
+            newRow["Refno"] = oldRow["Refno"];
+            newRow["FabricCombo"] = oldRow["FabricCombo"];
+            newRow["FabricPanelCode"] = oldRow["FabricPanelCode"];
+            newRow["UKey"] = 0;
+            newRow["Newkey"] = maxkey;
+            newRow["Cutno"] = DBNull.Value;
+            #endregion
+
             if (this.isAdditionalrevisedmarker)
             {
                 this.CurrentDetailData["isbyAdditionalRevisedMarker"] = 1;
-            }
-
-            // base.OnDetailGridInsert(index); //先給一個NewKey
-            int maxkey;
-            object comput = ((DataTable)this.detailgridbs.DataSource).Compute("Max(newkey)", string.Empty);
-            if (comput == DBNull.Value)
-            {
-                maxkey = 0;
-            }
-            else
-            {
-                maxkey = Convert.ToInt32(comput);
-            }
-
-            maxkey = maxkey + 1;
-
-            DataTable detailtmp = (DataTable)this.detailgridbs.DataSource;
-            int TEMP = ((DataTable)this.detailgridbs.DataSource).Rows.Count;
-
-            // 除Cutref, Cutno, Addname, AddDate, EditName, EditDate以外的所有欄位
-            newRow["Newkey"] = maxkey;
-            newRow["ID"] = OldRow["ID"];
-            newRow["Type"] = OldRow["Type"];
-            newRow["MDivisionId"] = OldRow["MDivisionId"];
-            newRow["FactoryID"] = OldRow["FactoryID"];
-            newRow["UKey"] = 0;
-            newRow["SCIRefno"] = OldRow["SCIRefno"];
-            newRow["Refno"] = OldRow["Refno"];
-            newRow["FabricCombo"] = OldRow["FabricCombo"];
-            newRow["FabricPanelCode"] = OldRow["FabricPanelCode"];
-            newRow["Cutno"] = DBNull.Value;
-            if (this.isAdditionalrevisedmarker)
-            {
                 newRow["isbyAdditionalRevisedMarker"] = 2;
             }
             else
@@ -2791,149 +2726,84 @@ END";
                 newRow["isbyAdditionalRevisedMarker"] = 0;
             }
 
-            // 因按下新增也會進來這,但新增的btn不要複製全部
+            // 因按下新增也會進來OnDetailGridInsert，但不要複製全部
+            // 按新增
             if (this.flag || ((DataTable)this.detailgridbs.DataSource).Rows.Count <= 0)
             {
-                // base.OnDetailGridInsert(index);
-                if (OldRow["Type"].ToString() == "1")
-                {
-                    newRow["OrderID"] = OldRow["OrderID"];
-                }
-                else
-                {
-                    newRow["OrderID"] = OldRow["ID"];
-                }
-
-                if (index == -1)
-                {
-                    index = TEMP;
-                }
-
-                // add PatternPanel 第三層資料
-                this.PatternPanelTb_Copy.Clear();
-                DataRow drNEW = this.PatternPanelTb_Copy.NewRow();
-                drNEW["id"] = this.CurrentMaintain["ID"];
-                drNEW["WorkOrderUkey"] = 0;  // 新增WorkOrderUkey塞0
-                drNEW["PatternPanel"] = string.Empty;
-                drNEW["FabricPanelCode"] = string.Empty;
-                this.PatternPanelTb_Copy.Rows.Add(drNEW);
-
-                OldRow.Table.Rows.InsertAt(newRow, index);
-
-                // flag = false;
+                newRow["OrderID"] = MyUtility.Convert.GetString(oldRow["Type"]) == "1" ? oldRow["OrderID"] : oldRow["ID"];
             }
+
+            // 按複製
             else
             {
-                newRow["OrderID"] = OldRow["OrderID"];
-                newRow["SEQ1"] = OldRow["SEQ1"];
-                newRow["SEQ2"] = OldRow["SEQ2"];
-
-                // CutRef
-                // newRow["Cutplanid"] = OldRow["Cutplanid"];
-                // Cutno
-                newRow["Layer"] = OldRow["Layer"];
-                newRow["Colorid"] = OldRow["Colorid"];
-                newRow["Markername"] = OldRow["Markername"];
-                newRow["EstCutDate"] = OldRow["EstCutDate"];
-                newRow["Cutcellid"] = OldRow["Cutcellid"];
-                newRow["MarkerLength"] = OldRow["MarkerLength"];
-                newRow["ConsPC"] = OldRow["ConsPC"];
-                newRow["Cons"] = OldRow["Cons"];
-                newRow["Refno"] = OldRow["Refno"];
-                newRow["MarkerNo"] = OldRow["MarkerNo"];
-                newRow["MarkerVersion"] = OldRow["MarkerVersion"];
-
-                // newRow["Addname"] = Sci.Env.User.UserName;
-                // newRow["AddDate"] = DateTime.Now;
-                // EditName
-                // EditDate
-                newRow["MarkerDownLoadID"] = OldRow["MarkerDownLoadID"];
-                newRow["FabricCode"] = OldRow["FabricCode"];
-                newRow["Order_EachconsUKey"] = OldRow["Order_EachconsUKey"];
-                newRow["Article"] = OldRow["Article"];
-                newRow["SizeCode"] = OldRow["SizeCode"];
-                newRow["CutQty"] = OldRow["CutQty"];
-                newRow["FabricPanelCode1"] = OldRow["FabricPanelCode1"];
-                newRow["PatternPanel"] = OldRow["PatternPanel"];
-                newRow["Fabeta"] = OldRow["Fabeta"];
-                newRow["sewinline"] = OldRow["sewinline"];
-                newRow["actcutdate"] = OldRow["actcutdate"];
+                #region 複製欄位其它, 不複製 CutRef, Cutno, Cutplanid, Addname, AddDate, EditName, EditDate
+                newRow["OrderID"] = oldRow["OrderID"];
+                newRow["SEQ1"] = oldRow["SEQ1"];
+                newRow["SEQ2"] = oldRow["SEQ2"];
+                newRow["Layer"] = oldRow["Layer"];
+                newRow["Colorid"] = oldRow["Colorid"];
+                newRow["Markername"] = oldRow["Markername"];
+                newRow["EstCutDate"] = oldRow["EstCutDate"];
+                newRow["Cutcellid"] = oldRow["Cutcellid"];
+                newRow["MarkerLength"] = oldRow["MarkerLength"];
+                newRow["ConsPC"] = oldRow["ConsPC"];
+                newRow["Cons"] = oldRow["Cons"];
+                newRow["Refno"] = oldRow["Refno"];
+                newRow["MarkerNo"] = oldRow["MarkerNo"];
+                newRow["MarkerVersion"] = oldRow["MarkerVersion"];
+                newRow["MarkerDownLoadID"] = oldRow["MarkerDownLoadID"];
+                newRow["FabricCode"] = oldRow["FabricCode"];
+                newRow["Order_EachconsUKey"] = oldRow["Order_EachconsUKey"];
+                newRow["Article"] = oldRow["Article"];
+                newRow["SizeCode"] = oldRow["SizeCode"];
+                newRow["CutQty"] = oldRow["CutQty"];
+                newRow["FabricPanelCode1"] = oldRow["FabricPanelCode1"];
+                newRow["PatternPanel"] = oldRow["PatternPanel"];
+                newRow["Fabeta"] = oldRow["Fabeta"];
+                newRow["sewinline"] = oldRow["sewinline"];
+                newRow["actcutdate"] = oldRow["actcutdate"];
                 newRow["Adduser"] = this.loginID;
-                newRow["edituser"] = OldRow["edituser"];
-                newRow["totallayer"] = OldRow["totallayer"];
-                newRow["multisize"] = OldRow["multisize"];
-                newRow["Order_SizeCode_Seq"] = OldRow["Order_SizeCode_Seq"];
-                newRow["SORT_NUM"] = OldRow["SORT_NUM"];
-                newRow["WeaveTypeID"] = OldRow["WeaveTypeID"];
-                newRow["DescDetail"] = OldRow["DescDetail"];
-                newRow["MarkerLengthY"] = OldRow["MarkerLengthY"];
-                newRow["MarkerLengthE"] = OldRow["MarkerLengthE"];
-                newRow["MtlTypeID_SCIRefno"] = OldRow["MtlTypeID_SCIRefno"];
-                newRow["Description"] = OldRow["Description"];
-                newRow["ActCuttingPerimeterNew"] = OldRow["ActCuttingPerimeterNew"];
-                newRow["StraightLengthNew"] = OldRow["StraightLengthNew"];
-                newRow["CurvedLengthNew"] = OldRow["CurvedLengthNew"];
-                newRow["ActCuttingPerimeter"] = OldRow["ActCuttingPerimeterNew"];
-                newRow["StraightLength"] = OldRow["StraightLengthNew"];
-                newRow["CurvedLength"] = OldRow["CurvedLengthNew"];
-                newRow["fromukey"] = OldRow["fromukey"];
-                if (index == -1)
-                {
-                    index = TEMP;
-                }
+                newRow["edituser"] = oldRow["edituser"];
+                newRow["totallayer"] = oldRow["totallayer"];
+                newRow["multisize"] = oldRow["multisize"];
+                newRow["Order_SizeCode_Seq"] = oldRow["Order_SizeCode_Seq"];
+                newRow["SORT_NUM"] = oldRow["SORT_NUM"];
+                newRow["WeaveTypeID"] = oldRow["WeaveTypeID"];
+                newRow["DescDetail"] = oldRow["DescDetail"];
+                newRow["MarkerLengthY"] = oldRow["MarkerLengthY"];
+                newRow["MarkerLengthE"] = oldRow["MarkerLengthE"];
+                newRow["MtlTypeID_SCIRefno"] = oldRow["MtlTypeID_SCIRefno"];
+                newRow["Description"] = oldRow["Description"];
+                newRow["ActCuttingPerimeterNew"] = oldRow["ActCuttingPerimeterNew"];
+                newRow["StraightLengthNew"] = oldRow["StraightLengthNew"];
+                newRow["CurvedLengthNew"] = oldRow["CurvedLengthNew"];
+                newRow["ActCuttingPerimeter"] = oldRow["ActCuttingPerimeterNew"];
+                newRow["StraightLength"] = oldRow["StraightLengthNew"];
+                newRow["CurvedLength"] = oldRow["CurvedLengthNew"];
+                newRow["fromukey"] = oldRow["fromukey"];
+                #endregion
 
-                OldRow.Table.Rows.InsertAt(newRow, index);
-                DataRow[] drTEMPS = this.sizeratioTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
-                foreach (DataRow drTEMP in drTEMPS)
-                {
-                    DataRow drNEW = this.sizeratioTb.NewRow();
-                    drNEW["WorkOrderUkey"] = 0;  // 新增WorkOrderUkey塞0
-                    drNEW["ID"] = drTEMP["ID"];
-                    drNEW["SizeCode"] = drTEMP["SizeCode"];
-                    drNEW["Qty"] = drTEMP["Qty"];
-                    drNEW["newkey"] = maxkey;
-                    this.sizeratioTb.Rows.Add(drNEW);
-                }
-
-                DataRow[] drTEMPdists = this.distqtyTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
-                foreach (DataRow drTEMP in drTEMPdists)
-                {
-                    DataRow drNEW = this.distqtyTb.NewRow();
-                    drNEW["WorkOrderUkey"] = 0;  // 新增WorkOrderUkey塞0
-                    drNEW["ID"] = drTEMP["ID"];
-                    drNEW["OrderID"] = drTEMP["OrderID"];
-                    drNEW["Article"] = drTEMP["Article"];
-                    drNEW["SizeCode"] = drTEMP["SizeCode"];
-                    drNEW["Qty"] = drTEMP["Qty"];
-                    drNEW["newkey"] = maxkey;
-                    this.distqtyTb.Rows.Add(drNEW);
-                }
-
-                DataRow[] drTEMPPP = this.PatternPanelTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
-                this.PatternPanelTb_Copy.Clear();
-                foreach (DataRow drTEMP in drTEMPPP)
-                {
-                    DataRow drNEW = this.PatternPanelTb_Copy.NewRow();
-                    drNEW["id"] = this.CurrentMaintain["ID"];
-                    drNEW["WorkOrderUkey"] = 0;  // 新增WorkOrderUkey塞0
-                    drNEW["PatternPanel"] = drTEMP["PatternPanel"];
-                    drNEW["FabricPanelCode"] = drTEMP["FabricPanelCode"];
-                    this.PatternPanelTb_Copy.Rows.Add(drNEW);
-                }
+                this.AddThirdDatas(this.sizeratioTb, MyUtility.Convert.GetLong(oldRow["ukey"]), MyUtility.Convert.GetLong(oldRow["newkey"]), maxkey);
+                this.AddThirdDatas(this.distqtyTb, MyUtility.Convert.GetLong(oldRow["ukey"]), MyUtility.Convert.GetLong(oldRow["newkey"]), maxkey);
+                this.AddThirdDatas(this.PatternPanelTb, MyUtility.Convert.GetLong(oldRow["ukey"]), MyUtility.Convert.GetLong(oldRow["newkey"]), maxkey);
             }
 
-            if (this.flag)
-            {
-                this.CreateSubDetailDatas(this.DetailDatas[0]);
-            }
-            else
-            {
-                this.CreateSubDetailDatas(this.detailgrid.GetDataRow(this.detailgridbs.Position - 1));
-            }
-
+            oldRow.Table.Rows.InsertAt(newRow, index); // 插入新的 WorkOrder
             this.flag = false;
         }
 
+        private void AddThirdDatas(DataTable target, long ukey, long newkey, long maxkey)
+        {
+            DataTable source = target.Select($"WorkOrderUkey={ukey} and newkey = {newkey}").TryCopyToDataTable(target);
+            foreach (DataRow ddr in source.Rows)
+            {
+                ddr["WorkOrderUkey"] = 0;
+                ddr["newkey"] = maxkey;
+                target.ImportRowAdded(ddr);
+            }
+        }
+
+        /// <inheritdoc/>
         protected override void OnDetailGridDelete()
         {
             if (this.CurrentDetailData == null)
@@ -2941,8 +2811,11 @@ END";
                 return;
             }
 
+            long ukey = MyUtility.Convert.GetLong(this.CurrentDetailData["Ukey"]);
+            long newKey = MyUtility.Convert.GetLong(this.CurrentDetailData["NewKey"]);
+
             // 判斷有 CutPlanID不能刪除
-            if (!string.IsNullOrEmpty(this.CurrentDetailData["Cutplanid"].ToString()))
+            if (!MyUtility.Check.Empty(this.CurrentDetailData["Cutplanid"]))
             {
                 MyUtility.Msg.WarningBox($"it's scheduled in P04. Cutting Daily Plan : {this.CurrentDetailData["Cutplanid"]}, can't be deleted.");
                 return;
@@ -2950,36 +2823,28 @@ END";
 
             if (this.CurrentDetailData.RowState != DataRowState.Added)
             {
-                string sqlchkOutput = $@"select id from CuttingOutput_Detail where WorkOrderUkey = '{this.CurrentDetailData["uKey"]}'";
-                DataRow dataRow;
-                if (MyUtility.Check.Seek(sqlchkOutput, out dataRow))
+                string sqlchkOutput = $@"select id from CuttingOutput_Detail where WorkOrderUkey = '{ukey}'";
+                if (MyUtility.Check.Seek(sqlchkOutput, out DataRow dataRow))
                 {
                     MyUtility.Msg.WarningBox($"Already create output <{dataRow["id"]}>, cann't be deleted");
                     return;
                 }
             }
 
-            string ukey = this.CurrentDetailData["Ukey"].ToString() == string.Empty ? "0" : this.CurrentDetailData["Ukey"].ToString();
-            int NewKey = Convert.ToInt32(this.CurrentDetailData["NewKey"]);
-            DataRow[] drar = this.sizeratioTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = {1}", ukey, NewKey));
-            for (int i = drar.Count() - 1; i >= 0; i--)
-            {
-                drar[i].Delete();
-            }
-
-            drar = this.distqtyTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = {1}", ukey, NewKey));
-            for (int i = drar.Count() - 1; i >= 0; i--)
-            {
-                drar[i].Delete();
-            }
-
-            drar = this.PatternPanelTb.Select(string.Format("WorkOrderUkey = {0} and NewKey = {1}", ukey, NewKey));
-            for (int i = drar.Count() - 1; i >= 0; i--)
-            {
-                drar[i].Delete();
-            }
+            DeleteThirdDatas(this.sizeratioTb, ukey, newKey);
+            DeleteThirdDatas(this.distqtyTb, ukey, newKey);
 
             base.OnDetailGridDelete();
+        }
+
+        /// <inheritdoc/>
+        internal static void DeleteThirdDatas(DataTable thirdTable, long workOrderUkey, long newKey)
+        {
+            DataRow[] byKeyThirdDatas = thirdTable.Select($"WorkOrderUkey = '{workOrderUkey}' and NewKey = {newKey}");
+            for (int i = byKeyThirdDatas.Count() - 1; i >= 0; i--)
+            {
+                byKeyThirdDatas[i].Delete();
+            }
         }
 
         private void InsertSizeRatioToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3058,8 +2923,8 @@ END";
                 sizeRatioQty = Convert.ToInt32(comput);
             }
 
-            decimal MarkerLengthNum, Conspc;
-            string MarkerLengthstr, lenY, lenE;
+            decimal markerLengthNum, conspc;
+            string markerLengthstr, lenY, lenE;
             if (MyUtility.Check.Empty(this.CurrentDetailData["MarkerLengthY"]))
             {
                 lenY = "0";
@@ -3078,35 +2943,35 @@ END";
                 lenE = this.CurrentDetailData["MarkerLengthE"].ToString();
             }
 
-            MarkerLengthstr = lenY + "Y" + lenE;
-            MarkerLengthNum = Convert.ToDecimal(MyUtility.GetValue.Lookup(string.Format("Select dbo.MarkerLengthToYDS('{0}')", MarkerLengthstr)));
+            markerLengthstr = lenY + "Y" + lenE;
+            markerLengthNum = Convert.ToDecimal(MyUtility.GetValue.Lookup(string.Format("Select dbo.MarkerLengthToYDS('{0}')", markerLengthstr)));
             if (sizeRatioQty == 0)
             {
-                Conspc = 0;
+                conspc = 0;
             }
             else
             {
-                Conspc = MarkerLengthNum / sizeRatioQty; // Conspc = MarkerLength / SizeRatio Qty
+                conspc = markerLengthNum / sizeRatioQty;
             }
 
             if (updateConsPC)
             {
-                this.CurrentDetailData["Conspc"] = Conspc;
+                this.CurrentDetailData["Conspc"] = conspc;
             }
 
             if (updateCons)
             {
                 if (MyUtility.Check.Empty(this.CurrentDetailData["Layer"]))
                 {
-                    this.CurrentDetailData["Cons"] = MarkerLengthNum * 0;
+                    this.CurrentDetailData["Cons"] = markerLengthNum * 0;
                 }
                 else
                 {
-                    this.CurrentDetailData["Cons"] = MarkerLengthNum * Convert.ToInt32(this.CurrentDetailData["Layer"]);
+                    this.CurrentDetailData["Cons"] = markerLengthNum * Convert.ToInt32(this.CurrentDetailData["Layer"]);
                 }
             }
 
-            this.txtMarkerLength.Text = MarkerLengthstr;
+            this.txtMarkerLength.Text = markerLengthstr;
             this.txtMarkerLength.ValidateControl();
         }
         #endregion
@@ -3114,23 +2979,23 @@ END";
         private void Cal_TotalCutQty(object workorderukey, object newkey)
         {
             this.GridValid();
-            string TotalCutQtystr;
-            TotalCutQtystr = string.Empty;
+            string totalCutQtystr;
+            totalCutQtystr = string.Empty;
             DataRow[] sizeview = this.sizeratioTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} ", Convert.ToInt32(workorderukey), Convert.ToInt32(newkey)));
 
             foreach (DataRow dr in sizeview)
             {
-                if (TotalCutQtystr == string.Empty)
+                if (totalCutQtystr == string.Empty)
                 {
-                    TotalCutQtystr = TotalCutQtystr + dr["SizeCode"].ToString().Trim() + "/" + (Convert.ToDecimal(dr["Qty"]) * Convert.ToDecimal(MyUtility.Check.Empty(this.CurrentDetailData["Layer"]) ? 0 : this.CurrentDetailData["Layer"])).ToString();
+                    totalCutQtystr = totalCutQtystr + dr["SizeCode"].ToString().Trim() + "/" + (Convert.ToDecimal(dr["Qty"]) * Convert.ToDecimal(MyUtility.Check.Empty(this.CurrentDetailData["Layer"]) ? 0 : this.CurrentDetailData["Layer"])).ToString();
                 }
                 else
                 {
-                    TotalCutQtystr = TotalCutQtystr + "," + dr["SizeCode"].ToString().Trim() + "/" + (Convert.ToDecimal(dr["Qty"]) * Convert.ToDecimal(MyUtility.Check.Empty(this.CurrentDetailData["Layer"]) ? 0 : this.CurrentDetailData["Layer"])).ToString();
+                    totalCutQtystr = totalCutQtystr + "," + dr["SizeCode"].ToString().Trim() + "/" + (Convert.ToDecimal(dr["Qty"]) * Convert.ToDecimal(MyUtility.Check.Empty(this.CurrentDetailData["Layer"]) ? 0 : this.CurrentDetailData["Layer"])).ToString();
                 }
             }
 
-            this.CurrentDetailData["CutQty"] = TotalCutQtystr;
+            this.CurrentDetailData["CutQty"] = totalCutQtystr;
         }
 
         private void InsertNewRecordToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3151,6 +3016,8 @@ END";
         }
 
         #region Save Before Post After
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             this.GridValid();
@@ -3175,18 +3042,18 @@ END";
             foreach (DataRow row in this.DetailDatas.Where(x => MyUtility.Check.Empty(x["CutRef"].ToString()) && !MyUtility.Check.Empty(x["CutNo"].ToString())))
             {
                 // 與該筆相同 FabricCombo、Cut# 的資料
-                List<DataRow> SameDatas = this.DetailDatas.Where(o =>
+                List<DataRow> sameDatas = this.DetailDatas.Where(o =>
                                                                 o["CutRef"].ToString() == string.Empty
                                                                 && o["CutNo"].ToString() == row["CutNo"].ToString()
                                                                 && o["FabricCombo"].ToString() == row["FabricCombo"].ToString()
                                                                 && o["Ukey"].ToString() != row["Ukey"].ToString()).ToList();
 
-                if (SameDatas.Count > 0)
+                if (sameDatas.Count > 0)
                 {
-                    var SigngleData = SameDatas.Where(x => x["MarkerName"].ToString() != row["MarkerName"].ToString() ||
+                    var signgleData = sameDatas.Where(x => x["MarkerName"].ToString() != row["MarkerName"].ToString() ||
                                                            x["MarkerNo"].ToString() != row["MarkerNo"].ToString())
                                                .ToList();
-                    if (SigngleData.Count > 0)
+                    if (signgleData.Count > 0)
                     {
                         index = this.DetailDatas.IndexOf(row);
                         this.detailgrid.SelectRowTo(index);
@@ -3224,28 +3091,29 @@ END";
             }
             #endregion
 
-            DataTable dt;
-            string msg1 = string.Empty, msg2 = string.Empty;
-            MyUtility.Tool.ProcessWithDatatable(this.sizeratioTb, "SizeCode,WorkOrderUkey,NewKey", "Select SizeCode,WorkOrderUkey,NewKey,Count() as countN from #tmp having countN >1 Group by SizeCode,WorkOrderUkey,NewKey", out dt);
+            string msg = string.Empty;
+            string sqlcmd = "Select SizeCode,WorkOrderUkey,NewKey,Count() as countN from #tmp having countN >1 Group by SizeCode,WorkOrderUkey,NewKey";
+            MyUtility.Tool.ProcessWithDatatable(this.sizeratioTb, "SizeCode,WorkOrderUkey,NewKey", sqlcmd, out DataTable dt);
             if (dt != null)
             {
                 foreach (DataRow dr in dt.Rows)
                 {
-                    msg1 = msg1 + dr["WorkOrderUkey"].ToString() + "\n";
+                    msg = msg + dr["WorkOrderUkey"].ToString() + "\n";
                 }
             }
 
-            if (!MyUtility.Check.Empty(msg1))
+            if (!MyUtility.Check.Empty(msg))
             {
-                MyUtility.Msg.WarningBox("The SizeRatio duplicate ,Please see below <Ukey> \n" + msg1);
+                MyUtility.Msg.WarningBox("The SizeRatio duplicate ,Please see below <Ukey> \n" + msg);
                 return false;
             }
 
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.distqtyTb, string.Empty, @"
+            sqlcmd = @"
 Select OrderID,Article,SizeCode,WorkOrderUkey,NewKey,Count(1) as countN
 from #tmp
 Group by OrderID,Article,SizeCode,WorkOrderUkey,NewKey
-having Count(1) >1", out dt);
+having Count(1) >1";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.distqtyTb, string.Empty, sqlcmd, out dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -3254,12 +3122,35 @@ having Count(1) >1", out dt);
 
             foreach (DataRow dr in dt.Rows)
             {
-                msg2 = msg2 + dr["WorkOrderUkey"].ToString() + "\n";
+                msg = msg + dr["WorkOrderUkey"].ToString() + "\n";
             }
 
-            if (!MyUtility.Check.Empty(msg2))
+            if (!MyUtility.Check.Empty(msg))
             {
-                MyUtility.Msg.WarningBox("The Distribute Qty data duplicate ,Please see below <Ukey> \n" + msg2);
+                MyUtility.Msg.WarningBox("The Distribute Qty data duplicate ,Please see below <Ukey> \n" + msg);
+                return false;
+            }
+
+            sqlcmd = @"
+Select WorkOrderUkey,PatternPanel,FabricPanelCode,NewKey,Count(1) as countN
+from #tmp
+Group by WorkOrderUkey,PatternPanel,FabricPanelCode,NewKey
+having Count(1) >1";
+            result = MyUtility.Tool.ProcessWithDatatable(this.PatternPanelTb, string.Empty, sqlcmd, out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                msg = msg + dr["WorkOrderUkey"].ToString() + "\n";
+            }
+
+            if (!MyUtility.Check.Empty(msg))
+            {
+                MyUtility.Msg.WarningBox("The PatternPanel data duplicate ,Please see below <Ukey> \n" + msg);
                 return false;
             }
 
@@ -3301,6 +3192,7 @@ having Count(1) >1", out dt);
             return false;
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             #region RevisedMarkerOriginalData 非AdditionalRevisedMarker功能增加的資料 isbyAdditionalRevisedMarker == 0
@@ -3387,8 +3279,13 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
             return base.ClickSave();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
+            List<Guozi_AGV.WorkOrder_Distribute> deleteWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
+            List<Guozi_AGV.WorkOrder_Distribute> editWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
+            List<long> deleteWorkOrder = new List<long>();
+
             #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 在此取拆出來資料的ukey,處理刪除的資料
             string sqlUpdateRevisedMarkerOriginalData = string.Empty;
             var listAdditionalRevisedMarkerSeparate = this.DetailDatas.Where(w => (w.RowState == DataRowState.Modified || w.RowState == DataRowState.Added) &&
@@ -3438,6 +3335,12 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
                 {
                     dr2["WorkOrderUkey"] = ukey;
                 }
+
+                dray = this.PatternPanelTb.Select(string.Format("newkey={0} and workorderUkey= 0", newkey)); // 0表示新增
+                foreach (DataRow dr2 in dray)
+                {
+                    dr2["WorkOrderUkey"] = ukey;
+                }
             }
 
             string delsql = string.Empty, updatesql = string.Empty, insertsql = string.Empty;
@@ -3446,19 +3349,19 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
             #region 刪除
             foreach (DataRow dr in this.sizeratioTb.AsEnumerable().Where(x => x.RowState == DataRowState.Deleted))
             {
-                delsql = delsql + string.Format("Delete From WorkOrder_SizeRatio Where WorkOrderUkey={0} and SizeCode ='{1}' and ID ='{2}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], cId);
+                delsql += string.Format("Delete From WorkOrder_SizeRatio Where WorkOrderUkey={0} and SizeCode ='{1}' and ID ='{2}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], cId);
             }
             #endregion
             #region 修改
             foreach (DataRow dr in this.sizeratioTb.AsEnumerable().Where(x => x.RowState == DataRowState.Modified))
             {
-                updatesql = updatesql + string.Format("Update WorkOrder_SizeRatio set Qty = {0},SizeCode = '{4}' where WorkOrderUkey ={1} and SizeCode = '{2}' and id ='{3}';", dr["Qty"], dr["WorkOrderUkey"], dr["SizeCode", DataRowVersion.Original], cId, dr["SizeCode"]);
+                updatesql += string.Format("Update WorkOrder_SizeRatio set Qty = {0},SizeCode = '{4}' where WorkOrderUkey ={1} and SizeCode = '{2}' and id ='{3}';", dr["Qty"], dr["WorkOrderUkey"], dr["SizeCode", DataRowVersion.Original], cId, dr["SizeCode"]);
             }
             #endregion
             #region 新增
             foreach (DataRow dr in this.sizeratioTb.AsEnumerable().Where(x => x.RowState == DataRowState.Added))
             {
-                insertsql = insertsql + string.Format("Insert into WorkOrder_SizeRatio(WorkOrderUkey,SizeCode,Qty,ID) values({0},'{1}',{2},'{3}'); ", dr["WorkOrderUkey"], dr["SizeCode"], dr["Qty"], cId);
+                insertsql += string.Format("Insert into WorkOrder_SizeRatio(WorkOrderUkey,SizeCode,Qty,ID) values({0},'{1}',{2},'{3}'); ", dr["WorkOrderUkey"], dr["SizeCode"], dr["Qty"], cId);
             }
             #endregion
             #endregion
@@ -3466,12 +3369,23 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
             #region 刪除
             foreach (DataRow dr in this.distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Deleted))
             {
+                deleteWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderUkey", DataRowVersion.Original],
+                    SizeCode = (string)dr["SizeCode", DataRowVersion.Original],
+                    Article = (string)dr["Article", DataRowVersion.Original],
+                    OrderID = (string)dr["OrderID", DataRowVersion.Original],
+                });
                 delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and id='{4}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
             }
             #endregion
             #region 修改
             foreach (DataRow dr in this.distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Modified))
             {
+                editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderUkey"],
+                });
                 updatesql += $@"
 Update WorkOrder_distribute
 set Qty = {dr["Qty"]},SizeCode = '{dr["SizeCode"]}',Article = '{dr["Article"]}',OrderID = '{dr["OrderID"]}'
@@ -3485,18 +3399,36 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
             #region 新增
             foreach (DataRow dr in this.distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Added))
             {
-                insertsql = insertsql + string.Format("Insert into WorkOrder_distribute(WorkOrderUkey,SizeCode,Qty,Article,OrderID,ID) values({0},'{1}',{2},'{3}','{4}','{5}'); ", dr["WorkOrderUkey"], dr["SizeCode"], dr["Qty"], dr["Article"], dr["OrderID"], cId);
+                editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderUkey"],
+                });
+                insertsql += string.Format("Insert into WorkOrder_distribute(WorkOrderUkey,SizeCode,Qty,Article,OrderID,ID) values({0},'{1}',{2},'{3}','{4}','{5}'); ", dr["WorkOrderUkey"], dr["SizeCode"], dr["Qty"], dr["Article"], dr["OrderID"], cId);
+            }
+            #endregion
+            #endregion
+            #region PatternPanel 刪除/新增/(無修改)
+            #region 刪除
+            foreach (DataRow dr in this.PatternPanelTb.AsEnumerable().Where(x => x.RowState == DataRowState.Deleted))
+            {
+                delsql += string.Format("Delete From WorkOrder_PatternPanel Where WorkOrderUkey={0} and PatternPanel ='{1}' and FabricPanelCode = '{2}' ;", dr["WorkOrderUkey", DataRowVersion.Original], dr["PatternPanel", DataRowVersion.Original], dr["FabricPanelCode", DataRowVersion.Original]);
+            }
+            #endregion
+            #region 新增
+            foreach (DataRow dr in this.PatternPanelTb.AsEnumerable().Where(x => x.RowState == DataRowState.Added))
+            {
+                insertsql += string.Format("Insert into WorkOrder_PatternPanel(WorkOrderUkey,PatternPanel,FabricPanelCode,ID) values({0},'{1}','{2}','{3}'); ", dr["WorkOrderUkey"], dr["PatternPanel"], dr["FabricPanelCode"], cId);
             }
             #endregion
             #endregion
 
             #region 回寫orders CutInLine,CutOffLine
-            string _CutInLine, _CutOffLine;
+            string cutInLine, cutOffLine;
 
             // aa = Convert.ToDateTime(((DataTable)detailgridbs.DataSource).Compute("Min(estcutdate)", null));
-            _CutInLine = ((DataTable)this.detailgridbs.DataSource).Compute("Min(estcutdate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Min(estcutdate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
-            _CutOffLine = ((DataTable)this.detailgridbs.DataSource).Compute("Max(estcutdate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Max(estcutdate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
-            updatesql = updatesql + string.Format("Update orders set CutInLine = iif('{0}' = '',null,'{0}'),CutOffLine =  iif('{1}' = '',null,'{1}') where POID = '{2}';", _CutInLine, _CutOffLine, this.CurrentMaintain["ID"]);
+            cutInLine = ((DataTable)this.detailgridbs.DataSource).Compute("Min(estcutdate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Min(estcutdate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
+            cutOffLine = ((DataTable)this.detailgridbs.DataSource).Compute("Max(estcutdate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Max(estcutdate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
+            updatesql += string.Format("Update orders set CutInLine = iif('{0}' = '',null,'{0}'),CutOffLine =  iif('{1}' = '',null,'{1}') where POID = '{2}';", cutInLine, cutOffLine, this.CurrentMaintain["ID"]);
 
             #endregion
 
@@ -3535,22 +3467,62 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
 
             #region sent data to GZ WebAPI
             string compareCol = "CutRef,EstCutDate,ID,OrderID,CutCellID";
+
             var listChangedDetail = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                 .Where(s =>
                 {
-                    return s.RowState == DataRowState.Added || (s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue(compareCol));
+                    return (
+                                s.RowState == DataRowState.Added ||
+                                (s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue(compareCol)) ||
+                                editWorkOrder_Distribute.Any(ed => ed.WorkOrderUkey == (long)s["Ukey"]))
+                            &&
+                            !MyUtility.Check.Empty(s["CutRef"]);
                 });
 
             if (listChangedDetail.Any())
             {
                 DataTable dtWorkOrder = listChangedDetail.CopyToDataTable();
-                Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkOrder));
+                Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkOrder))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
+
+            // CutRef被清空要傳delete給廠商
+            var cutRefToEmpty = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Modified &&
+                                                             MyUtility.Check.Empty(s["CutRef", DataRowVersion.Current]) &&
+                                                             !MyUtility.Check.Empty(s["CutRef", DataRowVersion.Original]));
+
+            var workOrder_Distribute = this.distqtyTb.AsEnumerable();
+            foreach (var item in cutRefToEmpty)
+            {
+                deleteWorkOrder.Add((long)item["Ukey"]);
+                deleteWorkOrder_Distribute.AddRange(
+                    workOrder_Distribute.Where(x => x.RowState != DataRowState.Deleted && (long)x["WorkOrderUkey"] == (long)item["Ukey"]).Select(
+                    s => new Guozi_AGV.WorkOrder_Distribute
+                    {
+                        WorkOrderUkey = (long)s["WorkOrderUkey", DataRowVersion.Original],
+                        SizeCode = (string)s["SizeCode", DataRowVersion.Original],
+                        Article = (string)s["Article", DataRowVersion.Original],
+                        OrderID = (string)s["OrderID", DataRowVersion.Original],
+                    }
+                    ));
+
+            }
+
+            deleteWorkOrder.AddRange(
+                ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                .Where(s => s.RowState == DataRowState.Deleted)
+                .Select(s => (long)s["Ukey", DataRowVersion.Original])
+                );
+
+            Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder(deleteWorkOrder));
+            Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
+
             #endregion
 
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -3564,6 +3536,7 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
         }
         #endregion
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             P02_Print callNextForm;
@@ -3586,9 +3559,10 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
             return base.ClickPrint();
         }
 
-        // 編輯時，將[SORT_NUM]賦予流水號
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
+            // 編輯時，將[SORT_NUM]賦予流水號
             base.ClickEditAfter();
             int serial = 1;
             this.detailgridbs.SuspendBinding();
@@ -3606,12 +3580,11 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
         {
             if (MyUtility.Check.Empty(this.CurrentDetailData["Cutplanid"]) && this.EditMode)
             {
-                string sqlCmd = string.Format(
-                    @"
+                string sqlCmd = $@"
 select distinct a.MarkerNo from Order_EachCons a
 inner join orders b on a.id = b.ID
-where b.poid = '{0}'
-", this.CurrentMaintain["ID"]);
+where b.poid = '{this.CurrentMaintain["ID"]}'
+";
                 SelectItem item = new SelectItem(sqlCmd, "20", this.txtBoxMarkerNo.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
@@ -3627,12 +3600,11 @@ where b.poid = '{0}'
         {
             if (this.EditMode)
             {
-                if (!MyUtility.Check.Seek(string.Format(
-                    @"
-    select 1 from Order_EachCons a
-    inner join orders b on a.id = b.ID
-    where b.poid = '{0}' and a.MarkerNo='{1}'
-    ", this.CurrentMaintain["ID"], this.txtBoxMarkerNo.Text)))
+                if (!MyUtility.Check.Seek($@"
+select 1 from Order_EachCons a
+inner join orders b on a.id = b.ID
+where b.poid = '{this.CurrentMaintain["ID"]}' and a.MarkerNo='{this.txtBoxMarkerNo.Text}'
+"))
                 {
                     MyUtility.Msg.WarningBox(string.Format("<MarkerNO: {0} > is not found!", this.txtBoxMarkerNo.Text));
                     this.CurrentDetailData["MarkerNo"] = string.Empty;
@@ -3654,17 +3626,16 @@ where b.poid = '{0}'
 
         private void TxtFabricPanelCode_Validating(object sender, CancelEventArgs e)
         {
-            DataRow dr;
             string new_FabricPanelCode = this.txtFabricPanelCode.Text;
-            string sqlcmd = string.Format(
-                @"select ob.SCIRefno,f.Description ,f.WeaveTypeID,ob.Refno
-                            from Order_BoF ob 
-                            left join Fabric f on ob.SCIRefno = f.SCIRefno
-                             where 
-                             exists (select id from Order_FabricCode ofa where ofa.id = '{0}' and ofa.FabricPanelCode = '{1}'
-                             and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)", this.CurrentMaintain["ID"], new_FabricPanelCode);
+            string sqlcmd = $@"
+select ob.SCIRefno,f.Description ,f.WeaveTypeID,ob.Refno
+from Order_BoF ob 
+left join Fabric f on ob.SCIRefno = f.SCIRefno
+where exists (select id from Order_FabricCode ofa where ofa.id = '{this.CurrentMaintain["ID"]}' and ofa.FabricPanelCode = '{new_FabricPanelCode}'
+and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)
+";
 
-            if (MyUtility.Check.Seek(sqlcmd, out dr))
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
             {
                 this.CurrentDetailData["Refno"] = dr["Refno"].ToString();
                 this.CurrentDetailData["SCIRefno"] = dr["SCIRefno"].ToString();
@@ -3727,8 +3698,7 @@ where b.poid = '{0}'
         // Quantity Breakdown
         private void Qtybreak_Click(object sender, EventArgs e)
         {
-            DataRow dr;
-            MyUtility.Check.Seek(string.Format("select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList from Orders o WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"]), out dr);
+            MyUtility.Check.Seek(string.Format("select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList from Orders o WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"]), out DataRow dr);
             PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), dr["PoList"].ToString());
             callNextForm.ShowDialog(this);
         }
@@ -3736,12 +3706,37 @@ where b.poid = '{0}'
         // PatternPanel
         private void BtnPatternPanel_Click(object sender, EventArgs e)
         {
-            this.OpenSubDetailPage();
+            var form = new P02_PatternPanel_n(this.PatternPanelTb, this.CurrentDetailData);
+            form.ShowDialog();
+            this.CurrentDetailData["PatternPanel"] = this.PatternPanelTb
+                .Select($@"Workorderukey = {this.CurrentDetailData["Ukey"]} and newkey = {this.CurrentDetailData["NewKey"]}")
+                .AsEnumerable()
+                .Where(w => w.RowState != DataRowState.Deleted)
+                .Select(s => MyUtility.Convert.GetString(s["PatternPanel"])).ToList().JoinToString("+");
+        }
 
-            DataTable sudt;
-            this.GetSubDetailDatas(this.CurrentDetailData, out sudt);
-            var x = sudt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PatternPanel"])).ToList();
-            this.CurrentDetailData["PatternPanel"] = string.Join("+", x);
+        private void BtnDist_Click(object sender, EventArgs e)
+        {
+            this.GridValid();
+            this.detailgrid.ValidateControl();
+            var frm = new P02_AutoDistToSP(this.CurrentDetailData, this.sizeratioTb, this.distqtyTb, this.PatternPanelTb);
+            frm.ShowDialog(this);
+        }
+
+        private void GridSizeRatio_EditingKeyProcessing(object sender, Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs e)
+        {
+            if (this.EditMode && e.KeyCode == Keys.Enter)
+            {
+                int rowindex = this.gridSizeRatio.CurrentCell.RowIndex;
+                if (rowindex == this.gridSizeRatio.RowCount - 1)
+                {
+                    DataRow ndr = this.sizeratioTb.NewRow();
+                    ndr["newkey"] = this.CurrentDetailData["newkey"];
+                    ndr["WorkorderUkey"] = this.CurrentDetailData["Ukey"];
+                    ndr["Qty"] = 0;
+                    this.sizeratioTb.Rows.Add(ndr);
+                }
+            }
         }
 
         private void Distribute_grid_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -3755,6 +3750,7 @@ where b.poid = '{0}'
             this.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUndo()
         {
             base.ClickUndo();
@@ -3765,15 +3761,15 @@ where b.poid = '{0}'
         private void GridDistributetoSPNo_SelectionChanged(object sender, EventArgs e)
         {
             // 更換qtybreakdown index
-            DataRow SpNoRow = this.gridDistributetoSPNo.GetDataRow(this.gridDistributetoSPNo.GetSelectedRowIndex());
-            if (MyUtility.Check.Empty(SpNoRow))
+            DataRow spNoRow = this.gridDistributetoSPNo.GetDataRow(this.gridDistributetoSPNo.GetSelectedRowIndex());
+            if (MyUtility.Check.Empty(spNoRow))
             {
                 return;
             }
 
-            string Article = SpNoRow["Article"].ToString();
-            string SizeCode = SpNoRow["SizeCode"].ToString();
-            string SpNo = SpNoRow["Orderid"].ToString();
+            string article = spNoRow["Article"].ToString();
+            string sizeCode = spNoRow["SizeCode"].ToString();
+            string spNo = spNoRow["Orderid"].ToString();
             int rowIndex = 0;
 
             if (!MyUtility.Check.Empty(this.distqtyTb) || this.distqtyTb.Rows.Count > 1)
@@ -3782,7 +3778,7 @@ where b.poid = '{0}'
                 {
                     DataGridViewRow dvr = this.gridQtyBreakdown.Rows[rIdx];
                     DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
-                    if (row["article"].ToString() == Article && row["SizeCode"].ToString() == SizeCode && row["id"].ToString() == SpNo)
+                    if (row["article"].ToString() == article && row["SizeCode"].ToString() == sizeCode && row["id"].ToString() == spNo)
                     {
                         rowIndex = rIdx;
                         break;
@@ -3801,17 +3797,12 @@ where b.poid = '{0}'
         /// <param name="strSCIRefno">SciRefno</param>
         private void CheckCuttingWidth(string strCutCellID, string strSCIRefno)
         {
-            string chkwidth = MyUtility.GetValue.Lookup(string.Format(
-                @"
-select width_cm = width*2.54 
-from Fabric 
-where SCIRefno = '{0}'", strSCIRefno));
-            string strCuttingWidth = MyUtility.GetValue.Lookup(string.Format(
-                @"
+            string chkwidth = MyUtility.GetValue.Lookup($@"select width_cm = width*2.54  from Fabric where SCIRefno = '{strSCIRefno}'");
+            string strCuttingWidth = MyUtility.GetValue.Lookup($@"
 select cuttingWidth = isnull (cuttingWidth, 0) 
 from CutCell 
-where   id = '{0}'
-        and MDivisionID = '{1}'", strCutCellID, Env.User.Keyword));
+where id = '{strCutCellID}'
+and MDivisionID = '{this.keyWord}'");
             if (!chkwidth.Empty() && !strCuttingWidth.Empty())
             {
                 decimal width_CM = decimal.Parse(chkwidth);
@@ -3835,7 +3826,7 @@ where   id = '{0}'
             this.Sorting(this.comboBox1.Text);
         }
 
-        P07 callP07 = null;
+        private P07 callP07 = null;
 
         private void P07FormOpen()
         {
@@ -3851,8 +3842,8 @@ where   id = '{0}'
                 }
             }
 
-            ToolStripMenuItem P07MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
+            ToolStripMenuItem p07MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Cutting"))
                 {
@@ -3862,7 +3853,7 @@ where   id = '{0}'
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P07. Query for Change Est. Cut Date Record"))
                             {
-                                P07MenuItem = (ToolStripMenuItem)subMenuItem;
+                                p07MenuItem = (ToolStripMenuItem)subMenuItem;
                                 break;
                             }
                         }
@@ -3870,8 +3861,10 @@ where   id = '{0}'
                 }
             }
 
-            this.callP07 = new P07(P07MenuItem);
-            this.callP07.MdiParent = this.MdiParent;
+            this.callP07 = new P07(p07MenuItem)
+            {
+                MdiParent = this.MdiParent,
+            };
             this.callP07.Show();
             this.callP07.P07Data(this.CurrentMaintain["ID"].ToString());
         }
