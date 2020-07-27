@@ -110,6 +110,11 @@
             this.btnCutplanChangeHistory = new Sci.Win.UI.Button();
             this.btnStdQtyWIP = new Sci.Win.UI.Button();
             this.btnDist = new Sci.Win.UI.Button();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.numLeadTime = new Sci.Win.UI.NumericBox();
+            this.dispSubprocess = new Sci.Win.UI.DisplayBox();
+            this.BtnImportMarker = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -142,6 +147,11 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.BtnImportMarker);
+            this.masterpanel.Controls.Add(this.dispSubprocess);
+            this.masterpanel.Controls.Add(this.numLeadTime);
+            this.masterpanel.Controls.Add(this.label4);
+            this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.btnStdQtyWIP);
             this.masterpanel.Controls.Add(this.numBalanceLayer);
             this.masterpanel.Controls.Add(this.numTotalLayer);
@@ -179,6 +189,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numBalanceLayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnStdQtyWIP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dispSubprocess, 0);
+            this.masterpanel.Controls.SetChildIndex(this.BtnImportMarker, 0);
             // 
             // detailpanel
             // 
@@ -195,7 +207,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(525, 58);
+            this.gridicon.Location = new System.Drawing.Point(727, 58);
             // 
             // refresh
             // 
@@ -251,7 +263,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1004, 713);
+            this.browse.Size = new System.Drawing.Size(1206, 713);
             // 
             // tabs
             // 
@@ -1177,6 +1189,16 @@
             this.btnDist.UseVisualStyleBackColor = true;
             this.btnDist.Click += new System.EventHandler(this.BtnDist_Click);
             // 
+            // btnImportMarker
+            // 
+            this.BtnImportMarker.Location = new System.Drawing.Point(530, 61);
+            this.BtnImportMarker.Name = "btnImportMarker";
+            this.BtnImportMarker.Size = new System.Drawing.Size(119, 30);
+            this.BtnImportMarker.TabIndex = 59;
+            this.BtnImportMarker.Text = "Import Marker";
+            this.BtnImportMarker.UseVisualStyleBackColor = true;
+            this.BtnImportMarker.Click += new System.EventHandler(this.BtnImportMarker_Click);
+            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(1012, 775);
@@ -1317,5 +1339,10 @@
         private Win.UI.Button btnCutplanChangeHistory;
         private Win.UI.Button btnStdQtyWIP;
         private Win.UI.Button btnDist;
+        private Win.UI.DisplayBox dispSubprocess;
+        private Win.UI.NumericBox numLeadTime;
+        private Win.UI.Label label4;
+        private Win.UI.Label label3;
+        private Win.UI.Button BtnImportMarker;
     }
 }

@@ -945,7 +945,7 @@ a.StyleUkey	= b.StyleUkey
 ,a.VRepeat = b.VRepeat
 ,a.OneTwoWay = b.OneTwoWay
 ,a.HorizontalCutting = b.HorizontalCutting
-
+,a.VRepeat_C = b.VRepeat_C
 from Production.dbo.Style_BOF as a 
 inner join Trade_To_Pms.dbo.Style_BOF as b ON a.Ukey=b.Ukey
 -------------------------- INSERT INTO 抓
@@ -965,6 +965,7 @@ StyleUkey
 ,VRepeat
 ,OneTwoWay 
 ,HorizontalCutting
+,VRepeat_C
 )
 select 
  b.StyleUkey
@@ -981,6 +982,7 @@ select
 ,b.VRepeat
 ,b.OneTwoWay 
 ,b.HorizontalCutting
+,b.VRepeat_C
 from Trade_To_Pms.dbo.Style_BOF as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_BOF as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 --STYLE9
