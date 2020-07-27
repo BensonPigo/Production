@@ -127,6 +127,7 @@ select
 			 end
     ,o.BuyBackReason
 	,o.StyleID
+    ,o.cpu
     ,o.StyleUnit
 	,o.SeasonID
 	,o.BrandID
