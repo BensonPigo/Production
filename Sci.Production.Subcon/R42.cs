@@ -140,6 +140,7 @@ Select
             left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
             left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
             left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
+            inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
             outer apply(
                 select sub = 1
                 from Bundle_Detail_Art bda WITH (NOLOCK) 
@@ -282,6 +283,7 @@ from BundleTransfer  bt WITH (NOLOCK, Index(BundleTransferDate))
 inner join Bundle_Detail bd on bd.BundleNo = bt.BundleNo
 left join Bundle b on b.id = bd.id
 left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply(
     select sub = 1
     from Bundle_Detail_Art bda WITH (NOLOCK) 

@@ -127,6 +127,7 @@ left join #QtyBySetPerSubprocessLoading a on oq.Orderid = a.OrderID and oq.Artic
 			, ComboType = sl.Location
 			, QAQty = isnull(sum(sdd.QAQty),0)
 	from Orders o WITH (NOLOCK) 
+    inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 	inner join Style_Location sl WITH (NOLOCK) on o.StyleUkey = sl.StyleUkey
 	inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
 	left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = o.ID 
@@ -194,6 +195,7 @@ drop table #tmp,#tmp2
 select bda.SubProcessID
 from Bundle b with(nolock)
 inner join orders o with(nolock) on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = bd.bundleno
 where o.ID ='{this.DataRow["OrderID"]}'
@@ -309,7 +311,8 @@ order by oq.ID,oq.Article,oq.SizeCode,Colorid
 
 select c.*
 from #tmp c
-left join Orders o  WITH (NOLOCK) on o.ID = c.ID
+inner join Orders o  WITH (NOLOCK) on o.ID = c.ID
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 left join Order_SizeCode z WITH (NOLOCK) on z.id = o.POID and z.SizeCode = c.SizeCode
 order by c.ID,c.Article,z.Seq,c.FabricCombo
 

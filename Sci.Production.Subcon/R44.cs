@@ -100,7 +100,7 @@ select	masterID = o.POID
         , OrderQty = Qty
 into #tsp
 from orders o WITH (NOLOCK)
-inner join Factory f WITH (NOLOCK) on o.FactoryID = f.ID
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 where	o.Category in ({2})
 		-- {0} 篩選 OrderID
 		{0}
