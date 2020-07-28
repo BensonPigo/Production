@@ -138,7 +138,7 @@
             this.masterpanel.Controls.Add(this.dateApproveDate);
             this.masterpanel.Controls.Add(this.dateDeliveryDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1070, 226);
+            this.masterpanel.Size = new System.Drawing.Size(892, 226);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDeliveryDate, 0);
@@ -190,7 +190,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 226);
-            this.detailpanel.Size = new System.Drawing.Size(1070, 230);
+            this.detailpanel.Size = new System.Drawing.Size(892, 123);
             // 
             // gridicon
             // 
@@ -205,7 +205,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1070, 230);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 123);
             // 
             // detail2
             // 
@@ -219,18 +219,8 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1070, 494);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1070, 456);
-            // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 456);
-            this.detailbtm.Size = new System.Drawing.Size(1070, 38);
             this.detailbtm.TabIndex = 1;
             // 
             // browse
@@ -802,7 +792,7 @@
             this.DefaultFilter = "potype=\'O\'";
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "ArtworkPO_detail";
-            this.GridUniqueKey = "id,artworkid,patterncode,OrderId,ArtworkReqID";
+            this.GridUniqueKey = "id,artworkid,patterncode,OrderId,ArtworkReqID,Article,SizeCode";
             this.IsSupportCheck = true;
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;

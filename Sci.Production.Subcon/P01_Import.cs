@@ -394,7 +394,9 @@ WHERE   bio.RFIDProcessLocationID='' and
 ArtworkId = '{tmp["ArtworkId"].ToString()}' and 
 patterncode = '{tmp["patterncode"].ToString()}' and 
 cost='{tmp["Cost"]}' and
-ArtworkReqID = '{tmp["ArtworkReqID"]}'
+ArtworkReqID = '{tmp["ArtworkReqID"]}' and
+Article =  '{tmp["Article"]}' and
+SizeCode = '{tmp["SizeCode"]}'
 ");
 
                     if (findrow.Length > 0)
