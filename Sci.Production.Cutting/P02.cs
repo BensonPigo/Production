@@ -104,7 +104,6 @@ namespace Sci.Production.Cutting
             this.sizeratioMenuStrip.Enabled = this.EditMode;
             this.distributeMenuStrip.Enabled = this.EditMode;
 
-
             if (history == "0")
             {
                 this.Text = "P02.Cutting Work Order";
@@ -2463,7 +2462,7 @@ SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, CutNo
 isnull(MarkerName,'') as MarkerName, estcutdate
 FROM Workorder WITH (NOLOCK) 
 WHERE (cutplanid is null or cutplanid ='') AND (CutNo is not null )
-        AND (cutref is not null and cutref !='') and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{this.keyWord}'
+AND (cutref is not null and cutref !='') and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{this.keyWord}'
 GROUP BY Cutref, FabricCombo, CutNo, MarkerName, estcutdate
 ";
             DualResult cutrefresult = DBProxy.Current.Select(null, cmdsql, out DataTable cutreftb);
@@ -2481,7 +2480,7 @@ and (estcutdate is not null and estcutdate !='' )
 and (CutCellid is not null and CutCellid !='' )
 and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{this.keyWord}'
 order by FabricCombo,cutno
-"; // 找出空的cutref
+";
             cutrefresult = DBProxy.Current.Select(null, cmdsql, out DataTable workordertmp);
             if (!cutrefresult)
             {
@@ -2496,21 +2495,16 @@ order by FabricCombo,cutno
             }
 
             string updatecutref = @"
-Create table #tmpWorkorder
-	(
-		Ukey bigint
-	)
-
 DECLARE @chk tinyint
 SET @chk = 0
-Begin Transaction[Trans_Name] --Trans_Name
+Begin Transaction [Trans_Name] -- Trans_Name 
 ";
 
             // 寫入空的Cutref
             foreach (DataRow dr in workordertmp.Rows)
             {
-                string newcutref = string.Empty;
                 DataRow[] findrow = cutreftb.Select(string.Format(@"MarkerName = '{0}' and FabricCombo = '{1}' and Cutno = {2} and estcutdate = '{3}' ", dr["MarkerName"], dr["FabricCombo"], dr["Cutno"], dr["estcutdate"]));
+                string newcutref;
 
                 // 若有找到同馬克同部位同Cutno同裁剪日就寫入同cutref
                 if (findrow.Length != 0)
@@ -2536,10 +2530,7 @@ Begin Transaction[Trans_Name] --Trans_Name
 		RAISERROR ('Duplicate Cutref. Please redo Auto Ref#',12, 1) 
 		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
 	end
-    Update Workorder set cutref = '{newcutref}' 
-    output	INSERTED.Ukey
-	into #tmpWorkorder
-    where ukey = '{dr["ukey"]}';");
+    Update Workorder set cutref = '{newcutref}' where ukey = '{dr["ukey"]}';");
             }
 
             updatecutref += @"
@@ -2548,21 +2539,16 @@ IF @chk <> 0 BEGIN -- 若是新增資料發生錯誤
     Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
 END
 ELSE BEGIN
-    select w.* 
-    from #tmpWorkorder tw
-    inner join WorkOrder w with (nolock) on tw.Ukey = w.Ukey
     Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
 END";
 
             DualResult upResult;
-            DataTable dtWorkorder = new DataTable();
-
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
             {
-                if (!(upResult = DBProxy.Current.Select(null, updatecutref, out dtWorkorder)))
+                if (!MyUtility.Check.Empty(updatecutref))
                 {
-                    if (upResult.ToString().Contains("Duplicate Cutref. Please redo Auto Ref#"))
+                    if (!(upResult = DBProxy.Current.Execute(null, updatecutref)))
                     {
                         if (upResult.ToString().Contains("Duplicate Cutref. Please redo Auto Ref#"))
                         {
@@ -2576,10 +2562,6 @@ END";
                     else
                     {
                         transactionscope.Complete();
-                        if (dtWorkorder.Rows.Count > 0)
-                        {
-                            Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkorder));
-                        }
                     }
                 }
             }
@@ -2611,9 +2593,9 @@ END";
                     decimal maxNo = 1 + MyUtility.Convert.GetDecimal(wk.Compute("Max(cutno)", $"FabricCombo ='{dr["FabricCombo"]}'"));
 
                     // 找合併組合相同資料, 且還沒產生Cutref
-                    DataTable sdt = wk.Select($"FabricCombo ='{dr["FabricCombo"]}' and FabricPanelCode ='{dr["FabricPanelCode"]}' and MarkerNo ='{dr["MarkerNo"]}' and Markername ='{dr["Markername"]}' and estcutdate ='{estcutdate}' and SizeCode ='{dr["SizeCode"]}' and isnull(CutRef,'') = ''").TryCopyToDataTable(wk);
+                    DataRow[] sdr = wk.Select($"FabricCombo ='{dr["FabricCombo"]}' and FabricPanelCode ='{dr["FabricPanelCode"]}' and MarkerNo ='{dr["MarkerNo"]}' and Markername ='{dr["Markername"]}' and estcutdate ='{estcutdate}' and SizeCode ='{dr["SizeCode"]}' and isnull(CutRef,'') = ''");
 
-                    decimal sumLayer = MyUtility.Convert.GetDecimal(sdt.Compute("sum(Layer)", string.Empty));
+                    decimal sumLayer = MyUtility.Convert.GetDecimal(sdr.CopyToDataTable().Compute("sum(Layer)", string.Empty));
 
                     // 最大裁剪數看其中一筆即可
                     if (sumLayer > MyUtility.Convert.GetDecimal(dr["CuttingLayer"]))
@@ -2622,17 +2604,17 @@ END";
                     }
                     else
                     {
-                        decimal hm = sdt.AsEnumerable().Max(m => MyUtility.Convert.GetDecimal(m["cutno"]));
+                        decimal hm = sdr.AsEnumerable().Max(m => MyUtility.Convert.GetDecimal(m["cutno"]));
                         if (hm != 0)
                         {
-                            foreach (DataRow item in sdt.AsEnumerable().Where(w => MyUtility.Check.Empty(w["cutno"])))
+                            foreach (var item in sdr.AsEnumerable().Where(w => MyUtility.Check.Empty(w["cutno"])))
                             {
                                 item["cutno"] = hm;
                             }
                         }
                         else
                         {
-                            foreach (DataRow item in sdt.Rows)
+                            foreach (var item in sdr)
                             {
                                 item["cutno"] = maxNo;
                             }
@@ -3376,7 +3358,7 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
                     Article = (string)dr["Article", DataRowVersion.Original],
                     OrderID = (string)dr["OrderID", DataRowVersion.Original],
                 });
-                delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and id='{4}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
+                delsql += string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and id='{4}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
             }
             #endregion
             #region 修改
@@ -3468,7 +3450,7 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
             #region sent data to GZ WebAPI
             string compareCol = "CutRef,EstCutDate,ID,OrderID,CutCellID";
 
-            var listChangedDetail = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+            var listChangedDetail = this.DetailDatas
                 .Where(s =>
                 {
                     return (
@@ -3503,16 +3485,13 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
                         SizeCode = (string)s["SizeCode", DataRowVersion.Original],
                         Article = (string)s["Article", DataRowVersion.Original],
                         OrderID = (string)s["OrderID", DataRowVersion.Original],
-                    }
-                    ));
-
+                    }));
             }
 
             deleteWorkOrder.AddRange(
                 ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                 .Where(s => s.RowState == DataRowState.Deleted)
-                .Select(s => (long)s["Ukey", DataRowVersion.Original])
-                );
+                .Select(s => (long)s["Ukey", DataRowVersion.Original]));
 
             Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder(deleteWorkOrder));
             Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));

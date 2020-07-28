@@ -29,9 +29,15 @@ namespace Sci.Production.Cutting
             this.Detailrow = detailrow;
             this.SizeratioTb = sizeratioTb;
             this.DistqtyTb = distqtyTb;
-            this.PatternPanel_Current = patternPanel.Select($@"Workorderukey = {detailrow["Ukey"]} and newkey = {detailrow["NewKey"]}")
+            this.PatternPanel_Current = patternPanel.AsEnumerable()
+                .Where(w => w.RowState != DataRowState.Deleted &&
+                    MyUtility.Convert.GetLong(w["Workorderukey"]) == MyUtility.Convert.GetLong(detailrow["Ukey"]) &&
+                    MyUtility.Convert.GetLong(w["newkey"]) == MyUtility.Convert.GetLong(detailrow["NewKey"]))
                 .TryCopyToDataTable(patternPanel);
-            this.PatternPanel_notCurrent = patternPanel.Select($@"not(Workorderukey = {detailrow["Ukey"]} and newkey = {detailrow["NewKey"]})")
+            this.PatternPanel_notCurrent = patternPanel.AsEnumerable()
+                .Where(w => w.RowState != DataRowState.Deleted &&
+                    !(MyUtility.Convert.GetLong(w["Workorderukey"]) == MyUtility.Convert.GetLong(detailrow["Ukey"]) &&
+                      MyUtility.Convert.GetLong(w["newkey"]) == MyUtility.Convert.GetLong(detailrow["NewKey"])))
                 .TryCopyToDataTable(patternPanel);
         }
 
@@ -46,8 +52,11 @@ namespace Sci.Production.Cutting
 
         private void Query()
         {
-            string sizes = this.SizeratioTb.Select($@"Workorderukey = '{this.Detailrow["ukey"]}' and newkey = {this.Detailrow["newkey"]}")
-                .AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).ToList().JoinToString("','");
+            string sizes = this.SizeratioTb.AsEnumerable()
+                .Where(w => w.RowState != DataRowState.Deleted &&
+                    MyUtility.Convert.GetLong(w["Workorderukey"]) == MyUtility.Convert.GetLong(this.Detailrow["Ukey"]) &&
+                    MyUtility.Convert.GetLong(w["newkey"]) == MyUtility.Convert.GetLong(this.Detailrow["NewKey"]))
+                .Select(s => MyUtility.Convert.GetString(s["SizeCode"])).ToList().JoinToString("','");
 
             string sqlcmd = $@"
 SELECT
@@ -205,8 +214,11 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
             {
                 // 找相同 OrderID, Article, SizeCode
                 var asList = this.DistqtyTb
-                    .Select($@"OrderID ='{dr["OrderID"]}' and Article = '{dr["Article"]}' and SizeCode = '{dr["SizeCode"]}'")
                     .AsEnumerable()
+                    .Where(w => w.RowState != DataRowState.Deleted &&
+                        MyUtility.Convert.GetString(w["OrderID"]) == MyUtility.Convert.GetString(dr["OrderID"]) &&
+                        MyUtility.Convert.GetString(w["Article"]) == MyUtility.Convert.GetString(dr["Article"]) &&
+                        MyUtility.Convert.GetString(w["SizeCode"]) == MyUtility.Convert.GetString(dr["SizeCode"]))
                     .Select(s => new
                     {
                         Workorderukey = MyUtility.Convert.GetLong(s["Workorderukey"]),
@@ -250,8 +262,11 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
 
             // 準備每個 SizeCode 能分配總數的清單
             var sList = processDT.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).ToList();
-            var sizeTtlQty = this.SizeratioTb.Select($"WorkOrderUkey = '{this.Detailrow["Ukey"]}' and newkey = '{this.Detailrow["NewKey"]}'")
+            var sizeTtlQty = this.SizeratioTb
                 .AsEnumerable()
+                .Where(w => w.RowState != DataRowState.Deleted &&
+                    MyUtility.Convert.GetLong(w["Workorderukey"]) == MyUtility.Convert.GetLong(this.Detailrow["Ukey"]) &&
+                    MyUtility.Convert.GetLong(w["newkey"]) == MyUtility.Convert.GetLong(this.Detailrow["NewKey"]))
                 .Select(s => new
                 {
                     SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
