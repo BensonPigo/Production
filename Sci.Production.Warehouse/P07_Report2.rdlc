@@ -474,33 +474,19 @@
         <TablixRowHierarchy>
           <TablixMembers>
             <TablixMember>
-              <Group Name="SEQ">
+              <Group Name="POID">
                 <GroupExpressions>
-                  <GroupExpression>=Fields!SEQ.Value</GroupExpression>
+                  <GroupExpression>=Fields!POID.Value</GroupExpression>
                 </GroupExpressions>
               </Group>
               <SortExpressions>
                 <SortExpression>
-                  <Value>=Fields!SEQ.Value</Value>
+                  <Value>=Fields!POID.Value</Value>
                 </SortExpression>
+                <SortExpression>
+                  <Value>=Fields!SEQ.Value</Value>
+                </SortExpression>                
               </SortExpressions>
-              <TablixMembers>
-                <TablixMember>
-                  <Group Name="POID">
-                    <GroupExpressions>
-                      <GroupExpression>=Fields!POID.Value</GroupExpression>
-                    </GroupExpressions>
-                  </Group>
-                  <SortExpressions>
-                    <SortExpression>
-                      <Value>=Fields!POID.Value</Value>
-                    </SortExpression>
-                  </SortExpressions>
-                  <TablixMembers>
-                    <TablixMember />
-                  </TablixMembers>
-                </TablixMember>
-              </TablixMembers>
             </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
