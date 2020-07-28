@@ -545,7 +545,13 @@ namespace Sci.Production.Cutting
                         mKeyword = markerItemSet.Version == "1" ? "實際裁割周長:" : "Real cut perimeter:";
                         if (mTmp.IndexOf(mKeyword) >= 0)
                         {
-                            markerItemSet.ActCuttingPerimeter = this.GetValue(mKeyword, mTmp);
+                            string actCuttingPerimeter = this.GetValue(mKeyword, mTmp);
+                            if (actCuttingPerimeter == "Not")
+                            {
+                                actCuttingPerimeter = string.Empty;
+                            }
+
+                            markerItemSet.ActCuttingPerimeter = actCuttingPerimeter;
                         }
                         else
                         {
