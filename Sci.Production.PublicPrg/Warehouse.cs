@@ -505,6 +505,39 @@ drop table #TmpSource
 ";
                     #endregion
                     break;
+                case 70:
+                    #region 更新Barcode
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column Barcode varchar(13)
+
+select distinct poid, seq1, seq2, stocktype
+, roll = RTRIM(LTRIM(isnull(roll, '')))
+, dyelot = isnull(dyelot, '')
+, Barcode
+into #tmpS1
+from #TmpSource
+
+merge dbo.FtyInventory as target
+using #tmpS1 as s
+on target.poid = s.poid 
+    and target.seq1 = s.seq1 
+    and target.seq2 = s.seq2 
+    and target.stocktype = s.stocktype 
+    and target.roll = s.roll 
+    and target.dyelot = s.dyelot
+when matched then
+    update
+    set Barcode = s.Barcode;
+
+drop table #tmpS1; 
+drop table #TmpSource;";
+                    #endregion
+                    break;
             }
             return sqlcmd;
         }
@@ -2943,6 +2976,123 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                 return true;
             }
 
+        }
+
+        public static List<string> GetBarcodeNo(string TableName, string keyWord, int batchNumber = 1 ,int DateType = 3, string checkColumn = "Barcode", String connectionName = null, int sequenceMode = 1, int sequenceLength = 0)
+        {
+            List<string> IDList = new List<string>();
+            if (MyUtility.Check.Empty(TableName))
+            {
+                throw new Exception("Parameter - tableName is not specified..");
+            }
+
+            DateTime today = DateTime.Today;
+            string TaiwanYear;
+            switch (DateType)
+            {
+                case 1:     // A yy xxxx
+                    keyWord = keyWord.ToUpper().Trim() + today.ToString("yy");
+                    break;
+                case 2:     // A yyMM xxxx
+                    keyWord = keyWord.ToUpper().Trim() + today.ToString("yyMM");
+                    break;
+                case 3:      // A yyMMdd xxxx
+                    keyWord = keyWord.ToUpper().Trim() + today.ToString("yyMMdd");
+                    break;
+                case 4:      // A yyyyMM xxxxx
+                    keyWord = keyWord.ToUpper().Trim() + today.ToString("yyyyMM");
+                    break;
+                case 5:     // 民國年 A yyyMM xxxx
+                    TaiwanYear = ((today.Year - 1911).ToString()).PadLeft(3, '0');
+                    keyWord = keyWord.ToUpper().Trim() + TaiwanYear + today.ToString("MM");
+                    break;
+                case 6:     // A xxxx
+                    keyWord = keyWord.ToUpper().Trim();
+                    break;
+                case 7:    // A yyyy xxxx
+                    keyWord = keyWord.ToUpper().Trim() + today.ToString("yyyy");
+                    break;
+                case 8:    // 民國年 A yyyMMdd xxxx
+                    TaiwanYear = ((today.Year - 1911).ToString()).PadLeft(3, '0');
+                    keyWord = keyWord.ToUpper().Trim() + TaiwanYear + today.ToString("MM") + today.ToString("dd");
+                    break;
+                default:
+                    return IDList;
+            }
+
+            //判斷schema欄位的結構長度
+            string returnID = "";
+            string sqlCmd = string.Format("SELECT TOP 1 {0} FROM {1} WHERE {2} LIKE '{3}%' ORDER BY {4} DESC", checkColumn, TableName, checkColumn, keyWord.Trim(), checkColumn);
+
+            DualResult result = null;
+            DataTable dtID = null;
+            int columnTypeLength = 0;
+            ITableSchema tableSchema = null;
+
+            if (result = DBProxy.Current.GetTableSchema(connectionName, TableName, out tableSchema))
+            {
+                foreach (IColumnSchema cs in tableSchema.Columns)
+                {
+                    if (cs.ColumnName.ToUpper() == checkColumn.ToUpper())
+                    {
+                        columnTypeLength = cs.MaxLength;
+                    }
+                }
+                if (columnTypeLength == 0)
+                {
+                    throw new Exception("Parameter - checkColumn is not found!");
+                }
+            }
+            else
+            {
+                throw new Exception(result.ToString());
+            }
+
+            if (result = DBProxy.Current.Select(connectionName, sqlCmd, out dtID))
+            {
+                if (dtID.Rows.Count > 0)
+                {
+                    string lastID = dtID.Rows[0][checkColumn].ToString();
+                    while (batchNumber > 0)
+                    {
+                        lastID = keyWord + GetNextValue(lastID.Substring(keyWord.Length), sequenceMode);
+                        IDList.Add(lastID);
+                        batchNumber = batchNumber - 1;
+                    }
+                }
+                else
+                {
+                    if (sequenceLength > 0)
+                    {
+                        if ((columnTypeLength - keyWord.Length) >= sequenceLength)
+                        {
+                            string nextValue = GetNextValue("0".PadLeft(sequenceLength, '0'), sequenceMode);
+                            while (batchNumber > 0)
+                            {
+                                IDList.Add(keyWord + nextValue);
+                                nextValue = GetNextValue(nextValue.PadLeft(sequenceLength, '0'), sequenceMode);
+                                batchNumber = batchNumber - 1;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string nextValue = GetNextValue("0".PadLeft(columnTypeLength - keyWord.Length, '0'), sequenceMode);
+                        while (batchNumber > 0)
+                        {
+                            IDList.Add(keyWord + nextValue);
+                            nextValue = GetNextValue(nextValue.PadLeft(columnTypeLength - keyWord.Length, '0'), sequenceMode);
+                            batchNumber = batchNumber - 1;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception(result.ToString());
+            }
+
+            return IDList;
         }
 
         private class NowDetail

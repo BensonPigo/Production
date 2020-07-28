@@ -1045,6 +1045,7 @@ where   v.FROM_U ='{0}'
             string upd_MD_2T = "";
             string upd_MD_8T = "";
             string upd_Fty_2T = "";
+            string upd_Fty_Barcode = "";
             StringBuilder sqlupd2 = new StringBuilder();
             String sqlcmd = "", sqlupd3 = "", ids = "", sqlcmd4 = "";
 
@@ -1218,6 +1219,35 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true, MtlAutoLock);
             #endregion 更新庫存數量  ftyinventory
 
+            #region 更新BarCode  Ftyinventory        
+            List<string> BarcodeList = new List<string>();
+            DataRow[] FabricCount = ((DataTable)detailgridbs.DataSource).Select("FabricType = 'F'");
+            BarcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", FabricCount.Length);
+            int cnt = 0;
+            foreach (DataRow drDis in DetailDatas)
+            {
+                if (string.Compare(drDis["FabricType"].ToString(), "F") == 0)
+                {
+                    drDis["Barcode"] = BarcodeList[cnt];
+                    cnt++;
+                }
+            }
+
+            var data_Fty_Barcode = (from m in DetailDatas.AsEnumerable()
+                                    select new
+                                    {
+                                        poid = m.Field<string>("poid"),
+                                        seq1 = m.Field<string>("seq1"),
+                                        seq2 = m.Field<string>("seq2"),
+                                        stocktype = m.Field<string>("stocktype"),
+                                        roll = m.Field<string>("roll"),
+                                        dyelot = m.Field<string>("dyelot"),
+                                        Barcode = m.Field<string>("Barcode"),
+                                    }).ToList();
+
+            upd_Fty_Barcode = Prgs.UpdateFtyInventory_IO(70, null, true);
+
+            #endregion
             #region 更新 Po_Supp_Detail StockUnit
             //ISP20190607 StockUnit的更新一律在資料交換的imp_po進行，這邊不用了
             //            string sql_UpdatePO_Supp_Detail = @";
@@ -1287,6 +1317,14 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain
                     DataTable resulttb;
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, "", upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+
+                    // 更新FtyInventory Barcode
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, "", upd_Fty_Barcode, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
@@ -1600,10 +1638,15 @@ SELECT [ID] = rd.id
 ,[Ukey] = rd.Ukey
 ,[IsInspection] = convert(bit, 0)
 ,Junk = case when r.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+,[Barcode] = f.Barcode
 FROM Production.dbo.Receiving_Detail rd
 inner join Production.dbo.Receiving r on rd.id = r.id
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
 	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
+left join Production.dbo.FtyInventory f on f.POID = rd.PoId
+	and f.Seq1=rd.Seq1 and f.Seq2=rd.Seq2 
+	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
+	and f.StockType = rd.StockType
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -1654,6 +1697,7 @@ select  a.id
         , a.ukey
         ,o.FactoryID
         ,o.OrderTypeID
+        ,Barcode = ''
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 left join orders o WITH (NOLOCK) on o.id = a.PoId
 LEFT JOIN PO_Supp_Detail p  WITH (NOLOCK) ON p.ID=a.PoId AND p.SEQ1=a.Seq1 AND p.SEQ2 = a.Seq2

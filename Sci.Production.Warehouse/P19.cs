@@ -408,6 +408,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
+                if (true) return;// 暫未開放
                 DataTable dtDetail = new DataTable();
                 string sqlGetData = string.Empty;
                 sqlGetData = $@"

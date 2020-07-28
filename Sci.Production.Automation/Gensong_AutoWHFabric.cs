@@ -61,6 +61,7 @@ namespace Sci.Production.Automation
                     Ukey = (long)dr["Ukey"],
                     IsInspection = (bool)dr["IsInspection"],
                     Junk = (bool)dr["Junk"],
+                    Barcode = dr["Barcode"].ToString(),
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
                 });
 
@@ -117,6 +118,7 @@ namespace Sci.Production.Automation
         /// <param name="strKey">PoID</param>
         public void SentWHCloseToGensongAutoWHFabric(DataTable dtMaster)
         {
+            if (true) return;// 暫未開放
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
             {
                 return;
@@ -146,6 +148,7 @@ namespace Sci.Production.Automation
         /// <param name="dtDetail">Detail DataSource</param>
         public void SentSubTransfer_DetailToGensongAutoWHFabric(DataTable dtMaster)
         {
+            if (true) return;// 暫未開放
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
@@ -224,6 +227,7 @@ and s.Type in ('A','B','D')
         /// <param name="strKey">ID</param>
         public void SentMtlLocationToGensongAutoWHFabric(DataTable dtMaster)
         {
+            if (true) return;// 暫未開放
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
@@ -287,6 +291,7 @@ and s.Type in ('A','B','D')
         /// <param name="dtDetail">Detail DataSource</param>
         public void SentCutplan_DetailToGensongAutoWHFabric(DataTable dtDetail)
         {
+            if (true) return;// 暫未開放
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
@@ -382,6 +387,7 @@ select distinct
         /// <param name="IsConfirmed">bool</param>
         public void SentBorrowBackToGensongAutoWHFabric(DataTable dtDetail,bool IsConfirmed)
         {
+            if (true) return;// 暫未開放
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
@@ -424,6 +430,7 @@ select distinct
         /// <param name="dtMaster">dtMaster</param>
         public void SentReturnReceiptToGensongAutoWHFabric(DataTable dtMaster)
         {
+            if (true) return;// 暫未開放
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
