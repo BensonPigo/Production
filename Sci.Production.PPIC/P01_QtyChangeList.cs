@@ -44,9 +44,11 @@ namespace Sci.Production.PPIC
             string cmd = @"
 SELECT OrderID, ID, rs.Name as Reason, iif(NeedProduction = 1, 'V', '') as NeedProduction, oa.ToSP, oa.FromSP
 FROM (
-    select OrderID, ID, ReasonID, NeedProduction, ToOrderID as ToSP, '' as FromSP from OrderChangeApplication where OrderID = @orderid 
+    select OrderID, ID, ReasonID, NeedProduction, ToOrderID as ToSP, '' as FromSP from OrderChangeApplication
+    where OrderID = @orderid and not (Status='Junk'or isnull(GMCheck,0)=1)
     UNION
-    select ToOrderID, ID, ReasonID, NeedProduction, '' as ToSP, OrderID as FromSP from OrderChangeApplication where ToOrderID = @orderid
+    select ToOrderID, ID, ReasonID, NeedProduction, '' as ToSP, OrderID as FromSP from OrderChangeApplication
+    where ToOrderID = @orderid and not (Status='Junk'or isnull(GMCheck,0)=1)
 ) oa
 OUTER APPLY (SELECT ID + '-' + Name as Name FROM Reason WHERE ReasonTypeID = 'OMQtychange' AND ID = oa.ReasonID) rs
 order by oa.ID";

@@ -1733,6 +1733,7 @@ update t set
 	,[BuyerRemark] = s.BuyerRemark
 	,[FactoryID] = isnull(s.FactoryID, '')
 	,[KeepPanels] = s.KeepPanels 
+	,GMCheck = s.GMCheck 
 from Production.dbo.OrderChangeApplication t
 inner join Trade_To_Pms.dbo.OrderChangeApplication s on s.ID = t.ID
 inner join Factory f on s.FactoryID = f.ID and f.IsProduceFty = 1
@@ -1742,7 +1743,7 @@ insert into Production.dbo.OrderChangeApplication ([ID], [ReasonID], [OrderID], 
 , [AddName], [AddDate], [ToOrderID], [NeedProduction], [OldQty], [RatioFty], [RatioSubcon], [RatioSCI], [RatioSupp], [RatioBuyer]
 , [ResponsibleFty], [ResponsibleSubcon], [ResponsibleSCI], [ResponsibleSupp], [ResponsibleBuyer], [FactoryICRDepartment], [FactoryICRNo], [FactoryICRRemark]
 , [SubconDBCNo], [SubconDBCRemark], [SubConName], [SCIICRDepartment], [SCIICRNo], [SCIICRRemark], [SuppDBCNo], [SuppDBCRemark], [BuyerDBCDepartment], [BuyerDBCNo]
-, [BuyerDBCRemark], [BuyerICRNo], [BuyerICRRemark], [MRComment], [Remark], [BuyerRemark], [FactoryID], [TPEEditName], [TPEEditDate],[KeepPanels])
+, [BuyerDBCRemark], [BuyerICRNo], [BuyerICRRemark], [MRComment], [Remark], [BuyerRemark], [FactoryID], [TPEEditName], [TPEEditDate],[KeepPanels],[GMCheck])
 select s.ID
 	,s.ReasonID
 	,s.OrderID
@@ -1795,6 +1796,7 @@ select s.ID
 	,s.EditName
 	,s.EditDate
 	,s.KeepPanels
+	,s.GMCheck
 from Trade_To_Pms.dbo.OrderChangeApplication  s
 inner join Production.dbo.Factory f on s.FactoryID =f.ID and f.IsProduceFty = 1
 where not exists(select 1 from Production.dbo.OrderChangeApplication t where s.ID = t.ID)

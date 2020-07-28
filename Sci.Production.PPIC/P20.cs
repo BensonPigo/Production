@@ -30,6 +30,7 @@ namespace Sci.Production.PPIC
             this.gridQtyBreakDownbyArticleSizeDetail.AutoGenerateColumns = true;
             this.GridQtyOrder_Apply.AutoGenerateColumns = true;
             this.gridQtyBrkApplybyArticleSizeDetail.AutoGenerateColumns = true;
+            this.DefaultFilter = "not (Status='Junk'or isnull(GMCheck,0)=1)";
         }
 
         /// <inheritdoc/>
