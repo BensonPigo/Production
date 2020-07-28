@@ -362,6 +362,7 @@ OUTER APPLY(
 	    SELECT distinct concat(',', pd.id)
 		FROM PackingList_Detail pd
 		WHERE pd.OrderID=t.id
+        and pd.OrdershipmodeSeq = t.Seq
         for xml path('')
 	),1,1,'')
 )Packings
@@ -371,6 +372,7 @@ OUTER APPLY(
 		FROM PackingList_Detail pd
 		inner join PackingList p ON p.ID=pd.ID
 		WHERE pd.OrderID=t.id
+        and pd.OrdershipmodeSeq = t.Seq
         for xml path('')
 	),1,1,'')
 )InvNo
