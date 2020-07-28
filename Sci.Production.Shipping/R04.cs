@@ -615,8 +615,8 @@ select oq.BuyerDelivery
 		,oq.Qty
 		,ShipQty.ShipQty
 		,OrderTtlQty = o.Qty
-		,NULL
-		,NULL
+		,ShipTtlQty=isnull(plds.ShipQty,0)
+        ,plds.CTNQty
 		,NULL
 		,NULL
 		,NULL
@@ -670,6 +670,12 @@ left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.Ord
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 left join Brand b WITH (NOLOCK) on o.BrandID= b.id
 outer apply(select ShipQty = isnull(sum(ShipQty), 0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) ShipQty
+outer apply(
+	select CTNQty=sum(pd.CTNQty),GW=sum(pd.GW),ShipQty=sum(pd.ShipQty)
+	from packinglist_detail pd
+	inner join PackingList p on p.id = pd.id
+	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+)plds
 
 where 1=1 and isnull(ot.IsGMTMaster,0) != 1
 
