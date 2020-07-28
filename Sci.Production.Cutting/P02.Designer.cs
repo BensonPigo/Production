@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelCuttingSP = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
@@ -113,8 +113,11 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.numLeadTime = new Sci.Win.UI.NumericBox();
-            this.dispSubprocess = new Sci.Win.UI.DisplayBox();
             this.BtnImportMarker = new Sci.Win.UI.Button();
+            this.dispSubprocess = new Sci.Win.UI.DisplayBox();
+            this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -147,11 +150,11 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.BtnImportMarker);
             this.masterpanel.Controls.Add(this.dispSubprocess);
-            this.masterpanel.Controls.Add(this.numLeadTime);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.numericBox1);
+            this.masterpanel.Controls.Add(this.label5);
+            this.masterpanel.Controls.Add(this.label6);
+            this.masterpanel.Controls.Add(this.BtnImportMarker);
             this.masterpanel.Controls.Add(this.btnStdQtyWIP);
             this.masterpanel.Controls.Add(this.numBalanceLayer);
             this.masterpanel.Controls.Add(this.numTotalLayer);
@@ -169,8 +172,14 @@
             this.masterpanel.Controls.Add(this.labelLine);
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelCuttingSP);
+            this.masterpanel.Controls.Add(this.numLeadTime);
+            this.masterpanel.Controls.Add(this.label4);
+            this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Dock = System.Windows.Forms.DockStyle.None;
-            this.masterpanel.Size = new System.Drawing.Size(631, 93);
+            this.masterpanel.Size = new System.Drawing.Size(830, 93);
+            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numLeadTime, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCuttingSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLine, 0);
@@ -189,8 +198,11 @@
             this.masterpanel.Controls.SetChildIndex(this.numBalanceLayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnStdQtyWIP, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dispSubprocess, 0);
             this.masterpanel.Controls.SetChildIndex(this.BtnImportMarker, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dispSubprocess, 0);
             // 
             // detailpanel
             // 
@@ -198,7 +210,7 @@
             this.detailpanel.Controls.Add(this.masterpanel);
             this.detailpanel.Controls.Add(this.detailbtm);
             this.detailpanel.Location = new System.Drawing.Point(0, 0);
-            this.detailpanel.Size = new System.Drawing.Size(1004, 713);
+            this.detailpanel.Size = new System.Drawing.Size(1203, 713);
             this.detailpanel.Controls.SetChildIndex(this.detailbtm, 0);
             this.detailpanel.Controls.SetChildIndex(this.masterpanel, 0);
             this.detailpanel.Controls.SetChildIndex(this.splitContainer1, 0);
@@ -207,12 +219,12 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(727, 58);
+            this.gridicon.Location = new System.Drawing.Point(655, 61);
             // 
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(7057, 561);
+            this.refresh.Location = new System.Drawing.Point(7212, 561);
             // 
             // detailgridcont
             // 
@@ -221,15 +233,15 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(627, 585);
+            this.detailgridcont.Size = new System.Drawing.Size(830, 585);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1004, 713);
+            this.detail.Size = new System.Drawing.Size(1203, 713);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1004, 713);
+            this.detailcont.Size = new System.Drawing.Size(1203, 713);
             // 
             // detailbtm
             // 
@@ -244,7 +256,7 @@
             this.detailbtm.Controls.Add(this.btnQuantityBreakdown);
             this.detailbtm.Controls.Add(this.label2);
             this.detailbtm.Location = new System.Drawing.Point(0, 678);
-            this.detailbtm.Size = new System.Drawing.Size(1004, 35);
+            this.detailbtm.Size = new System.Drawing.Size(1203, 35);
             this.detailbtm.Controls.SetChildIndex(this.label2, 0);
             this.detailbtm.Controls.SetChildIndex(this.btnQuantityBreakdown, 0);
             this.detailbtm.Controls.SetChildIndex(this.textbox_LastCutRef, 0);
@@ -263,11 +275,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1206, 713);
+            this.browse.Size = new System.Drawing.Size(1004, 713);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1012, 742);
+            this.tabs.Size = new System.Drawing.Size(1211, 742);
             this.tabs.SelectedIndexChanged += new System.EventHandler(this.Tabs_SelectedIndexChanged);
             // 
             // createby
@@ -476,7 +488,7 @@
             // btnQuantityBreakdown
             // 
             this.btnQuantityBreakdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuantityBreakdown.Location = new System.Drawing.Point(812, 4);
+            this.btnQuantityBreakdown.Location = new System.Drawing.Point(1011, 4);
             this.btnQuantityBreakdown.Name = "btnQuantityBreakdown";
             this.btnQuantityBreakdown.Size = new System.Drawing.Size(109, 30);
             this.btnQuantityBreakdown.TabIndex = 23;
@@ -487,7 +499,7 @@
             // btnPackingMethod
             // 
             this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPackingMethod.Location = new System.Drawing.Point(661, 4);
+            this.btnPackingMethod.Location = new System.Drawing.Point(860, 4);
             this.btnPackingMethod.Name = "btnPackingMethod";
             this.btnPackingMethod.Size = new System.Drawing.Size(145, 30);
             this.btnPackingMethod.TabIndex = 24;
@@ -696,14 +708,14 @@
             this.gridSizeRatio.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridSizeRatio.Location = new System.Drawing.Point(0, 13);
             this.gridSizeRatio.Name = "gridSizeRatio";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSizeRatio.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSizeRatio.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeRatio.RowTemplate.Height = 24;
@@ -779,14 +791,14 @@
             this.gridDistributetoSPNo.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDistributetoSPNo.Location = new System.Drawing.Point(0, 18);
             this.gridDistributetoSPNo.Name = "gridDistributetoSPNo";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDistributetoSPNo.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDistributetoSPNo.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDistributetoSPNo.RowTemplate.Height = 24;
@@ -837,14 +849,14 @@
             this.gridQtyBreakdown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakdown.Location = new System.Drawing.Point(0, 14);
             this.gridQtyBreakdown.Name = "gridQtyBreakdown";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakdown.RowTemplate.Height = 24;
@@ -1020,7 +1032,7 @@
             // btn_Refresh
             // 
             this.btn_Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Refresh.Location = new System.Drawing.Point(575, 4);
+            this.btn_Refresh.Location = new System.Drawing.Point(774, 4);
             this.btn_Refresh.Name = "btn_Refresh";
             this.btn_Refresh.Size = new System.Drawing.Size(80, 30);
             this.btn_Refresh.TabIndex = 49;
@@ -1032,7 +1044,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.Location = new System.Drawing.Point(631, 0);
+            this.splitContainer1.Location = new System.Drawing.Point(830, 0);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -1181,7 +1193,7 @@
             // btnDist
             // 
             this.btnDist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDist.Location = new System.Drawing.Point(927, 4);
+            this.btnDist.Location = new System.Drawing.Point(1126, 4);
             this.btnDist.Name = "btnDist";
             this.btnDist.Size = new System.Drawing.Size(74, 30);
             this.btnDist.TabIndex = 50;
@@ -1189,19 +1201,98 @@
             this.btnDist.UseVisualStyleBackColor = true;
             this.btnDist.Click += new System.EventHandler(this.BtnDist_Click);
             // 
-            // btnImportMarker
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(0, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(0, 0);
+            this.label3.TabIndex = 63;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(0, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(0, 0);
+            this.label4.TabIndex = 62;
+            // 
+            // numLeadTime
+            // 
+            this.numLeadTime.BackColor = System.Drawing.Color.White;
+            this.numLeadTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numLeadTime.Location = new System.Drawing.Point(0, 0);
+            this.numLeadTime.Name = "numLeadTime";
+            this.numLeadTime.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numLeadTime.Size = new System.Drawing.Size(100, 23);
+            this.numLeadTime.TabIndex = 61;
+            this.numLeadTime.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // BtnImportMarker
             // 
             this.BtnImportMarker.Location = new System.Drawing.Point(530, 61);
-            this.BtnImportMarker.Name = "btnImportMarker";
+            this.BtnImportMarker.Name = "BtnImportMarker";
             this.BtnImportMarker.Size = new System.Drawing.Size(119, 30);
             this.BtnImportMarker.TabIndex = 59;
             this.BtnImportMarker.Text = "Import Marker";
             this.BtnImportMarker.UseVisualStyleBackColor = true;
             this.BtnImportMarker.Click += new System.EventHandler(this.BtnImportMarker_Click);
             // 
+            // dispSubprocess
+            // 
+            this.dispSubprocess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.dispSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispSubprocess.Location = new System.Drawing.Point(710, 31);
+            this.dispSubprocess.Name = "dispSubprocess";
+            this.dispSubprocess.Size = new System.Drawing.Size(120, 23);
+            this.dispSubprocess.TabIndex = 67;
+            // 
+            // numericBox1
+            // 
+            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox1.IsSupportEditMode = false;
+            this.numericBox1.Location = new System.Drawing.Point(710, 5);
+            this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox1.ReadOnly = true;
+            this.numericBox1.Size = new System.Drawing.Size(61, 23);
+            this.numericBox1.TabIndex = 66;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(628, 31);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(79, 23);
+            this.label5.TabIndex = 65;
+            this.label5.Text = "Subprocess";
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(628, 5);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(79, 23);
+            this.label6.TabIndex = 64;
+            this.label6.Text = "Lead Time";
+            // 
             // P02
             // 
-            this.ClientSize = new System.Drawing.Size(1012, 775);
+            this.ClientSize = new System.Drawing.Size(1211, 775);
             this.Controls.Add(this.btnCutplanChangeHistory);
             this.DefaultControlForEdit = "numMarkerLengthY";
             this.DefaultDetailOrder = "Markname";
@@ -1339,10 +1430,13 @@
         private Win.UI.Button btnCutplanChangeHistory;
         private Win.UI.Button btnStdQtyWIP;
         private Win.UI.Button btnDist;
-        private Win.UI.DisplayBox dispSubprocess;
         private Win.UI.NumericBox numLeadTime;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.Button BtnImportMarker;
+        private Win.UI.DisplayBox dispSubprocess;
+        private Win.UI.NumericBox numericBox1;
+        private Win.UI.Label label5;
+        private Win.UI.Label label6;
     }
 }

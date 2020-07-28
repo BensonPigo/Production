@@ -147,7 +147,7 @@ namespace Sci.Production.Cutting
             var type = this.FileType;
             string filter;
 
-            filter = $"DAT Files({this.lastVerData["PatternNo"]}*.WRI)|*.WRI|All files (*.*)|*.*";
+            filter = "txt files (*.txt)|*.txt";
 
             string[] fileNames = null;
             SciFileDialog.ShowDialog(
@@ -418,12 +418,11 @@ namespace Sci.Production.Cutting
                 return false;
             }
 
-            if (fileName.IndexOf(this.MarkerNo) < 0)
-            {
-                MyUtility.Msg.InfoBox("File doesn't belong to this Marker!!");
-                return false;
-            }
-
+            // if (fileName.IndexOf(this.MarkerNo) < 0)
+            // {
+            //    MyUtility.Msg.InfoBox("File doesn't belong to this Marker!!");
+            //    return false;
+            // }
             bool chkfileDo = true;
 
             var allError = new List<string>();
@@ -588,7 +587,8 @@ namespace Sci.Production.Cutting
                         mKeyword = markerItemSet.Version == "1" ? "數量:" : "Repet.:";
                         if (mTmp.IndexOf(mKeyword) >= 0)
                         {
-                            markerItemSet.Qty = (Convert.ToInt32(markerItemSet.Qty) + Convert.ToInt32(this.GetValue(mKeyword, mTmp))).ToString();
+                            int getQty = MyUtility.Convert.GetInt(this.GetValue(mKeyword, mTmp));
+                            markerItemSet.Qty = (Convert.ToInt32(markerItemSet.Qty) + getQty).ToString();
                         }
 
                         if (markerItemSet.CheckItemComplete() == true)

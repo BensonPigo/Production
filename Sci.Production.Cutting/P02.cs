@@ -4,6 +4,7 @@ using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Class;
 using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
@@ -502,6 +503,13 @@ where WorkOrderUkey={0}", masterID);
             this.col_shift.Width = 66;
             this.col_wketa.Width = 77;
             this.btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+
+            #region 取得 LeadTime 和 Subprocess
+            var orders = this.distqtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["OrderID"])).Distinct().ToList();
+            var leadTimeList = Prgs.GetLeadTimeList(orders, out string annotationStr);
+            this.dispSubprocess.Text = annotationStr;
+            this.numLeadTime.Value = leadTimeList.Count > 0 ? leadTimeList[0].LeadTimeDay : 0;
+            #endregion
 
             #region 檢查MarkerNo ,MarkerVersion ,MarkerDownloadID是否與Order_Eachcons不同
             if (this.DetailDatas.Where(s => !s["MarkerNo"].Equals(s["EachconsMarkerNo"]) ||
