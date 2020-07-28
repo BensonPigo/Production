@@ -13,6 +13,7 @@
     [ToPOID] VARCHAR(13) NOT NULL CONSTRAINT [DF_TransferOut_Detail_ToPOID] DEFAULT ('') NULL,
     [ToSeq1] VARCHAR(3) NOT NULL CONSTRAINT [DF_TransferOut_Detail_ToSeq1] DEFAULT ('') NULL,
     [ToSeq12] VARCHAR(2) NOT NULL CONSTRAINT [DF_TransferOut_Detail_ToSeq2] DEFAULT ('') NULL,
+    [CompleteTime] DATETIME NULL, 
     CONSTRAINT [PK_TransferOut_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

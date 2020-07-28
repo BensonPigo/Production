@@ -12,6 +12,10 @@ using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 using Microsoft.Reporting.WinForms;
+using System.Data.SqlClient;
+using Sci.Win;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
@@ -440,6 +444,54 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             _transactionscope.Dispose();
             _transactionscope = null;
+
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                if (true) return;// 暫未開放
+                DataTable dtDetail = new DataTable();
+                string sqlGetData = string.Empty;
+                sqlGetData = $@"
+select distinct 
+[Id] = td.Id
+,[Type] = '' 
+,[CutPlanID] = ''
+,[EstCutdate] = null
+,[SpreadingNoID] = ''
+,[PoId] = td.POID
+,[Seq1] = td.Seq1
+,[Seq2] = td.Seq2
+,[Roll] = td.Roll
+,[Dyelot] = td.Dyelot
+,[Barcode] = fty.Barcode
+,[Qty] = td.Qty
+,[Ukey] = td.Ukey
+,CmdTime = GetDate()
+from Production.dbo.TransferOut_Detail td
+inner join Production.dbo.TransferOut t on td.Id=t.Id
+outer apply(
+	select Barcode
+	from Production.dbo.FtyInventory
+	where POID = td.POID and Seq1=td.Seq1
+	and Seq2=td.Seq2 and Roll=td.Roll and Dyelot=td.Dyelot
+)fty
+where t.Status='Confirmed'
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = td.Poid and seq1=td.seq1 and seq2=td.seq2 
+	and FabricType='F'
+)
+and t.id = '{CurrentMaintain["ID"]}'
+";
+
+                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
+                if (!drResult)
+                {
+                    ShowErr(drResult);
+                }
+                Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
 
         protected override void ClickUnconfirm()

@@ -15,6 +15,8 @@ using System.Reflection;
 using Microsoft.Reporting.WinForms;
 using Sci.Win;
 using System.Data.SqlClient;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
@@ -712,6 +714,7 @@ else
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
+                    SentToGensong_AutoWHFabric(true);
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -1055,6 +1058,7 @@ else
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
+                    SentToGensong_AutoWHFabric(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -1069,7 +1073,18 @@ else
             _transactionscope = null;
         }
 
-        // 寫明細撈出的sql command
+        private void SentToGensong_AutoWHFabric(bool IsConfirmed)
+        {
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                DataTable dtDetail = (DataTable)detailgridbs.DataSource;
+                Task.Run(() => new Gensong_AutoWHFabric().SentBorrowBackToGensongAutoWHFabric(dtDetail, IsConfirmed))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+        }
+
+        //寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();

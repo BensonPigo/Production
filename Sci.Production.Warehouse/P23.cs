@@ -14,6 +14,9 @@ using System.Reflection;
 using Microsoft.Reporting.WinForms;
 using System.Data.SqlClient;
 using Sci.Win;
+using static Sci.Production.PublicPrg.Prgs;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
@@ -282,6 +285,7 @@ WHERE   StockType='{0}'
             }
             else
             {
+                SentToGensong_AutoWHFabric();
                 MyUtility.Msg.InfoBox("Confirmed successful");
             }
         }
@@ -683,6 +687,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
+                    SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -697,7 +702,19 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             _transactionscope = null;
         }
 
-        // 寫明細撈出的sql command
+        private void SentToGensong_AutoWHFabric()
+        {
+            // AutoWHFabric WebAPI for Gensong       
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                DataTable dtMain = CurrentMaintain.Table.Clone();
+                dtMain.ImportRow(CurrentMaintain);
+                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+        }
+
+        //寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
