@@ -10,14 +10,18 @@
 
         public string Color { get; set; }
 
-        public string DESC { get; set; }
+        public string BrandID { get; set; }
 
         public string Supp { get; set; }
 
         public string Invo { get; set; }
 
         public string ETA { get; set; }
+
         public string Refno { get; set; }
+
         public string Packages { get; set; }
+
+        public string Seq { get; set; }
     }
 }
