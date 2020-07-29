@@ -48,6 +48,7 @@ namespace Sci.Production.Cutting
             this.numDistQty.Value = MyUtility.Convert.GetInt(this.Detailrow["layer"]) * MyUtility.Convert.GetInt(this.SizeratioTb.Compute("Sum(Qty)", $@"Workorderukey = '{this.Detailrow["ukey"]}' and newkey = {this.Detailrow["newkey"]}"));
             this.GridSetup();
             this.Query();
+            this.GridFilter();
         }
 
         private void Query()
@@ -74,10 +75,12 @@ SELECT
     Qty = 0,
     WorkOrderUkey = cast({this.Detailrow["Ukey"]} as bigint),
     NewKey = cast({this.Detailrow["NewKey"]} as bigint),
+	oc.ColorID,
     ID = '{this.Detailrow["ID"]}'
 FROM order_qty oq 
 INNER JOIN orders o ON o.id = oq.id 
-WHERE o.poid = '{this.Detailrow["ID"]}' and oq.SizeCode in ('{sizes}')
+INNER join Order_ColorCombo oc on oc.Id = o.poid and oc.Article = oq.Article and oc.FabricType = 'F'
+WHERE o.poid = '{this.Detailrow["ID"]}' and oq.SizeCode in ('{sizes}') and oc.ColorID = '{this.Detailrow["ColorID"]}'
 ORDER BY OQ.sizecode,oq.id,OQ.article 
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.SourceDt);
@@ -363,6 +366,19 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
                 this.grid1.ValidateControl();
                 this.ReWriteSeq();
                 this.CalTtlBal();
+            }
+        }
+
+        private void Chknotyetallocation_CheckedChanged(object sender, EventArgs e)
+        {
+            this.GridFilter();
+        }
+
+        private void GridFilter()
+        {
+            if (this.listControlBindingSource1 != null)
+            {
+                this.listControlBindingSource1.Filter = this.Chknotyetallocation.Checked ? "OrderQty - AccuDistQty > 0" : string.Empty;
             }
         }
     }

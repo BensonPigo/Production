@@ -33,11 +33,12 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.BtnDist = new Sci.Win.UI.Button();
             this.BtnClose = new Sci.Win.UI.Button();
             this.numDistQty = new Sci.Win.UI.NumericBox();
             this.numBalQty = new Sci.Win.UI.NumericBox();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.Chknotyetallocation = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -158,11 +159,26 @@
             0,
             0});
             // 
+            // Chknotyetallocation
+            // 
+            this.Chknotyetallocation.AutoSize = true;
+            this.Chknotyetallocation.Checked = true;
+            this.Chknotyetallocation.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Chknotyetallocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Chknotyetallocation.Location = new System.Drawing.Point(386, 9);
+            this.Chknotyetallocation.Name = "Chknotyetallocation";
+            this.Chknotyetallocation.Size = new System.Drawing.Size(233, 21);
+            this.Chknotyetallocation.TabIndex = 6;
+            this.Chknotyetallocation.Text = "Only show not yet allocation SP#";
+            this.Chknotyetallocation.UseVisualStyleBackColor = true;
+            this.Chknotyetallocation.CheckedChanged += new System.EventHandler(this.Chknotyetallocation_CheckedChanged);
+            // 
             // P02_AutoDistToSP
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 446);
+            this.Controls.Add(this.Chknotyetallocation);
             this.Controls.Add(this.numBalQty);
             this.Controls.Add(this.numDistQty);
             this.Controls.Add(this.BtnClose);
@@ -180,6 +196,7 @@
             this.Controls.SetChildIndex(this.BtnClose, 0);
             this.Controls.SetChildIndex(this.numDistQty, 0);
             this.Controls.SetChildIndex(this.numBalQty, 0);
+            this.Controls.SetChildIndex(this.Chknotyetallocation, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -197,5 +214,6 @@
         private Win.UI.NumericBox numDistQty;
         private Win.UI.NumericBox numBalQty;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.CheckBox Chknotyetallocation;
     }
 }
