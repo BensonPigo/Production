@@ -1,4 +1,5 @@
 ﻿
+
 CREATE PROCEDURE [dbo].[GetProductionOutputSummary]
 
 	@Year varchar(10) = '',
@@ -157,8 +158,12 @@ select
     [OutputDate] = FORMAT(s.OutputDate,'yyyyMM'),
     [OrderCPU] = o.Qty * gcRate.CpuRate * o.CPU,
     [OrderShortageCPU] = iif(o.GMTComplete = 'S' ,(o.Qty - GetPulloutData.Qty)  * gcRate.CpuRate * o.CPU ,0),
-    [SewingOutput] =(isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) / 100) + (isnull(fromTransfer.Qty,0) - isnull(ToTransfer.Qty,0))/100,
-    [SewingOutputCPU] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) * gcRate.CpuRate * o.CPU / 100 + ( ((isnull(fromTransfer.Qty,0) - isnull(ToTransfer.Qty,0)) )* gcRate.CpuRate * o.CPU/100),
+	[SewingOutput] = (isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) / 100) + (isnull(fromTransfer.Qty,0)  
+		- iif(obq.OrderIDFrom != '',	isnull(ToTransfer.Qty,0),0))
+		/100,
+    [SewingOutputCPU] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) * gcRate.CpuRate * o.CPU / 100 + ((isnull(fromTransfer.Qty,0) 
+		- iif(obq.OrderIDFrom != '', isnull(ToTransfer.Qty,0),0)) 
+		* gcRate.CpuRate * o.CPU/100),
     o.Junk,
     o.Qty,
     o.Category,
@@ -180,6 +185,11 @@ left join SewingOutput_Detail_Detail sdd with (nolock) on o.ID = sdd.OrderId
 left join SewingOutput s with (nolock) on sdd.ID = s.ID
 left join Order_Location ol with (nolock) on ol.OrderId = sdd.OrderId and ol.Location = sdd.ComboType
 left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = sdd.ComboType
+--left join (  Order_BuyBack_Qty obq with (nolock) on obq.OrderIDFrom = o.ID
+outer apply(
+	select distinct OrderIDFrom from Order_BuyBack_Qty	
+	where OrderIDFrom = o.id
+)obq
 outer apply (select [CpuRate] = case when o.IsForecast = 1 then (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O'))
                                      when o.LocalOrder = 1 then 1
                                      else (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O')) end
@@ -196,10 +206,6 @@ outer apply(
 	where a.Status= 'confirmed'
 	and b.FromOrderID = o.ID 
 	and o.Junk=1 and o.NeedProduction=1
-	and exists(
-		select 1 from Order_BuyBack_Qty
-		where OrderIDFrom = b.FromOrderID
-	)
 ) fromTransfer
 outer apply(
 	select Qty = sum(b.TransferQty * isnull(ol.Rate, sl.Rate)) 
@@ -210,10 +216,7 @@ outer apply(
 	where a.Status= 'confirmed'
 	and b.ToOrderID = o.ID
 	and o.Junk=1 and o.NeedProduction=1
-	and exists(
-		select 1 from Order_BuyBack_Qty
-		where OrderIDFrom = b.ToOrderID
-	)
+	and b.ToOrderID = obq.OrderIDFrom
 ) ToTransfer
 
 group by o.ID,
@@ -238,8 +241,8 @@ o.GMTComplete,
 f.FtyZone,
 o.ProgramID,
 tbs.TransFtyZone,
-fromTransfer.Qty,ToTransfer.Qty
-
+fromTransfer.Qty,ToTransfer.Qty,
+obq.OrderIDFrom
 
 select  ID,
         FactoryID,
