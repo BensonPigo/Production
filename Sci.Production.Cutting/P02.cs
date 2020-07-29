@@ -3724,6 +3724,14 @@ order by p.EditDate desc
                 this.PatternPanelTb.Rows.Add(drNEW);
             });
             #endregion
+
+            int icount = this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).Count();
+            for (int i = 0; i <= icount; i++)
+            {
+                this.detailgrid.CurrentCell = this.detailgrid.Rows[i].Cells["Layer"]; // 移動到指定cell 觸發 Con 計算
+            }
+
+            this.detailgrid.SelectRowTo(0);
         }
 
         private void Distribute_grid_DataError(object sender, DataGridViewDataErrorEventArgs e)

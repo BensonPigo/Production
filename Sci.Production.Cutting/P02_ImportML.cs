@@ -651,6 +651,7 @@ namespace Sci.Production.Cutting
                     rowML["StraightLength"] = item.Straight;
                     rowML["CurvedLength"] = item.Curved;
                     rowML["ActCuttingPerimeter"] = string.IsNullOrEmpty(item.ActCuttingPerimeter) ? item.Perimeter : item.ActCuttingPerimeter;
+
                     var isItemK = item.CurrentMarkerName.ToUpper().StartsWith("K");
                     if (isItemK)
                     {
@@ -717,6 +718,24 @@ Where bof.StyleUkey = @StyleUkey";
 
                         #endregion
                     }
+
+                    #region P02 的 TxtFabricPanelCode_Validating
+                    string sqlcmd2 = $@"
+select ob.SCIRefno,f.Description ,f.WeaveTypeID,ob.Refno
+from Order_BoF ob 
+left join Fabric f on ob.SCIRefno = f.SCIRefno
+where exists (select id from Order_FabricCode ofa where ofa.id = '{this.WorkOrderID}' and ofa.FabricPanelCode = '{rowML["FabricPanelCode"]}'
+and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)
+";
+                    if (MyUtility.Check.Seek(sqlcmd2, out DataRow dre))
+                    {
+                        rowML["Refno"] = dre["Refno"].ToString();
+                        rowML["SCIRefno"] = dre["SCIRefno"].ToString();
+                        rowML["MtlTypeID_SCIRefno"] = dre["WeaveTypeID"].ToString() + " / " + dre["SCIRefno"].ToString();
+                        rowML["Description"] = dre["Description"].ToString();
+                    }
+
+                    #endregion
 
                     if (rowML != null)
                     {
