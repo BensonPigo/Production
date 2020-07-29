@@ -1,18 +1,26 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Reporting.WinForms;
 using Sci.Data;
+using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P45 : Win.Tems.Input6
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P45"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P45(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -25,7 +33,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
-        // 新增時預設資料
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -36,7 +44,7 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
 
-        // edit前檢查
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -48,7 +56,7 @@ namespace Sci.Production.Warehouse
             return base.ClickEditBefore();
         }
 
-        // save前檢查 & 取id
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             //     檢查明細至少存在一筆資料。
@@ -68,7 +76,10 @@ namespace Sci.Production.Warehouse
                     warningmsg.Append(string.Format(
                         @"SP#: {0} SEQ#: {1} Roll#: {2} Dyelot: {3}
 Original Qty and Current Qty can’t be equal!!",
-                        row["poid"].ToString().Trim(), row["seq"].ToString().Trim(), row["Roll"].ToString().Trim(), row["Dyelot"].ToString().Trim())
+                        row["poid"].ToString().Trim(),
+                        row["seq"].ToString().Trim(),
+                        row["Roll"].ToString().Trim(),
+                        row["Dyelot"].ToString().Trim())
                         + Environment.NewLine);
                 }
 
@@ -78,7 +89,10 @@ Original Qty and Current Qty can’t be equal!!",
                     warningmsg.Append(string.Format(
                         @"SP#: {0} SEQ#: {1} Roll#: {2} Dyelot: {3}
 Reason can’t be empty!!",
-                        row["poid"].ToString().Trim(), row["seq"].ToString().Trim(), row["Roll"].ToString().Trim(), row["Dyelot"].ToString().Trim())
+                        row["poid"].ToString().Trim(),
+                        row["seq"].ToString().Trim(),
+                        row["Roll"].ToString().Trim(),
+                        row["Dyelot"].ToString().Trim())
                        + Environment.NewLine);
                 }
             }
@@ -106,7 +120,7 @@ Reason can’t be empty!!",
             return base.ClickSaveBefore();
         }
 
-        // 刪除前檢查
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -118,7 +132,7 @@ Reason can’t be empty!!",
             return base.ClickDeleteBefore();
         }
 
-        // Confirm
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -127,9 +141,8 @@ Reason can’t be empty!!",
                 return;
             }
 
-            DataTable[] dts;
             string id = this.CurrentMaintain["ID"].ToString();
-            DualResult res = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", new List<SqlParameter> { new SqlParameter("@ID", id) }, out dts);
+            DualResult res = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", new List<SqlParameter> { new SqlParameter("@ID", id) }, out DataTable[] dts);
             if (!res)
             {
                 MyUtility.Msg.ErrorBox(res.ToString(), "error");
@@ -151,7 +164,13 @@ Reason can’t be empty!!",
                         warningmsg.Append(string.Format(
                             @"SP#: {0} SEQ#: {1} Roll#: {2} Dyelot: {3}'s balance: {4} is less than Adjust qty: {5}
 Balacne Qty is not enough!!
-", drs["POID"].ToString(), drs["seq"].ToString(), drs["Roll"].ToString(), drs["Dyelot"].ToString(), drs["balance"].ToString(), drs["Adjustqty"].ToString()));
+",
+                            drs["POID"].ToString(),
+                            drs["seq"].ToString(),
+                            drs["Roll"].ToString(),
+                            drs["Dyelot"].ToString(),
+                            drs["balance"].ToString(),
+                            drs["Adjustqty"].ToString()));
                     }
                 }
 
@@ -230,7 +249,7 @@ Balacne Qty is not enough!!
             //            #endregion
         }
 
-        // Confirm
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -246,7 +265,6 @@ inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll a
 where d.Id = '{0}'
 and f.StockType = 'O'", this.CurrentMaintain["id"]);
 
-            DataTable dt;
             DualResult dr;
             string chksql = string.Format(
                 @"
@@ -255,7 +273,7 @@ Select d.POID,seq = concat(d.Seq1,'-',d.Seq2),d.Roll,d.Dyelot
 	,Adjustqty  = isnull(d.QtyBefore,0) - isnull(d.QtyAfter,0)
 	,q = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) -(isnull(d.QtyAfter,0)-isnull(d.QtyBefore,0))
 {0}", sql);
-            if (!(dr = DBProxy.Current.Select(null, chksql, out dt)))
+            if (!(dr = DBProxy.Current.Select(null, chksql, out DataTable dt)))
             {
                 MyUtility.Msg.WarningBox("Update datas error!!");
                 return;
@@ -269,7 +287,13 @@ Select d.POID,seq = concat(d.Seq1,'-',d.Seq2),d.Roll,d.Dyelot
                     warningmsg.Append(string.Format(
                         @"SP#: {0} SEQ#: {1} Roll#: {2} Dyelot: {3}'s balance: {4} is less than Adjust qty: {5}
 Balacne Qty is not enough!!
-", drs["POID"].ToString(), drs["seq"].ToString(), drs["Roll"].ToString(), drs["Dyelot"].ToString(), drs["balance"].ToString(), drs["Adjustqty"].ToString()));
+",
+                        drs["POID"].ToString(),
+                        drs["seq"].ToString(),
+                        drs["Roll"].ToString(),
+                        drs["Dyelot"].ToString(),
+                        drs["balance"].ToString(),
+                        drs["Adjustqty"].ToString()));
                 }
             }
 
@@ -304,7 +328,9 @@ from(
 where m2.POID = b.POID and m2.Seq1 = b.Seq1 and m2.Seq2 = b.Seq2
 
 update Adjust set Status ='New' where id = '{1}'
-", sql, this.CurrentMaintain["id"]);
+",
+                sql,
+                this.CurrentMaintain["id"]);
             if (!(dr = DBProxy.Current.Execute(null, upcmd)))
             {
                 MyUtility.Msg.WarningBox("Update datas error!!");
@@ -313,7 +339,97 @@ update Adjust set Status ='New' where id = '{1}'
             #endregion
         }
 
-        // refresh
+        /// <inheritdoc/>
+        protected override bool ClickPrint()
+        {
+            if (this.CurrentMaintain == null ||
+                this.CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
+
+            DateTime? issueDate = MyUtility.Convert.GetDate(this.CurrentMaintain["IssueDate"]);
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new ReportParameter("ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            report.ReportParameters.Add(new ReportParameter("IssueDate", issueDate.HasValue ? issueDate.Value.ToString("yyyy/MM/dd") : string.Empty));
+            report.ReportParameters.Add(new ReportParameter("Remark", MyUtility.Convert.GetString(this.CurrentMaintain["Remark"])));
+
+            List<SqlParameter> pars = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])),
+            };
+
+            string sqlcmd = @"
+select  ad.POID
+	, [Seq] = concat(ad.Seq1, '-', ad.Seq2)
+	, ad.Roll
+	, ad.Dyelot
+	, [ColorID] = dbo.GetColorMultipleID(psd.BrandId, psd.ColorID)
+	, [Description] = dbo.getmtldesc(ad.POID, ad.Seq1, ad.Seq2, 2, 0)
+	, [AdjustQty] = ad.QtyBefore - ad.QtyAfter
+	, psd.StockUnit
+	, [Location] = dbo.Getlocation(fi.ukey)
+from Adjust a
+inner join Adjust_Detail ad on a.ID = ad.ID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd.SEQ2 = ad.Seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join FtyInventory fi WITH (NOLOCK) on fi.POID = ad.POID and fi.Seq1 = ad.Seq1 and fi.Seq2 = ad.Seq2 and fi.Roll = ad.Roll and fi.StockType = ad.StockType and fi.Dyelot = ad.Dyelot
+where a.ID = @ID
+and a.Status = 'Confirmed'
+";
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
+            if (!result)
+            {
+                this.ShowErr(sqlcmd, result);
+            }
+
+            if (dtDetail == null || dtDetail.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dtDetail");
+                return false;
+            }
+
+            // 傳 list 資料
+            List<P45_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P45_PrintData()
+                {
+                    POID = row1["POID"].ToString().Trim(),
+                    SEQ = row1["SEQ"].ToString().Trim(),
+                    Roll = row1["Roll"].ToString().Trim(),
+                    Dyelot = row1["Dyelot"].ToString().Trim(),
+                    ColorID = row1["ColorID"].ToString().Trim(),
+                    Description = row1["Description"].ToString().Trim(),
+                    AdjustQty = row1["AdjustQty"].ToString().Trim(),
+                    StockUnit = row1["StockUnit"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim(),
+                }).ToList();
+
+            report.ReportDataSource = data;
+
+            // 指定是哪個 RDLC
+            Type reportResourceNamespace = typeof(P45_PrintData);
+            System.Reflection.Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P45_Print.rdlc";
+
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
+            {
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Win.Subs.ReportView(report)
+            {
+                MdiParent = this.MdiParent,
+            };
+            frm.Show();
+
+            return base.ClickPrint();
+        }
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -324,7 +440,7 @@ update Adjust set Status ='New' where id = '{1}'
             #endregion Status Label
         }
 
-        // 表身資料SQL Command
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -335,7 +451,7 @@ select
 	,seq = concat(ad.Seq1,'-',ad.Seq2)
 	,ad.Roll
 	,ad.Dyelot
-	,Description = f.Description
+	,Description = dbo.getmtldesc(ad.POID, ad.Seq1, ad.Seq2, 2, 0)
 	,ad.QtyBefore
 	,ad.QtyAfter
 	,adjustqty= ad.QtyBefore-ad.QtyAfter
@@ -353,7 +469,7 @@ where ad.Id='{0}'
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        // 表身資料設定
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region -- Current Qty Vaild 判斷 --
@@ -391,12 +507,11 @@ where ad.Id='{0}'
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    DataTable poitems;
                     string sqlcmd = string.Empty;
                     IList<DataRow> x;
 
                     sqlcmd = @"select id, Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Remove' AND junk = 0";
-                    DualResult result2 = DBProxy.Current.Select(null, sqlcmd, out poitems);
+                    DualResult result2 = DBProxy.Current.Select(null, sqlcmd, out DataTable poitems);
                     if (!result2)
                     {
                         this.ShowErr(sqlcmd, result2);
@@ -408,8 +523,10 @@ where ad.Id='{0}'
                         "ID,Name",
                         "5,150",
                         this.CurrentDetailData["reasonid"].ToString(),
-                        "ID,Name");
-                    item.Width = 600;
+                        "ID,Name")
+                    {
+                        Width = 600,
+                    };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -424,7 +541,6 @@ where ad.Id='{0}'
             };
             ts.CellValidating += (s, e) =>
             {
-                DataRow dr;
                 if (!this.EditMode)
                 {
                     return;
@@ -441,8 +557,10 @@ where ad.Id='{0}'
                     {
                         if (!MyUtility.Check.Seek(
                             string.Format(
-                            @"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
-and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
+                            @"select id, Name from Reason WITH (NOLOCK) where id = '{0}' and ReasonTypeID='Stock_Remove' AND junk = 0",
+                            e.FormattedValue),
+                            out DataRow dr,
+                            null))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
@@ -480,14 +598,14 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             var frm = new P45_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -505,13 +623,13 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
             }
         }
 
-        // detail 新增時設定預設值
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
         }
 
-        // grid 加工填值
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
