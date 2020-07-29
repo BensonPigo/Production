@@ -821,7 +821,7 @@ select Roll,Dyelot,TicketYds,Scale,Result
             string suppid = this.txtsupplier.TextBox1.Text + " - " + this.txtsupplier.DisplayBox1.Text;
             string Invno = dt_Exp.Rows.Count == 0 ? string.Empty : dt_Exp.Rows[0]["ID"].ToString();
 
-            string Refno = "Ref#" + this.displayRefno.Text + " , " + this.displaySCIRefno1.Text;
+            string brandID = MyUtility.GetValue.Lookup($"SELECT BrandID FROM Orders WHERE ID = '{this.displaySP.Text}'");// "Ref#" + this.displayRefno.Text + " , " + this.displaySCIRefno1.Text;
 
             ReportDefinition report = new ReportDefinition();
 
@@ -834,12 +834,13 @@ select Roll,Dyelot,TicketYds,Scale,Result
             dt.Columns.Add(new DataColumn("FactoryID", typeof(string)));
             dt.Columns.Add(new DataColumn("Style", typeof(string)));
             dt.Columns.Add(new DataColumn("Color", typeof(string)));
-            dt.Columns.Add(new DataColumn("DESC", typeof(string)));
+            dt.Columns.Add(new DataColumn("BrandID", typeof(string)));
             dt.Columns.Add(new DataColumn("Supp", typeof(string)));
             dt.Columns.Add(new DataColumn("Invo", typeof(string)));
             dt.Columns.Add(new DataColumn("ETA", typeof(string)));
             dt.Columns.Add(new DataColumn("Refno", typeof(string)));
             dt.Columns.Add(new DataColumn("Packages", typeof(string)));
+            dt.Columns.Add(new DataColumn("Seq", typeof(string)));
 
             int packages = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"
 SELECT SUM(ISNULL(e.Packages,0))
@@ -854,12 +855,13 @@ WHERE f.POID='{this.maindr["POID"]}' AND f.Seq1='{this.maindr["Seq1"]}'AND f.Seq
             dr["FactoryID"] = Env.User.Factory;
             dr["Style"] = this.displayStyle.Text;
             dr["Color"] = this.displayColor.Text;
-            dr["DESC"] = Refno;
+            dr["BrandID"] = brandID;
             dr["Supp"] = suppid;
             dr["Invo"] = Invno;
             dr["ETA"] = dt_Exp.Rows.Count == 0 ? string.Empty : DateTime.Parse(dt_Exp.Rows[0]["ETA"].ToString()).ToString("yyyy-MM-dd").ToString();
             dr["Refno"] = MyUtility.GetValue.Lookup($"SELECT Refno FROM PO_Supp_Detail WHERE ID='{this.maindr["POID"]}' AND Seq1='{this.maindr["Seq1"]}' AND Seq2='{this.maindr["Seq2"]}'");
             dr["Packages"] = packages.ToString();
+            dr["Seq"] = $"{ this.maindr["Seq1"]} - {this.maindr["Seq2"]}";
             dt.Rows.Add(dr);
 
             List<P01_ShadeBond_Data> data = dt.AsEnumerable()
@@ -869,12 +871,13 @@ WHERE f.POID='{this.maindr["POID"]}' AND f.Seq1='{this.maindr["Seq1"]}'AND f.Seq
                     FactoryID = row1["FactoryID"].ToString().Trim(),
                     Style = row1["Style"].ToString().Trim(),
                     Color = row1["Color"].ToString().Trim(),
-                    DESC = row1["DESC"].ToString().Trim(),
+                    BrandID = row1["BrandID"].ToString().Trim(),
                     Supp = row1["Supp"].ToString().Trim(),
                     Invo = row1["Invo"].ToString().Trim(),
                     ETA = row1["ETA"].ToString() == string.Empty ? string.Empty : DateTime.Parse(row1["ETA"].ToString()).ToString("yyyy-MM-dd").ToString().Trim(),
                     Refno = row1["Refno"].ToString().Trim(),
                     Packages = row1["Packages"].ToString().Trim(),
+                    Seq = row1["Seq"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;

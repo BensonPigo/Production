@@ -163,7 +163,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Fabric Supplier</Value>
+                              <Value>Brand</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -185,21 +185,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox117">
+                    <Textbox Name="Textbox5">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!Supp.Value</Value>
+                              <Value>=Fields!BrandID.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox117</rd:DefaultName>
+                      <rd:DefaultName>POID1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -708,7 +708,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Fabric Desc:</Value>
+                              <Value>Fabric Supplier</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -730,21 +730,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="DESC1">
+                    <Textbox Name="Textbox118">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!DESC.Value</Value>
+                              <Value>=Fields!Supp.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>DESC1</rd:DefaultName>
+                      <rd:DefaultName>Textbox117</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -755,11 +755,66 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <ColSpan>3</ColSpan>
                   </CellContents>
                 </TablixCell>
-                <TablixCell />
-                <TablixCell />
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox3">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Seq</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox3</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Seq">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Seq.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Seq</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
               </TablixCells>
             </TablixRow>
           </TablixRows>
@@ -1058,7 +1113,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox36</rd:DefaultName>
           <Top>0.29429cm</Top>
-          <Left>8.52289cm</Left>
+          <Left>7.47514cm</Left>
           <Height>0.74083cm</Height>
           <Width>2.7252cm</Width>
           <ZIndex>1</ZIndex>
@@ -1123,7 +1178,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox38</rd:DefaultName>
           <Top>0.29429cm</Top>
-          <Left>11.32628cm</Left>
+          <Left>10.27853cm</Left>
           <Height>0.74083cm</Height>
           <Width>3.87174cm</Width>
           <ZIndex>3</ZIndex>
@@ -1192,10 +1247,42 @@
           </Paragraphs>
           <rd:DefaultName>Textbox40</rd:DefaultName>
           <Top>1.12685cm</Top>
-          <Left>11.40156cm</Left>
+          <Left>10.35381cm</Left>
           <Height>0.6cm</Height>
           <Width>3.48305cm</Width>
           <ZIndex>5</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox41">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Level</Value>
+                  <Style>
+                    <FontSize>12pt</FontSize>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox36</rd:DefaultName>
+          <Top>0.29429cm</Top>
+          <Left>15.49489cm</Left>
+          <Height>0.74083cm</Height>
+          <Width>1.29645cm</Width>
+          <ZIndex>6</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1278,8 +1365,8 @@
           <DataField>Color</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="DESC">
-          <DataField>DESC</DataField>
+        <Field Name="BrandID">
+          <DataField>BrandID</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="ETA">
@@ -1312,6 +1399,10 @@
         </Field>
         <Field Name="Packages">
           <DataField>Packages</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Seq">
+          <DataField>Seq</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
