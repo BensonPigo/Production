@@ -14,6 +14,8 @@ using System.Reflection;
 using Microsoft.Reporting.WinForms;
 using System.Data.SqlClient;
 using Sci.Win;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
@@ -723,6 +725,8 @@ where isnull(f.OutQty,0) < d.Qty and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             _transactionscope.Dispose();
             _transactionscope = null;
+            // AutoWHFabric WebAPI for Gensong
+            SentToGensong_AutoWHFabric();
         }
 
         protected override void ClickUnconfirm()
@@ -893,6 +897,63 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             _transactionscope.Dispose();
             _transactionscope = null;
+
+            // AutoWHFabric WebAPI for Gensong
+            SentToGensong_AutoWHFabric();
+        }
+
+        /// <summary>
+        ///  AutoWHFabric WebAPI for Gensong
+        /// </summary>
+        private void SentToGensong_AutoWHFabric()
+        {   
+            if (true) return;// 暫未開放
+
+            DataTable dtDetail = new DataTable();
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                string sqlGetData = string.Empty;
+                sqlGetData = $@"
+SELECT [ID] = ird.id
+,[InvNo] = ''
+,[PoId] = ird.Poid
+,[Seq1] = ird.Seq1
+,[Seq2] = ird.Seq2
+,[Refno] = po3.Refno
+,[ColorID] = po3.ColorID
+,[Roll] = ird.Roll
+,[Dyelot] = ird.Dyelot
+,[StockUnit] = dbo.GetStockUnitBySPSeq(ird.POID,ird.Seq1,ird.Seq2)
+,[StockQty] = ird.Qty
+,[PoUnit] = po3.PoUnit
+,[ShipQty] = convert(numeric(11,2), 0)
+,[Weight] = convert(numeric(7,2), 0)
+,[StockType] = ird.StockType
+,[Ukey] = ird.Ukey
+,[IsInspection] = convert(bit, 0)
+,Junk = case when ir.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+FROM Production.dbo.IssueReturn_Detail ird
+inner join Production.dbo.IssueReturn ir on ird.id = ir.id
+inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= ird.PoId 
+	and po3.SEQ1 = ird.Seq1 and po3.SEQ2 = ird.Seq2
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = ird.Poid and seq1 = ird.seq1 and seq2 = ird.seq2 
+	and FabricType='F'
+)
+and ir.id = '{CurrentMaintain["id"]}'
+";
+
+                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
+                if (!drResult)
+                {
+                    ShowErr(drResult);
+                }
+
+                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
 
         // 寫明細撈出的sql command

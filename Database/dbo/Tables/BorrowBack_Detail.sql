@@ -19,6 +19,7 @@
     [ToDyelot]             VARCHAR (8)     CONSTRAINT [DF_BorrowBack_Detail_ToDyelot] DEFAULT ('') NULL,
     [Qty]                  NUMERIC (10, 2) CONSTRAINT [DF_BorrowBack_Detail_Qty] DEFAULT ((0)) NOT NULL,
     [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
+    [CompleteTime] DATETIME NULL, 
     CONSTRAINT [PK_BorrowBack_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
