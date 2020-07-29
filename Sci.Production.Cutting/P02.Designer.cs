@@ -138,6 +138,7 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -1177,6 +1178,12 @@
             this.btnDist.UseVisualStyleBackColor = true;
             this.btnDist.Click += new System.EventHandler(this.BtnDist_Click);
             // 
+            // backgroundWorker1
+            // 
+            this.BackgroundWorker1.WorkerReportsProgress = true;
+            this.BackgroundWorker1.WorkerSupportsCancellation = true;
+            this.BackgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
+            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(1012, 775);
@@ -1317,5 +1324,6 @@
         private Win.UI.Button btnCutplanChangeHistory;
         private Win.UI.Button btnStdQtyWIP;
         private Win.UI.Button btnDist;
+        private System.ComponentModel.BackgroundWorker BackgroundWorker1;
     }
 }
