@@ -1733,7 +1733,7 @@ update t set
 	,[BuyerRemark] = s.BuyerRemark
 	,[FactoryID] = isnull(s.FactoryID, '')
 	,[KeepPanels] = s.KeepPanels 
-	,GMCheck = s.GMCheck 
+	,[GMCheck] = s.GMCheck 
 from Production.dbo.OrderChangeApplication t
 inner join Trade_To_Pms.dbo.OrderChangeApplication s on s.ID = t.ID
 inner join Factory f on s.FactoryID = f.ID and f.IsProduceFty = 1
