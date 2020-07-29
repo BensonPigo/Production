@@ -410,7 +410,7 @@ with cte as(
 )
 select  z.*
         , Autopickqty = isnull (cte.qty, 0)
-        , qty = ISNULL(finqty.finqty, 0) -- 不能超過庫存量
+        , qty = ISNULL(cte.qty, 0)
         , ori_qty = isnull (cte.qty, 0) -- 不確定用在哪先保留
         , Diffqty = 0.0--之後用庫存總數去分配時再計算
 from (
@@ -432,13 +432,6 @@ left join cte on cte.SizeCode = z.SizeCode
                  and cte.poid = z.poid
                  and cte.seq1 = z.seq1
                  and cte.seq2 = z.seq2
-left join dbo.FtyInventory Fty with(NoLock) on Fty.poid = z.poid
-                                                and Fty.seq1 = z.seq1 
-											    and Fty.seq2 = z.seq2
-											    and Fty.StockType = 'B' 
-											    and Fty.Roll = ''
-outer apply(select balQty = isnull(Fty.InQty, 0) - isnull(Fty.OutQty, 0) + isnull(Fty.AdjustQty, 0))balQty
-outer apply(select finqty = iif (isnull (cte.qty, 0) > isnull(balQty, 0), isnull(balQty, 0),isnull (cte.qty, 0)))finqty
 
 order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1),
                 this.issueid,
