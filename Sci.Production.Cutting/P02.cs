@@ -2999,10 +2999,16 @@ END";
 
         #region Save Before Post After
 
+        private bool AnyChange = true;
+
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             this.GridValid();
+            this.AnyChange = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
+                this.PatternPanelTb.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
+                this.sizeratioTb.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
+                this.distqtyTb.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any();
 
             int index = 0;
             foreach (DataRow row in this.DetailDatas.Where(x => MyUtility.Check.Empty(x["MarkerNo"].ToString())))
@@ -3505,7 +3511,7 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-
+            this.BackgroundWorker1.RunWorkerAsync();
             foreach (DataRow dr in this.DetailDatas)
             {
                 dr["SORT_NUM"] = 0;  // 編輯後存檔，將[SORT_NUM]歸零
@@ -3553,6 +3559,7 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
 
             this.detailgridbs.ResumeBinding();
             this.detailgrid.SelectRowTo(0);
+            ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
         }
 
         private void TxtBoxMarkerNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -3846,6 +3853,38 @@ and MDivisionID = '{this.keyWord}'");
             };
             this.callP07.Show();
             this.callP07.P07Data(this.CurrentMaintain["ID"].ToString());
+        }
+
+        private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (!this.AnyChange)
+            {
+                e.Cancel = true;
+            }
+            else
+            {
+                string sqlcmd = $@"
+declare @ID varchar(13),@cDate date,@Manpower  int,@ManHours numeric(5,1)
+DECLARE CURSOR_ CURSOR FOR
+select distinct co.ID,co.cDate,co.Manpower,co.ManHours
+from WorkOrder w with(nolock)
+inner join CuttingOutput_Detail cod with(nolock) on cod.WorkOrderUkey = w.Ukey
+inner join CuttingOutput co with(nolock) on co.ID = cod.id
+where w.id = '{this.CurrentMaintain["ID"]}'
+order by co.cDate
+
+OPEN CURSOR_
+FETCH NEXT FROM CURSOR_ INTO  @ID ,@cDate ,@Manpower  ,@ManHours 
+While @@FETCH_STATUS = 0
+Begin	
+	EXEC Cutting_P20_CFM_Update @ID,@cDate,@Manpower,@ManHours,'Confirm'
+FETCH NEXT FROM CURSOR_ INTO  @ID ,@cDate ,@Manpower  ,@ManHours 
+End
+CLOSE CURSOR_
+DEALLOCATE CURSOR_
+";
+                DBProxy.Current.Execute(null, sqlcmd);
+            }
         }
     }
 }
