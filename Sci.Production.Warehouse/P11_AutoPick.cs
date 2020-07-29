@@ -1,10 +1,8 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -72,8 +70,6 @@ namespace Sci.Production.Warehouse
                 this.Close();
                 return;
             }
-
-            SqlConnection sqlConnection = null;
 
             DataSet dataSet = new DataSet();
 
@@ -416,7 +412,7 @@ select  z.*
         , Autopickqty = isnull (cte.qty, 0)
         , qty = ISNULL(finqty.finqty, 0) -- 不能超過庫存量
         , ori_qty = isnull (cte.qty, 0) -- 不確定用在哪先保留
-        , Diffqty = isnull (cte.qty, 0) - ISNULL(finqty.finqty, 0)
+        , Diffqty = 0.0--之後用庫存總數去分配時再計算
 from (
     select  x.poid
             , x.seq1
@@ -495,30 +491,45 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
                         tmp.ColumnsDecimalAdd("qty");
                         tmp.ColumnsDecimalAdd("ori_qty");
                         tmp.ColumnsDecimalAdd("Diffqty");
-
+                        decimal balqty = MyUtility.Convert.GetDecimal(dr["balanceqty"]); // 庫存總數
                         var drs = dr.GetChildRows(relation);
                         if (drs.Count() > 0)
                         {
                             // Qty 在這邊計算原因：細項中每一個 SizeCode 的數量都有做四捨五入
                             // 若在組 SQL 時就先將數量做加總，四捨五入後的結果會有差異
                             #region 計算每一個項的 Output & Qty
-                            var output = string.Empty;
-                            decimal totalQty = 0;
+                            string output = string.Empty;
+                            string output_ori = string.Empty;
+                            decimal totalQty = drs.AsEnumerable().Sum(s => MyUtility.Convert.GetDecimal(s["qty"]));
+                            decimal totalQty_ori = totalQty;
+                            totalQty = totalQty > balqty ? balqty : totalQty;
+                            decimal totalQty2 = totalQty;
                             foreach (DataRow dr2 in drs)
                             {
-                                if (Convert.ToDecimal(dr2["qty"]) != 0)
+                                if (MyUtility.Convert.GetDecimal(dr2["qty"]) > 0)
                                 {
-                                    output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
-                                    totalQty += Convert.ToDecimal(dr2["qty"]);
+                                    output_ori += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
                                 }
 
+                                if (totalQty < MyUtility.Convert.GetDecimal(dr2["qty"]))
+                                {
+                                    dr2["qty"] = totalQty;
+                                }
+
+                                if (MyUtility.Convert.GetDecimal(dr2["qty"]) > 0)
+                                {
+                                    output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
+                                }
+
+                                dr2["diffqty"] = MyUtility.Convert.GetDecimal(dr2["AutoPickqty"]) - MyUtility.Convert.GetDecimal(dr2["qty"]);
                                 tmp.ImportRow(dr2);
+                                totalQty -= MyUtility.Convert.GetDecimal(dr2["qty"]);
                             }
 
                             dr["Output"] = output;
-                            dr["OutputAutoPick"] = output;
-                            dr["Qty"] = Math.Round(totalQty, 2);
-                            dr["AutoPickqty"] = Math.Round(totalQty, 2);
+                            dr["OutputAutoPick"] = output_ori;
+                            dr["Qty"] = Math.Round(totalQty2, 2);
+                            dr["AutoPickqty"] = Math.Round(totalQty_ori, 2);
                             #endregion
                         }
 

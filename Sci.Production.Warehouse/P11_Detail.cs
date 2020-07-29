@@ -22,16 +22,12 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         public DataRow Master { get; set; }
 
-        private bool openFromAutoPick = false;
-
         /// <inheritdoc/>
-        public P11_Detail(bool openFromAutoPick = false)
+        public P11_Detail()
         {
             this.InitializeComponent();
             this.KeyField1 = "id";
             this.KeyField2 = "Issue_DetailUkey";
-
-            this.openFromAutoPick = openFromAutoPick;
 
             this.btmcont.Controls.Remove(this.append);
             this.btmcont.Controls.Remove(this.revise);
@@ -79,9 +75,11 @@ namespace Sci.Production.Warehouse
             this._matrix.IsXColEditable = false;  // X 顯示的欄位可否編輯?
             this._matrix.IsYColEditable = false;  // Y 顯示的欄位可否編輯?
             #endregion
+
+            string sqlcmd;
             if (this.Combo)
             {
-                DBProxy.Current.Select(null, string.Format(
+                sqlcmd = string.Format(
                     @"
 select  '' as Total
         , o.id
@@ -101,16 +99,20 @@ select  '' as Total
 from dbo.Orders o WITH (NOLOCK) 
 inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
 where o.POID = '{0}'
-group by sizecode", this.CurrentDetailData["poid"]), out dtIssueBreakdown);
-                DBProxy.Current.Select(null, string.Format(
+group by sizecode", this.CurrentDetailData["poid"]);
+                DBProxy.Current.Select(null, sqlcmd, out dtIssueBreakdown);
+
+                sqlcmd = string.Format(
                     @"
 select distinct os.* 
 from dbo.Order_SizeCode os WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.POID = os.Id
 inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
 where  o.POID='{0}'
-order by seq", this.CurrentDetailData["poid"]), out dtX);
-                DBProxy.Current.Select(null, string.Format(
+order by seq", this.CurrentDetailData["poid"]);
+                DBProxy.Current.Select(null, sqlcmd, out dtX);
+
+                sqlcmd = string.Format(
                     @"
 select  sum(oq.qty) Total
         , oq.article
@@ -126,11 +128,12 @@ select  sum(oq.qty) Total
         , '' 
 from dbo.Orders o WITH (NOLOCK) 
 inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
-where o.POID = '{0}'", this.CurrentDetailData["poid"]), out dtY);
+where o.POID = '{0}'", this.CurrentDetailData["poid"]);
+                DBProxy.Current.Select(null, sqlcmd, out dtY);
             }
             else
             {
-                DBProxy.Current.Select(null, string.Format(
+                sqlcmd = string.Format(
                     @"
 select  '' as Total
         , ID
@@ -148,16 +151,20 @@ select  '' as Total
         , convert(varchar,sum(qty)) qty2 
 from dbo.Order_Qty WITH (NOLOCK) 
 where id='{0}' 
-group by sizecode", this.Orderid), out dtIssueBreakdown);
-                DBProxy.Current.Select(null, string.Format(
+group by sizecode", this.Orderid);
+                DBProxy.Current.Select(null, sqlcmd, out dtIssueBreakdown);
+
+                sqlcmd = string.Format(
                     @"
 select os.* 
 from dbo.Order_SizeCode os WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.POID = os.Id
 inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
 where  o.id = '{0}'
-order by seq", this.Orderid), out dtX);
-                DBProxy.Current.Select(null, string.Format(
+order by seq", this.Orderid);
+                DBProxy.Current.Select(null, sqlcmd, out dtX);
+
+                sqlcmd = string.Format(
                     @"
 select  sum(qty) Total
         , '{0}' as ID
@@ -171,7 +178,8 @@ select  sum(qty) Total
         , ''
         , 'TTL' 
 from dbo.Order_qty WITH (NOLOCK) 
-where id='{0}' ", this.Orderid), out dtY);
+where id='{0}' ", this.Orderid);
+                DBProxy.Current.Select(null, sqlcmd, out dtY);
             }
 
             this._matrix.Clear();
@@ -188,9 +196,7 @@ where id='{0}' ", this.Orderid), out dtY);
         protected override void OnAttached()
         {
             base.OnAttached();
-            if (MyUtility.Check.Seek(
-                string.Format(
-                @"
+            string sqlcmd = $@"
 select  p.*
         , concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
         , dbo.getmtldesc(p.id, p.seq1, p.seq2, 2, 0) [description]
@@ -203,8 +209,8 @@ select  p.*
                                       and seq2 = p.seq2
                           )t for xml path('')) 
 from dbo.po_supp_detail p WITH (NOLOCK) 
-where p.id='{0}' and p.seq1='{1}' and p.seq2='{2}'",
-                this.CurrentDetailData["poid"], this.CurrentDetailData["seq1"], this.CurrentDetailData["seq2"]), out DataRow dr))
+where p.id='{this.CurrentDetailData["poid"]}' and p.seq1='{this.CurrentDetailData["seq1"]}' and p.seq2='{this.CurrentDetailData["seq2"]}'";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
             {
                 this.displySeqNo.Text = dr["seq"].ToString();
                 this.displyUnit.Text = dr["StockUnit"].ToString();
@@ -224,7 +230,7 @@ where p.id='{0}' and p.seq1='{1}' and p.seq2='{2}'",
                 this.ShowErr(result);
             }
 
-            string sql = string.Empty;
+            string sql;
             if (this.Combo)
             {
                 sql = $@"
