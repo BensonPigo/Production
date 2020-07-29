@@ -280,6 +280,7 @@ where b.Orderid = '{drSelected["OrderID"]}'
 	OffLineDate=o.SewOffLine
 into #tmpOrders
 from orders o with(nolock)
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply(
 	select CutCellid=STUFF((
 		select concat(',',w1.CutCellid)
@@ -486,6 +487,7 @@ select
 	OffLineDate=s.Offline
 into #tmpOrders
 from orders o with(nolock)
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 left join Order_Qty oq with(nolock) on oq.ID = o.ID
 outer apply(
 	select CutCellid=STUFF((
@@ -733,6 +735,7 @@ select
 	OffLineDate=o.SewOffLine
 into #tmpOrders
 from orders o with(nolock)
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply(
 	select CutCellid=STUFF((
 		select concat(',',w1.CutCellid)
@@ -948,6 +951,7 @@ select
 	OffLineDate=s.Offline
 into #tmpOrders
 from orders o with(nolock)
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 inner join Order_Qty oq with(nolock) on oq.ID = o.ID
 outer apply(
 	select CutCellid=STUFF((

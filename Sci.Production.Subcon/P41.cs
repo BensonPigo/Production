@@ -229,6 +229,7 @@ FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
 {(this.chkExtendAllParts.Checked ? "LEFT JOIN Bundle_Detail_AllPart bdap ON bdap.ID=b.ID AND bd.Patterncode ='ALLPARTS'" : string.Empty)}
 INNER JOIN Orders O ON o.ID=b.Orderid
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 LEFT JOIN Workorder w ON W.CutRef=b.CutRef AND w.ID=b.POID
 LEFT JOIN BundleInOut ReceiveQtySorting ON ReceiveQtySorting.BundleNo=bd.BundleNo AND ReceiveQtySorting.RFIDProcessLocationID ='' AND ReceiveQtySorting.SubProcessId='Sorting'
 LEFT JOIN BundleInOut ReceiveQtyLoading ON ReceiveQtyLoading.BundleNo=bd.BundleNo AND ReceiveQtyLoading.RFIDProcessLocationID ='' AND ReceiveQtyLoading.SubProcessId='Loading'

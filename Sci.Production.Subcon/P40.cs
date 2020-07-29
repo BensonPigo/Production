@@ -246,6 +246,7 @@ into #BasBundleInfo
 from Bundle b
 inner join Bundle_Detail bd on bd.ID = b.ID
 inner join Orders o on b.Orderid = o.ID  and o.MDivisionID  = b.MDivisionID 
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply (
 	select v = stuff ((	select distinct CONCAT ('+', bda.SubprocessId)
 						from Bundle_Detail_Art bda
