@@ -172,9 +172,9 @@
                                             </Paragraphs>
                                             <rd:DefaultName>POID</rd:DefaultName>
                                             <Top>0.02549cm</Top>
-                                            <Left>0.10583cm</Left>
+                                            <Left>0.42333cm</Left>
                                             <Height>0.6cm</Height>
-                                            <Width>2.59293cm</Width>
+                                            <Width>2.27543cm</Width>
                                             <ZIndex>4</ZIndex>
                                             <Style>
                                               <Border>
@@ -484,9 +484,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>
           <Top>1.2791cm</Top>
-          <Left>0.10583cm</Left>
+          <Left>0.42333cm</Left>
           <Height>0.56444cm</Height>
-          <Width>2.59293cm</Width>
+          <Width>2.27543cm</Width>
           <ZIndex>1</ZIndex>
           <Style>
             <Border>
@@ -546,9 +546,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox5</rd:DefaultName>
           <Top>2.40798cm</Top>
-          <Left>0.09701cm</Left>
+          <Left>0.42333cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.59293cm</Width>
+          <Width>2.26661cm</Width>
           <ZIndex>3</ZIndex>
           <Style>
             <Border>
@@ -668,9 +668,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox11</rd:DefaultName>
           <Top>3.4185cm</Top>
-          <Left>0.14111cm</Left>
+          <Left>0.42333cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.55765cm</Width>
+          <Width>2.27543cm</Width>
           <ZIndex>7</ZIndex>
           <Style>
             <Border>
@@ -774,9 +774,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox7</rd:DefaultName>
           <Top>1.84354cm</Top>
-          <Left>0.10583cm</Left>
+          <Left>0.42333cm</Left>
           <Height>0.62007cm</Height>
-          <Width>3.21909cm</Width>
+          <Width>2.90159cm</Width>
           <ZIndex>11</ZIndex>
           <Style>
             <Border>
