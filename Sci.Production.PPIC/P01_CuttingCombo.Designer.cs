@@ -55,7 +55,7 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(301, 0);
+            this.panel2.Location = new System.Drawing.Point(715, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(10, 395);
             this.panel2.TabIndex = 1;
@@ -65,7 +65,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(291, 10);
+            this.panel3.Size = new System.Drawing.Size(705, 10);
             this.panel3.TabIndex = 2;
             // 
             // panel4
@@ -74,14 +74,14 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 351);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(291, 44);
+            this.panel4.Size = new System.Drawing.Size(705, 44);
             this.panel4.TabIndex = 3;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(202, 7);
+            this.btnClose.Location = new System.Drawing.Point(616, 7);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 0;
@@ -94,7 +94,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 10);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(291, 341);
+            this.panel5.Size = new System.Drawing.Size(705, 341);
             this.panel5.TabIndex = 4;
             // 
             // gridCuttingCombo
@@ -125,20 +125,22 @@
             this.gridCuttingCombo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCuttingCombo.RowTemplate.Height = 24;
             this.gridCuttingCombo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCuttingCombo.Size = new System.Drawing.Size(291, 341);
+            this.gridCuttingCombo.ShowCellToolTips = false;
+            this.gridCuttingCombo.Size = new System.Drawing.Size(705, 341);
             this.gridCuttingCombo.TabIndex = 0;
             this.gridCuttingCombo.TabStop = false;
             // 
             // P01_CuttingCombo
             // 
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(311, 395);
+            this.ClientSize = new System.Drawing.Size(725, 395);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "P01_CuttingCombo";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Cutting Combo";
             this.TopMost = true;
             this.panel4.ResumeLayout(false);
