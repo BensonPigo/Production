@@ -102,6 +102,7 @@ outer apply(select QAQty= dbo.getMinCompleteSewQty(oca.OrderID ,ocad.Article ,oc
 outer apply(select QAQty= dbo.getMinCompleteSewQty(oca.ToOrderID ,ocad.Article ,ocad.SizeCode))s
 where 1=1
 and oca.Status in ('Confirmed','Closed')
+and isnull(oca.GMCheck,0) = 0
 and IIF(oca.ToOrderID is null,'', oca.ToOrderID) <> ''
 {where}
 
