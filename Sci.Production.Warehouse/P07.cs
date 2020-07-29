@@ -11,8 +11,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
+using Sci.Production.Automation;
+using static Sci.Production.Automation.Gensong_AutoWHFabric;
 
 namespace Sci.Production.Warehouse
 {
@@ -1212,9 +1215,10 @@ where   v.FROM_U ='{0}'
                 return;
             }
 
-            string upd_MD_2T = string.Empty;
-            string upd_MD_8T = string.Empty;
-            string upd_Fty_2T = string.Empty;
+            string upd_MD_2T = "";
+            string upd_MD_8T = "";
+            string upd_Fty_2T = "";
+            string upd_Fty_Barcode = "";
             StringBuilder sqlupd2 = new StringBuilder();
             string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty, sqlcmd4 = string.Empty;
 
@@ -1396,6 +1400,35 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true, MtlAutoLock);
             #endregion 更新庫存數量  ftyinventory
 
+            #region 更新BarCode  Ftyinventory        
+            List<string> BarcodeList = new List<string>();
+            DataRow[] FabricCount = ((DataTable)detailgridbs.DataSource).Select("FabricType = 'F'");
+            BarcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", FabricCount.Length);
+            int cnt = 0;
+            foreach (DataRow drDis in DetailDatas)
+            {
+                if (string.Compare(drDis["FabricType"].ToString(), "F") == 0)
+                {
+                    drDis["Barcode"] = BarcodeList[cnt];
+                    cnt++;
+                }
+            }
+
+            var data_Fty_Barcode = (from m in DetailDatas.AsEnumerable()
+                                    select new
+                                    {
+                                        poid = m.Field<string>("poid"),
+                                        seq1 = m.Field<string>("seq1"),
+                                        seq2 = m.Field<string>("seq2"),
+                                        stocktype = m.Field<string>("stocktype"),
+                                        roll = m.Field<string>("roll"),
+                                        dyelot = m.Field<string>("dyelot"),
+                                        Barcode = m.Field<string>("Barcode"),
+                                    }).ToList();
+
+            upd_Fty_Barcode = Prgs.UpdateFtyInventory_IO(70, null, true);
+
+            #endregion
             #region 更新 Po_Supp_Detail StockUnit
 
             // ISP20190607 StockUnit的更新一律在資料交換的imp_po進行，這邊不用了
@@ -1472,6 +1505,14 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
                         this.ShowErr(result);
                         return;
                     }
+
+                    // 更新FtyInventory Barcode
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, "", upd_Fty_Barcode, out resulttb, "#TmpSource", conn: sqlConn)))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
                     #endregion
 
                     #region MDivisionPoDetail
@@ -1537,6 +1578,9 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
                     _transactionscope.Dispose();
                 }
             }
+
+            // AutoWHFabric WebAPI for Gensong
+            SentToGensong_AutoWHFabric();
         }
 
         // Unconfirm
@@ -1762,9 +1806,69 @@ END", Env.User.UserID, this.CurrentMaintain["exportid"], this.CurrentMaintain["i
 
             _transactionscope.Dispose();
             _transactionscope = null;
+
+            // AutoWHFabric WebAPI for Gensong
+            SentToGensong_AutoWHFabric();
         }
 
-        // 寫明細撈出的sql command
+        /// <summary>
+        ///  AutoWHFabric WebAPI for Gensong
+        /// </summary>
+        private void SentToGensong_AutoWHFabric()
+        {
+            DataTable dtDetail = new DataTable();
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                string sqlGetData = string.Empty;
+                sqlGetData = $@"
+SELECT [ID] = rd.id
+,[InvNo] = r.InvNo
+,[PoId] = rd.Poid
+,[Seq1] = rd.Seq1
+,[Seq2] = rd.Seq2
+,[Refno] = po3.Refno
+,[ColorID] = po3.ColorID
+,[Roll] = rd.Roll
+,[Dyelot] = rd.Dyelot
+,[StockUnit] = rd.StockUnit
+,[StockQty] = rd.StockQty
+,[PoUnit] = rd.PoUnit
+,[ShipQty] = rd.ShipQty
+,[Weight] = rd.Weight
+,[StockType] = rd.StockType
+,[Ukey] = rd.Ukey
+,[IsInspection] = convert(bit, 0)
+,Junk = case when r.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+,[Barcode] = f.Barcode
+FROM Production.dbo.Receiving_Detail rd
+inner join Production.dbo.Receiving r on rd.id = r.id
+inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
+	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
+left join Production.dbo.FtyInventory f on f.POID = rd.PoId
+	and f.Seq1=rd.Seq1 and f.Seq2=rd.Seq2 
+	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
+	and f.StockType = rd.StockType
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
+	and FabricType='F'
+)
+and r.id = '{CurrentMaintain["id"]}'
+
+";
+
+                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
+                if (!drResult)
+                {
+                    ShowErr(drResult);
+                }
+                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+    }
+
+        //寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -1797,6 +1901,7 @@ select  a.id
         ,o.OrderTypeID
 		,b.ExportId
 		, [ContainerType]= Container.Val
+        ,Barcode = ''
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join orders o WITH (NOLOCK) on o.id = a.PoId

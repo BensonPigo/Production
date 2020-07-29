@@ -14,6 +14,8 @@ using System.Transactions;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using Sci.Production.PublicForm;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
@@ -659,7 +661,6 @@ drop table #tmp");
             }
 
             DataRow[] findrow = this.detail.AsEnumerable().Where(row => row["selected"].EqualString("True")).ToArray();
-
             if (findrow.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select data first!!");
@@ -831,7 +832,13 @@ from #tmp";
                 }
             }
 
-            // MyUtility.Msg.InfoBox("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!"+ " and Confirm Success!! ", "Complete!");
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMaster))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
             this.p13_msg.Show("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!" + " and Confirm Success!! ");
 
             this.btnCreate.Enabled = false;

@@ -12,6 +12,7 @@
     [Ukey]        BIGINT          IDENTITY (1, 1) NOT NULL,
     [Weight]      NUMERIC (7, 2)  DEFAULT ((0)) NOT NULL,
     [Remark]      NVARCHAR (100)  DEFAULT ('') NOT NULL,
+    [CompleteTime] DATETIME NULL, 
     CONSTRAINT [PK_TransferIn_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
