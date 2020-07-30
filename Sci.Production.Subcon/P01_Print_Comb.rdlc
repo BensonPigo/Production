@@ -101,7 +101,7 @@
                                   <Value>=Fields!ArtworkID.Value</Value>
                                   <Style>
                                     <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -110,9 +110,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>0.9156cm</Top>
-                          <Left>0.15896cm</Left>
+                          <Left>1.86803cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>4.08344cm</Width>
+                          <Width>2.94448cm</Width>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -133,7 +133,7 @@
                                   <Value>=Fields!CutParts.Value</Value>
                                   <Style>
                                     <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -142,9 +142,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>0.9156cm</Top>
-                          <Left>4.82951cm</Left>
+                          <Left>5.79863cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>4.81232cm</Width>
+                          <Width>3.22482cm</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
@@ -166,7 +166,7 @@
                                   <Value>=Fields!Unitprice.Value</Value>
                                   <Style>
                                     <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -177,7 +177,7 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>0.9156cm</Top>
-                          <Left>10.13427cm</Left>
+                          <Left>11.90504cm</Left>
                           <Height>0.6cm</Height>
                           <Width>1.96225cm</Width>
                           <ZIndex>2</ZIndex>
@@ -201,20 +201,20 @@
                                   <Value>=Fields!QtyGMT.Value</Value>
                                   <Style>
                                     <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Left</TextAlign>
+                                <TextAlign>Right</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>0.9156cm</Top>
-                          <Left>13.99807cm</Left>
+                          <Left>14.9856cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>3.22355cm</Width>
+                          <Width>2.3803cm</Width>
                           <ZIndex>3</ZIndex>
                           <Style>
                             <Border>
@@ -236,7 +236,7 @@
                                   <Value>=Fields!Amount.Value</Value>
                                   <Style>
                                     <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                     <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
@@ -272,7 +272,7 @@
                                   <Value>=First(Fields!ID.Value)</Value>
                                   <Style>
                                     <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -281,7 +281,7 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>0.17449cm</Top>
-                          <Left>0.22676cm</Left>
+                          <Left>0.19501cm</Left>
                           <Height>0.6cm</Height>
                           <Width>4.12022cm</Width>
                           <ZIndex>5</ZIndex>
@@ -305,7 +305,7 @@
                                   <Value>=First(Fields!OrderID.Value)</Value>
                                   <Style>
                                     <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -316,9 +316,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>0.17449cm</Top>
-                          <Left>14.08675cm</Left>
+                          <Left>14.3366cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>3.25342cm</Width>
+                          <Width>3.00357cm</Width>
                           <ZIndex>6</ZIndex>
                           <Style>
                             <Border>
@@ -340,7 +340,7 @@
                                   <Value>=First(Fields!poQTY.Value)</Value>
                                   <Style>
                                     <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                     <Format>#,0;(#,0)</Format>
                                   </Style>
                                 </TextRun>
@@ -376,7 +376,7 @@
                                   <Value>=Parameters!Issuedate.Value</Value>
                                   <Style>
                                     <FontFamily>times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -385,7 +385,7 @@
                           </Paragraphs>
                           <rd:DefaultName>Issuedate</rd:DefaultName>
                           <Top>0.17449cm</Top>
-                          <Left>4.82951cm</Left>
+                          <Left>5.79863cm</Left>
                           <Height>0.6cm</Height>
                           <Width>2.91324cm</Width>
                           <ZIndex>8</ZIndex>
@@ -409,7 +409,7 @@
                                   <Value>=Parameters!Delivery.Value</Value>
                                   <Style>
                                     <FontFamily>times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -418,7 +418,7 @@
                           </Paragraphs>
                           <rd:DefaultName>Delivery</rd:DefaultName>
                           <Top>0.17449cm</Top>
-                          <Left>10.13427cm</Left>
+                          <Left>9.42705cm</Left>
                           <Height>0.6cm</Height>
                           <Width>2.5cm</Width>
                           <ZIndex>9</ZIndex>
@@ -441,6 +441,72 @@
                             </Border>
                           </Style>
                         </Line>
+                        <Textbox Name="Textbox65">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Article.Value</Value>
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Top>0.9156cm</Top>
+                          <Left>0.12178cm</Left>
+                          <Height>0.6cm</Height>
+                          <Width>1.64533cm</Width>
+                          <ZIndex>11</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="Textbox66">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Size.Value</Value>
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Top>0.9156cm</Top>
+                          <Left>9.42705cm</Left>
+                          <Height>0.6cm</Height>
+                          <Width>1.64533cm</Width>
+                          <ZIndex>12</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
                       </ReportItems>
                       <KeepTogether>true</KeepTogether>
                       <Style>
@@ -467,6 +533,7 @@
             </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
+        <DataSetName>DataSet1</DataSetName>
         <Top>0.1984cm</Top>
         <Left>0.70886cm</Left>
         <Height>1.6722cm</Height>
@@ -1817,7 +1884,7 @@
                   <Value>SP#</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
+                    <FontSize>9pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
@@ -1850,7 +1917,7 @@
                   <Value>=Parameters!artworkunit.Value</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
+                    <FontSize>9pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
@@ -1859,7 +1926,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>7.71554cm</Top>
-          <Left>4.39445cm</Left>
+          <Left>4.71195cm</Left>
           <Height>0.6cm</Height>
           <Width>1.63946cm</Width>
           <ZIndex>29</ZIndex>
@@ -1883,7 +1950,7 @@
                   <Value>Q'ty</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
+                    <FontSize>9pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
@@ -1894,7 +1961,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>7.00278cm</Top>
-          <Left>18.4695cm</Left>
+          <Left>18.50125cm</Left>
           <Height>0.6cm</Height>
           <Width>1.699cm</Width>
           <ZIndex>30</ZIndex>
@@ -1918,7 +1985,7 @@
                   <Value>Pattern#</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
+                    <FontSize>9pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
@@ -1927,7 +1994,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>7.71554cm</Top>
-          <Left>1.14814cm</Left>
+          <Left>2.57689cm</Left>
           <Height>0.6cm</Height>
           <Width>1.60836cm</Width>
           <ZIndex>31</ZIndex>
@@ -1951,16 +2018,18 @@
                   <Value>Unit Price</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
+                    <FontSize>9pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
-              <Style />
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>7.71554cm</Top>
-          <Left>11.11584cm</Left>
+          <Left>12.06834cm</Left>
           <Height>0.6cm</Height>
           <Width>2.50781cm</Width>
           <ZIndex>32</ZIndex>
@@ -1984,16 +2053,18 @@
                   <Value>Q'ty/GMT</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
+                    <FontSize>9pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
-              <Style />
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>7.71554cm</Top>
-          <Left>15.05946cm</Left>
+          <Left>15.69446cm</Left>
           <Height>0.6cm</Height>
           <Width>2.3803cm</Width>
           <ZIndex>33</ZIndex>
@@ -2017,11 +2088,13 @@
                   <Value>Amount</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
+                    <FontSize>9pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
-              <Style />
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
@@ -2062,7 +2135,7 @@
                   <Value>P/O#</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
+                    <FontSize>9pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
@@ -2071,7 +2144,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>7.00278cm</Top>
-          <Left>1.15766cm</Left>
+          <Left>0.87191cm</Left>
           <Height>0.6cm</Height>
           <Width>1.18967cm</Width>
           <ZIndex>36</ZIndex>
@@ -2095,7 +2168,7 @@
                   <Value>Issue Date</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
+                    <FontSize>9pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
@@ -2104,7 +2177,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>7.00278cm</Top>
-          <Left>6.2042cm</Left>
+          <Left>6.50749cm</Left>
           <Height>0.6cm</Height>
           <Width>1.98342cm</Width>
           <ZIndex>37</ZIndex>
@@ -2128,7 +2201,7 @@
                   <Value>Delivery Date</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
+                    <FontSize>9pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
@@ -2137,7 +2210,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>7.00278cm</Top>
-          <Left>10.54866cm</Left>
+          <Left>10.13591cm</Left>
           <Height>0.6cm</Height>
           <Width>2.53904cm</Width>
           <ZIndex>38</ZIndex>
@@ -2161,7 +2234,7 @@
                   <Value>CutParts</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
-                    <FontSize>12pt</FontSize>
+                    <FontSize>9pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
@@ -2170,10 +2243,76 @@
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>7.71554cm</Top>
-          <Left>6.18999cm</Left>
+          <Left>6.50749cm</Left>
           <Height>0.6cm</Height>
           <Width>3.01529cm</Width>
           <ZIndex>39</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox23">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Article</Value>
+                  <Style>
+                    <FontFamily>times New Roman</FontFamily>
+                    <FontSize>9pt</FontSize>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox1</rd:DefaultName>
+          <Top>7.69437cm</Top>
+          <Left>0.86761cm</Left>
+          <Height>0.6cm</Height>
+          <Width>1.60836cm</Width>
+          <ZIndex>40</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox27">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Size</Value>
+                  <Style>
+                    <FontFamily>times New Roman</FontFamily>
+                    <FontSize>9pt</FontSize>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox1</rd:DefaultName>
+          <Top>7.72612cm</Top>
+          <Left>10.13591cm</Left>
+          <Height>0.6cm</Height>
+          <Width>1.60836cm</Width>
+          <ZIndex>41</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -2225,6 +2364,10 @@
           <DataField>ApvName</DataField>
           <rd:TypeName>System.Byte[]</rd:TypeName>
         </Field>
+        <Field Name="Article">
+          <DataField>Article</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="ArtworkID">
           <DataField>ArtworkID</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -2255,6 +2398,10 @@
         </Field>
         <Field Name="QtyGMT">
           <DataField>QtyGMT</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Size">
+          <DataField>Size</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="StyleID">
