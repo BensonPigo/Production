@@ -30,31 +30,39 @@ BEGIN
   DROP TABLE Order_Location
 END
 
-declare @DateStart date= (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System);
-declare @DateEnd date=CONVERT(date, GETDATE());
 declare @DateInfoName varchar(30) ='SewingOutput';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+if @DateStart is Null
+	set @DateStart= (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System)
+if @DateEnd is Null
+	set @DateEnd = CONVERT(DATE, GETDATE())
+	
+Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+values (@DateInfoName,@DateStart,@DateEnd);
 
-If Exists (Select 1 From Pms_To_Trade.dbo.DateInfo Where Name = @DateInfoName )
-Begin
-	update Pms_To_Trade.dbo.dateInfo
-	set DateStart=@DateStart,
-	DateEnd=@DateEnd
-	Where Name = @DateInfoName 
-end;
-else
-Begin 
-	insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
-	values (@DateInfoName,@DateStart,@DateEnd);
-end;
+
+declare @DateInfoName2 varchar(30) ='SewingOutput2';
+declare @DateStart2 date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName2);
+declare @DateEnd2 date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName2);
+if @DateStart2 is Null
+	set @DateStart2= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
+if @DateEnd2 is Null
+	set @DateEnd2 = CONVERT(DATE, GETDATE())
+	
+Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName2 
+Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+values (@DateInfoName2,@DateStart2,@DateEnd2);
 
 
 --SewingOutput
 SELECT *
 INTO SewingOutput
 FROM Production.dbo.SewingOutput a
-WHERE a.LockDate  BETWEEN (select DATEADD(DAY,1,SewLock) from Production.dbo.System)  AND CONVERT(date, GETDATE())
+WHERE a.LockDate  BETWEEN @DateStart AND @DateEnd
 OR a.LockDate is null
-or a.ReDailyTransferDate between cast(DATEADD(DAY,-7,GETDATE()) as date) and cast(GETDATE() as date)
+or a.ReDailyTransferDate between @DateStart2 and @DateEnd2
 
 --SewingOutput_detail
 SELECT b.*

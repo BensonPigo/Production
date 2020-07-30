@@ -1,9 +1,4 @@
 
--- =============================================
--- Author:		<Leo 01921>
--- Create date: <2016/08/17>
--- Description:	<Description,,>
--- =============================================
 Create PROCEDURE [dbo].[exp_Cutting] 
 
 AS
@@ -33,24 +28,17 @@ BEGIN
 END
 
 
-declare @DateStart date= (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System);
-declare @DateEnd date=CONVERT(date, GETDATE());
 declare @DateInfoName varchar(30) ='CUTTING';
-
---新增區間資料到DateInfo name='CUTTING' DateStart=Production.System.SewLock+1, DateEnd=轉檔日期
---確保轉出給Trade區間資料等同於DateInfo
-If Exists (Select 1 From Pms_To_Trade.dbo.DateInfo Where Name = @DateInfoName )
-Begin
-	update Pms_To_Trade.dbo.dateInfo
-	set DateStart=@DateStart,
-	DateEnd=@DateEnd
-	Where Name = @DateInfoName 
-end;
-else
-Begin 
-	insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
-	values (@DateInfoName,@DateStart,@DateEnd);
-end;
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+if @DateStart is Null
+	set @DateStart= (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System)
+if @DateEnd is Null
+	set @DateEnd = CONVERT(DATE, GETDATE())
+	
+Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+values (@DateInfoName,@DateStart,@DateEnd);
 
 SELECT ID, cDATE, MDivisionid,MANPOWER, MANHOURS, Actoutput, ActGarment, AddName, AddDate, EditName, EditDate
 INTO CuttingOutput

@@ -1,17 +1,7 @@
 
--- =============================================
--- Author:		<Leo 01921>
--- Create date: <2016/08/17>
--- Description:	<Description,,>
--- =============================================
 CREATE PROCEDURE [dbo].[exp_Airpp] 
-	-- Add the parameters for the stored procedure here
-	--<@Param1, sysname, @p1> <Datatype_For_Param1, , int> = <Default_Value_For_Param1, , 0>, 
-	--<@Param2, sysname, @p2> <Datatype_For_Param2, , int> = <Default_Value_For_Param2, , 0>
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 IF OBJECT_ID(N'dbo.AirPP') IS NOT NULL
 BEGIN
@@ -23,6 +13,17 @@ BEGIN
   DROP TABLE ShareExpense_APP
 END
 
+declare @DateInfoName varchar(30) ='AirPP';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date  = NULL--(select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+if @DateStart is Null
+	set @DateStart= CONVERT(DATE,DATEADD(day,-30,GETDATE()))
+if @DateEnd is Null
+	set @DateEnd = NULL-- CONVERT(DATE, GETDATE())
+	
+Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+values (@DateInfoName,@DateStart,@DateEnd);
 -----------------------------------------------------AirPP-----------------------------------------------------
 
 SELECT	app.ID
@@ -45,7 +46,7 @@ OUTER APPLY(
 	)
 )tmp
 WHERE	-- 30 天內新增異動的資料
-		CONVERT(datetime,isnull(app.EditDate, app.AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
+		CONVERT(datetime,isnull(app.EditDate, app.AddDate)) >= @DateStart
 		or
 		EXISTS(
 			----包含空運會計科目的ShareExpense_APP，30天內有異動過
@@ -56,7 +57,7 @@ WHERE	-- 30 天內新增異動的資料
 					----包含空運費
 					AND AN.IsAPP = 1
 					----ShareExpense_APP EditDate 在 30 天內
-					AND sea.EditDate >= DATEADD(DAY, -30, GETDATE())  
+					AND sea.EditDate >= @DateStart
 					AND sea.Junk=0
 		)
 		OR 
@@ -70,7 +71,7 @@ WHERE	-- 30 天內新增異動的資料
 					----包含空運費
 					AND AN.IsAPP = 1
 					----ShippingAP.VoucherEditDate 在 30 天內
-					AND SA.VoucherEditDate >= DATEADD(DAY, -30, GETDATE())   
+					AND SA.VoucherEditDate >= @DateStart 
 					AND sea.Junk=0
 		)
 
@@ -171,7 +172,7 @@ OUTER APPLY (
 							)
 ) Voucher
 WHERE	-- 30 天內新增異動的資料
-		CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
+		CONVERT(datetime,isnull(EditDate,AddDate)) >= @DateStart
 		OR EXISTS(
 			SELECT 1
 			FROM  #tmpVoucher tV
@@ -182,7 +183,7 @@ ORDER BY Id
 UPDATE Production.dbo.AirPP
 SET FtySendDate = GETDATE()
 WHERE 
-CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
+CONVERT(datetime,isnull(EditDate,AddDate)) >= @DateStart
  AND CONVERT(DATETIME, isnull(TPEEditDate,'')) <= CONVERT(DATETIME, isnull(EditDate,''))
 AND Status IN ('New','Checked','Approved','Junked') AND FtyMgrApvDate is not null AND FtySendDate is null
 
@@ -214,7 +215,7 @@ SELECT s.ShippingAPID
 INTO ShareExpense_APP
 FROM Production.dbo.ShareExpense_APP s
 LEFT JOIN Production.dbo.ShippingAP sa ON s.ShippingAPID = sa.ID
-WHERE CONVERT(datetime,s.EditDate) >= DATEADD(DAY, -30, GETDATE())
+WHERE CONVERT(datetime,s.EditDate) >= @DateStart
 ---------------------------------------------------------------------------------------------------------------
 
 

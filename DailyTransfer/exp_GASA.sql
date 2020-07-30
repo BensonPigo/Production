@@ -13,6 +13,18 @@ BEGIN
   DROP TABLE FirstDyelot
 END
 
+declare @DateInfoName varchar(30) ='GASA';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date  = NULL--(select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+if @DateStart is Null
+	set @DateStart= CONVERT(DATE,DATEADD(day,-30,GETDATE()))
+if @DateEnd is Null
+	set @DateEnd = NULL-- CONVERT(DATE, GETDATE())
+	
+Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+values (@DateInfoName,@DateStart,@DateEnd);
+
 SELECT [Export_DetailUkey]
       ,[InspectionReport]
       ,[TestReport]
@@ -25,7 +37,7 @@ SELECT [Export_DetailUkey]
       ,[TestReportCheckClima]
 INTO SentReport
 FROM Production.dbo.SentReport
-WHERE EditDate >= Convert(DATE,DATEADD(day,-30,GETDATE()))
+WHERE EditDate >= @DateStart
 ;
 
 SELECT [TestDocFactoryGroup]
@@ -39,5 +51,5 @@ SELECT [TestDocFactoryGroup]
       ,[EditDate]
 INTO FirstDyelot
 FROM Production.dbo.FirstDyelot
-WHERE EditDate >= Convert(DATE,DATEADD(day,-30,GETDATE()))
+WHERE EditDate >= @DateStart
 ;

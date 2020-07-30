@@ -1,21 +1,25 @@
 
-
--- =============================================
--- Author:		<Leo S01912>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
--- =============================================
 Create PROCEDURE [dbo].[exp_OrderSchedule]
 	
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 IF OBJECT_ID(N'dbo.OrderSchedule') IS NOT NULL
 BEGIN
 DROP TABLE OrderSchedule
 END
+
+declare @DateInfoName varchar(30) ='OrderSchedule';
+declare @DateStart date= NULL--(select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+if @DateStart is Null
+	set @DateStart= NULL--CONVERT(DATE,DATEADD(day,-30,GETDATE()))
+if @DateEnd is Null
+	set @DateEnd = EOMONTH(GETDATE(),3)
+	
+Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+values (@DateInfoName,@DateStart,@DateEnd);
 
 Select	o.ID
 		, o.SewInLine
@@ -28,7 +32,7 @@ Select	o.ID
 		, FirstCutDate = (select FirstCutDate from [Production].dbo.Cutting where ID = o.CuttingSP)
 INTO OrderSchedule
 from [Production].dbo.Orders o
-where	o.SCIDelivery <= EOMONTH(GETDATE(),3)
+where	o.SCIDelivery <= @DateEnd
 		and o.Finished = 0
 		and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1))
 		and o.IsForecast = 0
