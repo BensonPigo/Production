@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
+using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Xml.Linq;
@@ -9,24 +13,22 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Text;
 
-namespace Sci.Production.Centralized
+namespace Sci.Production.Planning
 {
-    public partial class R05 : Win.Tems.PrintForm
+    public partial class R05 : Sci.Win.Tems.PrintForm
     {
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.numYear.Value = MyUtility.Convert.GetDecimal(DateTime.Now.Year);
-            this.comboCentralizedM1.SetDefalutIndex(Env.User.Keyword);
-            this.comboCentralizedFactory1.SetDefalutIndex(Env.User.Factory, true);
-
             MyUtility.Tool.SetupCombox(this.cmbDate, 2, 1, "1,SCI Delivery Date,2,Buyer Delivery Date");
             this.cmbDate.SelectedValue = "1";
             this.comboFtyZone.IsIncludeSampleRoom = false;
-            this.comboFtyZone.SetDataSourceAllFty();
+            this.comboFtyZone.SetDataSource(Sci.Env.User.Keyword);
+            this.comboMDivision.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource();
         }
 
         private int Year;
@@ -51,9 +53,9 @@ namespace Sci.Production.Centralized
         {
             this.Year = MyUtility.Convert.GetInt(this.numYear.Value);
             this.Brand = this.txtbrand1.Text;
-            this.M = this.comboCentralizedM1.Text;
+            this.M = this.comboMDivision.Text;
             this.Zone = this.comboFtyZone.Text;
-            this.Factory = this.comboCentralizedFactory1.Text;
+            this.Factory = this.comboFactory.Text;
             this.Date = MyUtility.Convert.GetString(this.cmbDate.SelectedValue);
             this.Order = this.chkOrder.Checked;
             this.Forecast = this.chkForecast.Checked;
@@ -77,13 +79,13 @@ namespace Sci.Production.Centralized
         }
 
         /// <inheritdoc/>
-        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
             this.dtAllData = null;
             this.Summarydt = new List<DataTable>();
             this.listFtyZone = new List<string>();
-            string smmmaryDateCol = this.radioMonthly.Checked ? "SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6)" : "DateByHalfMonth";
+
             StringBuilder sqlcmdSP = new StringBuilder();
 
             sqlcmdSP.Append("exec dbo.GetProductionOutputSummary");
@@ -101,62 +103,35 @@ namespace Sci.Production.Centralized
             sqlcmdSP.Append(this.ExcludeSampleFactory ? $" 1," : "0,"); // ExcludeSampleFactory
             sqlcmdSP.Append(this.radioMonthly.Checked ? $" 1," : "0,"); // ChkMonthly
             sqlcmdSP.Append(this.chkIncludeCancelOrder.Checked ? $" 1," : "0,"); // @IncludeCancelOrder
-            #endregion
-
-            #region --由 appconfig 抓各個連線路徑
-            this.SetLoadingText("Load connections... ");
-            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS")).ToArray();
-            List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
-            foreach (string ss in strSevers)
-            {
-                if (!MyUtility.Check.Empty(ss))
-                {
-                    var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                    connectionString.Add(connections);
-                }
-            }
-
-            if (connectionString == null || connectionString.Count == 0)
-            {
-                return new DualResult(false, "no connection loaded.");
-            }
+            sqlcmdSP.Append($" 1,"); // IsFtySide 工廠端限制ForeCast單 僅顯示SCI delivery or buyer delivery 小於等於 當月份+4個月的月底+7天
             #endregion
 
             DualResult result = new DualResult(true);
 
-            foreach (string conString in connectionString)
+            result = DBProxy.Current.Select(string.Empty, sqlcmdSP.ToString().Substring(0, sqlcmdSP.Length - 1), null, out this.printData);
+            if (!result)
             {
-                SqlConnection conn;
-                using (conn = new SqlConnection(conString))
-                {
-                    conn.Open();
-                    result = DBProxy.Current.SelectByConn(conn, sqlcmdSP.ToString().Substring(0, sqlcmdSP.Length - 1), null, out this.printData);
-                    if (!result)
-                    {
-                        DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                        return failResult;
-                    }
+                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                return failResult;
+            }
 
-                    if (this.printData != null && this.printData[0].Rows.Count > 0)
-                    {
-                        if (this.dtAllData == null)
-                        {
-                            this.dtAllData = this.printData;
-                        }
-                        else
-                        {
-                            this.dtAllData[0].Merge(this.printData[0]);
-                            this.dtAllData[1].Merge(this.printData[1]);
-                            this.dtAllData[2].Merge(this.printData[2]);
-                        }
-                    }
+            if (this.printData != null && this.printData[0].Rows.Count > 0)
+            {
+                if (this.dtAllData == null)
+                {
+                    this.dtAllData = this.printData;
+                }
+                else
+                {
+                    this.dtAllData[0].Merge(this.printData[0]);
+                    this.dtAllData[1].Merge(this.printData[1]);
+                    this.dtAllData[2].Merge(this.printData[2]);
                 }
             }
 
             if (this.dtAllData == null || this.dtAllData[0].Rows.Count == 0)
             {
-                return Ict.Result.F("Data not found!");
+                return Result.F("Data not found!");
             }
 
             var allDetail = this.dtAllData[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["FtyZone"]));
@@ -316,7 +291,7 @@ drop table #tmp
             }
 
             DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
-            return Ict.Result.True;
+            return Result.True;
         }
 
         /// <inheritdoc/>
@@ -332,11 +307,11 @@ drop table #tmp
             this.SetCount(this.dtAllData[0].Rows.Count);
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string excelFile = "Centralized_R05.xltx";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
+            string excelFile = "Planning_R05.xltx";
+            Microsoft.Office.Interop.Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
+            excelApp.Visible = true;
 
-            // excelApp.Visible = true;
-            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
             if (this.Date == "1")
             {
                 worksheet.Cells[3, 1] = "SCI delivery";
@@ -377,32 +352,33 @@ drop table #tmp
             worksheet.Columns[11].ColumnWidth = 12.75;
             worksheet.Columns[12].ColumnWidth = 14;
             worksheet.Columns[13].ColumnWidth = 14;
-            worksheet.Columns[14].ColumnWidth = 14;
-            worksheet.Columns[15].ColumnWidth = 15;
-            worksheet.Columns[16].ColumnWidth = 25;
-            worksheet.Columns[17].ColumnWidth = 11.13;
-            worksheet.Columns[18].ColumnWidth = 25.25;
-            worksheet.Columns[19].ColumnWidth = 20;
-            worksheet.Columns[20].ColumnWidth = 7.63;
-            worksheet.Columns[21].ColumnWidth = 13.38;
-            worksheet.Columns[22].ColumnWidth = 11.88;
-            worksheet.Columns[23].ColumnWidth = 15.25;
+            worksheet.Columns[14].ColumnWidth = 12;
+            worksheet.Columns[15].ColumnWidth = 14;
+            worksheet.Columns[16].ColumnWidth = 15;
+            worksheet.Columns[17].ColumnWidth = 25;
+            worksheet.Columns[18].ColumnWidth = 11.13;
+            worksheet.Columns[19].ColumnWidth = 25.25;
+            worksheet.Columns[20].ColumnWidth = 20;
+            worksheet.Columns[21].ColumnWidth = 7.63;
+            worksheet.Columns[22].ColumnWidth = 13.38;
+            worksheet.Columns[23].ColumnWidth = 11.88;
             worksheet.Columns[24].ColumnWidth = 15.25;
             worksheet.Columns[25].ColumnWidth = 15.25;
-            worksheet.Columns[26].ColumnWidth = 25.75;
-            worksheet.Columns[27].ColumnWidth = 16.38;
-            worksheet.Columns[28].ColumnWidth = 17.5;
+            worksheet.Columns[26].ColumnWidth = 15.25;
+            worksheet.Columns[27].ColumnWidth = 25.75;
+            worksheet.Columns[28].ColumnWidth = 16.38;
             worksheet.Columns[29].ColumnWidth = 17.5;
             worksheet.Columns[30].ColumnWidth = 17.5;
-            worksheet.Columns[31].ColumnWidth = 18.13;
-            worksheet.Columns[32].ColumnWidth = 8;
-            worksheet.Columns[33].ColumnWidth = 22;
-            worksheet.Columns[34].ColumnWidth = 16.38;
-            worksheet.Columns[35].ColumnWidth = 6.5;
-            worksheet.Columns[36].ColumnWidth = 19.88;
-            worksheet.Columns[37].ColumnWidth = 16.38;
+            worksheet.Columns[31].ColumnWidth = 17.5;
+            worksheet.Columns[32].ColumnWidth = 18.13;
+            worksheet.Columns[33].ColumnWidth = 8;
+            worksheet.Columns[34].ColumnWidth = 22;
+            worksheet.Columns[35].ColumnWidth = 16.38;
+            worksheet.Columns[36].ColumnWidth = 6.5;
+            worksheet.Columns[37].ColumnWidth = 19.88;
             worksheet.Columns[38].ColumnWidth = 16.38;
             worksheet.Columns[39].ColumnWidth = 16.38;
+            worksheet.Columns[40].ColumnWidth = 16.38;
             #endregion
 
             for (int j = 1; j <= this.listFtyZone.Count; j++)
