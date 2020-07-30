@@ -58,9 +58,14 @@ namespace Sci.Production.Cutting
                     MyUtility.Convert.GetLong(w["Workorderukey"]) == MyUtility.Convert.GetLong(this.Detailrow["Ukey"]) &&
                     MyUtility.Convert.GetLong(w["newkey"]) == MyUtility.Convert.GetLong(this.Detailrow["NewKey"]))
                 .Select(s => MyUtility.Convert.GetString(s["SizeCode"])).ToList().JoinToString("','");
+            string fabricPanelCode = this.PatternPanel_Current.AsEnumerable()
+                .Where(w => w.RowState != DataRowState.Deleted &&
+                    MyUtility.Convert.GetLong(w["Workorderukey"]) == MyUtility.Convert.GetLong(this.Detailrow["Ukey"]) &&
+                    MyUtility.Convert.GetLong(w["newkey"]) == MyUtility.Convert.GetLong(this.Detailrow["NewKey"]))
+                .Select(s => MyUtility.Convert.GetString(s["FabricPanelCode"])).ToList().JoinToString("','");
 
             string sqlcmd = $@"
-SELECT
+SELECT distinct
 	Sel = CAST(0 AS bit),
 	Seq = '',
 	OrderId =	oq.id, 
@@ -81,6 +86,7 @@ FROM order_qty oq
 INNER JOIN orders o ON o.id = oq.id 
 INNER join Order_ColorCombo oc on oc.Id = o.poid and oc.Article = oq.Article and oc.FabricType = 'F'
 WHERE o.poid = '{this.Detailrow["ID"]}' and oq.SizeCode in ('{sizes}') and oc.ColorID = '{this.Detailrow["ColorID"]}'
+and oc.FabricPanelCode in ('{fabricPanelCode}')
 ORDER BY OQ.sizecode,oq.id,OQ.article 
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.SourceDt);
