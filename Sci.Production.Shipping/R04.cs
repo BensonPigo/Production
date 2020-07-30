@@ -679,7 +679,7 @@ outer apply(
 
 where 1=1 and isnull(ot.IsGMTMaster,0) != 1
 
-AND oq.Qty <>( (select isnull(sum(ShipQty), 0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) 
+AND oq.Qty <>( (select isnull(sum(ShipQty), 0) from packinglist_detail pld where pld.orderid = o.id and pld.OrderShipmodeSeq = oq.seq)
 				- [dbo].getInvAdjQty(o.ID,oq.Seq) )
 and o.PulloutComplete=0 and o.Qty > 0
 and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
