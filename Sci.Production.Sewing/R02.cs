@@ -1282,7 +1282,7 @@ where f.Junk = 0",
                 return false;
             }
 
-            // excel.Visible = true;
+            excel.Visible = true;
             Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 1] = string.Format("{0}", this.factoryName);
@@ -1591,7 +1591,7 @@ where f.Junk = 0",
         {
             insertRow = 5;
             Excel.Range rngToInsert;
-            object[,] objArray = new object[1, 16];
+            object[,] objArray = new object[1, 18];
             int iQAQty = 2, iTotalCPU = 3, iCPUSewer = 6, iAvgWorkHour = 7, iManHour = 9, iEff = 10;
             string sEff;
             foreach (DataRow dr in this.printData.Rows)
@@ -1609,21 +1609,49 @@ where f.Junk = 0",
                 if (this.reportType == 2)
                 {
                     objArray[0, 9] = dr[9];
+
+                    // EFF %  欄位公式
                     objArray[0, 10] = string.Format("=IF(J{0}=0,0,ROUND((D{0}/(J{0}*3600/1400))*100,1))", insertRow);
                 }
                 else
                 {
+                    // EFF %  欄位公式
                     objArray[0, 9] = string.Format("=IF(I{0}=0,0,ROUND((C{0}/(I{0}*3600/1400))*100,1))", insertRow);
 
                     if (this.reportType == 0)
                     {
                         if (pams != null && pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).Count() > 0)
                         {
+                            // Total Manpower (PAMS)
                             objArray[0, 11] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManpower;
+
+                            // Total Manhours (PAMS)
                             objArray[0, 12] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManhours;
 
                             string holiday = (pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().Holiday == 1) ? "Y" : string.Empty;
+
+                            /*
+                            // Test
+                            pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().TransManpowerIn = 2.5M;
+                            pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().TransManpowerOut = 1.5M;
+
+                            pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().TransManhoursIn = 2.5M;
+                            pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().TransManhoursOut = 6.7M;
+                            */
+
+                            // Holiday (PAMS)
                             objArray[0, 14] = holiday;
+                            decimal transferManpower = MyUtility.Convert.GetDecimal(pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().TransManpowerIn
+                                - pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().TransManpowerOut);
+
+                            decimal transferManhours = MyUtility.Convert.GetDecimal(pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().TransManhoursIn
+                                - pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().TransManhoursOut);
+
+                            // Transfer Manpower(PAMS)
+                            objArray[0, 15] = transferManpower;
+
+                            // Transfer Manhours(PAMS)]
+                            objArray[0, 16] = transferManhours;
                         }
                         else
                         {
@@ -1631,13 +1659,18 @@ where f.Junk = 0",
                             objArray[0, 12] = 0;
                         }
 
+                        // Average Working Hour(PAMS)
                         objArray[0, 10] = MyUtility.Convert.GetDouble(objArray[0, 11]) == 0 ? 0 : MyUtility.Convert.GetDouble(objArray[0, 12]) / MyUtility.Convert.GetDouble(objArray[0, 11]);
+
+                        // EFF % (PAMS) 欄位公式
                         objArray[0, 13] = string.Format("=IF(M{0}=0,0,ROUND((C{0}/(M{0}*3600/1400))*100,1))", insertRow);
-                        objArray[0, 15] = string.Empty;
+
+                        // Remark
+                        objArray[0, 17] = string.Empty;
                     }
                 }
 
-                worksheet.Range[string.Format("A{0}:O{0}", insertRow)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:R{0}", insertRow)].Value2 = objArray;
                 insertRow++;
 
                 // 插入一筆Record
@@ -1685,6 +1718,8 @@ where f.Junk = 0",
                     worksheet.Cells[insertRow, 12] = string.Format("=SUM(L5:L{0})", MyUtility.Convert.GetString(insertRow - 1));
                     worksheet.Cells[insertRow, 13] = string.Format("=SUM(M5:M{0})", MyUtility.Convert.GetString(insertRow - 1));
                     worksheet.Cells[insertRow, 14] = string.Format("=ROUND(C{0}/(M{0}*60*60/1400)*100,1)", insertRow);
+                    worksheet.Cells[insertRow, 16] = $"=SUM(P5:P{MyUtility.Convert.GetString(insertRow - 1)})";
+                    worksheet.Cells[insertRow, 17] = $"=SUM(Q5:Q{MyUtility.Convert.GetString(insertRow - 1)})";
                 }
             }
 
