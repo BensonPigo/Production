@@ -11,18 +11,18 @@ BEGIN
 轉入 ICR,ICR_Detail,ICR_ReplacementReport
 */
 
--- 設定區間資料
-declare @DateStart date
-declare @DateEnd date
-
-IF EXISTS (Select 1 From Trade_To_Pms.dbo.DateInfo Where Name = 'ICR')
-BEGIN
-	Select
-	 @DateStart = DateStart
-	,@DateEnd   = DateEnd 
-	From Trade_To_Pms.dbo.DateInfo 
-	Where Name = 'ICR'
-END
+------------------------------------------------------------------------------------------------------
+declare @DateInfoName varchar(30) ='ICR';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+if @DateStart is Null
+	set @DateStart= (Select DateStart From Trade_To_Pms.dbo.DateInfo Where Name = @DateInfoName)
+if @DateEnd is Null
+	set @DateEnd = (Select DateEnd From Trade_To_Pms.dbo.DateInfo Where Name = @DateInfoName)
+Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+values (@DateInfoName,@DateStart,@DateEnd);
+------------------------------------------------------------------------------------------------------
 
 -- #tmp Trade_To_PMS ICR
 	SELECT *

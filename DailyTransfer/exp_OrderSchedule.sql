@@ -9,17 +9,15 @@ BEGIN
 DROP TABLE OrderSchedule
 END
 
+------------------------------------------------------------------------------------------------------
 declare @DateInfoName varchar(30) ='OrderSchedule';
-declare @DateStart date= NULL--(select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
 declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
-if @DateStart is Null
-	set @DateStart= NULL--CONVERT(DATE,DATEADD(day,-30,GETDATE()))
 if @DateEnd is Null
-	set @DateEnd = EOMONTH(GETDATE(),3)
-	
+	set @DateEnd = EOMONTH(GETDATE(),3)	
 Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
 Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
-values (@DateInfoName,@DateStart,@DateEnd);
+values (@DateInfoName,@DateEnd,@DateEnd);
+------------------------------------------------------------------------------------------------------
 
 Select	o.ID
 		, o.SewInLine

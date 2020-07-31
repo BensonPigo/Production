@@ -1,30 +1,29 @@
 
--- =============================================
--- Author:		LEO
--- Create date: 20160903
--- Description:	<Description,,>
--- =============================================
-Create PROCEDURE imp_Prokit
-	-- Add the parameters for the stored procedure here
-	
+Create PROCEDURE imp_Prokit	
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
---	StyleC
---[Style_ProductionKits]
---PMS2多的,[SendToQA]
---      ,[QAReceived]
---,[MDivisionID]
+	
+------------------------------------------------------------------------------------------------------
+	declare @DateInfoName varchar(30) ='ProductionKits';
+	declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+	declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+	if @DateStart is Null
+		set @DateStart= (Select DateStart From Trade_To_Pms.dbo.DateInfo Where Name = @DateInfoName)
+	if @DateEnd is Null
+		set @DateEnd = (Select DateEnd From Trade_To_Pms.dbo.DateInfo Where Name = @DateInfoName)
+	Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+	values (@DateInfoName,@DateStart,@DateEnd);
+------------------------------------------------------------------------------------------------------
 
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.Style_ProductionKits
 from Production.dbo.Style_ProductionKits as a left join Trade_To_Pms.dbo.Style_ProductionKits as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
-and ((a.AddDate between (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits') and (select DateEnd from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits')) 
-or (a.EditDate between (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits') and (select DateEnd from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits')))
+and ((a.AddDate between @DateStart and @DateEnd) 
+or (a.EditDate between @DateStart and @DateEnd))
 
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 RAISERROR('imp_Style - Starts',0,0)

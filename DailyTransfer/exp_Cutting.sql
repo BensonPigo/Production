@@ -3,8 +3,7 @@ Create PROCEDURE [dbo].[exp_Cutting]
 
 AS
 BEGIN
-
-	SET NOCOUNT ON;
+SET NOCOUNT ON;
 IF OBJECT_ID(N'dbo.CuttingOutput') IS NOT NULL
 BEGIN
   DROP TABLE CuttingOutput
@@ -27,18 +26,18 @@ BEGIN
   DROP TABLE Workorder_Distribute
 END
 
-
+------------------------------------------------------------------------------------------------------
 declare @DateInfoName varchar(30) ='CUTTING';
 declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
 declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
 if @DateStart is Null
 	set @DateStart= (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System)
 if @DateEnd is Null
-	set @DateEnd = CONVERT(DATE, GETDATE())
-	
+	set @DateEnd = CONVERT(DATE, GETDATE())	
 Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
 Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
 values (@DateInfoName,@DateStart,@DateEnd);
+------------------------------------------------------------------------------------------------------
 
 SELECT ID, cDATE, MDivisionid,MANPOWER, MANHOURS, Actoutput, ActGarment, AddName, AddDate, EditName, EditDate
 INTO CuttingOutput

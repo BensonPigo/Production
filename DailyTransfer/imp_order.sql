@@ -6,21 +6,43 @@
 Create PROCEDURE [dbo].[imp_Order]
 AS
 BEGIN
-
 	SET NOCOUNT ON;
-
-	declare @OldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --最後匯入資料日期
-	declare @dToDay date = CONVERT(date, GETDATE()) --今天日期
-
-	DELETE FROM Trade_To_Pms.dbo.DateInfo
-	WHERE NAME='imp_Order_OldDate' or NAME='imp_Order_dToDay'
-
+	
+------------------------------------------------------------------------------------------------------
+	declare @DateInfoName varchar(30) ='imp_Order_OldDate';
+	declare @OldDate date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+	if @OldDate is Null
+		set @OldDate= (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --最後匯入資料日期
+	Delete Trade_To_Pms.dbo.dateInfo Where Name = @DateInfoName 
 	INSERT INTO Trade_To_Pms.dbo.DateInfo (Name, DateStart, DateEnd)
-                    VALUES  ('imp_Order_OldDate',@OldDate , @OldDate),
-					        ('imp_Order_dToDay',@dToDay , @dToDay);
+	VALUES  (@DateInfoName,@OldDate,@OldDate)
+	Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+	INSERT INTO Pms_To_Trade.dbo.DateInfo (Name, DateStart, DateEnd)
+	VALUES  (@DateInfoName,@OldDate,@OldDate)	
+------------------------------------------------------------------------------------------------------
+	Set @DateInfoName ='imp_Order_dToDay';
+	declare @dToDay date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+	if @dToDay is Null
+		set @dToDay= CONVERT(date, GETDATE())		
+	Delete Trade_To_Pms.dbo.dateInfo Where Name = @DateInfoName 
+	INSERT INTO Trade_To_Pms.dbo.DateInfo (Name, DateStart, DateEnd)
+	VALUES  (@DateInfoName,@dToDay,@dToDay)
+	Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+	INSERT INTO Pms_To_Trade.dbo.DateInfo (Name, DateStart, DateEnd)
+	VALUES  (@DateInfoName,@dToDay,@dToDay)							
+------------------------------------------------------------------------------------------------------
+	Set @DateInfoName  ='imp_Order';
+	declare @Odate_s datetime = (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+	declare @Odate_e datetime = (select DateEnd from Production.dbo.DateInfo where name = @DateInfoName);
+	if @Odate_s is Null
+		set @Odate_s= (SELECT TOP 1 DateStart FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
+	if @Odate_e is Null
+		set @Odate_e= (SELECT TOP 1 DateEnd FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')		
+	Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+	values (@DateInfoName,@Odate_s,@Odate_e);	
+------------------------------------------------------------------------------------------------------
 
-	declare @Odate_s datetime = (SELECT TOP 1 DateStart FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
-	declare @Odate_e datetime = (SELECT TOP 1 DateEnd FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
 -----------------匯入訂單檢核表------------------------
 	delete from Production.dbo.OrderComparisonList
 	where ISNULL(UpdateDate,'')='' and isnull(OrderId,'')='' and isnull(FactoryID,'')=''

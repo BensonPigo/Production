@@ -408,19 +408,18 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 --------TRADE的EditDate > PMS EditDate 就UPDATE All 如果false 就不UPDATE EditDate & EditName 其他一樣UPDATE
 
-
+------------------------------------------------------------------------------------------------------
 declare @DateInfoName varchar(30) ='imp_MtlType';
 declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
 declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
 if @DateStart is Null
 	set @DateStart= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
 if @DateEnd is Null
-	set @DateEnd = CONVERT(DATE, GETDATE())
-	
+	set @DateEnd = CONVERT(DATE, GETDATE())	
 Delete Trade_To_Pms.dbo.dateInfo Where Name = @DateInfoName 
 Insert into Trade_To_Pms.dbo.dateInfo(Name,DateStart,DateEnd)
 values (@DateInfoName,@DateStart,@DateEnd);
-
+------------------------------------------------------------------------------------------------------
 
 UPDATE a
 SET  
