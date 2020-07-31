@@ -252,7 +252,7 @@ left join #Final s on t.FactoryID = s.FactoryID
 	AND t.seq = s.seq 
 where T.BuyerDelivery between '''+@SDate+'''  and '''+@EDate+''' 
 	and t.FactoryID in (select distinct FactoryID from #Final ) 
-	and s.FactoryID   IS NULL
+	and s.id IS NULL
 	and ((s.OrderQty > s.PackingQty) OR (s.PackingCarton - s.ClogReceivedCarton <> 0 ))
 
 	drop table #final
