@@ -167,117 +167,119 @@ OUTER APPLY(
 					from ['+@LinkServerName+'].Production.dbo.SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
 					where sdd.OrderId = main.ID)a 
 )CMPQty
- where ( main.OrderQty > ISNULL(pd.PackingQty,0) OR (ISNULL(pd.PackingCarton,0) - ISNULL(pd.ClogReceivedCarton,0)) <> 0 ) 
-
 
 DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_Step1
 '
 
 SET @SqlCmd3= '
+BEGIN TRY
+Begin tran
 
-MERGE INTO P_OustandingPO t --要被insert/update/delete的表
-USING #Final s --被參考的表
-   ON t.FactoryID=s.FactoryID  
-   AND t.orderid=s.id 
-   AND t.seq = s.seq 
+update t
+SET 
+	t.CustPONo =  s.CustPONo,
+	t.StyleID =  s.StyleID,
+	t.BrandID = s.BrandID,
+	t.BuyerDelivery = s.BuyerDelivery,
+	t.ShipModeID =  s.ShipModeID,
+	t.Category =  s.Category,
+	t.PartialShipment =  s.PartialShipment,
+	t.Junk =  s.Cancelled,
+	t.OrderQty =  s.OrderQty,
+	t.PackingCtn =  s.PackingCarton,
+	t.PackingQty =  s.PackingQty,
+	t.ClogRcvCtn =  s.ClogReceivedCarton,
+	t.ClogRcvQty =  s.ClogReceivedQty,
+	t.LastCMPOutputDate =  s.LastCMPOutputDate,
+	t.CMPQty =  s.CMPQty,
+	t.LastDQSOutputDate =  s.LastDQSOutputDate,
+	t.DQSQty =  s.DQSQty,
+	t.OSTPackingQty =  s.OSTPackingQty,
+	t.OSTCMPQty =  s.OSTCMPQty,
+	t.OSTDQSQty =  s.OSTDQSQty,
+	t.OSTClogQty =  s.OSTClogQty,
+	t.OSTClogCtn =  s.OSTClogCtn,
+	t.PulloutComplete = s.PulloutComplete,
+	t.dest = s.dest
+from P_OustandingPO t
+inner join #Final s  
+		ON t.FactoryID=s.FactoryID  
+		AND t.orderid=s.id 
+		AND t.seq = s.seq 
 
-WHEN MATCHED THEN   
-    UPDATE SET 
-		t.CustPONo =  s.CustPONo,
-		t.StyleID =  s.StyleID,
-		t.BrandID = s.BrandID,
-		t.BuyerDelivery = s.BuyerDelivery,
-		t.ShipModeID =  s.ShipModeID,
-		t.Category =  s.Category,
-		t.PartialShipment =  s.PartialShipment,
-		t.Junk =  s.Cancelled,
-		t.OrderQty =  s.OrderQty,
-		t.PackingCtn =  s.PackingCarton,
-		t.PackingQty =  s.PackingQty,
-		t.ClogRcvCtn =  s.ClogReceivedCarton,
-		t.ClogRcvQty =  s.ClogReceivedQty,
-		t.LastCMPOutputDate =  s.LastCMPOutputDate,
-		t.CMPQty =  s.CMPQty,
-		t.LastDQSOutputDate =  s.LastDQSOutputDate,
-		t.DQSQty =  s.DQSQty,
-		t.OSTPackingQty =  s.OSTPackingQty,
-		t.OSTCMPQty =  s.OSTCMPQty,
-		t.OSTDQSQty =  s.OSTDQSQty,
-		t.OSTClogQty =  s.OSTClogQty,
-		t.OSTClogCtn =  s.OSTClogCtn,
-		t.PulloutComplete = s.PulloutComplete,
-		t.dest = s.dest
 
-WHEN NOT MATCHED by target THEN
-    INSERT ([FactoryID]
-		  ,[OrderID]
-		  ,[CustPONo]
-		  ,[StyleID]
-		  ,[BrandID]
-		  ,[BuyerDelivery]
-		  ,[Seq]
-		  ,[ShipModeID]
-		  ,[Category]
-		  ,[PartialShipment]
-		  ,[Junk]
-		  ,[OrderQty]
-		  ,[PackingCtn]
-		  ,[PackingQty]
-		  ,[ClogRcvCtn]
-		  ,[ClogRcvQty]
-		  ,[LastCMPOutputDate]
-		  ,[CMPQty]
-		  ,[LastDQSOutputDate]
-		  ,[DQSQty]
-		  ,[OSTPackingQty]
-		  ,[OSTCMPQty]
-		  ,[OSTDQSQty]
-		  ,[OSTClogQty]
-		  ,[OSTClogCtn]
-		  ,[PulloutComplete]
-		  ,[dest]
+insert into P_OustandingPO
+select  s.FactoryID,
+		s.id,
+		s.CustPONo,
+		s.StyleID,
+		s.BrandID,
+		s.BuyerDelivery,
+		s.Seq,
+		s.ShipModeID,
+		s.Category,
+		s.PartialShipment,
+		s.Cancelled,
+		s.OrderQty,
+		s.PackingCarton,
+		s.PackingQty,
+		s.ClogReceivedCarton,
+		s.ClogReceivedQty,
+		s.LastCMPOutputDate,
+		s.CMPQty,
+		s.LastDQSOutputDate,
+		s.DQSQty,
+		s.OSTPackingQty,
+		s.OSTCMPQty,
+		s.OSTDQSQty,
+		s.OSTClogQty,
+		s.OSTClogCtn,
+		s.PulloutComplete,
+		s.dest
+from #Final s
+where not exists(
+	select 1 from P_OustandingPO t 
+	where t.FactoryID = s.FactoryID  
+	AND t.orderid = s.id 
+	AND t.seq = s.seq 
 )
-	VALUES (
-			s.FactoryID,
-			s.id,
-			s.CustPONo,
-			s.StyleID,
-			s.BrandID,
-			s.BuyerDelivery,
-			s.Seq,
-			s.ShipModeID,
-			s.Category,
-			s.PartialShipment,
-			s.Cancelled,
-			s.OrderQty,
-			s.PackingCarton,
-			s.PackingQty,
-			s.ClogReceivedCarton,
-			s.ClogReceivedQty,
-			s.LastCMPOutputDate,
-			s.CMPQty,
-			s.LastDQSOutputDate,
-			s.DQSQty,
-			s.OSTPackingQty,
-			s.OSTCMPQty,
-			s.OSTDQSQty,
-			s.OSTClogQty,
-			s.OSTClogCtn,
-			s.PulloutComplete,
-			s.dest
-		  )
-	when not matched by source AND T.BuyerDelivery between '''+@SDate+'''  and '''+@EDate+''' 
+and ((OrderQty > PackingQty) OR (PackingCarton - ClogReceivedCarton <> 0 ))
+
+delete t
+from P_OustandingPO t
+left join #Final s on t.FactoryID = s.FactoryID  
+	AND t.orderid = s.id 
+	AND t.seq = s.seq 
+where T.BuyerDelivery between '''+@SDate+'''  and '''+@EDate+''' 
 	and t.FactoryID in (select distinct FactoryID from #Final ) 
-	then 
-			delete;
+	and s.id IS NULL
+	and ((s.OrderQty > s.PackingQty) OR (s.PackingCarton - s.ClogReceivedCarton <> 0 ))
 
 	drop table #final
+
+Commit tran
+
+END TRY
+BEGIN CATCH
+	RollBack Tran
+	declare @ErrMsg varchar(1000) = ''Err# : '' + ltrim(str(ERROR_NUMBER())) + 
+				CHAR(10)+''Error Severity:''+ltrim(str(ERROR_SEVERITY()  )) +
+				CHAR(10)+''Error State:'' + ltrim(str(ERROR_STATE() ))  +
+				CHAR(10)+''Error Proc:'' + isNull(ERROR_PROCEDURE(),'''')  +
+				CHAR(10)+''Error Line:''+ltrim(str(ERROR_LINE()  )) +
+				CHAR(10)+''Error Msg:''+ ERROR_MESSAGE() ;
+    
+    RaisError( @ErrMsg ,16,-1)
+
+END CATCH
 '
 
 SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3
 	EXEC sp_executesql @SqlCmd_Combin
 
 End
+
+
 
 
 
