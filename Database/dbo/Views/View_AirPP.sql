@@ -1,4 +1,5 @@
-﻿CREATE view  [dbo].[View_AirPP]
+﻿
+CREATE VIEW [dbo].[View_AirPP]
 as
 
 SELECT [VoucherID] = VoucherID.val
@@ -20,6 +21,7 @@ Outer apply
 									WHERE	an.IsAPP=1 
 											AND sea.ShippingAPID=sa.ID
 											AND sea.AirPPID= app.ID
+											AND sea.Junk = 0
 									)
 							)tV
 							WHERE isnull(tV.VoucherID,'' ) != ''										  
@@ -40,6 +42,7 @@ Outer apply
 							WHERE	an.IsAPP=1 
 									AND sea.ShippingAPID=sa.ID
 									AND sea.AirPPID= app.ID
+									AND sea.Junk = 0
 						)
 					)tV
 					where tV.VoucherDate IS NOT NULL)
@@ -53,7 +56,7 @@ Outer apply
 		select [ActAmtUSD] = cast(iif(sa.APPExchageRate = 0, 0, (sea.AmtFty + sea.AmtOther) / sa.APPExchageRate) as decimal(18,2)) 
 		from ShareExpense_APP sea
 		left join ShippingAP sa on sea.ShippingAPID = sa.ID 
-		where sea.AirPPID = app.ID
+		where sea.AirPPID = app.ID AND sea.Junk = 0
 	)ActAmtUSD 
  )ActAmtUSD
 outer apply
@@ -64,8 +67,8 @@ outer apply
 	outer apply (
 		select [val] = min(AddDate)
 		from ShippingAP
-		where ID = sa.ID
+		where ID = sa.ID 
 	)minAddDate
 	where sa.AddDate = minAddDate.val
-	and sea.AirPPID = app.ID
+	and sea.AirPPID = app.ID AND sea.Junk = 0
 )APPExchageRate 

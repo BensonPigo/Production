@@ -57,7 +57,7 @@ WHERE	-- 30 天內新增異動的資料
 					AND AN.IsAPP = 1
 					----ShareExpense_APP EditDate 在 30 天內
 					AND sea.EditDate >= DATEADD(DAY, -30, GETDATE())  
-					AND sea.Junk=0
+					--AND sea.Junk=0
 		)
 		OR 
 		EXISTS(
@@ -71,7 +71,7 @@ WHERE	-- 30 天內新增異動的資料
 					AND AN.IsAPP = 1
 					----ShippingAP.VoucherEditDate 在 30 天內
 					AND SA.VoucherEditDate >= DATEADD(DAY, -30, GETDATE())   
-					AND sea.Junk=0
+					--AND sea.Junk=0
 		)
 
 -------
@@ -151,8 +151,11 @@ SELECT [ID]
 	  ,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2),12) ) AS ForWard2N
 	  , [VoucherDate] = Voucher.VoucherDate
 	  , [VoucherID] = Voucher.VoucherID
+	  ,[APPExchageRate] = va.APPExchageRate
+	  ,[APPAmtUSD] = va.ActAmtUSD
 INTO AirPP
 FROM Production.dbo.AirPP AS A
+left join Production.dbo.View_AirPP va on va.ID = A.id
 OUTER APPLY (
 	SELECT VoucherID = STUFF (	(	SELECT DISTINCT CONCAT (',', tV.VoucherID) 
 									FROM #tmpVoucher tV
@@ -190,32 +193,6 @@ drop table #tmpVoucher
 
 ---------------------------------------------------------------------------------------------------------------
 
-
------------------------------------------------------ShareExpense_APP------------------------------------------
-
-SELECT s.ShippingAPID
-,s.InvNO
-,s.PackingListID
-,s.AirPPID
-,s.AccountID
-,s.CurrencyID
-,s.NW
-,s.RatioFty
-,s.AmtFty
-,s.RatioOther
-,s.AmtOther
-,s.Junk
-,s.EditName
-,s.EditDate
-,sa.APPExchageRate
-,[APPAmtUSD] =  CASE WHEN sa.APPExchageRate = 0 THEN 0
-				ELSE ROUND( (s.AmtFty + s.AmtOther) / sa.APPExchageRate , 2 )
-				END
-INTO ShareExpense_APP
-FROM Production.dbo.ShareExpense_APP s
-LEFT JOIN Production.dbo.ShippingAP sa ON s.ShippingAPID = sa.ID
-WHERE CONVERT(datetime,s.EditDate) >= DATEADD(DAY, -30, GETDATE())
----------------------------------------------------------------------------------------------------------------
 
 
 END
