@@ -107,6 +107,7 @@ order by M desc";
 select DISTINCT
 		 [Year] = YEAR(a.StartDate)
 		,[Month] = MONTH(a.StartDate)
+		,a.EndDate
         ,a.AGCCode [Factory ID]
         ,b.SeasonId [Season]
         ,b.BulkMR [DevMR]
@@ -114,6 +115,7 @@ select DISTINCT
         ,b.SuppID [Supplier]
         ,b.FactoryID [Factory]
         ,b.Refno [Shell]
+        ,b.Responsibility
         ,b.SalesName [Sales_Org_Name]
         ,b.StyleID [Style]
         ,b.Article [Article_ID]
@@ -122,13 +124,13 @@ select DISTINCT
         ,b.CustPONo [PO]
         ,b.ProductionDate [ProductionDate]
         ,b.DefectMainID [DefectMainID]
+        ,c.Name [Defect_Main_Name]
         ,b.DefectSubID [DefectSubID]
+        ,d.SubName [Defect_Sub_Name]
         ,b.FOB [FOB_Price]
         ,b.Qty [Qty]
         ,b.ValueinUSD [Complaint_Value]
         ,b.ValueINExRate [Exrate]
-        ,c.Name [Defect_Main_Name]
-        ,d.SubName [Defect_Sub_Name]
 from dbo.ADIDASComplain a WITH (NOLOCK) 
 inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.ID
 left join dbo.ADIDASComplainDefect c WITH (NOLOCK) on b.DefectMainID=c.ID
