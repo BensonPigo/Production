@@ -4,7 +4,7 @@
 -- Create date: <2016/08/17>
 -- Description:	<Description,,>
 -- =============================================
-alter PROCEDURE [dbo].[exp_Airpp] 
+Create PROCEDURE [dbo].[exp_Airpp] 
 	-- Add the parameters for the stored procedure here
 	--<@Param1, sysname, @p1> <Datatype_For_Param1, , int> = <Default_Value_For_Param1, , 0>, 
 	--<@Param2, sysname, @p2> <Datatype_For_Param2, , int> = <Default_Value_For_Param2, , 0>
