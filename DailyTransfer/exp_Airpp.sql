@@ -57,7 +57,6 @@ WHERE	-- 30 天內新增異動的資料
 					AND AN.IsAPP = 1
 					----ShareExpense_APP EditDate 在 30 天內
 					AND sea.EditDate >= DATEADD(DAY, -30, GETDATE())  
-					--AND sea.Junk=0
 		)
 		OR 
 		EXISTS(
@@ -71,12 +70,11 @@ WHERE	-- 30 天內新增異動的資料
 					AND AN.IsAPP = 1
 					----ShippingAP.VoucherEditDate 在 30 天內
 					AND SA.VoucherEditDate >= DATEADD(DAY, -30, GETDATE())   
-					--AND sea.Junk=0
 		)
 
 -------
 
-SELECT [ID]
+SELECT [ID] = a.ID
       ,[CDate]
       ,[OrderID]
       ,[OrderShipmodeSeq]
@@ -180,7 +178,7 @@ WHERE	-- 30 天內新增異動的資料
 			FROM  #tmpVoucher tV
 			WHERE A.ID = tV.ID
 		)
-ORDER BY Id 
+ORDER BY A.ID 
 
 UPDATE Production.dbo.AirPP
 SET FtySendDate = GETDATE()
