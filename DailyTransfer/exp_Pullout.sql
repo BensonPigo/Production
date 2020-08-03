@@ -32,6 +32,11 @@ IF OBJECT_ID(N'GMTBooking') IS NOT NULL
 BEGIN
   DROP TABLE GMTBooking
 END
+IF OBJECT_ID(N'GMTBooking_CTNR') IS NOT NULL
+BEGIN
+  DROP TABLE GMTBooking_CTNR
+END
+
 SELECT * 
 INTO  #CUR_PULLOUT1
 FROM 
@@ -212,6 +217,25 @@ from (
 	from #tmpFtyBooking2
 ) a 
 
+ 
+select g.ID, c.CTNRNo
+into GMTBooking_CTNR 
+from 
+(
+	select g.ID
+	from Production.dbo.GMTBooking_CTNR g
+	where exists (select 1 from #tmpFtyBooking1 where ID = g.ID)
+	group by g.ID
+)g
+outer apply (
+	select CTNRNo = stuff(
+	(
+		select concat(',', CTNRNo)
+		from Production.dbo.GMTBooking_CTNR  
+		where ID = g.ID
+		for xml path('')
+	),1,1,'')
+)c
 
 UPDATE  Production.dbo.Pullout
 SET SendToTPE = CONVERT(date, GETDATE())
