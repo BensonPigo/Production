@@ -145,7 +145,7 @@
             this.txtCode.Name = "txtCode";
             this.txtCode.Size = new System.Drawing.Size(122, 23);
             this.txtCode.TabIndex = 3;
-            this.txtCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtCode_PopUp);
+            this.txtCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCode_PopUp);
             // 
             // comboStatus
             // 
