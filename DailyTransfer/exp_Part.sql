@@ -158,7 +158,7 @@ AND PurchaseFrom = 'T'
 
 SELECT pod.ID,pod.seq1,pod.SEQ2,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid ,pod.PartReqID,pod.InQty
 	,prd.MinQty,prd.StockQty,prd.RoadQty
-	,pr.FactoryApprove, pr.FactoryApproveDate, pr.CmdApprove, pr.CmdApproveDate, pr.MgApprove, pr.MgApproveDate,prd.Consumable
+	,pr.FactoryApprove, pr.FactoryApproveDate, pr.CmdApprove, pr.CmdApproveDate, pr.MgApprove, pr.MgApproveDate,prd.Consumable,prd.AvgQty
 INTO  PartPO_Detail
 FROM Pms_To_Trade.dbo.PartPO, Production.dbo.SciMachine_PartPO_Detail  pod
 left join Production.dbo.SciMachine_PartReq_Detail prd on prd.ID= pod.PartReqID and prd.PartID=pod.PartID

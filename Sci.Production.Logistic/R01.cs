@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
-using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Logistic
 {
@@ -27,15 +27,9 @@ namespace Sci.Production.Logistic
         /// </summary>
         public DateTime? SciDelivery1
         {
-            get
-            {
-                return this.sciDelivery1;
-            }
+            get => this.sciDelivery1;
 
-            set
-            {
-                this.sciDelivery1 = value;
-            }
+            set => this.sciDelivery1 = value;
         }
 
         /// <summary>
@@ -46,8 +40,7 @@ namespace Sci.Production.Logistic
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable mDivision;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out DataTable mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             this.comboM.Text = Env.User.Keyword;
         }
@@ -112,6 +105,7 @@ into #tmp_Orders
 from Orders o WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 inner join Style s  WITH (NOLOCK) on o.StyleUkey = s.Ukey
+inner join Factory f WITH (NOLOCK) on f.id = o.FtyGroup and f.IsProduceFty = 1
 where o.Category = 'B'");
 
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
@@ -313,6 +307,8 @@ select
     ,[Junk]= IIF(t.Junk=1,'Y','')
     ,t.BuyerDelivery
     ,t.ShipmodeID
+    ,Packings.Packings
+    ,InvNo.InvNo
     ,t.Location
 	,t.LastTransferToClog
 	,t.LastCartonReceived
@@ -361,6 +357,25 @@ OUTER APPLY(
 		WHERE pd.OrderID=t.id AND p.Status <> 'Confirmed'
 	)a
 )PackingStatus
+OUTER APPLY(
+	SELECT Packings = stuff((
+	    SELECT distinct concat(',', pd.id)
+		FROM PackingList_Detail pd
+		WHERE pd.OrderID=t.id
+        and pd.OrdershipmodeSeq = t.Seq
+        for xml path('')
+	),1,1,'')
+)Packings
+OUTER APPLY(
+	SELECT InvNo = stuff((
+	    SELECT distinct concat(',', p.InvNo)
+		FROM PackingList_Detail pd
+		inner join PackingList p ON p.ID=pd.ID
+		WHERE pd.OrderID=t.id
+        and pd.OrdershipmodeSeq = t.Seq
+        for xml path('')
+	),1,1,'')
+)InvNo
 OUTER APPLY(
     ----計算方式參照Clog P11
 	SELECT  [Value]=sum(ISNULL(pd.QtyPerCTN,0))
@@ -442,13 +457,9 @@ drop table #tmp,#tmp2
             string strExcelName = Class.MicrosoftFile.GetName("Logistic_R01_CartonStatusReport");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
-            workbook.Close();
-            excel.Quit();
-            Marshal.ReleaseComObject(excel);
+            excel.Visible = true;
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(excel);
-
-            strExcelName.OpenFile();
             #endregion
             this.HideWaitMessage();
             return true;

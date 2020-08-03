@@ -163,15 +163,15 @@ order by g.BrandID,s.ID,g.ID,g.ShipModeID,g.CYCFS
             #region Summary
             if (this.Type == 2)
             {
-                sqlCmd = $@"select g.BrandID,g.ID,gcc.Type,gcc.ct,pp.TTLShipQty,pp.TTLCBM
+                sqlCmd = $@"select g.BrandID,g.ID,gcc.Type,gcc.CTNRNo,gcc.ct,pp.TTLShipQty,pp.TTLCBM
 into #tmp
 from ShipPlan s with(nolock)
 left join GMTBooking g with(nolock) on g.ShipPlanID = s.ID
 outer apply(
-	select gc.Type,ct = count(1)
+	select gc.Type,gc.CTNRNo,ct = count(1)
 	from GMTBooking_CTNR gc with(nolock)
 	where gc.ID = g.ID
-	group by gc.Type
+	group by gc.Type,gc.CTNRNo
 )gcc
 outer apply(
 	select TTLShipQty=sum(p.ShipQty),TTLCBM=sum(p.CBM)
@@ -189,12 +189,12 @@ where 1=1
 {where}
 
 select a.*,
-	isnull(CFS.GBct,0),isnull(CFS.TTLShipQty,0),isnull(CFS.TTLCBM,0),CFS=0,
-	isnull(STD20.GBct,0),isnull(STD20.TTLShipQty,0),isnull(STD20.TTLCBM,0),STD20=0,
-	isnull(STD40.GBct,0),isnull(STD40.TTLShipQty,0),isnull(STD40.TTLCBM,0),STD40=0,
-	isnull(HQ40.GBct,0),isnull(HQ40.TTLShipQty,0),isnull(HQ40.TTLCBM,0),HQ40=0,
-	isnull(HQ45.GBct,0),isnull(HQ45.TTLShipQty,0),isnull(HQ45.TTLCBM,0),HQ45=0,
-	isnull(AIR.GBct,0),isnull(AIR.TTLShipQty,0),isnull(AIR.TTLCBM,0),AIR=0
+	isnull(CFS.GBct,0),isnull(CFS.TTLShipQty,0),isnull(CFS.TTLCBM,0),CFS=isnull(CFS.CtnCount,0),
+	isnull(STD20.GBct,0),isnull(STD20.TTLShipQty,0),isnull(STD20.TTLCBM,0),STD20=isnull(STD20.CtnCount,0),
+	isnull(STD40.GBct,0),isnull(STD40.TTLShipQty,0),isnull(STD40.TTLCBM,0),STD40=isnull(STD40.CtnCount,0),
+	isnull(HQ40.GBct,0),isnull(HQ40.TTLShipQty,0),isnull(HQ40.TTLCBM,0),HQ40=isnull(HQ40.CtnCount,0),
+	isnull(HQ45.GBct,0),isnull(HQ45.TTLShipQty,0),isnull(HQ45.TTLCBM,0),HQ45=isnull(HQ45.CtnCount,0),
+	isnull(AIR.GBct,0),isnull(AIR.TTLShipQty,0),isnull(AIR.TTLCBM,0),AIR=isnull(AIR.CtnCount,0)
 from(
     select t.BrandID,GBct = COUNT(1)
     from #tmpa t
@@ -202,39 +202,63 @@ from(
 )a
 left join(
 	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TTLCBM=sum(TTLCBM)
+     ,CtnCount=(SELECT COUNT(Type) FROM(
+			            SELECT DISTINCT Type,CTNRno FROM #tmp 
+			            WHERE BrandID = t.BrandID AND Type=t.Type
+		            )a)
 	from #tmp t
 	where t.Type = 'CFS'
-	group by t.BrandID
+    group by t.BrandID,t.Type,t.CTNRno
 )CFS on a.BrandID = CFS.BrandID
 left join(
 	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TTLCBM=sum(TTLCBM)
+     ,CtnCount=(SELECT COUNT(Type) FROM(
+			            SELECT DISTINCT Type,CTNRno FROM #tmp 
+			            WHERE BrandID = t.BrandID AND Type=t.Type
+		            )a)
 	from #tmp t
 	where t.Type = '20 STD'
-	group by t.BrandID
+    group by t.BrandID,t.Type,t.CTNRno
 )STD20 on a.BrandID = STD20.BrandID
 left join(
 	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TTLCBM=sum(TTLCBM)
+     ,CtnCount=(SELECT COUNT(Type) FROM(
+			            SELECT DISTINCT Type,CTNRno FROM #tmp 
+			            WHERE BrandID = t.BrandID AND Type=t.Type
+		            )a)
 	from #tmp t
 	where t.Type = '40 STD'
-	group by t.BrandID	
+    group by t.BrandID,t.Type,t.CTNRno
 )STD40 on a.BrandID = STD40.BrandID
 left join(
 	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TTLCBM=sum(TTLCBM)
+     ,CtnCount=(SELECT COUNT(Type) FROM(
+			            SELECT DISTINCT Type,CTNRno FROM #tmp 
+			            WHERE BrandID = t.BrandID AND Type=t.Type
+		            )a)
 	from #tmp t
 	where t.Type = '40HQ'
-	group by t.BrandID	
+    group by t.BrandID,t.Type,t.CTNRno
 )HQ40 on a.BrandID = HQ40.BrandID
 left join(
 	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TTLCBM=sum(TTLCBM)
+     ,CtnCount=(SELECT COUNT(Type) FROM(
+			            SELECT DISTINCT Type,CTNRno FROM #tmp 
+			            WHERE BrandID = t.BrandID AND Type=t.Type
+		            )a)
 	from #tmp t
 	where t.Type = '45HQ'
-	group by t.BrandID	
+    group by t.BrandID,t.Type,t.CTNRno
 )HQ45 on a.BrandID = HQ45.BrandID
 left join(
 	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TTLCBM=sum(TTLCBM)
+     ,CtnCount=(SELECT COUNT(Type) FROM(
+			            SELECT DISTINCT Type,CTNRno FROM #tmp 
+			            WHERE BrandID = t.BrandID AND Type=t.Type
+		            )a)
 	from #tmp t
 	where t.Type = 'AIR'
-	group by t.BrandID	
+    group by t.BrandID,t.Type,t.CTNRno
 )AIR on a.BrandID = AIR.BrandID
 drop table #tmp,#tmpa
 ";

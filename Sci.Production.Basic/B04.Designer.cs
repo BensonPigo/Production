@@ -71,6 +71,7 @@ namespace Sci.Production.Basic
             this.txtEmail = new Sci.Win.UI.TextBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.chkIsFreightForwarder = new Sci.Win.UI.CheckBox();
+            this.chkJunk = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -88,6 +89,7 @@ namespace Sci.Production.Basic
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkJunk);
             this.detailcont.Controls.Add(this.chkIsFreightForwarder);
             this.detailcont.Controls.Add(this.panel1);
             this.detailcont.Controls.Add(this.txtEmail);
@@ -573,6 +575,20 @@ namespace Sci.Production.Basic
             this.chkIsFreightForwarder.Text = "Is Freight Forwarder";
             this.chkIsFreightForwarder.UseVisualStyleBackColor = true;
             // 
+            // chkJunk
+            // 
+            this.chkJunk.AutoSize = true;
+            this.chkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkJunk.IsSupportEditMode = false;
+            this.chkJunk.Location = new System.Drawing.Point(325, 17);
+            this.chkJunk.Name = "chkJunk";
+            this.chkJunk.ReadOnly = true;
+            this.chkJunk.Size = new System.Drawing.Size(57, 21);
+            this.chkJunk.TabIndex = 213;
+            this.chkJunk.Text = "Junk";
+            this.chkJunk.UseVisualStyleBackColor = true;
+            // 
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(953, 770);
@@ -654,5 +670,6 @@ namespace Sci.Production.Basic
         private Win.UI.Label label3;
         private Win.UI.Panel panel1;
         private Win.UI.CheckBox chkIsFreightForwarder;
+        private Win.UI.CheckBox chkJunk;
     }
 }

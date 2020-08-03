@@ -11,13 +11,19 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P35_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        protected DataTable dtInventory;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataTable dtInventory;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P35_Import"/> class.
+        /// </summary>
+        /// <param name="master">Master DataRow</param>
+        /// <param name="detail">Detail Table</param>
         public P35_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -26,7 +32,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtSP.Text.TrimEnd();
@@ -147,7 +153,7 @@ Where   c.lock = 0
             }
         }
 
-        // Form Load
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -179,12 +185,11 @@ Where   c.lock = 0
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    DataTable poitems;
                     string sqlcmd = string.Empty;
                     IList<DataRow> x;
 
                     sqlcmd = @"select id, Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND junk = 0";
-                    DualResult result2 = DBProxy.Current.Select(null, sqlcmd, out poitems);
+                    DualResult result2 = DBProxy.Current.Select(null, sqlcmd, out DataTable poitems);
                     if (!result2)
                     {
                         this.ShowErr(sqlcmd, result2);
@@ -196,8 +201,10 @@ Where   c.lock = 0
                         "ID,Name",
                         "5,150",
                         this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"].ToString(),
-                        "ID,Name");
-                    item.Width = 600;
+                        "ID,Name")
+                    {
+                        Width = 600,
+                    };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -212,7 +219,6 @@ Where   c.lock = 0
             };
             ts.CellValidating += (s, e) =>
             {
-                DataRow dr;
                 if (!this.EditMode)
                 {
                     return;
@@ -229,8 +235,9 @@ Where   c.lock = 0
                     {
                         if (!MyUtility.Check.Seek(
                             string.Format(
-                            @"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
-and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
+                            @"select id, Name from Reason WITH (NOLOCK) where id = '{0}' and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue),
+                            out DataRow dr,
+                            null))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
@@ -269,13 +276,13 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         // Close
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
@@ -329,7 +336,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         // Update All
-        private void btnUpdateAll_Click(object sender, EventArgs e)
+        private void BtnUpdateAll_Click(object sender, EventArgs e)
         {
             string reasonid = this.comboReason.SelectedValue.ToString();
             this.gridImport.ValidateControl();
@@ -348,7 +355,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             }
         }
 
-        private void txtLocation_Validating(object sender, CancelEventArgs e)
+        private void TxtLocation_Validating(object sender, CancelEventArgs e)
         {
             if (this.txtLocation.Text.ToString() == string.Empty)
             {
@@ -365,7 +372,10 @@ where exists(
     where   StockType='B' 
             and id = '{0}'
             and junk != '1'
-)", this.txtLocation.Text, Env.User.Keyword), null))
+)",
+                this.txtLocation.Text,
+                Env.User.Keyword),
+                null))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
@@ -373,7 +383,7 @@ where exists(
         }
 
         // Location  右鍵
-        private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -386,7 +396,10 @@ select  id
         , [Description] 
 from    dbo.MtlLocation WITH (NOLOCK) 
 where   StockType='B'
-        and junk != '1'"), "10,40", this.txtLocation.Text, "ID,Desc");
+        and junk != '1'"),
+                "10,40",
+                this.txtLocation.Text,
+                "ID,Desc");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

@@ -10,11 +10,16 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Basic
 {
+    /// <inheritdoc/>
     public partial class R01 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private StringBuilder sqlWhere = new StringBuilder();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R01"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -32,7 +37,7 @@ namespace Sci.Production.Basic
             #endregion
         }
 
-        private void txtCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.Tools.SelectItem item;
             string sqlcmd;
@@ -55,6 +60,7 @@ order by ID
             this.txtCode.Text = selectedData[0]["id"].ToString();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.sqlWhere.Clear();
@@ -91,6 +97,7 @@ order by ID
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DualResult result;
@@ -110,6 +117,7 @@ l.ID
 , l.CurrencyID
 , l.Remark
 , lbd.AccountNo
+, lbd.AccountName
 , lbd.BankName
 , lbd.SWIFTCode
 , lbd.BranchCode
@@ -124,7 +132,8 @@ LEFT JOIN Country c ON lbd.CountryID=c.ID
 WHERE 1=1
 
 ");
-            result = DBProxy.Current.Select(null, sqlCmd.Append(this.sqlWhere).ToString(), out this.printData);
+            sqlCmd.Append(this.sqlWhere);
+            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
 
             if (!result)
             {
@@ -135,6 +144,7 @@ WHERE 1=1
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.printData.Rows.Count <= 0)

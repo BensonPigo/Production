@@ -1,47 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 
 using Ict;
 using Ict.Win;
+using Sci;
 using Sci.Data;
+using Sci.Production;
+
+using Sci.Production.PublicPrg;
 using System.Linq;
 using System.Data.SqlClient;
 using Sci.Win;
 using System.Reflection;
+using Sci.Production.Class;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_Print : Win.Forms.Base
+    /// <summary>
+    /// P01_Print
+    /// </summary>
+    public partial class P01_Print : Sci.Win.Forms.Base
     {
-        DataRow masterData;
-        string GarTotal;
-        string TotalPoQty;
+        private DataRow masterData;
+        private string GarTotal;
+        private string TotalPoQty;
 
-        public P01_Print(DataRow mainData, string GRATOTAL, string numTotalPOQty)
+        /// <summary>
+        /// P01_Print
+        /// </summary>
+        /// <param name="mainData">mainData</param>
+        /// <param name="gRATOTAL">GRATOTAL</param>
+        /// <param name="numTotalPOQty">numTotalPOQty</param>
+        public P01_Print(DataRow mainData, string gRATOTAL, string numTotalPOQty)
         {
             this.InitializeComponent();
             this.radioByComb.Checked = true;
             this.masterData = mainData;
-            this.GarTotal = GRATOTAL;
+            this.GarTotal = gRATOTAL;
             this.TotalPoQty = numTotalPOQty;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnPrint_Click(object sender, EventArgs e)
+        private void BtnPrint_Click(object sender, EventArgs e)
         {
             string id = this.masterData["ID"].ToString();
-            string Issuedate = ((DateTime)MyUtility.Convert.GetDate(this.masterData["issuedate"])).ToShortDateString();
-            string Delivery = ((DateTime)MyUtility.Convert.GetDate(this.masterData["Delivery"])).ToShortDateString();
-            string Remark = this.masterData["Remark"].ToString();
-            decimal TOTAL = MyUtility.Convert.GetDecimal(this.masterData["amount"].ToString());
-            string CurrencyID = this.masterData["CurrencyID"].ToString();
-            string VatRate = this.masterData["VatRate"].ToString();
-            decimal VAT = MyUtility.Convert.GetDecimal(this.masterData["VAT"]);
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(this.masterData["issuedate"])).ToShortDateString();
+            string delivery = ((DateTime)MyUtility.Convert.GetDate(this.masterData["Delivery"])).ToShortDateString();
+            string remark = this.masterData["Remark"].ToString();
+            decimal tOTAL = MyUtility.Convert.GetDecimal(this.masterData["amount"].ToString());
+            string currencyID = this.masterData["CurrencyID"].ToString();
+            string vatRate = this.masterData["VatRate"].ToString();
+            decimal vAT = MyUtility.Convert.GetDecimal(this.masterData["VAT"]);
             string handle = this.masterData["handle"].ToString();
             string name = MyUtility.GetValue.Lookup("Name", this.masterData["handle"].ToString(), "Pass1", "ID");
             string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", this.masterData["artworktypeid"])).ToString().Trim();
@@ -56,15 +74,15 @@ where a.id='{0}' ", this.masterData["ID"].ToString()));
             pars.Add(new SqlParameter("@ID", id));
             DualResult result;
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Delivery", Delivery));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Delivery", delivery));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", Issuedate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TOTAL", TOTAL.ToString("#,0.00")));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", issuedate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TOTAL", tOTAL.ToString("#,0.00")));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("GRATOTAL", this.GarTotal));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyID", CurrencyID));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VatRate", VatRate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VAT", VAT.ToString("#,0.00")));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyID", currencyID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VatRate", vatRate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VAT", vAT.ToString("#,0.00")));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("artworkunit", artworkunit));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("handle", handle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("name", name));
@@ -100,7 +118,9 @@ select ART.id
        , Amount = format(A.Amount,'#,###,###,##0.00')
        , computeAmount = A.Amount
        , a.PatternDesc
-       ,ART.apvName
+       , ART.apvName
+       , A.Article
+       , A.SizeCode
 from DBO.artworkpo ART WITH (NOLOCK) 
 LEFT JOIN dbo.factory F WITH (NOLOCK) ON  F.ID = ART.factoryid
 LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) ON  L.ID = ART.LocalSuppID
@@ -122,25 +142,25 @@ order by ID", this.masterData["LocalSuppID"]);
                     return;
                 }
 
-                string Title1 = dtDetail.Rows[0]["nameEn"].ToString().Trim();
-                string Title2 = dtDetail.Rows[0]["AddressEN"].ToString().Trim();
-                string Title3 = dtDetail.Rows[0]["Tel"].ToString().Trim();
-                string TO = dtDetail.Rows[0]["TITLETO"].ToString().Trim();
-                string TEL = dtDetail.Rows[0]["Tel"].ToString().Trim();
-                string ADDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
-                string FAX = dtDetail.Rows[0]["fax"].ToString().Trim().Trim();
+                string title1 = dtDetail.Rows[0]["nameEn"].ToString().Trim();
+                string title2 = dtDetail.Rows[0]["AddressEN"].ToString().Trim();
+                string title3 = dtDetail.Rows[0]["Tel"].ToString().Trim();
+                string tO = dtDetail.Rows[0]["TITLETO"].ToString().Trim();
+                string tEL = dtDetail.Rows[0]["Tel"].ToString().Trim();
+                string aDDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
+                string fAX = dtDetail.Rows[0]["fax"].ToString().Trim().Trim();
                 string style = dtDetail.Rows[0]["styleID"].ToString().Trim();
                 decimal totalQty = MyUtility.Convert.GetDecimal(dtDetail.Compute("sum(poqty)", "1=1"));
-                decimal TotalAmount = MyUtility.Convert.GetDecimal(dtDetail.Compute("sum(computeAmount)", string.Empty));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TO", TO));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", TEL));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", ADDRESS));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", FAX));
+                decimal totalAmount = MyUtility.Convert.GetDecimal(dtDetail.Compute("sum(computeAmount)", string.Empty));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", title1));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", title2));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", title3));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TO", tO));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", tEL));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", aDDRESS));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", fAX));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", totalQty.ToString()));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", TotalAmount.ToString()));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", totalAmount.ToString()));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("style", style));
 
                 // 傳 list 資料
@@ -157,25 +177,27 @@ order by ID", this.masterData["LocalSuppID"]);
                         Amount = row1["Amount"].ToString(),
                         CutParts = row1["PatternDesc"].ToString(),
                         ID = row1["ID"].ToString(),
+                        Article = row1["Article"].ToString(),
+                        Size = row1["SizeCode"].ToString(),
                     }).ToList();
 
-                data[0].ApvName = Class.UserESignature.GetUserESignature(this.masterData["apvname"].ToString(), 207, 83);
-                data[0].LockName = Class.UserESignature.GetUserESignature(this.masterData["LockName"].ToString(), 207, 83);
+                data[0].ApvName = Production.Class.UserESignature.GetUserESignature(this.masterData["apvname"].ToString(), 207, 83);
+                data[0].LockName = Production.Class.UserESignature.GetUserESignature(this.masterData["LockName"].ToString(), 207, 83);
                 report.ReportDataSource = data;
                 #endregion
 
-                Type ReportResourceNamespace = typeof(P01_PrintData);
-                Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-                string ReportResourceName = "P01_Print_Comb.rdlc";
+                Type reportResourceNamespace = typeof(P01_PrintData);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P01_Print_Comb.rdlc";
 
                 IReportResource reportresource;
-                if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+                if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
                 {
                     return;
                 }
 
                 report.ReportResource = reportresource;
-                var frm1 = new Win.Subs.ReportView(report);
+                var frm1 = new Sci.Win.Subs.ReportView(report);
                 frm1.MdiParent = this.MdiParent;
                 frm1.TopMost = true;
                 frm1.Show();
@@ -211,22 +233,22 @@ order by ID", this.masterData["LocalSuppID"]);
                     return;
                 }
 
-                string Title1 = dtDetail.Rows[0]["nameEn"].ToString().Trim();
-                string Title2 = dtDetail.Rows[0]["AddressEN"].ToString().Trim();
-                string Title3 = dtDetail.Rows[0]["Tel"].ToString().Trim();
-                string TO = dtDetail.Rows[0]["TITLETO"].ToString().Trim();
-                string TEL = dtDetail.Rows[0]["Tel"].ToString().Trim();
-                string ADDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
-                string FAX = dtDetail.Rows[0]["fax"].ToString().Trim();
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TO", TO));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", TEL));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", ADDRESS));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", FAX));
+                string title1 = dtDetail.Rows[0]["nameEn"].ToString().Trim();
+                string title2 = dtDetail.Rows[0]["AddressEN"].ToString().Trim();
+                string title3 = dtDetail.Rows[0]["Tel"].ToString().Trim();
+                string tO = dtDetail.Rows[0]["TITLETO"].ToString().Trim();
+                string tEL = dtDetail.Rows[0]["Tel"].ToString().Trim();
+                string aDDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
+                string fAX = dtDetail.Rows[0]["fax"].ToString().Trim();
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", title1));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", title2));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", title3));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TO", tO));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", tEL));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", aDDRESS));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", fAX));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", this.TotalPoQty));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", TOTAL.ToString("#,0.00")));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", tOTAL.ToString("#,0.00")));
 
                 // 傳 list 資料
                 List<P01_PrintData> data = dtDetail.AsEnumerable()
@@ -242,23 +264,23 @@ order by ID", this.masterData["LocalSuppID"]);
                         Amount = row1["Amount"].ToString(),
                     }).ToList();
 
-                data[0].ApvName = Class.UserESignature.GetUserESignature(this.masterData["apvname"].ToString(), 207, 83);
-                data[0].LockName = Class.UserESignature.GetUserESignature(this.masterData["LockName"].ToString(), 185, 83);
+                data[0].ApvName = Production.Class.UserESignature.GetUserESignature(this.masterData["apvname"].ToString(), 207, 83);
+                data[0].LockName = Production.Class.UserESignature.GetUserESignature(this.masterData["LockName"].ToString(), 185, 83);
                 report.ReportDataSource = data;
                 #endregion
 
-                Type ReportResourceNamespace = typeof(P01_PrintData);
-                Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-                string ReportResourceName = "P01_Print.rdlc";
+                Type reportResourceNamespace = typeof(P01_PrintData);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P01_Print.rdlc";
 
                 IReportResource reportresource;
-                if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+                if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
                 {
                     return;
                 }
 
                 report.ReportResource = reportresource;
-                var frm1 = new Win.Subs.ReportView(report);
+                var frm1 = new Sci.Win.Subs.ReportView(report);
                 frm1.MdiParent = this.MdiParent;
                 frm1.TopMost = true;
                 frm1.Show();

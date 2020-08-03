@@ -138,7 +138,7 @@
             this.masterpanel.Controls.Add(this.dateApproveDate);
             this.masterpanel.Controls.Add(this.dateDeliveryDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1070, 226);
+            this.masterpanel.Size = new System.Drawing.Size(892, 226);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDeliveryDate, 0);
@@ -190,7 +190,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 226);
-            this.detailpanel.Size = new System.Drawing.Size(1070, 230);
+            this.detailpanel.Size = new System.Drawing.Size(892, 123);
             // 
             // gridicon
             // 
@@ -205,7 +205,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1070, 230);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 123);
             // 
             // detail2
             // 
@@ -219,18 +219,8 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1070, 494);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1070, 456);
-            // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 456);
-            this.detailbtm.Size = new System.Drawing.Size(1070, 38);
             this.detailbtm.TabIndex = 1;
             // 
             // browse
@@ -411,7 +401,7 @@
             this.btnBatchImport.TabStop = false;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
-            this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
+            this.btnBatchImport.Click += new System.EventHandler(this.BtnBatchImport_Click);
             // 
             // displayPONo
             // 
@@ -589,7 +579,7 @@
             this.btnBatchCreate.TabIndex = 0;
             this.btnBatchCreate.Text = "Batch Create";
             this.btnBatchCreate.UseVisualStyleBackColor = true;
-            this.btnBatchCreate.Click += new System.EventHandler(this.btnBatchCreate_Click);
+            this.btnBatchCreate.Click += new System.EventHandler(this.BtnBatchCreate_Click);
             // 
             // dateApproveDate
             // 
@@ -647,8 +637,8 @@
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(165, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 4;
-            this.txtartworktype_ftyArtworkType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtartworktype_ftyArtworkType_PopUp);
-            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
+            this.txtartworktype_ftyArtworkType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.Txtartworktype_ftyArtworkType_PopUp);
+            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.Txtartworktype_ftyArtworkType_Validating);
             // 
             // txtsubconSupplier
             // 
@@ -663,7 +653,7 @@
             this.txtsubconSupplier.Size = new System.Drawing.Size(165, 23);
             this.txtsubconSupplier.TabIndex = 1;
             this.txtsubconSupplier.TextBox1Binding = "";
-            this.txtsubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.txtsubconSupplier_Validating);
+            this.txtsubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.TxtsubconSupplier_Validating);
             // 
             // labelTotalPoQty
             // 
@@ -704,7 +694,7 @@
             this.btnIrrPriceReason.TabStop = false;
             this.btnIrrPriceReason.Text = "Irregular Price Reason";
             this.btnIrrPriceReason.UseVisualStyleBackColor = true;
-            this.btnIrrPriceReason.Click += new System.EventHandler(this.btnIrrPriceReason_Click);
+            this.btnIrrPriceReason.Click += new System.EventHandler(this.BtnIrrPriceReason_Click);
             // 
             // btnBatchApprove
             // 
@@ -715,7 +705,7 @@
             this.btnBatchApprove.TabIndex = 4;
             this.btnBatchApprove.Text = "Batch Approve";
             this.btnBatchApprove.UseVisualStyleBackColor = true;
-            this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
+            this.btnBatchApprove.Click += new System.EventHandler(this.BtnBatchApprove_Click);
             // 
             // lbLockName
             // 
@@ -802,7 +792,7 @@
             this.DefaultFilter = "potype=\'O\'";
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "ArtworkPO_detail";
-            this.GridUniqueKey = "id,artworkid,patterncode,OrderId,ArtworkReqID";
+            this.GridUniqueKey = "id,artworkid,patterncode,OrderId,ArtworkReqID,Article,SizeCode";
             this.IsSupportCheck = true;
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;

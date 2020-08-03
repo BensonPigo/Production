@@ -158,28 +158,36 @@ order by g.ID", masterID);
 declare @ShipPlanID varchar(25) = '{this.CurrentMaintain["id"]}'
 select concat(
 '20 STD=',(
-select ct=count(1)
+SELECT COUNT(Type) FROM (
+select DISTINCT gc.Type,gc.CTNRno
 from GMTBooking_CTNR gc with(nolock)
 inner join GMTBooking g with(nolock) on gc.id = g.id
-where g.ShipPlanID =@ShipPlanID and type = '20 STD')
+where g.ShipPlanID =@ShipPlanID and type = '20 STD')a
+)
 ,' ; '
 ,'40 STD=',(
-select ct=count(1)
+SELECT COUNT(Type) FROM (
+select DISTINCT gc.Type,gc.CTNRno
 from GMTBooking_CTNR gc with(nolock)
 inner join GMTBooking g with(nolock) on gc.id = g.id
-where g.ShipPlanID =@ShipPlanID and type = '40 STD')
+where g.ShipPlanID =@ShipPlanID and type = '40 STD')b
+)
 ,' ; '
 ,'40HQ=',(
-select ct=count(1)
+SELECT COUNT(Type) FROM (
+select DISTINCT gc.Type,gc.CTNRno
 from GMTBooking_CTNR gc with(nolock)
 inner join GMTBooking g with(nolock) on gc.id = g.id
-where g.ShipPlanID =@ShipPlanID and type = '40HQ')
+where g.ShipPlanID =@ShipPlanID and type = '40HQ')c
+)
 ,' ; '
 ,'45HQ=',(
-select ct=count(1)
+SELECT COUNT(Type) FROM (
+select DISTINCT gc.Type,gc.CTNRno
 from GMTBooking_CTNR gc with(nolock)
 inner join GMTBooking g with(nolock) on gc.id = g.id
-where g.ShipPlanID =@ShipPlanID and type = '45HQ')
+where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
+)
 )
 ";
             this.displayTTLContainer.Text = MyUtility.GetValue.Lookup(sqlctnr);

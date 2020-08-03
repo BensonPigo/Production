@@ -219,6 +219,7 @@ from Bundle b WITH (NOLOCK)
 {joinWorkOrder}
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id 
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno --and bio.SubProcessId = s.Id
 where 1=1
 
@@ -294,6 +295,7 @@ from #tmp_Workorder w
 inner join Bundle_Detail bd WITH (NOLOCK, Index(PK_Bundle_Detail)) on bd.BundleNo = w.BundleNo 
 inner join Bundle b WITH (NOLOCK, index(PK_Bundle)) on b.ID = bd.ID
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply(
     select s.ID,s.InOutRule,s.ArtworkTypeId
     from SubProcess s

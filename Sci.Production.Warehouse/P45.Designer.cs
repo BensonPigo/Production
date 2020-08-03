@@ -69,7 +69,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(954, 186);
+            this.masterpanel.Size = new System.Drawing.Size(892, 186);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -87,7 +87,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 186);
-            this.detailpanel.Size = new System.Drawing.Size(954, 163);
+            this.detailpanel.Size = new System.Drawing.Size(892, 163);
             // 
             // gridicon
             // 
@@ -96,7 +96,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(954, 163);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 163);
             // 
             // detail2
             // 
@@ -109,19 +109,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(954, 387);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(954, 349);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(954, 38);
             // 
             // browse
             // 
@@ -160,7 +147,7 @@
             this.btnImport.TabIndex = 69;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // dateIssueDate
             // 
@@ -224,7 +211,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(954, 186);
+            this.shapeContainer1.Size = new System.Drawing.Size(892, 186);
             this.shapeContainer1.TabIndex = 75;
             this.shapeContainer1.TabStop = false;
             // 
@@ -237,7 +224,7 @@
             this.btnFind.TabIndex = 77;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // txtLocateForSP
             // 
@@ -268,10 +255,10 @@
             this.GridNew = 0;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P45";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P45. Remove from Scrap Whse";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";

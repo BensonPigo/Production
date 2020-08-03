@@ -56,6 +56,7 @@
     [TPEEditName] VARCHAR(10) NULL DEFAULT (''), 
     [TPEEditDate] DATETIME NULL, 
     [KeepPanels] BIT NULL DEFAULT (0), 
+    [GMCheck] BIT NULL, 
     CONSTRAINT [PK_OrderChangeApplication] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

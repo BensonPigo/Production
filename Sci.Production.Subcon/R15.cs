@@ -9,20 +9,27 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Subcon
 {
+    /// <summary>
+    /// R15
+    /// </summary>
     public partial class R15 : Win.Tems.PrintForm
     {
-        string artworktype;
-        string factory;
-        string subcon;
-        string spno;
-        string style;
-        string orderby;
-        string mdivision;
-        DateTime? issuedate1;
-        DateTime? issuedate2;
-        DataTable printData;
-        StringBuilder condition = new StringBuilder();
+        private string artworktype;
+        private string factory;
+        private string subcon;
+        private string spno;
+        private string style;
+        private string orderby;
+        private string mdivision;
+        private DateTime? issuedate1;
+        private DateTime? issuedate2;
+        private DataTable printData;
+        private StringBuilder condition = new StringBuilder();
 
+        /// <summary>
+        /// R15
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R15(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -37,6 +44,8 @@ namespace Sci.Production.Subcon
         }
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.dateIssueDate.Value1) && MyUtility.Check.Empty(this.dateIssueDate.Value2))
@@ -66,6 +75,8 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -78,8 +89,10 @@ namespace Sci.Production.Subcon
 ,convert(varchar(10),a.Delivery,111) Delivery
 , b.ORDERID
 , c.styleid
+, b.Article
 , b.patternDesc
-,a.ArtworkTypeID
+, b.SizeCode
+, a.ArtworkTypeID
 , b.artworkid
 , b.CostStitch
 , b.Stitch
@@ -207,6 +220,8 @@ where 1=1"));
         }
 
         // 產生Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

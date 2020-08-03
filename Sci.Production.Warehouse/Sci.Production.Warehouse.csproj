@@ -454,6 +454,7 @@
     <Compile Include="P44_Import.Designer.cs">
       <DependentUpon>P44_Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="P45_PrintData.cs" />
     <Compile Include="P46.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1974,6 +1975,7 @@
     <EmbeddedResource Include="P33_Print.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="P45_Print.rdlc" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
     <None Include="Properties\DataSources\P10_RelaxationSticker_Data.datasource" />
@@ -1988,6 +1990,7 @@
     <None Include="Properties\DataSources\P33_PrintData.datasource">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Properties\DataSources\P45_PrintData.datasource" />
     <None Include="Properties\DataSources\P61_PrintData.datasource" />
     <None Include="Sci.Production.Warehouse.ruleset" />
   </ItemGroup>

@@ -1,29 +1,43 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
+using Sci;
+using Sci.Data;
 using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P05_Import : Win.Subs.Base
+    /// <summary>
+    /// P05_Import
+    /// </summary>
+    public partial class P05_Import : Sci.Win.Subs.Base
     {
-        DataRow dr_artworkReq;
-        DataTable dt_artworkReqDetail;
-        protected DataTable dtArtwork;
-        string sciDelivery_b;
-        string sciDelivery_e;
-        string Inline_b;
-        string Inline_e;
-        string sp_b;
-        string sp_e;
-        string MasterSP;
-        bool isNeedPlanningB03Quote = false;
-        bool IsSintexSubcon = false;
+        private DataRow dr_artworkReq;
+        private DataTable dt_artworkReqDetail;
+        private DataTable dtArtwork;
+        private string sciDelivery_b;
+        private string sciDelivery_e;
+        private string Inline_b;
+        private string Inline_e;
+        private string sp_b;
+        private string sp_e;
+        private string MasterSP;
+        private bool isNeedPlanningB03Quote = false;
+        private bool IsSintexSubcon = false;
+        private bool fromPlanningB03Quote = false;
 
+        /// <summary>
+        /// P05_Import
+        /// </summary>
+        /// <param name="master">master</param>
+        /// <param name="detail">detail</param>
         public P05_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -37,7 +51,7 @@ namespace Sci.Production.Subcon
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             this.sciDelivery_b = null;
             this.sciDelivery_e = null;
@@ -68,8 +82,8 @@ namespace Sci.Production.Subcon
             this.sp_e = this.txtSPNoEnd.Text;
             this.MasterSP = this.txtMasterSP.Text;
 
-            if ((this.sciDelivery_b == null && this.sciDelivery_e == null) &&
-                (this.Inline_b == null && this.Inline_e == null) &&
+            if (this.sciDelivery_b == null && this.sciDelivery_e == null &&
+                this.Inline_b == null && this.Inline_e == null &&
                 string.IsNullOrWhiteSpace(this.sp_b) && string.IsNullOrWhiteSpace(this.sp_e) &&
                 MyUtility.Check.Empty(this.MasterSP))
             {
@@ -116,6 +130,7 @@ namespace Sci.Production.Subcon
             }
 
             string strSQLCmd = string.Empty;
+            this.fromPlanningB03Quote = false;
             if (this.isNeedPlanningB03Quote)
             {
                 if (this.IsSintexSubcon && Prgs.CheckIsArtworkorUseArtwork(MyUtility.Convert.GetString(this.dr_artworkReq["artworktypeid"])))
@@ -125,6 +140,7 @@ namespace Sci.Production.Subcon
                 else
                 {
                     strSQLCmd = this.QuoteFromPlanningB03(sqlwhere);
+                    this.fromPlanningB03Quote = true;
                 }
             }
             else
@@ -132,9 +148,9 @@ namespace Sci.Production.Subcon
                 strSQLCmd = this.QuoteFromTmsCost(sqlwhere);
             }
 
-            DualResult result;
+            strSQLCmd = this.FinalGetDataSql(strSQLCmd);
 
-            // if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
+            Ict.DualResult result;
             if (result = MyUtility.Tool.ProcessWithDatatable(this.dt_artworkReqDetail, string.Empty, strSQLCmd, out this.dtArtwork))
             {
                 if (this.dtArtwork.Rows.Count == 0)
@@ -157,7 +173,7 @@ namespace Sci.Production.Subcon
             }
         }
 
-        private void checkBoxReqQtyHasValue_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxReqQtyHasValue_CheckedChanged(object sender, EventArgs e)
         {
             this.listControlBindingSource1.DataSource = this.FilterResult();
             this.gridBatchImport.ClearSelection();
@@ -167,7 +183,7 @@ namespace Sci.Production.Subcon
             }
         }
 
-        private void gridBatchImport_Sorted(object sender, EventArgs e)
+        private void GridBatchImport_Sorted(object sender, EventArgs e)
         {
             foreach (DataGridViewRow dr in this.gridBatchImport.Rows)
             {
@@ -183,6 +199,23 @@ namespace Sci.Production.Subcon
             }
 
             var filterResult = this.dtArtwork.AsEnumerable();
+
+            if (this.chkArticle.Checked && this.chkSize.Checked)
+            {
+                filterResult = filterResult.Where(s => !MyUtility.Check.Empty(s["Article"]) && !MyUtility.Check.Empty(s["SizeCode"]));
+            }
+            else if (this.chkArticle.Checked)
+            {
+                filterResult = filterResult.Where(s => !MyUtility.Check.Empty(s["Article"]) && MyUtility.Check.Empty(s["SizeCode"]));
+            }
+            else if (this.chkSize.Checked)
+            {
+                filterResult = filterResult.Where(s => MyUtility.Check.Empty(s["Article"]) && !MyUtility.Check.Empty(s["SizeCode"]));
+            }
+            else
+            {
+                filterResult = filterResult.Where(s => MyUtility.Check.Empty(s["Article"]) && MyUtility.Check.Empty(s["SizeCode"]));
+            }
 
             if (this.checkBoxReqQtyHasValue.Checked)
             {
@@ -204,11 +237,12 @@ namespace Sci.Production.Subcon
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            DataGridViewGeneratorNumericColumnSettings col_ReqQty = new DataGridViewGeneratorNumericColumnSettings();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings col_ReqQty = new DataGridViewGeneratorNumericColumnSettings();
 
             col_ReqQty.CellMouseDoubleClick += (s, e) =>
              {
@@ -218,14 +252,14 @@ namespace Sci.Production.Subcon
                      return;
                  }
 
-                 var frm = new P05_ReqQtyList(dr);
+                 var frm = new Sci.Production.Subcon.P05_ReqQtyList(dr);
                  frm.ShowDialog();
              };
 
-            string Caption_stitch = "PCS/Stitch";
+            string caption_stitch = "PCS/Stitch";
             if (this.dr_artworkReq != null)
             {
-                Caption_stitch = MyUtility.GetValue.Lookup($@"
+                caption_stitch = MyUtility.GetValue.Lookup($@"
 select Caption = iif(artworkunit='','PCS',artworkunit) 
 from artworktype WITH (NOLOCK)
 where id ='{this.dr_artworkReq["artworktypeid"]}'
@@ -243,8 +277,10 @@ where id ='{this.dr_artworkReq["artworktypeid"]}'
                 .Numeric("ReqQty", header: "Req. Qty", iseditable: true)
                 .Date("sewinline", header: "Sew. Inline", iseditingreadonly: true)
                 .Date("SciDelivery", header: "SCI Delivery", iseditingreadonly: true)
+                .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ArtworkID", header: "Artwork", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 5
-                .Numeric("stitch", header: Caption_stitch, iseditingreadonly: true)
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("stitch", header: caption_stitch, iseditingreadonly: true)
                 .Text("PatternCode", header: "Cut. Part", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cut. Part Name", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, iseditingreadonly: true)
@@ -252,12 +288,12 @@ where id ='{this.dr_artworkReq["artworktypeid"]}'
             this.gridBatchImport.Columns["ReqQty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
@@ -278,7 +314,7 @@ where id ='{this.dr_artworkReq["artworktypeid"]}'
                 foreach (DataRow tmp in dr2)
                 {
                     // DataRow[] findrow = dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and PatternDesc = '{tmp["PatternDesc"].ToString()}'");
-                    DataRow[] findrow = this.dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"]}' and ArtworkId = '{tmp["ArtworkId"]}' and patterncode = '{tmp["patterncode"]}' and PatternDesc = '{tmp["PatternDesc"]}'");
+                    DataRow[] findrow = this.dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"]}' and Article = '{tmp["Article"]}' and SizeCode = '{tmp["SizeCode"]}' and ArtworkId = '{tmp["ArtworkId"]}' and patterncode = '{tmp["patterncode"]}' and PatternDesc = '{tmp["PatternDesc"]}'");
                     decimal exceedQty = MyUtility.Convert.GetDecimal(tmp["AccReqQty"]) + MyUtility.Convert.GetDecimal(tmp["ReqQty"]) - MyUtility.Convert.GetDecimal(tmp["OrderQty"]);
 
                     decimal finalExceedQty = exceedQty < 0 ? 0 : exceedQty;
@@ -320,26 +356,12 @@ where id ='{this.dr_artworkReq["artworktypeid"]}'
             string tmpTable = string.Empty;
             string tmpcurrentReq = string.Empty;
 
-            // 上一層表身有資料, 就加上表身當前ReqQty
-            if (this.dt_artworkReqDetail.Rows.Count > 0)
-            {
-                tmpTable = $@"
-outer apply(
-    select value = sum(ReqQty) 
-    from #tmp
-    where OrderID = o.id and ArtworkID = iif(oa.ArtworkID is null,'{this.dr_artworkReq["artworktypeid"]}',oa.ArtworkID)
-    and PatternDesc = isnull(oa.PatternDesc,'') and PatternCode = isnull(oa.PatternCode,'')
-) CurrentReq";
-                tmpcurrentReq = "+ isnull(CurrentReq.value,0)";
-            }
-
             strSQLCmd = $@"
-select distinct Selected = 0
-        , [LocalSuppId] = '{this.dr_artworkReq["LocalSuppId"]}'
+select  [LocalSuppId] = '{this.dr_artworkReq["LocalSuppId"]}'
 		, [orderID] = o.ID
-        , OrderQty = o.Qty
-        , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) {tmpcurrentReq}
-        , ReqQty = iif(o.Qty-(ReqQty.value + PoQty.value {tmpcurrentReq}) < 0, 0, o.Qty - (ReqQty.value + PoQty.value {tmpcurrentReq}))
+        , oq.Article
+        , oq.SizeCode
+        , OrderQty = oq.Qty
 		, o.SewInLIne
 		, o.SciDelivery
 		, [ArtworkID] = oa.ArtworkID
@@ -351,38 +373,17 @@ select distinct Selected = 0
 		, o.POID
         , id = ''
         , ExceedQty = 0
+        , [StyleArtworkUkey] = null
+into #baseArtworkReq
 from  orders o WITH (NOLOCK)
-inner join dbo.Order_Artwork oa on oa.ID = o.ID and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
+inner join Order_Qty oq with (nolock) on o.ID = oq.ID
+inner join dbo.Order_Artwork oa on oa.ID = o.ID and oq.Article = oa.Article and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
 left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
-outer apply (
-        select value = ISNULL(sum(ReqQty),0)
-        from ArtworkReq_Detail AD, ArtworkReq a
-        where ad.ID=a.ID
-		and a.ArtworkTypeID = oa.ArtworkTypeID
-		and OrderID = o.ID 
-        and ad.PatternCode = oa.PatternCode
-        and ad.PatternDesc = oa.PatternDesc
-        and ad.ArtworkID = oa.ArtworkID
-        and a.id != '{this.dr_artworkReq["id"]}'
-        and a.status != 'Closed'
-) ReqQty
-outer apply (
-        select value = ISNULL(sum(PoQty),0)
-        from ArtworkPO_Detail AD,ArtworkPO A
-        where a.ID=ad.ID
-		and a.ArtworkTypeID = oa.ArtworkTypeID
-		and OrderID = o.ID 
-        and ad.PatternCode = oa.PatternCode
-        and ad.PatternDesc = oa.PatternDesc
-        and ad.ArtworkID = oa.ArtworkID
-		and ad.ArtworkReqID=''
-) PoQty
-{tmpTable}
 where f.IsProduceFty=1
 and o.category in ('B','S')
 and ot.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
-and o.MDivisionID='{Env.User.Keyword}' 
+and o.MDivisionID='{Sci.Env.User.Keyword}' 
 and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) 
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 {sqlWhere}
@@ -399,27 +400,12 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
             string tmpGroupby = string.Empty;
             string tmpcurrentReq = string.Empty;
 
-            // 上一層表身有資料, 就加上表身當前ReqQty
-            if (this.dt_artworkReqDetail.Rows.Count > 0)
-            {
-                tmpTable = $@"
-outer apply(
-    select value = sum(ReqQty) 
-    from #tmp
-    where OrderID = o.id and ArtworkID = iif(oa.ArtworkID is null,'{this.dr_artworkReq["artworktypeid"]}',oa.ArtworkID)
-    and PatternDesc = isnull(oa.PatternDesc,'') and PatternCode = isnull(oa.PatternCode,'')
-) CurrentReq";
-                tmpcurrentReq = "+ isnull(CurrentReq.value,0)";
-                tmpGroupby = ",CurrentReq.value";
-            }
-
             strSQLCmd = $@"
-select  Selected = 0
-        , [LocalSuppId] = isnull(sao.LocalSuppId,'')
+select  [LocalSuppId] = ''
 		, [orderID] = o.ID
-        , OrderQty = sum(oa.poqty)
-        , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) {tmpcurrentReq}
-        , ReqQty = iif(sum(oa.poqty)-(ReqQty.value + PoQty.value {tmpcurrentReq}) < 0, 0, sum(oa.poqty)- (ReqQty.value + PoQty.value {tmpcurrentReq}))
+        , oa.Article
+        , oa.SizeCode
+        , OrderQty = oa.poqty
 		, o.SewInLIne
 		, o.SciDelivery
 		, [ArtworkID] = oa.ArtworkID
@@ -431,47 +417,24 @@ select  Selected = 0
 		, o.POID
         , id = ''
         , ExceedQty = 0
+        , vsa.StyleArtworkUkey
+into #baseArtworkReq
 from  orders o WITH (NOLOCK) 
-inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
-left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID and
-														vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID and vsa.PatternCode = oa.PatternCode and
-														vsa.PatternDesc = oa.PatternDesc 
-left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
-                                                    sao.LocalSuppId = '{this.dr_artworkReq["LocalSuppId"]}'
+inner join dbo.View_Order_Artworks oa on oa.ID = o.ID
+left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and 
+                                        vsa.Article = oa.Article and 
+                                        vsa.ArtworkID = oa.ArtworkID and
+										vsa.ArtworkName = oa.ArtworkName and 
+                                        vsa.ArtworkTypeID = oa.ArtworkTypeID and 
+                                        vsa.PatternCode = oa.PatternCode and
+										vsa.PatternDesc = oa.PatternDesc 
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
-outer apply (
-        select value = ISNULL(sum(ReqQty),0)
-        from ArtworkReq_Detail AD, ArtworkReq a
-        where ad.ID=a.ID
-		and a.ArtworkTypeID = oa.ArtworkTypeID
-		and OrderID = o.ID 
-        and ad.PatternCode = oa.PatternCode
-        and ad.PatternDesc = oa.PatternDesc
-        and ad.ArtworkID = oa.ArtworkID
-        and a.id != '{this.dr_artworkReq["id"]}'
-        and a.status != 'Closed'
-) ReqQty
-outer apply (
-        select value = ISNULL(sum(PoQty),0)
-        from ArtworkPO_Detail AD,ArtworkPO A
-        where a.ID=ad.ID
-		and a.ArtworkTypeID = oa.ArtworkTypeID
-		and OrderID = o.ID 
-        and ad.PatternCode = oa.PatternCode
-        and ad.PatternDesc = oa.PatternDesc
-        and ad.ArtworkID = oa.ArtworkID
-		and ad.ArtworkReqID=''
-) PoQty
-{tmpTable}
 where f.IsProduceFty=1
 and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
 and o.category in ('B','S')
-and o.MDivisionID='{Env.User.Keyword}' 
+and o.MDivisionID='{Sci.Env.User.Keyword}' 
 and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 {sqlWhere}
-group by o.ID,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
-            ,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,PoQty.value,ReqQty.value,vsa.ActStitch  {tmpGroupby}
 ";
 
             return strSQLCmd;
@@ -483,26 +446,12 @@ group by o.ID,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.Sew
             string tmpTable = string.Empty;
             string tmpcurrentReq = string.Empty;
 
-            // 上一層表身有資料, 就加上表身當前ReqQty
-            if (this.dt_artworkReqDetail.Rows.Count > 0)
-            {
-                tmpTable = $@"
-outer apply(
-    select value = sum(ReqQty) 
-    from #tmp
-    where OrderID = o.id and ArtworkID = '{this.dr_artworkReq["artworktypeid"]}'
-    and PatternDesc = '' and PatternCode = ''
-) CurrentReq";
-                tmpcurrentReq = "+ isnull(CurrentReq.value,0)";
-            }
-
             strSQLCmd = $@"
-select  Selected = 0
-        , [LocalSuppId] = '{this.dr_artworkReq["LocalSuppId"]}'
+select  [LocalSuppId] = '{this.dr_artworkReq["LocalSuppId"]}'
 		, [orderID] = o.ID
-        , OrderQty = o.Qty
-        , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) {tmpcurrentReq}
-        , ReqQty = iif(o.Qty-(ReqQty.value + PoQty.value {tmpcurrentReq}) < 0, 0, o.Qty - (ReqQty.value + PoQty.value {tmpcurrentReq}))
+        , oq.Article
+        , oq.SizeCode
+        , OrderQty = oq.Qty
 		, o.SewInLIne
 		, o.SciDelivery
 		, [ArtworkID] = at.id
@@ -514,42 +463,216 @@ select  Selected = 0
 		, o.POID
         , id = ''
         , ExceedQty = 0
+        , [StyleArtworkUkey] = null
+into #baseArtworkReq
 from  Order_TmsCost ot
 inner join orders o WITH (NOLOCK) on ot.ID = o.ID
+inner join Order_Qty oq with (nolock) on o.ID = oq.ID
 inner join ArtworkType at WITH (NOLOCK) on at.id = '{this.dr_artworkReq["artworktypeid"]}'
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
+where f.IsProduceFty = 1
+and ot.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
+and ot.Price > 0
+and o.category in ('B','S')
+and o.MDivisionID='{Sci.Env.User.Keyword}' 
+and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
+and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
+{sqlWhere}
+";
+
+            return strSQLCmd;
+        }
+
+        private string FinalGetDataSql(string sql)
+        {
+            string sqlCheckB03Supp = this.fromPlanningB03Quote ? $@"left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = fr.StyleArtworkUkey and 
+                                                                    sao.LocalSuppId = '{this.dr_artworkReq["LocalSuppId"]}' and
+                                                                    sao.SizeCode = fr.SizeCode " : string.Empty;
+
+            string colSupp = this.fromPlanningB03Quote ? " ,[LocalSuppId] = isnull(sao.LocalSuppId, '') " : ",fr.LocalSuppId";
+
+            string strSQLCmd = sql + $@"
+select  * into #FinalArtworkReq
+from (
+select  LocalSuppId
+		,orderID
+        ,Article
+        ,SizeCode
+        ,OrderQty
+		,SewInLIne
+		,SciDelivery
+		,ArtworkID
+		,stitch
+		,PatternCode
+		,PatternDesc
+		,qtygarment
+        ,StyleID
+		,POID
+        ,id
+        ,ExceedQty
+        ,StyleArtworkUkey
+from #baseArtworkReq
+union all
+select  LocalSuppId
+		,orderID
+        ,Article
+        ,[SizeCode] = ''
+        ,[OrderQty] = sum(OrderQty)
+		,SewInLIne
+		,SciDelivery
+		,ArtworkID
+		,stitch
+		,PatternCode
+		,PatternDesc
+		,qtygarment
+        ,StyleID
+		,POID
+        ,id
+        ,ExceedQty
+        ,StyleArtworkUkey
+from #baseArtworkReq
+group by     LocalSuppId
+		    ,orderID
+            ,Article
+		    ,SewInLIne
+		    ,SciDelivery
+		    ,ArtworkID
+		    ,stitch
+		    ,PatternCode
+		    ,PatternDesc
+		    ,qtygarment
+            ,StyleID
+		    ,POID
+            ,id
+            ,ExceedQty
+            ,StyleArtworkUkey
+union all
+select  LocalSuppId
+		,orderID
+        ,[Article] = ''
+        ,SizeCode
+        ,[OrderQty] = sum(OrderQty)
+		,SewInLIne
+		,SciDelivery
+		,ArtworkID
+		,stitch
+		,PatternCode
+		,PatternDesc
+		,qtygarment
+        ,StyleID
+		,POID
+        ,id
+        ,ExceedQty
+        ,StyleArtworkUkey
+from #baseArtworkReq
+group by     LocalSuppId
+		    ,orderID
+            ,SizeCode
+		    ,SewInLIne
+		    ,SciDelivery
+		    ,ArtworkID
+		    ,stitch
+		    ,PatternCode
+		    ,PatternDesc
+		    ,qtygarment
+            ,StyleID
+		    ,POID
+            ,id
+            ,ExceedQty
+            ,StyleArtworkUkey
+union all
+select  LocalSuppId
+		,orderID
+        ,[Article] = ''
+        ,[SizeCode] = ''
+        ,[OrderQty] = sum(OrderQty)
+		,SewInLIne
+		,SciDelivery
+		,ArtworkID
+		,stitch
+		,PatternCode
+		,PatternDesc
+		,qtygarment
+        ,StyleID
+		,POID
+        ,id
+        ,ExceedQty
+        ,StyleArtworkUkey
+from #baseArtworkReq
+group by     LocalSuppId
+		    ,orderID
+		    ,SewInLIne
+		    ,SciDelivery
+		    ,ArtworkID
+		    ,stitch
+		    ,PatternCode
+		    ,PatternDesc
+		    ,qtygarment
+            ,StyleID
+		    ,POID
+            ,id
+            ,ExceedQty
+            ,StyleArtworkUkey
+) a
+
+select  [Selected] = 0
+        {colSupp}
+		,fr.orderID
+        ,fr.Article
+        ,fr.SizeCode
+        ,fr.OrderQty
+        ,[AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) + isnull(CurrentReq.value,0)
+        ,ReqQty = iif(fr.OrderQty-(ReqQty.value + PoQty.value + isnull(CurrentReq.value,0)) < 0, 0, fr.OrderQty - (ReqQty.value + PoQty.value + isnull(CurrentReq.value,0)))
+		,fr.SewInLIne
+		,fr.SciDelivery
+		,fr.ArtworkID
+		,fr.stitch
+		,fr.PatternCode
+		,fr.PatternDesc
+		,fr.qtygarment
+        ,fr.StyleID
+		,fr.POID
+        ,fr.id
+        ,fr.ExceedQty
+from #FinalArtworkReq fr
+{sqlCheckB03Supp}
 outer apply (
         select value = ISNULL(sum(ReqQty),0)
-        from ArtworkReq_Detail AD, ArtworkReq a
-        where ad.ID=a.ID
-		and a.ArtworkTypeID = ot.ArtworkTypeID
-		and OrderID = o.ID 
-        and ad.PatternCode = ''
-        and ad.PatternDesc = ''
-        and ad.ArtworkID = at.id
+        from ArtworkReq_Detail AD with (nolock)
+        inner join ArtworkReq a with (nolock) on ad.ID = a.ID
+        where a.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
+		and ad.OrderID = fr.OrderID
+        and ad.Article = fr.Article
+        and ad.SizeCode = fr.SizeCode
+        and ad.PatternCode = fr.PatternCode
+        and ad.PatternDesc = fr.PatternDesc
+        and ad.ArtworkID = fr.ArtworkID
         and a.id != '{this.dr_artworkReq["id"]}'
         and a.status != 'Closed'
 ) ReqQty
 outer apply (
         select value = ISNULL(sum(PoQty),0)
-        from ArtworkPO_Detail AD,ArtworkPO A
-        where a.ID=ad.ID
-		and a.ArtworkTypeID = ot.ArtworkTypeID
-		and OrderID = o.ID 
-        and ad.PatternCode= ''
-        and ad.PatternDesc = ''
-        and ad.ArtworkID = at.id
-		and ad.ArtworkReqID=''
+        from ArtworkPO_Detail AD with (nolock)
+        inner join ArtworkPO A with (nolock) on a.ID = ad.ID
+        where a.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
+		and ad.OrderID = fr.OrderID 
+        and ad.Article = fr.Article
+        and ad.SizeCode = fr.SizeCode
+        and ad.PatternCode = fr.PatternCode
+        and ad.PatternDesc = fr.PatternDesc
+        and ad.ArtworkID = fr.ArtworkID
+		and ad.ArtworkReqID = ''
 ) PoQty
-{tmpTable}
-where f.IsProduceFty = 1
-and ot.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
-and ot.Price > 0
-and o.category in ('B','S')
-and o.MDivisionID='{Env.User.Keyword}' 
-and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
-and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
-{sqlWhere}
+outer apply(
+    select value = sum(ReqQty) 
+    from #tmp
+    where   OrderID = fr.OrderID and
+            Article = fr.Article and
+            SizeCode = fr.SizeCode and
+            ArtworkID = fr.ArtworkID and
+            PatternCode = isnull(fr.PatternCode,'') and
+            PatternDesc = isnull(fr.PatternDesc,'')  
+) CurrentReq
 ";
 
             return strSQLCmd;

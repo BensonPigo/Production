@@ -234,6 +234,7 @@ Select
 into #result
 from BundleReplacement b WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 inner join BundleReplacement_Detail bd WITH (NOLOCK) on bd.Id = b.Id 
 outer apply(
     select s.ID,s.InOutRule,s.ArtworkTypeId

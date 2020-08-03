@@ -349,6 +349,7 @@ namespace Sci.Production.Planning
                            , InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
                     into #cte 
                     from dbo.Orders o WITH (NOLOCK) 
+                    inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
                     left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle
                     WHERE 1=1 {whereIncludeCancelOrder} "));
             #endregion
@@ -942,6 +943,7 @@ select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate       
        , InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle
 left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
 WHERE 1=1 {whereIncludeCancelOrder} "));

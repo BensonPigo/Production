@@ -181,6 +181,11 @@ namespace Sci.Production.Packing
                             // 4.從單張ZPL內容中，拆解出需要的欄位資訊，用於Mapping方便
                             List<ZPL> zPL_Objects = this.Analysis_ZPL(FileName_with_Data, ZPL_FileName_List);
 
+                            if (zPL_Objects == null)
+                            {
+                                return;
+                            }
+
                             this.File_Name_Object.Add(openFileDialog1.SafeFileNames[i], zPL_Objects);
                             this._File_Name_Object_List.File_Name_Object2s.Add(new File_Name_Object2()
                             {
@@ -352,113 +357,127 @@ namespace Sci.Production.Packing
         /// 從單張ZPL內容中，拆解出需要的欄位資訊
         /// </summary>
         /// <returns>整理完的ZPL物件</returns>
-        private List<ZPL> Analysis_ZPL(Dictionary<string, string> FileName_with_Data, List<string> ZPL_FileName_List)
+        private List<ZPL> Analysis_ZPL(Dictionary<string, string> fileName_with_Data, List<string> zPL_FileName_List)
         {
             List<ZPL> list = new List<ZPL>();
 
-            foreach (string custCTNno in ZPL_FileName_List)
+            foreach (string custCTNno in zPL_FileName_List)
             {
-                string[] strArray; // 取得CustCTN過程中，暫存用
-                string[] strArray2; // 取得CustCTN過程中，暫存用
-                bool IsMiexed = false;
-                string content = FileName_with_Data[custCTNno];
+                string content = fileName_with_Data[custCTNno];
+                bool isMixed = false;
+                string zplType = string.Empty;
 
                 // 是否混尺碼
-                IsMiexed = content.ToUpper().Contains("^FD" + "MIXED" + "^FS");
+                isMixed = content.ToUpper().Contains("^FD" + "MIXED" + "^FS");
 
-                // Orders.CustPONo
-                strArray = content.Split(new string[] { "^FDPO#:^FS^FT225,850^A0B,40,50^FD", "^FS^FT280,950^A0B,40,50^FDSKU:^FS" }, StringSplitOptions.RemoveEmptyEntries);
-                string CustPONo = strArray[1];
+                // 取得CustCD，後續用於判斷ZPL的格式
+                string custCD = this.GetCustCDFromZPL(content);
 
-                if (IsMiexed)
+                if (!isMixed)
                 {
-                    strArray2 = content.Split(new string[] { "^FS^FT280,950^A0B,40,50^FDSKU:^FS^FT280,850^A0B,40,50^FD", "^FS^FT" }, StringSplitOptions.RemoveEmptyEntries);
+                    // 非混尺碼
+                    string custPONo = this.GetPOnoFromZPL(content);
+                    string sku = this.GetSKUFromZPL(content);
+
+                    string styleID = sku.Split('-')[0];
+                    string article = sku.Split('-')[1];
+                    string sizeCode = sku.Split('-')[2];
+                    string ctnStartno = this.GetCTNStartnoFromZPL(content);
+                    string shipQty = this.GetShipQtyFromZPL(content);
+                    string custCTN = this.GetCustCTNFromZPL(content);
+
+                    ZPL zz = new ZPL();
+                    zz.CustPONo = custPONo;
+                    zz.StyleID = styleID;
+                    zz.Article = article;
+                    zz.SizeCode = sizeCode;
+                    zz.CTNStartNo = ctnStartno;
+                    zz.ShipQty = shipQty;
+                    zz.CustCTN = custCTN;
+                    list.Add(zz);
                 }
                 else
                 {
-                    strArray2 = content.Split(new string[] { "^FS^FT280,950^A0B,40,50^FDSKU:^FS^FT280,850^A0B,40,50^FD", "^FS^FT400,950^A0B,40,50^FDQTY:" }, StringSplitOptions.RemoveEmptyEntries);
-                }
+                    // 混尺碼
+                    string custPONo = this.GetPOnoFromZPL(content);
+                    string ctnStartno = this.GetCTNStartnoFromZPL(content);
+                    string custCTN = this.GetCustCTNFromZPL(content);
+                    List<SizeObject> sizeObjects = this.GetMixSizeObjectFromZPL(content);
+                    string shipQty = this.GetShipQtyFromZPL(content);
 
-                // 使用規則運算是，從陣列中找出 OO-OO-OO 的文字，O代表任意字元
-                // Regex r = new Regex(@"^\w{1,}\-\w{1,}\-\w{1,}$");
-                string StyleID_Article_SizeCode = string.Empty;
-                string StyleID = string.Empty;
-                string Article = string.Empty;
-                string SizeCode = string.Empty;
-                string ShipQty = string.Empty;
-                string CTNStartNo = string.Empty;
-
-                List<SizeObject> SizeObjects = new List<SizeObject>();
-
-                if (IsMiexed)
-                {
-                    int startIndex = Array.IndexOf(strArray2, strArray2.Where(o => o.ToString().Contains("Style-Color-Size")).FirstOrDefault());
-                    int endIndex = Array.IndexOf(strArray2, strArray2.Where(o => o.ToString().Contains("^FD" + "Total Qty")).FirstOrDefault());
-                    int sizeCount = (endIndex - startIndex - 1) / 4;
-                    List<string> tmpSizes = new List<string>();
-                    int ii = 0;
-                    for (int i = startIndex + 1; i <= endIndex; i++)
+                    if (sizeObjects.Select(o => o.StyleID).Distinct().Count() > 1 || sizeObjects.Select(o => o.Article).Distinct().Count() > 1)
                     {
-                        string tmpSize = string.Empty;
-                        if (i % 4 == 2)
-                        {
-                            string[] stringSeparators = new string[] { "^FD" };
-                            string sku = strArray2[i].Split(stringSeparators, StringSplitOptions.None)[1];
-                            StyleID = sku.Split('-')[0];
-                            Article = sku.Split('-')[1];
-                            tmpSize = sku.Split('-')[2];
-                            tmpSizes.Add(tmpSize);
-                        }
+                        MyUtility.Msg.WarningBox($"Not support Mix Article! PO#: {custPONo}, Cust. Carton No.: {custCTN}");
+                        return null;
+                    }
 
-                        if (i % 4 == 0)
-                        {
-                            string[] stringSeparators = new string[] { "^FD" };
-                            string qty = strArray2[i].Split(stringSeparators, StringSplitOptions.None)[1];
-                            SizeObjects.Add(new SizeObject()
-                            {
-                                Size = tmpSizes[ii].Trim(),
-                                Qty = Convert.ToInt32(qty.TrimStart().TrimEnd()),
-                            });
-                            ii++;
-                        }
+                    ZPL zz = new ZPL();
+                    zz.CustPONo = custPONo;
+                    zz.ShipQty = string.Empty;
+                    zz.SizeCode = string.Empty;
+
+                    // 現階段只有混尺碼情況，若有多色組則排除
+                    zz.StyleID = sizeObjects.FirstOrDefault().StyleID;
+                    zz.Article = sizeObjects.FirstOrDefault().Article;
+
+                    zz.CTNStartNo = ctnStartno;
+                    zz.CustCTN = custCTN;
+                    zz.Size_Qty_List = sizeObjects;
+                    list.Add(zz);
+                }
+                /*
+                // 根據ZPL的標題文字、座標，找到這張ZPL，屬於哪一種Type
+                foreach (var type in this.ZplTypes)
+                {
+                    ZplTitlePosition titlePosition = type.Value;
+
+                    bool po = content.ToUpper().Contains(titlePosition.PO);
+                    bool sku = content.ToUpper().Contains(titlePosition.SKU);
+                    bool qty = content.ToUpper().Contains(titlePosition.Qty);
+                    bool box = content.ToUpper().Contains(titlePosition.BOX);
+
+                    if (po && sku && qty && box)
+                    {
+                        zplType = type.Key;
+                        break;
                     }
                 }
-                else
+
+                ZPL z = new ZPL();
+
+                // 不同Type對應不同拆解方式
+                switch (zplType)
                 {
-                    StyleID_Article_SizeCode = strArray2[1]; // strArray2.Where(o => r.IsMatch(o)).FirstOrDefault();
-
-                    // Orders.StyleID
-                    StyleID = StyleID_Article_SizeCode.Split('-')[0];
-
-                    // Orders.Article
-                    Article = StyleID_Article_SizeCode.Split('-')[1];
-
-                    // Orders.SizeCode
-                    SizeCode = StyleID_Article_SizeCode.Split('-')[2].Split('^')[0];
-
-                    // PackingList_Detail.ShipQty
-                    strArray = content.Split(new string[] { "^FS^FT400,950^A0B,40,50^FDQTY:^FS^FT400,850^A0B,75,100^FD", "^FS^FO425,700^BY3^B3B,N,75,N,N^FD" }, StringSplitOptions.RemoveEmptyEntries);
-                    ShipQty = strArray[1];
-
-                    // PackingList_Detail.CTNStartNo
-                    strArray = content.Split(new string[] { "^FDBOX:^FS^FT700,590^A0B,48,65^FD", "^FS^FO0,960^GB775,0,4^FS^FT115,995^A0N,34,47,^FD" }, StringSplitOptions.RemoveEmptyEntries);
-                    CTNStartNo = strArray[1];
+                    case "A":
+                        z = this.SplitZLContent(content, custCTNno, isMixed,
+                                custPONo_Spliter1: "^FDPO#:^FS^FT225,850^A0B,40,50^FD",
+                                custPONo_Spliter2: "^FS^FT280,950^A0B,40,50^FDSKU:^FS",
+                                detail_Spliter1: "^FS^FT280,950^A0B,40,50^FDSKU:^FS^FT280,850^A0B,40,50^FD",
+                                detail_Spliter_Mixed: "^FS^FT",
+                                detail_Spliter_NotMix: "^FS^FT400,950^A0B,40,50^FDQTY:",
+                                detail_Spliter2: "^FS^FT400,950^A0B,40,50^FDQTY:^FS^FT400,850^A0B,75,100^FD",
+                                detail_Spliter3: "^FS^FO425,700^BY3^B3B,N,75,N,N^FD",
+                                detail_Spliter4: "^FDBOX:^FS^FT700,590^A0B,48,65^FD",
+                                detail_Spliter5: "^FS^FO0,960^GB775,0,4^FS^FT115,995^A0N,34,47,^FD");
+                        list.Add(z);
+                        break;
+                    case "B":
+                        z = this.SplitZLContent(content, custCTNno, isMixed,
+                                custPONo_Spliter1: "^FDPO#:^FS^FT325,790^A0B,75,80^FD",
+                                custPONo_Spliter2: "^FS^FT460,950^A0B,75,80^FDSKU:^FS",
+                                detail_Spliter1: "^FS^FT460,950^A0B,75,80^FDSKU:^FS^FT457,785^A0B,60,55^FD",
+                                detail_Spliter_Mixed: "^FS^FT",
+                                detail_Spliter_NotMix: "^FS^FT380,950^FT750,950^A0B,75,80^FDQTY:",
+                                detail_Spliter2: "^FS^FT380,950^FT750,950^A0B,75,80^FDQTY:^FS^FT750,750^A0B,75,100^FD",
+                                detail_Spliter3: "^FS^FT600,950^A0B,75,80^FD",
+                                detail_Spliter4: "^FDBOX:^FS^FT600,750^A0B,75,100^FD",
+                                detail_Spliter5: "^FS^FO0,960^GB775,0,4^FS^FT115,995^A0N,34,47,^FD");
+                        list.Add(z);
+                        break;
+                    default:
+                        break;
                 }
-
-                // PackingList_Detail.CustCTN
-                string CustCTN = custCTNno;
-
-                list.Add(new ZPL()
-                {
-                    CustPONo = CustPONo.Trim(),
-                    CustCTN = CustCTN.Trim(),
-                    StyleID = StyleID.Trim(),
-                    Article = Article.Trim(),
-                    SizeCode = SizeCode.Trim(),
-                    ShipQty = ShipQty.Trim(),
-                    CTNStartNo = CTNStartNo.Trim(),
-                    Size_Qty_List = SizeObjects,
-                });
+                */
             }
 
             return list;
@@ -2320,6 +2339,152 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
             }
         }
 
+        #region 從ZPL取得資訊
+
+        private string GetCustCDFromZPL(string zplContent)
+        {
+            string pono = this.GetPOnoFromZPL(zplContent);
+
+            DataTable dt;
+            string cmd = $@"
+select distinct p.CustCDID
+from PackingList p 
+inner join PackingList_Detail pd  On p.ID=pd.ID
+inner join Orders o On o.ID = pd.OrderID
+where o.CustPONo='{pono}'
+";
+
+            DualResult r = DBProxy.Current.Select(null, cmd, out dt);
+
+            if (!r)
+            {
+                this.ShowErr(r);
+                return string.Empty;
+            }
+
+            if (dt.Rows.Count > 1)
+            {
+                return string.Empty;
+            }
+
+            return MyUtility.Convert.GetString(dt.Rows[0]["CustCDID"]);
+        }
+
+        private string GetPOnoFromZPL(string zplContent)
+        {
+            string[] tmp1 = zplContent.Split(new string[] { "^FDPO#:^FS", "^FDSKU:^FS" }, StringSplitOptions.RemoveEmptyEntries);
+            string p = tmp1[1];
+            string pono = p.Split(new string[] { "^FD", "^FS" }, StringSplitOptions.RemoveEmptyEntries)[1];
+
+            return pono;
+        }
+
+        private string GetSKUFromZPL(string zplContent)
+        {
+            string[] tmp1 = zplContent.Split(new string[] { "^FDSKU:^FS", "^FDQTY:^FS" }, StringSplitOptions.RemoveEmptyEntries);
+            string p = tmp1[1];
+            string sku = p.Split(new string[] { "^FD", "^FS" }, StringSplitOptions.RemoveEmptyEntries)[1];
+
+            string[] tmp2 = zplContent.Split(new string[] { "^FDBOX:^FS", "^FDBOX:^FS" }, StringSplitOptions.RemoveEmptyEntries);
+            string s = tmp2[1];
+
+            return sku;
+        }
+
+        private string GetCTNStartnoFromZPL(string zplContent)
+        {
+            string[] tmp2 = zplContent.Split(new string[] { "^FDBOX:^FS", "^FDBOX:^FS" }, StringSplitOptions.RemoveEmptyEntries);
+            string s = tmp2[1];
+
+            int sIdx = s.IndexOf("^FD") + 3; // ^FD共三個字元，因此+3
+            int eIdx = s.IndexOf("^FS");
+
+            string ctnStartno = string.Empty;
+            for (int i = 0; i < (eIdx - sIdx); i++)
+            {
+                ctnStartno += s[i + sIdx].ToString();
+            }
+
+            return ctnStartno;
+        }
+
+        private string GetShipQtyFromZPL(string zplContent)
+        {
+            string[] tmp2 = zplContent.Split(new string[] { "^FDQTY:^FS", "^FDQTY:^FS" }, StringSplitOptions.RemoveEmptyEntries);
+            string s = tmp2[1];
+
+            int sIdx = s.IndexOf("^FD") + 3; // ^FD共三個字元，因此+3
+            int eIdx = s.IndexOf("^FS");
+
+            string shipQty = string.Empty;
+            for (int i = 0; i < (eIdx - sIdx); i++)
+            {
+                shipQty += s[i + sIdx].ToString();
+            }
+
+            return shipQty;
+        }
+
+        private string GetCustCTNFromZPL(string zplContent)
+        {
+            string[] tmp2 = zplContent.Split(new string[] { "^FD>;>8", "^FS" }, StringSplitOptions.RemoveEmptyEntries);
+            string custCTN = tmp2[1];
+            return custCTN;
+        }
+
+        private List<SizeObject> GetMixSizeObjectFromZPL(string content)
+        {
+            List<SizeObject> sizeObjects = new List<SizeObject>();
+
+            string[] strArray; // 取得CustCTN過程中，暫存用
+            string article = string.Empty;
+            string styleID = string.Empty;
+
+            strArray = content.Split(new string[] { "^FDSKU:^FS", "^FS^FT" }, StringSplitOptions.RemoveEmptyEntries);
+
+            int startIndex = Array.IndexOf(strArray, strArray.Where(o => o.ToString().Contains("Style-Color-Size")).FirstOrDefault());
+            int endIndex = Array.IndexOf(strArray, strArray.Where(o => o.ToString().Contains("^FDTotal Qty")).FirstOrDefault());
+
+            // 根據幾行，得知有多少種Size
+            int sizeCount = (endIndex - startIndex - 1) / 4;
+            List<string> tmpSizes = new List<string>();
+            int ii = 0;
+
+            for (int i = startIndex + 1; i <= endIndex; i++)
+            {
+                string tmpSize = string.Empty;
+                if (i % 4 == 3)
+                {
+                    string[] stringSeparators = new string[] { "^FD" };
+                    string sku = strArray[i].Split(stringSeparators, StringSplitOptions.None)[1];
+
+                    styleID = sku.Split('-')[0];
+                    article = sku.Split('-')[1];
+                    string size = sku.Split('-')[2];
+                    tmpSize = size;
+                    tmpSizes.Add(tmpSize);
+                }
+
+                if (i % 4 == 1)
+                {
+                    string[] stringSeparators = new string[] { "^FD" };
+                    string qty = strArray[i].Split(stringSeparators, StringSplitOptions.None)[1];
+                    sizeObjects.Add(new SizeObject()
+                    {
+                        StyleID = styleID,
+                        Article= article,
+                        Size = tmpSizes[ii].Trim(),
+                        Qty = Convert.ToInt32(qty.TrimStart().TrimEnd()),
+                    });
+                    ii++;
+                }
+            }
+
+            return sizeObjects;
+        }
+
+        #endregion
+
         #region 類別定義
 
         public class ZipHelper
@@ -2358,6 +2523,10 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
 
         public class SizeObject
         {
+            public string StyleID { get; set; }
+
+            public string Article { get; set; }
+
             public string Size { get; set; }
 
             public int Qty { get; set; }

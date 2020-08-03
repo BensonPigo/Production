@@ -8,20 +8,27 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
+    /// <summary>
+    /// R01
+    /// </summary>
     public partial class R01 : Win.Tems.PrintForm
     {
-        string artworktype;
-        string factory;
-        string subcon;
-        string spno;
-        string style;
-        string orderby;
-        string mdivision;
-        string brandID;
-        DateTime? issuedate1;
-        DateTime? issuedate2;
-        DataTable printData;
+        private string artworktype;
+        private string factory;
+        private string subcon;
+        private string spno;
+        private string style;
+        private string orderby;
+        private string mdivision;
+        private string brandID;
+        private DateTime? issuedate1;
+        private DateTime? issuedate2;
+        private DataTable printData;
 
+        /// <summary>
+        /// R01
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -36,6 +43,8 @@ namespace Sci.Production.Subcon
         }
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             // if (MyUtility.Check.Empty(dateRange1.Value1))
@@ -66,6 +75,8 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -83,8 +94,10 @@ namespace Sci.Production.Subcon
                                         ,c.SewInLine
                                         ,c.SciDelivery
                                         ,c.StyleID
+                                        ,b.Article
                                         ,b.ArtworkId
                                         ,RTrim(b.PatternCode) + '-' + b.PatternDesc
+                                        ,b.SizeCode
                                         ,b.PoQty
                                         ,b.UnitPrice
                                         ,b.PoQty*b.UnitPrice as poamt
@@ -207,6 +220,8 @@ namespace Sci.Production.Subcon
         }
 
         // 產生Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

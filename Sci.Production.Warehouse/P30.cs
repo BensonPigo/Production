@@ -270,7 +270,8 @@ WHERE   StockType='{dr["tostocktype"]}'
             int selectindex2 = this.comboFabricType.SelectedIndex;
             string strCfmDate1 = null;
             string strCfmDate2 = null;
-            string strSP = this.txtSP.Text;
+            string strSP_s = this.txtSP_s.Text;
+            string strSP_e = this.txtSP_e.Text;
             string strFactory = this.txtmfactory.Text;
 
             if (this.dateCfmDate.Value1 != null && this.dateCfmDate.Value2 != null)
@@ -279,7 +280,8 @@ WHERE   StockType='{dr["tostocktype"]}'
                 strCfmDate2 = this.dateCfmDate.Text2;
             }
 
-            if (MyUtility.Check.Empty(strSP) &&
+            if (MyUtility.Check.Empty(strSP_s) &&
+                MyUtility.Check.Empty(strSP_e) &&
                 MyUtility.Check.Empty(strCfmDate1) &&
                 MyUtility.Check.Empty(strCfmDate2))
             {
@@ -378,22 +380,34 @@ WHERE   StockType='{dr["tostocktype"]}'
             switch (selectindex2)
             {
                 case 0:
-                    sqlcmd.Append(@" 
-            AND pd.FabricType ='F'");
                     break;
                 case 1:
                     sqlcmd.Append(@" 
-            AND pd.FabricType ='A'");
+            AND pd.FabricType ='F'");
                     break;
                 case 2:
+                    sqlcmd.Append(@" 
+            AND pd.FabricType ='A'");
                     break;
             }
 
-            if (!MyUtility.Check.Empty(strSP))
+            if (!MyUtility.Check.Empty(strSP_s) && !MyUtility.Check.Empty(strSP_e))
             {
                 sqlcmd.Append($@" 
-            and pd.id = '{strSP}'");
+            and pd.id >= '{strSP_s}'
+            and pd.id <= '{strSP_e}'");
             }
+            else if (!MyUtility.Check.Empty(strSP_s) && MyUtility.Check.Empty(strSP_e))
+            {
+                sqlcmd.Append($@" 
+            and pd.id = '{strSP_s}'");
+            }
+            else if (MyUtility.Check.Empty(strSP_s) && !MyUtility.Check.Empty(strSP_e))
+            {
+                sqlcmd.Append($@" 
+            and pd.id = '{strSP_e}'");
+            }
+
 
             if (!MyUtility.Check.Empty(strFactory))
             {
@@ -404,7 +418,15 @@ WHERE   StockType='{dr["tostocktype"]}'
             if (!string.IsNullOrWhiteSpace(strCfmDate2))
             {
                 sqlcmd.Append($@" 
-            and o.CFMDate between '{strCfmDate1}' and '{strCfmDate2}'");
+			AND EXISTS(
+				SELECt 1
+				FROM Invtrans i WITH (NOLOCK)
+				WHERE i.InventoryPOID = pd.ID
+					AND i.InventorySeq1 = pd.Seq1
+					AND i.InventorySeq2 = pd.Seq2 
+					AND i.Type=5
+					AND i.ConfirmDate between '{strCfmDate1}' and '{strCfmDate2}'
+			)");
             }
             #endregion
 

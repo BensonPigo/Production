@@ -116,6 +116,7 @@ from (
     from Bundle b WITH (NOLOCK) 
     inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
     inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
+    inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
     left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno = bd.Bundleno
     left join SubProcess s WITH (NOLOCK) on s.Id = bio.SubprocessId
     where 1=1 and isnull(bio.RFIDProcessLocationID,'') = ''
