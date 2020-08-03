@@ -256,12 +256,6 @@ and s.FactoryID = @FactoryID
                     return;
                 }
 
-                if (!this.CheckSpLocked_Style())
-                {
-                    this.txtFromSP.Text = string.Empty;
-                    e.Cancel = true;
-                    return;
-                }
             }
             catch (Exception ex)
             {
@@ -296,13 +290,6 @@ and not exists (select 1 from Orders exludeOrder with (nolock)
                 if (!MyUtility.Check.Seek(sqlcmd, lis, null))
                 {
                     MyUtility.Msg.WarningBox($"Datas not found!");
-                    this.txtToSP.Text = string.Empty;
-                    e.Cancel = true;
-                    return;
-                }
-
-                if (!this.CheckSpLocked_Style())
-                {
                     this.txtToSP.Text = string.Empty;
                     e.Cancel = true;
                     return;
@@ -412,58 +399,5 @@ And QAQty > 0
             this.Close();
         }
 
-        /// <summary>
-        /// 若SP已經月結，則From To SP必須相同Style
-        /// </summary>
-        private bool CheckSpLocked_Style()
-        {
-            string cmd = string.Empty;
-            string toSP = this.txtToSP.Text;
-            string fromSP = this.txtFromSP.Text;
-
-            // 兩個都不為空才驗證
-            if (MyUtility.Check.Empty(fromSP) || MyUtility.Check.Empty(toSP))
-            {
-                return true;
-            }
-
-            bool isFromLocked = MyUtility.Check.Seek($@"SELECT 1 FROM SewingOutput s INNER JOIN SewingOutput_Detail sd ON s.ID =  sd.ID WHERE sd.OrderId='{fromSP}' AND s.Status='Locked'");
-            bool isToLocked = MyUtility.Check.Seek($@"SELECT 1 FROM SewingOutput s INNER JOIN SewingOutput_Detail sd ON s.ID =  sd.ID WHERE sd.OrderId='{toSP}' AND s.Status='Locked'");
-
-            if (isFromLocked || isToLocked)
-            {
-                bool isSameStayle = this.CheckSameStyle(fromSP, toSP);
-
-                if (!isSameStayle)
-                {
-                    MyUtility.Msg.WarningBox($"<From SP#> and <To SP#> must be same style.");
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// 確認From To SP#為相同Style
-        /// </summary>
-        /// <param name="fromSP">fromSP</param>
-        /// <param name="toSP">toSP</param>
-        /// <returns>是否相同</returns>
-        private bool CheckSameStyle(string fromSP, string toSP)
-        {
-            string cmd = $@"
-select 1
-from Orders o
-WHERE ID='{toSP}'
-AND EXISTS(
-	select StyleID
-	from Orders
-	WHERE ID='{fromSP}' AND StyleID=o.StyleID
-)
-";
-            bool isSameStayle = MyUtility.Check.Seek(cmd);
-
-            return isSameStayle;
-        }
     }
 }
