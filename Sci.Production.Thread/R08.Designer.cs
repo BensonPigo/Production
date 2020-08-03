@@ -59,17 +59,17 @@
             // print
             // 
             this.print.Enabled = false;
-            this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.Location = new System.Drawing.Point(434, 12);
             this.print.TabIndex = 0;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(430, 48);
+            this.toexcel.Location = new System.Drawing.Point(434, 48);
             this.toexcel.TabIndex = 1;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(430, 84);
+            this.close.Location = new System.Drawing.Point(434, 84);
             this.close.TabIndex = 2;
             // 
             // panel1
@@ -107,6 +107,7 @@
             this.comboMDivision.IsSupportUnselect = true;
             this.comboMDivision.Location = new System.Drawing.Point(117, 226);
             this.comboMDivision.Name = "comboMDivision";
+            this.comboMDivision.OldText = "";
             this.comboMDivision.Size = new System.Drawing.Size(80, 24);
             this.comboMDivision.TabIndex = 8;
             // 
@@ -243,6 +244,20 @@
             // 
             // dateDate
             // 
+            // 
+            // 
+            // 
+            this.dateDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateDate.DateBox1.Name = "";
+            this.dateDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateDate.DateBox2.Name = "";
+            this.dateDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateDate.DateBox2.TabIndex = 1;
             this.dateDate.IsRequired = false;
             this.dateDate.Location = new System.Drawing.Point(116, 17);
             this.dateDate.Name = "dateDate";
@@ -312,7 +327,11 @@
             this.ClientSize = new System.Drawing.Size(522, 335);
             this.Controls.Add(this.panel1);
             this.Name = "R08";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R08. Thread Issue List";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
