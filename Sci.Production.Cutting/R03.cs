@@ -168,7 +168,7 @@ select
 	wo.SCIRefno,
 	wo.Seq1,
 	wo.Seq2,
-    [ActConsOutput] = cast(acc.AccuCuttingLayer as numeric(8,0)) - ML.YDSMarkerLength
+    [ActConsOutput] = cast(isnull(iif(wo.Layer - isnull(acc.AccuCuttingLayer,0) = 0, wo.Cons, acc.AccuCuttingLayer * ML.YDSMarkerLength),0) as numeric(9,4))
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
