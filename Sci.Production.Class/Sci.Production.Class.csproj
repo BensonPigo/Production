@@ -109,6 +109,9 @@
     <Compile Include="Command\User.cs" />
     <Compile Include="Command\UserPrg.cs" />
     <Compile Include="ExcelFileNameExtension.cs" />
+    <Compile Include="InchTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MergeRowGrid.cs">
       <SubType>Component</SubType>
     </Compile>

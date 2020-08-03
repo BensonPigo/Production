@@ -4,11 +4,22 @@ using System.Data;
 using Sci.Data;
 using Ict;
 using EASendMail;
+using System.Windows.Forms;
+using System.Linq;
 
 namespace Sci.Production.PublicPrg
 {
     public static partial class Prgs
     {
+        /// <summary>
+        /// 轉呼叫string.IsNullOrWhiteSpace(source)
+        /// </summary>
+        /// <inheritdoc/>
+        public static bool IsNullOrWhiteSpace(this string source)
+        {
+            return string.IsNullOrWhiteSpace(source);
+        }
+
         private static DataTable dtPass1 = null;
 
         public enum Pass1Format
@@ -299,6 +310,181 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             {
                 dt.Columns.Remove(columns);
             }
+        }
+    }
+
+    /// <summary>
+    /// 開窗選擇一個檔案，用於替帶原生的OpenFileDialog
+    /// </summary>
+    public static class SciFileDialog
+    {
+        /// <summary>
+        /// 每次都忘記怎麼設定Filter，做一個小東西來省大腦空間
+        /// </summary>
+        public struct OpenFileDialogFilterPair
+        {
+            /// <summary>
+            /// 顯示出來給使用者看到的文字
+            /// </summary>
+            public string Display { get; set; }
+
+            /// <summary>
+            /// 實際用來篩選檔案的文字 ex: *.xls, *.xlsx
+            /// </summary>
+            public List<string> FilterText { get; set; }
+
+            /// <summary>
+            /// 每次都忘記怎麼設定Filter，做一個小東西來省大腦空間
+            /// </summary>
+            /// <inheritdoc />
+            public OpenFileDialogFilterPair(string display, params string[] filterText)
+            {
+                this.Display = display;
+                this.FilterText = filterText.Any() ? filterText.ToList() : new List<string>() { display };
+            }
+        }
+
+        private static bool IsLoadded = false;
+
+        /// <summary>
+        /// 建立一個起檔案的視窗，交給來源端的moreSetting方法做設定，然後開窗，成功選擇檔案的話會記錄選擇位置，以供下次開啟
+        /// </summary>
+        /// <inheritdoc/>
+        public static void ShowDialog(Action<OpenFileDialog> afterSelected, Action<OpenFileDialog> moreSetting = null, params OpenFileDialogFilterPair[] filterSetting)
+        {
+            if (afterSelected == null)
+            {
+                throw new ArgumentException("afterSelected argument can not be null");
+            }
+
+            using (var dlg = new OpenFileDialog())
+            {
+                if (filterSetting != null && filterSetting.Any())
+                {
+                    dlg.Filter = filterSetting
+                        .Select(item => $"{item.Display}|{item.FilterText.Select(item2 => item2).JoinToString(";")}")
+                        .JoinToString("|");
+                }
+
+                moreSetting?.Invoke(dlg);
+
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    afterSelected(dlg);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 開窗選擇一個檔案，可以透過moresetting進行細部設定
+        /// </summary>
+        /// <param name="filterSetting">篩選檔案的設定</param>
+        /// <returns>SelectSingleFileResult物件可以直接隱含轉型為bool或是string</returns>
+        public static SelectSingleFileResult SelectFile(params OpenFileDialogFilterPair[] filterSetting)
+        {
+            SelectSingleFileResult result = null;
+            ShowDialog(dlg => result = dlg.FileName, null, filterSetting);
+            return result;
+        }
+
+        /// <summary>
+        /// 開窗選擇一個檔案，可以透過moresetting進行細部設定
+        /// </summary>
+        /// <param name="moreSetting">透過存取傳入物件來改變細節設定</param>
+        /// <param name="filterSetting">篩選檔案的設定</param>
+        /// <returns>SelectSingleFileResult物件可以直接隱含轉型為bool或是string</returns>
+        public static SelectSingleFileResult SelectFile(Action<OpenFileDialog> moreSetting = null, params OpenFileDialogFilterPair[] filterSetting)
+        {
+            SelectSingleFileResult result = null;
+            ShowDialog(dlg => result = dlg.FileName, moreSetting, filterSetting);
+            return result;
+        }
+
+        /// <summary>
+        /// 開窗選擇複數檔案，可以透過moresetting進行細部設定
+        /// </summary>
+        /// <param name="filterSetting">篩選檔案的設定</param>
+        /// <returns>SelectMultiFileResult物件可以直接隱含轉型為bool或是string</returns>
+        public static SelectMultiFileResult SelectFiles(params OpenFileDialogFilterPair[] filterSetting)
+        {
+            SelectMultiFileResult result = null;
+            ShowDialog(dlg => result = dlg.FileNames, null, filterSetting);
+            return result;
+        }
+
+        /// <summary>
+        /// 開窗選擇複數檔案，可以透過moresetting進行細部設定
+        /// </summary>
+        /// <param name="moreSetting">透過存取傳入物件來改變細節設定</param>
+        /// <param name="filterSetting">篩選檔案的設定</param>
+        /// <returns>SelectMultiFileResult物件可以直接隱含轉型為bool或是string</returns>
+        public static SelectMultiFileResult SelectFiles(Action<OpenFileDialog> moreSetting = null, params OpenFileDialogFilterPair[] filterSetting)
+        {
+            SelectMultiFileResult result = null;
+            ShowDialog(dlg => result = dlg.FileNames, moreSetting, filterSetting);
+            return result;
+        }
+    }
+
+    /// <summary>
+    /// SciFileDialog.SelectFile的回傳物件，可以隱含轉換為string(FileName屬性)，也可隱含轉換為bool(FileName.IsNullOrWhiteSpace)
+    /// </summary>
+    public struct SelectSingleFileResult
+    {
+        /// <summary>
+        /// 選到的檔案名稱
+        /// </summary>
+        public string FileName;
+
+        /// <inheritdoc/>
+        public static implicit operator string(SelectSingleFileResult v)
+        {
+            return v.FileName;
+        }
+
+        /// <inheritdoc/>
+        public static implicit operator bool(SelectSingleFileResult v)
+        {
+            return v.FileName.IsNullOrWhiteSpace() == false;
+        }
+
+        /// <inheritdoc/>
+        public static implicit operator SelectSingleFileResult(string v)
+        {
+            return new SelectSingleFileResult()
+            {
+                FileName = v,
+            };
+        }
+    }
+
+    /// <summary>
+    /// SciFileDialog.SelectFiles的回傳物件，可以隱含轉換為string[](FileNames屬性)，也可隱含轉換為bool(FileNames != null and FileNames.Any())
+    /// </summary>
+    public struct SelectMultiFileResult
+    {
+        /// <inheritdoc/>
+        public string[] FileNames;
+
+        /// <inheritdoc/>
+        public static implicit operator string[](SelectMultiFileResult v)
+        {
+            return v.FileNames;
+        }
+
+        /// <inheritdoc/>
+        public static implicit operator bool(SelectMultiFileResult v)
+        {
+            return v.FileNames != null && v.FileNames.Any(item => item.IsNullOrWhiteSpace() == false);
+        }
+
+        /// <inheritdoc/>
+        public static implicit operator SelectMultiFileResult(string[] v)
+        {
+            return new SelectMultiFileResult()
+            {
+                FileNames = v,
+            };
         }
     }
 }

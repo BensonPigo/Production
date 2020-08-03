@@ -4,6 +4,7 @@ using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Class;
 using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
@@ -22,8 +23,9 @@ namespace Sci.Production.Cutting
     public partial class P02 : Win.Tems.Input8
     {
         #region
-        private readonly string loginID = Sci.Env.User.UserID;
-        private readonly string keyWord = Sci.Env.User.Keyword;
+        private readonly string LoginID = Sci.Env.User.UserID;
+        private readonly string KeyWord = Sci.Env.User.Keyword;
+        private readonly Win.UI.BindingSource2 bindingSource2 = new Win.UI.BindingSource2();
         private DataTable PatternPanelTb;
         private DataTable sizeratioTb;
         private DataTable layersTb;
@@ -35,7 +37,6 @@ namespace Sci.Production.Cutting
         private DataTable chksize;
         private DataRow drTEMP;  // 紀錄目前表身選擇的資料，避免按列印時模組會重LOAD資料，導致永遠只能印到第一筆資料
         private string Poid;
-        private Win.UI.BindingSource2 bindingSource2 = new Win.UI.BindingSource2();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Markername;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_sp;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_seq1;
@@ -108,13 +109,13 @@ namespace Sci.Production.Cutting
             {
                 this.Text = "P02.Cutting Work Order";
                 this.IsSupportEdit = true;
-                this.DefaultFilter = string.Format("mDivisionid = '{0}' and WorkType is not null and WorkType != '' and Finished = 0", this.keyWord);
+                this.DefaultFilter = string.Format("mDivisionid = '{0}' and WorkType is not null and WorkType != '' and Finished = 0", this.KeyWord);
             }
             else
             {
                 this.Text = "P02.Cutting Work Order(History)";
                 this.IsSupportEdit = false;
-                this.DefaultFilter = string.Format("mDivisionid = '{0}' and WorkType is not null and WorkType != '' and Finished = 1", this.keyWord);
+                this.DefaultFilter = string.Format("mDivisionid = '{0}' and WorkType is not null and WorkType != '' and Finished = 1", this.KeyWord);
             }
 
             this.detailgrid.Click += this.Detailgrid_Click;
@@ -141,7 +142,7 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory  WITH (NOLOCK)
-where MDivisionID = '{this.keyWord}'";
+where MDivisionID = '{this.KeyWord}'";
             DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
@@ -244,6 +245,7 @@ Select
     ,isbyAdditionalRevisedMarker = cast(0 as int)
     ,fromukey = a.ukey
     ,CuttingLayer = iif(isnull(cs.CuttingLayer,0) = 0, 100 ,cs.CuttingLayer)
+    ,ImportML = cast(0 as bit)
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
 left join Construction cs WITH (NOLOCK) on cs.ID = ConstructionID
@@ -455,6 +457,18 @@ drop table #tmp
         }
 
         /// <inheritdoc/>
+        protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Detail == null) ? "0" : MyUtility.Convert.GetString(e.Detail["UKey"]);
+            this.SubDetailSelectCommand = string.Format(
+                @"
+select * from WorkOrder_PatternPanel  WITH (NOLOCK)
+where WorkOrderUkey={0}", masterID);
+
+            return base.OnSubDetailSelectCommandPrepare(e);
+        }
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -474,9 +488,10 @@ drop table #tmp
 
             this.txtStyle.Text = orderdr == null ? string.Empty : orderdr["Styleid"].ToString();
             this.txtLine.Text = orderdr == null ? string.Empty : orderdr["SewLine"].ToString();
-            string maxcutrefCmd = string.Format("Select Max(Cutref) from workorder WITH (NOLOCK) where mDivisionid = '{0}'", this.keyWord);
+            string maxcutrefCmd = string.Format("Select Max(Cutref) from workorder WITH (NOLOCK) where mDivisionid = '{0}'", this.KeyWord);
             this.textbox_LastCutRef.Text = MyUtility.GetValue.Lookup(maxcutrefCmd);
             this.comboBox1.Enabled = !this.EditMode;  // Sorting於編輯模式時不可選取
+            this.BtnImportMarker.Enabled = this.EditMode;
 
             foreach (DataRow dr in this.DetailDatas)
             {
@@ -490,6 +505,13 @@ drop table #tmp
             this.col_shift.Width = 66;
             this.col_wketa.Width = 77;
             this.btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+
+            #region 取得 LeadTime 和 Subprocess
+            var orders = this.distqtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["OrderID"])).Distinct().ToList();
+            var leadTimeList = Prgs.GetLeadTimeList(orders, out string annotationStr);
+            this.dispSubprocess.Text = annotationStr;
+            this.numLeadTime.Value = leadTimeList.Count > 0 ? leadTimeList[0].LeadTimeDay : 0;
+            #endregion
 
             #region 檢查MarkerNo ,MarkerVersion ,MarkerDownloadID是否與Order_Eachcons不同
             if (this.DetailDatas.Where(s => !s["MarkerNo"].Equals(s["EachconsMarkerNo"]) ||
@@ -1277,7 +1299,7 @@ drop table #tmp
                     }
 
                     SelectItem sele;
-                    DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.keyWord), out DataTable cellTb);
+                    DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.KeyWord), out DataTable cellTb);
                     sele = new SelectItem(cellTb, "ID", "10@300,300", dr["CutCellid"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -1321,8 +1343,7 @@ drop table #tmp
                     return;
                 }
 
-                DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.keyWord), out DataTable cellTb);
-
+                DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.KeyWord), out DataTable cellTb);
                 DataRow[] seledr = cellTb.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
                 {
@@ -1441,7 +1462,7 @@ drop table #tmp
                     }
 
                     SelectItem sele;
-                    DBProxy.Current.Select(null, $"Select id,CutCell = CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.keyWord}' and junk=0", out DataTable spreadingNoIDTb);
+                    DBProxy.Current.Select(null, $"Select id,CutCell = CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.KeyWord}' and junk=0", out DataTable spreadingNoIDTb);
 
                     sele = new SelectItem(spreadingNoIDTb, "ID,CutCell", "10@400,300", dr["SpreadingNoID"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
@@ -1489,7 +1510,7 @@ drop table #tmp
                     return;
                 }
 
-                string sqlSpreading = $"Select CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.keyWord}' and  id = '{newvalue}' and junk=0";
+                string sqlSpreading = $"Select CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.KeyWord}' and  id = '{newvalue}' and junk=0";
                 if (!MyUtility.Check.Seek(sqlSpreading, out DataRow spreadingNodr))
                 {
                     dr["SpreadingNoID"] = string.Empty;
@@ -2255,6 +2276,11 @@ drop table #tmp
             {
                 this.distributeMenuStrip.Enabled = this.EditMode;
             }
+
+            if (this.BtnImportMarker != null)
+            {
+                this.BtnImportMarker.Enabled = this.EditMode;
+            }
         }
 
         /// <inheritdoc/>
@@ -2462,7 +2488,7 @@ SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, CutNo
 isnull(MarkerName,'') as MarkerName, estcutdate
 FROM Workorder WITH (NOLOCK) 
 WHERE (cutplanid is null or cutplanid ='') AND (CutNo is not null )
-AND (cutref is not null and cutref !='') and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{this.keyWord}'
+AND (cutref is not null and cutref !='') and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{this.KeyWord}'
 GROUP BY Cutref, FabricCombo, CutNo, MarkerName, estcutdate
 ";
             DualResult cutrefresult = DBProxy.Current.Select(null, cmdsql, out DataTable cutreftb);
@@ -2472,13 +2498,15 @@ GROUP BY Cutref, FabricCombo, CutNo, MarkerName, estcutdate
                 return;
             }
             #endregion
+
+            // 找出空的cutref
             cmdsql = $@"
 Select * 
 From workorder WITH (NOLOCK) 
 Where (CutNo is not null ) and (cutref is null or cutref ='') 
 and (estcutdate is not null and estcutdate !='' )
 and (CutCellid is not null and CutCellid !='' )
-and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{this.keyWord}'
+and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{this.KeyWord}'
 order by FabricCombo,cutno
 ";
             cutrefresult = DBProxy.Current.Select(null, cmdsql, out DataTable workordertmp);
@@ -2525,7 +2553,7 @@ Begin Transaction [Trans_Name] -- Trans_Name
                 }
 
                 updatecutref += string.Format($@"
-    if (select COUNT(1) from Workorder WITH (NOLOCK) where cutref = '{newcutref}' and mDivisionid = '{this.keyWord}' and id != '{this.CurrentMaintain["id"]}')>0
+    if (select COUNT(1) from Workorder WITH (NOLOCK) where cutref = '{newcutref}' and mDivisionid = '{this.KeyWord}' and id != '{this.CurrentMaintain["id"]}')>0
 	begin
 		RAISERROR ('Duplicate Cutref. Please redo Auto Ref#',12, 1) 
 		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
@@ -2744,7 +2772,7 @@ END";
                 newRow["Fabeta"] = oldRow["Fabeta"];
                 newRow["sewinline"] = oldRow["sewinline"];
                 newRow["actcutdate"] = oldRow["actcutdate"];
-                newRow["Adduser"] = this.loginID;
+                newRow["Adduser"] = this.LoginID;
                 newRow["edituser"] = oldRow["edituser"];
                 newRow["totallayer"] = oldRow["totallayer"];
                 newRow["multisize"] = oldRow["multisize"];
@@ -3549,6 +3577,8 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
         {
             // 編輯時，將[SORT_NUM]賦予流水號
             base.ClickEditAfter();
+
+            // 編輯時，將[SORT_NUM]賦予流水號
             int serial = 1;
             this.detailgridbs.SuspendBinding();
             foreach (DataRow dr in this.DetailDatas)
@@ -3725,6 +3755,52 @@ and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)
             }
         }
 
+        private void BtnImportMarker_Click(object sender, EventArgs e)
+        {
+            string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            string sqlcmd = $@"
+select top 1 s.SizeGroup, s.PatternNo, oe.markerNo, s.ID, p.Version
+from Order_EachCons oe 
+inner join dbo.SMNotice s on oe.SMNoticeID = s.ID
+inner join SMNotice_Detail sd with(nolock)on sd.id = s.id
+inner join Pattern p with(nolock)on p.id = sd.id
+where oe.ID = '{id}'
+and sd.PhaseID = 'Bulk'
+and p.Status='Completed'
+order by p.EditDate desc
+";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow drSMNotice))
+            {
+                string styleUkey = MyUtility.GetValue.Lookup($@"select o.StyleUkey from Orders o where o.id = '{id}'");
+                var form = new P02_ImportML(styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
+                form.ShowDialog();
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Not found SMNotice Datas"); // 正常不會發生這狀況
+            }
+
+            #region 產生第3層 PatternPanel 只有一筆
+            this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).ToList().ForEach(row =>
+            {
+                DataRow drNEW = this.PatternPanelTb.NewRow();
+                drNEW["id"] = this.CurrentMaintain["ID"];
+                drNEW["WorkOrderUkey"] = 0;  // 新增WorkOrderUkey塞0
+                drNEW["PatternPanel"] = row["PatternPanel"];
+                drNEW["FabricPanelCode"] = row["FabricPanelCode"];
+                this.PatternPanelTb.Rows.Add(drNEW);
+            });
+            #endregion
+
+            int icount = this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).Count();
+            for (int i = 0; i <= icount; i++)
+            {
+                this.detailgrid.CurrentCell = this.detailgrid.Rows[i].Cells["Layer"]; // 移動到指定cell 觸發 Con 計算
+            }
+
+            this.detailgrid.SelectRowTo(0);
+        }
+
         private void Distribute_grid_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
         }
@@ -3788,7 +3864,7 @@ and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)
 select cuttingWidth = isnull (cuttingWidth, 0) 
 from CutCell 
 where id = '{strCutCellID}'
-and MDivisionID = '{this.keyWord}'");
+and MDivisionID = '{this.KeyWord}'");
             if (!chkwidth.Empty() && !strCuttingWidth.Empty())
             {
                 decimal width_CM = decimal.Parse(chkwidth);
@@ -3855,6 +3931,7 @@ and MDivisionID = '{this.keyWord}'");
             this.callP07.P07Data(this.CurrentMaintain["ID"].ToString());
         }
 
+
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             if (!this.AnyChange)
@@ -3884,6 +3961,31 @@ CLOSE CURSOR_
 DEALLOCATE CURSOR_
 ";
                 DBProxy.Current.Execute(null, sqlcmd);
+            }
+        }
+        /// <inheritdoc/>
+        public static void ProcessColumns(DataRow currentRow)
+        {
+            // MarkerLengthY, MarkerLengthE, ActCuttingPerimeterNew, StraightLengthNew, CurvedLengthNew
+            if (!MyUtility.Check.Empty(currentRow["MarkerLength"]))
+            {
+                string markerLength = MyUtility.Convert.GetString(currentRow["MarkerLength"]);
+                int indexY = markerLength.IndexOf("Ｙ");
+                currentRow["markerLengthY"] = markerLength.Substring(0, indexY).PadLeft(2, '0');
+                currentRow["markerLengthE"] = markerLength.Substring(indexY + 1);
+            }
+
+            PadLeftTen("ActCuttingPerimeter", currentRow);
+            PadLeftTen("StraightLength", currentRow);
+            PadLeftTen("CurvedLength", currentRow);
+        }
+
+        /// <inheritdoc/>
+        private static void PadLeftTen(string columnName, DataRow currentRow)
+        {
+            if (!MyUtility.Check.Empty(currentRow[columnName]))
+            {
+                currentRow[columnName + "New"] = MyUtility.Convert.GetString(currentRow[columnName]).PadLeft(10, '0');
             }
         }
     }
