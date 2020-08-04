@@ -369,9 +369,7 @@ outer apply (select [val] =  TotalCPU.val - isnull(tb.SewingOutputCPU, 0) - isnu
 select  FtyGroup,
 		[Date] = iif(@ChkMonthly = 1,  SUBSTRING(Date,1,4)+SUBSTRING(Date,5,6),DateByHalfMonth),
 		ID,
-		[OutputDate] = case when @IncludeCancelOrder = 1 and OutputDate is null 
-							then SUBSTRING(Date,1,4)+SUBSTRING(Date,5,6)
-			else OutputDate end,
+		OutputDate,
 		[OrderCPU] = iif(IsCancelNeedProduction = 'N' and isNormalOrderCanceled = 1,0 ,OrderCPU - OrderShortageCPU),
 		[CanceledCPU] = iif(IsCancelNeedProduction = 'Y',OrderCPU, 0),
 		OrderShortageCPU,
