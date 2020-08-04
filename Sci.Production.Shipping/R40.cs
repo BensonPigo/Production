@@ -1115,92 +1115,9 @@ where a.[W/House Qty(Stock Unit)] + isnull(b.[W/House Qty(Stock Unit)],0) != 0
 ----------------------------------------------------------------
 ---------------- 08 WIP - 未WH關單------------------------------
 ----------------------------------------------------------------
+/*特定日期區間*/
 select * 
 into #tmpIssueQty1
-from (
-    --台北採購的物料
-	select  [HSCode] = isnull(f.HSCode,'')
-	        , [NLCode] = isnull(f.NLCode,'')
-            , t.FactoryID
-	        , [ID] = t.ID
-	        , [POID] = t.POID
-	        , [Qty] = IIF((mdp.OutQty-mdp.LObQty) > 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
-		                ,psd.StockUnit
-		                ,isnull(f.CustomsUnit,'')
-		                ,(mdp.OutQty-mdp.LObQty)
-		                ,isnull(f.Width,0)
-		                ,isnull(f.PcsWidth,0)
-		                ,isnull(f.PcsLength,0)
-		                ,isnull(f.PcsKg,0)
-		                ,isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',
-			                (select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-			                ,(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
-		                ,isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',
-			                (select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-			                ,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
-                            ,default)
-		                ,0)
-            , f.Refno
-            , [MaterialType] = dbo.GetMaterialTypeDesc(f.Type)
-            , f.Description
-            , [CustomsUnit] = f.CustomsUnit
-            , [StockQty] = IIF((mdp.OutQty-mdp.LObQty) > 0,(mdp.OutQty-mdp.LObQty),0)
-            , [StockUnit] = psd.StockUnit
-            , [StyleID] = t.StyleID
-            , [Color] = isnull(c.Name,'')
-	from #tmpOrderList t
-	inner join MDivisionPoDetail mdp WITH (NOLOCK) on mdp.POID = t.ID 
-	inner join PO_Supp_Detail psd WITH (NOLOCK) on mdp.POID = psd.ID 
-                                                   and psd.SEQ1 = mdp.Seq1 
-                                                   and psd.SEQ2 = mdp.Seq2
-	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
-    left join Color c WITH (NOLOCK) on psd.BrandID = c.BrandID 
-                                       and psd.ColorID = c.ID
-    where t.WhseClose is null
-   
-    union all
-    
-    --工廠採購的物料
-	select  [HSCode] = isnull(li.HSCode,'')
-	        , [NLCode] = isnull(li.NLCode,'')
-            , t.FactoryID
-	        , [ID] = t.ID
-	        , [POID] = t.POID
-	        , [Qty] = IIF(l.OutQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
-		                ,l.UnitId
-		                ,isnull(li.CustomsUnit,'')
-		                ,l.OutQty
-		                ,0
-		                ,isnull(li.PcsWidth,0)
-		                ,isnull(li.PcsLength,0)
-		                ,isnull(li.PcsKg,0)
-		                ,isnull(IIF(isnull(li.CustomsUnit,'') = 'M2',
-			                (select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			                ,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = isnull(li.CustomsUnit,''))),1)
-		                ,isnull(IIF(isnull(li.CustomsUnit,'') = 'M2',
-			                (select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			                ,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = isnull(li.CustomsUnit,''))),'')
-                            ,li.Refno)
-		                ,0)
-            , li.Refno
-            , [MaterialType] = dbo.GetMaterialTypeDesc(li.Category)
-            , li.Description
-            , [CustomsUnit] = li.CustomsUnit
-            , [StockQty] = l.OutQty
-            , [StockUnit] = li.UnitId
-            , [StyleID] = t.StyleID
-            , [Color] = ''
-	from #tmpOrderList t
-	inner join LocalInventory l WITH (NOLOCK) on t.ID = l.OrderID 
-	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
-    where t.WhseClose is null
-    
-) a
-
-/*特定日期區間*/
-
-select * 
-into #tmpIssueQty2
 from (
     --台北採購的物料
 	select  [HSCode] = isnull(f.HSCode,'')
@@ -1245,16 +1162,16 @@ from (
 		from Issue a
 		inner join Issue_Detail b on a.Id=b.Id
 		where b.PoId = mdp.POID and b.Seq1=mdp.seq1 and b.Seq2=mdp.Seq2
-		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() 
+		and a.IssueDate <= @GenerateDate
 		and a.Status='Confirmed'
-		and a.Type in ('A','B','C','D','H')
+		and a.Type in ('A','B','C','D','I')
 	)WH_Issue
 	outer apply(
 		select Qty = isnull(sum(b.Qty),0) 
 		from Issuelack a
 		inner join Issuelack_Detail b on a.Id = b.Id
 		where b.POID = psd.ID and b.Seq1 = psd.SEQ1 and b.Seq2 = psd.SEQ2
-		and IssueDate > @GenerateDate and IssueDate <= GETDATE()
+		and IssueDate <= @GenerateDate
 		and a.Type='R' and a.FabricType in ('F','A')
 		and a.Status !='New'
 	)WH15_16
@@ -1263,7 +1180,7 @@ from (
 		from IssueReturn a
 		inner join IssueReturn_Detail b on a.Id = b.Id
 		where b.POID = psd.ID and b.Seq1 = psd.SEQ1 and b.Seq2 = psd.SEQ2
-		and IssueDate > @GenerateDate and IssueDate <= GETDATE()
+		and IssueDate <= @GenerateDate
 		and a.status ='Confirmed'
 	)WH17
 	outer apply(
@@ -1271,7 +1188,7 @@ from (
 		from SubTransfer a
 		inner join SubTransfer_Detail b on a.Id=b.Id
 		where b.FromPOID = mdp.POID and b.FromSeq1=mdp.seq1 and b.FromSeq2=mdp.Seq2
-		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
+		and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
 		and a.Status='Confirmed'
 		and a.Type in ('E','D')
 	)WHSubTransfer_Plus
@@ -1280,7 +1197,7 @@ from (
 		from SubTransfer a
 		inner join SubTransfer_Detail b on a.Id=b.Id
 		where b.FromPOID = mdp.POID and b.FromSeq1=mdp.seq1 and b.FromSeq2=mdp.Seq2
-		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
+		and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
 		and a.Status='Confirmed'
 		and a.Type in ('C')
 	)WHSubTransfer_Reduce
@@ -1289,7 +1206,7 @@ from (
 		from TransferOut a
 		inner join TransferOut_Detail b on a.Id=b.Id
 		where b.PoId = mdp.POID and b.Seq1=mdp.seq1 and b.Seq2=mdp.Seq2
-		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
+		and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
 		and a.Status='Confirmed'
 	)WH19
 	outer apply(
@@ -1297,7 +1214,7 @@ from (
 		from BorrowBack a
 		inner join BorrowBack_Detail b on a.Id=b.Id
 		where b.FromPoId = mdp.POID and b.FromSeq1=mdp.seq1 and b.FromSeq2=mdp.Seq2
-		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
+		and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
 		and a.Status='Confirmed'
 		and a.Type in ('A','B')
 	)WHBorrowBack_Plus
@@ -1306,7 +1223,7 @@ from (
 		from BorrowBack a
 		inner join BorrowBack_Detail b on a.Id=b.Id
 		where b.ToPoId = mdp.POID and b.ToSeq1=mdp.seq1 and b.ToSeq2=mdp.Seq2
-		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
+		and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
 		and a.Status='Confirmed'
 		and a.Type in ('A','B')
 	)WHBorrowBack_Reduce
@@ -1315,40 +1232,40 @@ from (
 		select 1 from Issue a
 		inner join Issue_Detail b on a.Id = b.Id
 		where b.POID = psd.ID and b.Seq1 = psd.SEQ1 and b.Seq2 = psd.SEQ2
-		and IssueDate > @GenerateDate and IssueDate <= GETDATE()
+		and IssueDate <= @GenerateDate
 		and a.status = 'Confirmed'
-		and a.Type in ('A','B','C','D','H')
+		and a.Type in ('A','B','C','D','I')
 		union all
 		select 1 from Issuelack a
 		inner join Issuelack_Detail b on a.Id = b.Id
 		where b.POID = psd.ID and b.Seq1 = psd.SEQ1 and b.Seq2 = psd.SEQ2
-		and IssueDate > @GenerateDate and IssueDate <= GETDATE()
+		and IssueDate <= @GenerateDate
 		and a.Type='R' and a.FabricType in ('F','A')
 		and a.Status !='New'
 		union all
 		select 1 from IssueReturn a
 		inner join IssueReturn_Detail b on a.Id = b.Id
 		where b.POID = psd.ID and b.Seq1 = psd.SEQ1 and b.Seq2 = psd.SEQ2
-		and IssueDate > @GenerateDate and IssueDate <= GETDATE()
+		and IssueDate <= @GenerateDate
 		and a.status ='Confirmed'
 		union all
 		select 1 from SubTransfer a
 		inner join SubTransfer_Detail b on a.Id=b.Id
 		where b.FromPOID = mdp.POID and b.FromSeq1=mdp.seq1 and b.FromSeq2=mdp.Seq2
-		and IssueDate > @GenerateDate and IssueDate <= GETDATE()
+		and IssueDate <= @GenerateDate
 		and a.Status='Confirmed'
 		and a.Type in ('E','D','C')
 		union all
 		select 1 from TransferOut a
 		inner join TransferOut_Detail b on a.Id=b.Id
 		where b.PoId = mdp.POID and b.Seq1=mdp.seq1 and b.Seq2=mdp.Seq2
-		and IssueDate > @GenerateDate and IssueDate <= GETDATE()
+		and IssueDate <= @GenerateDate
 		and a.Status='Confirmed'
 		union all
 		select 1 from BorrowBack a
 		inner join BorrowBack_Detail b on a.Id=b.Id
 		where b.FromPoId = mdp.POID and b.FromSeq1=mdp.seq1 and b.FromSeq2=mdp.Seq2
-		and IssueDate > @GenerateDate and IssueDate <= GETDATE()
+		and IssueDate <= @GenerateDate
 		and a.Status='Confirmed'
 		and a.Type in ('A','B')
 	)
@@ -1394,7 +1311,7 @@ from (
 			inner join LocalIssue_Detail b on a.Id=b.Id
 			where b.OrderID = l.OrderID
 			and b.Refno = l.Refno and b.ThreadColorID = l.ThreadColorID
-			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
+			and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
 			and a.Status = 'Confirmed'
 	)WH61
     where t.WhseClose is null
@@ -1402,7 +1319,7 @@ from (
 		select * from LocalIssue a
 		inner join LocalIssue_Detail b on a.Id = b.Id
 		where b.OrderID = t.ID and b.Refno = l.Refno
-		and IssueDate > @GenerateDate and IssueDate <= GETDATE()
+		and IssueDate <= @GenerateDate
 		and a.status = 'Confirmed'
 	)
 ) a
@@ -1413,29 +1330,21 @@ select
 , a.FactoryID
 , [ID] = a.ID
 , [POID] = a.POID
-, [Qty] = sum(a.Qty) + sum(isnull(b.Qty,0))
+, [Qty] = sum(a.Qty) 
 , a.Refno
 , [MaterialType] = a.MaterialType
 , a.Description
 , [CustomsUnit] = a.CustomsUnit
-, [StockQty] = sum(a.StockQty) + sum(isnull(b.stockQty,0))
+, [StockQty] = sum(a.StockQty)
 , [StockUnit] = a.StockUnit
 , [StyleID] = a.StyleID
 , [Color] = a.Color
 into #tmpIssueQty
 from #tmpIssueQty1 a
-left join #tmpIssueQty2 b on 
-a.POID = b.POID
-and a.FactoryID = b.FactoryID 
-and a.Refno = b.Refno and a.Color = b.Color
-and a.ID=b.ID and a.StyleID = b.StyleID
-and a.HSCode = b.HSCode and a.NLCode = b.NLCode
-and a.MaterialType = b.MaterialType and a.CustomsUnit = b.CustomsUnit
-and a.StockUnit = b.StockUnit
-where a.StockQty + isnull(b.StockQty,0) != 0
+where a.StockQty  != 0
 group by a.id, a.POID, a.FactoryID, a.Refno, a.Color, a.Description, a.NLCode, a.CustomsUnit, a.StockUnit,a.MaterialType,a.HSCode,a.StyleID
 
-drop Table #tmpIssueQty1,#tmpIssueQty2
+drop Table #tmpIssueQty1
 ----------------------------------------------------------------
 -------- 09 WIP - 未WH關單 已SewingOutput數量 ------------------
 ----------------------------------------------------------------
