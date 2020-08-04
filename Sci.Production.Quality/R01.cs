@@ -461,7 +461,10 @@ from #tmpFinal tf
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
+            int defaultTimeout = DBProxy.Current.DefaultTimeout;
+            DBProxy.Current.DefaultTimeout = 1800;
             res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);
+            DBProxy.Current.DefaultTimeout = defaultTimeout;
             if (!res)
             {
                 return res;
