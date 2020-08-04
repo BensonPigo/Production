@@ -730,12 +730,8 @@ from SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
 INNER JOIN SewingOutput_Detail_Detail sdd ON sdd.SewingOutput_DetailUKey = sd.UKey
 INNER JOIN Orders o ON sd.OrderId = o.ID
-WHERE sd.OrderId='{fromOrderID}' AND s.Status = 'Locked'
-AND EXISTS(
-	SELECt 1 
-	FROM Orders 
-	WHERE ID = '{toOrderID}' AND StyleID <> o.StyleID
-)
+WHERE sd.OrderId='{fromOrderID}' AND s.Status != 'Locked'
+AND s.QAQty < '{this.DetailDatas[i]["TransferQty"]}'
 ";
                 if (MyUtility.Check.Seek(chk))
                 {
