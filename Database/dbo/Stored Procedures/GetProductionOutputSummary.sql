@@ -380,6 +380,7 @@ select  FtyGroup,
 		FtyZone,
 		TransFtyZone 
 from #tmpBaseBySource 
+where SewingOutput !=0
 
 select  FtyGroup,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1,FtyZone
 from    #tmpBase
