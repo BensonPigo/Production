@@ -12,7 +12,7 @@
     [PrintDate]   DATETIME       NULL,
     [IsPair]      BIT            NULL,
     [Location]    VARCHAR (1)    DEFAULT ('') NOT NULL,
-    [RFUID] VARCHAR(10) NOT NULL CONSTRAINT [DF_Bundle_Detail_RFUID] DEFAULT (''), 
+    [RFUID] VARCHAR(20) NOT NULL CONSTRAINT [DF_Bundle_Detail_RFUID] DEFAULT (''), 
     CONSTRAINT [PK_Bundle_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC),
     CONSTRAINT [UK_BundleNo_Bundle_Detail] UNIQUE NONCLUSTERED ([BundleNo] ASC)
 );

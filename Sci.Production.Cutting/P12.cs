@@ -972,6 +972,8 @@ where bd.BundleNo = '{0}'",
                         MyUtility.Msg.ErrorBox(result.ToString());
                         return;
                     }
+
+                    MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
                 }
                 catch (Exception ex)
                 {

@@ -29,26 +29,26 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioBundleCardRF = new System.Windows.Forms.RadioButton();
             this.checkExtendAllParts = new System.Windows.Forms.CheckBox();
             this.radioBundleChecklist = new System.Windows.Forms.RadioButton();
             this.radioBundleCard = new System.Windows.Forms.RadioButton();
-            this.radioBundleCardRF = new System.Windows.Forms.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(445, 12);
+            this.print.Location = new System.Drawing.Point(435, 12);
             this.print.TabIndex = 0;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(445, 48);
+            this.toexcel.Location = new System.Drawing.Point(435, 48);
             this.toexcel.TabIndex = 1;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(445, 84);
+            this.close.Location = new System.Drawing.Point(435, 84);
             this.close.TabIndex = 2;
             // 
             // radioPanel1
@@ -62,6 +62,16 @@
             this.radioPanel1.Size = new System.Drawing.Size(350, 113);
             this.radioPanel1.TabIndex = 0;
             this.radioPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.RadioPanel1_Paint);
+            // 
+            // radioBundleCardRF
+            // 
+            this.radioBundleCardRF.AutoSize = true;
+            this.radioBundleCardRF.Location = new System.Drawing.Point(28, 53);
+            this.radioBundleCardRF.Name = "radioBundleCardRF";
+            this.radioBundleCardRF.Size = new System.Drawing.Size(132, 21);
+            this.radioBundleCardRF.TabIndex = 6;
+            this.radioBundleCardRF.Text = "Bundle Card(RF)";
+            this.radioBundleCardRF.UseVisualStyleBackColor = true;
             // 
             // checkExtendAllParts
             // 
@@ -96,19 +106,9 @@
             this.radioBundleCard.Text = "Bundle Card(A4)";
             this.radioBundleCard.UseVisualStyleBackColor = true;
             // 
-            // radioBundleCardRF
-            // 
-            this.radioBundleCardRF.AutoSize = true;
-            this.radioBundleCardRF.Location = new System.Drawing.Point(28, 53);
-            this.radioBundleCardRF.Name = "radioBundleCardRF";
-            this.radioBundleCardRF.Size = new System.Drawing.Size(132, 21);
-            this.radioBundleCardRF.TabIndex = 6;
-            this.radioBundleCardRF.Text = "Bundle Card(RF)";
-            this.radioBundleCardRF.UseVisualStyleBackColor = true;
-            // 
             // P10_Print
             // 
-            this.ClientSize = new System.Drawing.Size(537, 162);
+            this.ClientSize = new System.Drawing.Size(527, 155);
             this.Controls.Add(this.radioPanel1);
             this.DefaultControl = "radioBundleCard";
             this.Name = "P10_Print";

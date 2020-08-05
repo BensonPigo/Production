@@ -749,17 +749,14 @@ order by x.[Bundle]");
 
                 try
                 {
-                    // string dllpath = Directory.GetCurrentDirectory() + @"\KytDll.dll";
-                    // Assembly assembly = Assembly.ReflectionOnlyLoadFrom(dllpath);
-                    // assembly.ManifestModule.GetPEKind(out PortableExecutableKinds peKind, out ImageFileMachine machine);
-                    // var a = peKind;
-                    // var b = machine;
                     DualResult result = Prg.BundleRFCard.BundleRFCardPrint(this.dt);
                     if (!result)
                     {
                         MyUtility.Msg.ErrorBox(result.ToString());
                         return false;
                     }
+
+                    MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
                 }
                 catch (Exception ex)
                 {

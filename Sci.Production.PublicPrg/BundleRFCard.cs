@@ -4,13 +4,68 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.IO;
-using System.Text;
 
 namespace Sci.Production.Prg
 {
     /// <inheritdoc/>
     public class BundleRFCard
     {
+        /// <summary>
+        /// Bundle Test Type
+        /// </summary>
+        public enum BundleType : int
+        {
+            /// <summary>
+            /// 0. Open Port
+            /// </summary>
+            Open = 0,
+
+            /// <summary>
+            /// 1. card from Stacker
+            /// </summary>
+            C31 = 1,
+
+            /// <summary>
+            /// 2. Get UID
+            /// </summary>
+            F30 = 2,
+
+            /// <summary>
+            /// 3. Set Print Data
+            /// </summary>
+            P48 = 3,
+
+            /// <summary>
+            /// 4. Print
+            /// </summary>
+            P41 = 4,
+
+            /// <summary>
+            /// 5. Set And Print  3+4
+            /// </summary>
+            P49 = 5,
+
+            /// <summary>
+            /// card to Bin Box
+            /// </summary>
+            C34 = 6,
+
+            /// <summary>
+            /// Write DB
+            /// </summary>
+            WDB = 7,
+
+            /// <summary>
+            /// Create IMG
+            /// </summary>
+            Create = 8,
+
+            /// <summary>
+            /// port close
+            /// </summary>
+            Close = 9,
+        }
+
         /// <summary>
         /// Bundel RF 統一撈取語法
         /// </summary>
@@ -251,11 +306,11 @@ from
                     foreach (DataRow dr in dt.Rows)
                     {
                         // C16 Card Position Check
-                        result = CardPositionCheck();
-                        if (!result)
-                        {
-                            throw new Exception(string.Join("Card Position Check :", Environment.NewLine, "Please remove the card in the machine and rerun again."));
-                        }
+                        // result = CardPositionCheck();
+                        // if (!result)
+                        // {
+                        //     throw new Exception(string.Join("Card Position Check :", Environment.NewLine, "Please remove the card in the machine and rerun again."));
+                        // }
 
                         // C31
                         result = CardFromStacker();
@@ -264,7 +319,7 @@ from
                             throw new Exception(string.Join("Card Get From Stacker Error :", Environment.NewLine, result.ToString()));
                         }
 
-                        // R61
+                        // F30
                         string cardUID = string.Empty;
                         result = CardRFUiD();
                         if (result)
@@ -286,7 +341,7 @@ from
                         }
 
                         // P49
-                        result = CardPrint(path, fileName);
+                        result = CardSetAndPrint(path, fileName);
                         if (!result)
                         {
                             throw new Exception(string.Join("Print Error :", Environment.NewLine, result.ToString()));
@@ -310,6 +365,10 @@ from
                         }
                     }
                 }
+                else
+                {
+                    throw new Exception("Printer(CHP_1800) usb port not open");
+                }
 
                 result = new DualResult(true);
             }
@@ -320,6 +379,89 @@ from
             finally
             {
                 BundleRFCardUSB.UsbPortClose();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Bundel Test Flow
+        /// </summary>
+        /// <param name="dt">DataTable</param>
+        /// <param name="type">Bundle Type</param>
+        /// <returns>DualResult</returns>
+        public static DualResult BundelTest(DataTable dt, BundleType type)
+        {
+            DualResult result = new DualResult(false);
+            try
+            {
+                DataRow dr;
+                string path;
+                string fileName;
+
+                if (dt.Rows.Count == 0)
+                {
+                    throw new Exception("No Data");
+                }
+
+                dr = dt.Rows[0];
+                switch (type)
+                {
+                    case BundleType.Open:
+                        bool isopen = BundleRFCardUSB.UsbPortOpen();
+                        result = new DualResult(isopen, isopen ? string.Empty : "Printer(CHP_1800) usb port not open");
+                        break;
+                    case BundleType.Close:
+                        bool isClose = BundleRFCardUSB.UsbPortClose();
+                        result = new DualResult(isClose, isClose ? string.Empty : "Printer(CHP_1800) usb port not Close");
+                        break;
+                    case BundleType.C31:
+                        result = CardFromStacker();
+                        break;
+                    case BundleType.F30:
+                        result = CardRFUiD();
+
+                        MyUtility.Msg.InfoBox("BundleID" + dr["BundleID"].ToString() + ",BundleNo" + dr["BundleNo"].ToString() + ",RFUiD" + result.Description);
+                        break;
+                    case BundleType.Create:
+                        path = Directory.GetCurrentDirectory() + @"\data";
+                        fileName = dr["BundleNo"].ToString() + ".png";
+                        result = CardConvertHtmlToImage(dr, path, fileName);
+                        break;
+                    case BundleType.P48:
+                        fileName = dr["BundleNo"].ToString() + ".png";
+                        result = CardSetPrintData(fileName);
+                        break;
+                    case BundleType.P41:
+                        result = CardPrint();
+                        break;
+                    case BundleType.P49:
+                        path = Directory.GetCurrentDirectory() + @"\data";
+                        fileName = dr["BundleNo"].ToString() + ".png";
+                        result = CardSetAndPrint(path, fileName);
+                        break;
+                    case BundleType.C34:
+                        result = CardCapture();
+                        break;
+                    case BundleType.WDB:
+                        result = CardRFUiD();
+                        if (!result)
+                        {
+                            throw new Exception(string.Join("Card Get RF UID Error :", Environment.NewLine, result.ToString()));
+                        }
+
+                        MyUtility.Msg.InfoBox("BundleID" + dr["BundleID"].ToString() + ",BundleNo" + dr["BundleNo"].ToString() + ",RFUiD" + result.Description);
+
+                        result = UpdateBundleDetailRFUID(dr["BundleID"].ToString(), dr["BundleNo"].ToString(), result.Description);
+                        break;
+                    default:
+                        result = new DualResult(false, "Not Fund Type");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                result = new DualResult(false, ex);
             }
 
             return result;
@@ -397,7 +539,7 @@ from
         }
 
         /// <summary>
-        /// [R61] RF card detect in antenna area.
+        /// [F30] RF card detect in antenna area.
         /// </summary>
         /// <returns>DualResult</returns>
         private static DualResult CardRFUiD()
@@ -409,20 +551,27 @@ from
             ushort[] rLen = new ushort[2];
             string errcode;
             string result_data = string.Empty;
+            uint recLen = 0;
 
-            // R61
-            gbacmd[0] = 0x52;
-            gbacmd[1] = 0x36;
-            gbacmd[2] = 0x31;
+            // F30
+            gbacmd[0] = 0x46;
+            gbacmd[1] = 0x33;
+            gbacmd[2] = 0x30;
 
             res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
             errcode = string.Format("0x{0:x4}", res);
 
-            result_data = Encoding.UTF8.GetString(rDat);
             if (rDat[0] == 0x00)
             {
+                recLen = (uint)(rLen[1] << 8);
+                recLen |= rLen[0];
+                for (int i = 0; i <= recLen - 1; i++)
+                {
+                    result_data += Convert.ToInt32(rDat[i]);
+                }
+
                 // Card UID
-                result = new DualResult(true, result_data);
+                result = new DualResult(true, result_data.Right(16));
             }
             else
             {
@@ -482,10 +631,10 @@ from
 ";
 
             HtmlRenderer.HtmlRender.Render(
-                Graphics.FromImage(m_Bitmap),
-                htmlBody,
-                point,
-                maxSize);
+               Graphics.FromImage(m_Bitmap),
+               htmlBody,
+               point,
+               maxSize);
 
             try
             {
@@ -502,12 +651,95 @@ from
         }
 
         /// <summary>
-        /// [P49] Set Data and Print
+        /// P48 Set Print Data
+        /// </summary>
+        /// <param name="fileName">檔名</param>
+        /// <returns>DualResult</returns>
+        private static DualResult CardSetPrintData(string fileName)
+        {
+            DualResult result = new DualResult(false);
+            byte[] gbacmd = new byte[3];
+            byte[] tDat = new byte[1000], rDat = new byte[1000];
+            byte[] dataSendBufY = new byte[150000];
+            int tLen = 0, res = 0;
+            ushort[] rLen = new ushort[2];
+            string errcode;
+            string result_data = string.Empty;
+            bool ret;
+
+            ret = MakeDll.Func.ResetBitmap();
+
+            MakeDll.Func.ImageDataStruct ii = new MakeDll.Func.ImageDataStruct
+            {
+                xaxis = "20",
+                yaxis = "20",
+                width = "500",
+                height = "556",
+                threshold = "250",
+                datapath = "data\\" + fileName,
+                filename = fileName,
+                rotation = "90",
+                property = "IMAGE",
+            };
+
+            ret = MakeDll.Func.S_ImageToDithering(ii);
+
+            tLen = MakeDll.Func.S_MakeDataForComSendYLen("P48");
+            dataSendBufY = MakeDll.Func.S_MakeDataForComSendY("P48");
+
+            res = BundleRFCardUSB.ImageExeCmd(dataSendBufY, tLen, rDat, rLen, 15000);
+            errcode = string.Format("0x{0:x4}", res);
+            if (res != 0x0000)
+            {
+                result = new DualResult(false, errcode);
+            }
+            else
+            {
+                result = new DualResult(true);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// P41 Print
+        /// </summary>
+        /// <returns>DualResult</returns>
+        private static DualResult CardPrint()
+        {
+            DualResult result = new DualResult(false);
+            byte[] gbacmd = new byte[3];
+            byte[] tDat = new byte[1000], rDat = new byte[1000];
+            ushort tLen = 0, res = 0;
+            ushort[] rLen = new ushort[2];
+            string errcode;
+
+            // P41
+            gbacmd[0] = 0x50;
+            gbacmd[1] = 0x34;
+            gbacmd[2] = 0x31;
+
+            res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+            errcode = string.Format("0x{0:x4}", res);
+            if (res != 0x0000)
+            {
+                result = new DualResult(false, errcode);
+            }
+            else
+            {
+                result = new DualResult(true);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// [P49] Set Data and Print  =  [P48] + [P41]
         /// </summary>
         /// <param name="path">路徑</param>
         /// <param name="fileName">檔名</param>
         /// <returns>DualResult</returns>
-        private static DualResult CardPrint(string path, string fileName)
+        private static DualResult CardSetAndPrint(string path, string fileName)
         {
             DualResult result = new DualResult(false);
             byte[] gbacmd = new byte[3];
@@ -521,14 +753,14 @@ from
 
             MakeDll.Func.ImageDataStruct ii = new MakeDll.Func.ImageDataStruct
             {
-                xaxis = "20",
-                yaxis = "20",
+                xaxis = "270",
+                yaxis = "80",
                 width = "500",
                 height = "556",
-                threshold = "250",
+                threshold = "255",
                 datapath = "data\\" + fileName,
                 filename = fileName,
-                rotation = "90",
+                rotation = "270",
             };
 
             ret = MakeDll.Func.ResetBitmap();
