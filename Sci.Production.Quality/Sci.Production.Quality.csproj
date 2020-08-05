@@ -117,6 +117,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="B12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12.Designer.cs">
+      <DependentUpon>B12.cs</DependentUpon>
+    </Compile>
     <Compile Include="B11.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -534,6 +540,18 @@
     <Compile Include="R01.Designer.cs">
       <DependentUpon>R01.cs</DependentUpon>
     </Compile>
+    <Compile Include="R51.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R51.Designer.cs">
+      <DependentUpon>R51.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R50.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R50.Designer.cs">
+      <DependentUpon>R50.cs</DependentUpon>
+    </Compile>
     <Compile Include="R09.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -656,6 +674,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="B12.resx">
+      <DependentUpon>B12.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B11.resx">
       <DependentUpon>B11.cs</DependentUpon>
     </EmbeddedResource>
@@ -864,6 +885,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R51.resx">
+      <DependentUpon>R51.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R50.resx">
+      <DependentUpon>R50.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R09.resx">
       <DependentUpon>R09.cs</DependentUpon>

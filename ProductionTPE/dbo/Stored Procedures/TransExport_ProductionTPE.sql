@@ -85,6 +85,10 @@ BEGIN
 	-------------AccountNoSetting-------------------
 	RAISERROR('AccountNoSetting - Starts',0,0)
 	select * into dbo.AccountNoSetting from (select * from ProductionTPE.dbo.AccountNoSetting ) as tmp
+	
+	-------------SubProDefectCode-------------------
+	RAISERROR('SubProDefectCode  - Starts',0,0)
+	select * into dbo.SubProDefectCode from (select * from ProductionTPE.dbo.SubProDefectCode ) as tmp
 
 	set transaction isolation level read committed
 END

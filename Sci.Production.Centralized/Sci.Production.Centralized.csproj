@@ -158,6 +158,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="QA_B12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QA_B12.Designer.cs">
+      <DependentUpon>QA_B12.cs</DependentUpon>
+    </Compile>
     <Compile Include="Basic_B18.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -357,6 +363,9 @@
       <DependentUpon>WH_B01.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="QA_B12.resx">
+      <DependentUpon>QA_B12.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Basic_B18.resx">
       <DependentUpon>Basic_B18.cs</DependentUpon>
     </EmbeddedResource>
