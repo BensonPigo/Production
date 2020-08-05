@@ -723,6 +723,10 @@ end
 
                 string fromOrderID = MyUtility.Convert.GetString(this.DetailDatas[i]["FromOrderID"]);
                 string toOrderID = MyUtility.Convert.GetString(this.DetailDatas[i]["ToOrderID"]);
+                string fromComboType = MyUtility.Convert.GetString(this.DetailDatas[i]["FromComboType"]);
+                string fromArticle = MyUtility.Convert.GetString(this.DetailDatas[i]["Article"]);
+
+                string fromSizeCode = MyUtility.Convert.GetString(this.DetailDatas[i]["SizeCode"]);
 
                 string cmd = $@"
 select 1
@@ -746,9 +750,8 @@ select 1
 from SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
 INNER JOIN SewingOutput_Detail_Detail sdd ON sdd.SewingOutput_DetailUKey = sd.UKey
-INNER JOIN Orders o ON sd.OrderId = o.ID
-WHERE sd.OrderId='{fromOrderID}'
-HAVING SUM(sdd.QAQty) < '{this.DetailDatas[i]["TransferQty"]}'
+WHERE sd.OrderId='{fromOrderID}' AND sdd.ComboType='{fromComboType}' AND sdd.Article='{fromArticle}' AND sdd.SizeCode='{fromSizeCode}'
+HAVING SUM(sdd.QAQty) >= '{this.DetailDatas[i]["TransferQty"]}'
 ";
                 }
                 else
@@ -759,13 +762,12 @@ select 1
 from SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
 INNER JOIN SewingOutput_Detail_Detail sdd ON sdd.SewingOutput_DetailUKey = sd.UKey
-INNER JOIN Orders o ON sd.OrderId = o.ID
-WHERE sd.OrderId='{fromOrderID}' AND s.Status != 'Locked'
-HAVING SUM(sdd.QAQty) < '{this.DetailDatas[i]["TransferQty"]}'
+WHERE sd.OrderId='{fromOrderID}' AND s.Status != 'Locked' AND sdd.ComboType='{fromComboType}' AND sdd.Article='{fromArticle}' AND sdd.SizeCode='{fromSizeCode}'
+HAVING SUM(sdd.QAQty) >= '{this.DetailDatas[i]["TransferQty"]}'
 ";
                 }
 
-                if (MyUtility.Check.Seek(cmd))
+                if (!MyUtility.Check.Seek(cmd))
                 {
                     MyUtility.Msg.WarningBox("Some [From SP#] sewing output already locked cannot transfer to other style!");
                     return false;
