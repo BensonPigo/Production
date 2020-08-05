@@ -181,7 +181,7 @@ end
                     DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                     List<SqlParameter> lis = new List<SqlParameter>();
                     lis.Add(new SqlParameter("@ToOrderID", dr["ToOrderID"]));
-                    string sqlcmd = $@"select distinct SizeCode from Order_Qty with(nolock) where ID = @ToOrderID";
+                    string sqlcmd = $@"select distinct SizeCode from Order_Qty with(nolock) where ID = @ToOrderID  union select distinct sizecode from sewingoutput_Detail_detail where orderid=@ToOrderID";
                     SelectItem item = new SelectItem(sqlcmd, lis, "15", MyUtility.Convert.GetString(dr["ToSizeCode"]));
                     DialogResult dialogResult = item.ShowDialog();
                     if (dialogResult == DialogResult.Cancel)
@@ -206,7 +206,7 @@ end
                     List<SqlParameter> lis = new List<SqlParameter>();
                     lis.Add(new SqlParameter("@ToSizeCode", e.FormattedValue));
                     lis.Add(new SqlParameter("@ToOrderID", dr["ToOrderID"]));
-                    string sqlcmd = $@"select 1 from Order_Qty with(nolock) where ID = @ToOrderID and SizeCode = @ToSizeCode";
+                    string sqlcmd = $@"select 1 from Order_Qty with(nolock) where ID = @ToOrderID and SizeCode = @ToSizeCode union select 1 from sewingoutput_Detail_detail where orderid=@ToOrderID AND SizeCode = @ToSizeCode";
                     try
                     {
                         if (!MyUtility.Check.Seek(sqlcmd, lis, null))
@@ -256,6 +256,7 @@ and sd.AutoCreate = 0 --排除G單
                     e.Cancel = true;
                     return;
                 }
+
             }
             catch (Exception ex)
             {
@@ -399,5 +400,6 @@ And QAQty > 0
         {
             this.Close();
         }
+
     }
 }

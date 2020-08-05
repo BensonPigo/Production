@@ -305,7 +305,7 @@ and sd.AutoCreate = 0 --排除G單
                 {
                     List<SqlParameter> lis = new List<SqlParameter>();
                     lis.Add(new SqlParameter("@FromOrderID", this.CurrentDetailData["FromOrderID"]));
-                    string sqlcmd = $@"select distinct SizeCode from Order_Qty with(nolock) where ID = @FromOrderID";
+                    string sqlcmd = $@"select distinct SizeCode from Order_Qty with(nolock) where ID = @FromOrderID union select distinct sizecode from sewingoutput_Detail_detail where orderid=@FromOrderID ";
                     SelectItem item = new SelectItem(sqlcmd, lis, "15", MyUtility.Convert.GetString(this.CurrentDetailData["SizeCode"]));
                     DialogResult dialogResult = item.ShowDialog();
                     if (dialogResult == DialogResult.Cancel)
@@ -332,7 +332,7 @@ and sd.AutoCreate = 0 --排除G單
                     List<SqlParameter> lis = new List<SqlParameter>();
                     lis.Add(new SqlParameter("@SizeCode", e.FormattedValue));
                     lis.Add(new SqlParameter("@FromOrderID", this.CurrentDetailData["FromOrderID"]));
-                    string sqlcmd = $@"select 1 from Order_Qty with(nolock) where ID = @FromOrderID and SizeCode = @SizeCode";
+                    string sqlcmd = $@"select 1 from Order_Qty with(nolock) where ID = @FromOrderID and SizeCode = @SizeCode union select 1 from sewingoutput_Detail_detail where orderid=@FromOrderID AND SizeCode = @SizeCode";
                     try
                     {
                         if (!MyUtility.Check.Seek(sqlcmd, lis, null))
@@ -537,7 +537,7 @@ end
                 {
                     List<SqlParameter> lis = new List<SqlParameter>();
                     lis.Add(new SqlParameter("@ToOrderID", this.CurrentDetailData["ToOrderID"]));
-                    string sqlcmd = $@"select distinct SizeCode from Order_Qty with(nolock) where ID = @ToOrderID";
+                    string sqlcmd = $@"select distinct SizeCode from Order_Qty with(nolock) where ID = @ToOrderID union select DISTINCT SizeCode from sewingoutput_Detail_detail where orderid=@ToOrderID ";
                     SelectItem item = new SelectItem(sqlcmd, lis, "15", MyUtility.Convert.GetString(this.CurrentDetailData["ToSizeCode"]));
                     DialogResult dialogResult = item.ShowDialog();
                     if (dialogResult == DialogResult.Cancel)
@@ -563,7 +563,7 @@ end
                     List<SqlParameter> lis = new List<SqlParameter>();
                     lis.Add(new SqlParameter("@ToSizeCode", e.FormattedValue));
                     lis.Add(new SqlParameter("@ToOrderID", this.CurrentDetailData["ToOrderID"]));
-                    string sqlcmd = $@"select 1 from Order_Qty with(nolock) where ID = @ToOrderID and SizeCode = @ToSizeCode";
+                    string sqlcmd = $@"select 1 from Order_Qty with(nolock) where ID = @ToOrderID and SizeCode = @ToSizeCode union select 1 from sewingoutput_Detail_detail where orderid=@ToOrderID AND SizeCode = @ToSizeCode";
                     try
                     {
                         if (!MyUtility.Check.Seek(sqlcmd, lis, null))
@@ -718,6 +718,59 @@ end
                     this.detailgrid.BeginEdit(true);
                     return false;
                 }
+
+                #region 檢查：款式是否相同，以及可轉出數量是否足夠
+
+                string fromOrderID = MyUtility.Convert.GetString(this.DetailDatas[i]["FromOrderID"]);
+                string toOrderID = MyUtility.Convert.GetString(this.DetailDatas[i]["ToOrderID"]);
+
+                string cmd = $@"
+select 1
+from Orders o
+where o.ID='{fromOrderID}'
+AND EXISTS(
+	select 1 
+	from Orders
+	where ID='{toOrderID}' AND StyleID = o.StyleID
+)
+";
+
+                // 判斷From To SP是否同款
+                bool isSameStyle = MyUtility.Check.Seek(cmd);
+
+                if (isSameStyle)
+                {
+                    // 同款式的話，上鎖+未上鎖 >= 轉移數量即可
+                    cmd = $@"
+select 1
+from SewingOutput s
+INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
+INNER JOIN SewingOutput_Detail_Detail sdd ON sdd.SewingOutput_DetailUKey = sd.UKey
+INNER JOIN Orders o ON sd.OrderId = o.ID
+WHERE sd.OrderId='{fromOrderID}'
+HAVING SUM(sdd.QAQty) < '{this.DetailDatas[i]["TransferQty"]}'
+";
+                }
+                else
+                {
+                    // 不同款的話，只能從未上鎖的轉出，因此只需判斷未上鎖數量
+                    cmd = $@"
+select 1
+from SewingOutput s
+INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
+INNER JOIN SewingOutput_Detail_Detail sdd ON sdd.SewingOutput_DetailUKey = sd.UKey
+INNER JOIN Orders o ON sd.OrderId = o.ID
+WHERE sd.OrderId='{fromOrderID}' AND s.Status != 'Locked'
+HAVING SUM(sdd.QAQty) < '{this.DetailDatas[i]["TransferQty"]}'
+";
+                }
+
+                if (MyUtility.Check.Seek(cmd))
+                {
+                    MyUtility.Msg.WarningBox("Some [From SP#] sewing output already locked cannot transfer to other style!");
+                    return false;
+                }
+                #endregion
             }
 
             #region GetID
