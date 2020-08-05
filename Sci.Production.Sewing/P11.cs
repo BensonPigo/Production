@@ -719,21 +719,53 @@ end
                     return false;
                 }
 
-                #region 檢查：From SP#若已經Locked，則To SP必須相同款式
+                #region 檢查：款式是否相同，以及可轉出數量是否足夠
 
                 string fromOrderID = MyUtility.Convert.GetString(this.DetailDatas[i]["FromOrderID"]);
                 string toOrderID = MyUtility.Convert.GetString(this.DetailDatas[i]["ToOrderID"]);
 
-                string chk = $@"
+                string cmd = $@"
+select 1
+from Orders o
+where o.ID='{fromOrderID}'
+AND EXISTS(
+	select 1 
+	from Orders
+	where ID='{toOrderID}' AND StyleID = o.StyleID
+)
+";
+
+                // 判斷From To SP是否同款
+                bool isSameStyle = MyUtility.Check.Seek(cmd);
+
+                if (isSameStyle)
+                {
+                    // 同款式的話，上鎖+未上鎖 >= 轉移數量即可
+                    cmd = $@"
+select 1
+from SewingOutput s
+INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
+INNER JOIN SewingOutput_Detail_Detail sdd ON sdd.SewingOutput_DetailUKey = sd.UKey
+INNER JOIN Orders o ON sd.OrderId = o.ID
+WHERE sd.OrderId='{fromOrderID}'
+HAVING SUM(sdd.QAQty) < '{this.DetailDatas[i]["TransferQty"]}'
+";
+                }
+                else
+                {
+                    // 不同款的話，只能從未上鎖的轉出，因此只需判斷未上鎖數量
+                    cmd = $@"
 select 1
 from SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
 INNER JOIN SewingOutput_Detail_Detail sdd ON sdd.SewingOutput_DetailUKey = sd.UKey
 INNER JOIN Orders o ON sd.OrderId = o.ID
 WHERE sd.OrderId='{fromOrderID}' AND s.Status != 'Locked'
-AND s.QAQty < '{this.DetailDatas[i]["TransferQty"]}'
+HAVING SUM(sdd.QAQty) < '{this.DetailDatas[i]["TransferQty"]}'
 ";
-                if (MyUtility.Check.Seek(chk))
+                }
+
+                if (MyUtility.Check.Seek(cmd))
                 {
                     MyUtility.Msg.WarningBox("Some [From SP#] sewing output already locked cannot transfer to other style!");
                     return false;
