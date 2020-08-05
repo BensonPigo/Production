@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+﻿using Sci.Win.UI;
+using System.ComponentModel;
 using System.Windows.Forms;
-using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
@@ -35,8 +35,6 @@ namespace Sci.Production.Class
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "Where Junk = 0";
-            string sqlCmd = string.Empty;
-
             if (!string.IsNullOrWhiteSpace(this.CClassify))
             {
                 sqlWhere = sqlWhere + " And Classify in (" + this.CClassify + ")";
@@ -46,17 +44,19 @@ namespace Sci.Production.Class
             {
                 if (this.CSubprocess == "Y")
                 {
-                    sqlWhere = sqlWhere + " And IsSubprocess =1 ";
+                    sqlWhere += " And IsSubprocess =1 ";
                 }
                 else
                 {
-                    sqlWhere = sqlWhere + " And IsSubprocess =0 ";
+                    sqlWhere += " And IsSubprocess =0 ";
                 }
             }
 
-            sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere + " order by Seq";
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
-            item.Size = new System.Drawing.Size(435, 510);
+            string sqlCmd = "select ID, Abbreviation,Remark from ArtworkType WITH (NOLOCK)" + sqlWhere + " order by Seq";
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,4,20", this.Text, false, ",")
+            {
+                Size = new System.Drawing.Size(635, 510),
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -77,8 +77,6 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
                 string sqlWhere = string.Format("Where Junk = 0 and id='{0}'", str);
-                string sqlCmd = string.Empty;
-
                 if (!string.IsNullOrWhiteSpace(this.CClassify))
                 {
                     sqlWhere = sqlWhere + " And Classify in (" + this.CClassify + ")";
@@ -88,17 +86,16 @@ namespace Sci.Production.Class
                 {
                     if (this.CSubprocess == "Y")
                     {
-                        sqlWhere = sqlWhere + " And IsSubprocess =1 ";
+                        sqlWhere += " And IsSubprocess =1 ";
                     }
                     else
                     {
-                        sqlWhere = sqlWhere + " And IsSubprocess =0 ";
+                        sqlWhere += " And IsSubprocess =0 ";
                     }
                 }
 
-                sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere;
-
-                if (MyUtility.Check.Seek(sqlCmd) == false)
+                string sqlCmd = "select 1 from ArtworkType WITH (NOLOCK)" + sqlWhere;
+                if (!MyUtility.Check.Seek(sqlCmd))
                 {
                     this.Text = string.Empty;
                     e.Cancel = true;

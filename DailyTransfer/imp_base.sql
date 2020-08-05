@@ -3752,6 +3752,54 @@ when not matched by target then
 when not matched by source then 
 	delete;	
 
+
+--SubProDefectCode 
+update tar set
+ tar.Junk          = S.Junk
+,tar.Description   = S.Description
+,tar.AddName	   = S.AddName
+,tar.AddDate	   = S.AddDate
+,tar.EditName	   = S.EditName
+,tar.EditDate	   = S.EditDate
+from Trade_To_Pms.dbo.SubProDefectCode S
+inner join Production.dbo.SubProDefectCode tar 
+	on tar.ArtworkTypeID	 = S.ArtworkTypeID	
+	and tar.DefectCode	 = S.DefectCode	
+	
+INSERT INTO SubProDefectCode
+(
+	[ArtworkTypeID]
+	,[DefectCode]
+	,[Junk]
+	,[Description]
+	,[AddDate]
+	,[AddName]
+	,[EditDate]
+	,[Editname]
+)
+SELECT
+	[ArtworkTypeID]
+	,[DefectCode]
+	,[Junk]
+	,[Description]
+	,[AddDate]
+	,[AddName]
+	,[EditDate]
+	,[Editname]
+from Trade_To_Pms.dbo.SubProDefectCode S
+where not exists(
+	select 1
+	from Production.dbo.SubProDefectCode tar
+	where tar.ArtworkTypeID	 = S.ArtworkTypeID	
+	and tar.DefectCode	 = S.DefectCode	)
+	
+DELETE S
+from Production.dbo.SubProDefectCode S
+where not exists(
+	select 1
+	from Trade_To_Pms.dbo.SubProDefectCode tar
+	where tar.ArtworkTypeID	 = S.ArtworkTypeID	
+	and tar.DefectCode	 = S.DefectCode	)
 END
 
 
