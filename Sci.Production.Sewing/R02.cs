@@ -1282,7 +1282,6 @@ where f.Junk = 0",
                 return false;
             }
 
-            excel.Visible = true;
             Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 1] = string.Format("{0}", this.factoryName);
