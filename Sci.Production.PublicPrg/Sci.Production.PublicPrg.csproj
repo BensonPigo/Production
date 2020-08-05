@@ -58,6 +58,9 @@
     <Reference Include="EASendMail">
       <HintPath>..\_Dll\EASendMail.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlRenderer, Version=1.4.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.WinForms.1.4.14.0\lib\net45\HtmlRenderer.dll</HintPath>
+    </Reference>
     <Reference Include="Ict">
       <HintPath>..\_Dll\Ict.dll</HintPath>
     </Reference>
@@ -88,6 +91,9 @@
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\_Dll\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="MakeDll">
+      <HintPath>..\_Dll\MakeDll.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -134,6 +140,8 @@
   <ItemGroup>
     <Compile Include="ExcelExtension.cs" />
     <Compile Include="ExcelPrg.cs" />
+    <Compile Include="BundleRFCard.cs" />
+    <Compile Include="BundleRFCardUSB.cs" />
     <Compile Include="ListToDataTable.cs" />
     <Compile Include="ConvertToPDF.cs" />
     <Compile Include="Exts.cs" />

@@ -10,13 +10,20 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
+using Sci.Andy.ExtensionMethods;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P12 : Win.Tems.QueryForm
     {
-        BindingList<P12_PrintData> Data = new BindingList<P12_PrintData>();
+        private BindingList<P12_PrintData> Data = new BindingList<P12_PrintData>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P12"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -26,27 +33,27 @@ namespace Sci.Production.Cutting
             this.comboSortBy.SelectedIndex = 0;
         }
 
-        string Cut_Ref;
-        string Cut_Ref1;
-        string SP;
-        string SP1;
-        string POID;
-        string Bundle;
-        string Bundle1;
-        DateTime? Est_CutDate;
-        string Cell;
-        string size;
-        string Sort_by;
-        string Extend;
-        DualResult result;
-        DataTable dtt;
-        string Addname;
-        DateTime? AddDate;
-        string Cutno;
-        string Comb;
-        string SpreadingNoID;
+        private string Cut_Ref;
+        private string Cut_Ref1;
+        private string SP;
+        private string SP1;
+        private string POID;
+        private string Bundle;
+        private string Bundle1;
+        private DateTime? Est_CutDate;
+        private string Cell;
+        private string size;
+        private string Sort_by;
+        private string Extend;
+        private DualResult result;
+        private DataTable dtt;
+        private string Addname;
+        private DateTime? AddDate;
+        private string Cutno;
+        private string Comb;
+        private string SpreadingNoID;
 
-        void GridSetup()
+        private void GridSetup()
         {
             this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
@@ -79,7 +86,7 @@ namespace Sci.Production.Cutting
                 ;
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty()
                 && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty()
@@ -134,9 +141,10 @@ namespace Sci.Production.Cutting
             string sqlWhere = string.Empty;
             string sb = string.Empty;
             string declare = string.Empty;
-            List<string> sqlWheres = new List<string>();
-
-            sqlWheres.Add("b.MDivisionID=@Keyword");
+            List<string> sqlWheres = new List<string>
+            {
+                "b.MDivisionID=@Keyword",
+            };
 
             if (!this.txtCutRefStart.Text.Empty() && !this.txtCutRefEnd.Text.Empty())
             {
@@ -227,9 +235,9 @@ namespace Sci.Production.Cutting
 
             string sqlcmd = string.Empty;
 
-            if (this.checkExtendAllParts.Checked) // 有勾[Extend All Parts]
+            if (this.checkExtendAllParts.Checked)
             {
-                #region SQL
+                #region 有勾[Extend All Parts]
 
                 DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
                 sqlcmd = $@"
@@ -284,6 +292,7 @@ select
     , WorkOrder.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
+	, [BundleID] = b.ID
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -366,6 +375,7 @@ select
     , WorkOrder.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
+	, [BundleID] = b.ID
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
@@ -437,9 +447,9 @@ OPTION (RECOMPILE)"
 ;
                 #endregion
             }
-            else // 沒勾[Extend All Parts]
+            else
             {
-                #region SQL
+                #region 沒勾[Extend All Parts]
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Env.User.Keyword}'
 declare @Cut_Ref varchar(6) = '{this.Cut_Ref}'
@@ -492,6 +502,7 @@ select
     , WorkOrder.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
+	, [BundleID] = b.ID
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -574,6 +585,7 @@ select
     , WorkOrder.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
+	, [BundleID] = b.ID
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
@@ -659,15 +671,16 @@ OPTION (RECOMPILE)"
             this.HideWaitMessage();
         }
 
-        private void btnBundleCard_Click(object sender, EventArgs e)
+        private void BtnBundleCard_Click(object sender, EventArgs e)
         {
             #region report
 
             bool checkone = false;
             for (int i = 0; i < this.grid1.Rows.Count; i++)
             {
-                if (!MyUtility.Check.Empty(this.grid1[0, i].Value) // 判斷是否為空值
-                    && (bool)this.grid1[0, i].Value == true)　// 判斷是否有打勾
+                // 判斷是否為空值 是否有打勾與
+                if (!MyUtility.Check.Empty(this.grid1[0, i].Value)
+                    && (bool)this.grid1[0, i].Value == true)
                 {
                     checkone = true;
                 }
@@ -818,19 +831,21 @@ OPTION (RECOMPILE)"
             var res = data;
 
             // 指定是哪個 RDLC
-            Type ReportResourceNamespace = typeof(P12_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P12_Print.rdlc";
+            Type reportResourceNamespace = typeof(P12_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P12_Print.rdlc";
             IReportResource reportresource;
-            if (!(this.result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(this.result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 this.ShowException(this.result);
                 return;
             }
 
-            ReportDefinition report = new ReportDefinition();
-            report.ReportDataSource = res;
-            report.ReportResource = reportresource;
+            ReportDefinition report = new ReportDefinition
+            {
+                ReportDataSource = res,
+                ReportResource = reportresource,
+            };
 
             // 開啟 report view
             var frm = new Win.Subs.ReportView(report);
@@ -861,7 +876,8 @@ where bd.BundleNo = '{0}'",
                             from Bundle b WITH (NOLOCK)
                             inner join Bundle_Detail bd WITH (NOLOCK) on b.id=bd.ID
                             where bd.BundleNo = '{1}'",
-                    item.SP, item.Barcode));
+                    item.SP,
+                    item.Barcode));
             }
 
             frm.viewer.Print += (s, eArgs) =>
@@ -880,7 +896,7 @@ where bd.BundleNo = '{0}'",
             #endregion
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             #region excel
             this.grid1.ValidateControl();
@@ -902,9 +918,69 @@ where bd.BundleNo = '{0}'",
             #endregion
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void BtnBundleCardRF_Click(object sender, EventArgs e)
+        {
+            var bundleIDs = this.dtt.AsEnumerable()
+                .Where(x => x["selected"].ToBool())
+                .GroupBy(x => new
+                {
+                    BundleID = x["BundleID"],
+                    BundleNO = x["Bundle"],
+                })
+                .Select(x => new
+                {
+                    x.Key.BundleID,
+                    x.Key.BundleNO,
+                })
+                .ToList();
+
+            if (bundleIDs.Count == 0)
+            {
+                this.grid1.Focus();
+                MyUtility.Msg.ErrorBox("Grid must be chose one");
+                return;
+            }
+
+            string sqlWhere = "and bd.BundleNO = @bundleNO";
+            string sqlCmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, sqlWhere);
+            foreach (var item in bundleIDs)
+            {
+                List<SqlParameter> pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", item.BundleID),
+                    new SqlParameter("@bundleNO", item.BundleNO),
+                };
+
+                DataTable dt = new DataTable();
+                DualResult result = DBProxy.Current.Select(string.Empty, sqlCmd, pars, out dt);
+                if (!this.result)
+                {
+                    MyUtility.Msg.ErrorBox(this.result.ToString());
+                    return;
+                }
+
+                try
+                {
+                    result = Prg.BundleRFCard.BundleRFCardPrint(dt);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox(result.ToString());
+                        return;
+                    }
+
+                    MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
+                }
+                catch (Exception ex)
+                {
+                    MyUtility.Msg.ErrorBox(ex.ToString());
+                    return;
+                }
+            }
         }
     }
 }
