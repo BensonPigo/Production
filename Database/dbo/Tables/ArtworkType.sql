@@ -27,7 +27,6 @@
     [IsPrintToCMP]           BIT            CONSTRAINT [DF_ArtworkType_IsPrintToCMP] DEFAULT ((1)) NULL,
     [IsLocalPurchase]        BIT            CONSTRAINT [DF_ArtworkType_IsLocalPurchase] DEFAULT ((0)) NULL,
     [IsSubprocessInspection] BIT            CONSTRAINT [DF_ArtworkType_IsSubprocessInspection] DEFAULT ((0)) NOT NULL,
-    [SubProInsMode]          VARCHAR (20)   NULL,
     CONSTRAINT [PK_ArtworkType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

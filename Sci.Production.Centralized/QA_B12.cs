@@ -1,4 +1,5 @@
 ﻿using Sci.Data;
+using Sci.Win.Tools;
 using System.Data;
 using System.Windows.Forms;
 
@@ -23,7 +24,7 @@ namespace Sci.Production.Centralized
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.txtartworktype_fty1.ReadOnly = true;
+            this.txtArtworkType.ReadOnly = true;
             this.txtDefectCode.ReadOnly = true;
         }
 
@@ -32,7 +33,7 @@ namespace Sci.Production.Centralized
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["ArtworkTypeID"]))
             {
-                this.txtartworktype_fty1.Focus();
+                this.txtArtworkType.Focus();
                 MyUtility.Msg.WarningBox("< ArtworkType > can not be empty!");
                 return false;
             }
@@ -51,6 +52,28 @@ namespace Sci.Production.Centralized
             }
 
             return base.ClickSaveBefore();
+        }
+
+        private void TxtArtworkType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlcmd = $@"
+select a.ID, a.Remark
+from ArtworkType a with(nolock)
+where a.IsSubprocessInspection = 1
+and a.Junk = 0
+";
+
+            SelectItem item = new SelectItem(sqlcmd, "20,4,20", this.txtArtworkType.Text, false, ",")
+            {
+                Size = new System.Drawing.Size(635, 510),
+            };
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtArtworkType.Text = item.GetSelectedString();
         }
     }
 }

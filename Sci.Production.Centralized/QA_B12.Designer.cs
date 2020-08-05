@@ -34,7 +34,7 @@
             this.editDescription = new Sci.Win.UI.EditBox();
             this.lbDefectCode = new Sci.Win.UI.Label();
             this.txtDefectCode = new Sci.Win.UI.TextBox();
-            this.txtartworktype_fty1 = new Sci.Production.Class.Txtartworktype_fty();
+            this.txtArtworkType = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,7 +49,7 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtartworktype_fty1);
+            this.detailcont.Controls.Add(this.txtArtworkType);
             this.detailcont.Controls.Add(this.txtDefectCode);
             this.detailcont.Controls.Add(this.lbDefectCode);
             this.detailcont.Controls.Add(this.editDescription);
@@ -141,17 +141,16 @@
             this.txtDefectCode.Size = new System.Drawing.Size(665, 23);
             this.txtDefectCode.TabIndex = 7;
             // 
-            // txtartworktype_fty1
+            // txtArtworkType
             // 
-            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_fty1.CClassify = "";
-            this.txtartworktype_fty1.CSubprocess = "Y";
-            this.txtartworktype_fty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ArtworkTypeID", true));
-            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(128, 33);
-            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
-            this.txtartworktype_fty1.Size = new System.Drawing.Size(292, 23);
-            this.txtartworktype_fty1.TabIndex = 8;
+            this.txtArtworkType.BackColor = System.Drawing.Color.White;
+            this.txtArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ArtworkTypeID", true));
+            this.txtArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtArtworkType.Location = new System.Drawing.Point(128, 33);
+            this.txtArtworkType.Name = "txtArtworkType";
+            this.txtArtworkType.Size = new System.Drawing.Size(292, 23);
+            this.txtArtworkType.TabIndex = 9;
+            this.txtArtworkType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtArtworkType_PopUp);
             // 
             // QA_B12
             // 
@@ -186,6 +185,6 @@
         private Win.UI.EditBox editDescription;
         private Win.UI.TextBox txtDefectCode;
         private Win.UI.Label lbDefectCode;
-        private Production.Class.Txtartworktype_fty txtartworktype_fty1;
+        private Win.UI.TextBox txtArtworkType;
     }
 }
