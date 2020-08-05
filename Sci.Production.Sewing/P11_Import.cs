@@ -245,6 +245,7 @@ from SewingOutput_Detail sd with(nolock)
 inner join SewingOutput s with(nolock) on sd.ID = s.ID
 where sd.OrderId = @sp
 and s.FactoryID = @FactoryID
+and sd.AutoCreate = 0 --排除G單
 ";
             try
             {
@@ -279,6 +280,7 @@ inner join Factory f with(nolock) on o.FactoryID = f.ID
 where o.ID = @sp
 and o.FtyGroup = @FtyGroup
 and f.IsProduceFty = 1
+and o.Category in ('B','S')
 and not exists (select 1 from Orders exludeOrder with (nolock) 
                             where (exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0) and
                                   exludeOrder.ID = o.ID
