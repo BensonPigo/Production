@@ -218,30 +218,24 @@ namespace Sci.Production.Quality
             this.cmd = $@"
 SET ARITHABORT ON
 
-    select 
+select 
     [BalanceQty]=sum(fit.inqty - fit.outqty + fit.adjustqty) 
     ,rd.poid
     ,rd.seq1
     ,rd.seq2
     ,RD.ID
-    INTO #balanceTmp
+INTO #balanceTmp
 from dbo.View_AllReceivingDetail rd
-inner join FIR f on f.ReceivingID = rd.id AND f.POID=rd.poid AND  f.seq1 = rd.seq1 and f.seq2 = rd.Seq2
+inner join FIR f on f.POID=rd.poid AND  f.ReceivingID = rd.id AND f.seq1 = rd.seq1 and f.seq2 = rd.Seq2
 inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit.seq2 = rd.Seq2 AND fit.StockType=rd.StockType and fit.Roll=rd.Roll and fit.Dyelot=rd.Dyelot
-    where 1=1
+where 1=1 
     {rWhere.Replace("where", "AND")}
     {sqlWhere.Replace("where", "AND").Replace("SP.", "f.").Replace("P.", "f.")}
     GROUP BY rd.poid,rd.seq1,rd.seq2,RD.ID
+ 
 
-    select rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty,
-				TotalRollsCalculated=sum(iif(RD.StockQty>0,1,0)) over (partition by rd.id,rd.PoId,RD.seq1,RD.seq2,rd.ExportId),
-                [InvStock] = iif(rd.StockType = 'I', RD.StockQty, 0),
-                [BulkStock] = iif(rd.StockType = 'B', RD.StockQty, 0)
-    into #AllReceivingDetail
-	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
-    {rWhere}  
 
-    select  
+select  
 	F.POID
 	,(F.SEQ1+'-'+F.SEQ2)SEQ
 	,O.factoryid
@@ -303,15 +297,25 @@ inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit
     ps1.LocalMR
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
-    inner join #AllReceivingDetail t  on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2 AND T.Id=F.ReceivingID
-    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id from dbo.Orders o WITH (NOLOCK)  
-                {oWhere}
-		        ) O on O.id = F.POID
-    inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
-    inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
-    inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
-	LEFT JOIN #balanceTmp BalanceQty ON BalanceQty.poid = f.POID and BalanceQty.seq1 = f.seq1 and BalanceQty.seq2 =f.seq2 AND BalanceQty.ID = f.ReceivingID
-    left join MDivisionPoDetail mp on mp.POID=f.POID and mp.Seq1=f.SEQ1 and mp.Seq2=f.SEQ2
+cross apply(
+    select rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty,
+			TotalRollsCalculated=sum(iif(RD.StockQty>0,1,0)) over (partition by rd.id,rd.PoId,RD.seq1,RD.seq2,rd.ExportId),
+            [InvStock] = iif(rd.StockType = 'I', RD.StockQty, 0),
+            [BulkStock] = iif(rd.StockType = 'B', RD.StockQty, 0)
+    --into #AllReceivingDetail
+    from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
+    where rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Id=F.ReceivingID
+        {rWhere.Replace("where", "AND")}
+) t
+--inner join #AllReceivingDetail t  on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2 AND T.Id=F.ReceivingID
+inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id from dbo.Orders o WITH (NOLOCK)  
+            {oWhere}
+		    ) O on O.id = F.POID
+inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
+inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
+inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
+LEFT JOIN #balanceTmp BalanceQty ON BalanceQty.poid = f.POID and BalanceQty.seq1 = f.seq1 and BalanceQty.seq2 =f.seq2 AND BalanceQty.ID = f.ReceivingID
+left join MDivisionPoDetail mp on mp.POID=f.POID and mp.Seq1=f.SEQ1 and mp.Seq2=f.SEQ2
 OUTER APPLY(
 	SELECT * FROM  Fabric C WITH (NOLOCK) WHERE C.SCIRefno = F.SCIRefno
 )C
