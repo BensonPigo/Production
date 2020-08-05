@@ -218,7 +218,7 @@ left join(
 		            )a)
 	from #tmp t
 	where t.Type = '20 STD'
-    group by t.BrandID,t.Type,t.CTNRno
+    group by t.BrandID,t.Type
 )STD20 on a.BrandID = STD20.BrandID
 left join(
 	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TTLCBM=sum(TTLCBM)
@@ -228,7 +228,7 @@ left join(
 		            )a)
 	from #tmp t
 	where t.Type = '40 STD'
-    group by t.BrandID,t.Type,t.CTNRno
+    group by t.BrandID,t.Type
 )STD40 on a.BrandID = STD40.BrandID
 left join(
 	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TTLCBM=sum(TTLCBM)
@@ -238,7 +238,7 @@ left join(
 		            )a)
 	from #tmp t
 	where t.Type = '40HQ'
-    group by t.BrandID,t.Type,t.CTNRno
+    group by t.BrandID,t.Type
 )HQ40 on a.BrandID = HQ40.BrandID
 left join(
 	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TTLCBM=sum(TTLCBM)
@@ -248,7 +248,7 @@ left join(
 		            )a)
 	from #tmp t
 	where t.Type = '45HQ'
-    group by t.BrandID,t.Type,t.CTNRno
+    group by t.BrandID,t.Type
 )HQ45 on a.BrandID = HQ45.BrandID
 left join(
 	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TTLCBM=sum(TTLCBM)
@@ -258,7 +258,7 @@ left join(
 		            )a)
 	from #tmp t
 	where t.Type = 'AIR'
-    group by t.BrandID,t.Type,t.CTNRno
+    group by t.BrandID,t.Type
 )AIR on a.BrandID = AIR.BrandID
 drop table #tmp,#tmpa
 ";
