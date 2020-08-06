@@ -5,7 +5,7 @@
 -- Description:	<Description,,>
 -- =============================================
 CREATE PROCEDURE [dbo].[CuttingP20calculateCutQty]
-	@type int,--1:pre_qty
+	@type int,--1:pre_qty, 2:all day qty
 	@id varchar(20),
 	@Cdate date
 AS
@@ -25,7 +25,7 @@ BEGIN
 	inner join CuttingOutput_Detail cod on cod.WorkOrderUkey = wd.WorkOrderUkey
 	inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
 	inner join orders o WITH (NOLOCK) on o.id = wd.OrderID
-	where ((co.cdate <= @Cdate and @type=0) or(co.cdate < @Cdate and @type=1))
+	where ((co.cdate <= @Cdate and @type=0) or (co.cdate < @Cdate and @type=1) or @type = 2)
 	and exists (select 1 from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = @ID and CuttingID = o.poid)
 	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,o.MDivisionid,wd.Qty,wd.WorkOrderUkey
 	------------------
@@ -42,16 +42,7 @@ BEGIN
 	into #tmp2_1
 	from #Lagtmp where TotalCutQty>= AccuCutQty or (TotalCutQty < AccuCutQty and TotalCutQty > Lagaccu)
 	------------------
-	if @type = 0
-	begin
-		select OrderID,SizeCode,Article,PatternPanel,MDivisionid,[cutqty] = sum(cQty)
-		from #tmp2_1
-		group by OrderID,SizeCode,Article,PatternPanel,MDivisionid
-	end
-	else
-	begin
-		select OrderID,SizeCode,Article,PatternPanel,MDivisionid,[cutqty] = sum(cQty)
-		from #tmp2_1
-		group by OrderID,SizeCode,Article,PatternPanel,MDivisionid
-	end
+	select OrderID,SizeCode,Article,PatternPanel,MDivisionid,[cutqty] = sum(cQty)
+	from #tmp2_1
+	group by OrderID,SizeCode,Article,PatternPanel,MDivisionid
 END

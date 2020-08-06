@@ -50,24 +50,41 @@ BEGIN
 			);
 		End;
 
+		If Object_ID('tempdb..#tmp2_WIP_Qty') Is Null
+		Begin
+			Create Table #tmp2_WIP_Qty
+			(  
+				 Orderid Varchar(16)
+				, SizeCode VarChar(8)
+				, Article VarChar(8)
+				, PatternPanel VarChar(8)
+				, MDivisionid VarChar(8)
+				, cutQty int
+			);
+		End;
+
 		insert into #tmp2_A
-		exec CuttingP20calculateCutQty '0',@ID,@Cdate
+		exec CuttingP20calculateCutQty 0, @ID, @Cdate
 		
 		insert into #tmp2_B
-		exec CuttingP20calculateCutQty '1',@ID,@Cdate
+		exec CuttingP20calculateCutQty 1, @ID, @Cdate
 		
-		select a.*,pre_cutqty=b.cutqty 
-		into #tmp2
-		from #tmp2_A a
-		left join #tmp2_B b on a.Article=b.Article and a.MDivisionid=b.MDivisionid and a.OrderID = b.OrderID and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
+		insert into #tmp2_WIP_Qty
+		exec CuttingP20calculateCutQty 2, @ID, null
 
+		select a.OrderID, a.SizeCode, a.Article, a.PatternPanel, a.MDivisionid,[cutqty] = c.cutQty,pre_cutqty=b.cutqty, WIP_Qty = a.cutqty
+		into #tmp2
+		from #tmp2_WIP_Qty a
+		left join #tmp2_B b on a.Article=b.Article and a.MDivisionid=b.MDivisionid and a.OrderID = b.OrderID and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
+		left join #tmp2_A c on a.Article=c.Article and a.MDivisionid=c.MDivisionid and a.OrderID = c.OrderID and a.PatternPanel = c.PatternPanel and a.SizeCode = c.SizeCode
 
         Select o.poid,a.orderid,a.article,a.sizecode,
 			order_cpu = o.cpu,
 			cutqty = min(isnull(b.cutqty,0)),
 			cpu = o.cpu*min(isnull(b.cutqty,0)),
 			pre_cutqty = min(isnull(b.pre_cutqty,0)),
-			pre_cpu = o.cpu*min(isnull(b.pre_cutqty,0))
+			pre_cpu = o.cpu*min(isnull(b.pre_cutqty,0)),
+			WIP_Qty = min(isnull(b.WIP_Qty,0))
 		into #tmp3
         from #tmp1 a 
         left join #tmp2 b on a.orderid = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
@@ -113,9 +130,9 @@ BEGIN
 			USING #tmp3 AS S
 			ON (T.Orderid = S.orderid and T.Article = S.Article and T.Size = S.SizeCode) 
 			WHEN NOT MATCHED BY TARGET 
-			    THEN INSERT(Orderid,Article,Size ,Qty) VALUES(S.orderid,  S.Article,  S.SizeCode  ,S.cutqty)
+			    THEN INSERT(Orderid,Article,Size ,Qty) VALUES(S.orderid,  S.Article,  S.SizeCode  ,S.WIP_Qty)
 			WHEN MATCHED 
-			    THEN UPDATE SET T.Qty = S.cutqty;
+			    THEN UPDATE SET T.Qty = S.WIP_Qty;
 
 		--update Cutting.FirstCutDate/ LastCutDate 
 		update c
