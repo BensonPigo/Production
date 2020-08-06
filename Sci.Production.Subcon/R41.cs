@@ -304,7 +304,7 @@ outer apply(
                                 where   bda.BundleNo = bd.BundleNo    and
                                         bda.ID = b.ID   and
                                         bda.SubProcessID = s.ID
-                        ) or s.IsRFIDDefault = 1
+                        ) or  (s.IsSelection = 0 AND s.IsRFIDDefault = 1)
 ) s
 left join BundleInOut bio WITH (NOLOCK, index(PK_BundleInOut)) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
 outer apply(
