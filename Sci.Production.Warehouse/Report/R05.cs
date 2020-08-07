@@ -208,7 +208,7 @@ where 1=1
             if (this.type == 0)
             {
                 sqlCmd.Append(@"
-select 
+select distinct
 	t.id,t.MDivisionID,t.FromFtyID,t.FactoryID,t.IssueDate,t.Status
 	,td.POID, o.StyleID, p.Refno, p.ColorID, p.SizeSpec
 	,td.Seq1, td.Seq2
@@ -268,7 +268,7 @@ where 1=1
             else
             {
                 sqlCmd.Append(@"
-select
+select distinct
 	t.id,t.MDivisionID,t.FactoryID,t.ToMDivisionid,t.IssueDate,t.Status
 	,td.POID, o.StyleID, p.Refno, p.ColorID, p.SizeSpec
 	,td.Seq1, td.Seq2
