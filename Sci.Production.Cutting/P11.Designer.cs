@@ -179,7 +179,7 @@
             this.btnClose.TabIndex = 18;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnBatchCreate
             // 
@@ -190,7 +190,7 @@
             this.btnBatchCreate.TabIndex = 17;
             this.btnBatchCreate.Text = "Batch Create";
             this.btnBatchCreate.UseVisualStyleBackColor = true;
-            this.btnBatchCreate.Click += new System.EventHandler(this.btnBatchCreate_Click);
+            this.btnBatchCreate.Click += new System.EventHandler(this.BtnBatchCreate_Click);
             // 
             // label_TotalQty
             // 
@@ -213,7 +213,7 @@
             this.btnCopy_to_same_Cutref.TabIndex = 13;
             this.btnCopy_to_same_Cutref.Text = "Copy Item/Cutpart/Artwork to same CutRef#";
             this.btnCopy_to_same_Cutref.UseVisualStyleBackColor = true;
-            this.btnCopy_to_same_Cutref.Click += new System.EventHandler(this.btnCopy_to_same_Cutref_Click);
+            this.btnCopy_to_same_Cutref.Click += new System.EventHandler(this.BtnCopy_to_same_Cutref_Click);
             // 
             // btnCopy_to_other_Cutref
             // 
@@ -224,7 +224,7 @@
             this.btnCopy_to_other_Cutref.TabIndex = 14;
             this.btnCopy_to_other_Cutref.Text = "Copy Item/Cutpart/Artwork to other CutRef#";
             this.btnCopy_to_other_Cutref.UseVisualStyleBackColor = true;
-            this.btnCopy_to_other_Cutref.Click += new System.EventHandler(this.btnCopy_to_other_Cutref_Click);
+            this.btnCopy_to_other_Cutref.Click += new System.EventHandler(this.BtnCopy_to_other_Cutref_Click);
             // 
             // btnColorComb
             // 
@@ -236,7 +236,7 @@
             this.btnColorComb.TabIndex = 10;
             this.btnColorComb.Text = "Color Comb";
             this.btnColorComb.UseVisualStyleBackColor = true;
-            this.btnColorComb.Click += new System.EventHandler(this.btnColorComb_Click);
+            this.btnColorComb.Click += new System.EventHandler(this.BtnColorComb_Click);
             // 
             // numTotalPart
             // 
@@ -282,7 +282,7 @@
             this.btnGarmentList.TabIndex = 9;
             this.btnGarmentList.Text = "Garment List";
             this.btnGarmentList.UseVisualStyleBackColor = true;
-            this.btnGarmentList.Click += new System.EventHandler(this.btnGarmentList_Click);
+            this.btnGarmentList.Click += new System.EventHandler(this.BtnGarmentList_Click);
             // 
             // label5
             // 
@@ -305,7 +305,7 @@
             this.btn_LefttoRight.TabIndex = 11;
             this.btn_LefttoRight.Text = ">";
             this.btn_LefttoRight.UseVisualStyleBackColor = true;
-            this.btn_LefttoRight.Click += new System.EventHandler(this.btn_LefttoRight_Click);
+            this.btn_LefttoRight.Click += new System.EventHandler(this.Btn_LefttoRight_Click);
             // 
             // btn_RighttoLeft
             // 
@@ -316,7 +316,7 @@
             this.btn_RighttoLeft.TabIndex = 12;
             this.btn_RighttoLeft.Text = "<";
             this.btn_RighttoLeft.UseVisualStyleBackColor = true;
-            this.btn_RighttoLeft.Click += new System.EventHandler(this.btn_RighttoLeft_Click);
+            this.btn_RighttoLeft.Click += new System.EventHandler(this.Btn_RighttoLeft_Click);
             // 
             // numNoOfBundle
             // 
@@ -482,14 +482,14 @@
             this.insertIntoRecordToolStripMenuItem.Name = "insertIntoRecordToolStripMenuItem";
             this.insertIntoRecordToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.insertIntoRecordToolStripMenuItem.Text = "Insert into Record";
-            this.insertIntoRecordToolStripMenuItem.Click += new System.EventHandler(this.insertIntoRecordToolStripMenuItem_Click);
+            this.insertIntoRecordToolStripMenuItem.Click += new System.EventHandler(this.InsertIntoRecordToolStripMenuItem_Click);
             // 
             // deleteRecordToolStripMenuItem
             // 
             this.deleteRecordToolStripMenuItem.Name = "deleteRecordToolStripMenuItem";
             this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.deleteRecordToolStripMenuItem.Text = "Delete Record";
-            this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.deleteRecordToolStripMenuItem_Click);
+            this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.DeleteRecordToolStripMenuItem_Click);
             // 
             // gridArticleSize
             // 
@@ -522,7 +522,7 @@
             this.gridArticleSize.Size = new System.Drawing.Size(595, 211);
             this.gridArticleSize.TabIndex = 20;
             this.gridArticleSize.TabStop = false;
-            this.gridArticleSize.SelectionChanged += new System.EventHandler(this.gridArticleSize_SelectionChanged);
+            this.gridArticleSize.SelectionChanged += new System.EventHandler(this.GridArticleSize_SelectionChanged);
             // 
             // gridAllPart
             // 
@@ -570,14 +570,14 @@
             this.allpart_insert.Name = "allpart_insert";
             this.allpart_insert.Size = new System.Drawing.Size(175, 22);
             this.allpart_insert.Text = "Insert into Record";
-            this.allpart_insert.Click += new System.EventHandler(this.allpart_insert_Click);
+            this.allpart_insert.Click += new System.EventHandler(this.Allpart_insert_Click);
             // 
             // allpart_delete
             // 
             this.allpart_delete.Name = "allpart_delete";
             this.allpart_delete.Size = new System.Drawing.Size(175, 22);
             this.allpart_delete.Text = "Delete Record";
-            this.allpart_delete.Click += new System.EventHandler(this.allpart_delete_Click);
+            this.allpart_delete.Click += new System.EventHandler(this.Allpart_delete_Click);
             // 
             // gridQty
             // 
@@ -642,7 +642,7 @@
             this.gridCutRef.Size = new System.Drawing.Size(570, 211);
             this.gridCutRef.TabIndex = 22;
             this.gridCutRef.TabStop = false;
-            this.gridCutRef.SelectionChanged += new System.EventHandler(this.gridCutRef_SelectionChanged);
+            this.gridCutRef.SelectionChanged += new System.EventHandler(this.GridCutRef_SelectionChanged);
             // 
             // btnQuery
             // 
@@ -653,7 +653,7 @@
             this.btnQuery.TabIndex = 6;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // labelGroup
             // 
