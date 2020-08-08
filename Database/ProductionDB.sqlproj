@@ -2505,7 +2505,7 @@
     <Build Include="dbo\Tables\FtyStdRate_EMB.sql" />
     <Build Include="dbo\Functions\GetEmboideryCost.sql" />
     <Build Include="dbo\Functions\GetPrintingCost.sql" />
-    <Build Include="dbo\Tables\�ƻsAccessoryDefect.sql">
+    <Build Include="dbo\Tables\�ƻsAccessoryDefect.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
@@ -2517,6 +2517,7 @@
     <Build Include="dbo\Functions\GetWebApiURL.sql" />
     <Build Include="dbo\Tables\AutomationReceivedMsg.sql" />
     <Build Include="dbo\Stored Procedures\GetProductionOutputSummary.sql" />
+    <Build Include="dbo\Tables\Bundle_Detail_Order.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
