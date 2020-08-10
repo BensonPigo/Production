@@ -268,8 +268,8 @@ drop table #TPI_MachIn1
 drop table #TPI_PartPO1
 
 ------------------------------------------------------------------------------------------------------
-declare @DateInfoName varchar(30) ='MachinePending';
-declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+Set @DateInfoName  ='MachinePending';
+Set @DateStart = (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
 declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
 if @DateStart is Null
 	set @DateStart= CONVERT(DATE,DATEADD(day,-30,GETDATE()))
