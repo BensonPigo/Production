@@ -152,6 +152,7 @@ select
 	o.FactoryID,
     e.Consignee,
     e.ShipModeID,
+    e.CYCFS,
     e.Blno,
     e.Vessel,
     [ProdFactory]=o.FactoryID,
@@ -183,7 +184,8 @@ select
     ed.NetKg,
     ed.WeightKg,
 	[ArriveQty]=isnull(ed.Qty,0)+isnull(ed.foc,0),
-    [ContainerTypeNo] = Container.Val,
+    [ContainerType] = ContainerType.Val,
+    [ContainerNo] = ContainerNo.Val,
     e.PortArrival,
 	e.WhseArrival,
 	o.KPILETA,
@@ -203,13 +205,22 @@ left join TPEPass1 TEPPOSMR on TEPPOSMR.id = po.POSMR
 left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
 OUTER APPLY(
 		SELECT [Val] = STUFF((
-		SELECT DISTINCT ','+esc.ContainerType + '-' +esc.ContainerNo
+		SELECT DISTINCT ','+esc.ContainerType
 		FROM Export_ShipAdvice_Container esc
 		WHERE esc.Export_Detail_Ukey=ed.Ukey
 		AND esc.ContainerType <> '' AND esc.ContainerNo <> ''
 		FOR XML PATH('')
 	),1,1,'')
-)Container
+)ContainerType
+OUTER APPLY(
+		SELECT [Val] = STUFF((
+		SELECT DISTINCT ','+esc.ContainerNo
+		FROM Export_ShipAdvice_Container esc
+		WHERE esc.Export_Detail_Ukey=ed.Ukey
+		AND esc.ContainerType <> '' AND esc.ContainerNo <> ''
+		FOR XML PATH('')
+	),1,1,'')
+)ContainerNo
 where exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 and ed.PoType = 'G' 
 
