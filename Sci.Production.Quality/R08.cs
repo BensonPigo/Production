@@ -118,7 +118,7 @@ SELECT [Inspected Date] = FP.InspDate
        ,o.StyleID
        ,[SP#] = F.POID
        ,[SEQ#] = concat(RTRIM(F.SEQ1) ,'-',F.SEQ2)
-       ,[StockType]=(select Name from DropDownList ddl  where ddl.id like '%'+rd. StockType+'%' and ddl.Type = 'Pms_StockType')
+       ,[StockType]=iif(isnull(rd. StockType, '') = '', '', (select Name from DropDownList ddl  where ddl.id like '%'+rd. StockType+'%' and ddl.Type = 'Pms_StockType'))
        ,[WK#] = rd.ExportID
 	   ,[Supplier]=f.SuppID
 	   ,[Supplier Name]=(select AbbEN from Supp where id = f.SuppID)
