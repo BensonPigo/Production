@@ -17,6 +17,14 @@ namespace Sci.Production.Sewing
 
         public decimal SewTtlManhours { get; set; }
 
+        public decimal TransManpowerIn { get; set; }
+
+        public decimal TransManpowerOut { get; set; }
+
+        public decimal TransManhoursIn { get; set; }
+
+        public decimal TransManhoursOut { get; set; }
+
         public int Holiday { get; set; }
 
         public string yyyyMM { get; set; }
