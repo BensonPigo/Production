@@ -304,11 +304,11 @@ LEFT join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 	from SubProcess s
-	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
+	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1 AND s.IsSelection=0
 )s
 
 select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,
-	NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end,
+	NoBundleCardAfterSubprocess=  isnull(x.NoBundleCardAfterSubprocess,0),
 	PostSewingSubProcess=0
 into #tmpBundleNo_SubProcess
 from #tmpBundleNo b
@@ -519,11 +519,11 @@ inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID a
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 	from SubProcess s
-	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
+	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1 AND s.IsSelection=0
 )s
 
 select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,
-	NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end,
+	NoBundleCardAfterSubprocess= isnull(x.NoBundleCardAfterSubprocess,0),
 	PostSewingSubProcess=0
 into #tmpBundleNo_SubProcess
 from #tmpBundleNo b
@@ -772,7 +772,7 @@ inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,s.IsSelection
 	from SubProcess s
-	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
+	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1 AND s.IsSelection=0
 )s
 outer apply(
 	SELECT top 1 [val] = DD.id + '-' + DD.NAME 
@@ -815,7 +815,7 @@ select   Orderid
         ,BundleGroup
         ,SizeCode
 		,CutRef
-	    ,NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
+	    ,NoBundleCardAfterSubprocess= isnull(x.NoBundleCardAfterSubprocess,0) 
 	    ,PostSewingSubProcess=0
 		,b.FabricKind
 		,b.IsSelection
@@ -880,7 +880,7 @@ left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.Sub
 left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
 left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
 outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
-where b.subProcessid='{subProcess}' and((IsSelection = 0) or (subProcess= '{subProcess}' and IsSelection = 1))
+where b.subProcessid='{subProcess}' and((IsSelection = 0) or (b.subProcessid= '{subProcess}' and IsSelection = 1))
 
 select
 	 CutRef
@@ -997,7 +997,7 @@ inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID a
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,s.IsSelection
 	from SubProcess s
-	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
+	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1 AND s.IsSelection=0
 )s
 outer apply(
 	SELECT top 1 [val] = DD.id + '-' + DD.NAME 
@@ -1028,7 +1028,7 @@ outer apply(
 )SubProcess
 
 select Orderid,SubProcess,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
-	,NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
+	,NoBundleCardAfterSubprocess= isnull(x.NoBundleCardAfterSubprocess,0) 
 	,PostSewingSubProcess=0
     ,PatternDesc
     ,BundleGroup
@@ -1087,7 +1087,7 @@ left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.Sub
 left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
 left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
 outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
-where b.subProcessid='{subProcess}'  and((IsSelection = 0) or (subProcess= '{subProcess}' and IsSelection = 1))
+where b.subProcessid='{subProcess}'  and((IsSelection = 0) or (b.subProcessid= '{subProcess}' and IsSelection = 1))
 
 select
 	 CutRef
