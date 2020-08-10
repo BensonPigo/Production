@@ -6,67 +6,58 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Linq;
-using System.IO;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P10_Print : Win.Tems.PrintForm
     {
-        DualResult result;
-        DataRow CurrentDataRow;
-        string pathName;
+        private readonly DataRow CurrentDataRow;
+        private DualResult result;
+        private string pathName;
 
+        /// <inheritdoc/>
         public P10_Print(DataRow row)
         {
             this.InitializeComponent();
             this.CurrentDataRow = row;
             this.toexcel.Enabled = false;
+            MyUtility.Tool.SetupCombox(this.comboLayout, 2, 1, "0,Layout1,1,Layout2");
         }
 
-        string Bundle_Card;
-        string Bundle_Check_list;
-        string Extend_All_Parts;
-
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.Bundle_Card = this.radioBundleCard.Checked.ToString();
-            this.Bundle_Check_list = this.radioBundleChecklist.Checked.ToString();
-            this.Extend_All_Parts = this.checkExtendAllParts.Checked.ToString();
             return base.ValidateInput();
         }
 
-        DataTable dtt;
-        DataTable dt;
+        private DataTable dtt;
+        private DataTable dt;
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             if (this.radioBundleCard.Checked == true)
             {
                 #region report
-                DataRow row = this.CurrentDataRow;
-                string id = row["ID"].ToString();
+                string id = this.CurrentDataRow["ID"].ToString();
 
-                List<SqlParameter> pars = new List<SqlParameter>();
-                pars.Add(new SqlParameter("@ID", id));
-                pars.Add(new SqlParameter("@CutRef", this.CurrentDataRow["cutref"].ToString()));
-                pars.Add(new SqlParameter("@POID", this.CurrentDataRow["POID"].ToString()));
+                List<SqlParameter> pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", id),
+                    new SqlParameter("@CutRef", this.CurrentDataRow["cutref"].ToString()),
+                    new SqlParameter("@POID", this.CurrentDataRow["POID"].ToString()),
+                    new SqlParameter("@extend", this.checkExtendAllParts.Checked ? "1" : "0"),
+                };
+
+                string scmd;
                 if (this.checkExtendAllParts.Checked)
                 {
-                    pars.Add(new SqlParameter("@extend", "1"));
-                }
-                else
-                {
-                    pars.Add(new SqlParameter("@extend", "0"));
-                }
-
-                string scmd = string.Empty;
-                if (this.checkExtendAllParts.Checked) // 有勾[Extend All Parts]
-                {
-                    #region SQL
                     scmd = string.Format(@"
 select distinct *
 from (
@@ -160,11 +151,9 @@ outer apply
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
 order by x.[Barcode]");
-                    #endregion
                 }
-                else // 沒勾[Extend All Parts]
+                else
                 {
-                    #region SQL
                     scmd = string.Format(@"
 select distinct *
 from (
@@ -245,7 +234,6 @@ outer apply
 )cu
 
 order by x.[Barcode]");
-                    #endregion
                 }
 
                 this.result = DBProxy.Current.Select(string.Empty, scmd, pars, out this.dt);
@@ -259,23 +247,16 @@ order by x.[Barcode]");
             else
             {
                 #region excel
-                DataRow row = this.CurrentDataRow;
-                string id = row["ID"].ToString();
-                List<SqlParameter> lis = new List<SqlParameter>();
-                lis.Add(new SqlParameter("@ID", id));
+                string id = this.CurrentDataRow["ID"].ToString();
+                List<SqlParameter> lis = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", id),
+                    new SqlParameter("@extend", this.checkExtendAllParts.Checked ? "1" : "0"),
+                };
+
+                string sqlcmd;
                 if (this.checkExtendAllParts.Checked)
                 {
-                    lis.Add(new SqlParameter("@extend", "1"));
-                }
-                else
-                {
-                    lis.Add(new SqlParameter("@extend", "0"));
-                }
-
-                string sqlcmd = string.Empty;
-                if (this.checkExtendAllParts.Checked) // 有勾[Extend All Parts]
-                {
-                    #region SQL
                     sqlcmd = string.Format(@"
 select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
 from (
@@ -346,11 +327,9 @@ outer apply
 )cu
 
 order by x.[Bundle]");
-                    #endregion
                 }
-                else // 沒勾[Extend All Parts]
+                else
                 {
-                    #region SQL
                     sqlcmd = string.Format(@"
 select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
 from (
@@ -419,7 +398,6 @@ outer apply
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
 order by x.[Bundle]");
-                    #endregion
                 }
 
                 this.result = DBProxy.Current.Select(string.Empty, sqlcmd, lis, out this.dtt);
@@ -433,6 +411,7 @@ order by x.[Bundle]");
             return this.result;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dtt == null || this.dtt.Rows.Count == 0)
@@ -479,6 +458,7 @@ order by x.[Bundle]");
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToPrint(ReportDefinition report)
         {
             if (this.radioBundleCard.Checked)
@@ -606,12 +586,11 @@ order by x.[Bundle]");
 
                 report.ReportDataSource = data;
 
-                Type ReportResourceNamespace = typeof(P10_PrintData);
-                Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-                string ReportResourceName = "P10_Print.rdlc";
+                Type reportResourceNamespace = typeof(P10_PrintData);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P10_Print.rdlc";
 
-                IReportResource reportresource;
-                if (!(this.result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+                if (!(this.result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
                 {
                     this.ShowException(this.result);
                     return this.result;
@@ -620,9 +599,11 @@ order by x.[Bundle]");
                 report.ReportResource = reportresource;
 
                 // 開啟 report view
-                var frm = new Win.Subs.ReportView(report);
-                frm.MdiParent = this.MdiParent;
-                frm.DirectPrint = true;
+                var frm = new Win.Subs.ReportView(report)
+                {
+                    MdiParent = this.MdiParent,
+                    DirectPrint = true,
+                };
                 frm.ShowDialog();
                 #endregion
             }
@@ -709,20 +690,7 @@ order by x.[Bundle]");
             return true;
         }
 
-        // public bool PrintExcel(string filePath)
-        // {
-        //    // 1. 判斷檔案是否存在
-        //    //if (!System.IO.File.Exists(filePath)) return false;
-        //    PrintDocument printDoc = new PrintDocument();
-        //    PrintDialog pd = new PrintDialog();
-        //    printDoc.DocumentName = filePath;
-        //    pd.Document = printDoc;
-        //    if (pd.ShowDialog() == DialogResult.OK)
-        //        printDoc.Print();
-        //    //System.IO.File.Delete(filePath);
-        //    return true;
-        // }
-        private void radioPanel1_Paint(object sender, PaintEventArgs e)
+        private void RadioPanel1_Paint(object sender, PaintEventArgs e)
         {
             if (this.radioBundleCard.Checked == true)
             {
@@ -734,6 +702,11 @@ order by x.[Bundle]");
                 this.toexcel.Enabled = true;
                 this.print.Enabled = true;
             }
+        }
+
+        private void RadioBundleCard_CheckedChanged(object sender, EventArgs e)
+        {
+            this.comboLayout.Enabled = this.radioBundleCard.Enabled;
         }
     }
 }
