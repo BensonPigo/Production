@@ -391,6 +391,11 @@ outer apply(
 	from Bundle_Detail_art bda WITH (NOLOCK) 
 	where bda.BundleNo = bunD.BundleNo
 )x
+OUTER APPLY(  --取得這個bundle no的指定加工段
+	SELECT  DISTINCT SubProcessId 
+    FROM Bundle_Detail_Art bda 
+    WHERE bda.BundleNo = bunD.BundleNo and bda.SubProcessId = sub.ID
+)BundleArt
 outer apply(
 	select	top 1
 			bunD.ID
@@ -433,6 +438,7 @@ OUTER APPLY(----裁剪組合缺少的數量
 	t.OrderID=st0.OrderID AND t.Article=st0.Article AND t.SizeCode=st0.SizeCode
 )IsLackPatternPanel
 where (sub.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0) AND bunD.BundleGroup IS NOT NULL
+ {(subprocessIDtmp != "Sorting" && subprocessIDtmp != "Loading" && subprocessIDtmp != "SewingLine" ? $"and BundleArt.SubprocessId='{subprocessIDtmp}'" : string.Empty )}
 
 select	Orderid
 		, SubprocessId
