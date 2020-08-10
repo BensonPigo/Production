@@ -114,7 +114,7 @@ namespace Sci.Production.Quality
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true)
                  .Text("Refno", header: "Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                 .Text("ColorName", header: "Color \r\nName", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("ColorName", header: "Color Name", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .DateTime("CutTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(20))
                  .DateTime("PasteTime", header: "Paste Shadeband Time", width: Widths.AnsiChars(20))
                  .DateTime("PassQATime", header: "Pass QA Time", width: Widths.AnsiChars(20))
