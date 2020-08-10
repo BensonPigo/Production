@@ -1,6 +1,8 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Automation;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
@@ -47,6 +49,15 @@ from FinishingProcess");
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            #region ISP20201344 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentFinishingProcess(this.CurrentMaintain["DM300"].ToString()))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
         }
 
         protected override void ClickJunk()
