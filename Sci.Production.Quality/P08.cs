@@ -25,38 +25,53 @@ namespace Sci.Production.Quality
 
             Dictionary<string, string> comboBoxUpdateTime_RowSource = new Dictionary<string, string>
             {
+                { string.Empty, string.Empty },
                 { "CutTime", "Cut Shadeband Time" },
                 { "PasteTime", "Paste Shadeband Time" },
                 { "PassQATime", "Pass QA Time" },
             };
+            this.comboBoxTimeSearch.DataSource = new BindingSource(comboBoxUpdateTime_RowSource, null);
+            this.comboBoxTimeSearch.ValueMember = "Key";
+            this.comboBoxTimeSearch.DisplayMember = "Value";
+            this.comboBoxTimeSearch.SelectedValue = string.Empty;
+
             this.comboBoxUpdateTime.DataSource = new BindingSource(comboBoxUpdateTime_RowSource, null);
             this.comboBoxUpdateTime.ValueMember = "Key";
             this.comboBoxUpdateTime.DisplayMember = "Value";
+            this.comboBoxUpdateTime.SelectedValue = "CutTime";
         }
 
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.dateTimePickerUpdateTime.CustomFormat = "yyyy/MM/dd HH:mm:ss";
-            this.dateTimePickerUpdateTime.Text = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+            this.InitDataTimePicker(this.dateTimePickerUpdateTime);
+            this.InitDataTimePicker(this.dateTimePickerTimeSearch1);
+            this.InitDataTimePicker(this.dateTimePickerTimeSearch2);
             this.GridSetup();
+        }
+
+        private void InitDataTimePicker(DateTimePicker timePicker)
+        {
+            timePicker.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+            timePicker.Text = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
         }
 
         /// <inheritdoc/>
         private void GridSetup()
         {
             DataGridViewGeneratorTextColumnSettings cellShadebandDocLocationID = new DataGridViewGeneratorTextColumnSettings();
+
             cellShadebandDocLocationID.CellMouseDoubleClick += (s, e) =>
             {
-                this.GridShadebandDocLocationIDCellPop(e.RowIndex);
+                this.GridShadebandDocLocationIDCellPop(e.RowIndex, null);
             };
 
             cellShadebandDocLocationID.EditingMouseUp += (s, e) =>
             {
                 if (e.Button == MouseButtons.Right)
                 {
-                    this.GridShadebandDocLocationIDCellPop(e.RowIndex);
+                    this.GridShadebandDocLocationIDCellPop(e.RowIndex, null);
                 }
             };
 
@@ -76,8 +91,15 @@ namespace Sci.Production.Quality
                     return;
                 }
 
+                curDr["select"] = 1;
                 curDr["ShadebandDocLocationID"] = e.FormattedValue;
                 curDr.EndEdit();
+            };
+
+            this.gridReceiving.CellValueChanged += (s, e) =>
+            {
+                DataRow dr = this.gridReceiving.GetDataRow(e.RowIndex);
+                this.SelectModify(dr);
             };
 
             this.Helper.Controls.Grid.Generator(this.gridReceiving)
@@ -92,38 +114,56 @@ namespace Sci.Production.Quality
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true)
                  .Text("Refno", header: "Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                 .Text("ColorID", header: "Color \r\nName", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("ColorName", header: "Color Name", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .DateTime("CutTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(20))
                  .DateTime("PasteTime", header: "Paste Shadeband Time", width: Widths.AnsiChars(20))
                  .DateTime("PassQATime", header: "Pass QA Time", width: Widths.AnsiChars(20))
                  .Text("ShadebandDocLocationID", header: "Shadeband Location", width: Widths.AnsiChars(10), settings: cellShadebandDocLocationID)
+                 .Text("ShadeBond", header: "hade \r\n Band", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Date("ShadeBondDate", header: "Last Shade \r\n Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(15))
                  ;
             this.gridReceiving.Columns["CutTime"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["PasteTime"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["PassQATime"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["ShadebandDocLocationID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridReceiving.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+        }
+
+        private void SelectModify(DataRow dr)
+        {
+            if (!Equals(dr["CutTime"], dr["oldCutTime"]) ||
+                !Equals(dr["PasteTime"], dr["oldPasteTime"]) ||
+                !Equals(dr["PassQATime"], dr["oldPassQATime"]) ||
+                !Equals(dr["ShadebandDocLocationID"], dr["oldShadebandDocLocationID"]) ||
+                !Equals(dr["Remark"], dr["oldRemark"]))
+            {
+                dr["select"] = 1;
+            }
         }
 
         private void TxtShadeandLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            this.GridShadebandDocLocationIDCellPop(-2);
+            Win.UI.TextBox txtLocation = (Win.UI.TextBox)sender;
+            this.GridShadebandDocLocationIDCellPop(-2, txtLocation);
         }
 
         private void TxtShadeandLocation_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (this.txtShadeandLocation.Text.Empty())
+            Win.UI.TextBox txtLocation = (Win.UI.TextBox)sender;
+            if (txtLocation.Text.Empty())
             {
                 return;
             }
 
-            if (!this.ShadeandLocation_Validating(this.txtShadeandLocation.Text))
+            if (!this.ShadeandLocation_Validating(txtLocation.Text))
             {
                 e.Cancel = true;
                 return;
             }
         }
 
-        private void GridShadebandDocLocationIDCellPop(int rowIndex)
+        private void GridShadebandDocLocationIDCellPop(int rowIndex, Win.UI.TextBox txtLocation)
         {
             string sqlcmd = "select ID, Description from ShadebandDocLocation where Junk = 0";
             DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
@@ -147,7 +187,7 @@ namespace Sci.Production.Quality
             }
             else
             {
-                this.txtShadeandLocation.Text = MyUtility.Convert.GetString(dr["ID"]);
+                txtLocation.Text = MyUtility.Convert.GetString(dr["ID"]);
             }
         }
 
@@ -173,6 +213,7 @@ namespace Sci.Production.Quality
         private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.Query();
+            this.InitDataTimePicker(this.dateTimePickerUpdateTime);
         }
 
         /// <summary>
@@ -248,17 +289,33 @@ namespace Sci.Production.Quality
                 sqlWhere2 += $" and td.dyelot like '%{this.txtDyelot.Text}%'" + Environment.NewLine;
             }
 
-            if (!MyUtility.Check.Empty(this.txtPackage.Text))
+            if (!MyUtility.Check.Empty(this.txtLocationSearch.Text))
             {
-                sqlWhere += $" and e.Packages = '{this.txtPackage.Text}'" + Environment.NewLine;
-                sqlWhere2 += $" and 1=0" + Environment.NewLine;
+                sqlWhere += $" and fs.ShadebandDocLocationID = '{this.txtLocationSearch.Text}'" + Environment.NewLine;
+                sqlWhere2 += $" and fs.ShadebandDocLocationID = '{this.txtLocationSearch.Text}'" + Environment.NewLine;
+            }
+
+            switch (this.comboBoxTimeSearch.SelectedValue.ToString().ToUpper())
+            {
+                case "CUTTIME":
+                    sqlWhere += $" and fs.CutTime >= '{this.dateTimePickerTimeSearch1.Text}' and fs.CutTime <= '{this.dateTimePickerTimeSearch2.Text}'" + Environment.NewLine;
+                    sqlWhere2 += $" and fs.CutTime >= '{this.dateTimePickerTimeSearch1.Text}' and fs.CutTime <= '{this.dateTimePickerTimeSearch2.Text}'" + Environment.NewLine;
+                    break;
+                case "PASTETIME":
+                    sqlWhere += $" and fs.PasteTime >= '{this.dateTimePickerTimeSearch1.Text}' and fs.PasteTime <= '{this.dateTimePickerTimeSearch2.Text}'" + Environment.NewLine;
+                    sqlWhere2 += $" and fs.PasteTime >= '{this.dateTimePickerTimeSearch1.Text}' and fs.PasteTime <= '{this.dateTimePickerTimeSearch2.Text}'" + Environment.NewLine;
+                    break;
+                case "PASSQATIME":
+                    sqlWhere += $" and fs.PassQATime >= '{this.dateTimePickerTimeSearch1.Text}' and fs.PassQATime <= '{this.dateTimePickerTimeSearch2.Text}'" + Environment.NewLine;
+                    sqlWhere2 += $" and fs.PassQATime >= '{this.dateTimePickerTimeSearch1.Text}' and fs.PassQATime <= '{this.dateTimePickerTimeSearch2.Text}'" + Environment.NewLine;
+                    break;
             }
 
             string sqlCmd = $@"
 select 
 	[select] = cast(0 as bit)
 	, r.ExportID
-	, e.Packages
+	, [Packages] = e.[Packages]
 	, [ArriveDate] = r.WhseArrival
 	, f.POID
     , [SEQ] = CONCAT(f.SEQ1, ' ', f.SEQ2)
@@ -266,20 +323,33 @@ select
 	, fs.Roll
 	, fs.Dyelot
 	, psd.Refno
-	, psd.ColorID
+	, [ColorName] = c.name
 	, [Qty] = rd.StockQty
 	, fs.CutTime
 	, fs.PasteTime
 	, fs.PassQATime
 	, fs.ShadebandDocLocationID
 	, fs.ID
+    , f.ShadeBond
+    , f.ShadeBondDate
+    , fs.Remark
+    , [oldCutTime] = fs.CutTime
+    , [oldPasteTime] = fs.PasteTime
+    , [oldPassQATime] = fs.PassQATime
+    , [oldShadebandDocLocationID] = fs.ShadebandDocLocationID
+    , [oldRemark] = fs.Remark
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
 inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
 inner join FIR f with (nolock) on r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2
 inner join FIR_Shadebone fs with (nolock) on f.id = fs.ID and rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
-inner join Export e with (nolock) on r.ExportId = e.ID
+left join Color c with (nolock) on psd.ColorID = c.ID and psd.BrandId = c.BrandID
+outer apply (
+    select [Packages] = sum(e.Packages)
+    from Export e with (nolock) 
+    where r.ExportId = e.MainExportID
+)e
 {sqlWhere}
 UNION all
 select 
@@ -293,19 +363,28 @@ select
 	, fs.Roll
 	, fs.Dyelot
 	, psd.Refno
-	, psd.ColorID
+    , [ColorName] = c.name
 	, [Qty] = td.Qty
 	, fs.CutTime
 	, fs.PasteTime
 	, fs.PassQATime
 	, fs.ShadebandDocLocationID
 	, fs.ID
+    , f.ShadeBond
+    , f.ShadeBondDate
+    , fs.Remark
+    , [oldCutTime] = fs.CutTime
+    , [oldPasteTime] = fs.PasteTime
+    , [oldPassQATime] = fs.PassQATime
+    , [oldShadebandDocLocationID] = fs.ShadebandDocLocationID
+    , [oldRemark] = fs.Remark
 FROM TransferIn t with (nolock)
 INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
 INNER JOIN PO_Supp_Detail psd with (nolock) on td.PoId = psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
 INNER JOIN Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
 inner join FIR f with (nolock) on t.id = f.ReceivingID and td.PoId = F.POID and td.Seq1 = F.SEQ1 and td.Seq2 = F.SEQ2
 inner join FIR_Shadebone fs with (nolock) on f.id = fs.ID and td.Roll = fs.Roll and td.Dyelot = fs.Dyelot
+left join Color c with (nolock) on psd.ColorID = c.ID and psd.BrandId = c.BrandID
 {sqlWhere2}
 ";
 
@@ -349,6 +428,7 @@ update fs
 	, fs.PasteTime = t.PasteTime
 	, fs.PassQATime = t.PassQATime
 	, fs.ShadebandDocLocationID = t.ShadebandDocLocationID
+    , fs.Remark = t.Remark
 from FIR_Shadebone fs
 inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
 ";
@@ -362,7 +442,7 @@ inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
                     DualResult result;
                     if (!MyUtility.Check.Empty(sqlcmd))
                     {
-                        result = MyUtility.Tool.ProcessWithDatatable(selectedListDataRow.CopyToDataTable(), "ID,Roll,Dyelot,CutTime,PasteTime,PassQATime,ShadebandDocLocationID", sqlcmd, out DataTable dtUpdate, temptablename: "#tmp");
+                        result = MyUtility.Tool.ProcessWithDatatable(selectedListDataRow.CopyToDataTable(), "ID,Roll,Dyelot,CutTime,PasteTime,PassQATime,ShadebandDocLocationID,Remark", sqlcmd, out DataTable dtUpdate, temptablename: "#tmp");
                         if (!result)
                         {
                             throw result.GetException();
@@ -420,7 +500,11 @@ inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
                 string comboUpdateTime = this.comboBoxUpdateTime.SelectedValue.ToString();
                 foreach (DataRow dr in selectedListDataRow.ToList())
                 {
-                    dr[comboUpdateTime] = updateTime;
+                    if (!comboUpdateTime.Empty())
+                    {
+                        dr[comboUpdateTime] = updateTime;
+                    }
+
                     if (!MyUtility.Check.Empty(this.txtShadeandLocation.Text))
                     {
                         dr["ShadebandDocLocationID"] = this.txtShadeandLocation.Text;
