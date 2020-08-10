@@ -7,6 +7,9 @@ using System.Windows.Forms;
 using Sci.Data;
 using Sci.Win.Tools;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Quality
 {
@@ -725,6 +728,89 @@ values (@ID,@NO,'Appearance of garment after wash',8)
 ";
                         DBProxy.Current.Execute(null, insertShrinkage, spam);
                     }
+
+                    #region 寫入GarmentTest_Detail_FGWT
+
+                    // 取Location
+                    List<string> locations = MyUtility.GetValue.Lookup($@"
+
+SELECT STUFF(
+	(select DISTINCT ',' + sl.Location
+	from Style s
+	INNER JOIN Style_Location sl ON s.Ukey = sl.StyleUkey 
+	where s.id='{this.CurrentMaintain["StyleID"]}' AND s.BrandID='{this.CurrentMaintain["BrandID"]}' AND s.SeasonID='{this.CurrentMaintain["SeasonID"]}'
+	FOR XML PATH('')
+	) 
+,1,1,'')").Split(',').ToList();
+
+                    List<FGWT> fGWTs = new List<FGWT>();
+
+                    bool containsT = locations.Contains("T");
+                    bool containsB = locations.Contains("B");
+
+                    // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
+                    if (containsT && containsB)
+                    {
+                        fGWTs = GetDefaultFGWT(false, false, true);
+                    }
+                    else if (containsT)
+                    {
+                        fGWTs = GetDefaultFGWT(containsT, false, false);
+                    }
+                    else
+                    {
+                        fGWTs = GetDefaultFGWT(false, containsB, false);
+                    }
+
+                    string garmentTest_Detail_ID = MyUtility.Convert.GetString(dr["ID"]);
+                    string garmentTest_Detail_No = MyUtility.Convert.GetString(dr["NO"]);
+
+                    StringBuilder insertCmd = new StringBuilder();
+                    List<SqlParameter> parameters = new List<SqlParameter>();
+                    int idx = 0;
+
+                    // 組合INSERT SQL
+                    foreach (var fGWT in fGWTs)
+                    {
+                        string location = string.Empty;
+
+                        switch (fGWT.Location)
+                        {
+                            case "Top":
+                                location = "T";
+                                break;
+                            case "Bottom":
+                                location = "B";
+                                break;
+                            case "Top+Bottom":
+                                location = "S";
+                                break;
+                            default:
+                                break;
+                        }
+
+                        insertCmd.Append($@"
+
+INSERT INTO GarmentTest_Detail_FGWT
+           (ID, No, Location, Type)
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx})
+
+");
+                        parameters.Add(new SqlParameter($"@Location{idx}", location));
+                        parameters.Add(new SqlParameter($"@Type{idx}", fGWT.Type));
+                        idx++;
+                    }
+
+                    // 找不到才Insert
+                    if (!MyUtility.Check.Seek($"SELECT 1 FROM GarmentTest_Detail_FGWT WHERE ID ='{garmentTest_Detail_ID}' AND NO='{garmentTest_Detail_No}'"))
+                    {
+                        DBProxy.Current.Execute(null, insertCmd.ToString(), parameters);
+                    }
+                    #endregion
                 }
             }
 

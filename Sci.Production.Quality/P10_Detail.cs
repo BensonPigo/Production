@@ -210,6 +210,7 @@ namespace Sci.Production.Quality
 
             this.comboTemperature.SelectedIndex = 0;
             this.comboMachineModel.SelectedIndex = 0;
+            this.combFGWTMaterial.SelectedIndex = 0;
             this.comboNeck.SelectedIndex = 0;
 
             // DataGridViewGeneratorNumericColumnSettings AfterWash1Cell = new DataGridViewGeneratorNumericColumnSettings();
@@ -541,7 +542,8 @@ and st.Article = '{this.MasterRow["Article"]}'
             this.txtColour.Text = MyUtility.Check.Empty(dr["Colour"]) ? MyUtility.GetValue.Lookup(strSqlcmd) : MyUtility.Convert.GetString(dr["Colour"]);
 
             this.txtReportDate.Value = MyUtility.Convert.GetDate(dr["ReportDate"]);
-            this.comboResult.Text = MyUtility.Convert.GetString(dr["Result"]);
+            this.comboResult.Text = MyUtility.Convert.GetString(dr["LOtoFactory"]);
+            this.txtLotoFactory.Text = MyUtility.Convert.GetString(dr["LOtoFactory"]);
 
             this.txtRemark.Text = MyUtility.Convert.GetString(dr["Remark"]);
 
@@ -557,6 +559,7 @@ and st.Article = '{this.MasterRow["Article"]}'
 
             this.comboTemperature.Text = MyUtility.Convert.GetString(dr["Temperature"]);
             this.comboMachineModel.Text = MyUtility.Convert.GetString(dr["Machine"]);
+            this.combFGWTMaterial.Text = MyUtility.Convert.GetString(dr["FGWTMtlTypeID"]);
             this.txtFibreComposition.Text = MyUtility.Convert.GetString(dr["Composition"]);
             this.comboNeck.Text = MyUtility.Convert.GetBool(dr["Neck"]) ? "YES" : "No";
         }
@@ -715,11 +718,13 @@ order by seq";
                             Result = '{this.comboResult.SelectedValue}',
                             SizeCode='{this.txtSize.Text}',
                             Remark =  '{this.txtRemark.Text}',
+                            LOtoFactory =  '{this.txtLotoFactory.Text}',
                             LineDry =  '{this.rdbtnLine.Checked}',
                             TumbleDry =  '{this.rdbtnTumble.Checked}',
                             HandWash =  '{this.rdbtnHand.Checked}',
                             Temperature =  {this.comboTemperature.Text},
                             Machine =  '{this.comboMachineModel.Text}',
+                            FGWTMtlTypeID =  '{this.combFGWTMaterial.Text}',
                             Composition =  '{this.txtFibreComposition.Text}',
                             Neck ='{MyUtility.Convert.GetString(this.comboNeck.Text).EqualString("YES")}'
                         where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
