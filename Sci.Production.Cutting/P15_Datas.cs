@@ -42,6 +42,11 @@ namespace Sci.Production.Cutting
             /// P15 Create 準備寫入資料過程, 紀錄當前這筆已處理過
             /// </summary>
             public bool Ran { get; set; }
+
+            /// <summary>
+            /// P15 紀錄寫入的 BuundleGroup ,以便合併組找回, 寫入相同的 BuundleGroup
+            /// </summary>
+            public int BuundleGroup { get; set; }
         }
 
         /// <inheritdoc/>

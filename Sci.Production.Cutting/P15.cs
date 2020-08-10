@@ -1609,8 +1609,9 @@ order by ArticleGroup";
                 Article = MyUtility.Convert.GetString(s["Article"]),
                 SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
                 Qty = MyUtility.Convert.GetInt(s["Qty"]),
-                Dup = 0, // 紀錄是否完全一樣的組別 Ukey, Article, Size, 左下資料
+                Dup = -1, // 紀錄是否完全一樣的組別 Ukey, Article, Size, 左下資料
                 Ran = false,
+                BuundleGroup = 0,
             }).ToList();
             var patternList = this.patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => new Pattern
             {
@@ -1640,38 +1641,71 @@ order by ArticleGroup";
                 Parts = MyUtility.Convert.GetInt(s["Parts"]),
                 Ispair = MyUtility.Convert.GetBool(s["ispair"]),
             }).ToList();
-            var selList = qtydataList.Where(w => ukeyList.Contains(w.Ukey)).ToList(); // 要寫入的中上表
-            var selpatternList = patternList.Where(w => ukeyList.Contains(w.Ukey)).ToList(); // 要寫入的左下表
-            var selallPartList = allPartList.Where(w => ukeyList.Contains(w.Ukey)).ToList(); // 要寫入的右下表
+            var selList = qtydataList.Where(w => ukeyList.Contains(w.Ukey) && !w.Qty.Empty()).ToList(); // 要寫入的中上表
             var idenList = selList.Select(s => s.Iden).ToList();
+            var selpatternList = patternList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden)).ToList(); // 要寫入的左下表
+            var selallPartList = allPartList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden)).ToList(); // 要寫入的右下表
 
             if (!this.BeforeBarchCreate(idenList, selpatternList))
             {
                 return;
             }
 
-            // 找重複 ukey, Article, SizeCode, 並標記 Dup (合併組)
-            int setdup = 0;
-            foreach (var item in selList)
+            // 標記 dup 數字一樣為同一組需合併建立在同一張 P10
+            foreach (var selq in selList)
             {
-                if (item.Ran)
+                // 若這筆已被前面標記(重複組),則跳下筆ID
+                if (selq.Dup > -1)
                 {
                     continue;
                 }
 
-                selList.Where(w => w.Ukey == item.Ukey && w.Article == item.Article && w.SizeCode == item.SizeCode).ToList().ForEach(r =>
-                {
-                    r.Dup = setdup;
-                    r.Ran = true;
-                });
+                int maxDup = selList.Select(s => s.Dup).Max() + 1;
+                selq.Dup = maxDup;
 
-                setdup++;
+                // 當前這筆向下比較, 去 iden 欄位, 比較不同 iden 的資料組是否完全一樣
+                var sourList = selpatternList.Where(w => w.Iden == selq.Iden).Select(s => new
+                {
+                    s.Cutref,
+                    s.Poid,
+                    s.Ukey,
+                    s.PatternCode,
+                    s.PatternDesc,
+                    s.Location,
+                    s.Parts,
+                    s.Ispair,
+                    s.Art,
+                    s.NoBundleCardAfterSubprocess_String,
+                    s.PostSewingSubProcess_String,
+                }).OrderBy(o => o.PatternCode).ToList();
+
+                foreach (var nnext in selList.Where(w => w.Iden != selq.Iden && w.Dup == -1 && w.Ukey == selq.Ukey && w.Article == selq.Article && w.SizeCode == selq.SizeCode))
+                {
+                    var otherList = selpatternList.Where(w => w.Iden == nnext.Iden).Select(s => new
+                    {
+                        s.Cutref,
+                        s.Poid,
+                        s.Ukey,
+                        s.PatternCode,
+                        s.PatternDesc,
+                        s.Location,
+                        s.Parts,
+                        s.Ispair,
+                        s.Art,
+                        s.NoBundleCardAfterSubprocess_String,
+                        s.PostSewingSubProcess_String,
+                    }).OrderBy(o => o.PatternCode).ToList();
+
+                    // A, B 完全一樣
+                    if (!(sourList.Except(otherList).Any() || otherList.Except(sourList).Any()))
+                    {
+                        nnext.Dup = maxDup;
+                    }
+                }
             }
 
-            selList.ForEach(r => r.Ran = false);
-
             // 準備 by OrderID 的 startNo List
-            var selSP = this.ArticleSizeTb.AsEnumerable().Where(w => ukeyList.Contains(MyUtility.Convert.GetLong(w["Ukey"]))).Select(s => s["OrderID"].ToString()).ToList();
+            var selSP = this.ArticleSizeTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && ukeyList.Contains(MyUtility.Convert.GetLong(w["Ukey"]))).Select(s => s["OrderID"].ToString()).Distinct().ToList();
             var startnoList = selSP.Select(s => new StartNo_SP
             {
                 OrderID = s,
@@ -1681,8 +1715,8 @@ order by ArticleGroup";
             // 總建單數.
             int num_Bundle = selList.Select(s => s.Dup).Distinct().Count();
 
-            // ALLPARTS 合併減少數. dup <= dupmax 為需要合併建立, 判斷 tone>0 若一樣則 ALLPARTS 合併成一筆
-            int dallparts = selList.Where(w2 => w2.Tone > 0).Distinct().Count();
+            // ALLPARTS 合併減少數
+            int dallparts = selList.Where(w2 => w2.Tone > 0).GroupBy(g => new { g.Dup, g.Tone }).Select(s => new { s.Key.Dup, s.Key.Tone, ct = s.Count() - 1 }).Sum(s => s.ct);
 
             // 總建 BundleNo 數量
             int num_BundleNo = selpatternList.Count() - dallparts;
@@ -1708,11 +1742,10 @@ order by ArticleGroup";
                 DataRow drRatio = this.SizeRatioTb.Select($"ukey = '{first.Ukey}' and SizeCode ='{first.SizeCode}'").First();
                 DataRow drAS = this.ArticleSizeTb.Select($"iden = {first.Iden}").AsEnumerable().OrderBy(o => o["OrderID"]).First(); // 取 OrderID 最小
                 int startno = startnoList.Where(w => w.OrderID == drAS["OrderID"].ToString()).Select(s => s.Startno).First();
-                startnoList.Where(w => w.OrderID == drAS["OrderID"].ToString() && this.radioWithcuto.Checked).ToList().ForEach(r => r.Startno += 1); // 準備完 startno, 紀錄就先加 1
                 string sewingLine = drAS["SewingLine"].Empty() ? string.Empty : drAS["SewingLine"].ToString().Length > 2 ? drAS["SewingLine"].ToString().Substring(0, 2) : drAS["SewingLine"].ToString();
                 bool isEXCESS = this.ArticleSizeTb.Select($"iden = {first.Iden} and isEXCESS = 'Y'").Any();
                 bool byToneGenerate = selList.Where(w => w.Dup == dup && w.Tone == first.Tone).Count() > 1;
-                int bundleQty = 1; // 綁包數, 在 P10 表頭的 No of Bundle
+                int bundleQty = seldupList.Where(w => w.Tone == 0).Count() + seldupList.Where(w => w.Tone > 0).Select(s => s.Tone).Distinct().Count(); // 綁包數
                 #endregion
 
                 // bundle
@@ -1767,24 +1800,42 @@ values
     ,'{byToneGenerate}');
 ");
 
-                // 合併, 只有 bundle 合併, 底下的資料表有幾組就按實寫入
-                foreach (var selitem in seldupList.Where(w => w.Dup == dup))
+                // Bundle_Detail_allpart
+                foreach (var allPart in selallPartList.Where(w => w.Iden == first.Iden && !w.Ran))
                 {
+                    insertSql.Append($@"
+Insert Into Bundle_Detail_allpart(ID, PatternCode, PatternDesc, Parts, isPair, Location) 
+Values('{bundleID}', '{allPart.PatternCode}', '{allPart.PatternDesc}', '{allPart.Parts}', '{allPart.Ispair}', '{allPart.Location}');");
+                }
+
+                selallPartList.Where(w => seldupList.Select(s => s.Iden).Contains(w.Iden)).ToList().ForEach(r => r.Ran = true);
+
+                // 合併, 只有 bundle, Bundle_Detail_allpart 合併. 其它的資料表有幾組就按實寫入
+                foreach (var selitem in seldupList)
+                {
+                    var selTList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0).ToList();
+
+                    // Tone > 0, 相同 Tone,  BuundleGroup =0, 先給同樣的 BuundleGroup
+                    selTList.Where(w => w.BuundleGroup == 0).ToList().ForEach(r => r.BuundleGroup = startno);
+                    if (selitem.BuundleGroup == 0)
+                    {
+                        selitem.BuundleGroup = startno;
+                    }
+
+                    startnoList.Where(w => w.OrderID == drAS["OrderID"].ToString() && this.radioWithcuto.Checked).ToList().ForEach(r => r.Startno = ++startno);
+
                     // Bundle_Detail_Qty
                     insertSql.Append($@"
 Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.SizeCode}', {selitem.Qty});");
 
-                    // Bundle_Detail_allpart
-                    foreach (var allPart in selallPartList.Where(w => w.Iden == selitem.Iden))
-                    {
-                        insertSql.Append($@"
-Insert Into Bundle_Detail_allpart(ID, PatternCode, PatternDesc, Parts, isPair, Location) 
-Values('{bundleID}', '{allPart.PatternCode}', '{allPart.PatternDesc}', '{allPart.Parts}', '{allPart.Ispair}', '{allPart.Location}');");
-                    }
-
-                    // Bundle_Detail, Bundle_Detail_Art, (P15才有的寫的) Bundle_Detail_Order
+                    // Bundle_Detail, Bundle_Detail_Art, &  P15才有的寫的 Bundle_Detail_Order
                     foreach (var pattern in selpatternList.Where(w => w.Iden == selitem.Iden))
                     {
+                        if (pattern.Ran)
+                        {
+                            continue;
+                        }
+
                         string bundleNo = bundleno_list[bundlenoCount];
                         bundlenoCount++;
 
@@ -1793,34 +1844,26 @@ Values('{bundleID}', '{allPart.PatternCode}', '{allPart.PatternDesc}', '{allPart
                         bdr["Bundleno"] = bundleNo;
                         insert_BundleNo.Rows.Add(bdr);
 
-                        // 若 dup, tone 相同 寫入Bundle_Detail 時 PatternCode = ALLPARTS 合為一筆 Qty, Parts 數量加起來
-                        var selToneList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0).ToList();
-                        var sameToneAllpartList = selpatternList.Where(w => selToneList.Select(s => s.Iden).Contains(w.Iden) && w.PatternCode.Equals("ALLPARTS")).ToList();
-                        bool mergeALLPARTS = pattern.PatternCode.Equals("ALLPARTS") && selToneList.Count() > 1;
-                        int bdQty = mergeALLPARTS ? selToneList.Sum(s => s.Qty) : selitem.Qty;
-                        int parts = mergeALLPARTS ? sameToneAllpartList.Sum(s => s.Parts) : pattern.Parts;
+                        // 若 dup, tone 相同 寫入Bundle_Detail 時 PatternCode = ALLPARTS 合為一筆 Qty 數量加起來. 且標記已準備
+                        var selDTList = selTList.Where(w => pattern.PatternCode.Equals("ALLPARTS")).ToList();
+                        selpatternList.Where(w => w.PatternCode.Equals("ALLPARTS") && selDTList.Select(s => s.Iden).Contains(w.Iden)).ToList().ForEach(r => r.Ran = true);
+                        int bdQty = pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0 ? selDTList.Sum(s => s.Qty) : selitem.Qty;
 
-                        if (!pattern.Ran)
-                        {
-                            insertSql.Append($@"
+                        insertSql.Append($@"
 Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, SizeCode, Qty, Parts, Farmin, Farmout, isPair, Location)
 Values
     ('{bundleID}'
     ,'{bundleNo}'
-    ,{startno}
+    ,{selitem.BuundleGroup}
     ,'{pattern.PatternCode}'
     ,'{pattern.PatternDesc.Replace("'", "''")}'
     ,'{selitem.SizeCode}'
     ,{bdQty}
-    ,{parts}
+    ,{pattern.Parts}
     ,0,0 -- Farmin, Farmout
     ,'{pattern.Ispair}'
     ,'{pattern.Location}');
 ");
-                        }
-
-                        pattern.Ran = true;
-                        sameToneAllpartList.ForEach(r => r.Ran = true);
 
                         // Bundle_Detail_Art 將 Art 以+號拆開寫入, 且ALLPARTS 不寫入
                         if (!pattern.PatternCode.Equals("ALLPARTS"))
@@ -1931,6 +1974,11 @@ INSERT INTO [dbo].[Bundle_Detail_Order]([BundleNo],[OrderID],[Qty]) Values('{bun
             if (cutrefAy.Length == 0)
             {
                 MyUtility.Msg.InfoBox("Please select data first !!");
+                return false;
+            }
+
+            if (idenList.Count == 0)
+            {
                 return false;
             }
 
