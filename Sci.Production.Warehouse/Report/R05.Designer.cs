@@ -41,20 +41,29 @@
             this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             this.radioTransferIn = new Sci.Win.UI.RadioButton();
             this.radioTransferOut = new Sci.Win.UI.RadioButton();
+            this.lbReportType = new Sci.Win.UI.Label();
+            this.lbMaterialType = new Sci.Win.UI.Label();
+            this.comboMaterialType = new Sci.Win.UI.ComboBox();
+            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioSummary = new Sci.Win.UI.RadioButton();
+            this.radioDetail = new Sci.Win.UI.RadioButton();
+            this.radioPanel2 = new Sci.Win.UI.RadioPanel();
+            this.radioPanel1.SuspendLayout();
+            this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Enabled = false;
-            this.print.Location = new System.Drawing.Point(399, 12);
+            this.print.Location = new System.Drawing.Point(435, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(399, 48);
+            this.toexcel.Location = new System.Drawing.Point(435, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(399, 84);
+            this.close.Location = new System.Drawing.Point(435, 84);
             // 
             // label1
             // 
@@ -157,10 +166,13 @@
             // txtfactory1
             // 
             this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.BoolFtyGroupList = true;
             this.txtfactory1.FilteMDivision = false;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsProduceFty = false;
             this.txtfactory1.IssupportJunk = false;
             this.txtfactory1.Location = new System.Drawing.Point(105, 114);
+            this.txtfactory1.MDivision = null;
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
             this.txtfactory1.TabIndex = 104;
@@ -170,7 +182,7 @@
             this.radioTransferIn.AutoSize = true;
             this.radioTransferIn.Checked = true;
             this.radioTransferIn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioTransferIn.Location = new System.Drawing.Point(105, 149);
+            this.radioTransferIn.Location = new System.Drawing.Point(10, 5);
             this.radioTransferIn.Name = "radioTransferIn";
             this.radioTransferIn.Size = new System.Drawing.Size(95, 21);
             this.radioTransferIn.TabIndex = 105;
@@ -182,18 +194,91 @@
             // 
             this.radioTransferOut.AutoSize = true;
             this.radioTransferOut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioTransferOut.Location = new System.Drawing.Point(218, 149);
+            this.radioTransferOut.Location = new System.Drawing.Point(111, 5);
             this.radioTransferOut.Name = "radioTransferOut";
             this.radioTransferOut.Size = new System.Drawing.Size(107, 21);
             this.radioTransferOut.TabIndex = 106;
             this.radioTransferOut.Text = "Transfer Out";
             this.radioTransferOut.UseVisualStyleBackColor = true;
             // 
+            // lbReportType
+            // 
+            this.lbReportType.Location = new System.Drawing.Point(9, 184);
+            this.lbReportType.Name = "lbReportType";
+            this.lbReportType.Size = new System.Drawing.Size(93, 23);
+            this.lbReportType.TabIndex = 107;
+            this.lbReportType.Text = "Report Type";
+            // 
+            // lbMaterialType
+            // 
+            this.lbMaterialType.Location = new System.Drawing.Point(9, 219);
+            this.lbMaterialType.Name = "lbMaterialType";
+            this.lbMaterialType.Size = new System.Drawing.Size(93, 23);
+            this.lbMaterialType.TabIndex = 108;
+            this.lbMaterialType.Text = "Material Type";
+            // 
+            // comboMaterialType
+            // 
+            this.comboMaterialType.BackColor = System.Drawing.Color.White;
+            this.comboMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMaterialType.FormattingEnabled = true;
+            this.comboMaterialType.IsSupportUnselect = true;
+            this.comboMaterialType.Location = new System.Drawing.Point(105, 219);
+            this.comboMaterialType.Name = "comboMaterialType";
+            this.comboMaterialType.OldText = "";
+            this.comboMaterialType.Size = new System.Drawing.Size(121, 24);
+            this.comboMaterialType.TabIndex = 111;
+            // 
+            // radioPanel1
+            // 
+            this.radioPanel1.Controls.Add(this.radioSummary);
+            this.radioPanel1.Controls.Add(this.radioDetail);
+            this.radioPanel1.Location = new System.Drawing.Point(105, 184);
+            this.radioPanel1.Name = "radioPanel1";
+            this.radioPanel1.Size = new System.Drawing.Size(175, 28);
+            this.radioPanel1.TabIndex = 112;
+            // 
+            // radioSummary
+            // 
+            this.radioSummary.AutoSize = true;
+            this.radioSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSummary.Location = new System.Drawing.Point(78, 3);
+            this.radioSummary.Name = "radioSummary";
+            this.radioSummary.Size = new System.Drawing.Size(85, 21);
+            this.radioSummary.TabIndex = 1;
+            this.radioSummary.Text = "Summary";
+            this.radioSummary.UseVisualStyleBackColor = true;
+            // 
+            // radioDetail
+            // 
+            this.radioDetail.AutoSize = true;
+            this.radioDetail.Checked = true;
+            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail.Location = new System.Drawing.Point(10, 3);
+            this.radioDetail.Name = "radioDetail";
+            this.radioDetail.Size = new System.Drawing.Size(62, 21);
+            this.radioDetail.TabIndex = 0;
+            this.radioDetail.TabStop = true;
+            this.radioDetail.Text = "Detail";
+            this.radioDetail.UseVisualStyleBackColor = true;
+            // 
+            // radioPanel2
+            // 
+            this.radioPanel2.Controls.Add(this.radioTransferIn);
+            this.radioPanel2.Controls.Add(this.radioTransferOut);
+            this.radioPanel2.Location = new System.Drawing.Point(105, 149);
+            this.radioPanel2.Name = "radioPanel2";
+            this.radioPanel2.Size = new System.Drawing.Size(229, 29);
+            this.radioPanel2.TabIndex = 113;
+            // 
             // R05
             // 
-            this.ClientSize = new System.Drawing.Size(491, 206);
-            this.Controls.Add(this.radioTransferOut);
-            this.Controls.Add(this.radioTransferIn);
+            this.ClientSize = new System.Drawing.Size(527, 275);
+            this.Controls.Add(this.radioPanel2);
+            this.Controls.Add(this.radioPanel1);
+            this.Controls.Add(this.comboMaterialType);
+            this.Controls.Add(this.lbMaterialType);
+            this.Controls.Add(this.lbReportType);
             this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.txtMdivision1);
             this.Controls.Add(this.txtSP2);
@@ -206,7 +291,11 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "R05";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R05. Material Transfer In / Out Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -221,8 +310,15 @@
             this.Controls.SetChildIndex(this.txtSP2, 0);
             this.Controls.SetChildIndex(this.txtMdivision1, 0);
             this.Controls.SetChildIndex(this.txtfactory1, 0);
-            this.Controls.SetChildIndex(this.radioTransferIn, 0);
-            this.Controls.SetChildIndex(this.radioTransferOut, 0);
+            this.Controls.SetChildIndex(this.lbReportType, 0);
+            this.Controls.SetChildIndex(this.lbMaterialType, 0);
+            this.Controls.SetChildIndex(this.comboMaterialType, 0);
+            this.Controls.SetChildIndex(this.radioPanel1, 0);
+            this.Controls.SetChildIndex(this.radioPanel2, 0);
+            this.radioPanel1.ResumeLayout(false);
+            this.radioPanel1.PerformLayout();
+            this.radioPanel2.ResumeLayout(false);
+            this.radioPanel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -243,5 +339,12 @@
         private Class.Txtfactory txtfactory1;
         private Win.UI.RadioButton radioTransferIn;
         private Win.UI.RadioButton radioTransferOut;
+        private Win.UI.Label lbReportType;
+        private Win.UI.Label lbMaterialType;
+        private Win.UI.ComboBox comboMaterialType;
+        private Win.UI.RadioPanel radioPanel1;
+        private Win.UI.RadioButton radioSummary;
+        private Win.UI.RadioButton radioDetail;
+        private Win.UI.RadioPanel radioPanel2;
     }
 }
