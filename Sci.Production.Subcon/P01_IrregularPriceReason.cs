@@ -706,14 +706,16 @@ DROP TABLE #tmp_AllOrders --,#BePurchased
                     //    ShowErr(sql.ToString(), result);
                     // }
                     // IrregularPriceReason_InDB = MyUtility.Check.Empty(IrregularPriceReason_InDB) ? new DataTable() : IrregularPriceReason_InDB;
-                    sql.Append(" SELECT DISTINCT al.POID ,al.ArtworkTypeID ,o.BrandID ,o.StyleID ,al.POPrice, al.StandardPrice ,al.SubconReasonID ,al.AddDate ,al.AddName ,al.EditDate ,al.EditName " + Environment.NewLine);
 
+                    sql.Append(" alter table #TmpSource alter column OrderID varchar(13)  " + Environment.NewLine);
+                    sql.Append(" alter table #TmpSource alter column ArtworkTypeID varchar(20)  " + Environment.NewLine);
+                    sql.Append(" SELECT DISTINCT al.POID ,al.ArtworkTypeID ,o.BrandID ,o.StyleID ,al.POPrice, al.StandardPrice ,al.SubconReasonID ,al.AddDate ,al.AddName ,al.EditDate ,al.EditName " + Environment.NewLine);
                     sql.Append(" FROM #TmpSource t" + Environment.NewLine);
                     sql.Append(" INNER JOIN Orders o ON o.ID = t.OrderID" + Environment.NewLine);
                     sql.Append(" INNER JOIN ArtworkPO_IrregularPrice al ON al.POID = o.POID AND al.ArtworkTypeID = t.ArtworkTypeID" + Environment.NewLine);
                     sql.Append(" INNER JOIN SubconReason sr ON sr.Type = 'IP' AND sr.ID = al.SubconReasonID" + Environment.NewLine);
 
-                    result = MyUtility.Tool.ProcessWithDatatable(this._detailDatas, string.Empty, sql.ToString(), out IrregularPriceReason_InDB, "#TmpSource", null, parameters);
+                    result = MyUtility.Tool.ProcessWithDatatable(this._detailDatas, null, sql.ToString(), out IrregularPriceReason_InDB, "#TmpSource", null, parameters);
 
                     if (!result)
                     {

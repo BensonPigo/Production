@@ -707,7 +707,8 @@ select	ar.LocalSuppId
         , Style = o.StyleID
 		, o.POID
         , [ArtworkReqID] = ar.ID
-        , [Article] = (SELECT Stuff((select concat( ',',Article)   from Order_Article with (nolock) where ID = o.ID FOR XML PATH('')),1,1,'') )
+        , ard.Article
+        , ard.SizeCode
         , o.Category
 from ArtworkReq ar  with (nolock)
 inner join ArtworkReq_Detail ard with (nolock) on ar.ID = ard.ID 
