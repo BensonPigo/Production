@@ -789,26 +789,52 @@ SELECT STUFF(
                                 break;
                         }
 
-                        insertCmd.Append($@"
+                        if (fGWT.Scale == null)
+                        {
+                            insertCmd.Append($@"
 
 INSERT INTO GarmentTest_Detail_FGWT
-           (ID, No, Location, Type)
+           (ID, No, Location, Type ,TestDetail)
      VALUES
            ( {garmentTest_Detail_ID}
            , {garmentTest_Detail_No}
            , @Location{idx}
-           , @Type{idx})
+           , @Type{idx}
+           , @TestDetail{idx})
 
 ");
+                        }
+                        else
+                        {
+                            insertCmd.Append($@"
+
+INSERT INTO GarmentTest_Detail_FGWT
+           (ID, No, Location, Type ,Scale,TestDetail)
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx}
+           , ''
+           , @TestDetail{idx})
+
+");
+                        }
+
                         parameters.Add(new SqlParameter($"@Location{idx}", location));
                         parameters.Add(new SqlParameter($"@Type{idx}", fGWT.Type));
+                        parameters.Add(new SqlParameter($"@TestDetail{idx}", fGWT.TestDetail));
                         idx++;
                     }
 
                     // 找不到才Insert
                     if (!MyUtility.Check.Seek($"SELECT 1 FROM GarmentTest_Detail_FGWT WHERE ID ='{garmentTest_Detail_ID}' AND NO='{garmentTest_Detail_No}'"))
                     {
-                        DBProxy.Current.Execute(null, insertCmd.ToString(), parameters);
+                        DualResult r = DBProxy.Current.Execute(null, insertCmd.ToString(), parameters);
+                        if (!r)
+                        {
+                            this.ShowErr(r);
+                        }
                     }
                     #endregion
                 }

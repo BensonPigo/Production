@@ -2505,7 +2505,7 @@
     <Build Include="dbo\Tables\FtyStdRate_EMB.sql" />
     <Build Include="dbo\Functions\GetEmboideryCost.sql" />
     <Build Include="dbo\Functions\GetPrintingCost.sql" />
-    <Build Include="dbo\Tables\�ƻsAccessoryDefect.sql">
+    <Build Include="dbo\Tables\�ƻsAccessoryDefect.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
@@ -2523,6 +2523,8 @@
     <Build Include="dbo\Tables\CutInsRecord_RollDyelot.sql" />
     <Build Include="dbo\Tables\CutInsRecord_Defect.sql" />
     <Build Include="dbo\Tables\CutInsRecord.sql" />
+    <Build Include="dbo\Tables\GarmentTest_Detail_FGWT.sql" />
+    <Build Include="dbo\Tables\SampleGarmentTest_Detail_FGWT.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

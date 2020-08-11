@@ -14,6 +14,8 @@
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_GarmentTest_Detail_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
     [OldUkey]     VARCHAR (10)   CONSTRAINT [DF__tmp_ms_xx__OldUk__560B68B9] DEFAULT ('') NULL,
+    [LOtoFactory] VARCHAR(100) NOT NULL  CONSTRAINT DF_GarmentTest_Detail_LOtoFactory DEFAULT('') , 
+    [FGWTMtlTypeID] VARCHAR(20) NOT NULL  CONSTRAINT DF_GarmentTest_Detail_FGWTMtlTypeID DEFAULT('') , 
     CONSTRAINT [PK_GarmentTest_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC)
 );
 
