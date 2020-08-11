@@ -40,6 +40,7 @@ namespace Sci.Production.Sewing
             .Text("FromComboType", header: "*", width: Widths.AnsiChars(1), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("DisplayFromSewingQty", header: "From SP# Sewing\r\nOutput Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("ToOrderID", header: "To SP#", width: Widths.AnsiChars(14), iseditingreadonly: true)
             .Text("ToComboType", header: "*", width: Widths.AnsiChars(1), settings: this.ToComboType)
             .Text("ToArticle", header: "Article", width: Widths.AnsiChars(8), settings: this.ToArticle)
@@ -327,12 +328,14 @@ Select Distinct Selected = 0,
     FromComboType=sdd.ComboType,
     sdd.Article,
     sdd.SizeCode,
+    [DisplayFromSewingQty] = Sum(sdd.QAQty),
     ToOrderID = '{this.txtToSP.Text}', ToComboType = '', TransferQty = 0,
     ToArticle=sdd.Article,
     ToSizeCode=sdd.SizeCode
 From SewingOutput_Detail_Detail sdd with(nolock)
 Where OrderID = @sp
 And QAQty > 0
+group by sdd.OrderID, sdd.ComboType, sdd.Article, sdd.SizeCode
 ";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, lis, out dt);
