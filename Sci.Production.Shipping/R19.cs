@@ -68,7 +68,7 @@ namespace Sci.Production.Shipping
 
             #region Where 條件
             List<SqlParameter> paras = new List<SqlParameter>();
-            string where = $@"e.Eta between '{this.eta_s}'AND '{this.eta_e}' 
+            string where = $@" e.Junk = 0 and e.Eta between '{this.eta_s}'AND '{this.eta_e}' 
 and exists (select 1 from Factory where e.FactoryID = id and IsProduceFty = 1) ";
 
             if (!MyUtility.Check.Empty(this.wk_s))
