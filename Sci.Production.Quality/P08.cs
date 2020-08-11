@@ -119,7 +119,7 @@ namespace Sci.Production.Quality
                  .DateTime("PasteTime", header: "Paste Shadeband Time", width: Widths.AnsiChars(20))
                  .DateTime("PassQATime", header: "Pass QA Time", width: Widths.AnsiChars(20))
                  .Text("ShadebandDocLocationID", header: "Shadeband Location", width: Widths.AnsiChars(10), settings: cellShadebandDocLocationID)
-                 .Text("ShadeBond", header: "hade \r\n Band", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("ShadeBond", header: "shade \r\n Band", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Date("ShadeBondDate", header: "Last Shade \r\n Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15))
                  ;
