@@ -262,12 +262,14 @@ select distinct	st1.OrderID,
 		st1.PatternPanel,
 		st1.FabricPanelCode,
 		CutpartCount.PatternCode,
+        CutpartCount.PatternDesc,
 		CutpartCount.QtyBySet,
 		CutpartCount.QtyBySubprocess
 into #QtyBySetPerCutpart{subprocessIDtmp}
 from #AllOrders st1
 outer apply (
 	select	bunD.Patterncode
+            ,bunD.PatternDesc
 			, QtyBySet = count (1)
 			, QtyBySubprocess = sum (isnull (QtyBySubprocess.v, 0))
 	from (
@@ -313,7 +315,7 @@ outer apply (
 									where BunDArt.Bundleno = bunD.BundleNo
 										and BunDArt.SubprocessId = '{subprocessID}'))
 	) QtyBySubprocess
-	group by bunD.Patterncode
+	group by bunD.Patterncode,bunD.PatternDesc
 ) CutpartCount
 WHERE Patterncode IS NOT NULL
 
@@ -362,6 +364,7 @@ select    st0.Orderid
 		, st0.PatternPanel
 		, bunD.FabricPanelCode
 		, st0.PatternCode
+        , st0.PatternDesc
 		, bunIO.InComing
 		, bunIO.OutGoing
 		, [Qty] = IIF( RealCont.Ctn < Std.Ctn OR IsLackPatternPanel.Ctn > 0,0 ,bunD.Qty)  ----如果部位數有少，直接歸零不算；如果超過沒關係
