@@ -40,6 +40,7 @@
             this.txtConsignee = new Sci.Win.UI.TextBox();
             this.txtshipmode = new Sci.Production.Class.Txtshipmode();
             this.txtscifactory = new Sci.Production.Class.Txtscifactory();
+            this.label6 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -194,11 +195,23 @@
             this.txtscifactory.Size = new System.Drawing.Size(66, 23);
             this.txtscifactory.TabIndex = 4;
             // 
+            // label6
+            // 
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label6.Location = new System.Drawing.Point(13, 185);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(156, 23);
+            this.label6.TabIndex = 106;
+            this.label6.Text = "Junk WK# is excluded";
+            this.label6.TextStyle.Color = System.Drawing.Color.Red;
+            // 
             // R19
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(514, 224);
+            this.ClientSize = new System.Drawing.Size(514, 232);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.txtscifactory);
             this.Controls.Add(this.txtshipmode);
             this.Controls.Add(this.txtConsignee);
@@ -233,6 +246,7 @@
             this.Controls.SetChildIndex(this.txtConsignee, 0);
             this.Controls.SetChildIndex(this.txtshipmode, 0);
             this.Controls.SetChildIndex(this.txtscifactory, 0);
+            this.Controls.SetChildIndex(this.label6, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -252,5 +266,6 @@
         private Win.UI.TextBox txtConsignee;
         private Class.Txtshipmode txtshipmode;
         private Class.Txtscifactory txtscifactory;
+        private Win.UI.Label label6;
     }
 }
