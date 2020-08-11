@@ -105,7 +105,7 @@ into #tmp_Orders
 from Orders o WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 inner join Style s  WITH (NOLOCK) on o.StyleUkey = s.Ukey
-inner join Factory f WITH (NOLOCK) on f.id = o.FtyGroup and f.IsProduceFty = 1
+inner join Factory f WITH (NOLOCK) on f.id = o.FactoryID and f.IsProduceFty = 1
 where o.Category = 'B'");
 
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
