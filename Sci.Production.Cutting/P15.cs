@@ -934,8 +934,8 @@ and ord.mDivisionid = '{this.keyWord}'
 
         private void AddPatternAllpart(long ukey, long iden)
         {
-            DataTable dtp = this.patternTbOri.Select($"Ukey = {ukey}").CopyToDataTable();
-            DataTable dta = this.allpartTbOri.Select($"Ukey = {ukey}").CopyToDataTable();
+            DataTable dtp = this.patternTbOri.Select($"Ukey = {ukey}").TryCopyToDataTable(this.patternTbOri);
+            DataTable dta = this.allpartTbOri.Select($"Ukey = {ukey}").TryCopyToDataTable(this.allpartTbOri);
             dtp.AsEnumerable().ToList().ForEach(r => r["iden"] = iden);
             dta.AsEnumerable().ToList().ForEach(r => r["iden"] = iden);
             this.patternTb.Merge(dtp);
@@ -1985,7 +1985,7 @@ INSERT INTO [dbo].[Bundle_Detail_Order]([BundleNo],[OrderID],[Qty]) Values('{bun
             // item 自動帶入有可能超過20碼
             if (cutrefAy.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["item"]).Length > 20).Any())
             {
-                DataTable wdt = this.CutRefTb.Select("Sel=1 and len(item) > 20").CopyToDataTable();
+                DataTable wdt = this.CutRefTb.Select("Sel=1 and len(item) > 20").TryCopyToDataTable(this.CutRefTb);
                 MsgGridForm m = new MsgGridForm(wdt, "Item string length can not more 20", "Warning")
                 {
                     Width = 800,
@@ -2021,7 +2021,7 @@ INSERT INTO [dbo].[Bundle_Detail_Order]([BundleNo],[OrderID],[Qty]) Values('{bun
             var patternList = this.patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && ukeyList.Contains(MyUtility.Convert.GetLong(w["ukey"]))).ToList();
 
             // 有勾選, 判斷Pattern(Cutpart_grid)的Artwork  不可為空
-            if (patternList.CopyToDataTable().Select("PatternCode<>'ALLPARTS' and (art='' or art is null) ").Any())
+            if (patternList.TryCopyToDataTable(this.patternTb).Select("PatternCode<>'ALLPARTS' and (art='' or art is null) ").Any())
             {
                 MyUtility.Msg.WarningBox("<Art> can not be empty!");
                 return false;
