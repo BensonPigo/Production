@@ -19,6 +19,8 @@
     [StockType]    VARCHAR (1)     CONSTRAINT [DF_Receiving_Detail_StockType] DEFAULT ('') NULL,
     [Ukey]         BIGINT          IDENTITY (1, 1) NOT NULL,
     [CompleteTime] DATETIME NULL, 
+    [CombineBarcode] VARCHAR NULL, 
+    [Unoriginal] BIT NULL, 
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -119,3 +121,22 @@ GO
 CREATE NONCLUSTERED INDEX [id_UKEY]
     ON [dbo].[Receiving_Detail]([Id] ASC, [Ukey] ASC);
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'用來當作合併布卷條碼判斷值',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Receiving_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CombineBarcode'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否是來源值',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Receiving_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Unoriginal'
