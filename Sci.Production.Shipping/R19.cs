@@ -69,7 +69,32 @@ namespace Sci.Production.Shipping
             #region Where 條件
             List<SqlParameter> paras = new List<SqlParameter>();
             string where = $@" e.Junk = 0 and e.Eta between '{this.eta_s}'AND '{this.eta_e}' 
-and exists (select 1 from Factory where e.FactoryID = id and IsProduceFty = 1) ";
+and (   exists (select 1 from Factory where e.FactoryID = id and IsProduceFty = 1) or
+        exists (select 1 
+                from Export_Detail ed 
+                left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
+                outer apply (select [val] = case when ed.PoType = 'M' and ed.FabricType = 'M' 
+		                     then (
+		                     	select TOP 1 mpo.FactoryID 
+		                     	from SciMachine_MachinePO mpo, SciMachine_MachinePO_Detail mpod 
+		                     	where mpo.ID = mpod.ID and mpod.ID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2
+		                     )
+                             when ed.PoType = 'M' and ed.FabricType = 'P' 
+		                      then (
+		                     	select TOP 1 ppo.FactoryID 
+		                     	from SciMachine_PartPO ppo, SciMachine_PartPO_Detail ppod 
+		                     	where ppo.ID = ppod.ID and ppod.TPEPOID = ed.PoID and ppod.Seq1 = ed.Seq1 and ppod.seq2 = ed.Seq2
+		                     ) 
+		                     when ed.PoType = 'M' and ed.FabricType = 'O' 
+		                     then (
+		                     	select TOP 1 mpo.Factoryid 
+		                     	from SciMachine_MiscPO mpo, SciMachine_MiscPO_Detail mpod 
+		                     	where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2
+		                     ) 
+	                         else o.FactoryID end) FatoryID
+                inner join Factory f on f.ID = FatoryID.val and f.IsProduceFty = 1
+                where e.ID = ed.ID)
+    )";
 
             if (!MyUtility.Check.Empty(this.wk_s))
             {
