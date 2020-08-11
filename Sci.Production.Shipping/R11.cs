@@ -563,6 +563,7 @@ with ExportData as (
 		   , DoortoDoorDelivery = iif(dtd1.v = 1 or dtd2.v = 1,'Y','')
 		   , e.FactoryID
 		   , e.Consignee
+           , e.ETA
 	from Export e WITH (NOLOCK) 
 	left join Supp s WITH (NOLOCK) on s.ID = e.Forwarder
 	outer apply(
@@ -626,6 +627,7 @@ FtyExportData as (
 		   , DoortoDoorDelivery =''
 		   , [FactoryID]=''
 		   , f.Consignee
+           , [ETA] = null
 	from FtyExport f WITH (NOLOCK) 
 	left join LocalSupp l WITH (NOLOCK) on l.ID = f.Forwarder
 	where not exists (
@@ -662,10 +664,9 @@ FtyExportData as (
 select	IE
 		, Type
 		, ID
+		, ETA
 		, FactoryID
 		, Consignee
-		, '' as Shipper
-		, '' as BrandID
 		, '' as Category
 		, 0 as OrderQty
 		, LoadingOrigin
@@ -680,6 +681,7 @@ select	IE
 		, Blno
 		, NoImportChg
 		, DoortoDoorDelivery 
+        , '' as BrandID
 from ExportData
 where (Blno <> '' and APId1 is null) 
 	  or (Blno = '' and APId2 is null)
@@ -687,10 +689,9 @@ union all
 select	IE
 		, Type
 		, ID
+		, ETA
 		, FactoryID
 		, Consignee
-		, Shipper = ''
-		, BrandID = '' 
 		, Category = '' 
 		, OrderQty = 0 
 		, LoadingOrigin
@@ -705,6 +706,7 @@ select	IE
 		, Blno
 		, NoImportChg
 		, DoortoDoorDelivery 
+        , BrandID = '' 
 from FtyExportData");
                 #endregion
             }
