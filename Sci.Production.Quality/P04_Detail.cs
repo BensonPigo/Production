@@ -834,8 +834,8 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         ,f.Scale
         ,f.TestDetail
         ,[Result]=IIF(f.Scale IS NOT NULL
-	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass','Fail')
-	        ,IIF(gd.FGWTMtlTypeID <> '' AND gd.FGWTMtlTypeID  IS NOT NULL
+	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
+	        ,IIF(AfterWash IS NOT NULL AND BeforeWash IS NOT NULL
 			        ,IIF(gd.FGWTMtlTypeID='KNIT' AND -2 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 3
 					        , 'Pass'
 					        ,IIF(gd.FGWTMtlTypeID='WOVEN' AND -3 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 5
@@ -869,7 +869,7 @@ order by f.Location, f.Type";
 	t.[BeforeWash]  = s.[BeforeWash],
 	t.[SizeSpec]  = s.[SizeSpec],
     t.[AfterWash]	= s.[AfterWash],
-    t.[Shrinkage]	=IIF(s.BeforeWash=0 OR s.BeforeWash IS NULL, NULL, (s.AfterWash - s.BeforeWash) * 1.0 / s.BeforeWash * 100),
+    t.[Shrinkage]	= s.Shrinkage,
     t.[Scale]	= s.[Scale]
 	;
 
@@ -889,8 +889,8 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         ,f.Scale
         ,f.TestDetail
         ,[Result]=IIF(f.Scale IS NOT NULL
-	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass','Fail')
-	        ,IIF(gd.FGWTMtlTypeID <> '' AND gd.FGWTMtlTypeID  IS NOT NULL
+	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
+	        ,IIF( AfterWash IS NOT NULL AND BeforeWash IS NOT NULL
 			        ,IIF(gd.FGWTMtlTypeID='KNIT' AND -2 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 3
 					        , 'Pass'
 					        ,IIF(gd.FGWTMtlTypeID='WOVEN' AND -3 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 5
@@ -3111,7 +3111,10 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
             worksheet.Cells[6, 3] = "T1 Factory Name: " + MyUtility.GetValue.Lookup($"SELECT BrandFTYCode FROM Orders WHERE ID='{this.MasterRow["OrderID"]}'");
             worksheet.Cells[6, 4] = "LO to Factory: " + MyUtility.Convert.GetString(this.Deatilrow["LOtoFactory"]);
 
-            worksheet.Cells[8, 1] = "Date: " + MyUtility.Convert.GetDate(this.Deatilrow["SubmitDate"]).Value.ToString("yyyy/MM/dd");
+            if (MyUtility.Convert.GetDate(this.Deatilrow["SubmitDate"]).HasValue)
+            {
+                worksheet.Cells[8, 1] = "Date: " + MyUtility.Convert.GetDate(this.Deatilrow["SubmitDate"]).Value.ToString("yyyy/MM/dd");
+            }
 
             int copyCount = this.dtFGWT.Rows.Count - 2;
 
@@ -3152,43 +3155,7 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 worksheet.Cells[startRowIndex, 5] = MyUtility.Convert.GetString(dr["TestDetail"]);
 
                 // adidas pass
-                if (dr["Scale"] != DBNull.Value)
-                {
-                    if (MyUtility.Convert.GetString(dr["Scale"]) == "4-5" || MyUtility.Convert.GetString(dr["Scale"]) == "5")
-                    {
-                        worksheet.Cells[startRowIndex, 6] = "Pass";
-                    }
-                    else
-                    {
-                        worksheet.Cells[startRowIndex, 6] = "Fail";
-                    }
-                }
-                else
-                {
-                    string fGWTMtlTypeID = MyUtility.GetValue.Lookup($"SELECT  ISNULL(FGWTMtlTypeID,'')  FROM GarmentTest_Detail WHERE ID={this.Deatilrow["ID"]} AND No ={this.Deatilrow["No"]} ");
-
-                    if (!MyUtility.Check.Empty(fGWTMtlTypeID))
-                    {
-                        double r = MyUtility.Convert.GetDouble(dr["AfterWash"]) - MyUtility.Convert.GetDouble(dr["BeforeWash"]);
-
-                        if (fGWTMtlTypeID.ToUpper() == "KNIT" && -2 < r && r < 3)
-                        {
-                            worksheet.Cells[startRowIndex, 6] = "Pass";
-                        }
-                        else if (fGWTMtlTypeID.ToUpper() == "WOVEN" && -3 < r && r < 5)
-                        {
-                            worksheet.Cells[startRowIndex, 6] = "Pass";
-                        }
-                        else
-                        {
-                            worksheet.Cells[startRowIndex, 6] = "Fail";
-                        }
-                    }
-                    else
-                    {
-                        worksheet.Cells[startRowIndex, 6] = string.Empty;
-                    }
-                }
+                worksheet.Cells[startRowIndex, 6] = MyUtility.Convert.GetString(dr["Result"]);
 
                 startRowIndex++;
             }

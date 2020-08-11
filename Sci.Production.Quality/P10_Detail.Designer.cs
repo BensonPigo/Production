@@ -73,13 +73,6 @@
             this.txtReportNo = new Sci.Win.UI.TextBox();
             this.txtStyle = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.tabFGWT = new System.Windows.Forms.TabPage();
-            this.panel10 = new Sci.Win.UI.Panel();
-            this.label43 = new System.Windows.Forms.Label();
-            this.label42 = new System.Windows.Forms.Label();
-            this.panel11 = new Sci.Win.UI.Panel();
-            this.gridFGWT = new Sci.Win.UI.Grid();
-            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel9 = new Sci.Win.UI.Panel();
             this.gridShrinkage = new Sci.Win.UI.Grid();
@@ -128,6 +121,13 @@
             this.panel8 = new Sci.Win.UI.Panel();
             this.gridAppearance = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.tabFGWT = new System.Windows.Forms.TabPage();
+            this.panel10 = new Sci.Win.UI.Panel();
+            this.label43 = new System.Windows.Forms.Label();
+            this.label42 = new System.Windows.Forms.Label();
+            this.panel11 = new Sci.Win.UI.Panel();
+            this.gridFGWT = new Sci.Win.UI.Grid();
+            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.btnAmend = new Sci.Win.UI.Button();
@@ -141,11 +141,6 @@
             this.panel3 = new Sci.Win.UI.Panel();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.tabFGWT.SuspendLayout();
-            this.panel10.SuspendLayout();
-            this.panel11.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.panel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridShrinkage)).BeginInit();
@@ -159,6 +154,11 @@
             this.panel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
+            this.tabFGWT.SuspendLayout();
+            this.panel10.SuspendLayout();
+            this.panel11.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).BeginInit();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -616,98 +616,13 @@
             this.label1.TabIndex = 20;
             this.label1.Text = "Style#";
             // 
-            // tabFGWT
-            // 
-            this.tabFGWT.Controls.Add(this.panel10);
-            this.tabFGWT.Controls.Add(this.panel11);
-            this.tabFGWT.Location = new System.Drawing.Point(4, 25);
-            this.tabFGWT.Name = "tabFGWT";
-            this.tabFGWT.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFGWT.Size = new System.Drawing.Size(1134, 420);
-            this.tabFGWT.TabIndex = 2;
-            this.tabFGWT.Text = "FGWT";
-            // 
-            // panel10
-            // 
-            this.panel10.Controls.Add(this.label43);
-            this.panel10.Controls.Add(this.label42);
-            this.panel10.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel10.Location = new System.Drawing.Point(3, 364);
-            this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(1128, 53);
-            this.panel10.TabIndex = 2;
-            // 
-            // label43
-            // 
-            this.label43.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label43.AutoSize = true;
-            this.label43.ForeColor = System.Drawing.Color.Red;
-            this.label43.Location = new System.Drawing.Point(6, 28);
-            this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(497, 17);
-            this.label43.TabIndex = 9;
-            this.label43.Text = "WOVEN： When -3 < (AfterWash - BeforeWash) < +5 Result Pass, other Fail.";
-            // 
-            // label42
-            // 
-            this.label42.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label42.AutoSize = true;
-            this.label42.ForeColor = System.Drawing.Color.Red;
-            this.label42.Location = new System.Drawing.Point(6, 6);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(480, 17);
-            this.label42.TabIndex = 8;
-            this.label42.Text = "KNIT ： When -2 < (AfterWash - BeforeWash) < +3 Result Pass, other Fail.";
-            // 
-            // panel11
-            // 
-            this.panel11.Controls.Add(this.gridFGWT);
-            this.panel11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel11.Location = new System.Drawing.Point(3, 3);
-            this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(1128, 414);
-            this.panel11.TabIndex = 1;
-            // 
-            // gridFGWT
-            // 
-            this.gridFGWT.AllowUserToAddRows = false;
-            this.gridFGWT.AllowUserToDeleteRows = false;
-            this.gridFGWT.AllowUserToResizeRows = false;
-            this.gridFGWT.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridFGWT.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridFGWT.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridFGWT.DataSource = this.listControlBindingSource3;
-            this.gridFGWT.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridFGWT.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridFGWT.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridFGWT.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridFGWT.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridFGWT.Location = new System.Drawing.Point(0, 0);
-            this.gridFGWT.Name = "gridFGWT";
-            this.gridFGWT.ReadOnly = true;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridFGWT.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridFGWT.RowTemplate.Height = 24;
-            this.gridFGWT.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridFGWT.ShowCellToolTips = false;
-            this.gridFGWT.Size = new System.Drawing.Size(1128, 414);
-            this.gridFGWT.TabIndex = 1;
-            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.panel9);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1134, 423);
+            this.tabPage2.Size = new System.Drawing.Size(1134, 420);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Shrinkage";
             // 
@@ -718,7 +633,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 3);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(1128, 417);
+            this.panel9.Size = new System.Drawing.Size(1128, 414);
             this.panel9.TabIndex = 62;
             // 
             // gridShrinkage
@@ -738,20 +653,20 @@
             this.gridShrinkage.Location = new System.Drawing.Point(0, 0);
             this.gridShrinkage.Name = "gridShrinkage";
             this.gridShrinkage.ReadOnly = true;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridShrinkage.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridShrinkage.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridShrinkage.RowTemplate.Height = 24;
             this.gridShrinkage.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridShrinkage.ShowCellToolTips = false;
-            this.gridShrinkage.Size = new System.Drawing.Size(1128, 274);
+            this.gridShrinkage.Size = new System.Drawing.Size(1128, 271);
             this.gridShrinkage.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -761,7 +676,7 @@
             this.flowLayoutPanel1.Controls.Add(this.panel6);
             this.flowLayoutPanel1.Controls.Add(this.panel5);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 274);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 271);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(1128, 143);
             this.flowLayoutPanel1.TabIndex = 61;
@@ -1377,14 +1292,14 @@
             this.gridAppearance.Location = new System.Drawing.Point(0, 0);
             this.gridAppearance.Name = "gridAppearance";
             this.gridAppearance.ReadOnly = true;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAppearance.RowTemplate.Height = 24;
@@ -1393,6 +1308,91 @@
             this.gridAppearance.Size = new System.Drawing.Size(1128, 414);
             this.gridAppearance.TabIndex = 1;
             this.gridAppearance.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.gridAppearance_CellBeginEdit);
+            // 
+            // tabFGWT
+            // 
+            this.tabFGWT.Controls.Add(this.panel10);
+            this.tabFGWT.Controls.Add(this.panel11);
+            this.tabFGWT.Location = new System.Drawing.Point(4, 25);
+            this.tabFGWT.Name = "tabFGWT";
+            this.tabFGWT.Padding = new System.Windows.Forms.Padding(3);
+            this.tabFGWT.Size = new System.Drawing.Size(1134, 420);
+            this.tabFGWT.TabIndex = 2;
+            this.tabFGWT.Text = "FGWT";
+            // 
+            // panel10
+            // 
+            this.panel10.Controls.Add(this.label43);
+            this.panel10.Controls.Add(this.label42);
+            this.panel10.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel10.Location = new System.Drawing.Point(3, 364);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(1128, 53);
+            this.panel10.TabIndex = 2;
+            // 
+            // label43
+            // 
+            this.label43.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label43.AutoSize = true;
+            this.label43.ForeColor = System.Drawing.Color.Red;
+            this.label43.Location = new System.Drawing.Point(6, 28);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(497, 17);
+            this.label43.TabIndex = 9;
+            this.label43.Text = "WOVEN： When -3 < (AfterWash - BeforeWash) < +5 Result Pass, other Fail.";
+            // 
+            // label42
+            // 
+            this.label42.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label42.AutoSize = true;
+            this.label42.ForeColor = System.Drawing.Color.Red;
+            this.label42.Location = new System.Drawing.Point(6, 6);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(480, 17);
+            this.label42.TabIndex = 8;
+            this.label42.Text = "KNIT ： When -2 < (AfterWash - BeforeWash) < +3 Result Pass, other Fail.";
+            // 
+            // panel11
+            // 
+            this.panel11.Controls.Add(this.gridFGWT);
+            this.panel11.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel11.Location = new System.Drawing.Point(3, 3);
+            this.panel11.Name = "panel11";
+            this.panel11.Size = new System.Drawing.Size(1128, 355);
+            this.panel11.TabIndex = 1;
+            // 
+            // gridFGWT
+            // 
+            this.gridFGWT.AllowUserToAddRows = false;
+            this.gridFGWT.AllowUserToDeleteRows = false;
+            this.gridFGWT.AllowUserToResizeRows = false;
+            this.gridFGWT.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridFGWT.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridFGWT.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridFGWT.DataSource = this.listControlBindingSource3;
+            this.gridFGWT.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridFGWT.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridFGWT.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridFGWT.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridFGWT.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridFGWT.Location = new System.Drawing.Point(0, 0);
+            this.gridFGWT.Name = "gridFGWT";
+            this.gridFGWT.ReadOnly = true;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridFGWT.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridFGWT.RowTemplate.Height = 24;
+            this.gridFGWT.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridFGWT.ShowCellToolTips = false;
+            this.gridFGWT.Size = new System.Drawing.Size(1128, 355);
+            this.gridFGWT.TabIndex = 1;
             // 
             // panel1
             // 
@@ -1524,12 +1524,6 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            this.tabFGWT.ResumeLayout(false);
-            this.panel10.ResumeLayout(false);
-            this.panel10.PerformLayout();
-            this.panel11.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.panel9.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridShrinkage)).EndInit();
@@ -1547,6 +1541,12 @@
             this.panel8.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
+            this.tabFGWT.ResumeLayout(false);
+            this.panel10.ResumeLayout(false);
+            this.panel10.PerformLayout();
+            this.panel11.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).EndInit();
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
