@@ -385,7 +385,8 @@ where v.VNContractID = @contract
         因此發料紀錄只有母單才有
         * 子單 : AutoCreate = 1
 
-        WIP 只須確認尚未關倉的訂單即可
+        WIP 確認尚未關倉的訂單 &&
+		關倉日期比 GenerateDate 晚，代表當天還沒有關倉
 */
 select sdd.OrderID
 		, sdd.ComboType
@@ -395,7 +396,7 @@ select sdd.OrderID
 into #tmpSewingOutput_WHNotClose
 from #tmpOrderList t
 inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = t.id
-where   t.WhseClose is null
+where   (t.WhseClose is null or t.WhseClose >= @GenerateDate)
         and not exists (
             select 1
             from SewingOutput_Detail sd With (NoLock)
@@ -439,6 +440,8 @@ from (
 			, QAQty = sum(sdd.QAQty)
 	from #tmpOrderList t
     inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = t.id
+	inner join SewingOutput s WITH (NOLOCK) on s.id=sdd.ID
+	where s.OutputDate <= @GenerateDate
 	group by sdd.OrderID, sdd.ComboType, sdd.Article, sdd.SizeCode   
 ) ASO 
 full outer join (
@@ -454,6 +457,8 @@ full outer join (
 			, QAQty = sum (sdd.QAQty)
 	from #tmpOrderList t
     inner join SewingOutput_Detail_Detail_Garment sdd WITH (NOLOCK) on sdd.OrderIDfrom = t.id
+	inner join SewingOutput s with(nolock) on s.ID=sdd.ID
+	where s.OutputDate <= @GenerateDate
 	group by sdd.OrderIDfrom, sdd.ComboType, sdd.Article, sdd.SizeCode
 ) AGO on ASO.OrderId = AGO.OrderIDfrom
 		    and ASO.ComboType = AGO.ComboType
@@ -580,6 +585,7 @@ from (
                 from TransferIn WITH (NOLOCK)
 		        where InvNo = fe.InvNo 
                       and status='Confirmed'
+					  and IssueDate <= @GenerateDate -- 特定日期沒有倉庫收料紀錄
             )
 	        and not exists (
                 select 1 
@@ -589,7 +595,7 @@ from (
                     and IssueDate <= @GenerateDate -- 特定日期沒有倉庫收料紀錄
             )
             and fe.PortArrival between @EtaRange and @GenerateDate --WK#, FtyWK#（物料進口 - 到貨（港）日在『特定日期（含當天）』 的 30 天內）
-            AND CONVERT(date, fe.AddDate) <= @GenerateDate --排除資料建立日期在『特定日期（含當天）』後的 WK#, Fty WK# 
+            AND CONVERT(date, fe.AddDate) <= @GenerateDate --排除資料建立日期在『特定日期（含當天）』後的 WK#, Fty WK#  
             {whereftys}
 ) a				
 
@@ -642,7 +648,8 @@ from (
                                                   and psd.SEQ1 = fi.Seq1 
                                                   and psd.SEQ2 = fi.Seq2
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
-	where (fi.StockType = 'B' or fi.StockType = 'I')		 
+	where (fi.StockType = 'B' or fi.StockType = 'I')		 	
+    and fi.InQty-fi.OutQty+fi.AdjustQty != 0
           {whereftys}
     
     union all
@@ -699,7 +706,8 @@ from (
         inner join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
         inner join Orders o WITH (NOLOCK) on o.id= l.OrderID
         where 1=1
-              {whereftys}
+		and l.InQty-l.OutQty+l.AdjustQty != 0
+        {whereftys}
     )x
 	group by HSCode,NLCode,POID,FactoryID,Seq,RefNo,MaterialType,Description,Roll,Dyelot,StockType,Location,[W/House Unit],[Customs Unit]
 ) a
@@ -777,7 +785,7 @@ from (
 		and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期到 A, B 倉有收發紀錄的訂單
 		and a.Status='Confirmed'
-		and a.Type in ('A','B','C','D')
+		and a.Type in ('A','B','C','D','I')
 	)WH_Issue
 	outer apply(
 		select Qty = isnull(sum(b.Qty),0) 
@@ -868,6 +876,7 @@ from (
 	)WHBorrowBack_Reduce
 
 	where (fi.StockType = 'B' or fi.StockType = 'I')
+    and WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer_Plus.Qty+WHSubTransfer_Reduce.Qty != 0
 		  and exists (
 			select 1 from Receiving a
 			inner join Receiving_Detail b on a.Id=b.Id
@@ -889,7 +898,7 @@ from (
 			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期到 A, B 倉有收發紀錄的訂單
 			and a.Status='Confirmed'
-			and a.Type in ('A','B','C','D')
+			and a.Type in ('A','B','C','D','I')
 			union all
 			select 1 from Issuelack a
 			inner join Issuelack_Detail b on a.Id=b.Id
@@ -1046,7 +1055,7 @@ from (
 			and a.Status = 'Confirmed'
 			and a.Type='D'
 		)WH47
-        where l.InQty-l.OutQty+l.AdjustQty != 0	
+        where WH39.Qty+WH47.Qty+WH60.Qty+WH61.Qty != 0
 			  and exists(
 				select 1 from LocalReceiving a
 				inner join LocalReceiving_Detail b on a.Id=b.Id
@@ -1084,25 +1093,25 @@ from (
 ) a
 
 select 
-a.HSCode
-, a.NLCode
-, a.POID
-, a.FactoryID
-, a.Seq
-, a.Refno
-, a.MaterialType
-, a.Description
-, a.Roll
-, a.Dyelot
-, a.StockType
-, a.Location
+HSCode = isnull(a.HSCode,b.HSCode)
+, NLCode = isnull(a.NLCode,b.NLCode)
+, POID = isnull(a.POID,b.POID)
+, FactoryID = isnull(a.FactoryID,b.FactoryID)
+, Seq = isnull(a.Seq,b.Seq)
+, Refno = isnull(a.Refno,b.Refno)
+, MaterialType = isnull(a.MaterialType,b.MaterialType)
+, Description = isnull(a.Description,b.Description)
+, Roll = isnull(a.Roll,b.Roll)
+, Dyelot = isnull(a.Dyelot,b.Dyelot)
+, StockType = isnull(a.StockType,b.StockType)
+, Location = isnull(a.Location,b.Location)
 , [Qty] = a.Qty + isnull(b.Qty,0)
-, [W/House Unit] = a.[W/House Unit]
+, [W/House Unit] = isnull(a.[W/House Unit],b.[W/House Unit])
 , [W/House Qty(Stock Unit)] = a.[W/House Qty(Stock Unit)] + isnull(b.[W/House Qty(Stock Unit)],0)
-, a.[Stock Unit]
+, [Stock Unit] = isnull(a.[Stock Unit],b.[Stock Unit])
 into #tmpWHQty
 from #tmpWHQty1 a
-left join #tmpWHQty2 b on a.POID = b.POID
+full outer join #tmpWHQty2 b on a.POID = b.POID
 and a.FactoryID = b.FactoryID and a.Seq=b.Seq 
 and a.Roll = b.Roll and a.Dyelot = b.Dyelot
 and a.Refno = b.Refno and a.MaterialType = b.MaterialType 
@@ -1111,6 +1120,7 @@ and a.StockType = b.StockType and a.Location = b.Location
 and a.[Stock Unit] = b.[Stock Unit]
 where a.[W/House Qty(Stock Unit)] + isnull(b.[W/House Qty(Stock Unit)],0) != 0
 
+drop table #tmpWHQty1,#tmpWHQty2
 
 ----------------------------------------------------------------
 ---------------- 08 WIP - 未WH關單------------------------------
@@ -1128,7 +1138,7 @@ from (
 	        , [Qty] = IIF((mdp.OutQty-mdp.LObQty) > 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
 		                ,psd.StockUnit
 		                ,isnull(f.CustomsUnit,'')
-		                ,(WH_Issue.Qty+WH15_16.Qty+WH17.Qty+WH19.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer_Plus.Qty+WHSubTransfer_Reduce.Qty)
+		                ,(WH_Issue.Qty+WH15_16.Qty+WH17.Qty)
 		                ,isnull(f.Width,0)
 		                ,isnull(f.PcsWidth,0)
 		                ,isnull(f.PcsLength,0)
@@ -1145,7 +1155,7 @@ from (
             , [MaterialType] = dbo.GetMaterialTypeDesc(f.Type)
             , f.Description
             , [CustomsUnit] = f.CustomsUnit
-            , [StockQty] = WH_Issue.Qty+WH15_16.Qty+WH17.Qty+WH19.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer_Plus.Qty+WHSubTransfer_Reduce.Qty
+            , [StockQty] = WH_Issue.Qty+WH15_16.Qty+WH17.Qty
             , [StockUnit] = psd.StockUnit
             , [StyleID] = t.StyleID
             , [Color] = isnull(c.Name,'')
@@ -1183,51 +1193,7 @@ from (
 		and IssueDate <= @GenerateDate
 		and a.status ='Confirmed'
 	)WH17
-	outer apply(
-		select Qty = isnull(sum(b.Qty),0) 
-		from SubTransfer a
-		inner join SubTransfer_Detail b on a.Id=b.Id
-		where b.FromPOID = mdp.POID and b.FromSeq1=mdp.seq1 and b.FromSeq2=mdp.Seq2
-		and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-		and a.Status='Confirmed'
-		and a.Type in ('E','D')
-	)WHSubTransfer_Plus
-	outer apply(
-		select Qty = - isnull(sum(b.Qty),0) 
-		from SubTransfer a
-		inner join SubTransfer_Detail b on a.Id=b.Id
-		where b.FromPOID = mdp.POID and b.FromSeq1=mdp.seq1 and b.FromSeq2=mdp.Seq2
-		and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-		and a.Status='Confirmed'
-		and a.Type in ('C')
-	)WHSubTransfer_Reduce
-	outer apply(
-		select Qty = isnull(sum(b.Qty),0) 
-		from TransferOut a
-		inner join TransferOut_Detail b on a.Id=b.Id
-		where b.PoId = mdp.POID and b.Seq1=mdp.seq1 and b.Seq2=mdp.Seq2
-		and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-		and a.Status='Confirmed'
-	)WH19
-	outer apply(
-		select Qty = isnull(sum(b.Qty),0) 
-		from BorrowBack a
-		inner join BorrowBack_Detail b on a.Id=b.Id
-		where b.FromPoId = mdp.POID and b.FromSeq1=mdp.seq1 and b.FromSeq2=mdp.Seq2
-		and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-		and a.Status='Confirmed'
-		and a.Type in ('A','B')
-	)WHBorrowBack_Plus
-	outer apply(
-		select Qty = - isnull(sum(b.Qty),0) 
-		from BorrowBack a
-		inner join BorrowBack_Detail b on a.Id=b.Id
-		where b.ToPoId = mdp.POID and b.ToSeq1=mdp.seq1 and b.ToSeq2=mdp.Seq2
-		and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
-		and a.Status='Confirmed'
-		and a.Type in ('A','B')
-	)WHBorrowBack_Reduce
-    where t.WhseClose is null
+    where (t.WhseClose is null or t.WhseClose >= @GenerateDate)
 	and exists(
 		select 1 from Issue a
 		inner join Issue_Detail b on a.Id = b.Id
@@ -1248,26 +1214,6 @@ from (
 		where b.POID = psd.ID and b.Seq1 = psd.SEQ1 and b.Seq2 = psd.SEQ2
 		and IssueDate <= @GenerateDate
 		and a.status ='Confirmed'
-		union all
-		select 1 from SubTransfer a
-		inner join SubTransfer_Detail b on a.Id=b.Id
-		where b.FromPOID = mdp.POID and b.FromSeq1=mdp.seq1 and b.FromSeq2=mdp.Seq2
-		and IssueDate <= @GenerateDate
-		and a.Status='Confirmed'
-		and a.Type in ('E','D','C')
-		union all
-		select 1 from TransferOut a
-		inner join TransferOut_Detail b on a.Id=b.Id
-		where b.PoId = mdp.POID and b.Seq1=mdp.seq1 and b.Seq2=mdp.Seq2
-		and IssueDate <= @GenerateDate
-		and a.Status='Confirmed'
-		union all
-		select 1 from BorrowBack a
-		inner join BorrowBack_Detail b on a.Id=b.Id
-		where b.FromPoId = mdp.POID and b.FromSeq1=mdp.seq1 and b.FromSeq2=mdp.Seq2
-		and IssueDate <= @GenerateDate
-		and a.Status='Confirmed'
-		and a.Type in ('A','B')
 	)
     
     union all
@@ -1314,7 +1260,7 @@ from (
 			and a.IssueDate <= @GenerateDate --特定日期 A, B 倉有收發紀錄的訂單
 			and a.Status = 'Confirmed'
 	)WH61
-    where t.WhseClose is null
+    where (t.WhseClose is null or t.WhseClose >= @GenerateDate)
 	and exists(
 		select * from LocalIssue a
 		inner join LocalIssue_Detail b on a.Id = b.Id
@@ -1392,9 +1338,7 @@ inner join #tmpCustomSP v on t.StyleID = v.StyleID
 					         and sdd.SizeCode = v.SizeCode
 					         and sdd.Article = v.Article
 left join LocalItem li with (nolock) on li.RefNo = v.RefNo
-where t.WhseClose is null
-
-
+where (t.WhseClose is null or t.WhseClose >= @GenerateDate)
 ----------------------------------------------------------------
 -------------03 WIP在製品(WIP Qty Detail) ----------------------
 ----------------------------------------------------------------
@@ -1577,17 +1521,20 @@ left join #tmpSewingOutput_InFty sdd on sdd.OrderID = tp.ID
 outer apply(
 	select isnull(Sum(pdd.ShipQty),0) as ShipQty
 	from Pullout_Detail_Detail pdd WITH (NOLOCK)
+	inner join Pullout p with(nolock) on p.ID = pdd.ID
 	where pdd.OrderID = tp.ID
             and pdd.Article = sdd.Article 
             and pdd.SizeCode = sdd.SizeCode
+			and p.PulloutDate <= @GenerateDate
 ) PulloutDD
 outer apply(
 	select isnull(Sum(iaq.DiffQty),0) as DiffQty
 	from InvAdjust ia WITH (NOLOCK)
-	inner join InvAdjust_qty iaq WITH (NOLOCK) on ia.id=iaq.id 	
+	inner join InvAdjust_qty iaq WITH (NOLOCK) on ia.id=iaq.id 		
 	where ia.OrderID = sdd.OrderId 
             and iaq.Article = sdd.Article 
             and iaq.SizeCode = sdd.SizeCode
+			and ia.IssueDate <= @GenerateDate
 ) InvAdjustQ
 outer apply(
 	select isnull(Sum(agd.qty),0) as gmtQty
@@ -1597,6 +1544,7 @@ outer apply(
 		    and agd.orderid = sdd.orderid 
             and agd.Article = sdd.Article 
             and agd.SizeCode = sdd.SizeCode
+			and ag.IssueDate <= @GenerateDate
 ) AdjustGMT	
 outer apply (
     select	DisposeQty = isnull (sum (pld.ShipQty), 0)
@@ -1609,6 +1557,7 @@ outer apply (
 	        and sdd.OrderID = pld.OrderID
 	        and sdd.Article = pld.Article
 	        and sdd.SizeCode = pld.SizeCode
+			and cgd.DisposeDate <= @GenerateDate
 ) ClogDispose
 outer apply (
     select qty = sdd.QaQty - (isnull(PulloutDD.ShipQty, 0) + isnull (InvAdjustQ.DiffQty,0)) - (isnull(AdjustGMT.gmtQty,0) + isnull (ClogDispose.DisposeQty, 0))
@@ -1796,6 +1745,7 @@ from (
     inner join orders o WITH (NOLOCK) on o.id=ft.POID
 	where 1=1 
             and ft.StockType='O'
+			and ft.InQty-ft.OutQty+ft.AdjustQty != 0
             {whereftys}
 
     union all
@@ -1833,8 +1783,8 @@ from (
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
 	where 1=1
-          
-          {whereftys}
+	and l.LobQty != 0
+    {whereftys}
 ) a
 
 /*取得區間資料*/
@@ -1933,7 +1883,7 @@ from (
 				and a.Status = 'Confirmed'
 				and a.Type in ('C','D','E')
 			)
-        {whereftys}
+            {whereftys}
 
     union all
 	
@@ -2017,25 +1967,25 @@ from (
 ) a
 
 select 
-a.HSCode
-, a.NLCode
-, a.POID
-, a.FactoryID
-, a.Seq
-, a.Refno
-, a.MaterialType
-, a.Description
-, a.Roll
-, a.Dyelot
-, a.StockType
-, a.Location
+HSCode = isnull(a.HSCode,b.HSCode)
+, NLCode = isnull(a.NLCode,b.NLCode)
+, POID = isnull(a.POID,b.POID)
+, FactoryID = isnull(a.FactoryID,b.FactoryID)
+, Seq = isnull(a.Seq,b.Seq)
+, Refno = isnull(a.Refno,b.Refno)
+, MaterialType = isnull(a.MaterialType,b.MaterialType)
+, [Description] = isnull(a.Description,b.Description)
+, Roll = isnull(a.Roll,b.Roll)
+, Dyelot = isnull(a.Dyelot,b.Dyelot)
+, StockType = isnull(a.StockType,b.StockType)
+, Location = isnull(a.Location,b.Location)
 , [Qty] = a.Qty + isnull(b.Qty,0)
-, a.CustomsUnit 
+, CustomsUnit = isnull(a.CustomsUnit ,b.CustomsUnit)
 , [ScrapQty] = a.ScrapQty + isnull(b.ScrapQty,0)
-, a.StockUnit
+, StockUnit = isnull(a.StockUnit,b.StockUnit)
 into #tmpScrapQty
 from #tmpScrapQty1 a
-left join #tmpScrapQty2 b on a.POID = b.POID
+full outer join #tmpScrapQty2 b on a.POID = b.POID
 and a.FactoryID = b.FactoryID and a.Seq=b.Seq 
 and a.Roll = b.Roll and a.Dyelot = b.Dyelot
 and a.Refno = b.Refno  and a.MaterialType = b.MaterialType
@@ -2088,6 +2038,7 @@ outer apply (
                 where o.id = oqg.id
                       and gmo.ID = oqg.OrderIDFrom
             )
+			and gmo.WhseClose >= @GenerateDate
 ) fromSP
 where   o.Category <>''
         and (   
@@ -2103,6 +2054,7 @@ where   o.Category <>''
                 from Order_Finish orf With (NoLock)
                 where o.id = orf.id
             )
+			or o.WhseClose >= @GenerateDate --訂單的關單日在『特定日期（含當天）』之後
         )
         and o.Qty<>0
         and o.LocalOrder = 0 
@@ -2376,6 +2328,11 @@ drop table  #tmpContract
             , #OnRoadProductQty
             , #tmpScrapQty
             , #tmpOutstanding 
+			, #tmpIssueQty_forwip
+			,#tmpIssueQty_forwip2
+			,#tmpSPNotCloseSewingOutput_forwip
+			,#tmpSPNotCloseSewingOutput_forwip2
+			
 ", MyUtility.Check.Empty(this.hscode) ? string.Empty : string.Format("and HSCode = '{0}'", this.hscode),
                     MyUtility.Check.Empty(this.nlcode) ? string.Empty : string.Format("and NLCode = '{0}'", this.nlcode)));
                 #endregion
