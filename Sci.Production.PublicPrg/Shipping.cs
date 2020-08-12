@@ -774,7 +774,7 @@ on rd.PoId = (select TOP 1 POID
                 where   StyleUkey = t.StyleUkey 
                         and Category = t.Category 
                 order by BuyerDelivery, ID) 
-    and rd.seq1 like 'A_'
+    and rd.seq1 not like 'A%'
 inner join  Receiving r with (nolock) on rd.ID = r.ID and r.Type='B' and r.Status = 'Confirmed' -- W/H P08 Type='B'
 left join PO_Supp_Detail  psd  with (nolock) on psd .ID = rd.PoId and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
 left join Fabric f with (nolock) on f.SCIRefno = psd.SCIRefno
