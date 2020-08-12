@@ -291,8 +291,8 @@ where a.id = @ID", pars, out dtDetail);
                         row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
 
-                //check 相同CombineBarcode, Refno, Color 是否一致
-                if (!MyUtility.Check.Empty(row["CombineBarcode"]) && this.IsAutomation)
+                // check 相同CombineBarcode, Refno, Color 是否一致
+                if (!MyUtility.Check.Empty(row["CombineBarcode"]) && this.IsAutomation && row["FabricType"].ToString() == "F")
                 {
                     // 取出原始資料
                     DataTable dtOriginal = this.DetailDatas.CopyToDataTable().AsEnumerable().Where(r =>
@@ -712,11 +712,14 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
                 string combineBarcode = MyUtility.Convert.GetString(this.CurrentDetailData["CombineBarcode"]);
 
                 this.CurrentDetailData["Roll"] = newvalue;
-                foreach (DataRow dr in this.DetailDatas)
+                if (!MyUtility.Check.Empty(combineBarcode))
                 {
-                    if (string.Compare(dr["CombineBarcode"].ToString(), combineBarcode) == 0)
+                    foreach (DataRow dr in this.DetailDatas)
                     {
-                        dr["Roll"] = newvalue;
+                        if (string.Compare(dr["CombineBarcode"].ToString(), combineBarcode) == 0)
+                        {
+                            dr["Roll"] = newvalue;
+                        }
                     }
                 }
             };
@@ -744,11 +747,14 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
                 string combineBarcode = MyUtility.Convert.GetString(this.CurrentDetailData["CombineBarcode"]);
 
                 this.CurrentDetailData["dyelot"] = newvalue;
-                foreach (DataRow dr in this.DetailDatas)
+                if (!MyUtility.Check.Empty(combineBarcode))
                 {
-                    if (string.Compare(dr["CombineBarcode"].ToString(), combineBarcode) == 0)
+                    foreach (DataRow dr in this.DetailDatas)
                     {
-                        dr["dyelot"] = newvalue;
+                        if (string.Compare(dr["CombineBarcode"].ToString(), combineBarcode) == 0)
+                        {
+                            dr["dyelot"] = newvalue;
+                        }
                     }
                 }
             };
@@ -800,8 +806,6 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             .Text("Fabric", header: "Fabric \r\n Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), settings: roll_setting).Get(out this.col_Roll) // 2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), settings: dyelot_setting).Get(out this.col_Dyelot) // 3
-            .Text("RefNo", header: "Ref#", iseditingreadonly: true)
-            .Text("ColorID", header: "Color", iseditingreadonly: true)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
             .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10) // 5
             .Numeric("qty", header: "In Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, settings: qty_setting) // 6
@@ -810,6 +814,8 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), settings: sk).Get(out cbb_stocktype) // 8
             .Text("Location", header: "Location", iseditingreadonly: false, settings: ts2) // 9
             .Text("Remark", header: "Remark", iseditingreadonly: false) // 10
+            .Text("RefNo", header: "Ref#", iseditingreadonly: true)
+            .Text("ColorID", header: "Color", iseditingreadonly: true)
             ;
             #endregion 欄位設定
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
@@ -861,8 +867,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             DataRow pre_row = this.detailgrid.GetDataRow(this.detailgridbs.Position);
 
             // 要主料才能使用+-按鈕功能
-            if (this.detailgrid.Columns[e.ColumnIndex].Name == "btnAdd2" &&
-                (pre_row["FabricType"].ToString() == "F" || MyUtility.Check.Empty(pre_row["FabricType"])))
+            if (this.detailgrid.Columns[e.ColumnIndex].Name == "btnAdd2" && this.IsAutomation)
             {
                 DataGridViewButtonCell pre_dgbtn = (DataGridViewButtonCell)this.detailgrid.Rows[e.RowIndex].Cells["btnAdd2"];
                 DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
@@ -873,7 +878,8 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
                     return;
                 }
 
-                if (pre_dgbtn.Value.ToString() == "+")
+                if (pre_dgbtn.Value.ToString() == "+" &&
+                    (pre_row["FabricType"].ToString() == "F" || MyUtility.Check.Empty(pre_row["FabricType"])))
                 {
                     // 取得CombineBarcode
                     string pre_ComBarcode = pre_row["CombineBarcode"].ToString();
@@ -906,7 +912,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
                     DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
                     next_dgbtn.Value = "-";
                 }
-                else
+                else if(pre_dgbtn.Value.ToString() == "-")
                 {
                     // 刪除該筆資料
                     this.OnDetailGridDelete();
@@ -1191,38 +1197,47 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             #endregion 更新庫存數量  ftyinventory
 
             #region 更新BarCode  Ftyinventory
-
-            List<string> barcodeList = new List<string>();
-            DataTable dtCnt = (DataTable)this.detailgridbs.DataSource;
-
-            // distinct CombineBarcode,並排除CombineBarcode = null
-            DataRow[] DistCnt1 = dtCnt.DefaultView.ToTable(true, "CombineBarcode", "FabricType").Select("FabricType = 'F' and CombineBarcode is not null");
-            DataRow[] Count2 = dtCnt.Select("FabricType = 'F' and CombineBarcode is null");
-
-            barcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", DistCnt1.Length + Count2.Length);
-            int cnt = 0;
-            ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "CombineBarcode";
-            foreach (DataRow drDis in this.DetailDatas)
+            if (this.IsAutomation)
             {
-                if (string.Compare(drDis["FabricType"].ToString(), "F") == 0 &&
-                    MyUtility.Check.Empty(drDis["CombineBarcode"]))
+                List<string> barcodeList = new List<string>();
+                DataTable dtCnt = (DataTable)this.detailgridbs.DataSource;
+
+                // distinct CombineBarcode,並排除CombineBarcode = null
+                DataRow[] DistCnt1 = dtCnt.DefaultView.ToTable(true, "CombineBarcode", "FabricType").Select("FabricType = 'F' and CombineBarcode is not null");
+                DataRow[] Count2 = dtCnt.Select("FabricType = 'F' and CombineBarcode is null");
+                if (DistCnt1.Length + Count2.Length > 0)
                 {
-                    drDis["Barcode"] = barcodeList[cnt];
-                    cnt++;
-                }
-                else
-                {
-                    if (MyUtility.Check.Empty(drDis["Barcode"]))
+                    barcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", DistCnt1.Length + Count2.Length);
+                    int cnt = 0;
+
+                    // 排序CombineBarcode, 將所有未展開主料置頂
+                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "CombineBarcode";
+                    foreach (DataRow drDis in this.DetailDatas)
                     {
-                        foreach (var item in this.DetailDatas)
+                        if (string.Compare(drDis["FabricType"].ToString(), "F") == 0)
                         {
-                            if (string.Compare(drDis["CombineBarcode"].ToString(), item["CombineBarcode"].ToString()) == 0)
+                            // 代表尚未展開的主料,直接給barcodeNo
+                            if (MyUtility.Check.Empty(drDis["CombineBarcode"]))
                             {
-                                item["Barcode"] = barcodeList[cnt];
+                                drDis["Barcode"] = barcodeList[cnt];
+                                cnt++;
+                            }
+                            else
+                            {
+                                if (MyUtility.Check.Empty(drDis["Barcode"]))
+                                {
+                                    foreach (var item in this.DetailDatas)
+                                    {
+                                        if (string.Compare(drDis["CombineBarcode"].ToString(), item["CombineBarcode"].ToString()) == 0)
+                                        {
+                                            item["Barcode"] = barcodeList[cnt];
+                                        }
+                                    }
+
+                                    cnt++;
+                                }
                             }
                         }
-
-                        cnt++;
                     }
                 }
             }
@@ -1305,7 +1320,7 @@ when matched then
                     }
 
                     // 更新FtyInventory Barcode
-                    if (this.IsAutomation)
+                    if (this.IsAutomation && data_Fty_Barcode.Count >= 1)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode, out resulttb, "#TmpSource", conn: sqlConn)))
                         {

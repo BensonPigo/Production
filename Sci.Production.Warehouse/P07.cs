@@ -234,8 +234,9 @@ namespace Sci.Production.Warehouse
 
                 // listRowErrMsg.Add("<Location> length can't be more than 60 Characters.");
 
-                //check 相同CombineBarcode, Refno, Color 是否一致
-                if (!MyUtility.Check.Empty(row["CombineBarcode"]) && this.IsAutomation)
+                // check 相同CombineBarcode, Refno, Color 是否一致
+                if (!MyUtility.Check.Empty(row["CombineBarcode"]) && this.IsAutomation &&
+                        row["FabricType"].ToString() == "F")
                 {
                     // 取出原始資料
                     DataTable dtOriginal = this.DetailDatas.CopyToDataTable().AsEnumerable().Where(r =>
@@ -869,8 +870,8 @@ select  StockUnit = dbo.GetStockUnitBySPSeq ('{0}', '{1}', '{2}')"
                             this.CurrentDetailData["PoidSeq"] = this.CurrentDetailData["Poid"].ToString() + e.FormattedValue;
                             this.CurrentDetailData["Refno"] = dr["Refno"];
                             this.CurrentDetailData["ColorID"] = dr["WH_P07_Color"];
-                            //CurrentDetailData["shipqty"] = 0m;
-                            //CurrentDetailData["Actualqty"] = 0m;
+                            // CurrentDetailData["shipqty"] = 0m;
+                            // CurrentDetailData["Actualqty"] = 0m;
 
                             // 開始檢查FtyInventory
                             string poid = MyUtility.Convert.GetString(this.CurrentDetailData["poid"]);
@@ -1162,7 +1163,7 @@ WHERE   StockType='{0}'
             Ict.Win.DataGridViewGeneratorTextColumnSettings roll_setting = new DataGridViewGeneratorTextColumnSettings();
             roll_setting.CellValidating += (s, e) =>
             {
-                if (!this.EditMode || !IsAutomation)
+                if (!this.EditMode || !this.IsAutomation)
                 {
                     return;
                 }
@@ -1196,7 +1197,7 @@ WHERE   StockType='{0}'
 
             dyelot_setting.CellValidating += (s, e) =>
             {
-                if (!this.EditMode || !IsAutomation)
+                if (!this.EditMode || !this.IsAutomation)
                 {
                     return;
                 }
@@ -1242,7 +1243,7 @@ WHERE   StockType='{0}'
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), settings: dyelot_setting).Get(out this.col_Dyelot) // 8
             .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 10, settings: ns2).Get(out this.Col_ActualQty) // 9
             .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true) // 10
-            .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true).Get(out col_ttlqty) // 11
+            .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true).Get(out this.col_ttlqty) // 11
             .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 12
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 13
             .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype) // 14
@@ -1362,8 +1363,7 @@ WHERE   StockType='{0}'
             DataRow pre_row = this.detailgrid.GetDataRow(this.detailgridbs.Position);
 
             // 要主料才能使用+-按鈕功能
-            if (this.detailgrid.Columns[e.ColumnIndex].Name == "btnAdd2" &&
-                (pre_row["FabricType"].ToString() == "F" || MyUtility.Check.Empty(pre_row["FabricType"])))
+            if (this.detailgrid.Columns[e.ColumnIndex].Name == "btnAdd2" && this.IsAutomation)
             {
                 DataGridViewButtonCell pre_dgbtn = (DataGridViewButtonCell)this.detailgrid.Rows[e.RowIndex].Cells["btnAdd2"];
                 DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
@@ -1374,7 +1374,8 @@ WHERE   StockType='{0}'
                     return;
                 }
 
-                if (pre_dgbtn.Value.ToString() == "+")
+                if (pre_dgbtn.Value.ToString() == "+" &&
+                   (pre_row["FabricType"].ToString() == "F" || MyUtility.Check.Empty(pre_row["FabricType"])))
                 {
                     // 取得CombineBarcode
                     string pre_ComBarcode = pre_row["CombineBarcode"].ToString();
@@ -1406,7 +1407,7 @@ WHERE   StockType='{0}'
                     DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
                     next_dgbtn.Value = "-";
                 }
-                else
+                else if (pre_dgbtn.Value.ToString() == "-")
                 {
                     // 刪除該筆資料
                     this.OnDetailGridDelete();
@@ -1695,41 +1696,47 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             #endregion 更新庫存數量  ftyinventory
 
             #region 更新BarCode  Ftyinventory
-
-            List<string> barcodeList = new List<string>();
-            DataTable dtCnt = (DataTable)this.detailgridbs.DataSource;
+            if (this.IsAutomation)
+            {
+                List<string> barcodeList = new List<string>();
+                DataTable dtCnt = (DataTable)this.detailgridbs.DataSource;
 
                 // distinct CombineBarcode,並排除CombineBarcode = null
-            DataRow[] DistCnt1 = dtCnt.DefaultView.ToTable(true, "CombineBarcode", "FabricType").Select("FabricType = 'F' and CombineBarcode is not null");
-            DataRow[] Count2 = dtCnt.Select("FabricType = 'F' and CombineBarcode is null");
-
-            barcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", DistCnt1.Length + Count2.Length);
-            int cnt = 0;
-            ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "CombineBarcode";
-            foreach (DataRow drDis in this.DetailDatas)
+                DataRow[] DistCnt1 = dtCnt.DefaultView.ToTable(true, "CombineBarcode", "FabricType").Select("FabricType = 'F' and CombineBarcode is not null");
+                DataRow[] Count2 = dtCnt.Select("FabricType = 'F' and CombineBarcode is null");
+                if (DistCnt1.Length + Count2.Length > 0)
                 {
-                    if (string.Compare(drDis["FabricType"].ToString(), "F") == 0 &&
-                        MyUtility.Check.Empty(drDis["CombineBarcode"]))
+                    barcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", DistCnt1.Length + Count2.Length);
+                    int cnt = 0;
+                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "CombineBarcode";
+                    foreach (DataRow drDis in this.DetailDatas)
                     {
-                        drDis["Barcode"] = barcodeList[cnt];
-                        cnt++;
-                    }
-                    else
-                    {
-                        if (MyUtility.Check.Empty(drDis["Barcode"]))
+                        if (string.Compare(drDis["FabricType"].ToString(), "F") == 0)
                         {
-                            foreach (var item in this.DetailDatas)
+                            if (MyUtility.Check.Empty(drDis["CombineBarcode"]))
                             {
-                                if (string.Compare(drDis["CombineBarcode"].ToString(), item["CombineBarcode"].ToString()) == 0)
+                                drDis["Barcode"] = barcodeList[cnt];
+                                cnt++;
+                            }
+                            else
+                            {
+                                if (MyUtility.Check.Empty(drDis["Barcode"]))
                                 {
-                                    item["Barcode"] = barcodeList[cnt];
+                                    foreach (var item in this.DetailDatas)
+                                    {
+                                        if (string.Compare(drDis["CombineBarcode"].ToString(), item["CombineBarcode"].ToString()) == 0)
+                                        {
+                                            item["Barcode"] = barcodeList[cnt];
+                                        }
+                                    }
+
+                                    cnt++;
                                 }
                             }
-
-                            cnt++;
                         }
                     }
                 }
+            }
 
             var data_Fty_Barcode = (from m in this.DetailDatas.AsEnumerable().Where(s => s["FabricType"].ToString() == "F")
                                         select new
@@ -1824,7 +1831,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
                     }
 
                     // 更新FtyInventory Barcode
-                    if (this.IsAutomation)
+                    if (this.IsAutomation && data_Fty_Barcode.Count >= 1)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
@@ -2195,7 +2202,7 @@ and r.id = '{this.CurrentMaintain["id"]}'
             }
     }
 
-        //寫明細撈出的sql command
+        // 寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -2392,7 +2399,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                     this.CurrentMaintain["third"] = 1;
                     this.dateETA.Enabled = true;
                 }
-                Change_record();
+                this.Change_record();
             }
         }
 
@@ -2760,6 +2767,14 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             newrow["stockunit"] = lastRow["stockunit"];
             newrow["Stocktype"] = lastRow["Stocktype"];
             newrow["Location"] = lastRow["Location"];
+            // GridView button顯示+
+            DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
+            next_dgbtn.Value = "+";
+        }
+
+        protected override void OnDetailGridInsert(int index = -1)
+        {
+            base.OnDetailGridInsert(index);
             // GridView button顯示+
             DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
             next_dgbtn.Value = "+";
