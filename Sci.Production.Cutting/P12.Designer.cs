@@ -75,11 +75,15 @@
             this.checkChangepagebyCut = new System.Windows.Forms.CheckBox();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
+            this.Layout1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.Layout2 = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -334,7 +338,7 @@
             this.btnQuery.TabIndex = 17;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // checkExtendAllParts
             // 
@@ -453,7 +457,7 @@
             this.btnBundleCard.TabIndex = 1;
             this.btnBundleCard.Text = "Bundle Card";
             this.btnBundleCard.UseVisualStyleBackColor = true;
-            this.btnBundleCard.Click += new System.EventHandler(this.btnBundleCard_Click);
+            this.btnBundleCard.Click += new System.EventHandler(this.BtnBundleCard_Click);
             // 
             // btnToExcel
             // 
@@ -464,7 +468,7 @@
             this.btnToExcel.TabIndex = 2;
             this.btnToExcel.Text = "ToExcel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // btnClose
             // 
@@ -475,7 +479,7 @@
             this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // panel3
             // 
@@ -543,6 +547,28 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Layout1,
+            this.Layout2});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(122, 48);
+            // 
+            // Layout1
+            // 
+            this.Layout1.Name = "Layout1";
+            this.Layout1.Size = new System.Drawing.Size(121, 22);
+            this.Layout1.Text = "Layout1";
+            this.Layout1.Click += new System.EventHandler(this.Layout1_Click);
+            // 
+            // Layout2
+            // 
+            this.Layout2.Name = "Layout2";
+            this.Layout2.Size = new System.Drawing.Size(121, 22);
+            this.Layout2.Text = "Layout2";
+            this.Layout2.Click += new System.EventHandler(this.Layout2_Click);
+            // 
             // P12
             // 
             this.ClientSize = new System.Drawing.Size(1008, 562);
@@ -563,6 +589,7 @@
             this.panel3.PerformLayout();
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -614,5 +641,8 @@
         private System.Windows.Forms.CheckBox checkChangepagebyCut;
         private Win.UI.Label label2;
         private Class.TxtSpreadingNo txtSpreadingNo1;
+        private Win.UI.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem Layout1;
+        private System.Windows.Forms.ToolStripMenuItem Layout2;
     }
 }

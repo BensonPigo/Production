@@ -1,5 +1,4 @@
 ﻿using Ict;
-using Ict.Win;
 using Sci.Data;
 using Sci.Win;
 using System;
@@ -8,7 +7,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -73,9 +71,7 @@ from (
 	    ,a.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
         ,a.SizeCode [Size]
-        --,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
         ,'(' + qq.Cutpart + ')' + a.PatternDesc [Desc]
-        --,Artwork.Artwork [Artwork]
         ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
         ,a.Qty [Quantity]
         ,a.BundleNo [Barcode]
@@ -483,10 +479,6 @@ order by x.[Bundle]");
                 }
 
                 this.SetCount(this.dt.Rows.Count);
-                string fileName = this.comboLayout.SelectedValue.ToString() == "0" ? "Cutting_P10_Layout1" : "Cutting_P10_Layout2";
-                Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
-                Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                excelApp.Visible = true;
                 List<P10_PrintData> data = this.dt.AsEnumerable().Select(row1 => new P10_PrintData()
                 {
                     Group_right = row1["Group_right"].ToString(),
@@ -509,11 +501,15 @@ order by x.[Bundle]");
                     Brand = row1["brand"].ToString(),
                     Item = row1["item"].ToString(),
                     EXCESS1 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
-                    NoBundleCardAfterSubprocess1 = row1["NoBundleCardAfterSubprocess"].ToString(),
+                    NoBundleCardAfterSubprocess1 = row1["NoBundleCardAfterSubprocess"].ToString().Empty() ? string.Empty : "X",
                     Replacement1 = string.Empty,
                     ShipCode = MyUtility.Convert.GetString(row1["ShipCode"]),
                     FabricPanelCode = MyUtility.Convert.GetString(row1["FabricPanelCode"]),
                 }).ToList();
+                string fileName = "Cutting_P10_Layout1";
+                Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
+                Excel.Workbook workbook = excelApp.ActiveWorkbook;
+                Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 // 範本預設 A4 紙, 分割 9 格貼紙格式, 因印表機邊界, 9 格格式有點不同
                 if (data.Count > 9)
@@ -532,13 +528,13 @@ order by x.[Bundle]");
                 int row_ref = 0;
                 data.ForEach(r =>
                 {
-                    DataTable bdoDt = this.GetBundle_Detail_Order_Data(r.Barcode);
-                    string sps = this.GetSpstring(bdoDt);
-                    string no = this.GetNo(r.SP, r.FabricPanelCode, r.Size, r.Barcode);
-                    string excess = r.EXCESS1.Empty() ? string.Empty : "EXCESS";
-                    string x = r.NoBundleCardAfterSubprocess1.Empty() ? string.Empty : "X";
-
-                    string contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
+                    DataTable bdoDt = GetBundle_Detail_Order_Data(r.Barcode);
+                    string sps = GetSpstring(bdoDt);
+                    string no = GetNo(r.SP, r.FabricPanelCode, r.Size, r.Barcode);
+                    string contian;
+                    if (this.comboLayout.SelectedValue.ToString() == "0")
+                    {
+                        contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
 SP#:{sps}
 Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
@@ -549,6 +545,22 @@ Size: {r.Size}     Part: {r.Parts}
 Dese: {r.Desc}
 Sub Process: {r.Artwork}
 Qty: {r.Quantity}";
+                    }
+                    else
+                    {
+                        contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
+SP#:{sps}
+Style#: {r.Style}
+Sea: {r.Season}     Brand: {r.ShipCode}
+Marker#: {r.MarkerNo}
+Cut#: {r.Body_Cut}
+Color: {r.Color}
+Size: {r.Size}     Part: {r.Parts}
+Dese: {r.Desc}
+Sub Process: {r.Artwork}
+Qty: {r.Quantity}     Item: {r.Item}";
+                    }
+
                     row_ref = i / 3;
                     row_ref = (row_ref * 5) - (row_ref / 3);
                     col_ref = (i % 3) * 4;
@@ -556,8 +568,8 @@ Qty: {r.Quantity}";
                     worksheet.Cells[1 + row_ref, 1 + col_ref] = contian;
                     worksheet.Cells[1 + row_ref, 1 + col_ref].Characters(1, 8).Font.Bold = true; // 部分粗體
                     worksheet.Cells[1 + row_ref, 1 + col_ref].Characters(cutindex, 6).Font.Bold = true; // 部分粗體
-                    worksheet.Cells[2 + row_ref, 1 + col_ref] = excess;
-                    worksheet.Cells[2 + row_ref, 2 + col_ref] = x;
+                    worksheet.Cells[2 + row_ref, 1 + col_ref] = r.EXCESS1;
+                    worksheet.Cells[2 + row_ref, 2 + col_ref] = r.NoBundleCardAfterSubprocess1;
                     worksheet.Cells[3 + row_ref, 1 + col_ref] = "*" + r.Barcode + "*";
 
                     // 邊框 」貼紙裁線
@@ -572,7 +584,13 @@ Qty: {r.Quantity}";
                     i++;
                 });
 
-                excelApp.Visible = true;
+                PrintDialog pd = new PrintDialog();
+                if (pd.ShowDialog() == DialogResult.OK)
+                {
+                    string printer = pd.PrinterSettings.PrinterName;
+                    workbook.PrintOutEx(ActivePrinter: printer);
+                }
+
                 Marshal.ReleaseComObject(excelApp);
 
                 #region Bundle Card RDLC 先不要刪 / 不要刪 / 不要刪
@@ -801,19 +819,21 @@ Qty: {r.Quantity}";
             return true;
         }
 
-        private string GetSpstring(DataTable dt)
+        /// <inheritdoc/>
+        public static string GetSpstring(DataTable dt)
         {
             string sps = string.Empty;
             if (dt.Rows.Count > 0)
             {
                 sps = dt.Rows[0]["OrderID"].ToString();
-                sps += this.GetSubSPstring(dt, true, 32);
+                sps += GetSubSPstring(dt, true, 32);
             }
 
             return sps;
         }
 
-        private string GetSubSPstring(DataTable dt, bool excludefirst, int subCount)
+        /// <inheritdoc/>
+        public static string GetSubSPstring(DataTable dt, bool excludefirst, int subCount)
         {
             string sps = string.Empty;
 
@@ -851,20 +871,16 @@ Qty: {r.Quantity}";
             return sps;
         }
 
-        private DataTable GetBundle_Detail_Order_Data(string bundleno)
+        /// <inheritdoc/>
+        public static DataTable GetBundle_Detail_Order_Data(string bundleno)
         {
             string sqlcmd = $@"select bdo.OrderID,o.Categoryfrom Bundle_Detail_Order bdo with(nolock)left join Orders o with(nolock) on o.ID = bdo.OrderIDwhere bundleno = '{bundleno}'order by OrderID";
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return null;
-            }
-
+            DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
             return dt;
         }
 
-        private string GetNo(string orderid, string fabricPanelCode, string size, string bundleNo)
+        /// <inheritdoc/>
+        public static string GetNo(string orderid, string fabricPanelCode, string size, string bundleNo)
         {
             string sqlcmd = $@"SELECT D.BundleNo, D.BundleGroup,D.Qty
 into #tmp

@@ -206,5 +206,14 @@
 
         /// <inheritdoc/>
         public string FabricPanelCode { get; set; }
+
+        /// <inheritdoc/>
+        public string Comb { get; set; }
+
+        /// <inheritdoc/>
+        public string Cut { get; set; }
+
+        /// <inheritdoc/>
+        public int GroupCombCut { get; set; }
     }
 }
