@@ -478,6 +478,7 @@ order by x.[Bundle]");
                     return false;
                 }
 
+                this.ShowWaitMessage("Process Excel!");
                 this.SetCount(this.dt.Rows.Count);
                 List<P10_PrintData> data = this.dt.AsEnumerable().Select(row1 => new P10_PrintData()
                 {
@@ -584,6 +585,7 @@ Qty: {r.Quantity}     Item: {r.Item}";
                     i++;
                 });
 
+                this.HideWaitMessage();
                 PrintDialog pd = new PrintDialog();
                 if (pd.ShowDialog() == DialogResult.OK)
                 {
@@ -592,7 +594,6 @@ Qty: {r.Quantity}     Item: {r.Item}";
                 }
 
                 Marshal.ReleaseComObject(excelApp);
-
                 #region Bundle Card RDLC 先不要刪 / 不要刪 / 不要刪
 
                 // if (this.dt == null || this.dt.Rows.Count == 0)

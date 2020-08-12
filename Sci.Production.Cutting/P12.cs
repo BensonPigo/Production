@@ -938,6 +938,7 @@ OPTION (RECOMPILE)"
                 return;
             }
 
+            this.ShowWaitMessage("Process Excel!");
             List<P10_PrintData> data = dtSelect.AsEnumerable().Select(row1 => new P10_PrintData()
             {
                 Group_right = row1["Group"].ToString(),
@@ -1041,6 +1042,7 @@ inner join Bundle_Detail bd WITH (NOLOCK) on b.id=bd.ID
 where bd.BundleNo = '{item.Barcode}'");
             }
 
+            this.HideWaitMessage();
             PrintDialog pd = new PrintDialog();
             if (pd.ShowDialog() == DialogResult.OK)
             {
