@@ -18,6 +18,7 @@ BEGIN
 	[Category]			[varchar](1) NULL,
 	[OrderTypeID]		[varchar](20) NULL,
 	[Dest]				[varchar](2) NULL,
+	[DestCountry]		[varchar](30) NULL,
 	[CustCDID]			[varchar](16) NULL,
 	[StyleUnit]			[varchar](8) NULL,
 	[SetQty]			[int] NOT NULL,
@@ -351,6 +352,42 @@ CREATE TABLE [dbo].[LocalItem] (
 ) ON [PRIMARY]
 END
 
+IF OBJECT_ID(N'CFANeedInsp') IS NULL
+BEGIN 
+CREATE TABLE [dbo].[CFANeedInsp] (
+    [SCICtnNo]			varchar(15) NOT NULL,
+	[CmdTime]			Datetime NOT NULL,
+    [GenSongUpdated]	bit   NOT NULL DEFAULT ((0)) ,
+	CONSTRAINT [PK_CFANeedInsp] PRIMARY KEY CLUSTERED 
+	(
+		[SCICtnNo] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+	;	
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI箱號', N'SCHEMA', N'dbo', N'TABLE', N'CFANeedInsp', N'COLUMN', N'SCICtnNo';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI寫入/更新此筆資料時間', N'SCHEMA', N'dbo', N'TABLE', N'CFANeedInsp', N'COLUMN', N'CmdTime';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'GenSong是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'CFANeedInsp', N'COLUMN', N'GenSongUpdated';
+END
+
+IF OBJECT_ID(N'ClogGarmentDispose') IS NULL
+BEGIN 
+CREATE TABLE [dbo].[ClogGarmentDispose] (
+    [SCICtnNo]			varchar(15) NOT NULL,
+	[CmdTime]			Datetime NOT NULL,
+    [Dispose]			bit   NOT NULL DEFAULT ((1)) ,
+    [GenSongUpdated]	bit   NOT NULL DEFAULT ((0)) ,
+	CONSTRAINT [PK_ClogGarmentDispose] PRIMARY KEY CLUSTERED 
+	(
+		[SCICtnNo] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+	;	
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI箱號', N'SCHEMA', N'dbo', N'TABLE', N'ClogGarmentDispose', N'COLUMN', N'SCICtnNo';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI寫入/更新此筆資料時間', N'SCHEMA', N'dbo', N'TABLE', N'ClogGarmentDispose', N'COLUMN', N'CmdTime';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'0:轉回倉庫; 1:轉出倉庫報廢', N'SCHEMA', N'dbo', N'TABLE', N'ClogGarmentDispose', N'COLUMN', N'Dispose';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'GenSong是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ClogGarmentDispose', N'COLUMN', N'GenSongUpdated';
+END
+
 declare @cDate date = @inputDate;
 declare @yestarDay date =CONVERT(Date, dateAdd(day,-1,GetDate()));
 --declare @cDate date = CONVERT(date, DATEADD(DAY,-10, GETDATE()));-- for test
@@ -370,11 +407,12 @@ where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate or conv
 
 MERGE Orders AS T
 USING(
-	SELECT id,BrandID,ProgramID,StyleID,SeasonID,ProjectID,Category,OrderTypeID,Dest,CustCDID,StyleUnit
+	SELECT o.id,BrandID,ProgramID,StyleID,SeasonID,ProjectID,Category,OrderTypeID,Dest,CustCDID,StyleUnit
 	,[SetQty] = (select count(1) cnt from Production.dbo.Style_Location where o.StyleUkey=StyleUkey)
 	,[Location] = sl.Location , o.PulloutComplete, o.Junk,[CmdTime] = GETDATE()
-	,[SunriseUpdated] = 0, [GenSongUpdated] = 0, [CustPONo], o.POID
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0, [CustPONo], o.POID ,[DestCountry] = c.Alias
 	FROM Production.dbo.Orders o
+	LEFT JOIN Production.dbo.Country c ON o.Dest = c.ID
 	outer apply(	
 	select Location = STUFF((
 		select distinct CONCAT(',',Location) 
@@ -406,14 +444,15 @@ UPDATE SET
 	t.SunriseUpdated = s.SunriseUpdated,
 	t.GenSongUpdated = s.GenSongUpdated,
 	t.CustPONo = s.CustPONo,
-	t.POID = s.POID
+	t.POID = s.POID,
+	t.DestCountry = s.DestCountry
 WHEN NOT MATCHED BY TARGET THEN
 INSERT(  id,   BrandID,   ProgramID,   StyleID,   SeasonID,   ProjectID,   Category,   OrderTypeID
 	,  Dest,   CustCDID,   StyleUnit,   SetQty,   Location,   PulloutComplete,   Junk
-	,  CmdTime,   SunriseUpdated,   GenSongUpdated, CustPONo, POID) 
+	,  CmdTime,   SunriseUpdated,   GenSongUpdated, CustPONo, POID	,DestCountry) 
 VALUES(s.id, s.BrandID, s.ProgramID, s.StyleID, s.SeasonID, s.ProjectID, s.Category, s.OrderTypeID
 	,s.Dest, s.CustCDID, s.StyleUnit, s.SetQty, s.Location, s.PulloutComplete, s.Junk
-	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated, s.CustPONo, s.POID)	;
+	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated, s.CustPONo, s.POID	,s.DestCountry)	;
 
 --02. 轉出區間 [Production].[dbo].[Order_QtyShip].ID 在本次有更新的 Orders 之中
 MERGE Order_QtyShip AS T
@@ -1080,6 +1119,45 @@ UPDATE SET
 WHEN NOT MATCHED BY TARGET THEN
 	INSERT( Refno		,UnPack		,Junk		,CmdTime		,SunriseUpdated		,GenSongUpdated		)
 	VALUES( s.Refno		,s.UnPack	,s.Junk		,GETDATE()		,0					,0					)
+;
+
+--15. CFANeedInsp
+MERGE CFANeedInsp AS T
+USING(
+	SELECT DISTINCT pd.SCICtnNo, [CmdTime]=GETDATE(), [GenSongUpdated]=0
+	FROM Production.dbo.PackingList p
+	INNER JOIN Production.dbo.PackingList_Detail pd ON p.ID= pd.ID
+	where pd.CFASelectInspDate = @cDate AND pd.CFANeedInsp = 1
+) as S
+on t.SCICtnNo = s.SCICtnNo
+WHEN MATCHED THEN
+UPDATE SET
+	t.CmdTime = s.CmdTime,
+	t.GenSongUpdated = s.GenSongUpdated
+WHEN NOT MATCHED BY TARGET THEN
+INSERT(SCICtnNo, CmdTime, GenSongUpdated )
+Values(s.SCICtnNo, s.CmdTime, s.GenSongUpdated )
+;
+
+--16. ClogGarmentDispose
+MERGE ClogGarmentDispose AS T
+USING(
+	SELECT DISTINCT pd.SCICtnNo, [CmdTime]=GETDATE(), [Dispose] = IIF(a.Status='Confirmed',1,0), [GenSongUpdated]=0
+	FROM Production.dbo.ClogGarmentDispose a 
+	INNER JOIN Production.dbo.ClogGarmentDispose_Detail b ON a.ID= b.ID
+	INNER JOIN Production.dbo.PackingList p ON p.ID = b.PackingListID
+	INNER JOIN Production.dbo.PackingList_Detail pd On p.ID = pd.ID AND pd.CTNStartNO = b.CTNStartNO
+	WHERE (Cast(a.EditDate as Date) = @cDate OR Cast(a.AddDate as Date) = @cDate)
+) as S
+on t.SCICtnNo = s.SCICtnNo
+WHEN MATCHED THEN
+UPDATE SET
+	t.CmdTime = s.CmdTime,
+	t.Dispose = s.Dispose,
+	t.GenSongUpdated = s.GenSongUpdated
+WHEN NOT MATCHED BY TARGET THEN
+INSERT(SCICtnNo, CmdTime, Dispose, GenSongUpdated )
+Values(s.SCICtnNo, s.CmdTime, s.Dispose,  s.GenSongUpdated )
 ;
 
 END try
