@@ -26,6 +26,8 @@
     [Neck] BIT NOT NULL DEFAULT (1), 
     [Status] VARCHAR(15) NULL, 
     [ReportNo] VARCHAR(13) NOT NULL DEFAULT '', 
+    [LOtoFactory] VARCHAR(100) NOT NULL  CONSTRAINT DF_SampleGarmentTest_Detail_LOtoFactory DEFAULT('') , 
+    [FGWTMtlTypeID] VARCHAR(20) NOT NULL  CONSTRAINT DF_SampleGarmentTest_Detail_FGWTMtlTypeID DEFAULT('') , 
     CONSTRAINT [PK_SampleGarmentTest_Detail] PRIMARY KEY CLUSTERED ([ID],[No] ASC)
 )
 

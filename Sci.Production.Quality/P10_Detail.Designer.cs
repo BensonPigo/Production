@@ -31,8 +31,13 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.combFGWTMaterial = new Sci.Win.UI.ComboBox();
+            this.label41 = new Sci.Win.UI.Label();
+            this.txtLotoFactory = new Sci.Win.UI.TextBox();
+            this.label40 = new Sci.Win.UI.Label();
             this.comboResult = new Sci.Win.UI.ComboBox();
             this.txtReportDate = new Sci.Win.UI.DateBox();
             this.comboNeck = new Sci.Win.UI.ComboBox();
@@ -116,12 +121,19 @@
             this.panel8 = new Sci.Win.UI.Panel();
             this.gridAppearance = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.tabFGWT = new System.Windows.Forms.TabPage();
+            this.panel10 = new Sci.Win.UI.Panel();
+            this.label43 = new System.Windows.Forms.Label();
+            this.label42 = new System.Windows.Forms.Label();
+            this.panel11 = new Sci.Win.UI.Panel();
+            this.gridFGWT = new Sci.Win.UI.Grid();
             this.panel1 = new Sci.Win.UI.Panel();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.btnAmend = new Sci.Win.UI.Button();
             this.btnEncode = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
+            this.btnToFGWT = new Sci.Win.UI.Button();
             this.btnPDF = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
@@ -141,6 +153,10 @@
             this.panel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
+            this.tabFGWT.SuspendLayout();
+            this.panel10.SuspendLayout();
+            this.panel11.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).BeginInit();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -151,6 +167,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabFGWT);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -160,6 +177,10 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.combFGWTMaterial);
+            this.tabPage1.Controls.Add(this.label41);
+            this.tabPage1.Controls.Add(this.txtLotoFactory);
+            this.tabPage1.Controls.Add(this.label40);
             this.tabPage1.Controls.Add(this.comboResult);
             this.tabPage1.Controls.Add(this.txtReportDate);
             this.tabPage1.Controls.Add(this.comboNeck);
@@ -202,13 +223,56 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Detail";
             // 
+            // combFGWTMaterial
+            // 
+            this.combFGWTMaterial.AutoCompleteCustomSource.AddRange(new string[] {
+            "KNIT",
+            "WOVEN"});
+            this.combFGWTMaterial.BackColor = System.Drawing.Color.White;
+            this.combFGWTMaterial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.combFGWTMaterial.FormattingEnabled = true;
+            this.combFGWTMaterial.IsSupportUnselect = true;
+            this.combFGWTMaterial.Items.AddRange(new object[] {
+            "KNIT",
+            "WOVEN"});
+            this.combFGWTMaterial.Location = new System.Drawing.Point(122, 308);
+            this.combFGWTMaterial.Name = "combFGWTMaterial";
+            this.combFGWTMaterial.OldText = "";
+            this.combFGWTMaterial.Size = new System.Drawing.Size(121, 24);
+            this.combFGWTMaterial.TabIndex = 60;
+            // 
+            // label41
+            // 
+            this.label41.Location = new System.Drawing.Point(0, 308);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(119, 23);
+            this.label41.TabIndex = 59;
+            this.label41.Text = "FGWT Material";
+            // 
+            // txtLotoFactory
+            // 
+            this.txtLotoFactory.BackColor = System.Drawing.Color.White;
+            this.txtLotoFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLotoFactory.Location = new System.Drawing.Point(98, 101);
+            this.txtLotoFactory.Name = "txtLotoFactory";
+            this.txtLotoFactory.Size = new System.Drawing.Size(100, 23);
+            this.txtLotoFactory.TabIndex = 58;
+            // 
+            // label40
+            // 
+            this.label40.Location = new System.Drawing.Point(4, 101);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(91, 23);
+            this.label40.TabIndex = 57;
+            this.label40.Text = "LO to Factory";
+            // 
             // comboResult
             // 
             this.comboResult.BackColor = System.Drawing.Color.White;
             this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboResult.FormattingEnabled = true;
             this.comboResult.IsSupportUnselect = true;
-            this.comboResult.Location = new System.Drawing.Point(574, 73);
+            this.comboResult.Location = new System.Drawing.Point(574, 70);
             this.comboResult.Name = "comboResult";
             this.comboResult.OldText = "";
             this.comboResult.Size = new System.Drawing.Size(121, 24);
@@ -216,7 +280,7 @@
             // 
             // txtReportDate
             // 
-            this.txtReportDate.Location = new System.Drawing.Point(342, 74);
+            this.txtReportDate.Location = new System.Drawing.Point(342, 71);
             this.txtReportDate.Name = "txtReportDate";
             this.txtReportDate.Size = new System.Drawing.Size(140, 23);
             this.txtReportDate.TabIndex = 0;
@@ -234,7 +298,7 @@
             this.comboNeck.Items.AddRange(new object[] {
             "Yes",
             "No"});
-            this.comboNeck.Location = new System.Drawing.Point(401, 317);
+            this.comboNeck.Location = new System.Drawing.Point(401, 336);
             this.comboNeck.Name = "comboNeck";
             this.comboNeck.OldText = "";
             this.comboNeck.Size = new System.Drawing.Size(121, 24);
@@ -252,7 +316,7 @@
             this.comboMachineModel.Items.AddRange(new object[] {
             "Top Load",
             "Front Load"});
-            this.comboMachineModel.Location = new System.Drawing.Point(125, 252);
+            this.comboMachineModel.Location = new System.Drawing.Point(121, 271);
             this.comboMachineModel.Name = "comboMachineModel";
             this.comboMachineModel.OldText = "";
             this.comboMachineModel.Size = new System.Drawing.Size(121, 24);
@@ -261,7 +325,7 @@
             // rdbtnHand
             // 
             this.rdbtnHand.AutoSize = true;
-            this.rdbtnHand.Location = new System.Drawing.Point(601, 170);
+            this.rdbtnHand.Location = new System.Drawing.Point(597, 191);
             this.rdbtnHand.Name = "rdbtnHand";
             this.rdbtnHand.Size = new System.Drawing.Size(14, 13);
             this.rdbtnHand.TabIndex = 53;
@@ -270,7 +334,7 @@
             // rdbtnTumble
             // 
             this.rdbtnTumble.AutoSize = true;
-            this.rdbtnTumble.Location = new System.Drawing.Point(402, 170);
+            this.rdbtnTumble.Location = new System.Drawing.Point(398, 191);
             this.rdbtnTumble.Name = "rdbtnTumble";
             this.rdbtnTumble.Size = new System.Drawing.Size(14, 13);
             this.rdbtnTumble.TabIndex = 52;
@@ -280,7 +344,7 @@
             // 
             this.rdbtnLine.AutoSize = true;
             this.rdbtnLine.Checked = true;
-            this.rdbtnLine.Location = new System.Drawing.Point(150, 170);
+            this.rdbtnLine.Location = new System.Drawing.Point(146, 191);
             this.rdbtnLine.Name = "rdbtnLine";
             this.rdbtnLine.Size = new System.Drawing.Size(14, 13);
             this.rdbtnLine.TabIndex = 51;
@@ -303,7 +367,7 @@
             "40",
             "50",
             "60"});
-            this.comboTemperature.Location = new System.Drawing.Point(125, 208);
+            this.comboTemperature.Location = new System.Drawing.Point(121, 227);
             this.comboTemperature.Name = "comboTemperature";
             this.comboTemperature.OldText = "";
             this.comboTemperature.Size = new System.Drawing.Size(121, 24);
@@ -313,7 +377,7 @@
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label18.Location = new System.Drawing.Point(6, 321);
+            this.label18.Location = new System.Drawing.Point(6, 340);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(389, 20);
             this.label18.TabIndex = 49;
@@ -323,7 +387,7 @@
             // 
             this.txtRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtRemark.Location = new System.Drawing.Point(377, 252);
+            this.txtRemark.Location = new System.Drawing.Point(373, 271);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.ReadOnly = true;
             this.txtRemark.Size = new System.Drawing.Size(492, 23);
@@ -333,14 +397,14 @@
             // 
             this.txtFibreComposition.BackColor = System.Drawing.Color.White;
             this.txtFibreComposition.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFibreComposition.Location = new System.Drawing.Point(377, 209);
+            this.txtFibreComposition.Location = new System.Drawing.Point(373, 228);
             this.txtFibreComposition.Name = "txtFibreComposition";
             this.txtFibreComposition.Size = new System.Drawing.Size(312, 23);
             this.txtFibreComposition.TabIndex = 47;
             // 
             // label17
             // 
-            this.label17.Location = new System.Drawing.Point(255, 252);
+            this.label17.Location = new System.Drawing.Point(251, 271);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(119, 23);
             this.label17.TabIndex = 46;
@@ -348,7 +412,7 @@
             // 
             // label16
             // 
-            this.label16.Location = new System.Drawing.Point(255, 209);
+            this.label16.Location = new System.Drawing.Point(251, 228);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(119, 23);
             this.label16.TabIndex = 45;
@@ -356,7 +420,7 @@
             // 
             // label15
             // 
-            this.label15.Location = new System.Drawing.Point(3, 252);
+            this.label15.Location = new System.Drawing.Point(-1, 271);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(119, 23);
             this.label15.TabIndex = 44;
@@ -364,7 +428,7 @@
             // 
             // label14
             // 
-            this.label14.Location = new System.Drawing.Point(3, 209);
+            this.label14.Location = new System.Drawing.Point(-1, 228);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(119, 23);
             this.label14.TabIndex = 43;
@@ -372,7 +436,7 @@
             // 
             // label13
             // 
-            this.label13.Location = new System.Drawing.Point(496, 167);
+            this.label13.Location = new System.Drawing.Point(492, 188);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(84, 23);
             this.label13.TabIndex = 42;
@@ -380,7 +444,7 @@
             // 
             // label12
             // 
-            this.label12.Location = new System.Drawing.Point(255, 167);
+            this.label12.Location = new System.Drawing.Point(251, 188);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(119, 23);
             this.label12.TabIndex = 41;
@@ -388,7 +452,7 @@
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(3, 167);
+            this.label10.Location = new System.Drawing.Point(-1, 188);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(119, 23);
             this.label10.TabIndex = 40;
@@ -398,15 +462,15 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.label8.Location = new System.Drawing.Point(3, 121);
+            this.label8.Location = new System.Drawing.Point(-1, 142);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(171, 25);
+            this.label8.Size = new System.Drawing.Size(178, 25);
             this.label8.TabIndex = 38;
-            this.label8.Text = "Washing Cindition";
+            this.label8.Text = "Washing Condition";
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(496, 74);
+            this.label7.Location = new System.Drawing.Point(496, 71);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(75, 23);
             this.label7.TabIndex = 37;
@@ -414,7 +478,7 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(255, 74);
+            this.label6.Location = new System.Drawing.Point(255, 71);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(80, 23);
             this.label6.TabIndex = 35;
@@ -422,7 +486,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(3, 74);
+            this.label4.Location = new System.Drawing.Point(3, 71);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
             this.label4.TabIndex = 33;
@@ -432,7 +496,7 @@
             // 
             this.txtColour.BackColor = System.Drawing.Color.White;
             this.txtColour.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtColour.Location = new System.Drawing.Point(81, 74);
+            this.txtColour.Location = new System.Drawing.Point(81, 71);
             this.txtColour.Name = "txtColour";
             this.txtColour.Size = new System.Drawing.Size(139, 23);
             this.txtColour.TabIndex = 32;
@@ -1243,6 +1307,90 @@
             this.gridAppearance.TabIndex = 1;
             this.gridAppearance.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.gridAppearance_CellBeginEdit);
             // 
+            // tabFGWT
+            // 
+            this.tabFGWT.Controls.Add(this.panel10);
+            this.tabFGWT.Controls.Add(this.panel11);
+            this.tabFGWT.Location = new System.Drawing.Point(4, 25);
+            this.tabFGWT.Name = "tabFGWT";
+            this.tabFGWT.Padding = new System.Windows.Forms.Padding(3);
+            this.tabFGWT.Size = new System.Drawing.Size(1134, 420);
+            this.tabFGWT.TabIndex = 2;
+            this.tabFGWT.Text = "FGWT";
+            // 
+            // panel10
+            // 
+            this.panel10.Controls.Add(this.label43);
+            this.panel10.Controls.Add(this.label42);
+            this.panel10.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel10.Location = new System.Drawing.Point(3, 364);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(1128, 53);
+            this.panel10.TabIndex = 2;
+            // 
+            // label43
+            // 
+            this.label43.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label43.AutoSize = true;
+            this.label43.ForeColor = System.Drawing.Color.Red;
+            this.label43.Location = new System.Drawing.Point(6, 28);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(497, 17);
+            this.label43.TabIndex = 9;
+            this.label43.Text = "WOVEN： When -3 < (AfterWash - BeforeWash) < +5 Result Pass, other Fail.";
+            // 
+            // label42
+            // 
+            this.label42.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label42.AutoSize = true;
+            this.label42.ForeColor = System.Drawing.Color.Red;
+            this.label42.Location = new System.Drawing.Point(6, 6);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(480, 17);
+            this.label42.TabIndex = 8;
+            this.label42.Text = "KNIT ： When -2 < (AfterWash - BeforeWash) < +3 Result Pass, other Fail.";
+            // 
+            // panel11
+            // 
+            this.panel11.Controls.Add(this.gridFGWT);
+            this.panel11.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel11.Location = new System.Drawing.Point(3, 3);
+            this.panel11.Name = "panel11";
+            this.panel11.Size = new System.Drawing.Size(1128, 355);
+            this.panel11.TabIndex = 1;
+            // 
+            // gridFGWT
+            // 
+            this.gridFGWT.AllowUserToAddRows = false;
+            this.gridFGWT.AllowUserToDeleteRows = false;
+            this.gridFGWT.AllowUserToResizeRows = false;
+            this.gridFGWT.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridFGWT.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridFGWT.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridFGWT.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridFGWT.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridFGWT.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridFGWT.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridFGWT.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridFGWT.Location = new System.Drawing.Point(0, 0);
+            this.gridFGWT.Name = "gridFGWT";
+            this.gridFGWT.ReadOnly = true;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridFGWT.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridFGWT.RowTemplate.Height = 24;
+            this.gridFGWT.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridFGWT.ShowCellToolTips = false;
+            this.gridFGWT.Size = new System.Drawing.Size(1128, 355);
+            this.gridFGWT.TabIndex = 1;
+            // 
             // panel1
             // 
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
@@ -1293,6 +1441,7 @@
             // 
             // radioPanel2
             // 
+            this.radioPanel2.Controls.Add(this.btnToFGWT);
             this.radioPanel2.Controls.Add(this.btnPDF);
             this.radioPanel2.Controls.Add(this.btnEdit);
             this.radioPanel2.Controls.Add(this.btnClose);
@@ -1301,6 +1450,17 @@
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.Size = new System.Drawing.Size(1142, 35);
             this.radioPanel2.TabIndex = 9;
+            // 
+            // btnToFGWT
+            // 
+            this.btnToFGWT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToFGWT.Location = new System.Drawing.Point(780, 0);
+            this.btnToFGWT.Name = "btnToFGWT";
+            this.btnToFGWT.Size = new System.Drawing.Size(97, 30);
+            this.btnToFGWT.TabIndex = 9;
+            this.btnToFGWT.Text = "To FGWT";
+            this.btnToFGWT.UseVisualStyleBackColor = true;
+            this.btnToFGWT.Click += new System.EventHandler(this.BtnToFGWT_Click);
             // 
             // btnPDF
             // 
@@ -1378,6 +1538,11 @@
             this.panel8.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
+            this.tabFGWT.ResumeLayout(false);
+            this.panel10.ResumeLayout(false);
+            this.panel10.PerformLayout();
+            this.panel11.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).EndInit();
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
@@ -1482,5 +1647,16 @@
         private Win.UI.Button btnEdit;
         private Win.UI.Button btnClose;
         private Win.UI.Panel panel9;
+        private Win.UI.TextBox txtLotoFactory;
+        private Win.UI.Label label40;
+        private Win.UI.ComboBox combFGWTMaterial;
+        private Win.UI.Label label41;
+        private System.Windows.Forms.TabPage tabFGWT;
+        private Win.UI.Panel panel10;
+        private System.Windows.Forms.Label label43;
+        private System.Windows.Forms.Label label42;
+        private Win.UI.Panel panel11;
+        private Win.UI.Grid gridFGWT;
+        private Win.UI.Button btnToFGWT;
     }
 }

@@ -5,6 +5,7 @@ using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -33,12 +34,15 @@ namespace Sci.Production.Quality
 
             this.comboTemperature.SelectedIndex = 0;
             this.comboMachineModel.SelectedIndex = 0;
+            this.combFGWTMaterial.SelectedIndex = 0;
             this.comboNeck.SelectedIndex = 0;
 
             DataGridViewGeneratorNumericColumnSettings BeforeWash = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings AfterWash1Cell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings AfterWash1Cell2 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings AfterWash1Cell3 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings AfterWash1Cell4 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings BeforeWash1 = new DataGridViewGeneratorNumericColumnSettings();
 
             #region 避免除數為0的檢查
             BeforeWash.CellValidating += (s, eve) =>
@@ -189,6 +193,54 @@ namespace Sci.Production.Quality
                     dr["Shrinkage3"] = (AfterWash3Num - BeforeWashNum) / BeforeWashNum * 100;
                 }
             };
+
+            BeforeWash1.CellValidating += (s, eve) =>
+            {
+                if (!this.EditMode || MyUtility.Check.Empty(eve.FormattedValue) || eve.RowIndex == -1)
+                {
+                    return; // 非編輯模式
+                }
+
+                DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
+
+                if (MyUtility.Check.Empty(eve.FormattedValue))
+                {
+                    dr["BeforeWash"] = eve.FormattedValue;
+                    dr["Shrinkage"] = DBNull.Value;
+                }
+                else
+                {
+                    // 分母不為0才計算Shrikage(%)
+                    double beforeWashNum = MyUtility.Convert.GetDouble(eve.FormattedValue);
+                    double afterWash = MyUtility.Convert.GetDouble(dr["AfterWash"]);
+                    dr["BeforeWash"] = beforeWashNum;
+                    dr["Shrinkage"] = (afterWash - beforeWashNum) / beforeWashNum * 100.0;
+                }
+            };
+
+            AfterWash1Cell4.CellValidating += (s, eve) =>
+            {
+                if (!this.EditMode || MyUtility.Check.Empty(eve.FormattedValue) || eve.RowIndex == -1)
+                {
+                    return; // 非編輯模式
+                }
+
+                DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
+
+                double afterWash = Convert.ToDouble(eve.FormattedValue);
+                dr["AfterWash"] = afterWash;
+
+                // 分母不為0才計算Shrikage(%)
+                if (MyUtility.Check.Empty(dr["BeforeWash"]))
+                {
+                    dr["Shrinkage"] = DBNull.Value;
+                }
+                else
+                {
+                    double beforeWashNum = MyUtility.Convert.GetDouble(dr["BeforeWash"]);
+                    dr["Shrinkage"] = (afterWash - beforeWashNum) / beforeWashNum * 100.0;
+                }
+            };
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.gridActualShrinkage)
@@ -213,6 +265,8 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings ArtworkCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings TextColumnSetting = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ScaleCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings SizeSpecCell = new DataGridViewGeneratorNumericColumnSettings();
 
             ArtworkCell.CellMouseClick += (s, eve) =>
             {
@@ -426,6 +480,156 @@ namespace Sci.Production.Quality
                 }
             };
 
+            ScaleCell.CellMouseClick += (s, eve) =>
+            {
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                // 第一列跟第三列開啟的Type不一樣
+                if (eve.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
+
+                    if (dr["Scale"] == DBNull.Value)
+                    {
+                        return;
+                    }
+
+                    string sql = "select ID from Scale WHERE Junk=0";
+
+                    string defaultSelected = MyUtility.Convert.GetString(dr["Scale"]);
+
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "ID,Name", "ID,Name", defaultSelected, null, null, null);
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    dr["Scale"] = item.GetSelectedString().ToString();
+                    dr.EndEdit();
+                }
+            };
+
+            ScaleCell.EditingMouseDown += (s, eve) =>
+            {
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (eve.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
+
+                    if (dr["Scale"] == DBNull.Value)
+                    {
+                        return;
+                    }
+                    string sql = "select ID from Scale  WHERE Junk=0";
+
+                    string defaultSelected = MyUtility.Convert.GetString(dr["Scale"]);
+
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "ID,Name", "ID,Name", defaultSelected, null, null, null);
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    dr["Scale"] = item.GetSelectedString().ToString();
+                    dr.EndEdit();
+                }
+            };
+
+            ScaleCell.CellValidating += (s, eve) =>
+            {
+                if (!this.EditMode || MyUtility.Check.Empty(eve.FormattedValue))
+                {
+                    return; // 非編輯模式
+                }
+
+                if (eve.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
+                string scale = eve.FormattedValue.ToString();
+
+                string sql = "select ID from Scale  WHERE Junk=0 AND ID =@Scale";
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter("@Scale", scale));
+
+                if (!MyUtility.Check.Seek(sql,parameters))
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                    dr.EndEdit();
+                    eve.Cancel = true;
+                    return;
+                }
+
+                dr["Scale"] = eve.FormattedValue;
+            };
+
+            BeforeWash1.CellEditable += (s, eve) =>
+            {
+                DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
+
+                if (dr["Scale"] != DBNull.Value)
+                {
+                    eve.IsEditable = false;
+                }
+                else
+                {
+                    eve.IsEditable = true;
+                }
+            };
+
+            SizeSpecCell.CellEditable += (s, eve) =>
+            {
+                DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
+
+                if (dr["Scale"] != DBNull.Value)
+                {
+                    eve.IsEditable = false;
+                }
+                else
+                {
+                    eve.IsEditable = true;
+                }
+            };
+
+            AfterWash1Cell4.CellEditable += (s, eve) =>
+            {
+                DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
+
+                if (dr["Scale"] != DBNull.Value)
+                {
+                    eve.IsEditable = false;
+                }
+                else
+                {
+                    eve.IsEditable = true;
+                }
+            };
+
+            ScaleCell.CellEditable += (s, eve) =>
+            {
+                DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
+
+                if (dr["Scale"] != DBNull.Value)
+                {
+                    eve.IsEditable = true;
+                }
+                else
+                {
+                    eve.IsEditable = false;
+                }
+            };
+
             Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
             ResultCombo.Add("N/A", "N/A");
             ResultCombo.Add("Accepted", "Accepted");
@@ -438,6 +642,7 @@ namespace Sci.Production.Quality
             TextColumnSetting.CharacterCasing = CharacterCasing.Normal;
             TextColumnSetting.MaxLength = 500;
             ArtworkCell.MaxLength = 200;
+            ScaleCell.MaxLength = 5;
 
             this.Helper.Controls.Grid.Generator(this.gridAppearance)
             .Text("Type", header: "After Wash Appearance Check list", width: Widths.AnsiChars(40), iseditingreadonly: true, settings: ArtworkCell)
@@ -448,9 +653,21 @@ namespace Sci.Production.Quality
             .ComboBox("Wash5", header: "Wash5", width: Widths.AnsiChars(10), settings: ResultComboCell)
             .Text("Comment", header: "Comment", width: Widths.AnsiChars(20), settings: TextColumnSetting);
 
+            this.Helper.Controls.Grid.Generator(this.gridFGWT)
+            .Text("LocationText", header: "Location", width: Widths.AnsiChars(12), iseditingreadonly: true)
+            .Text("Type", header: "Type", width: Widths.AnsiChars(40), iseditingreadonly: true)
+            .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2, settings: BeforeWash1)
+            .Numeric("SizeSpec", header: "Size Spec Meas ", width: Widths.AnsiChars(6), decimal_places: 2,settings: SizeSpecCell)
+            .Numeric("AfterWash", header: "After Wash", width: Widths.AnsiChars(6), decimal_places: 2, settings: AfterWash1Cell4)
+            .Numeric("Shrinkage", header: "Shrikage(%)", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 2)
+            .Text("Scale", header: "Scale", width: Widths.AnsiChars(10), settings: ScaleCell)
+            .Text("Result", header: "Result", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            ;
+
             this.tab1Load();
             this.tab2Load();
             this.tab3Load();
+            this.tab4Load();
 
             this.tabControl1.SelectedIndex = 1;
             this.tabControl1.SelectedIndex = 2;
@@ -468,6 +685,7 @@ namespace Sci.Production.Quality
 
             this.dateSubmit.Value = MyUtility.Convert.GetDate(this.Deatilrow["SubmitDate"]);
             this.numArriveQty.Value = MyUtility.Convert.GetInt(this.Deatilrow["ArrivedQty"]);
+            this.txtLotoFactory.Text = MyUtility.Convert.GetString(this.Deatilrow["LOtoFactory"]);
             this.comboResult.Text = MyUtility.Convert.GetString(this.Deatilrow["Result"]);
             this.txtRemark.Text = MyUtility.Convert.GetString(this.Deatilrow["Remark"]);
             this.rdbtnLine.Checked = MyUtility.Convert.GetBool(this.Deatilrow["LineDry"]);
@@ -475,6 +693,7 @@ namespace Sci.Production.Quality
             this.rdbtnHand.Checked = MyUtility.Convert.GetBool(this.Deatilrow["HandWash"]);
             this.comboTemperature.Text = MyUtility.Convert.GetString(this.Deatilrow["Temperature"]);
             this.comboMachineModel.Text = MyUtility.Convert.GetString(this.Deatilrow["Machine"]);
+            this.combFGWTMaterial.Text = MyUtility.Convert.GetString(this.Deatilrow["FGWTMtlTypeID"]);
             this.txtFibreComposition.Text = MyUtility.Convert.GetString(this.Deatilrow["Composition"]);
             this.comboNeck.Text = MyUtility.Convert.GetBool(this.Deatilrow["Neck"]) ? "YES" : "No";
             this.comboResult.Text = MyUtility.Convert.GetString(this.Deatilrow["Result"]) == "P" ? "Pass" : "Fail";
@@ -592,6 +811,112 @@ order by seq";
             }
         }
 
+        DataTable dtFGWT;
+
+        private void tab4Load()
+        {
+            this.gridFGWT.IsEditingReadOnly = false;
+
+            string sqlFGWT = $@"
+select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
+						WHEN Location='T' THEN 'Top'
+						WHEN Location='S' THEN 'Top+Bottom'
+						ELSE ''
+					END
+		,Location
+        ,Type 
+		,f.ID
+		,f.No
+        ,BeforeWash 
+        ,SizeSpec 
+        ,AfterWash
+        ,f.Shrinkage
+        ,f.Scale
+        ,f.TestDetail
+        ,[Result]=IIF(f.Scale IS NOT NULL
+	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
+	        ,IIF(AfterWash IS NOT NULL AND BeforeWash IS NOT NULL
+			        ,IIF(gd.FGWTMtlTypeID='KNIT' AND -2 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 3
+					        , 'Pass'
+					        ,IIF(gd.FGWTMtlTypeID='WOVEN' AND -3 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 5
+							        ,'Pass'
+							        ,'Fail'
+						        )
+				        )
+			        ,''
+		        )
+        )
+from GarmentTest_Detail_FGWT f 
+LEFT JOIN GarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
+where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
+order by LocationText DESC";
+
+            DBProxy.Current.Select(null, sqlFGWT, out this.dtFGWT);
+            this.gridFGWT.DataSource = this.dtFGWT;
+        }
+
+        private void tab4Save()
+        {
+            DataTable gridFGWT = (DataTable)this.gridFGWT.DataSource;
+
+            string cmd = $@"
+  merge GarmentTest_Detail_FGWT t
+  using #tmp s
+  on s.id = t.id and s.no = t.no and s.Location = t.Location and s.Type	= t.Type
+  when matched then
+  update set
+	t.[BeforeWash]  = s.[BeforeWash],
+	t.[SizeSpec]  = s.[SizeSpec],
+    t.[AfterWash]	= s.[AfterWash],
+    t.[Shrinkage]	= s.Shrinkage,
+    t.[Scale]	= s.[Scale]
+	;
+
+select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
+						WHEN Location='T' THEN 'Top'
+						WHEN Location='S' THEN 'Top+Bottom'
+						ELSE ''
+					END
+		,Location
+        ,Type 
+		,f.ID
+		,f.No
+        ,BeforeWash 
+        ,SizeSpec 
+        ,AfterWash
+        ,f.Shrinkage
+        ,f.Scale
+        ,f.TestDetail
+        ,[Result]=IIF(f.Scale IS NOT NULL
+	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
+	        ,IIF( AfterWash IS NOT NULL AND BeforeWash IS NOT NULL
+			        ,IIF(gd.FGWTMtlTypeID='KNIT' AND -2 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 3
+					        , 'Pass'
+					        ,IIF(gd.FGWTMtlTypeID='WOVEN' AND -3 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 5
+							        ,'Pass'
+							        ,'Fail'
+						        )
+				        )
+			        ,''
+		        )
+        )
+from GarmentTest_Detail_FGWT f 
+LEFT JOIN GarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
+where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
+order by LocationText DESC
+
+";
+
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(gridFGWT, string.Empty, cmd, out this.dtFGWT);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.gridFGWT.DataSource = this.dtFGWT;
+        }
+
         private void btnEncode_Click(object sender, EventArgs e)
         {
             DualResult dr = DBProxy.Current.Execute(null, $"Update [GarmentTest_Detail] set Status='Confirmed' where id = '{this.MasterRow["ID"]}'");
@@ -628,12 +953,14 @@ order by seq";
 update GarmentTest_Detail set
     SubmitDate = iif('{SubmitDate}'='',null,'{SubmitDate}'),
     ArrivedQty =  {this.numArriveQty.Value},
+    LOtoFactory =  '{this.txtLotoFactory.Text}',
     Result = '{this.comboResult.SelectedValue}',
     Remark =  '{this.txtRemark.Text}',
     LineDry =  '{this.rdbtnLine.Checked}',
     Temperature =  '{this.comboTemperature.Text}',
     TumbleDry =  '{this.rdbtnTumble.Checked}',
     Machine =  '{this.comboMachineModel.Text}',
+    FGWTMtlTypeID =  '{this.combFGWTMaterial.Text}',
     HandWash =  '{this.rdbtnHand.Checked}',
     Composition =  '{this.txtFibreComposition.Text}',
     Neck ='{MyUtility.Convert.GetString(this.comboNeck.Text).EqualString("YES")}'
@@ -652,6 +979,9 @@ where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
 
                 this.tab3ApperanceSave();
                 this.tab3Load();
+
+                this.tab4Save();
+                this.tab4Load();
 
                 this.btnenable();
                 this.gridAppearance.ForeColor = Color.Black;
@@ -695,8 +1025,10 @@ where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
             this.rdbtnTumble.Enabled = this.EditMode;
             this.rdbtnHand.Enabled = this.EditMode;
             this.btnPDF.Enabled = !this.EditMode;
+            this.btnToFGWT.Enabled = !this.EditMode;
             this.gridActualShrinkage.ReadOnly = !this.EditMode;
             this.gridAppearance.ReadOnly = !this.EditMode;
+            this.gridFGWT.ReadOnly = !this.EditMode;
             this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
         }
 
@@ -2753,6 +3085,90 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
             }
 
             return strValie;
+        }
+
+        private void BtnToFGWT_Click(object sender, EventArgs e)
+        {
+            if (this.dtFGWT.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Datas not found!");
+                return;
+            }
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P04_FGWT.xltx");
+            objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
+
+            // objApp.Visible = true;
+
+            // 若為QA 10產生則顯示New Development Testing ( V )，若為QA P04產生則顯示1st Bulk Testing ( V )
+            worksheet.Cells[4, 3] = "1st Bulk Testing ( V )";
+
+            worksheet.Cells[5, 1] = "adidas Article No.: " + MyUtility.Convert.GetString(this.MasterRow["Article"]);
+            worksheet.Cells[5, 3] = "adidas Working No.: " + MyUtility.Convert.GetString(this.MasterRow["StyleID"]);
+            worksheet.Cells[5, 4] = "adidas Model No.: " + MyUtility.GetValue.Lookup($"SELECT StyleName FROM Style WHERE ID='{this.MasterRow["StyleID"]}'");
+
+            worksheet.Cells[6, 1] = "T1 Supplier Ref.: " + MyUtility.GetValue.Lookup($"SELECT FactoryID FROM Orders WHERE ID='{this.MasterRow["OrderID"]}'");
+            worksheet.Cells[6, 3] = "T1 Factory Name: " + MyUtility.GetValue.Lookup($"SELECT BrandFTYCode FROM Orders WHERE ID='{this.MasterRow["OrderID"]}'");
+            worksheet.Cells[6, 4] = "LO to Factory: " + this.txtLotoFactory.Text;
+
+            if (this.dateSubmit.Value.HasValue)
+            {
+                worksheet.Cells[8, 1] = "Date: " + this.dateSubmit.Value.Value.ToString("yyyy/MM/dd");
+            }
+
+            int copyCount = this.dtFGWT.Rows.Count - 2;
+
+            for (int i = 0; i <= copyCount - 1; i++)
+            {
+                // 複製儲存格
+                Microsoft.Office.Interop.Excel.Range rgCopy = worksheet.get_Range("A13:A13").EntireRow;
+
+                // 選擇要被貼上的位置
+                Microsoft.Office.Interop.Excel.Range rgPaste = worksheet.get_Range("A13:A13", Type.Missing);
+
+                // 貼上
+                rgPaste.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rgCopy.Copy(Type.Missing));
+            }
+
+            worksheet.get_Range($"B12", $"B{ this.dtFGWT.Rows.Count + 11}").Merge(false);
+
+            int startRowIndex = 12;
+
+            // 開始填入表身
+            foreach (DataRow dr in this.dtFGWT.Rows)
+            {
+                // Requirement
+                worksheet.Cells[startRowIndex, 3] = MyUtility.Convert.GetString(dr["Type"]);
+
+                // Test Results
+                // 若[GarmentTest_Detail_FGWT.Scale]非null則帶入Scale，若為null則帶入 [GarmentTest_Detail_FGWT.AfterWash - GarmentTest_Detail_FGWT.BeforeWash.]
+                if (dr["Scale"] != DBNull.Value)
+                {
+                    worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetString(dr["Scale"]);
+                }
+                else
+                {
+                    worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetDouble(dr["AfterWash"]) - MyUtility.Convert.GetDouble(dr["BeforeWash"]);
+                }
+
+                // Test Details
+                worksheet.Cells[startRowIndex, 5] = MyUtility.Convert.GetString(dr["TestDetail"]);
+
+                // adidas pass
+                worksheet.Cells[startRowIndex, 6] = MyUtility.Convert.GetString(dr["Result"]);
+
+                startRowIndex++;
+            }
+
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName("QA_P04_FGWT");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(objApp);
+            strExcelName.OpenFile();
+            #endregion
         }
     }
 }
