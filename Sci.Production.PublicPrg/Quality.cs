@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Sci.Data;
 using Ict;
 using Ict.Win;
+using System.Collections.Generic;
 
 namespace Sci.Production.PublicPrg
 {
@@ -203,6 +204,152 @@ namespace Sci.Production.PublicPrg
                 };
                 return Result;
             }
+        }
+
+        /// <summary>
+        /// GarmentTest_Detail_FGWT 和 SampleGarmentTest_Detail的欄位物件
+        /// </summary>
+        public class FGWT
+        {
+            public string Location { get; set; }
+
+            public string Type { get; set; }
+
+            public string Scale { get; set; }
+
+            public string TestDetail { get; set; }
+        }
+
+        /// <summary>
+        /// 取得預設FGWT
+        /// </summary>
+        /// <param name="isTop">是否TOP</param>
+        /// <param name="isBottom">>是否Bottom</param>
+        /// <param name="isTop_Bottom">>是否TOP & Bottom</param>
+        /// <param name="isAll">>是否All</param>
+        /// <returns>預設清單</returns>
+        public static List<FGWT> GetDefaultFGWT(bool isTop, bool isBottom, bool isTop_Bottom, bool isAll = true)
+        {
+            List<FGWT> defaultFGWTList = new List<FGWT>();
+
+            // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
+
+            List<FGWT> top = new List<FGWT>()
+            {
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: jacket-like garment a) length of necktape" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: jacket-like garment b) length armhole to bottom hem" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: jacket-like garment c) length of front" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: jacket-like garment d) length of centre back" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: jacket-like garment e) length of underarm" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: jacket-like garment f) width across back" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: jacket-like garment g) width below centre back neck (average)" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: jacket-like garment h) width of sleeve" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: jacket-like garment i) width of sleeve botttom/cuff bottom" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: lining of jacket-like garment a) length of necktape" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: lining of jacket-like garment b) length armhole to bottom hem" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: lining of jacket-like garment c) length of front" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: lining of jacket-like garment d) length of centre back" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: lining of jacket-like garment e) length of underarm" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: lining of jacket-like garment f) width across back" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: lining of jacket-like garment g) width below centre back neck(average)" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: lining of jacket-like garment h) width of sleeve" },
+                new FGWT() { Location = "Top", TestDetail = "%", Type = "dimensional change: lining of jacket-like garment i) width of sleeve botttom/ cuff bottom" },
+            };
+
+            List<FGWT> bottom = new List<FGWT>()
+            {
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: trouser-like garment a) length of front leg" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: trouser-like garment b) length of back leg" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: trouser-like garment c) length of inside leg" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: trouser-like garment d) width at waist" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: trouser-like garment e) width at bottom of leg" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: trouser-like garment f) width of leg halfway" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: trouser-like garment g) width of top of leg" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment a) length of front leg" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment b) length of back leg" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment c) length of inside leg" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment d) width at waist "},
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment e) width at bottom of leg" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment f) width of leg halfway" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment g) width of top of leg" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: skirt a) length from waist to bottom hem" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: skirt b) width at waistband" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: skirt c) width below top/bottom edge of waistband (average)" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of skirt a) length from waist to bottom hem" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of skirt b) width at waistband" },
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of skirt c) width below top/bottom edge of waistband (average)" },
+            };
+
+            List<FGWT> top_bottom = new List<FGWT>()
+            {
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear a) length of neckktape" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear b) length armhole to bottom hem" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear c) length of centre front" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear d) length of centre back" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear e) length of underarm" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear f) width across back" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear g) width below centre back neck (average)" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear h) width of sleeve" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear i) width of sleeve botttom/cuff bottom" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear j) length of front leg" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear k) length of back leg" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear l) length of inside leg" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear m) width at waist" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear n) width at bottom of leg" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear o) width of leg halfway" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear p) width of top of leg" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear a) length of neckktape" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear b) length armhole to bottom hem" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear c) length of centre front" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear d) length of centre back" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear e) length of underarm" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear f) width across back" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear g) width below centre back neck (average)" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear h) width of sleeve" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear i) width of sleeve botttom/cuff bottom" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear j) length of front leg" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear k) length of back leg" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear l) length of inside leg" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear m) width at waist" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear n) width at bottom of leg" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear o) width of leg halfway" },
+                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: lining of full body wear p) width of top of leg" },
+            };
+
+            // All項目最後會寫入空白
+            List<FGWT> all = new List<FGWT>()
+            {
+                new FGWT() { Location = string.Empty, TestDetail = "%", Type = "dimensional change: flat made-up textile articles a) overall length" },
+                new FGWT() { Location = string.Empty, TestDetail = "%", Type = "dimensional change: flat made-up textile articles b) overall width" },
+                new FGWT() { Location = string.Empty, TestDetail = "%", Type = "spirality: Garment - in percentage (average)" },
+                new FGWT() { Location = string.Empty, TestDetail = "cm", Type = "spirality: Garment - hem opening in cm" },
+                new FGWT() { Location = string.Empty, TestDetail = "grade", Type = "appearance after laundering: Garment - colour change", Scale = string.Empty },
+                new FGWT() { Location = string.Empty, TestDetail = "grade", Type = "appearance after laundering: Garment - staining", Scale = string.Empty },
+                new FGWT() { Location = string.Empty, TestDetail = "pass/fail",Type = "appearance after laundering: Garment - physical changes", Scale = string.Empty },
+            };
+
+            if (isTop)
+            {
+                defaultFGWTList.AddRange(top);
+            }
+
+            if (isBottom)
+            {
+                defaultFGWTList.AddRange(bottom);
+            }
+
+            if (isTop_Bottom)
+            {
+                defaultFGWTList.AddRange(top_bottom);
+            }
+
+            if (isAll)
+            {
+                defaultFGWTList.AddRange(all);
+            }
+
+
+            return defaultFGWTList;
         }
     }
 }
