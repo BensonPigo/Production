@@ -36,33 +36,33 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(445, 12);
+            this.print.Location = new System.Drawing.Point(317, 12);
             this.print.TabIndex = 0;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(445, 48);
+            this.toexcel.Location = new System.Drawing.Point(317, 48);
             this.toexcel.TabIndex = 1;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(445, 84);
+            this.close.Location = new System.Drawing.Point(317, 84);
             this.close.TabIndex = 2;
             // 
             // buttonCustomized
             // 
             this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCustomized.Location = new System.Drawing.Point(399, 120);
+            this.buttonCustomized.Location = new System.Drawing.Point(271, 120);
             // 
             // checkUseCustomized
             // 
             this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkUseCustomized.Location = new System.Drawing.Point(425, 126);
+            this.checkUseCustomized.Location = new System.Drawing.Point(297, 126);
             // 
             // txtVersion
             // 
             this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtVersion.Location = new System.Drawing.Point(425, 124);
+            this.txtVersion.Location = new System.Drawing.Point(297, 124);
             // 
             // checkExtendAllParts
             // 
@@ -112,7 +112,7 @@
             // 
             // P10_Print
             // 
-            this.ClientSize = new System.Drawing.Size(537, 178);
+            this.ClientSize = new System.Drawing.Size(409, 178);
             this.Controls.Add(this.comboLayout);
             this.Controls.Add(this.checkExtendAllParts);
             this.Controls.Add(this.radioBundleChecklist);
