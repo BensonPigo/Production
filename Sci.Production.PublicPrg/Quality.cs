@@ -286,7 +286,6 @@ namespace Sci.Production.PublicPrg
                 new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear b) length armhole to bottom hem" },
                 new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear c) length of centre front" },
                 new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear d) length of centre back" },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear d) length of centre back" },
                 new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear e) length of underarm" },
                 new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear f) width across back" },
                 new FGWT() { Location = "Top+Bottom", TestDetail = "%", Type = "dimensional change: full body wear g) width below centre back neck (average)" },

@@ -127,7 +127,6 @@
             this.label42 = new System.Windows.Forms.Label();
             this.panel11 = new Sci.Win.UI.Panel();
             this.gridFGWT = new Sci.Win.UI.Grid();
-            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.btnAmend = new Sci.Win.UI.Button();
@@ -158,7 +157,6 @@
             this.panel10.SuspendLayout();
             this.panel11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).BeginInit();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -619,10 +617,10 @@
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.panel9);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1134, 420);
+            this.tabPage2.Size = new System.Drawing.Size(1134, 423);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Shrinkage";
             // 
@@ -633,7 +631,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 3);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(1128, 414);
+            this.panel9.Size = new System.Drawing.Size(1128, 417);
             this.panel9.TabIndex = 62;
             // 
             // gridShrinkage
@@ -666,7 +664,7 @@
             this.gridShrinkage.RowTemplate.Height = 24;
             this.gridShrinkage.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridShrinkage.ShowCellToolTips = false;
-            this.gridShrinkage.Size = new System.Drawing.Size(1128, 271);
+            this.gridShrinkage.Size = new System.Drawing.Size(1128, 274);
             this.gridShrinkage.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -676,7 +674,7 @@
             this.flowLayoutPanel1.Controls.Add(this.panel6);
             this.flowLayoutPanel1.Controls.Add(this.panel5);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 271);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 274);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(1128, 143);
             this.flowLayoutPanel1.TabIndex = 61;
@@ -1369,7 +1367,6 @@
             this.gridFGWT.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridFGWT.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridFGWT.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridFGWT.DataSource = this.listControlBindingSource3;
             this.gridFGWT.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridFGWT.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridFGWT.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -1546,7 +1543,6 @@
             this.panel10.PerformLayout();
             this.panel11.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).EndInit();
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
@@ -1662,6 +1658,5 @@
         private Win.UI.Panel panel11;
         private Win.UI.Grid gridFGWT;
         private Win.UI.Button btnToFGWT;
-        private Win.UI.ListControlBindingSource listControlBindingSource3;
     }
 }

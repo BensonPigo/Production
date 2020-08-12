@@ -664,7 +664,7 @@ namespace Sci.Production.Quality
             .Text("Comment", header: "Comment", width: Widths.AnsiChars(10), settings: TextColumnSetting);
 
             this.Helper.Controls.Grid.Generator(this.gridFGWT)
-            .Text("LocationText", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("LocationText", header: "Location", width: Widths.AnsiChars(12), iseditingreadonly: true)
             .Text("Type", header: "Type", width: Widths.AnsiChars(40), iseditingreadonly: true)
             .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2, settings: BeforeWash1)
             .Numeric("SizeSpec", header: "Size Spec Meas ", width: Widths.AnsiChars(6), decimal_places: 2, settings: SizeSpecCell)
@@ -742,7 +742,7 @@ and st.Article = '{this.MasterRow["Article"]}'
             this.txtColour.Text = MyUtility.Check.Empty(dr["Colour"]) ? MyUtility.GetValue.Lookup(strSqlcmd) : MyUtility.Convert.GetString(dr["Colour"]);
 
             this.txtReportDate.Value = MyUtility.Convert.GetDate(dr["ReportDate"]);
-            this.comboResult.Text = MyUtility.Convert.GetString(dr["LOtoFactory"]);
+            this.comboResult.Text = MyUtility.Convert.GetString(dr["Result"]);
             this.txtLotoFactory.Text = MyUtility.Convert.GetString(dr["LOtoFactory"]);
 
             this.txtRemark.Text = MyUtility.Convert.GetString(dr["Remark"]);
@@ -939,16 +939,15 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 from SampleGarmentTest_Detail_FGWT f 
 LEFT JOIN SampleGarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
-order by f.Location, f.Type";
+order by LocationText DESC";
 
             DBProxy.Current.Select(null, sqlFGWT, out this.dtFGWT);
-            this.listControlBindingSource3.DataSource = null;
-            this.listControlBindingSource3.DataSource = this.dtFGWT;
+            this.gridFGWT.DataSource = this.dtFGWT;
         }
 
         private void tab4Save()
         {
-            DataTable gridFGWT = (DataTable)this.listControlBindingSource3.DataSource;
+            DataTable gridFGWT = (DataTable)this.gridFGWT.DataSource;
 
             string cmd = $@"
   merge SampleGarmentTest_Detail_FGWT t
@@ -994,7 +993,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 from SampleGarmentTest_Detail_FGWT f 
 LEFT JOIN SampleGarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
-order by f.Location, f.Type
+order by LocationText DESC
 
 ";
 
@@ -1004,6 +1003,7 @@ order by f.Location, f.Type
                 this.ShowErr(result);
                 return;
             }
+            this.gridFGWT.DataSource = this.dtFGWT;
         }
 
         #endregion
@@ -2882,20 +2882,25 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             // objApp.Visible = true;
 
             // 若為QA 10產生則顯示New Development Testing ( V )，若為QA P04產生則顯示1st Bulk Testing ( V )
-            worksheet.Cells[4, 3] = "1st Bulk Testing ( V )";
+            worksheet.Cells[4, 1] = "New Development Testing ( V )";
 
             worksheet.Cells[5, 1] = "adidas Article No.: " + MyUtility.Convert.GetString(this.MasterRow["Article"]);
             worksheet.Cells[5, 3] = "adidas Working No.: " + MyUtility.Convert.GetString(this.MasterRow["StyleID"]);
             worksheet.Cells[5, 4] = "adidas Model No.: " + MyUtility.GetValue.Lookup($"SELECT StyleName FROM Style WHERE ID='{this.MasterRow["StyleID"]}'");
 
-            worksheet.Cells[6, 4] = "LO to Factory: " + MyUtility.Convert.GetString(this.Deatilrow["LOtoFactory"]);
+            worksheet.Cells[6, 4] = "LO to Factory: " + this.txtLotoFactory.Text;
 
-            string reportDate = MyUtility.GetValue.Lookup($@"select ReportDate from[SampleGarmentTest_Detail] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} ");
+            //string reportDate = MyUtility.GetValue.Lookup($@"select ReportDate from[SampleGarmentTest_Detail] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} ");
 
-            if (!MyUtility.Check.Empty(reportDate))
+            if (this.txtReportDate.Value.HasValue)
             {
-                worksheet.Cells[8, 1] = "Date: " + MyUtility.Convert.GetDate(reportDate).Value.ToString("yyyy/MM/dd");
+                worksheet.Cells[8, 1] = "Date: " + this.txtReportDate.Value.Value.ToString("yyyy/MM/dd");
             }
+
+            //if (!MyUtility.Check.Empty(reportDate))
+            //{
+            //    worksheet.Cells[8, 1] = "Date: " + MyUtility.Convert.GetDate(reportDate).Value.ToString("yyyy/MM/dd");
+            //}
 
             int copyCount = this.dtFGWT.Rows.Count - 2;
 
@@ -2942,9 +2947,12 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             }
 
             #region Save & Show Excel
-            objApp.Visible = true;
+            string strExcelName = Class.MicrosoftFile.GetName("QA_P10_FGWT");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);
+            strExcelName.OpenFile();
             #endregion
         }
     }

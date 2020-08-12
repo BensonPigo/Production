@@ -654,7 +654,7 @@ namespace Sci.Production.Quality
             .Text("Comment", header: "Comment", width: Widths.AnsiChars(20), settings: TextColumnSetting);
 
             this.Helper.Controls.Grid.Generator(this.gridFGWT)
-            .Text("LocationText", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("LocationText", header: "Location", width: Widths.AnsiChars(12), iseditingreadonly: true)
             .Text("Type", header: "Type", width: Widths.AnsiChars(40), iseditingreadonly: true)
             .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2, settings: BeforeWash1)
             .Numeric("SizeSpec", header: "Size Spec Meas ", width: Widths.AnsiChars(6), decimal_places: 2,settings: SizeSpecCell)
@@ -849,16 +849,15 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 from GarmentTest_Detail_FGWT f 
 LEFT JOIN GarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
-order by f.Location, f.Type";
+order by LocationText DESC";
 
             DBProxy.Current.Select(null, sqlFGWT, out this.dtFGWT);
-            this.listControlBindingSource3.DataSource = null;
-            this.listControlBindingSource3.DataSource = this.dtFGWT;
+            this.gridFGWT.DataSource = this.dtFGWT;
         }
 
         private void tab4Save()
         {
-            DataTable gridFGWT = (DataTable)this.listControlBindingSource3.DataSource;
+            DataTable gridFGWT = (DataTable)this.gridFGWT.DataSource;
 
             string cmd = $@"
   merge GarmentTest_Detail_FGWT t
@@ -904,7 +903,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 from GarmentTest_Detail_FGWT f 
 LEFT JOIN GarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
-order by f.Location, f.Type
+order by LocationText DESC
 
 ";
 
@@ -914,6 +913,8 @@ order by f.Location, f.Type
                 this.ShowErr(result);
                 return;
             }
+
+            this.gridFGWT.DataSource = this.dtFGWT;
         }
 
         private void btnEncode_Click(object sender, EventArgs e)
@@ -3087,7 +3088,6 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
 
         private void BtnToFGWT_Click(object sender, EventArgs e)
         {
-
             if (this.dtFGWT.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Datas not found!");
@@ -3109,11 +3109,11 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
 
             worksheet.Cells[6, 1] = "T1 Supplier Ref.: " + MyUtility.GetValue.Lookup($"SELECT FactoryID FROM Orders WHERE ID='{this.MasterRow["OrderID"]}'");
             worksheet.Cells[6, 3] = "T1 Factory Name: " + MyUtility.GetValue.Lookup($"SELECT BrandFTYCode FROM Orders WHERE ID='{this.MasterRow["OrderID"]}'");
-            worksheet.Cells[6, 4] = "LO to Factory: " + MyUtility.Convert.GetString(this.Deatilrow["LOtoFactory"]);
+            worksheet.Cells[6, 4] = "LO to Factory: " + this.txtLotoFactory.Text;
 
-            if (MyUtility.Convert.GetDate(this.Deatilrow["SubmitDate"]).HasValue)
+            if (this.dateSubmit.Value.HasValue)
             {
-                worksheet.Cells[8, 1] = "Date: " + MyUtility.Convert.GetDate(this.Deatilrow["SubmitDate"]).Value.ToString("yyyy/MM/dd");
+                worksheet.Cells[8, 1] = "Date: " + this.dateSubmit.Value.Value.ToString("yyyy/MM/dd");
             }
 
             int copyCount = this.dtFGWT.Rows.Count - 2;
@@ -3161,9 +3161,12 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
             }
 
             #region Save & Show Excel
-            objApp.Visible = true;
+            string strExcelName = Class.MicrosoftFile.GetName("QA_P04_FGWT");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);
+            strExcelName.OpenFile();
             #endregion
         }
     }
