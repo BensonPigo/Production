@@ -1924,6 +1924,30 @@ where not exists (select 1
             #region
             if (this.rftDT != null && this.rftDT.Rows.Count > 0)
             {
+                // RFT 表頭的InlineQty、RejectQty資料來源，必須與Sewing P01表頭的InlineQty、DefectQty相同，因此重新算一次
+                DataTable detailBody = (DataTable)this.detailgridbs.DataSource;
+
+                foreach (DataRow item in this.rftDT.Rows)
+                {
+                    string orderID = MyUtility.Convert.GetString(item["OrderID"]);
+                    string cDate = MyUtility.Convert.GetString(item["CDate"]);
+                    string sewingLineID = MyUtility.Convert.GetString(item["SewingLineID"]);
+                    string factoryID = MyUtility.Convert.GetString(item["FactoryID"]);
+                    string team = MyUtility.Convert.GetString(item["Team"]);
+                    string shift = MyUtility.Convert.GetString(item["Shift"]);
+
+                    int inlineQty = detailBody.AsEnumerable().Where(o =>
+                           o["OrderID"].ToString() == orderID
+                    ).Sum(o => MyUtility.Convert.GetInt(o["InlineQty"]));
+
+                    int defectQty = detailBody.AsEnumerable().Where(o =>
+                           o["OrderID"].ToString() == orderID
+                    ).Sum(o => MyUtility.Convert.GetInt(o["DefectQty"]));
+
+                    item["InspectQty"] = inlineQty;
+                    item["RejectQty"] = defectQty;
+                }
+
                 string insertRFT = $@"
 select *,MDivisionid=(select MDivisionID from Factory where id=t.FactoryID)
 into #tmp1
@@ -4334,7 +4358,8 @@ select t.OrderId
 	, Team = '{this.CurrentMaintain["Team"]}'
 	, Status='New'
 	, Remark=''
-    ,t.Article,t.ComboType,t.OrderId
+    ,t.Article,t.ComboType
+INTO #tmp2
 from #tmp t
 outer apply(
 	select Qty=count(*)
@@ -4366,6 +4391,24 @@ outer apply(
            and not (ins.Status <> 'Fixed'  or (ins.Status = 'Fixed' and cast(ins.AddDate as date) = ins.InspectionDate))
            and ins.SunriseNid = 0
 ) DiffInspectQty
+
+
+SELECT  OrderId
+	, CDate
+	, SewinglineID
+	, FactoryID 
+	, [InspectQty]=SUM(InspectQty)
+	, [RejectQty]= SUM(RejectQty)
+	, [DefectQty] =SUM(DefectQty)
+	, Shift
+	, Team
+	, Status
+	, Remark
+FROM #tmp2
+GROUP BY  OrderId, CDate, SewinglineID, FactoryID , Shift, Team, Status, Remark
+
+
+drop table #tmp,#tmp2
 ";
 
             using (SqlConnection mesConn = new SqlConnection(Env.Cfg.GetConnection("ManufacturingExecution", DBProxy.Current.DefaultModuleName).ConnectionString))
