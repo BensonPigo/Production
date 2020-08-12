@@ -843,18 +843,18 @@ select Roll,Dyelot,TicketYds,Scale,Result
             dt.Columns.Add(new DataColumn("Seq", typeof(string)));
 
             int packages = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"
-SELECT SUM(ISNULL(e.Packages,0))
-FROM FIR f
-LEFT JOIN Receiving r ON r.ID = f.ReceivingID
-LEFT JOIN Export e ON e.ID = r.ExportId
-WHERE f.POID='{this.maindr["POID"]}' AND f.Seq1='{this.maindr["Seq1"]}'AND f.Seq2='{this.maindr["Seq2"]}'
+
+SELECT sum(Packages) 
+FROM Export
+WHERE MainExportID='{this.maindr["ExportID"]}'
 "));
+            string colorName = MyUtility.GetValue.Lookup($"SELECT Name FROM Color WHERE ID = '{this.displayColor.Text}' AND BrandId  ='{brandID}' ");
 
             dr = dt.NewRow();
             dr["Poid"] = this.displaySP.Text;
             dr["FactoryID"] = Env.User.Factory;
             dr["Style"] = this.displayStyle.Text;
-            dr["Color"] = this.displayColor.Text;
+            dr["Color"] = colorName;
             dr["BrandID"] = brandID;
             dr["Supp"] = suppid;
             dr["Invo"] = Invno;
