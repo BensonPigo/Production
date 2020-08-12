@@ -501,7 +501,7 @@ namespace Sci.Production.Quality
 
                     string defaultSelected = MyUtility.Convert.GetString(dr["Scale"]);
 
-                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected, null, null, null);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "ID,Name", "ID,Name", defaultSelected, null, null, null);
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -532,7 +532,7 @@ namespace Sci.Production.Quality
 
                     string defaultSelected = MyUtility.Convert.GetString(dr["Scale"]);
 
-                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected, null, null, null);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "ID,Name", "ID,Name", defaultSelected, null, null, null);
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -1025,6 +1025,7 @@ where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
             this.rdbtnTumble.Enabled = this.EditMode;
             this.rdbtnHand.Enabled = this.EditMode;
             this.btnPDF.Enabled = !this.EditMode;
+            this.btnToFGWT.Enabled = !this.EditMode;
             this.gridActualShrinkage.ReadOnly = !this.EditMode;
             this.gridAppearance.ReadOnly = !this.EditMode;
             this.gridFGWT.ReadOnly = !this.EditMode;
