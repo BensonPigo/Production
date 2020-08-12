@@ -193,7 +193,9 @@ and sd.AutoCreate = 0 --排除G單
                 {
                     List<SqlParameter> lis = new List<SqlParameter>();
                     lis.Add(new SqlParameter("@FromOrderID", this.CurrentDetailData["FromOrderID"]));
-                    string sqlcmd = $@"select Location from Order_Location with(nolock) where OrderID = @FromOrderID";
+                    string sqlcmd = $@"select Location from Order_Location with(nolock) where OrderID = @FromOrderID
+                                        union
+                                      select distinct [Location] = ComboType from sewingoutput_Detail_detail where orderid=@FromOrderID";
                     SelectItem item = new SelectItem(sqlcmd, lis, "8", MyUtility.Convert.GetString(this.CurrentDetailData["FromComboType"]));
                     DialogResult dialogResult = item.ShowDialog();
                     if (dialogResult == DialogResult.Cancel)
@@ -218,7 +220,9 @@ and sd.AutoCreate = 0 --排除G單
                     List<SqlParameter> lis = new List<SqlParameter>();
                     lis.Add(new SqlParameter("@FromOrderID", this.CurrentDetailData["FromOrderID"]));
                     lis.Add(new SqlParameter("@Location", e.FormattedValue));
-                    string sqlcmd = $@"select 1 from Order_Location with(nolock) where OrderID = @FromOrderID and Location = @Location";
+                    string sqlcmd = $@"select 1 from Order_Location with(nolock) where OrderID = @FromOrderID and Location = @Location
+                                        union
+                                      select 1 from sewingoutput_Detail_detail where orderid=@FromOrderID  and ComboType = @Location";
                     try
                     {
                         if (!MyUtility.Check.Seek(sqlcmd, lis, null))
@@ -247,7 +251,9 @@ and sd.AutoCreate = 0 --排除G單
                 {
                     List<SqlParameter> lis = new List<SqlParameter>();
                     lis.Add(new SqlParameter("@FromOrderID", this.CurrentDetailData["FromOrderID"]));
-                    string sqlcmd = $@"select distinct Article from Order_Qty with(nolock) where ID = @FromOrderID";
+                    string sqlcmd = $@"select distinct Article from Order_Qty with(nolock) where ID = @FromOrderID
+                                        union
+                                      select distinct Article from sewingoutput_Detail_detail where orderid=@FromOrderID";
                     SelectItem item = new SelectItem(sqlcmd, lis, "15", MyUtility.Convert.GetString(this.CurrentDetailData["Article"]));
                     DialogResult dialogResult = item.ShowDialog();
                     if (dialogResult == DialogResult.Cancel)
@@ -274,7 +280,9 @@ and sd.AutoCreate = 0 --排除G單
                     List<SqlParameter> lis = new List<SqlParameter>();
                     lis.Add(new SqlParameter("@FromOrderID", this.CurrentDetailData["FromOrderID"]));
                     lis.Add(new SqlParameter("@Article", e.FormattedValue));
-                    string sqlcmd = $@"select 1 from Order_Qty with(nolock) where ID = @FromOrderID and Article = @Article";
+                    string sqlcmd = $@"select 1 from Order_Qty with(nolock) where ID = @FromOrderID and Article = @Article
+                                        union
+                                      select 1 from sewingoutput_Detail_detail where orderid = @FromOrderID and Article = @Article ";
                     try
                     {
                         if (!MyUtility.Check.Seek(sqlcmd, lis, null))
@@ -305,7 +313,9 @@ and sd.AutoCreate = 0 --排除G單
                 {
                     List<SqlParameter> lis = new List<SqlParameter>();
                     lis.Add(new SqlParameter("@FromOrderID", this.CurrentDetailData["FromOrderID"]));
-                    string sqlcmd = $@"select distinct SizeCode from Order_Qty with(nolock) where ID = @FromOrderID union select distinct sizecode from sewingoutput_Detail_detail where orderid=@FromOrderID ";
+                    string sqlcmd = $@"select distinct SizeCode from Order_Qty with(nolock) where ID = @FromOrderID 
+                                        union
+                                      select distinct sizecode from sewingoutput_Detail_detail where orderid=@FromOrderID ";
                     SelectItem item = new SelectItem(sqlcmd, lis, "15", MyUtility.Convert.GetString(this.CurrentDetailData["SizeCode"]));
                     DialogResult dialogResult = item.ShowDialog();
                     if (dialogResult == DialogResult.Cancel)
