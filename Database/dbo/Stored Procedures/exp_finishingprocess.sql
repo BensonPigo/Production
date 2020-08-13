@@ -631,6 +631,17 @@ VALUES(s.[SCICtnNo],s.[Side],s.[Seq],s.[FilePath],s.[FileName],s.[CmdTime],s.[Su
 	,s.PackingListID	,s.Is2Side	,s.IsHorizontal	,s.IsSSCC	,s.FromRight	,s.FromBottom	,s.Width	,s.Length
 );
 
+UPDATE fps
+SET Junk = 1 , SunriseUpdated = 0 , GenSongUpdated = 0 ,CmdTime = GetDate()
+FROM ShippingMarkPic_Detail fps
+WHERE NOT EXISTS(
+	SELECT	 1
+	FROM Production.dbo.ShippingMarkPic_Detail s1
+	inner join Production.dbo.ShippingMarkPic s2 on s2.ukey = s1.ShippingMarkPicUkey
+	WHERE s1.SCICtnNo = fps.SCICtnNo AND s1.ShippingMarkTypeUkey = fps.ShippingMarkTypeUkey AND s2.PackingListID = fps.PackingListID
+)
+AND Junk = 0
+
 --06. 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天
 select * 
 into #tmpPackingList
