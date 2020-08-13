@@ -109,16 +109,16 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
             {
                 sqlCmd = $@"
 	select wd.OrderID,co.cDate,wd.SizeCode,wd.Article,wp.PatternPanel,wd.WorkOrderUkey,
-		cutqty= iif(sum(cod.Layer*ws.Qty)>wd.Qty,wd.Qty,sum(cod.Layer*ws.Qty)),
+		cutqty= iif(isnull(sum(cod.Layer*ws.Qty), 0)>wd.Qty,wd.Qty,isnull(sum(cod.Layer*ws.Qty), 0)),
 		co.MDivisionid,
-		TotalCutQty=sum(cod.Layer*ws.qty),cod.CutRef,wo.FabricPanelCode,wo.Cutno
+		TotalCutQty=isnull(sum(cod.Layer*ws.Qty),0),cod.CutRef,wo.FabricPanelCode,wo.Cutno
 	into #CutQtytmp1
 	from WorkOrder_Distribute wd WITH (NOLOCK)
 	inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
 	inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = wd.WorkOrderUkey and ws.SizeCode = wd.SizeCode
 	inner join WorkOrder wo WITH (NOLOCK) on wo.Ukey = wd.WorkOrderUkey
-	inner join CuttingOutput_Detail cod on cod.WorkOrderUkey = wd.WorkOrderUkey
-	inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
+	left join CuttingOutput_Detail cod on cod.WorkOrderUkey = wd.WorkOrderUkey
+	left join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
 	inner join orders o WITH (NOLOCK) on o.id = wd.OrderID
 	where o.poid=(select poid from orders o with(nolock) where id = '{this.id}')
 	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,wd.Qty,wd.WorkOrderUkey,cod.CutRef,co.cDate,wo.FabricPanelCode,wo.Cutno
