@@ -832,7 +832,7 @@ Select
 	 sel = cast(0 as bit)
 	, Pkey = ROW_NUMBER() over (order by b.sizecode,b.orderid,a.FabricPanelCode) -- 為 workorder_Distribute 的 Key, 計算已選總和用
 	, iden = 0
-	, No = DENSE_RANK() over (partition by a.ukey,article.article order by b.sizecode) -- 對應 GridQty 的欄位
+	, No = DENSE_RANK() over (partition by a.ukey order by article.article,b.sizecode) -- 對應 GridQty 的欄位
 	, a.cutref
 	, orderid = iif(b.OrderID = 'EXCESS', isnull(l.orderid,l2.OrderID), b.OrderID)
 	, article.article
@@ -882,7 +882,7 @@ Where isnull(a.CutRef,'') <> ''
 and ord.mDivisionid = '{this.keyWord}'
 {where}
 {distru_where}
-order by b.sizecode,b.orderid,a.FabricPanelCode
+order by article.article,b.sizecode,b.orderid,a.FabricPanelCode
 ";
             query_dResult = DBProxy.Current.Select(null, distru_cmd, out this.ArticleSizeTb);
             if (!query_dResult)

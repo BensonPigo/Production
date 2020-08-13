@@ -875,7 +875,12 @@ Qty: {r.Quantity}     Item: {r.Item}";
         /// <inheritdoc/>
         public static DataTable GetBundle_Detail_Order_Data(string bundleno)
         {
-            string sqlcmd = $@"select bdo.OrderID,o.Categoryfrom Bundle_Detail_Order bdo with(nolock)left join Orders o with(nolock) on o.ID = bdo.OrderIDwhere bundleno = '{bundleno}'order by OrderID";
+            string sqlcmd = $@"
+select bdo.OrderID,o.Category
+from Bundle_Detail_Order bdo with(nolock)
+left join Orders o with(nolock) on o.ID = bdo.OrderID
+where bundleno = '{bundleno}'
+order by OrderID";
             DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
             return dt;
         }
