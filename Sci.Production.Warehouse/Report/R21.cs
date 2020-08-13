@@ -11,30 +11,32 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R21 : Win.Tems.PrintForm
     {
-        string StartSPNo;
-        string EndSPNo;
-        string MDivision;
-        string Factory;
-        string StartRefno;
-        string EndRefno;
-        string Color;
-        string MT;
-        string ST;
-        string WorkNo;
+        private string StartSPNo;
+        private string EndSPNo;
+        private string MDivision;
+        private string Factory;
+        private string StartRefno;
+        private string EndRefno;
+        private string Color;
+        private string MT;
+        private string MtlTypeID;
+        private string ST;
+        private string WorkNo;
         private bool bulk;
         private bool sample;
         private bool material;
         private bool smtl;
         private bool complete;
-        DateTime? BuyerDelivery1;
-        DateTime? BuyerDelivery2;
-        DateTime? ETA1;
-        DateTime? ETA2;
-        DateTime? arriveWH1;
-        DateTime? arriveWH2;
-        string sqlcolumn = @"select
+        private DateTime? BuyerDelivery1;
+        private DateTime? BuyerDelivery2;
+        private DateTime? ETA1;
+        private DateTime? ETA2;
+        private DateTime? arriveWH1;
+        private DateTime? arriveWH2;
+        private string sqlcolumn = @"select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
@@ -125,7 +127,7 @@ namespace Sci.Production.Warehouse
 	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'')     
     ";
 
-        string sqlcolumn_sum = @"select
+        private string sqlcolumn_sum = @"select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
@@ -204,44 +206,42 @@ namespace Sci.Production.Warehouse
 	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'') 
     ";
 
-        string sql_yyyy = @"select distinct left(CONVERT(CHAR(8),o.SciDelivery, 112),4) as SciYYYY";
+        private string sql_yyyy = @"select distinct left(CONVERT(CHAR(8),o.SciDelivery, 112),4) as SciYYYY";
 
-        string sql_cnt = @"select count(*) as datacnt";
+        private string sql_cnt = @"select count(*) as datacnt";
 
-        int _reportType;
-        bool boolCheckQty;
-        int data_cnt = 0;
-        StringBuilder sqlcmd = new StringBuilder();
-        StringBuilder sqlcmd_fin = new StringBuilder();
-        DataTable printData;
-        DataTable printData_cnt;
-        DataTable printData_yyyy;
+        private int _reportType;
+        private bool boolCheckQty;
+        private int data_cnt = 0;
+        private StringBuilder sqlcmd = new StringBuilder();
+        private StringBuilder sqlcmd_fin = new StringBuilder();
+        private DataTable printData;
+        private DataTable printData_cnt;
+        private DataTable printData_yyyy;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R21"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
 
-            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("All", "All");
-            comboBox1_RowSource.Add("F", "Fabric");
-            comboBox1_RowSource.Add("A", "Accessory");
-            this.cmbMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
-            this.cmbMaterialType.ValueMember = "Key";
-            this.cmbMaterialType.DisplayMember = "Value";
-            this.cmbMaterialType.SelectedIndex = 0;
-
-            Dictionary<string, string> comboBox2_RowSource = new Dictionary<string, string>();
-            comboBox2_RowSource.Add("All", "All");
-            comboBox2_RowSource.Add("B", "Bulk");
-            comboBox2_RowSource.Add("I", "Inventory");
-            comboBox2_RowSource.Add("O", "Scrap");
+            Dictionary<string, string> comboBox2_RowSource = new Dictionary<string, string>
+            {
+                { "All", "All" },
+                { "B", "Bulk" },
+                { "I", "Inventory" },
+                { "O", "Scrap" },
+            };
             this.cmbStockType.DataSource = new BindingSource(comboBox2_RowSource, null);
             this.cmbStockType.ValueMember = "Key";
             this.cmbStockType.DisplayMember = "Value";
             this.cmbStockType.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.StartSPNo = this.textStartSP.Text;
@@ -251,7 +251,8 @@ namespace Sci.Production.Warehouse
             this.StartRefno = this.textStartRefno.Text;
             this.EndRefno = this.textEndRefno.Text;
             this.Color = this.textColor.Text;
-            this.MT = this.cmbMaterialType.SelectedValue.ToString();
+            this.MT = this.comboxMaterialTypeAndID.comboMaterialType.SelectedValue.ToString();
+            this.MtlTypeID = this.comboxMaterialTypeAndID.comboMtlTypeID.SelectedValue.ToString();
             this.ST = this.cmbStockType.SelectedValue.ToString();
             this._reportType = this.rdbtnDetail.Checked ? 0 : 1;
             this.boolCheckQty = this.checkQty.Checked;
@@ -283,6 +284,7 @@ namespace Sci.Production.Warehouse
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.sqlcmd.Clear();
@@ -387,6 +389,11 @@ where 1=1
                 {
                     this.sqlcmd.Append(string.Format(" and psd.FabricType = '{0}'", this.MT));
                 }
+            }
+
+            if (!MyUtility.Check.Empty(this.MtlTypeID))
+            {
+                this.sqlcmd.Append(string.Format(" and fabric.MtlTypeID = '{0}'", this.MtlTypeID));
             }
 
             if (!MyUtility.Check.Empty(this.ST))
@@ -591,6 +598,7 @@ or
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region check printData

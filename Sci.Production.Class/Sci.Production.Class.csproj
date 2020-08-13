@@ -106,6 +106,12 @@
     <Compile Include="ComboRFIDProcessLocation.Designer.cs">
       <DependentUpon>ComboRFIDProcessLocation.cs</DependentUpon>
     </Compile>
+    <Compile Include="ComboxMaterialTypeAndID.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ComboxMaterialTypeAndID.Designer.cs">
+      <DependentUpon>ComboxMaterialTypeAndID.cs</DependentUpon>
+    </Compile>
     <Compile Include="Command\User.cs" />
     <Compile Include="Command\UserPrg.cs" />
     <Compile Include="ExcelFileNameExtension.cs" />
@@ -648,6 +654,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ComboFactory.resx">
       <DependentUpon>ComboFactory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComboxMaterialTypeAndID.resx">
+      <DependentUpon>ComboxMaterialTypeAndID.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Holiday.resx">
       <DependentUpon>Holiday.cs</DependentUpon>
