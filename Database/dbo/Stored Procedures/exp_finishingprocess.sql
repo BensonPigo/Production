@@ -86,7 +86,8 @@ BEGIN
 	[GenSongUpdated]	[bit] NOT NULL DEFAULT ((0)),
 	[PackingCTN]        [varchar](19) NOT NULL,
 	[HTMLSetting]       bit NOT NULL DEFAULT ((0)),
-	[PicSetting]        bit NOT NULL DEFAULT ((0))
+	[PicSetting]        bit NOT NULL DEFAULT ((0)),
+	[IsMixPacking]				[bit] NULL DEFAULT ((0)),
  CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY CLUSTERED 
 (
 	[SCICtnNo] ASC,
@@ -206,6 +207,7 @@ BEGIN
 	[PackingListID]			[varchar](15) NOT NULL,
 	[SCICtnNo]  			[varchar](15) NOT NULL,
 	[Side]					[varchar](5) NOT NULL,
+	[GensongUpdateTime]		[varchar](50) NULL,
 	[Seq]					[int] NOT NULL,
 	[FilePath]				[varchar](80) NULL,
 	[FileName]				[varchar](30) NULL,
@@ -221,6 +223,7 @@ BEGIN
 	FromBottom				[numeric](8, 2) NOT NULL DEFAULT ((0)),
 	Width					[int] NOT NULL DEFAULT ((0)),
 	Length					[int] NOT NULL DEFAULT ((0)),
+	Junk					[bit] NOT NULL DEFAULT ((0)),
  CONSTRAINT [PK_ShippingMarkPic_Detail] PRIMARY KEY CLUSTERED 
 (
 	[SCICtnNo] ASC,	
