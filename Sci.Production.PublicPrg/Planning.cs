@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Sci.Data;
+using System;
 using System.Data;
-using Sci.Data;
 
 namespace Sci.Production.PublicPrg
 {
@@ -41,7 +41,9 @@ namespace Sci.Production.PublicPrg
 													if @days < 0
 		                                                set @count-=1;
                                                 end
-                                                select dateadd(day, @count,@bascidate) as workdate", days, basicdate.ToShortDateString(), factoryid);
+                                                select dateadd(day, @count,@bascidate) as workdate", days,
+                basicdate.ToShortDateString(),
+                factoryid);
 
             return DateTime.Parse(MyUtility.GetValue.Lookup(sqlcmd, null));
         }
@@ -82,31 +84,8 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
 	drop table #std
 ", orderid);
 
-            // 原SQL
-            // WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,stdq,ComboType) AS (
-            //      SELECT DATEDIFF(DAY,A.Inline,A.Offline)+1 AS DD
-            //                    , 1 as num
-            //                    , convert(date,A.Inline) inline
-            //                    ,A.OrderID
-            //                    ,sewinglineid
-            //                    ,a.FactoryID
-            //                    ,iif(a.WorkDay=0,(a.WorkHour / 1 * a.StandardOutput),(a.WorkHour / a.WorkDay * a.StandardOutput)) stdq
-            //                    ,a.ComboType
-            // FROM SewingSchedule A WITH (NOLOCK) WHERE ORDERID='{0}'
-            //      UNION ALL
-            //      SELECT DD,num + 1, DATEADD(DAY,1,INLINE) ,ORDERID,sewinglineid,FactoryID,stdq,ComboType
-            // FROM cte a where num < DD  AND ORDERID='{0}'
-            //    )
-            // select min(stdq) stdq
-            // from (
-            // SELECT a.orderid,a.sewinglineid,a.ComboType,a.INLINE,sum(a.stdq) stdq, isnull(b.hours,0) workhours
-            // FROM cte a left join WorkHour b WITH (NOLOCK) on convert(date,a.inline) = b.date and a.sewinglineid = b.SewingLineID and a.FactoryID=b.FactoryID
-            // group by a.orderid,a.sewinglineid,a.ComboType,a.INLINE,b.Hours
-            // having isnull(b.hours,0) > 0) tmp
-            DataTable dt;
-            DBProxy.Current.Select(null, sqlcmd, out dt);
+            DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
 
-            // return int.Parse(dt.Rows[0][0].ToString());
             if (dt == null || dt.Rows.Count == 0 || dt.Rows[0].Table == null || dt.Rows[0].Table.Rows.Count == 0 || dt.Rows[0][0].Empty())
             {
                 return 0;
@@ -163,53 +142,57 @@ inner join Orders o WITH (NOLOCK) on o.ID=oq.ID
 inner join Order_ColorCombo occ WITH (NOLOCK) on o.poid = occ.id and occ.Article = oq.Article
 inner join order_Eachcons cons WITH (NOLOCK) on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.FabricPanelCode = occ.FabricPanelCode and cons.CuttingPiece='0'
 left join Order_BOF bof WITH (NOLOCK) on bof.Id = cons.Id and bof.FabricCode = cons.FabricCode
-left join Bundle B WITH (NOLOCK) on o.ID=b.Orderid and cons.FabricCombo=b.PatternPanel and oq.Article=b.Article
-left join Bundle_Detail BD WITH (NOLOCK) on B.ID=BD.Id and oq.SizeCode=bd.Sizecode
+left join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.OrderID = o.ID
+left join Bundle b WITH (NOLOCK) on bdo.id = b.ID and cons.FabricCombo=b.PatternPanel and oq.Article=b.Article
 where occ.FabricCode !='' and occ.FabricCode is not null and bof.Kind = 1
 and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 0) --非local單
 AND (exists(select 1 from Order_EachCons_Article oea where oea.Id = o.POID and oea.Article = oq.Article )
 	or not exists (select 1 from Order_EachCons_Article oea where  oea.Id = o.POID)
 )
+
 union all
 select	distinct
-		bun.Orderid
+		bdo.Orderid
 		, bun.POID
 		, bun.PatternPanel
 		, bun.Article
 		, bd.Sizecode
 		,bun.FabricPanelCode
-from Bundle_Detail bd WITH (NOLOCK)
+from Bundle_Detail_Order bdo WITH (NOLOCK)
+inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bdo.BundleNo
 inner join Bundle bun WITH (NOLOCK) on bun.id = bd.id
-inner join Orders o WITH (NOLOCK) on bun.Orderid = o.ID and  bun.MDivisionID = o.MDivisionID
+inner join Orders o WITH (NOLOCK) on bdo.Orderid = o.ID and  bun.MDivisionID = o.MDivisionID
 and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 1) --Local單
 
 --2020/06/08 效能調整
-select bunD.ID
+select 
+    bunD.ID
     , bunD.BundleGroup
     , bunD.BundleNo
     , bun.AddDate
-    , bun.Orderid
+    , bdo.Orderid
     , bun.PatternPanel
     , bun.FabricPanelCode
     , bun.Article
     , bunD.Sizecode
     , bunD.Patterncode
-    , bunD.Qty
+    , Qty = sum(bdo.Qty)
     , bunD.IsPair
 into #tmp_Bundle_QtyBySubprocess
-from Bundle_Detail bunD WITH (NOLOCK)
-inner join Bundle bun WITH (NOLOCK) on bunD.Id = bun.ID
+from Bundle_Detail_Order bdo WITH (NOLOCK)
+inner join Bundle_Detail bund WITH (NOLOCK) on bund.BundleNo = bdo.BundleNo
+inner join Bundle bun WITH (NOLOCK) on bun.id = bund.id
 where exists (
 	select 1
 	from #AllOrders x0
 	where bunD.Sizecode = x0.Sizecode
-	and bun.Orderid = x0.Orderid
+	and bdo.Orderid = x0.Orderid
 	and bun.PatternPanel = x0.PatternPanel
 	and bun.FabricPanelCode = x0.FabricPanelCode
 	and bun.Article = x0.Article
 )
-group by bunD.ID, bunD.BundleGroup, bunD.BundleNo, bun.AddDate, bun.Orderid, bun.PatternPanel, bun.FabricPanelCode, bun.Article,
-bunD.Sizecode, bunD.Patterncode, bunD.Qty, bunD.IsPair
+group by bunD.ID, bunD.BundleGroup, bunD.BundleNo, bun.AddDate, bdo.Orderid, bun.PatternPanel, bun.FabricPanelCode, bun.Article,
+bunD.Sizecode, bunD.Patterncode, bunD.IsPair
 ";
 
             foreach (string subprocessID in subprocessIDs)
@@ -371,9 +354,10 @@ outer apply(
 			, bunD.BundleNo
 			, bunD.IsPair
 	from Bundle bun WITH (NOLOCK)
-	INNER JOIn Orders o WITH (NOLOCK) ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID 
+	INNER JOIn Orders o WITH (NOLOCK) ON bun.MDivisionid=o.MDivisionID 
 	inner join Bundle_Detail bunD WITH (NOLOCK) on bunD.Id = bun.ID
-	where bun.Orderid = st0.Orderid 
+	inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Orderid=o.ID AND bunD.BundleNo = bdo.BundleNo    
+	where bdo.Orderid = st0.Orderid 
 		and bun.PatternPanel = st0.PatternPanel 
 		--and bun.FabricPanelCode = st0.FabricPanelCode 
 		and bun.Article = st0.Article  
