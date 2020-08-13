@@ -1346,24 +1346,19 @@ AND DD.id = LIST.kind ";
         protected override DualResult ClickDeletePost()
         {
             string id = this.CurrentMaintain["ID"].ToString();
-            DataTable dtBundle_Detail_Art;
-            string deleteBundleDetailQty = $@"
-select Ukey from Bundle_Detail_Art with (nolock) where id = '{id}'
+            string deleteBundleDetailQty = string.Format(
+                    @"
+delete bundle where id = '{0}';
+delete Bundle_Detail where id = '{0}';
+delete Bundle_Detail_Art where id = '{0}';
+delete Bundle_Detail_AllPart where id = '{0}';
+delete Bundle_Detail_qty where id = '{0}';
+delete Bundle_Detail_Order where id = '{0}';
+", id);
 
-delete 
-from Bundle_Detail_Qty
-where id = '{id}'
-delete 
-from Bundle_Detail_Allpart
-where id = '{id}'
-delete 
-from Bundle_Detail_Art
-where id = '{id}'
-";
+            DualResult result = DBProxy.Current.Select(null, deleteBundleDetailQty, out DataTable dtBundle_Detail_Art);
 
-            DualResult result = DBProxy.Current.Select(null, deleteBundleDetailQty, out dtBundle_Detail_Art);
-
-            if (result == false)
+            if (!result)
             {
                 return result;
             }

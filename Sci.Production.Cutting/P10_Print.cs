@@ -850,10 +850,6 @@ Qty: {r.Quantity}     Item: {r.Item}";
 
                 string sp = dr["OrderID"].ToString();
                 sps += "/";
-                if (MyUtility.Convert.GetString(dr["Category"]).EqualString("S"))
-                {
-                    sps += "S";
-                }
 
                 sps += sp.Length > 10 ? sp.Substring(10) : sp;
                 if (i++ > subCount)
@@ -876,9 +872,8 @@ Qty: {r.Quantity}     Item: {r.Item}";
         public static DataTable GetBundle_Detail_Order_Data(string bundleno)
         {
             string sqlcmd = $@"
-select bdo.OrderID,o.Category
+select bdo.OrderID
 from Bundle_Detail_Order bdo with(nolock)
-left join Orders o with(nolock) on o.ID = bdo.OrderID
 where bundleno = '{bundleno}'
 order by OrderID";
             DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);

@@ -4,17 +4,12 @@ using Sci.Data;
 
 namespace Sci.Production.PublicPrg
 {
+    /// <inheritdoc/>
     public static partial class Prgs
     {
         #region GetWorkDate
 
-        /// <summary>
-        /// GetWorkDate()
-        /// </summary>
-        /// <param name="String factoryid"></param>
-        /// <param name="int days"></param>
-        /// <param name="DateTime basicdate"></param>
-        /// <returns>datetime workdate</returns>
+        /// <inheritdoc/>
         public static DateTime GetWorkDate(string factoryid, int days, DateTime basicdate)
         {
             string sqlcmd = string.Format(
@@ -51,13 +46,10 @@ namespace Sci.Production.PublicPrg
             return DateTime.Parse(MyUtility.GetValue.Lookup(sqlcmd, null));
         }
         #endregion
+
         #region GetStdQ
 
-        /// <summary>
-        /// GetStdQ()
-        /// </summary>
-        /// <param name="String OrderID"></param>
-        /// <returns>Int StdQ</returns>
+        /// <inheritdoc/>
         public static int GetStdQ(string orderid)
         {
             string sqlcmd = string.Format(
@@ -130,6 +122,11 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
         /// <summary>
         /// 最終算出每張[By SP]或[By SP,Article,Size]目前可完成的成衣件數
         /// 此function目的Planning R15效能.若無大量資料需求, 請使用procedure的QtyBySetPerSubprocess
+        /// SubprocessID 外加工段
+        /// InStartDate 篩選裁片收進的起始日
+        /// InEndDate 篩選裁片收進的結束日
+        /// OutStartDate 篩選裁片完成加工段的起始日
+        /// OutEndDate 篩選裁片完成加工段的結束日
         /// </summary>
         /// <param name="subprocessIDs">字串陣列,需要計算的工段</param>
         /// <param name="tempTable">傳入需有OrderID欄位</param>
@@ -137,30 +134,6 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
         /// <param name="isNeedCombinBundleGroup">是否要依照 BundleGroup 算成衣件數 true/false</param>
         /// <param name="isMorethenOrderQty">回傳Qty值是否超過訂單數, (生產有可能超過) </param>
         /// <returns>回傳字串, 提供接下去的Sql指令使用#temp Table</returns>
-        ///
-
-    /*
-     * @Order
-        訂單號碼
-     * @SubprocessID
-        外加工段
-     * @IsSpectialReader
-        特殊的外加工段
-        e.g. Sorting, Loading...
-     * @InStartDate
-        篩選裁片收進的起始日
-     * @InEndDate
-        篩選裁片收進的結束日
-     * @OutStartDate
-        篩選裁片完成加工段的起始日
-     * @OutEndDate
-        篩選裁片完成加工段的結束日
-     * @IsNeedCombinBundleGroup
-        是否要依照 BundleGroup 算成衣件數
-     * @IsMorethenOrderQty
-        回傳Qty值是否超過訂單數, (生產有可能超過)
-     */
-
         // 非常重要 更新此處一定要把此dll檔案更新到MES
         // 非常重要 更新此處一定要把此dll檔案更新到MES
         // 非常重要 更新此處一定要把此dll檔案更新到MES

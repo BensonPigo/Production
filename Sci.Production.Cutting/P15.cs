@@ -376,8 +376,10 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 this.CheckNotMain(dr);
             };
 
-            DataGridViewGeneratorTextColumnSettings patternDesc = new DataGridViewGeneratorTextColumnSettings();
-            patternDesc.CharacterCasing = CharacterCasing.Normal;
+            DataGridViewGeneratorTextColumnSettings patternDesc = new DataGridViewGeneratorTextColumnSettings
+            {
+                CharacterCasing = CharacterCasing.Normal,
+            };
             patternDesc.CellValidating += (s, e) =>
             {
                 DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
@@ -830,9 +832,10 @@ order by ord.poid,a.estcutdate,a.Fabriccombo,a.cutno
             string distru_cmd = $@"
 Select
 	 sel = cast(0 as bit)
-	, Pkey = ROW_NUMBER() over (order by b.sizecode,b.orderid,a.FabricPanelCode) -- 為 workorder_Distribute 的 Key, 計算已選總和用
-	, iden = 0
+	, a.Ukey
 	, No = DENSE_RANK() over (partition by a.ukey order by article.article,b.sizecode) -- 對應 GridQty 的欄位
+	, iden = 0
+	, Pkey = ROW_NUMBER() over (order by b.sizecode,b.orderid,a.FabricPanelCode) -- 為 workorder_Distribute 的 Key, 計算已選總和用
 	, a.cutref
 	, orderid = iif(b.OrderID = 'EXCESS', isnull(l.orderid,l2.OrderID), b.OrderID)
 	, article.article
@@ -852,7 +855,6 @@ Select
 	, TotalParts = 0
 	, ord.poid
 	, startno = 0
-	, a.Ukey
 	, ord.StyleUkey
 from workorder a WITH (NOLOCK) 
 inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey
@@ -1611,7 +1613,33 @@ order by ArticleGroup";
                 Qty = MyUtility.Convert.GetInt(s["Qty"]),
                 Dup = -1, // 紀錄是否完全一樣的組別 Ukey, Article, Size, 左下資料
                 Ran = false,
-                BuundleGroup = 0,
+            }).ToList();
+            var asList = this.ArticleSizeTb.AsEnumerable().Select(s => new ArticleSize
+            {
+                Ukey = MyUtility.Convert.GetLong(s["ukey"]),
+                No = MyUtility.Convert.GetInt(s["No"]),
+                Iden = MyUtility.Convert.GetInt(s["iden"]),
+                Pkey = MyUtility.Convert.GetLong(s["Pkey"]),
+                Cutref = MyUtility.Convert.GetString(s["Cutref"]),
+                POID = MyUtility.Convert.GetString(s["POID"]),
+                OrderID = MyUtility.Convert.GetString(s["OrderID"]),
+                Article = MyUtility.Convert.GetString(s["Article"]),
+                SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
+                IsEXCESS = MyUtility.Convert.GetString(s["IsEXCESS"]),
+                ColorID = MyUtility.Convert.GetString(s["ColorID"]),
+                Fabriccombo = MyUtility.Convert.GetString(s["Fabriccombo"]),
+                FabricPanelCode = MyUtility.Convert.GetString(s["FabricPanelCode"]),
+                Ratio = MyUtility.Convert.GetString(s["Ratio"]),
+                Cutno = MyUtility.Convert.GetInt(s["Cutno"]),
+                Sewingline = MyUtility.Convert.GetString(s["Sewingline"]),
+                SewingCell = MyUtility.Convert.GetString(s["SewingCell"]),
+                Item = MyUtility.Convert.GetString(s["Item"]),
+                Qty = MyUtility.Convert.GetInt(s["Qty"]),
+                Cutoutput = MyUtility.Convert.GetInt(s["Cutoutput"]),
+                RealCutOutput = MyUtility.Convert.GetInt(s["RealCutOutput"]),
+                TotalParts = MyUtility.Convert.GetInt(s["TotalParts"]),
+                Startno = MyUtility.Convert.GetInt(s["Startno"]),
+                StyleUkey = MyUtility.Convert.GetLong(s["StyleUkey"]),
             }).ToList();
             var patternList = this.patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => new Pattern
             {
@@ -1627,6 +1655,7 @@ order by ArticleGroup";
                 Art = MyUtility.Convert.GetString(s["art"]),
                 NoBundleCardAfterSubprocess_String = MyUtility.Convert.GetString(s["NoBundleCardAfterSubprocess_String"]),
                 PostSewingSubProcess_String = MyUtility.Convert.GetString(s["PostSewingSubProcess_String"]),
+                BuundleGroup = 0,
                 Ran = false,
             }).ToList();
             var allPartList = this.allpartTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => new Pattern
@@ -1643,6 +1672,7 @@ order by ArticleGroup";
             }).ToList();
             var selList = qtydataList.Where(w => ukeyList.Contains(w.Ukey) && !w.Qty.Empty()).ToList(); // 要寫入的中上表
             var idenList = selList.Select(s => s.Iden).ToList();
+            var selASList = asList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden)).ToList();
             var selpatternList = patternList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden)).ToList(); // 要寫入的左下表
             var selallPartList = allPartList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden)).ToList(); // 要寫入的右下表
 
@@ -1703,14 +1733,43 @@ order by ArticleGroup";
                     }
                 }
             }
+            var dupList = selList.Select(s => s.Dup).Distinct().OrderBy(o => o).ToList();
 
-            // 準備 by OrderID 的 startNo List
-            var selSP = this.ArticleSizeTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && ukeyList.Contains(MyUtility.Convert.GetLong(w["Ukey"]))).Select(s => s["OrderID"].ToString()).Distinct().ToList();
-            var startnoList = selSP.Select(s => new StartNo_SP
+            // 準備 Bundle.StartNo, Bundle_Detail.BundleGroup
+            dupList.ForEach(dup =>
             {
-                OrderID = s,
-                Startno = this.radiobegin1.Checked ? 1 : MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"Select isnull(Max(startno+Qty),1) from Bundle WITH (NOLOCK) Where OrderID = '{s}'")),
-            }).ToList();
+                // 先找出此單要建立幾個 BundleGroup, 合併建立的 (Tone:沒輸入或不一樣)
+                int numBG = selList.Where(w => w.Dup == dup && w.Tone == 0).Count() + selList.Where(w => w.Dup == dup && w.Tone > 0).Select(s => s.Tone).Distinct().Count();
+
+                // 找此單要建立包含的所有 OrderID
+                var orderList = selASList.Where(w => selList.Where(w2 => w2.Dup == dup).Select(s => s.Iden).ToList().Contains(w.Iden)).Select(s => s.OrderID).Distinct().ToList();
+
+                // 找 (當前這筆意義 bundle) → (會先建立的bundle: Dup < dup) → (右上角意義 Bundle_Detail_Oder, < 有交集 OrderID > 的資料) → (左下角意義 Bundle_Detail ).max( BundleGroup )
+                // 若找到 BundleGroup + 1 = 1, 表示未處理過並紀錄, 則去 DB 找最大+1, 並記錄
+                int maxBuundleGroup = 0;
+                if (this.radioWithcuto.Checked)
+                {
+                    maxBuundleGroup = selpatternList
+                    .Where(w3 => selASList.Where(w2 => selList.Where(w => w.Dup < dup).Select(s => s.Iden).Contains(w2.Iden) && orderList.Contains(w2.OrderID)).Select(s => s.Iden).ToList().Contains(w3.Iden))
+                    .Select(m => m.BuundleGroup).DefaultIfEmpty(0).Max();
+                    if (maxBuundleGroup == 0)
+                    {
+                        string sqlcmd = $@"
+select isnull(max(bd.BundleGroup),0)
+from Bundle b WITH (NOLOCK)
+inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.ID
+where b.Orderid in('{orderList.JoinToString("','")}')";
+                        maxBuundleGroup = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
+                    }
+                }
+
+                selList.Where(w2 => w2.Dup == dup).ToList().ForEach(r => r.Startno = maxBuundleGroup + 1);
+                selList.Where(w2 => w2.Dup == dup).Select(s => s.Iden).OrderBy(o => o).ToList().ForEach(iden =>
+                {
+                    selpatternList.Where(w => w.Iden == iden).ToList().ForEach(r => r.BuundleGroup = maxBuundleGroup + 1);
+                    maxBuundleGroup++;
+                });
+            });
 
             // 總建單數.
             int num_Bundle = selList.Select(s => s.Dup).Distinct().Count();
@@ -1730,7 +1789,7 @@ order by ArticleGroup";
             StringBuilder insertSql = new StringBuilder();
 
             // 將 Dup 重複縮減, 為 Bundle 建立幾張 Cutting_P10, 準備寫入字串
-            foreach (int dup in selList.Select(s => s.Dup).Distinct())
+            foreach (int dup in dupList)
             {
                 var seldupList = selList.Where(w => w.Dup == dup).ToList();
                 var first = seldupList.First();
@@ -1740,12 +1799,11 @@ order by ArticleGroup";
                 idcount++;
                 DataRow drCut = this.CutRefTb.Select($"ukey = {first.Ukey}").First();
                 DataRow drRatio = this.SizeRatioTb.Select($"ukey = '{first.Ukey}' and SizeCode ='{first.SizeCode}'").First();
-                DataRow drAS = this.ArticleSizeTb.Select($"iden = {first.Iden}").AsEnumerable().OrderBy(o => o["OrderID"]).First(); // 取 OrderID 最小
-                int startno = startnoList.Where(w => w.OrderID == drAS["OrderID"].ToString()).Select(s => s.Startno).First();
-                string sewingLine = drAS["SewingLine"].Empty() ? string.Empty : drAS["SewingLine"].ToString().Length > 2 ? drAS["SewingLine"].ToString().Substring(0, 2) : drAS["SewingLine"].ToString();
-                bool isEXCESS = this.ArticleSizeTb.Select($"iden = {first.Iden} and isEXCESS = 'Y'").Any();
+                var firstAS = selASList.Where(w => w.Iden == first.Iden).OrderBy(o => o.OrderID).First();
+                string sewingLine = firstAS.Sewingline.Empty() ? string.Empty : firstAS.Sewingline.Length > 2 ? firstAS.Sewingline.Substring(0, 2) : firstAS.Sewingline;
+                bool isEXCESS = selASList.Where(w => w.Iden == first.Iden && w.IsEXCESS == "Y").Any();
                 bool byToneGenerate = selList.Where(w => w.Dup == dup && w.Tone == first.Tone).Count() > 1;
-                int bundleQty = seldupList.Where(w => w.Tone == 0).Count() + seldupList.Where(w => w.Tone > 0).Select(s => s.Tone).Distinct().Count(); // 綁包數
+                int bundleQty = seldupList.Where(w => w.Tone == 0).Count() + seldupList.Where(w => w.Tone > 0).Select(s => s.Tone).Distinct().Count(); // BundleGroup 數
                 #endregion
 
                 // bundle
@@ -1784,14 +1842,14 @@ values
     ,'{drCut["Fabriccombo"]}'
     ,{drCut["Cutno"]}
     ,GETDATE()
-    ,'{drAS["OrderID"]}'
+    ,'{firstAS.OrderID}'
     ,'{sewingLine}'
     , '{drCut["Item"]}'
-    ,'{drAS["SewingCell"]}'
+    ,'{firstAS.SewingCell}'
     ,'{drRatio["Qty"]}'
-    ,{startno}
+    ,{first.Startno}
     ,{bundleQty}
-    ,{drAS["TotalParts"]}
+    ,{firstAS.TotalParts}
     ,'{drCut["CutRef"]}'
     ,'{this.loginID}'
     ,GETDATE()
@@ -1813,17 +1871,6 @@ Values('{bundleID}', '{allPart.PatternCode}', '{allPart.PatternDesc}', '{allPart
                 // 合併, 只有 bundle, Bundle_Detail_allpart 合併. 其它的資料表有幾組就按實寫入
                 foreach (var selitem in seldupList)
                 {
-                    var selTList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0).ToList();
-
-                    // Tone > 0, 相同 Tone,  BuundleGroup =0, 先給同樣的 BuundleGroup
-                    selTList.Where(w => w.BuundleGroup == 0).ToList().ForEach(r => r.BuundleGroup = startno);
-                    if (selitem.BuundleGroup == 0)
-                    {
-                        selitem.BuundleGroup = startno;
-                    }
-
-                    startnoList.Where(w => w.OrderID == drAS["OrderID"].ToString() && this.radioWithcuto.Checked).ToList().ForEach(r => r.Startno = ++startno);
-
                     // Bundle_Detail_Qty
                     insertSql.Append($@"
 Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.SizeCode}', {selitem.Qty});");
@@ -1845,7 +1892,7 @@ Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.Si
                         insert_BundleNo.Rows.Add(bdr);
 
                         // 若 dup, tone 相同 寫入Bundle_Detail 時 PatternCode = ALLPARTS 合為一筆 Qty 數量加起來. 且標記已準備
-                        var selDTList = selTList.Where(w => pattern.PatternCode.Equals("ALLPARTS")).ToList();
+                        var selDTList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0 && pattern.PatternCode.Equals("ALLPARTS")).ToList();
                         selpatternList.Where(w => w.PatternCode.Equals("ALLPARTS") && selDTList.Select(s => s.Iden).Contains(w.Iden)).ToList().ForEach(r => r.Ran = true);
                         int bdQty = pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0 ? selDTList.Sum(s => s.Qty) : selitem.Qty;
 
@@ -1854,7 +1901,7 @@ Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, 
 Values
     ('{bundleID}'
     ,'{bundleNo}'
-    ,{selitem.BuundleGroup}
+    ,{pattern.BuundleGroup}
     ,'{pattern.PatternCode}'
     ,'{pattern.PatternDesc.Replace("'", "''")}'
     ,'{selitem.SizeCode}'
@@ -1884,7 +1931,7 @@ Values('{bundleID}','{bundleNo}','{ann[i]}','{pattern.PatternCode}','{ps}','{nb}
                         foreach (DataRow idrAS in this.ArticleSizeTb.Select($"iden = {selitem.Iden}"))
                         {
                             insertSql.Append($@"
-INSERT INTO [dbo].[Bundle_Detail_Order]([BundleNo],[OrderID],[Qty]) Values('{bundleNo}','{idrAS["OrderID"]}','{idrAS["Cutoutput"]}')
+INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty]) Values('{bundleID}','{bundleNo}','{idrAS["OrderID"]}','{idrAS["Cutoutput"]}')
 ");
                         }
                     }
@@ -1905,7 +1952,7 @@ INSERT INTO [dbo].[Bundle_Detail_Order]([BundleNo],[OrderID],[Qty]) Values('{bun
             }
 
             #region sent data to GZ WebAPI
-            Func<List<BundleToAGV_PostBody>> funListBundle = () =>
+            List<BundleToAGV_PostBody> FunListBundle()
             {
                 string sqlGetData = $@"
             select  bd.ID          ,
@@ -1954,8 +2001,9 @@ INSERT INTO [dbo].[Bundle_Detail_Order]([BundleNo],[OrderID],[Qty]) Values('{bun
                 {
                     return null;
                 }
-            };
-            Task.Run(() => new Guozi_AGV().SentBundleToAGV(funListBundle))
+            }
+
+            Task.Run(() => new Guozi_AGV().SentBundleToAGV(FunListBundle))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
 
             #endregion
