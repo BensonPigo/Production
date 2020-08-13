@@ -1526,6 +1526,7 @@ outer apply(
             and pdd.Article = sdd.Article 
             and pdd.SizeCode = sdd.SizeCode
 			and p.PulloutDate <= @GenerateDate
+            and p.status !='New'
 ) PulloutDD
 outer apply(
 	select isnull(Sum(iaq.DiffQty),0) as DiffQty
