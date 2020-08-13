@@ -1105,9 +1105,9 @@ HSCode = isnull(a.HSCode,b.HSCode)
 , Dyelot = isnull(a.Dyelot,b.Dyelot)
 , StockType = isnull(a.StockType,b.StockType)
 , Location = isnull(a.Location,b.Location)
-, [Qty] = a.Qty + isnull(b.Qty,0)
+, [Qty] = isnull(a.Qty,0) + isnull(b.Qty,0)
 , [W/House Unit] = isnull(a.[W/House Unit],b.[W/House Unit])
-, [W/House Qty(Stock Unit)] = a.[W/House Qty(Stock Unit)] + isnull(b.[W/House Qty(Stock Unit)],0)
+, [W/House Qty(Stock Unit)] = isnull(a.[W/House Qty(Stock Unit)],0) + isnull(b.[W/House Qty(Stock Unit)],0)
 , [Stock Unit] = isnull(a.[Stock Unit],b.[Stock Unit])
 into #tmpWHQty
 from #tmpWHQty1 a
@@ -1118,7 +1118,7 @@ and a.Refno = b.Refno and a.MaterialType = b.MaterialType
 and a.HSCode = b.HSCode and a.NLCode = b.NLCode
 and a.StockType = b.StockType and a.Location = b.Location
 and a.[Stock Unit] = b.[Stock Unit]
-where a.[W/House Qty(Stock Unit)] + isnull(b.[W/House Qty(Stock Unit)],0) != 0
+where isnull(a.[W/House Qty(Stock Unit)],0) + isnull(b.[W/House Qty(Stock Unit)],0) != 0
 
 drop table #tmpWHQty1,#tmpWHQty2
 
@@ -1979,9 +1979,9 @@ HSCode = isnull(a.HSCode,b.HSCode)
 , Dyelot = isnull(a.Dyelot,b.Dyelot)
 , StockType = isnull(a.StockType,b.StockType)
 , Location = isnull(a.Location,b.Location)
-, [Qty] = a.Qty + isnull(b.Qty,0)
+, [Qty] = isnull(a.Qty,0) + isnull(b.Qty,0)
 , CustomsUnit = isnull(a.CustomsUnit ,b.CustomsUnit)
-, [ScrapQty] = a.ScrapQty + isnull(b.ScrapQty,0)
+, [ScrapQty] = isnull(a.ScrapQty,0) + isnull(b.ScrapQty,0)
 , StockUnit = isnull(a.StockUnit,b.StockUnit)
 into #tmpScrapQty
 from #tmpScrapQty1 a
@@ -1991,7 +1991,7 @@ and a.Roll = b.Roll and a.Dyelot = b.Dyelot
 and a.Refno = b.Refno  and a.MaterialType = b.MaterialType
 and a.StockType = b.StockType and a.Location = b.Location
 and a.CustomsUnit = b.CustomsUnit and a.StockUnit = b.StockUnit
-where a.ScrapQty + isnull(b.ScrapQty,0) != 0
+where isnull(a.ScrapQty,0) + isnull(b.ScrapQty,0) != 0
 
 drop table #tmpScrapQty1,#tmpScrapQty2
 ----------------------------------------------------------------
