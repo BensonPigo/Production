@@ -39,7 +39,7 @@ INNER JOIN Export_detail b WITH (NOLOCK)  ON a.ID = b.ID
 OUTER APPLY(
 	SELECT [Container]=STUFF((
 
-		SELECT DISTINCT ','+ContainerType+ContainerNo 
+		SELECT DISTINCT ','+ContainerType+ '-' +ContainerNo 
 		FROM Export_ShipAdvice_Container c  WITH (NOLOCK)
 		WHERE c.Export_Detail_Ukey = b.Ukey
 		FOR XML PATH('')
