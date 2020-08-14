@@ -622,7 +622,7 @@ from (
 		                            where fid.Ukey = fi.UKey 
 		                            for xml path(''))
 		                           ,'')
-	        ,[Qty] = IIF(fi.InQty-fi.OutQty+fi.AdjustQty > 0, dbo.getVNUnitTransfer(
+	        ,[Qty] = IIF(fi.InQty-fi.OutQty+fi.AdjustQty != 0, dbo.getVNUnitTransfer(
 			        isnull(f.Type, '')
 			        ,psd.StockUnit
 			        ,isnull(f.CustomsUnit, '')
@@ -683,7 +683,7 @@ from (
 	            , [Dyelot] = '' 
 	            , [StockType] = 'B'
 	            , [Location] = '' 
-	            , [Qty] = IIF(l.InQty-l.OutQty+l.AdjustQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
+	            , [Qty] = IIF(l.InQty-l.OutQty+l.AdjustQty != 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 		                    ,l.UnitId
 		                    ,li.CustomsUnit
 		                    ,(l.InQty-l.OutQty+l.AdjustQty)
@@ -1114,9 +1114,9 @@ HSCode = isnull(a.HSCode,b.HSCode)
 , Dyelot = isnull(a.Dyelot,b.Dyelot)
 , StockType = isnull(a.StockType,b.StockType)
 , Location = isnull(a.Location,b.Location)
-, [Qty] = isnull(a.Qty,0) + isnull(b.Qty,0)
+, [Qty] = sum(isnull(a.Qty,0) + isnull(b.Qty,0))
 , [W/House Unit] = isnull(a.[W/House Unit],b.[W/House Unit])
-, [W/House Qty(Stock Unit)] = isnull(a.[W/House Qty(Stock Unit)],0) + isnull(b.[W/House Qty(Stock Unit)],0)
+, [W/House Qty(Stock Unit)] = sum(isnull(a.[W/House Qty(Stock Unit)],0) + isnull(b.[W/House Qty(Stock Unit)],0))
 , [Stock Unit] = isnull(a.[Stock Unit],b.[Stock Unit])
 into #tmpWHQty
 from #tmpWHQty1 a
@@ -1128,6 +1128,9 @@ and a.HSCode = b.HSCode and a.NLCode = b.NLCode
 and a.StockType = b.StockType and a.Location = b.Location
 and a.[Stock Unit] = b.[Stock Unit]
 where isnull(a.[W/House Qty(Stock Unit)],0) + isnull(b.[W/House Qty(Stock Unit)],0) != 0
+group by isnull(a.HSCode,b.HSCode),isnull(a.NLCode,b.NLCode),isnull(a.POID,b.POID),isnull(a.FactoryID,b.FactoryID),isnull(a.Seq,b.Seq)
+,isnull(a.Refno,b.Refno),isnull(a.MaterialType,b.MaterialType),isnull(a.Description,b.Description),isnull(a.Roll,b.Roll),isnull(a.Dyelot,b.Dyelot)
+,isnull(a.StockType,b.StockType),isnull(a.Location,b.Location), isnull(a.[W/House Unit],b.[W/House Unit]),isnull(a.[Stock Unit],b.[Stock Unit])
 
 drop table #tmpWHQty1,#tmpWHQty2
 
@@ -1144,7 +1147,7 @@ from (
             , t.FactoryID
 	        , [ID] = t.ID
 	        , [POID] = t.POID
-	        , [Qty] = IIF((mdp.OutQty-mdp.LObQty) > 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
+	        , [Qty] = IIF((WH_Issue.Qty+WH15_16.Qty+WH17.Qty) != 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
 		                ,psd.StockUnit
 		                ,isnull(f.CustomsUnit,'')
 		                ,(WH_Issue.Qty+WH15_16.Qty+WH17.Qty)
@@ -1233,7 +1236,7 @@ from (
             , t.FactoryID
 	        , [ID] = t.ID
 	        , [POID] = t.POID
-	        , [Qty] = IIF(l.OutQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
+	        , [Qty] = IIF(WH61.Qty != 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 		                ,l.UnitId
 		                ,isnull(li.CustomsUnit,'')
 		                ,WH61.Qty
@@ -1728,7 +1731,7 @@ from (
 	        , [Dyelot] = ft.Dyelot
 	        , [StockType] = ft.StockType
 	        , [Location] = ftd.MtlLocationID		
-	        , [Qty] = IIF(ft.InQty-ft.OutQty+ft.AdjustQty > 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
+	        , [Qty] = IIF(ft.InQty-ft.OutQty+ft.AdjustQty != 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
 			        ,psd.StockUnit
 			        ,isnull(f.CustomsUnit,'')
 			        ,ft.InQty-ft.OutQty+ft.AdjustQty
@@ -1772,7 +1775,7 @@ from (
 	        , [Dyelot] = ''
 	        , [StockType] = 'O'
 	        , [Location] = l.CLocation		
-	        , [Qty] = IIF(l.LobQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
+	        , [Qty] = IIF(l.LobQty != 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 			        ,l.UnitId,li.CustomsUnit
 			        ,l.LobQty
 			        ,0
@@ -1989,9 +1992,9 @@ HSCode = isnull(a.HSCode,b.HSCode)
 , Dyelot = isnull(a.Dyelot,b.Dyelot)
 , StockType = isnull(a.StockType,b.StockType)
 , Location = isnull(a.Location,b.Location)
-, [Qty] = isnull(a.Qty,0) + isnull(b.Qty,0)
+, [Qty] = sum(isnull(a.Qty,0) + isnull(b.Qty,0))
 , CustomsUnit = isnull(a.CustomsUnit ,b.CustomsUnit)
-, [ScrapQty] = isnull(a.ScrapQty,0) + isnull(b.ScrapQty,0)
+, [ScrapQty] = sum(isnull(a.ScrapQty,0) + isnull(b.ScrapQty,0))
 , StockUnit = isnull(a.StockUnit,b.StockUnit)
 into #tmpScrapQty
 from #tmpScrapQty1 a
@@ -2002,6 +2005,9 @@ and a.Refno = b.Refno  and a.MaterialType = b.MaterialType
 and a.StockType = b.StockType and a.Location = b.Location
 and a.CustomsUnit = b.CustomsUnit and a.StockUnit = b.StockUnit
 where isnull(a.ScrapQty,0) + isnull(b.ScrapQty,0) != 0
+group by isnull(a.HSCode,b.HSCode),isnull(a.NLCode,b.NLCode),isnull(a.POID,b.POID),isnull(a.FactoryID,b.FactoryID),isnull(a.Seq,b.Seq)
+,isnull(a.Refno,b.Refno),isnull(a.MaterialType,b.MaterialType),isnull(a.Description,b.Description),isnull(a.Roll,b.Roll),isnull(a.Dyelot,b.Dyelot)
+,isnull(a.StockType,b.StockType),isnull(a.Location,b.Location),isnull(a.CustomsUnit ,b.CustomsUnit),isnull(a.StockUnit,b.StockUnit)
 
 drop table #tmpScrapQty1,#tmpScrapQty2
 ----------------------------------------------------------------
