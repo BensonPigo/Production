@@ -883,7 +883,8 @@ order by OrderID";
         /// <inheritdoc/>
         public static string GetNo(string orderid, string fabricPanelCode, string size, string bundleNo)
         {
-            string sqlcmd = $@"SELECT D.BundleNo, D.BundleGroup,D.Qty
+            string sqlcmd = $@"
+SELECT D.BundleNo, D.BundleGroup,D.Qty
 into #tmp
 FROM BUNDLE_DETAIL D
 INNER JOIN BUNDLE B ON B.ID = D.ID  

@@ -1733,6 +1733,7 @@ order by ArticleGroup";
                     }
                 }
             }
+
             var dupList = selList.Select(s => s.Dup).Distinct().OrderBy(o => o).ToList();
 
             // 準備 Bundle.StartNo, Bundle_Detail.BundleGroup
