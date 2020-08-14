@@ -36,6 +36,7 @@ END
 declare @DateInfoName varchar(30) ='SewingOutput';
 declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
 declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 if @DateStart is Null
@@ -44,15 +45,18 @@ if @DateEnd is Null
 	set @DateEnd = CONVERT(DATE, GETDATE())	
 
 --3.更新Pms_To_Trade.dbo.dateInfo
-Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
-Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
-values (@DateInfoName,@DateStart,@DateEnd);
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateEnd, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@DateStart,@DateEnd,@Remark);
 ------------------------------------------------------------------------------------------------------
 --***資料交換的條件限制***
 --1. 優先取得Production.dbo.DateInfo
 declare @DateInfoName2 varchar(30) ='SewingOutput2';
 declare @DateStart2 date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName2);
 declare @DateEnd2 date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName2);
+declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 if @DateStart2 is Null
@@ -61,9 +65,11 @@ if @DateEnd2 is Null
 	set @DateEnd2 = CONVERT(DATE, GETDATE())	
 
 --3.更新Pms_To_Trade.dbo.dateInfo
-Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName2 
-Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
-values (@DateInfoName2,@DateStart2,@DateEnd2);
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart2,DateEnd = @DateEnd2, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@DateStart2,@DateEnd2,@Remark);
 ------------------------------------------------------------------------------------------------------
 
 --SewingOutput

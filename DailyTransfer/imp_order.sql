@@ -13,41 +13,56 @@ BEGIN
 --1. 優先取得Production.dbo.DateInfo
 	declare @DateInfoName varchar(30) ='imp_Order_OldDate';
 	declare @OldDate date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+	declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 	if @OldDate is Null
 		set @OldDate= (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --最後匯入資料日期
 
+--3.更新Trade_To_Pms.dbo.dateInfo
+if exists(select 1 from Trade_To_Pms.dbo.dateInfo where Name = @DateInfoName )
+	update Trade_To_Pms.dbo.dateInfo  set DateStart = @oldDate,DateEnd = @oldDate, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Trade_To_Pms.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@oldDate,@oldDate,@Remark);
+	
 --3.更新Pms_To_Trade.dbo.dateInfo
-	Delete Trade_To_Pms.dbo.dateInfo Where Name = @DateInfoName 
-	INSERT INTO Trade_To_Pms.dbo.DateInfo (Name, DateStart, DateEnd)
-	VALUES  (@DateInfoName,@OldDate,@OldDate)
-	Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
-	INSERT INTO Pms_To_Trade.dbo.DateInfo (Name, DateStart, DateEnd)
-	VALUES  (@DateInfoName,@OldDate,@OldDate)	
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @oldDate,DateEnd = @oldDate, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@oldDate,@oldDate,@Remark);
 ------------------------------------------------------------------------------------------------------
 --***資料交換的條件限制***
 --1. 優先取得Production.dbo.DateInfo
 	Set @DateInfoName ='imp_Order_dToDay';
 	declare @dToDay date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+	SET @Remark = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 	if @dToDay is Null
 		set @dToDay= CONVERT(date, GETDATE())		
-
+		
+--3.更新Trade_To_Pms.dbo.dateInfo
+if exists(select 1 from Trade_To_Pms.dbo.dateInfo where Name = @DateInfoName )
+	update Trade_To_Pms.dbo.dateInfo  set DateStart = @dToDay,DateEnd = @dToDay, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Trade_To_Pms.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@dToDay,@dToDay,@Remark);
+	
 --3.更新Pms_To_Trade.dbo.dateInfo
-	Delete Trade_To_Pms.dbo.dateInfo Where Name = @DateInfoName 
-	INSERT INTO Trade_To_Pms.dbo.DateInfo (Name, DateStart, DateEnd)
-	VALUES  (@DateInfoName,@dToDay,@dToDay)
-	Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
-	INSERT INTO Pms_To_Trade.dbo.DateInfo (Name, DateStart, DateEnd)
-	VALUES  (@DateInfoName,@dToDay,@dToDay)							
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @dToDay,DateEnd = @dToDay, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@dToDay,@dToDay,@Remark);
 ------------------------------------------------------------------------------------------------------
 --***資料交換的條件限制***
 --1. 優先取得Production.dbo.DateInfo
 	Set @DateInfoName  ='imp_Order';
 	declare @Odate_s datetime = (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
 	declare @Odate_e datetime = (select DateEnd from Production.dbo.DateInfo where name = @DateInfoName);
+	SET @Remark = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 	if @Odate_s is Null
@@ -56,9 +71,11 @@ BEGIN
 		set @Odate_e= (SELECT TOP 1 DateEnd FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')		
 
 --3.更新Pms_To_Trade.dbo.dateInfo
-	Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
-	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
-	values (@DateInfoName,@Odate_s,@Odate_e);	
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @Odate_s,DateEnd = @Odate_e, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@Odate_s,@Odate_e,@Remark);
 ------------------------------------------------------------------------------------------------------
 
 -----------------匯入訂單檢核表------------------------

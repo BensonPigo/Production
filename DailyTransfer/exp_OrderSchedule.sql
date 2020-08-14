@@ -14,15 +14,18 @@ END
 --1. 優先取得Production.dbo.DateInfo
 declare @DateInfoName varchar(30) ='OrderSchedule';
 declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 if @DateEnd is Null
 	set @DateEnd = EOMONTH(GETDATE(),3)	
 
 --3.更新Pms_To_Trade.dbo.dateInfo
-Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
-Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
-values (@DateInfoName,@DateEnd,@DateEnd);
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateEnd,DateEnd = @DateEnd, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@DateEnd,@DateEnd,@Remark);
 ------------------------------------------------------------------------------------------------------
 
 Select	o.ID

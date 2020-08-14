@@ -414,6 +414,7 @@ where b.id is null
 declare @DateInfoName varchar(30) ='imp_MtlType';
 declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
 declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 if @DateStart is Null
@@ -422,9 +423,11 @@ if @DateEnd is Null
 	set @DateEnd = CONVERT(DATE, GETDATE())	
 
 --3.更新Pms_To_Trade.dbo.dateInfo
-Delete Trade_To_Pms.dbo.dateInfo Where Name = @DateInfoName 
-Insert into Trade_To_Pms.dbo.dateInfo(Name,DateStart,DateEnd)
-values (@DateInfoName,@DateStart,@DateEnd);
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateEnd, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@DateStart,@DateEnd,@Remark);
 ------------------------------------------------------------------------------------------------------
 
 UPDATE a

@@ -15,43 +15,52 @@ BEGIN
 --1. 優先取得Production.dbo.DateInfo
 	declare @DateInfoName varchar(30) ='imp_MockupOrder_OldDate';
 	declare @oldDate date= (select DateEnd from Production.dbo.DateInfo where name = @DateInfoName);
+	declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 	if @oldDate is Null
 		set @oldDate= (select DateEnd from Trade_To_Pms.dbo.DateInfo WITH (NOLOCK) where name='imp_Order_OldDate')	
 
 --3.更新Pms_To_Trade.dbo.dateInfo
-	Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
-	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
-	values (@DateInfoName,@oldDate,@oldDate);
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @oldDate,DateEnd = @oldDate, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@oldDate,@oldDate,@Remark);
 ------------------------------------------------------------------------------------------------------
 --***資料交換的條件限制***
 --1. 優先取得Production.dbo.DateInfo
 	Set @DateInfoName ='imp_MockupOrder_dToDay';
 	declare @dToDay date= (select DateEnd from Production.dbo.DateInfo where name = @DateInfoName);
+	SET @Remark = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 	if @dToDay is Null
 		set @dToDay= (select DateEnd from Trade_To_Pms.dbo.DateInfo WITH (NOLOCK) where name='imp_Order_dToDay')	
 
 --3.更新Pms_To_Trade.dbo.dateInfo
-	Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
-	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
-	values (@DateInfoName,@dToDay,@dToDay);
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @dToDay,DateEnd = @dToDay, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@dToDay,@dToDay,@Remark);
 ------------------------------------------------------------------------------------------------------
 --***資料交換的條件限制***
 --1. 優先取得Production.dbo.DateInfo
 	Set @DateInfoName ='imp_MockupOrder';
 	declare @Odate_s date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+	declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 	if @Odate_s is Null
 		set @Odate_s= (select DateStart from Trade_To_Pms.dbo.DateInfo WITH (NOLOCK) where name = 'MockupOrder')	
 
 --3.更新Pms_To_Trade.dbo.dateInfo
-	Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
-	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
-	values (@DateInfoName,@Odate_s,@Odate_s);
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @Odate_s,DateEnd = @Odate_s, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@Odate_s,@Odate_s,@Remark);
 ------------------------------------------------------------------------------------------------------
 
 		---------------From Trade MockupOrder ----------------------------
