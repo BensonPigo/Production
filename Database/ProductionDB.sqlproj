@@ -2525,6 +2525,7 @@
     <Build Include="dbo\Tables\CutInsRecord.sql" />
     <Build Include="dbo\Tables\GarmentTest_Detail_FGWT.sql" />
     <Build Include="dbo\Tables\SampleGarmentTest_Detail_FGWT.sql" />
+    <Build Include="dbo\Tables\Bundle_Detail_Order.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

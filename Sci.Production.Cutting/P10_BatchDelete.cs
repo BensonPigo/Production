@@ -173,11 +173,12 @@ where 1=1
             {
                 sqldelete += string.Format(
                     @"
-delete from bundle where id = '{0}';
-delete from Bundle_Detail where id = '{0}';
-delete from Bundle_Detail_Art where id = '{0}';
-delete from Bundle_Detail_AllPart where id = '{0}';
-delete from Bundle_Detail_qty where id = '{0}';
+delete bundle where id = '{0}';
+delete Bundle_Detail where id = '{0}';
+delete Bundle_Detail_Art where id = '{0}';
+delete Bundle_Detail_AllPart where id = '{0}';
+delete Bundle_Detail_qty where id = '{0}';
+delete Bundle_Detail_Order where id = '{0}';
 ", dr["ID"]);
             }
 

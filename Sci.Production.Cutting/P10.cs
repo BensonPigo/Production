@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -24,6 +25,7 @@ namespace Sci.Production.Cutting
         DataTable bundle_Detail_Art_Tb;
         DataTable bundle_Detail_Qty_Tb;
         string WorkOrder_Ukey;
+        DataTable dtBundle_Detail_Order;
 
         public P10(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
@@ -83,9 +85,30 @@ where MDivisionID = '{0}'", Env.User.Keyword);
 
         protected override bool OnGridSetup()
         {
+            DataGridViewGeneratorTextColumnSettings bundleno = new DataGridViewGeneratorTextColumnSettings();
+            bundleno.EditingMouseDoubleClick += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataTable curdtBundle_Detail_Order = this.GetBundle_Detail_Order(this.CurrentDetailData["Bundleno"].ToString());
+                this.ShowBundle_Detail_Order(curdtBundle_Detail_Order);
+            };
+
+            bundleno.CellFormatting += (s, e) =>
+            {
+                DataTable curdtBundle_Detail_Order = this.GetBundle_Detail_Order(this.CurrentDetailData["Bundleno"].ToString());
+                if (curdtBundle_Detail_Order.Rows.Count > 1)
+                {
+                    e.CellStyle.BackColor = Color.Yellow;
+                }
+            };
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("BundleGroup", header: "Group", width: Widths.AnsiChars(4), integer_places: 5, iseditingreadonly: true)
-            .Text("Bundleno", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Bundleno", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: bundleno)
             .Text("Location", header: "Location", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("PatternCode", header: "Cutpart", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -245,6 +268,15 @@ order by bundlegroup",
             }
 
             this.getFabricKind();
+
+            string sqlcmd = $@"select distinct [SP#] = OrderID from Bundle_Detail_Order where ID = '{this.CurrentMaintain["ID"]}' order by OrderID";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.dtBundle_Detail_Order);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
+            this.btnSPs.ForeColor = this.dtBundle_Detail_Order.Rows.Count > 1 ? System.Drawing.Color.Blue : System.Drawing.Color.Black;
         }
 
         public void queryTable()
@@ -1346,24 +1378,19 @@ AND DD.id = LIST.kind ";
         protected override DualResult ClickDeletePost()
         {
             string id = this.CurrentMaintain["ID"].ToString();
-            DataTable dtBundle_Detail_Art;
-            string deleteBundleDetailQty = $@"
-select Ukey from Bundle_Detail_Art with (nolock) where id = '{id}'
+            string deleteBundleDetailQty = string.Format(
+                    @"
+delete bundle where id = '{0}';
+delete Bundle_Detail where id = '{0}';
+delete Bundle_Detail_Art where id = '{0}';
+delete Bundle_Detail_AllPart where id = '{0}';
+delete Bundle_Detail_qty where id = '{0}';
+delete Bundle_Detail_Order where id = '{0}';
+", id);
 
-delete 
-from Bundle_Detail_Qty
-where id = '{id}'
-delete 
-from Bundle_Detail_Allpart
-where id = '{id}'
-delete 
-from Bundle_Detail_Art
-where id = '{id}'
-";
+            DualResult result = DBProxy.Current.Select(null, deleteBundleDetailQty, out DataTable dtBundle_Detail_Art);
 
-            DualResult result = DBProxy.Current.Select(null, deleteBundleDetailQty, out dtBundle_Detail_Art);
-
-            if (result == false)
+            if (!result)
             {
                 return result;
             }
@@ -1371,6 +1398,47 @@ where id = '{id}'
             Task.Run(() => new Guozi_AGV().SentDeleteBundle((DataTable)this.detailgridbs.DataSource));
             Task.Run(() => new Guozi_AGV().SentDeleteBundle_SubProcess(dtBundle_Detail_Art));
             return base.ClickDeletePost();
+        }
+
+        private void BtnSPs_Click(object sender, EventArgs e)
+        {
+            this.ShowBundle_Detail_Order(this.dtBundle_Detail_Order);
+        }
+
+        private DataTable GetBundle_Detail_Order(string bundleno)
+        {
+            string sqlcmd = $@"
+select [SP#] = OrderID, Qty from Bundle_Detail_Order where Bundleno = '{bundleno}' order by OrderID";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable curdtBundle_Detail_Order);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
+            return curdtBundle_Detail_Order;
+        }
+
+        private void ShowBundle_Detail_Order(DataTable dt)
+        {
+            if (dt.AsEnumerable().Any())
+            {
+                MsgGridForm m = new MsgGridForm(dt, "SP# List")
+                {
+                    Width = 650,
+                };
+                m.grid1.Columns[0].Width = 140;
+                m.text_Find.Width = 140;
+                m.btn_Find.Location = new Point(150, 6);
+                m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+                this.FormClosing += (s, args) =>
+                {
+                    if (m.Visible)
+                    {
+                        m.Close();
+                    }
+                };
+                m.Show(this);
+            }
         }
     }
 }
