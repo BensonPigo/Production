@@ -1216,6 +1216,12 @@
     <Compile Include="Report\R24.Designer.cs">
       <DependentUpon>R24.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R27.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R27.Designer.cs">
+      <DependentUpon>R27.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R33.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1885,6 +1891,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R24.resx">
       <DependentUpon>R24.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R27.resx">
+      <DependentUpon>R27.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R33.resx">
       <DependentUpon>R33.cs</DependentUpon>
