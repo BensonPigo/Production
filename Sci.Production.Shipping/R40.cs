@@ -830,8 +830,8 @@ from (
 		select Qty = - isnull(sum(b.Qty),0) 
 		from SubTransfer a
 		inner join SubTransfer_Detail b on a.Id=b.Id
-		where b.FromFtyInventoryUkey = fi.Ukey and b.FromPOID = fi.POID and b.FromSeq1=fi.seq1 and b.FromSeq2=fi.Seq2
-		and b.FromStockType = fi.StockType and b.FromRoll = fi.Roll and b.FromDyelot = fi.Dyelot
+		where b.ToPOID = fi.POID and b.ToSeq1=fi.seq1 and b.ToSeq2=fi.Seq2
+		and b.ToStockType = fi.StockType and b.ToRoll = fi.Roll and b.ToDyelot = fi.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
 		and a.Status='Confirmed'
 		and a.Type in ('C')
@@ -1804,10 +1804,10 @@ from (
 	        , [Dyelot] = ft.Dyelot
 	        , [StockType] = ft.StockType
 	        , [Location] = ftd.MtlLocationID		
-	        , [Qty] = IIF((WH43.Qty + WH44.Qty + WH36.Qty + WH45.Qty) > 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
+	        , [Qty] = IIF((WH43.Qty + WH24_25.Qty + WH36.Qty + WH45.Qty) > 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
 			        ,psd.StockUnit
 			        ,isnull(f.CustomsUnit,'')
-			        ,WH43.Qty + WH44.Qty + WH36.Qty + WH45.Qty
+			        ,WH43.Qty + WH24_25.Qty + WH36.Qty + WH45.Qty
 			        ,isnull(f.Width,0)
 			        ,isnull(f.PcsWidth,0)
 			        ,isnull(f.PcsLength,0)
@@ -1820,7 +1820,7 @@ from (
 				        ,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
                         ,default),0)
 	        , [CustomsUnit] = isnull(f.CustomsUnit,'')
-	        , [ScrapQty] = WH43.Qty + WH44.Qty + WH36.Qty + WH45.Qty
+	        , [ScrapQty] = WH43.Qty + WH24_25.Qty + WH36.Qty + WH45.Qty
 	        , [StockUnit] = psd.StockUnit
 	from FtyInventory ft WITH (NOLOCK) 
 	left join FtyInventory_detail ftd WITH (NOLOCK) on ft.ukey=ftd.ukey	
@@ -1850,12 +1850,12 @@ from (
 	outer apply(
 		select [Qty] = - isnull(sum(b.Qty),0) from SubTransfer a
 		inner join SubTransfer_Detail b on a.ID=b.ID
-		where b.FromPOID = ft.POID and b.FromSeq1=ft.seq1 and b.FromSeq2=ft.Seq2
-		and b.FromStockType = ft.StockType and b.FromRoll = ft.Roll and b.FromDyelot = ft.Dyelot
+		where b.ToPOID = ft.POID and b.ToSeq1=ft.seq1 and b.ToSeq2=ft.Seq2
+		and b.ToStockType = ft.StockType and b.ToRoll = ft.Roll and b.ToDyelot = ft.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
 		and a.Status = 'Confirmed'
 		and a.Type in ('D','E')
-	)WH44
+	)WH24_25
 	outer apply(
 		select [Qty] = isnull(sum(b.Qty),0) from SubTransfer a
 		inner join SubTransfer_Detail b on a.ID=b.ID
@@ -1867,7 +1867,7 @@ from (
 	)WH36
 	where 1=1 
             and ft.StockType='O'
-            and (WH43.Qty + WH44.Qty + WH36.Qty + WH45.Qty) != 0
+            and (WH43.Qty + WH24_25.Qty + WH36.Qty + WH45.Qty) != 0
 			and exists(
 				select 1 from Adjust a
 				inner join Adjust_Detail b on a.ID=b.ID
