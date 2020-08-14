@@ -732,7 +732,7 @@ from (
 		                            where fid.Ukey = fi.UKey 
 		                            for xml path(''))
 		                           ,'')
-	        ,[Qty] = IIF(WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer_Plus.Qty+WHSubTransfer_Reduce.Qty > 0, dbo.getVNUnitTransfer(
+	        ,[Qty] = IIF(WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer_Plus.Qty+WHSubTransfer_Reduce.Qty != 0, dbo.getVNUnitTransfer(
 			        isnull(f.Type, '')
 			        ,psd.StockUnit
 			        ,isnull(f.CustomsUnit, '')
@@ -929,7 +929,16 @@ from (
 			and b.FromStockType = fi.StockType and b.FromRoll = fi.Roll and b.FromDyelot = fi.Dyelot
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
 			and a.Status='Confirmed'
-			and a.Type in ('E','D','C')
+			and a.Type in ('E','D')
+            union all
+			select 1 
+			from SubTransfer a
+			inner join SubTransfer_Detail b on a.Id=b.Id
+			where b.ToPOID = fi.POID and b.ToSeq1=fi.seq1 and b.ToSeq2=fi.Seq2
+			and b.ToStockType = fi.StockType and b.ToRoll = fi.Roll and b.ToDyelot = fi.Dyelot
+			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
+			and a.Status='Confirmed'
+			and a.Type in ('C')
 			union all
 			select 1 from TransferIn a
 			inner join TransferIn_Detail b on a.Id=b.Id
@@ -995,7 +1004,7 @@ from (
 	            , [Dyelot] = '' 
 	            , [StockType] = 'B'
 	            , [Location] = '' 
-	            , [Qty] = IIF(WH39.Qty+WH47.Qty+WH60.Qty+WH61.Qty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
+	            , [Qty] = IIF(WH39.Qty+WH47.Qty+WH60.Qty+WH61.Qty != 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 		                    ,l.UnitId
 		                    ,li.CustomsUnit
 		                    ,(WH39.Qty+WH47.Qty+WH60.Qty+WH61.Qty)
@@ -1804,7 +1813,7 @@ from (
 	        , [Dyelot] = ft.Dyelot
 	        , [StockType] = ft.StockType
 	        , [Location] = ftd.MtlLocationID		
-	        , [Qty] = IIF((WH43.Qty + WH24_25.Qty + WH36.Qty + WH45.Qty) > 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
+	        , [Qty] = IIF((WH43.Qty + WH24_25.Qty + WH36.Qty + WH45.Qty) != 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
 			        ,psd.StockUnit
 			        ,isnull(f.CustomsUnit,'')
 			        ,WH43.Qty + WH24_25.Qty + WH36.Qty + WH45.Qty
@@ -1878,9 +1887,9 @@ from (
 				union all
 				select 1 from SubTransfer a
 				inner join SubTransfer_Detail b on a.ID=b.ID
-				where b.FromPOID = ft.POID and b.FromSeq1=ft.seq1 and b.FromSeq2=ft.Seq2
-				and b.FromStockType = ft.StockType and b.FromRoll = ft.Roll and b.FromDyelot = ft.Dyelot
-				and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
+                where b.ToPOID = ft.POID and b.ToSeq1=ft.seq1 and b.ToSeq2=ft.Seq2
+		        and b.ToStockType = ft.StockType and b.ToRoll = ft.Roll and b.ToDyelot = ft.Dyelot
+		        and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
 				and a.Status = 'Confirmed'
 				and a.Type in ('C','D','E')
 			)
@@ -1900,7 +1909,7 @@ from (
 	        , [Dyelot] = ''
 	        , [StockType] = 'O'
 	        , [Location] = l.CLocation		
-	        , [Qty] = IIF((WH36.Qty + wh44.Qty + WH46.Qty) > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
+	        , [Qty] = IIF((WH36.Qty + wh44.Qty + WH46.Qty) != 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 			        ,l.UnitId,li.CustomsUnit
 			        ,WH36.Qty + wh44.Qty + WH46.Qty
 			        ,0
