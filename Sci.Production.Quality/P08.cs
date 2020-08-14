@@ -61,7 +61,7 @@ namespace Sci.Production.Quality
         private void GridSetup()
         {
             DataGridViewGeneratorTextColumnSettings cellShadebandDocLocationID = new DataGridViewGeneratorTextColumnSettings();
-
+            DataGridViewGeneratorTextColumnSettings cellShadeBand = new DataGridViewGeneratorTextColumnSettings();
             cellShadebandDocLocationID.CellMouseDoubleClick += (s, e) =>
             {
                 this.GridShadebandDocLocationIDCellPop(e.RowIndex, null);
@@ -96,6 +96,17 @@ namespace Sci.Production.Quality
                 curDr.EndEdit();
             };
 
+            cellShadeBand.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.gridReceiving.GetDataRow(e.RowIndex);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                this.ShadeBond(dr["FIRID"].ToString());
+            };
+
             this.gridReceiving.CellValueChanged += (s, e) =>
             {
                 DataRow dr = this.gridReceiving.GetDataRow(e.RowIndex);
@@ -119,7 +130,7 @@ namespace Sci.Production.Quality
                  .DateTime("PasteTime", header: "Paste Shadeband Time", width: Widths.AnsiChars(20))
                  .DateTime("PassQATime", header: "Pass QA Time", width: Widths.AnsiChars(20))
                  .Text("ShadebandDocLocationID", header: "Shadeband Location", width: Widths.AnsiChars(10), settings: cellShadebandDocLocationID)
-                 .Text("ShadeBond", header: "shade \r\n Band", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("ShadeBond", header: "shade \r\n Band", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: cellShadeBand)
                  .Date("ShadeBondDate", header: "Last Shade \r\n Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15))
                  ;
@@ -128,6 +139,26 @@ namespace Sci.Production.Quality
             this.gridReceiving.Columns["PassQATime"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["ShadebandDocLocationID"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+        }
+
+        private void ShadeBond(string firID)
+        {
+            if (firID.Empty())
+            {
+                return;
+            }
+
+            DataTable dt = this.QueryFir(firID);
+
+            if (dt.Rows[0] == null)
+            {
+                return;
+            }
+
+            var frm = new P01_ShadeBond(false, dt.Rows[0]["ID"].ToString(), null, null, dt.Rows[0]);
+            frm.ShowDialog(this);
+            frm.Dispose();
+            this.Query();
         }
 
         private void SelectModify(DataRow dr)
@@ -338,6 +369,7 @@ select
     , [oldPassQATime] = fs.PassQATime
     , [oldShadebandDocLocationID] = fs.ShadebandDocLocationID
     , [oldRemark] = fs.Remark
+    , [FIRID] = f.ID
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
@@ -378,6 +410,7 @@ select
     , [oldPassQATime] = fs.PassQATime
     , [oldShadebandDocLocationID] = fs.ShadebandDocLocationID
     , [oldRemark] = fs.Remark
+    , [FIRID] = f.ID
 FROM TransferIn t with (nolock)
 INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
 INNER JOIN PO_Supp_Detail psd with (nolock) on td.PoId = psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
@@ -404,6 +437,20 @@ left join Color c with (nolock) on psd.ColorID = c.ID and psd.BrandId = c.BrandI
             }
 
             this.listControlBindingSource1.DataSource = dt;
+        }
+
+        private DataTable QueryFir(string id)
+        {
+            string sqlCmd =
+                $@"select f.*
+	                ,r.whseArrival
+	                ,r.Exportid
+                from FIR f
+                Left join Receiving r WITH (NOLOCK) on r.id = f.receivingid
+                where f.id = {id} ";
+            DataTable dt = new DataTable();
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
+            return dt;
         }
 
         /// <inheritdoc/>
