@@ -1,35 +1,32 @@
 
--- =============================================
--- Author:		LEO
--- Create date:20160903
--- Description:	<Description,,>
--- =============================================
 Create PROCEDURE imp_Po
-	---- Add the parameters for the stored procedure here
-	--<@Param1, sysname, @p1> <Datatype_For_Param1, , int> = <Default_Value_For_Param1, , 0>, 
-	--<@Param2, sysname, @p2> <Datatype_For_Param2, , int> = <Default_Value_For_Param2, , 0>
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
    SELECT b.*
 INTO #Trade_To_Pms_PO --先下條件把PO成為工廠別
  FROM  Trade_To_Pms.dbo.PO b WITH (NOLOCK) inner join Production.dbo.Factory c WITH (NOLOCK) on b.FactoryID = c.ID
 
- -----Trade 的區間資料 new Eeit----
-	Declare @DateInfoName VarChar(30) = 'PO';
-	Declare @DateStart Date;
-	Declare @DateEnd Date;
+ -----Trade 的區間資料 new Eeit----	
+------------------------------------------------------------------------------------------------------
+--***資料交換的條件限制***
+--1. 優先取得Production.dbo.DateInfo
+	declare @DateInfoName varchar(30) ='PO';
+	declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+	declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
 
-	If Exists (Select 1 From Trade_To_Pms.dbo.DateInfo Where Name = @DateInfoName)
-	Begin
-		Select @DateStart = DateStart
-			 , @DateEnd = DateEnd
-		  From Trade_To_Pms.dbo.DateInfo
-		 Where Name = @DateInfoName;
-	End;
+--2.取得預設值
+	if @DateStart is Null
+		set @DateStart= (Select DateStart From Trade_To_Pms.dbo.DateInfo Where Name = @DateInfoName)
+	if @DateEnd is Null
+		set @DateEnd = (Select DateEnd From Trade_To_Pms.dbo.DateInfo Where Name = @DateInfoName)
+
+--3.更新Pms_To_Trade.dbo.dateInfo
+	Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+	values (@DateInfoName,@DateStart,@DateEnd);
+------------------------------------------------------------------------------------------------------
 
  If Object_ID('tempdb..#TransOrderList') Is Not Null
 	Begin

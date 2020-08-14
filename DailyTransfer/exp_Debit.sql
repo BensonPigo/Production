@@ -19,12 +19,29 @@ BEGIN
   DROP TABLE Debit5
 END
 
+------------------------------------------------------------------------------------------------------
+--***資料交換的條件限制***
+--1. 優先取得Production.dbo.DateInfo
+declare @DateInfoName varchar(30) ='Debit';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+
+--2.取得預設值
+if @DateStart is Null
+	set @DateStart= CONVERT(DATE,DATEADD(day,-30,GETDATE()))
+if @DateEnd is Null
+	set @DateEnd = CONVERT(DATE, GETDATE())	
+
+--3.更新Pms_To_Trade.dbo.dateInfo
+Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+values (@DateInfoName,@DateStart,@DateEnd);
+------------------------------------------------------------------------------------------------------
 
 SELECT * 
 INTO Debit
 FROM Production.dbo.Debit
-WHERE EditDate 
-BETWEEN Convert(DATE,DATEADD(day,-30,GETDATE()))AND CONVERT(date,Getdate()) OR SysDate BETWEEN Convert(DATE,DATEADD(day,-30,GETDATE())) AND CONVERT(date,Getdate())
+WHERE EditDate BETWEEN @DateStart AND @DateEnd OR SysDate BETWEEN @DateStart AND @DateEnd
 ORDER BY ID ;
 
 -------PMS  Debit_Schedule會先轉到Debit5，再透過Trade的SP轉進 Debit_Schedules-------

@@ -18,14 +18,28 @@ BEGIN
   DROP TABLE ReplacementReport_Detail
 END
 
+------------------------------------------------------------------------------------------------------
+--***資料交換的條件限制***
+--1. 優先取得Production.dbo.DateInfo
+declare @DateInfoName varchar(30) ='ReplacementReport';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
 
+--2.取得預設值
+if @DateStart is Null
+	set @DateStart= CONVERT(DATE,DATEADD(day,-30,GETDATE()))
+
+--3.更新Pms_To_Trade.dbo.dateInfo
+Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+values (@DateInfoName,@DateStart,@DateStart);
+------------------------------------------------------------------------------------------------------
 
 SELECT * 
 INTO ReplacementReport
 FROM Production.dbo.ReplacementReport
-WHERE ExportToTPE >=CONVERT(DATE,DATEADD(day,-30,GETDATE()))
+WHERE ExportToTPE >= @DateStart
 or ExportToTPE is null
-OR EditDate >=  CONVERT(DATE,DATEADD(day,-30,GETDATE()))
+OR EditDate >= @DateStart
 ORDER BY Id 
 
 

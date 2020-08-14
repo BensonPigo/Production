@@ -13,6 +13,22 @@ BEGIN
   DROP TABLE FirstDyelot
 END
 
+------------------------------------------------------------------------------------------------------
+--***資料交換的條件限制***
+--1. 優先取得Production.dbo.DateInfo
+declare @DateInfoName varchar(30) ='GASA';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+
+--2.取得預設值
+if @DateStart is Null
+	set @DateStart= CONVERT(DATE,DATEADD(day,-30,GETDATE()))
+
+--3.更新Pms_To_Trade.dbo.dateInfo	
+Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+values (@DateInfoName,@DateStart,@DateStart);
+------------------------------------------------------------------------------------------------------
+
 SELECT [Export_DetailUkey]
       ,[InspectionReport]
       ,[TestReport]
@@ -25,7 +41,7 @@ SELECT [Export_DetailUkey]
       ,[TestReportCheckClima]
 INTO SentReport
 FROM Production.dbo.SentReport
-WHERE EditDate >= Convert(DATE,DATEADD(day,-30,GETDATE()))
+WHERE EditDate >= @DateStart
 ;
 
 SELECT [TestDocFactoryGroup]
@@ -39,5 +55,5 @@ SELECT [TestDocFactoryGroup]
       ,[EditDate]
 INTO FirstDyelot
 FROM Production.dbo.FirstDyelot
-WHERE EditDate >= Convert(DATE,DATEADD(day,-30,GETDATE()))
+WHERE EditDate >= @DateStart
 ;

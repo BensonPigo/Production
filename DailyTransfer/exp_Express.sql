@@ -1,13 +1,5 @@
 
--- =============================================
--- Author:		<Leo 01921>
--- Create date: <2016/8/17>
--- Description:	<Description,,>
--- =============================================
 CREATE PROCEDURE [dbo].[exp_Express]
-	---- Add the parameters for the stored procedure here
-	--<@Param1, sysname, @p1> <Datatype_For_Param1, , int> = <Default_Value_For_Param1, , 0>, 
-	--<@Param2, sysname, @p2> <Datatype_For_Param2, , int> = <Default_Value_For_Param2, , 0>
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -26,24 +18,21 @@ BEGIN
   DROP TABLE Express_CTNData
 END
 
-declare @DateStart date= CONVERT(DATE,DATEADD(day,-30,GETDATE()));
-declare @DateEnd date=CONVERT(date, '9999-12-31');
+------------------------------------------------------------------------------------------------------
+--***資料交換的條件限制***
+--1. 優先取得Production.dbo.DateInfo
 declare @DateInfoName varchar(30) ='FactoryExpress';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
 
---新增區間資料到DateInfo name='FactoryExpress' DateStart=轉檔日期前30天 DateEnd= 日期最大值
---確保轉出給Trade區間資料等同於DateInfo
-If Exists (Select 1 From Pms_To_Trade.dbo.DateInfo Where Name = @DateInfoName )
-Begin
-	update Pms_To_Trade.dbo.dateInfo
-	set DateStart=@DateStart,
-	DateEnd=@DateEnd
-	Where Name = @DateInfoName 
-end;
-Else
-Begin 
-	insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
-	values (@DateInfoName,@DateStart,@DateEnd);
-end;
+--2.取得預設值
+if @DateStart is Null
+	set @DateStart= CONVERT(DATE,DATEADD(day,-30,GETDATE()))
+
+--3.更新Pms_To_Trade.dbo.dateInfo
+Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+values (@DateInfoName,@DateStart,@DateStart);
+------------------------------------------------------------------------------------------------------
 
 
 SELECT * 

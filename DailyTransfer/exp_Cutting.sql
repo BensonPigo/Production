@@ -1,15 +1,9 @@
 
--- =============================================
--- Author:		<Leo 01921>
--- Create date: <2016/08/17>
--- Description:	<Description,,>
--- =============================================
 Create PROCEDURE [dbo].[exp_Cutting] 
 
 AS
 BEGIN
-
-	SET NOCOUNT ON;
+SET NOCOUNT ON;
 IF OBJECT_ID(N'dbo.CuttingOutput') IS NOT NULL
 BEGIN
   DROP TABLE CuttingOutput
@@ -32,25 +26,24 @@ BEGIN
   DROP TABLE Workorder_Distribute
 END
 
-
-declare @DateStart date= (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System);
-declare @DateEnd date=CONVERT(date, GETDATE());
+------------------------------------------------------------------------------------------------------
+--***資料交換的條件限制***
+--1. 優先取得Production.dbo.DateInfo
 declare @DateInfoName varchar(30) ='CUTTING';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
 
---新增區間資料到DateInfo name='CUTTING' DateStart=Production.System.SewLock+1, DateEnd=轉檔日期
---確保轉出給Trade區間資料等同於DateInfo
-If Exists (Select 1 From Pms_To_Trade.dbo.DateInfo Where Name = @DateInfoName )
-Begin
-	update Pms_To_Trade.dbo.dateInfo
-	set DateStart=@DateStart,
-	DateEnd=@DateEnd
-	Where Name = @DateInfoName 
-end;
-else
-Begin 
-	insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
-	values (@DateInfoName,@DateStart,@DateEnd);
-end;
+--2.取得預設值
+if @DateStart is Null
+	set @DateStart= (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System)
+if @DateEnd is Null
+	set @DateEnd = CONVERT(DATE, GETDATE())	
+
+--3.更新Pms_To_Trade.dbo.dateInfo
+Delete Pms_To_Trade.dbo.dateInfo Where Name = @DateInfoName 
+Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+values (@DateInfoName,@DateStart,@DateEnd);
+------------------------------------------------------------------------------------------------------
 
 SELECT ID, cDATE, MDivisionid,MANPOWER, MANHOURS, Actoutput, ActGarment, AddName, AddDate, EditName, EditDate
 INTO CuttingOutput
