@@ -22,9 +22,10 @@ this.dr["seq2"].ToString());
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string selectCommand1 = string.Format(
-                @"
-Select a.id
+
+            string selectCommand1 = $@"
+
+SELECT   a.id
 	   , a.ETA
 	   , a.WhseArrival
 	   , b.qty
@@ -32,12 +33,23 @@ Select a.id
 	   , a.vessel
 	   , a.ShipModeID
        , a.Blno
-From export a WITH (NOLOCK) 
-	 , export_detail b WITH (NOLOCK) 
-Where a.id = b.id
-And b.poid = '{0}'
-And b.seq1 = '{1}'
-And b.seq2 = '{2}'", this.dr["id"].ToString(), this.dr["seq1"].ToString(), this.dr["seq2"].ToString());
+	   , con.Container
+FROM Export a WITH (NOLOCK) 
+INNER JOIN Export_detail b WITH (NOLOCK)  ON a.ID = b.ID
+OUTER APPLY(
+	SELECT [Container]=STUFF((
+
+		SELECT DISTINCT ','+ContainerType+ContainerNo 
+		FROM Export_ShipAdvice_Container c  WITH (NOLOCK)
+		WHERE c.Export_Detail_Ukey = b.Ukey
+		FOR XML PATH('')
+
+	),1,1,'')
+)con
+WHERE b.poid = '{this.dr["id"]}'
+And b.seq1 = '{this.dr["Seq1"]}'
+And b.seq2 = '{this.dr["Seq2"]}'
+";
 
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
@@ -59,7 +71,8 @@ And b.seq2 = '{2}'", this.dr["id"].ToString(), this.dr["seq1"].ToString(), this.
                  .Numeric("Foc", header: "FOC", width: Widths.AnsiChars(12), integer_places: 6, decimal_places: 4)
                  .Text("Vessel", header: "Vessel Name", width: Widths.AnsiChars(20))
                  .Text("Shipmodeid", header: "Ship Mode", width: Widths.AnsiChars(6))
-                 .Text("Blno", header: "B/L No.", width: Widths.AnsiChars(20));
+                 .Text("Blno", header: "B/L No.", width: Widths.AnsiChars(20))
+                 .Text("Container", header: "ContainerType & No", width: Widths.AnsiChars(20));
         }
 
         private void btnClose_Click(object sender, EventArgs e)
