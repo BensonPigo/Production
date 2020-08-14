@@ -33,6 +33,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.comboIssueType.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -80,6 +81,10 @@ namespace Sci.Production.Warehouse
             {
                 sqlWhere += "and I.Type = 'C' ";
             }
+            else
+            {
+                sqlWhere += "and I.Type in ('B','C') ";
+            }
 
             if (!MyUtility.Check.Empty(this.txtMdivision.Text))
             {
@@ -100,7 +105,7 @@ select	I.ID,
 		I.FactoryID,
 		I.CutplanID,
 		I.OrderId,
-		o.POID,
+		ID.POID,
 		i.SewLine,
 		[Seq] = concat(Ltrim(Rtrim( ID.seq1)), ' ',  ID.seq2),
 		[Description] = dbo.getmtldesc(ID.poid, ID.seq1,ID.seq2,2,0),
@@ -137,7 +142,6 @@ from Issue I with (nolock)
 Inner join Issue_Detail ID with (nolock) on I.ID=ID.ID
 Inner join po_supp_detail PSD on ID.POID=PSD.ID and ID.SEQ1=PSD.SEQ1 and ID.SEQ2=PSD.SEQ2
 Inner join FtyInventory F on ID.Poid = F.Poid and ID.Seq1 = F.seq1 and ID.seq2 = F.seq2 and ID.roll = F.roll
-inner join Orders o with (nolock) on o.ID = I.OrderId
 where 1 = 1 {sqlWhere}
 
 ";
