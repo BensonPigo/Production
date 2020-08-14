@@ -371,8 +371,8 @@ seq[1]), out this.dr))
             .Text("StockUnit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("output", header: "Pick Output", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: ts)
             .Numeric("balanceqty", header: "Balance", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
-            .Numeric("AutoPickqty", header: "Pick Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
-            .Text("OutputAutoPick", header: "Pick Output", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Numeric("AutoPickqty", header: "AutoPick \r\n Calculation \r\n Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
+            .Text("OutputAutoPick", header: "AutoPick \r\n Calculation \r\n Output", width: Widths.AnsiChars(20), iseditingreadonly: true)
             ;
             #endregion 欄位設定
 
@@ -420,8 +420,15 @@ select  a.Id
         , a.Ukey
         , balanceqty = isnull((fi.inqty - fi.outqty + fi.adjustqty),0.00)
         , a.BarcodeNo
-        , AutoPickqty=0.0
-        , OutputAutoPick=''
+        , AutoPickqty=(select SUM(AutoPickQty)  from Issue_Size iss where iss.Issue_DetailUkey = a.ukey)
+        , OutputAutoPick=(
+			select  STUFF((
+				select CONCAT(',',rtrim(iss.SizeCode),'*',iss.AutoPickQty)
+				from Issue_Size iss
+				where iss.Issue_DetailUkey = a.ukey
+				for xml path('')
+			),1,1,'')
+			)
 from dbo.Issue_Detail a WITH (NOLOCK) 
 left join dbo.po_supp_detail p WITH (NOLOCK) on p.id  = a.poid 
                                                 and p.seq1= a.seq1 
