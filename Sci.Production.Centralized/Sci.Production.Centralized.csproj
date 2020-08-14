@@ -52,7 +52,7 @@
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -308,6 +308,12 @@
     <Compile Include="R20.Designer.cs">
       <DependentUpon>R20.cs</DependentUpon>
     </Compile>
+    <Compile Include="R21.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R21.Designer.cs">
+      <DependentUpon>R21.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sewing_B01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -431,6 +437,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R20.resx">
       <DependentUpon>R20.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R21.resx">
+      <DependentUpon>R21.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sewing_B01.resx">
       <DependentUpon>Sewing_B01.cs</DependentUpon>
