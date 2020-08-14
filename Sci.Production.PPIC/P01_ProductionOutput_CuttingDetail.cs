@@ -51,12 +51,12 @@ namespace Sci.Production.PPIC
             this.gridCuttingDailyOutput.IsEditingReadOnly = true;
             this.gridCuttingDailyOutput.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridCuttingDailyOutput)
-                 .Date("CDate", header: "Date", width: Widths.AnsiChars(10))
+                 .Text("CDate", header: "Date", width: Widths.AnsiChars(10))
                  .Text("CutRef", header: "Ref#", width: Widths.AnsiChars(8))
                  .Text("PatternPanel", header: "Fabric Comb", width: Widths.AnsiChars(2))
                  .Text("FabricPanelCode", header: "Lectra Code", width: Widths.AnsiChars(2))
                  .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3))
-                 .Numeric("CutQty", header: "Q'ty", width: Widths.AnsiChars(6));
+                 .Text("CutQty", header: "Q'ty", width: Widths.AnsiChars(6), alignment: System.Windows.Forms.DataGridViewContentAlignment.MiddleRight);
             this.gridCuttingDailyOutput.Columns[1].Visible = this.type != "A";
             this.gridCuttingDailyOutput.Columns[2].Visible = this.type != "A";
             this.gridCuttingDailyOutput.Columns[3].Visible = this.type != "A";
@@ -136,11 +136,12 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
 	into #tmp2_1
 	from #Lagtmp where TotalCutQty>= AccuCutQty or (TotalCutQty < AccuCutQty and TotalCutQty > Lagaccu)
 	------------------mp2_A
-	select OrderID,cDate,CutRef,SizeCode,Article,PatternPanel,MDivisionid,[cutqty] = sum(cQty),FabricPanelCode,Cutno
-	from #tmp2_1
+	select  [OrderID] = isnull(OrderID, '----'),[cDate] = isnull(Format(cDate, 'yyyy/MM/dd') , '----'),[CutRef] = isnull(CutRef, '----'),SizeCode,Article,PatternPanel,MDivisionid,
+	        [cutqty] = iif(Cutno is null, '----', cast(sum(cQty) as varchar)),FabricPanelCode,[Cutno] = isnull(cast(Cutno as varchar), '----')
+    from #tmp2_1
 	where orderid = '{this.id}' and SizeCode = '{this.sizeCode}' and Article ='{this.article}'
 	group by OrderID,CutRef,SizeCode,Article,PatternPanel,MDivisionid,cDate,FabricPanelCode,Cutno
-    order by cDate,CutRef,PatternPanel,FabricPanelCode,Cutno
+    order by PatternPanel,FabricPanelCode,cDate,CutRef,Cutno
 
 	drop table #CutQtytmp1,#CutQtytmp2,#Lagtmp,#tmp2_1
 ";
