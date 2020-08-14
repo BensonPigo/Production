@@ -556,6 +556,7 @@ select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
         , p.Refno   
         , dbo.getmtldesc(p.id,p.seq1,p.seq2,2,0) as Description 
         , p.ColorID
+        , [WH_P07_Color] = Color.Value
         , p.SizeSpec 
         , p.FinalETA
         , isnull(m.InQty, 0) as InQty
@@ -575,8 +576,15 @@ from dbo.PO_Supp_Detail p WITH (NOLOCK)
 inner join Orders o on p.id = o.id
 inner join Factory f on o.FtyGroup = f.id
 left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON p.SCIRefNo=Fabric.SCIRefNo
 inner join View_unitrate v on v.FROM_U = p.POUnit 
 	                          and v.TO_U = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN p.SuppColor
+		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 END
+)Color
 OUTER APPLY(
 	SELECT [LockCount]=COUNT(UKEY)
 	FROM FtyInventory

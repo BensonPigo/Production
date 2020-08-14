@@ -9,6 +9,7 @@ using Ict.Win;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
@@ -67,6 +68,8 @@ namespace Sci.Production.Warehouse
             this.grid2Data.Columns.Add("ErrMsg", typeof(string));
             this.grid2Data.Columns.Add("CanWriteIn", typeof(bool));
             this.grid2Data.Columns.Add("Fabric", typeof(string));
+            this.grid2Data.Columns.Add("Refno", typeof(string));
+            this.grid2Data.Columns.Add("ColorID", typeof(string));
 
             this.listControlBindingSource2.DataSource = this.grid2Data;
             this.gridPoid.DataSource = this.listControlBindingSource2;
@@ -264,6 +267,23 @@ namespace Sci.Production.Warehouse
                     newRow["location"] = (objCellArray[1, ItemPosition[8]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[8]].ToString().Replace("'", string.Empty).Trim(), "C");
                     newRow["Remark"] = (objCellArray[1, ItemPosition[9]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[9]].ToString().Trim(), "C");
                     newRow["CanWriteIn"] = true;
+
+                    List<SqlParameter> sqlpar = new List<SqlParameter>();
+                    sqlpar.Add(new SqlParameter("@poid", newRow["poid"].ToString().Trim()));
+                    sqlpar.Add(new SqlParameter("@seq1", newRow["seq1"].ToString().Trim()));
+                    sqlpar.Add(new SqlParameter("@seq2", newRow["seq2"].ToString().Trim()));
+                    DataRow dr2;
+                    string sql = @"
+select    pd.Refno
+        , pd.ColorID
+from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
+where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
+
+                    if (MyUtility.Check.Seek(sql, sqlpar, out dr2))
+                    {
+                        newRow["Refno"] = dr2["Refno"].ToString();
+                        newRow["ColorID"] = dr2["ColorID"].ToString();
+                    }
                     #region check Columns length
                     List<string> listColumnLengthErrMsg = new List<string>();
 
@@ -485,6 +505,7 @@ namespace Sci.Production.Warehouse
                     DataRow[] checkRow = this.detailData.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["poid"].EqualString(dr2["poid"])
                                                                                 && row["seq1"].EqualString(dr2["seq1"]) && row["seq2"].EqualString(dr2["seq2"])
                                                                                 && row["roll"].EqualString(dr2["roll"]) && row["Dyelot"].EqualString(dr2["Dyelot"])).ToArray();
+
                     // 開始檢查FtyInventory
                     string poid = MyUtility.Convert.GetString(dr2["poid"]);
                     string seq1 = MyUtility.Convert.GetString(dr2["seq1"]);
@@ -493,7 +514,6 @@ namespace Sci.Production.Warehouse
                     string dyelot = MyUtility.Convert.GetString(dr2["dyelot"]);
                     string fabricType = MyUtility.Convert.GetString(dr2["fabrictype"]);
                     string stockType = MyUtility.Convert.GetString(dr2["stockType"]);
-
 
                     // 布料，且都有值了才檢查該Row
                     if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
@@ -507,7 +527,6 @@ namespace Sci.Production.Warehouse
                             return;
                         }
                     }
-
 
                     if (checkRow.Length == 0)
                     {
