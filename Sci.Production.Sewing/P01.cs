@@ -225,11 +225,6 @@ select  sd.*
 from SewingOutput_Detail sd WITH (NOLOCK) 
 left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
 LEFT JOIN SewingReason sr ON sd.SewingReasonID=sr.ID
-outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderId 
-                               and rft.CDate = s.OutputDate 
-                               and rft.SewinglineID = s.SewingLineID 
-                               and rft.Shift = s.Shift 
-                               and rft.Team = s.Team) Rft
 where sd.ID = '{0}'",
                 masterID);
             return base.OnDetailSelectCommandPrepare(e);
