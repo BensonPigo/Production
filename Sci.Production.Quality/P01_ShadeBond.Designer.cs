@@ -67,6 +67,7 @@
             this.labinspector = new Sci.Win.UI.Label();
             this.btnInspectedallpass = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
+            this.btnPrintFormatReport8 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -74,12 +75,13 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.btnPrintFormatReport8);
             this.btmcont.Controls.Add(this.button1);
             this.btmcont.Controls.Add(this.btnInspectedallpass);
             this.btmcont.Controls.Add(this.btnPrintFormatReport);
             this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
-            this.btmcont.Size = new System.Drawing.Size(962, 40);
+            this.btmcont.Size = new System.Drawing.Size(1008, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -89,11 +91,12 @@
             this.btmcont.Controls.SetChildIndex(this.btnPrintFormatReport, 0);
             this.btmcont.Controls.SetChildIndex(this.btnInspectedallpass, 0);
             this.btmcont.Controls.SetChildIndex(this.button1, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnPrintFormatReport8, 0);
             // 
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 163);
-            this.gridcont.Size = new System.Drawing.Size(938, 520);
+            this.gridcont.Size = new System.Drawing.Size(984, 520);
             // 
             // append
             // 
@@ -109,11 +112,11 @@
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(872, 5);
+            this.undo.Location = new System.Drawing.Point(918, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(792, 5);
+            this.save.Location = new System.Drawing.Point(838, 5);
             // 
             // displayBrand
             // 
@@ -386,7 +389,7 @@
             // 
             // btnToExcel
             // 
-            this.btnToExcel.Location = new System.Drawing.Point(627, 5);
+            this.btnToExcel.Location = new System.Drawing.Point(742, 5);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(90, 30);
             this.btnToExcel.TabIndex = 130;
@@ -422,11 +425,12 @@
             // 
             // btnPrintFormatReport
             // 
-            this.btnPrintFormatReport.Location = new System.Drawing.Point(476, 5);
+            this.btnPrintFormatReport.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.btnPrintFormatReport.Location = new System.Drawing.Point(431, 5);
             this.btnPrintFormatReport.Name = "btnPrintFormatReport";
-            this.btnPrintFormatReport.Size = new System.Drawing.Size(145, 30);
+            this.btnPrintFormatReport.Size = new System.Drawing.Size(141, 30);
             this.btnPrintFormatReport.TabIndex = 129;
-            this.btnPrintFormatReport.Text = "Print Format Report";
+            this.btnPrintFormatReport.Text = "Print Format Report(4 Slot)";
             this.btnPrintFormatReport.UseVisualStyleBackColor = true;
             this.btnPrintFormatReport.Click += new System.EventHandler(this.btnPrintFormatReport_Click);
             // 
@@ -470,7 +474,7 @@
             // btnInspectedallpass
             // 
             this.btnInspectedallpass.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnInspectedallpass.Location = new System.Drawing.Point(309, 5);
+            this.btnInspectedallpass.Location = new System.Drawing.Point(264, 5);
             this.btnInspectedallpass.Name = "btnInspectedallpass";
             this.btnInspectedallpass.Size = new System.Drawing.Size(161, 30);
             this.btnInspectedallpass.TabIndex = 128;
@@ -481,7 +485,7 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Location = new System.Drawing.Point(142, 5);
+            this.button1.Location = new System.Drawing.Point(97, 5);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(161, 30);
             this.button1.TabIndex = 131;
@@ -489,9 +493,20 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
+            // btnPrintFormatReport8
+            // 
+            this.btnPrintFormatReport8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.btnPrintFormatReport8.Location = new System.Drawing.Point(578, 5);
+            this.btnPrintFormatReport8.Name = "btnPrintFormatReport8";
+            this.btnPrintFormatReport8.Size = new System.Drawing.Size(141, 30);
+            this.btnPrintFormatReport8.TabIndex = 132;
+            this.btnPrintFormatReport8.Text = "Print Format Report(8 Slot)";
+            this.btnPrintFormatReport8.UseVisualStyleBackColor = true;
+            this.btnPrintFormatReport8.Click += new System.EventHandler(this.btnPrintFormatReport_Click);
+            // 
             // P01_ShadeBond
             // 
-            this.ClientSize = new System.Drawing.Size(962, 733);
+            this.ClientSize = new System.Drawing.Size(1008, 733);
             this.Controls.Add(this.txtShadeboneInspector);
             this.Controls.Add(this.labinspector);
             this.Controls.Add(this.dateArriveWHDate);
@@ -621,5 +636,6 @@
         private Win.UI.Label labinspector;
         private Win.UI.Button btnInspectedallpass;
         private Win.UI.Button button1;
+        private System.Windows.Forms.Button btnPrintFormatReport8;
     }
 }
