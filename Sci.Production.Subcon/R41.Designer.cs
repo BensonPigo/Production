@@ -53,6 +53,8 @@
             this.txtsubprocess = new Sci.Production.Class.Txtsubprocess();
             this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             this.dateSewInLine = new Sci.Win.UI.DateRange();
+            this.dateLastSewDate = new Sci.Win.UI.DateRange();
+            this.label4 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -73,31 +75,37 @@
             // 
             // labelCutRefNo
             // 
+            this.labelCutRefNo.BackColor = System.Drawing.Color.LightSkyBlue;
             this.labelCutRefNo.Location = new System.Drawing.Point(27, 19);
             this.labelCutRefNo.Name = "labelCutRefNo";
             this.labelCutRefNo.Size = new System.Drawing.Size(132, 23);
             this.labelCutRefNo.TabIndex = 94;
             this.labelCutRefNo.Text = "Cut Ref#";
+            this.labelCutRefNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelSPNo
             // 
+            this.labelSPNo.BackColor = System.Drawing.Color.LightSkyBlue;
             this.labelSPNo.Location = new System.Drawing.Point(27, 48);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(132, 23);
             this.labelSPNo.TabIndex = 95;
             this.labelSPNo.Text = "SP#";
+            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelBundleCDate
             // 
+            this.labelBundleCDate.BackColor = System.Drawing.Color.LightSkyBlue;
             this.labelBundleCDate.Location = new System.Drawing.Point(27, 106);
             this.labelBundleCDate.Name = "labelBundleCDate";
             this.labelBundleCDate.Size = new System.Drawing.Size(132, 23);
             this.labelBundleCDate.TabIndex = 96;
             this.labelBundleCDate.Text = "Bundle CDate";
+            this.labelBundleCDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelSubProcess
             // 
-            this.labelSubProcess.Location = new System.Drawing.Point(27, 222);
+            this.labelSubProcess.Location = new System.Drawing.Point(27, 251);
             this.labelSubProcess.Name = "labelSubProcess";
             this.labelSubProcess.Size = new System.Drawing.Size(132, 23);
             this.labelSubProcess.TabIndex = 97;
@@ -105,7 +113,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(27, 251);
+            this.labelM.Location = new System.Drawing.Point(27, 280);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(132, 23);
             this.labelM.TabIndex = 98;
@@ -148,7 +156,7 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(162, 251);
+            this.comboM.Location = new System.Drawing.Point(162, 280);
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(121, 24);
@@ -157,11 +165,12 @@
             // label6
             // 
             this.label6.AutoSize = true;
+            this.label6.BackColor = System.Drawing.Color.Transparent;
             this.label6.Location = new System.Drawing.Point(289, 22);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(16, 17);
+            this.label6.Size = new System.Drawing.Size(22, 17);
             this.label6.TabIndex = 106;
-            this.label6.Text = "~";
+            this.label6.Text = "～";
             // 
             // txtCutRefStart
             // 
@@ -183,7 +192,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(27, 280);
+            this.labelFactory.Location = new System.Drawing.Point(27, 309);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(132, 23);
             this.labelFactory.TabIndex = 98;
@@ -191,11 +200,13 @@
             // 
             // lbBundleScanDate
             // 
+            this.lbBundleScanDate.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbBundleScanDate.Location = new System.Drawing.Point(27, 135);
             this.lbBundleScanDate.Name = "lbBundleScanDate";
             this.lbBundleScanDate.Size = new System.Drawing.Size(132, 23);
             this.lbBundleScanDate.TabIndex = 109;
             this.lbBundleScanDate.Text = "Bundle Scan Date";
+            this.lbBundleScanDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // dateBundleScanDate
             // 
@@ -221,11 +232,13 @@
             // 
             // lbEstCuttingDate
             // 
+            this.lbEstCuttingDate.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbEstCuttingDate.Location = new System.Drawing.Point(27, 77);
             this.lbEstCuttingDate.Name = "lbEstCuttingDate";
             this.lbEstCuttingDate.Size = new System.Drawing.Size(132, 23);
             this.lbEstCuttingDate.TabIndex = 111;
             this.lbEstCuttingDate.Text = "Est. Cutting Date";
+            this.lbEstCuttingDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // dateEstCutDate
             // 
@@ -251,7 +264,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(27, 307);
+            this.label1.Location = new System.Drawing.Point(27, 336);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(132, 23);
             this.label1.TabIndex = 113;
@@ -274,26 +287,29 @@
             this.dateBDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateBDelivery.DateBox2.TabIndex = 1;
             this.dateBDelivery.IsRequired = false;
-            this.dateBDelivery.Location = new System.Drawing.Point(162, 164);
+            this.dateBDelivery.Location = new System.Drawing.Point(162, 222);
             this.dateBDelivery.Name = "dateBDelivery";
             this.dateBDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateBDelivery.TabIndex = 6;
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(27, 164);
+            this.label2.Location = new System.Drawing.Point(27, 222);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(132, 23);
             this.label2.TabIndex = 115;
             this.label2.Text = "Buyer Delivery Date";
+            this.label2.TextStyle.Color = System.Drawing.Color.White;
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(27, 193);
+            this.label3.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.label3.Location = new System.Drawing.Point(27, 164);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(132, 23);
             this.label3.TabIndex = 118;
             this.label3.Text = "Sewing Inline";
+            this.label3.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // comboRFIDProcessLocation
             // 
@@ -302,7 +318,7 @@
             this.comboRFIDProcessLocation.FormattingEnabled = true;
             this.comboRFIDProcessLocation.IncludeJunk = true;
             this.comboRFIDProcessLocation.IsSupportUnselect = true;
-            this.comboRFIDProcessLocation.Location = new System.Drawing.Point(162, 306);
+            this.comboRFIDProcessLocation.Location = new System.Drawing.Point(162, 335);
             this.comboRFIDProcessLocation.Name = "comboRFIDProcessLocation";
             this.comboRFIDProcessLocation.OldText = "";
             this.comboRFIDProcessLocation.Size = new System.Drawing.Size(121, 24);
@@ -313,7 +329,7 @@
             this.txtsubprocess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtsubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtsubprocess.IsSupportEditMode = false;
-            this.txtsubprocess.Location = new System.Drawing.Point(162, 222);
+            this.txtsubprocess.Location = new System.Drawing.Point(162, 251);
             this.txtsubprocess.Name = "txtsubprocess";
             this.txtsubprocess.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtsubprocess.ReadOnly = true;
@@ -328,7 +344,7 @@
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IssupportJunk = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(162, 280);
+            this.comboFactory.Location = new System.Drawing.Point(162, 309);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
@@ -351,14 +367,48 @@
             this.dateSewInLine.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateSewInLine.DateBox2.TabIndex = 1;
             this.dateSewInLine.IsRequired = false;
-            this.dateSewInLine.Location = new System.Drawing.Point(162, 193);
+            this.dateSewInLine.Location = new System.Drawing.Point(162, 164);
             this.dateSewInLine.Name = "dateSewInLine";
             this.dateSewInLine.Size = new System.Drawing.Size(280, 23);
             this.dateSewInLine.TabIndex = 7;
             // 
+            // dateLastSewDate
+            // 
+            // 
+            // 
+            // 
+            this.dateLastSewDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateLastSewDate.DateBox1.Name = "";
+            this.dateLastSewDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateLastSewDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateLastSewDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateLastSewDate.DateBox2.Name = "";
+            this.dateLastSewDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateLastSewDate.DateBox2.TabIndex = 1;
+            this.dateLastSewDate.IsSupportEditMode = false;
+            this.dateLastSewDate.Location = new System.Drawing.Point(162, 193);
+            this.dateLastSewDate.Name = "dateLastSewDate";
+            this.dateLastSewDate.Size = new System.Drawing.Size(280, 23);
+            this.dateLastSewDate.TabIndex = 120;
+            // 
+            // label4
+            // 
+            this.label4.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.label4.Location = new System.Drawing.Point(27, 193);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(132, 23);
+            this.label4.TabIndex = 119;
+            this.label4.Text = "Last Sew. Date";
+            this.label4.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R41
             // 
-            this.ClientSize = new System.Drawing.Size(563, 363);
+            this.ClientSize = new System.Drawing.Size(563, 403);
+            this.Controls.Add(this.dateLastSewDate);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.dateSewInLine);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.dateBDelivery);
@@ -388,6 +438,9 @@
             this.Name = "R41";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R41.Bundle tracking list (RFID)";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelCutRefNo, 0);
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.labelBundleCDate, 0);
@@ -415,6 +468,8 @@
             this.Controls.SetChildIndex(this.dateBDelivery, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.dateSewInLine, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.dateLastSewDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -446,5 +501,7 @@
         private Win.UI.Label label2;
         private Win.UI.Label label3;
         private Win.UI.DateRange dateSewInLine;
+        private Win.UI.DateRange dateLastSewDate;
+        private Win.UI.Label label4;
     }
 }

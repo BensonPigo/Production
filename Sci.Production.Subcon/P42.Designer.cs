@@ -48,8 +48,6 @@
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.label8 = new Sci.Win.UI.Label();
             this.cmbSummaryBy = new Sci.Win.UI.ComboBox();
-            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
-            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid2 = new Sci.Win.UI.Grid();
             this.label9 = new Sci.Win.UI.Label();
@@ -57,6 +55,10 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
+            this.dateLastSewDate = new Sci.Win.UI.DateRange();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
@@ -97,7 +99,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(215, 9);
+            this.label1.Location = new System.Drawing.Point(227, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(16, 23);
             this.label1.TabIndex = 26;
@@ -109,10 +111,10 @@
             this.txtSp2.BackColor = System.Drawing.Color.White;
             this.txtSp2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSp2.IsSupportEditMode = false;
-            this.txtSp2.Location = new System.Drawing.Point(236, 9);
+            this.txtSp2.Location = new System.Drawing.Point(248, 9);
             this.txtSp2.Name = "txtSp2";
             this.txtSp2.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtSp2.Size = new System.Drawing.Size(127, 23);
+            this.txtSp2.Size = new System.Drawing.Size(115, 23);
             this.txtSp2.TabIndex = 1;
             // 
             // txtSp1
@@ -120,10 +122,10 @@
             this.txtSp1.BackColor = System.Drawing.Color.White;
             this.txtSp1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSp1.IsSupportEditMode = false;
-            this.txtSp1.Location = new System.Drawing.Point(83, 9);
+            this.txtSp1.Location = new System.Drawing.Point(107, 9);
             this.txtSp1.Name = "txtSp1";
             this.txtSp1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtSp1.Size = new System.Drawing.Size(127, 23);
+            this.txtSp1.Size = new System.Drawing.Size(115, 23);
             this.txtSp1.TabIndex = 0;
             // 
             // grid1
@@ -165,7 +167,7 @@
             this.txtPO.BackColor = System.Drawing.Color.White;
             this.txtPO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtPO.IsSupportEditMode = false;
-            this.txtPO.Location = new System.Drawing.Point(83, 38);
+            this.txtPO.Location = new System.Drawing.Point(107, 38);
             this.txtPO.Name = "txtPO";
             this.txtPO.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtPO.Size = new System.Drawing.Size(127, 23);
@@ -176,7 +178,7 @@
             this.chkBulk.AutoSize = true;
             this.chkBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkBulk.IsSupportEditMode = false;
-            this.chkBulk.Location = new System.Drawing.Point(83, 68);
+            this.chkBulk.Location = new System.Drawing.Point(83, 96);
             this.chkBulk.Name = "chkBulk";
             this.chkBulk.Size = new System.Drawing.Size(54, 21);
             this.chkBulk.TabIndex = 3;
@@ -188,7 +190,7 @@
             this.chkSample.AutoSize = true;
             this.chkSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkSample.IsSupportEditMode = false;
-            this.chkSample.Location = new System.Drawing.Point(143, 68);
+            this.chkSample.Location = new System.Drawing.Point(143, 96);
             this.chkSample.Name = "chkSample";
             this.chkSample.Size = new System.Drawing.Size(74, 21);
             this.chkSample.TabIndex = 4;
@@ -197,7 +199,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(5, 67);
+            this.label3.Location = new System.Drawing.Point(5, 95);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
             this.label3.TabIndex = 47;
@@ -284,33 +286,6 @@
             this.cmbSummaryBy.Size = new System.Drawing.Size(130, 24);
             this.cmbSummaryBy.TabIndex = 10;
             // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.BoolFtyGroupList = true;
-            this.txtfactory1.FilteMDivision = false;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.IsProduceFty = false;
-            this.txtfactory1.IsSupportEditMode = false;
-            this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(444, 38);
-            this.txtfactory1.MDivision = null;
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 6;
-            // 
-            // txtMdivision1
-            // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.IsSupportEditMode = false;
-            this.txtMdivision1.Location = new System.Drawing.Point(444, 9);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 5;
-            // 
             // grid2
             // 
             this.grid2.AllowUserToAddRows = false;
@@ -349,7 +324,7 @@
             this.label9.BackColor = System.Drawing.Color.LightSkyBlue;
             this.label9.Location = new System.Drawing.Point(5, 9);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
+            this.label9.Size = new System.Drawing.Size(99, 23);
             this.label9.TabIndex = 101;
             this.label9.Text = "SP#";
             this.label9.TextStyle.Color = System.Drawing.Color.Black;
@@ -359,7 +334,7 @@
             this.label10.BackColor = System.Drawing.Color.LightSkyBlue;
             this.label10.Location = new System.Drawing.Point(5, 38);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(75, 23);
+            this.label10.Size = new System.Drawing.Size(99, 23);
             this.label10.TabIndex = 102;
             this.label10.Text = "P.O.";
             this.label10.TextStyle.Color = System.Drawing.Color.Black;
@@ -394,9 +369,70 @@
             this.label12.Text = "Buyer Delivery";
             this.label12.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // label6
+            // 
+            this.label6.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.label6.Location = new System.Drawing.Point(5, 67);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(99, 23);
+            this.label6.TabIndex = 106;
+            this.label6.Text = "Last Sew. Date";
+            this.label6.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // dateLastSewDate
+            // 
+            // 
+            // 
+            // 
+            this.dateLastSewDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateLastSewDate.DateBox1.Name = "";
+            this.dateLastSewDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateLastSewDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateLastSewDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateLastSewDate.DateBox2.Name = "";
+            this.dateLastSewDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateLastSewDate.DateBox2.TabIndex = 1;
+            this.dateLastSewDate.IsSupportEditMode = false;
+            this.dateLastSewDate.Location = new System.Drawing.Point(107, 67);
+            this.dateLastSewDate.Name = "dateLastSewDate";
+            this.dateLastSewDate.Size = new System.Drawing.Size(280, 23);
+            this.dateLastSewDate.TabIndex = 107;
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.BoolFtyGroupList = true;
+            this.txtfactory1.FilteMDivision = false;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsProduceFty = false;
+            this.txtfactory1.IsSupportEditMode = false;
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(444, 38);
+            this.txtfactory1.MDivision = null;
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 6;
+            // 
+            // txtMdivision1
+            // 
+            this.txtMdivision1.BackColor = System.Drawing.Color.White;
+            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision1.IsSupportEditMode = false;
+            this.txtMdivision1.Location = new System.Drawing.Point(444, 9);
+            this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision1.TabIndex = 5;
+            // 
             // P42
             // 
             this.ClientSize = new System.Drawing.Size(1008, 562);
+            this.Controls.Add(this.dateLastSewDate);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label2);
@@ -448,6 +484,8 @@
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label11, 0);
             this.Controls.SetChildIndex(this.label12, 0);
+            this.Controls.SetChildIndex(this.label6, 0);
+            this.Controls.SetChildIndex(this.dateLastSewDate, 0);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
@@ -484,5 +522,7 @@
         private Win.UI.Label label2;
         private Win.UI.Label label11;
         private Win.UI.Label label12;
+        private Win.UI.Label label6;
+        private Win.UI.DateRange dateLastSewDate;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
@@ -82,9 +83,10 @@ namespace Sci.Production.Subcon
                 MyUtility.Check.Empty(this.dateEstCutDate.Value1) && MyUtility.Check.Empty(this.dateEstCutDate.Value2) &&
                 MyUtility.Check.Empty(this.dateBundleCDate.Value1) && MyUtility.Check.Empty(this.dateBundleCDate.Value2) &&
                 MyUtility.Check.Empty(this.dateBundleScanDate.Value1) && MyUtility.Check.Empty(this.dateBundleScanDate.Value2) &&
-                MyUtility.Check.Empty(this.dateSewInLine.Value1) && MyUtility.Check.Empty(this.dateSewInLine.Value2))
+                MyUtility.Check.Empty(this.dateSewInLine.Value1) && MyUtility.Check.Empty(this.dateSewInLine.Value2) &&
+                !this.dateLastSewDate.HasValue)
             {
-                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Est. Cutting Date][Bundle CDate][Bundle Scan Date],[Sewing Inline] cannot all empty !!");
+                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Est. Cutting Date][Bundle CDate][Bundle Scan Date],[Sewing Inline],[Last Sew. Date] cannot all empty !!");
                 return false;
             }
 
@@ -104,6 +106,9 @@ namespace Sci.Production.Subcon
             StringBuilder sqlWhere = new StringBuilder();
             StringBuilder sqlWhereFirstQuery = new StringBuilder();
             string joinWorkOrder = string.Empty;
+            string whereExistsLastSewDate = string.Empty;
+            string whereSewDate = string.Empty;
+            List<SqlParameter> listPar = new List<SqlParameter>();
             if (!MyUtility.Check.Empty(this.SubProcess))
             {
                 sqlWhere.Append($@" and s.id in ('{this.SubProcess.Replace(",", "','")}') ");
@@ -208,12 +213,26 @@ namespace Sci.Production.Subcon
             {
                 sqlWhereFirstQuery.Append(@" and w.CutRef <> '' ");
             }
+
+            if (this.dateLastSewDate.HasValue)
+            {
+                whereExistsLastSewDate = $@" and exists(select 1 from View_SewingInfoLocation vsis with (nolock) where vsis.OrderID = o.ID and vsis.LastSewDate between @LastSewDateFrom and @LastSewDateTo)";
+                whereSewDate = " and (tsi.LastSewDate between @LastSewDateFrom and @LastSewDateTo)";
+                listPar.Add(new SqlParameter("@LastSewDateFrom", this.dateLastSewDate.DateBox1.Value));
+                listPar.Add(new SqlParameter("@LastSewDateTo", this.dateLastSewDate.DateBox2.Value));
+            }
             #endregion
 
             #region sqlcmd
             string sqlCmd = string.Empty;
             sqlCmd += $@"
-select distinct bd.BundleNo 
+select distinct bd.BundleNo,
+                bd.Location,
+                b.Article,
+                b.ColorID,
+                bd.SizeCode,
+                bd.Patterncode,
+                b.OrderID
 into #tmp_Workorder
 from Bundle b WITH (NOLOCK)
 {joinWorkOrder}
@@ -222,8 +241,35 @@ inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDi
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno --and bio.SubProcessId = s.Id
 where 1=1
-
 {sqlWhereFirstQuery} 
+{whereExistsLastSewDate}
+
+--取得Last Sew. Date相關資料
+select  vsl.OrderId, vsl.Article, vsl.SizeCode, vsl.Color, vsl.ComboType, vsl.LastSewDate, vsl.SewQty
+into #tmpSewingInfo
+from dbo.View_SewingInfoLocation vsl with (nolock)
+where   exists(select 1 from #tmp_Workorder tw 
+                        where   tw.OrderID = vsl.OrderId and
+                                tw.Article = vsl.Article and
+                                tw.SizeCode = vsl.SizeCode and
+                                tw.ColorID = vsl.Color and
+                                tw.Location = vsl.ComboType)
+
+alter table #tmpSewingInfo alter column ComboType varchar(8)
+
+insert into #tmpSewingInfo(OrderId, Article, SizeCode, Color, ComboType, LastSewDate, SewQty)
+select  OrderId, 
+        Article, 
+        SizeCode, 
+        Color, 
+        'ALLPARTS',
+        [LastSewDate] = max(LastSewDate), 
+        [SewQty] = sum(SewQty)
+from #tmpSewingInfo
+group by    OrderId, Article, SizeCode, Color
+
+
+
 ";
 
             sqlCmd += $@" 
@@ -290,6 +336,7 @@ Select
 	,bio.CutCellID
 	,[SpreadingNo] = wk.SpreadingNo
 	,[FabricKind] = FabricKind.val
+    ,[BundleLocation] = w.Location
 into #result
 from #tmp_Workorder w 
 inner join Bundle_Detail bd WITH (NOLOCK, Index(PK_Bundle_Detail)) on bd.BundleNo = w.BundleNo 
@@ -458,8 +505,16 @@ select
 	,r.PanelNo
 	,r.CutCellID
     ,r.SpreadingNo
+    ,[LastSewDate] = tsi.LastSewDate
+    ,[SewQty] = tsi.SewQty
 from #result r
 left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
+left join #tmpSewingInfo tsi on tsi.OrderId =   r.[SP#] and 
+                                tsi.Article = r.[Article]     and
+                                tsi.SizeCode  = r.[Size]   and
+                                tsi.Color    =   r.[Color]  and
+                                (tsi.ComboType = r.BundleLocation or tsi.ComboType = r.Pattern)
+where 1 = 1 {whereSewDate}
 order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 
 
 drop table #result
@@ -486,6 +541,11 @@ drop table #tmp_Workorder
             SqlConnection conn = null;
             DBProxy.Current.OpenConnection(this.ConnectionName, out conn);
             var cmd = new SqlCommand(sqlResult, conn);
+            foreach (SqlParameter sqlPar in listPar)
+            {
+                cmd.Parameters.Add(sqlPar);
+            }
+
             cmd.CommandTimeout = 3000;
             var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             int loadCounts = 0;
