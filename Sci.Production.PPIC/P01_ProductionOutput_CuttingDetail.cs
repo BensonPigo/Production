@@ -51,12 +51,12 @@ namespace Sci.Production.PPIC
             this.gridCuttingDailyOutput.IsEditingReadOnly = true;
             this.gridCuttingDailyOutput.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridCuttingDailyOutput)
-                 .Date("CDate", header: "Date", width: Widths.AnsiChars(10))
+                 .Text("CDate", header: "Date", width: Widths.AnsiChars(10))
                  .Text("CutRef", header: "Ref#", width: Widths.AnsiChars(8))
                  .Text("PatternPanel", header: "Fabric Comb", width: Widths.AnsiChars(2))
                  .Text("FabricPanelCode", header: "Lectra Code", width: Widths.AnsiChars(2))
                  .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3))
-                 .Numeric("CutQty", header: "Q'ty", width: Widths.AnsiChars(6));
+                 .Text("CutQty", header: "Q'ty", width: Widths.AnsiChars(6), alignment: System.Windows.Forms.DataGridViewContentAlignment.MiddleRight);
             this.gridCuttingDailyOutput.Columns[1].Visible = this.type != "A";
             this.gridCuttingDailyOutput.Columns[2].Visible = this.type != "A";
             this.gridCuttingDailyOutput.Columns[3].Visible = this.type != "A";
@@ -109,16 +109,16 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
             {
                 sqlCmd = $@"
 	select wd.OrderID,co.cDate,wd.SizeCode,wd.Article,wp.PatternPanel,wd.WorkOrderUkey,
-		cutqty= iif(sum(cod.Layer*ws.Qty)>wd.Qty,wd.Qty,sum(cod.Layer*ws.Qty)),
+		cutqty= iif(isnull(sum(cod.Layer*ws.Qty), 0)>wd.Qty,wd.Qty,isnull(sum(cod.Layer*ws.Qty), 0)),
 		co.MDivisionid,
-		TotalCutQty=sum(cod.Layer*ws.qty),cod.CutRef,wo.FabricPanelCode,wo.Cutno
+		TotalCutQty=isnull(sum(cod.Layer*ws.Qty),0),cod.CutRef,wo.FabricPanelCode,wo.Cutno
 	into #CutQtytmp1
 	from WorkOrder_Distribute wd WITH (NOLOCK)
 	inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
 	inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = wd.WorkOrderUkey and ws.SizeCode = wd.SizeCode
 	inner join WorkOrder wo WITH (NOLOCK) on wo.Ukey = wd.WorkOrderUkey
-	inner join CuttingOutput_Detail cod on cod.WorkOrderUkey = wd.WorkOrderUkey
-	inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
+	left join CuttingOutput_Detail cod on cod.WorkOrderUkey = wd.WorkOrderUkey
+	left join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
 	inner join orders o WITH (NOLOCK) on o.id = wd.OrderID
 	where o.poid=(select poid from orders o with(nolock) where id = '{this.id}')
 	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,wd.Qty,wd.WorkOrderUkey,cod.CutRef,co.cDate,wo.FabricPanelCode,wo.Cutno
@@ -136,11 +136,12 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
 	into #tmp2_1
 	from #Lagtmp where TotalCutQty>= AccuCutQty or (TotalCutQty < AccuCutQty and TotalCutQty > Lagaccu)
 	------------------mp2_A
-	select OrderID,cDate,CutRef,SizeCode,Article,PatternPanel,MDivisionid,[cutqty] = sum(cQty),FabricPanelCode,Cutno
-	from #tmp2_1
+	select  [OrderID] = isnull(OrderID, '----'),[cDate] = isnull(Format(cDate, 'yyyy/MM/dd') , '----'),[CutRef] = isnull(CutRef, '----'),SizeCode,Article,PatternPanel,MDivisionid,
+	        [cutqty] = iif(Cutno is null, '----', cast(sum(cQty) as varchar)),FabricPanelCode,[Cutno] = isnull(cast(Cutno as varchar), '----')
+    from #tmp2_1
 	where orderid = '{this.id}' and SizeCode = '{this.sizeCode}' and Article ='{this.article}'
 	group by OrderID,CutRef,SizeCode,Article,PatternPanel,MDivisionid,cDate,FabricPanelCode,Cutno
-    order by cDate,CutRef,PatternPanel,FabricPanelCode,Cutno
+    order by PatternPanel,FabricPanelCode,cDate,CutRef,Cutno
 
 	drop table #CutQtytmp1,#CutQtytmp2,#Lagtmp,#tmp2_1
 ";
