@@ -217,7 +217,7 @@ and SunriseNid != 0
             this.DetailSelectCommand = string.Format(
                 @"
 select  sd.*
-        , [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0 or rft.InspectQty-rft.RejectQty <= 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  )
+        , [RFT] = CONVERT(VARCHAR, convert(Decimal(5,2),  ROUND(sd.QAQty* 1.0 / sd.InlineQty * 1.0 * 100 ,2))) +'%'
         , [Tips] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
         , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
 		, [SewingReasonID]=sr.id
@@ -1925,28 +1925,28 @@ where not exists (select 1
             if (this.rftDT != null && this.rftDT.Rows.Count > 0)
             {
                 // RFT 表頭的InlineQty、RejectQty資料來源，必須與Sewing P01表頭的InlineQty、DefectQty相同，因此重新算一次
-                DataTable detailBody = (DataTable)this.detailgridbs.DataSource;
+                //DataTable detailBody = (DataTable)this.detailgridbs.DataSource;
 
-                foreach (DataRow item in this.rftDT.Rows)
-                {
-                    string orderID = MyUtility.Convert.GetString(item["OrderID"]);
-                    string cDate = MyUtility.Convert.GetString(item["CDate"]);
-                    string sewingLineID = MyUtility.Convert.GetString(item["SewingLineID"]);
-                    string factoryID = MyUtility.Convert.GetString(item["FactoryID"]);
-                    string team = MyUtility.Convert.GetString(item["Team"]);
-                    string shift = MyUtility.Convert.GetString(item["Shift"]);
+                //foreach (DataRow item in this.rftDT.Rows)
+                //{
+                //    string orderID = MyUtility.Convert.GetString(item["OrderID"]);
+                //    string cDate = MyUtility.Convert.GetString(item["CDate"]);
+                //    string sewingLineID = MyUtility.Convert.GetString(item["SewingLineID"]);
+                //    string factoryID = MyUtility.Convert.GetString(item["FactoryID"]);
+                //    string team = MyUtility.Convert.GetString(item["Team"]);
+                //    string shift = MyUtility.Convert.GetString(item["Shift"]);
 
-                    int inlineQty = detailBody.AsEnumerable().Where(o =>
-                           o["OrderID"].ToString() == orderID
-                    ).Sum(o => MyUtility.Convert.GetInt(o["InlineQty"]));
+                //    int inlineQty = detailBody.AsEnumerable().Where(o =>
+                //           o["OrderID"].ToString() == orderID
+                //    ).Sum(o => MyUtility.Convert.GetInt(o["InlineQty"]));
 
-                    int defectQty = detailBody.AsEnumerable().Where(o =>
-                           o["OrderID"].ToString() == orderID
-                    ).Sum(o => MyUtility.Convert.GetInt(o["DefectQty"]));
+                //    int defectQty = detailBody.AsEnumerable().Where(o =>
+                //           o["OrderID"].ToString() == orderID
+                //    ).Sum(o => MyUtility.Convert.GetInt(o["DefectQty"]));
 
-                    item["InspectQty"] = inlineQty;
-                    item["RejectQty"] = defectQty;
-                }
+                //    item["InspectQty"] = inlineQty;
+                //    item["RejectQty"] = defectQty;
+                //}
 
                 string insertRFT = $@"
 select *,MDivisionid=(select MDivisionID from Factory where id=t.FactoryID)
@@ -3985,8 +3985,8 @@ select
 	, ColorID=''
 	, TMS=0
 	, HourlyStandardOutput = 0
-	, [QAQty] = sum(iif(ins.Status in ('Pass','Fixed'),1,0))
-	, [DefectQty] = sum(iif(ins.Status in ('Reject','Dispose'),1,0))
+	, [QAQty] = sum(iif(ins.Status in ('Pass'),1,0))
+	, [DefectQty] = sum(iif(ins.Status in ('Reject','Dispose','Fixed'),1,0))
 	, [InlineQty] = count(1)
 	, [ImportFromDQS] = 1
 	, [AutoCreate] = 0
@@ -4076,7 +4076,7 @@ select
 	, ComboType=Location 
 	, Article
 	, SizeCode=Size
-	, [QAQty] = sum(iif(ins.Status in ('Pass','Fixed'),1,0))
+	, [QAQty] = sum(iif(ins.Status in ('Pass'),1,0))
     , [ExistsSunriseNid] = sum(iif(ins.SunriseNid = 0,0,1))
 from inspection ins WITH (NOLOCK)
 where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
@@ -4391,6 +4391,7 @@ outer apply(
            and not (ins.Status <> 'Fixed'  or (ins.Status = 'Fixed' and cast(ins.AddDate as date) = ins.InspectionDate))
            and ins.SunriseNid = 0
 ) DiffInspectQty
+
 
 
 SELECT  OrderId
