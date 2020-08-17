@@ -363,7 +363,7 @@ select a.id
 	,a.FromLocation
 	,a.ToLocation
 	,a.ftyinventoryukey
-	,ukey
+	,a.ukey
 	,p1.Refno
 	,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 from dbo.LocationTrans_detail a WITH (NOLOCK) 
