@@ -460,6 +460,7 @@ select
 	,ad.ReasonId
 	,reason_nm = (select Name FROM Reason WHERE id=ReasonId AND junk = 0 and ReasonTypeID='Stock_Remove')
     ,ColorID =dbo.GetColorMultipleID(psd.BrandId, psd.ColorID)
+    ,ad.ukey
 from Adjust_detail ad WITH (NOLOCK) 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd.SEQ2 = ad.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
