@@ -31,19 +31,15 @@
             this.rdbtnSummary = new Sci.Win.UI.RadioButton();
             this.rdbtnDetail = new Sci.Win.UI.RadioButton();
             this.cmbStockType = new Sci.Win.UI.ComboBox();
-            this.cmbMaterialType = new Sci.Win.UI.ComboBox();
             this.labelReportType = new Sci.Win.UI.Label();
             this.labelStockType = new Sci.Win.UI.Label();
-            this.labelMaterialType = new Sci.Win.UI.Label();
             this.textColor = new Sci.Win.UI.TextBox();
             this.labelColor = new Sci.Win.UI.Label();
             this.checkQty = new Sci.Win.UI.CheckBox();
-            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             this.label2 = new Sci.Win.UI.Label();
             this.textEndRefno = new Sci.Win.UI.TextBox();
             this.textStartRefno = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.textEndSP = new Sci.Win.UI.TextBox();
             this.textStartSP = new Sci.Win.UI.TextBox();
             this.labelRefno = new Sci.Win.UI.Label();
@@ -64,22 +60,27 @@
             this.checkBulk = new Sci.Win.UI.CheckBox();
             this.labelCategory = new Sci.Win.UI.Label();
             this.chkComplete = new Sci.Win.UI.CheckBox();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
+            this.comboxMaterialTypeAndID = new Sci.Production.Class.ComboxMaterialTypeAndID();
+            this.panel1 = new Sci.Win.UI.Panel();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(437, 79);
+            this.print.Location = new System.Drawing.Point(530, 79);
             this.print.TabIndex = 18;
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(437, 9);
+            this.toexcel.Location = new System.Drawing.Point(530, 9);
             this.toexcel.TabIndex = 16;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(437, 45);
+            this.close.Location = new System.Drawing.Point(530, 45);
             this.close.TabIndex = 17;
             // 
             // buttonCustomized
@@ -126,18 +127,6 @@
             this.cmbStockType.Size = new System.Drawing.Size(117, 24);
             this.cmbStockType.TabIndex = 12;
             // 
-            // cmbMaterialType
-            // 
-            this.cmbMaterialType.BackColor = System.Drawing.Color.White;
-            this.cmbMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmbMaterialType.FormattingEnabled = true;
-            this.cmbMaterialType.IsSupportUnselect = true;
-            this.cmbMaterialType.Location = new System.Drawing.Point(126, 269);
-            this.cmbMaterialType.Name = "cmbMaterialType";
-            this.cmbMaterialType.OldText = "";
-            this.cmbMaterialType.Size = new System.Drawing.Size(117, 24);
-            this.cmbMaterialType.TabIndex = 11;
-            // 
             // labelReportType
             // 
             this.labelReportType.Location = new System.Drawing.Point(8, 359);
@@ -153,14 +142,6 @@
             this.labelStockType.Size = new System.Drawing.Size(114, 23);
             this.labelStockType.TabIndex = 129;
             this.labelStockType.Text = "Stock Type";
-            // 
-            // labelMaterialType
-            // 
-            this.labelMaterialType.Location = new System.Drawing.Point(8, 269);
-            this.labelMaterialType.Name = "labelMaterialType";
-            this.labelMaterialType.Size = new System.Drawing.Size(114, 23);
-            this.labelMaterialType.TabIndex = 128;
-            this.labelMaterialType.Text = "Material Type";
             // 
             // textColor
             // 
@@ -192,21 +173,6 @@
             this.checkQty.TabIndex = 15;
             this.checkQty.Text = "Qty > 0";
             this.checkQty.UseVisualStyleBackColor = true;
-            // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.BoolFtyGroupList = true;
-            this.txtfactory1.FilteMDivision = false;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.IsProduceFty = false;
-            this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(126, 149);
-            this.txtfactory1.MaxLength = 8;
-            this.txtfactory1.MDivision = null;
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 6;
             // 
             // label2
             // 
@@ -255,16 +221,6 @@
             this.label1.Text = "～";
             this.label1.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label1.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // txtMdivision1
-            // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(126, 120);
-            this.txtMdivision1.MaxLength = 8;
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(67, 23);
-            this.txtMdivision1.TabIndex = 5;
             // 
             // textEndSP
             // 
@@ -500,9 +456,52 @@
             this.chkComplete.Text = "Material complete";
             this.chkComplete.UseVisualStyleBackColor = true;
             // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.BoolFtyGroupList = true;
+            this.txtfactory1.FilteMDivision = false;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsProduceFty = false;
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(126, 149);
+            this.txtfactory1.MaxLength = 8;
+            this.txtfactory1.MDivision = null;
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 6;
+            // 
+            // txtMdivision1
+            // 
+            this.txtMdivision1.BackColor = System.Drawing.Color.White;
+            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision1.Location = new System.Drawing.Point(126, 120);
+            this.txtMdivision1.MaxLength = 8;
+            this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.Size = new System.Drawing.Size(67, 23);
+            this.txtMdivision1.TabIndex = 5;
+            // 
+            // comboxMaterialTypeAndID
+            // 
+            this.comboxMaterialTypeAndID.Location = new System.Drawing.Point(0, 5);
+            this.comboxMaterialTypeAndID.Name = "comboxMaterialTypeAndID";
+            this.comboxMaterialTypeAndID.Size = new System.Drawing.Size(486, 33);
+            this.comboxMaterialTypeAndID.TabIndex = 150;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.comboxMaterialTypeAndID);
+            this.panel1.Location = new System.Drawing.Point(8, 258);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(496, 38);
+            this.panel1.TabIndex = 151;
+            // 
             // R21
             // 
-            this.ClientSize = new System.Drawing.Size(527, 441);
+            this.ClientSize = new System.Drawing.Size(637, 438);
+            this.Controls.Add(this.textColor);
+            this.Controls.Add(this.labelColor);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.chkComplete);
             this.Controls.Add(this.checkSMTL);
             this.Controls.Add(this.checkMaterial);
@@ -520,12 +519,8 @@
             this.Controls.Add(this.rdbtnSummary);
             this.Controls.Add(this.rdbtnDetail);
             this.Controls.Add(this.cmbStockType);
-            this.Controls.Add(this.cmbMaterialType);
             this.Controls.Add(this.labelReportType);
             this.Controls.Add(this.labelStockType);
-            this.Controls.Add(this.labelMaterialType);
-            this.Controls.Add(this.textColor);
-            this.Controls.Add(this.labelColor);
             this.Controls.Add(this.checkQty);
             this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.label2);
@@ -555,12 +550,8 @@
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.txtfactory1, 0);
             this.Controls.SetChildIndex(this.checkQty, 0);
-            this.Controls.SetChildIndex(this.labelColor, 0);
-            this.Controls.SetChildIndex(this.textColor, 0);
-            this.Controls.SetChildIndex(this.labelMaterialType, 0);
             this.Controls.SetChildIndex(this.labelStockType, 0);
             this.Controls.SetChildIndex(this.labelReportType, 0);
-            this.Controls.SetChildIndex(this.cmbMaterialType, 0);
             this.Controls.SetChildIndex(this.cmbStockType, 0);
             this.Controls.SetChildIndex(this.rdbtnDetail, 0);
             this.Controls.SetChildIndex(this.rdbtnSummary, 0);
@@ -571,12 +562,6 @@
             this.Controls.SetChildIndex(this.dateArriveDate, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.buttonCustomized, 0);
-            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
-            this.Controls.SetChildIndex(this.txtVersion, 0);
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.txtWorkNo, 0);
             this.Controls.SetChildIndex(this.labelCategory, 0);
             this.Controls.SetChildIndex(this.checkBulk, 0);
@@ -584,6 +569,16 @@
             this.Controls.SetChildIndex(this.checkMaterial, 0);
             this.Controls.SetChildIndex(this.checkSMTL, 0);
             this.Controls.SetChildIndex(this.chkComplete, 0);
+            this.Controls.SetChildIndex(this.panel1, 0);
+            this.Controls.SetChildIndex(this.labelColor, 0);
+            this.Controls.SetChildIndex(this.textColor, 0);
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -594,10 +589,8 @@
         private Win.UI.RadioButton rdbtnSummary;
         private Win.UI.RadioButton rdbtnDetail;
         private Win.UI.ComboBox cmbStockType;
-        private Win.UI.ComboBox cmbMaterialType;
         private Win.UI.Label labelReportType;
         private Win.UI.Label labelStockType;
-        private Win.UI.Label labelMaterialType;
         private Win.UI.TextBox textColor;
         private Win.UI.Label labelColor;
         private Win.UI.CheckBox checkQty;
@@ -627,5 +620,7 @@
         private Win.UI.CheckBox checkBulk;
         private Win.UI.Label labelCategory;
         private Win.UI.CheckBox chkComplete;
+        private Class.ComboxMaterialTypeAndID comboxMaterialTypeAndID;
+        private Win.UI.Panel panel1;
     }
 }

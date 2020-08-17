@@ -13,6 +13,8 @@
     [Weight]      NUMERIC (7, 2)  DEFAULT ((0)) NOT NULL,
     [Remark]      NVARCHAR (100)  DEFAULT ('') NOT NULL,
     [CompleteTime] DATETIME NULL, 
+    [CombineBarcode] VARCHAR NULL, 
+    [Unoriginal] BIT NULL, 
     CONSTRAINT [PK_TransferIn_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -62,3 +64,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'儲位', @l
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferIn_Detail', @level2type = N'COLUMN', @level2name = N'Qty';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'用來當作合併布卷條碼判斷值',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferIn_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CombineBarcode'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否是來源值',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferIn_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Unoriginal'

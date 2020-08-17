@@ -71,6 +71,8 @@ namespace Sci.Production.Warehouse
             this.grid2Data.Columns.Add("Remark", typeof(string));
             this.grid2Data.Columns.Add("ErrMsg", typeof(string));
             this.grid2Data.Columns.Add("fabrictype", typeof(string));
+            this.grid2Data.Columns.Add("Refno", typeof(string));
+            this.grid2Data.Columns.Add("ColorID", typeof(string));
 
             this.listControlBindingSource2.DataSource = this.grid2Data;
             this.gridPoid.DataSource = this.listControlBindingSource2;
@@ -385,10 +387,18 @@ select  pd.fabrictype
         , StockUnit = dbo.GetStockUnitBySPSeq (pd.id, pd.seq1, pd.seq2)
         , Round(dbo.GetUnitQty(pd.POUnit, dbo.GetStockUnitBySPSeq (pd.id, pd.seq1, pd.seq2), @shipqty), 2) as stockqty 
         , (select o.Category from Orders o WITH (NOLOCK) where o.id= pd.id) as category
+        , pd.Refno
+        , [ColorID] = isnull(Color.Value,'')
 from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
 inner join [dbo].[Fabric] ff WITH (NOLOCK) on pd.SCIRefno= ff.SCIRefno
 inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
 inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN ff.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN pd.SuppColor
+		 ELSE dbo.GetColorMultipleID(pd.BrandID,pd.ColorID)
+	 END
+)Color
 where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
 
                                 if (MyUtility.Check.Seek(sql, sqlpar, out dr2))
@@ -420,6 +430,8 @@ where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
                                     newRow["Pounit"] = dr2["pounit"].ToString();
                                     newRow["StockUnit"] = dr2["StockUnit"].ToString();
                                     newRow["stockqty"] = decimal.Parse(dr2["stockqty"].ToString());
+                                    newRow["Refno"] = dr2["Refno"].ToString();
+                                    newRow["ColorID"] = dr2["ColorID"].ToString();
 
                                     // 決定倉別
                                     if (dr2["category"].ToString() == "M")
