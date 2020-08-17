@@ -218,7 +218,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
 
             if (tmp_dt.Select("CYCFS in ('CFS-CFS','CFS-CY')").Count() > 0)
             {
-                this.numericBoxCFSCBM.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCBM)", "CYCFS in ('CFS-CFS','CFS-CY')")), 2);
+                this.numericBoxCFSCBM.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCBM)", "CYCFS in ('CFS-CFS','CFS-CY') and ShipModeID not in ('A/C','A/P','E/C','E/P','A/P-C','E/P-C','AIR')")), 2);
             }
             else
             {
@@ -227,7 +227,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
 
             if (tmp_dt.Select("ShipModeID in('A/C','A/P','E/C','E/P')").Count() > 0)
             {
-                this.numericBoxAIRGW.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalGW)", "ShipModeID in('A/C','A/P','E/C','E/P')")), 2);
+                this.numericBoxAIRGW.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalGW)", "ShipModeID in('A/C','A/P','E/C','E/P','A/P-C','E/P-C','AIR')")), 2);
             }
             else
             {

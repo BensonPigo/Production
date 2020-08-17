@@ -163,7 +163,8 @@ order by g.BrandID,s.ID,g.ID,g.ShipModeID,g.CYCFS
             #region Summary
             if (this.Type == 2)
             {
-                sqlCmd = $@"select g.BrandID,g.ID,gcc.Type,gcc.CTNRNo,gcc.ct,pp.TTLShipQty,pp.TTLCBM
+                sqlCmd = $@"
+select g.BrandID,g.ID,gcc.Type,gcc.CTNRNo,gcc.ct,pp.TTLShipQty,pp.TTLCBM,g.TotalGW,g.CYCFS,g.ShipModeID
 into #tmp
 from ShipPlan s with(nolock)
 left join GMTBooking g with(nolock) on g.ShipPlanID = s.ID
@@ -188,13 +189,32 @@ left join GMTBooking g with(nolock) on g.ShipPlanID = s.ID
 where 1=1
 {where}
 
-select a.*,
-	isnull(CFS.GBct,0),isnull(CFS.TTLShipQty,0),isnull(CFS.TTLCBM,0),CFS=isnull(CFS.CtnCount,0),
-	isnull(STD20.GBct,0),isnull(STD20.TTLShipQty,0),isnull(STD20.TTLCBM,0),STD20=isnull(STD20.CtnCount,0),
-	isnull(STD40.GBct,0),isnull(STD40.TTLShipQty,0),isnull(STD40.TTLCBM,0),STD40=isnull(STD40.CtnCount,0),
-	isnull(HQ40.GBct,0),isnull(HQ40.TTLShipQty,0),isnull(HQ40.TTLCBM,0),HQ40=isnull(HQ40.CtnCount,0),
-	isnull(HQ45.GBct,0),isnull(HQ45.TTLShipQty,0),isnull(HQ45.TTLCBM,0),HQ45=isnull(HQ45.CtnCount,0),
-	isnull(AIR.GBct,0),isnull(AIR.TTLShipQty,0),isnull(AIR.TTLCBM,0),AIR=isnull(AIR.CtnCount,0)
+select a.BrandID
+,[Total Number of GB#] = a.GBct
+,[CFS_NoOfGB] = isnull(CFS.GBct,0)
+,[CFS_ShipQty] = isnull(CFS.TTLShipQty,0)
+,[CFS_CBM] = isnull(CFS.TTLCBM,0)
+,[CFS_ContQty] = isnull(CFS.CtnCount,0)
+,[20STD_NoOfGB] = isnull(STD20.GBct,0)
+,[20STD_ShipQty] = isnull(STD20.TTLShipQty,0)
+,[20STD_CBM] = isnull(STD20.TTLCBM,0)
+,[20STD_ContQty] = isnull(STD20.CtnCount,0)
+,[40STD_NoOfGB] = isnull(STD40.GBct,0)
+,[40STD_ShipQty] = isnull(STD40.TTLShipQty,0)
+,[40STD_CBM] = isnull(STD40.TTLCBM,0)
+,[40STD_ContQty] = isnull(STD40.CtnCount,0)
+,[40HQ_NoOfGB] = isnull(HQ40.GBct,0)
+,[40HQ_ShipQty] = isnull(HQ40.TTLShipQty,0)
+,[40HQ_CBM] = isnull(HQ40.TTLCBM,0)
+,[40HQ_ContQty] = isnull(HQ40.CtnCount,0)
+,[45HQ_NoOfGB] = isnull(HQ45.GBct,0)
+,[45HQ_ShipQty] = isnull(HQ45.TTLShipQty,0)
+,[45HQ_CBM] = isnull(HQ45.TTLCBM,0)
+,[40HQ_ContQty] = isnull(HQ45.CtnCount,0)
+,[AIR_NoOfGB] = isnull(AIR.GBct,0)
+,[AIR_ShipQty] = isnull(AIR.TTLShipQty,0)
+,[AIR_CBM] = isnull(AIR.TotalGW,0)
+,[AIR_ContQty]= isnull(AIR.CtnCount,0)
 from(
     select t.BrandID,GBct = COUNT(1)
     from #tmpa t
@@ -207,7 +227,8 @@ left join(
 			            WHERE BrandID = t.BrandID AND Type=t.Type
 		            )a)
 	from #tmp t
-	where t.Type = 'CFS'
+	where t.CYCFS in ('CFS-CFS','CFS-CY')
+	and t.ShipModeID not in ('A/C','A/P','E/C','E/P','A/P-C','E/P-C','AIR')
     group by t.BrandID,t.Type,t.CTNRno
 )CFS on a.BrandID = CFS.BrandID
 left join(
@@ -251,13 +272,13 @@ left join(
     group by t.BrandID,t.Type
 )HQ45 on a.BrandID = HQ45.BrandID
 left join(
-	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TTLCBM=sum(TTLCBM)
+	select t.BrandID,GBct = COUNT(ID),TTLShipQty=sum(TTLShipQty),TotalGW=sum(TotalGW)
      ,CtnCount=(SELECT COUNT(Type) FROM(
 			            SELECT DISTINCT Type,CTNRno FROM #tmp 
 			            WHERE BrandID = t.BrandID AND Type=t.Type
 		            )a)
 	from #tmp t
-	where t.Type = 'AIR'
+	where t.ShipModeID in('A/C','A/P','E/C','E/P','A/P-C','E/P-C','AIR')
     group by t.BrandID,t.Type
 )AIR on a.BrandID = AIR.BrandID
 drop table #tmp,#tmpa
