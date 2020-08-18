@@ -225,6 +225,11 @@ select  sd.*
 from SewingOutput_Detail sd WITH (NOLOCK) 
 left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
 LEFT JOIN SewingReason sr ON sd.SewingReasonID=sr.ID
+outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderId 
+                               and rft.CDate = s.OutputDate 
+                               and rft.SewinglineID = s.SewingLineID 
+                               and rft.Shift = s.Shift 
+                               and rft.Team = s.Team) Rft
 where sd.ID = '{0}'",
                 masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -1919,30 +1924,6 @@ where not exists (select 1
             #region
             if (this.rftDT != null && this.rftDT.Rows.Count > 0)
             {
-                // RFT 表頭的InlineQty、RejectQty資料來源，必須與Sewing P01表頭的InlineQty、DefectQty相同，因此重新算一次
-                //DataTable detailBody = (DataTable)this.detailgridbs.DataSource;
-
-                //foreach (DataRow item in this.rftDT.Rows)
-                //{
-                //    string orderID = MyUtility.Convert.GetString(item["OrderID"]);
-                //    string cDate = MyUtility.Convert.GetString(item["CDate"]);
-                //    string sewingLineID = MyUtility.Convert.GetString(item["SewingLineID"]);
-                //    string factoryID = MyUtility.Convert.GetString(item["FactoryID"]);
-                //    string team = MyUtility.Convert.GetString(item["Team"]);
-                //    string shift = MyUtility.Convert.GetString(item["Shift"]);
-
-                //    int inlineQty = detailBody.AsEnumerable().Where(o =>
-                //           o["OrderID"].ToString() == orderID
-                //    ).Sum(o => MyUtility.Convert.GetInt(o["InlineQty"]));
-
-                //    int defectQty = detailBody.AsEnumerable().Where(o =>
-                //           o["OrderID"].ToString() == orderID
-                //    ).Sum(o => MyUtility.Convert.GetInt(o["DefectQty"]));
-
-                //    item["InspectQty"] = inlineQty;
-                //    item["RejectQty"] = defectQty;
-                //}
-
                 string insertRFT = $@"
 select *,MDivisionid=(select MDivisionID from Factory where id=t.FactoryID)
 into #tmp1
@@ -3980,8 +3961,8 @@ select
 	, ColorID=''
 	, TMS=0
 	, HourlyStandardOutput = 0
-	, [QAQty] = sum(iif(ins.Status in ('Pass'),1,0))
-	, [DefectQty] = sum(iif(ins.Status in ('Reject','Dispose','Fixed'),1,0))
+	, [QAQty] = sum(iif(ins.Status in ('Pass','Fixed'),1,0))
+	, [DefectQty] = sum(iif(ins.Status in ('Reject','Dispose'),1,0))
 	, [InlineQty] = count(1)
 	, [ImportFromDQS] = 1
 	, [AutoCreate] = 0
@@ -4071,7 +4052,7 @@ select
 	, ComboType=Location 
 	, Article
 	, SizeCode=Size
-	, [QAQty] = sum(iif(ins.Status in ('Pass'),1,0))
+	, [QAQty] = sum(iif(ins.Status in ('Pass','Fixed'),1,0))
     , [ExistsSunriseNid] = sum(iif(ins.SunriseNid = 0,0,1))
 from inspection ins WITH (NOLOCK)
 where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
@@ -4347,7 +4328,7 @@ select t.OrderId
 	, SewinglineID='{this.CurrentMaintain["SewingLineID"]}'
 	, FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 	, InspectQty= t.InlineQty - DiffInspectQty.Qty
-	, RejectQty= t.DefectQty
+	, RejectQty= RejectData.Qty--t.DefectQty
 	, [DefectQty] = DefectData.Qty
 	, Shift='{this.CurrentMaintain["Shift"]}'
 	, Team = '{this.CurrentMaintain["Team"]}'
@@ -4386,6 +4367,23 @@ outer apply(
            and not (ins.Status <> 'Fixed'  or (ins.Status = 'Fixed' and cast(ins.AddDate as date) = ins.InspectionDate))
            and ins.SunriseNid = 0
 ) DiffInspectQty
+outer apply(
+    -- 最後計算RFT 排除Fixed，但若同一天被Reject又被修好這時候也要抓進來並算reject。
+    select Qty=count(*)
+	from Inspection ins with (nolock)
+	where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+           and ins.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+           and ins.Line = '{this.CurrentMaintain["SewingLineID"]}'
+           and ins.Team = '{this.CurrentMaintain["Team"]}'
+           and ins.Shift = '{shift}' 
+           and ins.Article = t.Article
+           and ins.Location = t.ComboType
+           and ins.OrderId = t.OrderId
+           --and not (ins.Status <> 'Fixed'  or (ins.Status = 'Fixed' and cast(ins.AddDate as date) = ins.InspectionDate))
+           and ins.Status IN ('Fixed','Reject','Dispode')
+           and cast(ins.AddDate as date) = ins.InspectionDate
+           and ins.SunriseNid = 0
+) RejectData
 
 
 
