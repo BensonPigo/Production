@@ -945,12 +945,14 @@ OPTION (RECOMPILE)"
                 Group_left = row1["left"].ToString(),
                 Line = row1["Line"].ToString(),
                 Cell = row1["Cell"].ToString(),
+                POID = row1["POID"].ToString(),
                 SP = row1["SP"].ToString(),
                 Style = row1["Style"].ToString(),
                 MarkerNo = row1["MarkerNo"].ToString(),
                 Body_Cut = row1["Body_Cut"].ToString(),
                 Parts = row1["Parts"].ToString(),
                 Color = row1["Color2"].ToString(),
+                Article = row1["Article"].ToString(),
                 Size = row1["Size"].ToString(),
                 SizeSpec = row1["SizeSpec"].ToString(),
                 Desc = row1["Description"].ToString(),
@@ -1080,7 +1082,7 @@ where bd.BundleNo = '{item.Barcode}'");
             {
                 DataTable bdoDt = P10_Print.GetBundle_Detail_Order_Data(r.Barcode);
                 string sps = P10_Print.GetSpstring(bdoDt);
-                string no = P10_Print.GetNo(r.SP, r.FabricPanelCode, r.Size, r.Barcode);
+                string no = P10_Print.GetNo(r.POID, r.FabricPanelCode, r.Article, r.Size, r.Barcode);
                 string contian;
                 if (layout == 1)
                 {

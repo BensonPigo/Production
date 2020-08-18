@@ -16,6 +16,9 @@
         public string Cell { get; set; }
 
         /// <inheritdoc/>
+        public string POID { get; set; }
+
+        /// <inheritdoc/>
         public string SP { get; set; }
 
         /// <inheritdoc/>
@@ -32,6 +35,9 @@
 
         /// <inheritdoc/>
         public string Color { get; set; }
+
+        /// <inheritdoc/>
+        public string Article { get; set; }
 
         /// <inheritdoc/>
         public string Size { get; set; }

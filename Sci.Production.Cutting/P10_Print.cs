@@ -64,12 +64,14 @@ from (
 	    ,c.FactoryID  [Group_left]
         ,b.Sewinglineid [Line]
         ,b.SewingCell [Cell]
+        ,b.POID
         ,b.Orderid [SP]
         ,c.StyleID [Style]
         ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
         , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 	    ,a.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
+        ,b.Article
         ,a.SizeCode [Size]
         ,'(' + qq.Cutpart + ')' + a.PatternDesc [Desc]
         ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
@@ -105,12 +107,14 @@ from (
 	    ,c.FactoryID  [Group_left]
         ,b.Sewinglineid [Line]
         ,b.SewingCell [Cell]
+        ,b.POID
         ,b.Orderid [SP]
         ,c.StyleID [Style]
         ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
         , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 	    ,d.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
+        ,b.Article
         ,a.SizeCode [Size]
          ,'(' + qq.Cutpart + ')' + d.PatternDesc [Desc]
         --,Artwork.Artwork [Artwork]
@@ -164,12 +168,14 @@ from (
 			,c.FactoryID  [Group_left]
 			,b.Sewinglineid [Line]
 			,b.SewingCell [Cell]
+            ,b.POID
 			,b.Orderid [SP]
 			,c.StyleID [Style]
 			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
             , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
+            ,b.Article
 			,a.SizeCode [Size]
 			,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
 			,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
@@ -200,12 +206,14 @@ from (
 			,c.FactoryID  [Group_left]
 			,b.Sewinglineid [Line]
 			,b.SewingCell [Cell]
+            ,b.POID
 			,b.Orderid [SP]
 			,c.StyleID [Style]
 			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
             , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
+            ,b.Article
 			,a.SizeCode [Size]
 			,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
 	        ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
@@ -486,12 +494,14 @@ order by x.[Bundle]");
                     Group_left = row1["Group_left"].ToString(),
                     Line = row1["Line"].ToString(),
                     Cell = row1["Cell"].ToString(),
+                    POID = row1["POID"].ToString(),
                     SP = row1["SP"].ToString(),
                     Style = row1["Style"].ToString(),
                     MarkerNo = row1["MarkerNo"].ToString(),
                     Body_Cut = row1["Body_Cut"].ToString(),
                     Parts = row1["Parts"].ToString(),
                     Color = row1["Color"].ToString(),
+                    Article = row1["Article"].ToString(),
                     Size = row1["Size"].ToString(),
                     SizeSpec = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? string.Empty : "(" + row1["SizeSpec"].ToString() + ")",
                     Desc = row1["Desc"].ToString(),
@@ -531,7 +541,7 @@ order by x.[Bundle]");
                 {
                     DataTable bdoDt = GetBundle_Detail_Order_Data(r.Barcode);
                     string sps = GetSpstring(bdoDt);
-                    string no = GetNo(r.SP, r.FabricPanelCode, r.Size, r.Barcode);
+                    string no = GetNo(r.POID, r.FabricPanelCode, r.Article, r.Size, r.Barcode);
                     string contian;
                     if (this.comboLayout.SelectedValue.ToString() == "0")
                     {
@@ -881,21 +891,48 @@ order by OrderID";
         }
 
         /// <inheritdoc/>
-        public static string GetNo(string orderid, string fabricPanelCode, string size, string bundleNo)
+        public static string GetNo(string poid, string fabricPanelCode, string article, string size, string bundleNo)
         {
             string sqlcmd = $@"
-SELECT D.BundleNo, D.BundleGroup,D.Qty
+SELECT bd.id, bd.BundleGroup, bd.BundleNo,bd.Patterncode, bd.Qty, maxQty=MAX(bd.Qty) over(partition by b.id, BundleGroup)
 into #tmp
-FROM BUNDLE_DETAIL D
-INNER JOIN BUNDLE B ON B.ID = D.ID  
-WHERE B.ORDERID='{orderid}' AND B.FabricPanelCode='{fabricPanelCode}' AND D.SIZECODE='{size}'
-ORDER BY BundleGroup
+FROM BUNDLE_DETAIL bd with(nolock)
+INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
+WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
+ORDER BY BundleGroup,bd.BundleNo
 
-select distinct t.BundleGroup,t.Qty into #tmp2 from #tmp t ORDER BY BundleGroup
-select t.BundleGroup, lastNo = SUM(t.Qty) over(order by t.BundleGroup) + 1,startNo = LAG(Qty,1,0)over(order by BundleGroup) + 1 into #tmp3 from #tmp2 t
-select concat(startNo,'~',lastNo) from #tmp3 t3 inner join #tmp t on t.BundleGroup = t3.BundleGroup where t.BundleNo = '{bundleNo}'
+--同Patterncode下有數量不同
 
-drop table #tmp,#tmp2,#tmp3
+select t.*,
+	tmpLastNo = IIF(Qty < maxQty, sum(qty) over(partition by ID,BundleGroup,Patterncode Order by BundleNo), Qty)
+into #tmpx1
+from #tmp t
+
+select distinct Id,BundleGroup,maxQty into #tmp2 from #tmp
+select *, lastNo = SUM(maxQty) over(Order by Id,BundleGroup) into #tmp3 from #tmp2
+select *, before = LAG(lastNo,1,0) over(Order by Id,BundleGroup) into #tmp4 from #tmp3
+
+select
+	x1.*,
+	minPatterncodeNo = min(tmpLastNo)  over(partition by x1.ID,x1.BundleGroup,x1.Patterncode Order by x1.BundleNo),
+	tmpbefore = t4.before + 1,
+	lastno = t4.before + x1.tmpLastNo
+into #tmp5
+from #tmp4 t4
+inner join #tmpx1 x1 on x1.Id = t4.Id and x1.BundleGroup = t4.BundleGroup
+
+select t5.*,
+	startNo = case when Qty = maxQty or tmpLastNo = minPatterncodeNo then tmpbefore
+					else LAG(lastNo,1,0) over(partition by ID,BundleGroup,Patterncode Order by BundleNo) + 1
+					end
+into #tmp6
+from #tmp5 t5
+
+select CONCAT(startNo,'~',lastno)
+from #tmp6
+where BundleNo =  '{bundleNo}'
+
+drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
 ";
             return MyUtility.GetValue.Lookup(sqlcmd);
         }

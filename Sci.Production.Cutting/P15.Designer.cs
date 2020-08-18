@@ -159,7 +159,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(1155, 604);
+            this.splitContainer1.Size = new System.Drawing.Size(1155, 644);
             this.splitContainer1.SplitterDistance = 34;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -326,8 +326,8 @@
             this.splitContainer2.Panel2.Controls.Add(this.BtnClose);
             this.splitContainer2.Panel2.Controls.Add(this.BtnBatchCreate);
             this.splitContainer2.Panel2MinSize = 45;
-            this.splitContainer2.Size = new System.Drawing.Size(1155, 566);
-            this.splitContainer2.SplitterDistance = 517;
+            this.splitContainer2.Size = new System.Drawing.Size(1155, 606);
+            this.splitContainer2.SplitterDistance = 557;
             this.splitContainer2.TabIndex = 1;
             // 
             // splitContainer3
@@ -344,8 +344,8 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.splitContainer7);
-            this.splitContainer3.Size = new System.Drawing.Size(1155, 517);
-            this.splitContainer3.SplitterDistance = 247;
+            this.splitContainer3.Size = new System.Drawing.Size(1155, 557);
+            this.splitContainer3.SplitterDistance = 242;
             this.splitContainer3.TabIndex = 2;
             // 
             // splitContainer4
@@ -361,7 +361,7 @@
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.splitContainer5);
-            this.splitContainer4.Size = new System.Drawing.Size(1155, 247);
+            this.splitContainer4.Size = new System.Drawing.Size(1155, 242);
             this.splitContainer4.SplitterDistance = 560;
             this.splitContainer4.TabIndex = 3;
             // 
@@ -393,7 +393,7 @@
             this.gridCutRef.RowTemplate.Height = 24;
             this.gridCutRef.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCutRef.ShowCellToolTips = false;
-            this.gridCutRef.Size = new System.Drawing.Size(560, 247);
+            this.gridCutRef.Size = new System.Drawing.Size(560, 242);
             this.gridCutRef.TabIndex = 6;
             this.gridCutRef.TabStop = false;
             this.gridCutRef.SelectionChanged += new System.EventHandler(this.GridCutRef_SelectionChanged);
@@ -412,7 +412,7 @@
             // splitContainer5.Panel2
             // 
             this.splitContainer5.Panel2.Controls.Add(this.gridArticleSize);
-            this.splitContainer5.Size = new System.Drawing.Size(591, 247);
+            this.splitContainer5.Size = new System.Drawing.Size(591, 242);
             this.splitContainer5.SplitterDistance = 131;
             this.splitContainer5.TabIndex = 4;
             // 
@@ -433,7 +433,7 @@
             // splitContainer6.Panel2
             // 
             this.splitContainer6.Panel2.Controls.Add(this.gridQty);
-            this.splitContainer6.Size = new System.Drawing.Size(131, 247);
+            this.splitContainer6.Size = new System.Drawing.Size(131, 242);
             this.splitContainer6.SplitterDistance = 25;
             this.splitContainer6.TabIndex = 0;
             // 
@@ -495,7 +495,7 @@
             this.gridQty.RowTemplate.Height = 24;
             this.gridQty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQty.ShowCellToolTips = false;
-            this.gridQty.Size = new System.Drawing.Size(131, 218);
+            this.gridQty.Size = new System.Drawing.Size(131, 213);
             this.gridQty.TabIndex = 8;
             this.gridQty.TabStop = false;
             this.gridQty.SelectionChanged += new System.EventHandler(this.GridQty_SelectionChanged);
@@ -529,7 +529,7 @@
             this.gridArticleSize.RowTemplate.Height = 24;
             this.gridArticleSize.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridArticleSize.ShowCellToolTips = false;
-            this.gridArticleSize.Size = new System.Drawing.Size(456, 247);
+            this.gridArticleSize.Size = new System.Drawing.Size(456, 242);
             this.gridArticleSize.TabIndex = 9;
             this.gridArticleSize.TabStop = false;
             // 
@@ -574,7 +574,7 @@
             // splitContainer7.Panel2
             // 
             this.splitContainer7.Panel2.Controls.Add(this.splitContainer8);
-            this.splitContainer7.Size = new System.Drawing.Size(1155, 266);
+            this.splitContainer7.Size = new System.Drawing.Size(1155, 311);
             this.splitContainer7.SplitterDistance = 28;
             this.splitContainer7.TabIndex = 0;
             // 
@@ -638,7 +638,7 @@
             // splitContainer8.Panel2
             // 
             this.splitContainer8.Panel2.Controls.Add(this.splitContainer9);
-            this.splitContainer8.Size = new System.Drawing.Size(1155, 234);
+            this.splitContainer8.Size = new System.Drawing.Size(1155, 279);
             this.splitContainer8.SplitterDistance = 560;
             this.splitContainer8.TabIndex = 0;
             // 
@@ -671,7 +671,7 @@
             this.gridCutpart.RowTemplate.Height = 24;
             this.gridCutpart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCutpart.ShowCellToolTips = false;
-            this.gridCutpart.Size = new System.Drawing.Size(560, 234);
+            this.gridCutpart.Size = new System.Drawing.Size(560, 279);
             this.gridCutpart.TabIndex = 80;
             this.gridCutpart.TabStop = false;
             // 
@@ -712,7 +712,7 @@
             // splitContainer9.Panel2
             // 
             this.splitContainer9.Panel2.Controls.Add(this.gridAllPart);
-            this.splitContainer9.Size = new System.Drawing.Size(591, 234);
+            this.splitContainer9.Size = new System.Drawing.Size(591, 279);
             this.splitContainer9.SplitterDistance = 41;
             this.splitContainer9.TabIndex = 1;
             // 
@@ -767,7 +767,7 @@
             this.gridAllPart.RowTemplate.Height = 24;
             this.gridAllPart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAllPart.ShowCellToolTips = false;
-            this.gridAllPart.Size = new System.Drawing.Size(546, 234);
+            this.gridAllPart.Size = new System.Drawing.Size(546, 279);
             this.gridAllPart.TabIndex = 77;
             this.gridAllPart.TabStop = false;
             // 
@@ -871,7 +871,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1155, 604);
+            this.ClientSize = new System.Drawing.Size(1155, 644);
             this.Controls.Add(this.splitContainer1);
             this.DefaultControl = "txtCutRef";
             this.DefaultControlForEdit = "txtCutRef";

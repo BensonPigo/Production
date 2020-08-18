@@ -692,6 +692,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                     this.ArticleSizeTb.Merge(form.Sel_Distribute);
                 }
 
+                dr["POID"] = form.Sel_Distribute.Rows[0]["POID"];
                 dr["Article"] = form.Sel_Distribute.Rows[0]["Article"];
                 dr["SizeCode"] = form.Sel_Distribute.Rows[0]["SizeCode"];
                 dr["Qty"] = this.ArticleSizeTb.DefaultView.ToTable().AsEnumerable().Sum(sum => MyUtility.Convert.GetInt(sum["cutoutput"]));
@@ -948,8 +949,8 @@ and ord.mDivisionid = '{this.keyWord}'
         {
             // by Article, Size 整理出中上 No of Bundle 的資料表, 並從 1 開始依序給 No 值 (index). 唯一值:Ukey, No
             var result = this.ArticleSizeTb.AsEnumerable()
-                .GroupBy(s => new { Ukey = (long)s["Ukey"], No = (long)s["No"], Article = s["Article"].ToString(), SizeCode = s["SizeCode"].ToString() })
-                .Select((g, i) => new { g.Key.Ukey, iden = ++i, g.Key.No, Tone = string.Empty, g.Key.Article, g.Key.SizeCode, Qty = g.Sum(s => (decimal?)s["cutoutput"]) })
+                .GroupBy(s => new { Ukey = (long)s["Ukey"], No = (long)s["No"], POID = s["POID"].ToString(), Article = s["Article"].ToString(), SizeCode = s["SizeCode"].ToString() })
+                .Select((g, i) => new { g.Key.Ukey, iden = ++i, g.Key.No, Tone = string.Empty, g.Key.POID, g.Key.Article, g.Key.SizeCode, Qty = g.Sum(s => (decimal?)s["cutoutput"]) })
                 .OrderBy(o => o.Article)
                 .ThenBy(o => o.SizeCode)
                 .ToList();
@@ -1608,13 +1609,14 @@ order by ArticleGroup";
                 No = MyUtility.Convert.GetInt(s["No"]),
                 Iden = MyUtility.Convert.GetInt(s["iden"]),
                 Tone = MyUtility.Convert.GetInt(s["tone"]),
+                POID = MyUtility.Convert.GetString(s["POID"]),
                 Article = MyUtility.Convert.GetString(s["Article"]),
                 SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
                 Qty = MyUtility.Convert.GetInt(s["Qty"]),
                 Dup = -1, // 紀錄是否完全一樣的組別 Ukey, Article, Size, 左下資料
                 Ran = false,
             }).ToList();
-            var asList = this.ArticleSizeTb.AsEnumerable().Select(s => new ArticleSize
+            var asList = this.ArticleSizeTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => new ArticleSize
             {
                 Ukey = MyUtility.Convert.GetLong(s["ukey"]),
                 No = MyUtility.Convert.GetInt(s["No"]),
@@ -1673,7 +1675,7 @@ order by ArticleGroup";
             var selList = qtydataList.Where(w => ukeyList.Contains(w.Ukey) && !w.Qty.Empty()).ToList(); // 要寫入的中上表
             var idenList = selList.Select(s => s.Iden).ToList();
             var selASList = asList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden)).ToList();
-            var selpatternList = patternList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden)).ToList(); // 要寫入的左下表
+            var selpatternList = patternList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden) && w.Parts > 0).ToList(); // 要寫入的左下表
             var selallPartList = allPartList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden)).ToList(); // 要寫入的右下表
 
             if (!this.BeforeBarchCreate(idenList, selpatternList))
@@ -1736,39 +1738,45 @@ order by ArticleGroup";
 
             var dupList = selList.Select(s => s.Dup).Distinct().OrderBy(o => o).ToList();
 
-            // 準備 Bundle.StartNo, Bundle_Detail.BundleGroup
+            // 準備 Bundle.[StartNo], Bundle_Detail.[BundleGroup], 在同一個 POID 下,依序編碼
             dupList.ForEach(dup =>
             {
-                // 先找出此單要建立幾個 BundleGroup, 合併建立的 (Tone:沒輸入或不一樣)
-                int numBG = selList.Where(w => w.Dup == dup && w.Tone == 0).Count() + selList.Where(w => w.Dup == dup && w.Tone > 0).Select(s => s.Tone).Distinct().Count();
+                string poid = selList.Where(w => w.Dup == dup).Select(s => s.POID).First();
 
-                // 找此單要建立包含的所有 OrderID
-                var orderList = selASList.Where(w => selList.Where(w2 => w2.Dup == dup).Select(s => s.Iden).ToList().Contains(w.Iden)).Select(s => s.OrderID).Distinct().ToList();
-
-                // 找 (當前這筆意義 bundle) → (會先建立的bundle: Dup < dup) → (右上角意義 Bundle_Detail_Oder, < 有交集 OrderID > 的資料) → (左下角意義 Bundle_Detail ).max( BundleGroup )
-                // 若找到 BundleGroup + 1 = 1, 表示未處理過並紀錄, 則去 DB 找最大+1, 並記錄
-                int maxBuundleGroup = 0;
-                if (this.radioWithcuto.Checked)
+                // 找出此此單 POID 下,編碼最大 BundleGroup,若還沒有編碼, 則去 DB 撈最大
+                int maxBuundleGroup = selpatternList.Where(w => w.Poid == poid).Select(s => s.BuundleGroup).DefaultIfEmpty(0).Max();
+                if (maxBuundleGroup.Empty())
                 {
-                    maxBuundleGroup = selpatternList
-                    .Where(w3 => selASList.Where(w2 => selList.Where(w => w.Dup < dup).Select(s => s.Iden).Contains(w2.Iden) && orderList.Contains(w2.OrderID)).Select(s => s.Iden).ToList().Contains(w3.Iden))
-                    .Select(m => m.BuundleGroup).DefaultIfEmpty(0).Max();
-                    if (maxBuundleGroup == 0)
-                    {
-                        string sqlcmd = $@"
-select isnull(max(bd.BundleGroup),0)
+                    string sqlcmd = $@"
+select max(BundleGroup)
 from Bundle b WITH (NOLOCK)
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.ID
-where b.Orderid in('{orderList.JoinToString("','")}')";
-                        maxBuundleGroup = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
-                    }
+where b.POID = '{poid}'
+";
+                    maxBuundleGroup = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
                 }
 
-                selList.Where(w2 => w2.Dup == dup).ToList().ForEach(r => r.Startno = maxBuundleGroup + 1);
-                selList.Where(w2 => w2.Dup == dup).Select(s => s.Iden).OrderBy(o => o).ToList().ForEach(iden =>
+                maxBuundleGroup = this.radiobegin1.Checked ? 1 : maxBuundleGroup + 1;
+
+                // 紀錄 Startno, 合併建單先給同樣 Startno
+                selList.Where(w2 => w2.Dup == dup).ToList().ForEach(r => r.Startno = maxBuundleGroup);
+
+                // 紀錄 BuundleGroup, 同 Tone(合併Allpart) 要相同 BuundleGroup. 排序 Tone 和下方準備 Bundle_Detail 排序一樣, 目的是讓 BundleNo 和 BuundleGroup 順序一起由小到大, 不影響資料正確性
+                selList.Where(w2 => w2.Dup == dup).OrderBy(o => o.Tone).ToList().ForEach(f =>
                 {
-                    selpatternList.Where(w => w.Iden == iden).ToList().ForEach(r => r.BuundleGroup = maxBuundleGroup + 1);
-                    maxBuundleGroup++;
+                    // 先找相同 Tone 的編碼
+                    int toneBG = selpatternList
+                    .Where(w2 => selList.Where(w => w.Dup == f.Dup && w.Tone == f.Tone && w.Tone > 0).Select(s => s.Iden).Contains(w2.Iden))
+                    .Select(s => s.BuundleGroup).DefaultIfEmpty(0).Max();
+                    if (toneBG.Empty())
+                    {
+                        selpatternList.Where(w => w.Iden == f.Iden).ToList().ForEach(r => r.BuundleGroup = maxBuundleGroup);
+                        maxBuundleGroup++;
+                    }
+                    else
+                    {
+                        selpatternList.Where(w => w.Iden == f.Iden).ToList().ForEach(r => r.BuundleGroup = toneBG);
+                    }
                 });
             });
 
@@ -1869,8 +1877,8 @@ Values('{bundleID}', '{allPart.PatternCode}', '{allPart.PatternDesc}', '{allPart
 
                 selallPartList.Where(w => seldupList.Select(s => s.Iden).Contains(w.Iden)).ToList().ForEach(r => r.Ran = true);
 
-                // 合併, 只有 bundle, Bundle_Detail_allpart 合併. 其它的資料表有幾組就按實寫入
-                foreach (var selitem in seldupList)
+                // 合併, 只有 bundle, Bundle_Detail_allpart 合併. 其它的資料表有幾組就按實寫入. 排序 Tone 和上方準備 BuundleGroup 排序一樣
+                foreach (var selitem in seldupList.OrderBy(o => o.Tone))
                 {
                     // Bundle_Detail_Qty
                     insertSql.Append($@"
@@ -1879,6 +1887,7 @@ Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.Si
                     // Bundle_Detail, Bundle_Detail_Art, &  P15才有的寫的 Bundle_Detail_Order
                     foreach (var pattern in selpatternList.Where(w => w.Iden == selitem.Iden))
                     {
+                        // Ran 只針對 ALLPARTS 那筆
                         if (pattern.Ran)
                         {
                             continue;

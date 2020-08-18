@@ -17,6 +17,7 @@ using static Sci.Production.Automation.Guozi_AGV;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P10 : Win.Tems.Input6
     {
         string keyword = Env.User.Keyword;
@@ -27,6 +28,7 @@ namespace Sci.Production.Cutting
         string WorkOrder_Ukey;
         DataTable dtBundle_Detail_Order;
 
+        /// <inheritdoc/>
         public P10(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
         {
@@ -43,6 +45,7 @@ namespace Sci.Production.Cutting
             this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = Bundle.Orderid)  = '{Env.User.Factory}'";
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -83,6 +86,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             };
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings bundleno = new DataGridViewGeneratorTextColumnSettings();
@@ -123,6 +127,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.OnGridSetup();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             #region 主 Detail
@@ -203,6 +208,7 @@ order by bundlegroup",
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -327,6 +333,7 @@ order by bundlegroup",
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -339,6 +346,7 @@ order by bundlegroup",
             this.bundle_Detail_Qty_Tb.Clear();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["OrderID"]))
@@ -402,6 +410,7 @@ order by bundlegroup",
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePre()
         {
             #region 填入Bundleno
@@ -442,6 +451,7 @@ order by bundlegroup",
             return base.ClickSavePre();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
             string allpart_cmd = string.Empty, Art_cmd = string.Empty, Qty_cmd = string.Empty;
@@ -449,7 +459,6 @@ order by bundlegroup",
             DataTable allparttmp, arttmp, qtytmp;
             string masterID = (this.CurrentMaintain == null) ? string.Empty : this.CurrentMaintain["id"].ToString();
 
-            // string allPart_cmd = string.Format(@"Select b.* from Bundle_Detail_Allpart b WITH (NOLOCK) left join Bundle_Detail a WITH (NOLOCK) on a.id = b.id where b.id='{0}' ", masterID);
             // 直接撈Bundle_Detail_Allpart就行,不然在算新舊資料筆數來判斷新刪修時,會因為表頭表身join造成count過多
             string allPart_cmd = string.Format(@"select * from Bundle_Detail_Allpart WITH (NOLOCK) where id='{0}'  ", masterID);
             string art_cmd = string.Format(@"Select b.* from Bundle_Detail_art b WITH (NOLOCK) left join Bundle_Detail a WITH (NOLOCK) on a.Bundleno = b.bundleno and a.id = b.id where b.id='{0}'", masterID);
@@ -542,43 +551,6 @@ delete from bundle_Detail_Art where id='{0}'", masterID);
 from #tmpOldBundle_Detail_Art tda
 where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID = bda.ID and tda.Ukey = bda.Ukey) ";
             #endregion
-            #region 處理Bundle_Detail_Art
-
-            // int art_old_rowCount = arttmp.Rows.Count;
-            // foreach (DataRow dr in bundle_Detail_Art_Tb.Rows) //處理Bundle_Detail_Art
-            // {
-            //    if (bundle_Detail_Art_Tb.Rows.Count > art_old_rowCount)
-            //    {
-            //        Art_cmd = Art_cmd + string.Format(
-            //       @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid)
-            //            values('{0}','{1}','{2}','{3}');"
-            //        , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"]);
-            //    }
-            //    //if (row >= art_old_rowCount) //新增
-            //    //{
-            //    //    Art_cmd = Art_cmd + string.Format(
-            //    //   @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid)
-            //    //    values('{0}','{1}','{2}','{3}');"
-            //    //    , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"]);
-            //    //}
-            //    else //覆蓋
-            //    {
-            //        Art_cmd = Art_cmd + string.Format(
-            //        @"update bundle_Detail_Art set PatternCode ='{0}',SubProcessid = '{1}',bundleno ='{2}'
-            //        Where ukey ={3};", dr["PatternCode"], dr["SubProcessid"], dr["Bundleno"], arttmp.Rows[row]["ukey"]);
-            //    }
-            //    //row++;
-            // }
-            // bundle_Detail_Art_Tb.AcceptChanges();//變更Row Status 狀態
-            // int art_new_rowCount = bundle_Detail_Art_Tb.Rows.Count;
-            // if (art_old_rowCount < art_new_rowCount) //舊的筆數小於新的筆數 表示要先覆蓋再刪除多餘的
-            // {
-            //    for (int i = art_new_rowCount; i < art_old_rowCount; i++)
-            //    {
-            //        Art_cmd = Art_cmd + string.Format(@"Delete from bundle_Detail_Art where ukey ='{0}';", arttmp.Rows[i]["ukey"]);
-            //    }
-            // }
-            #endregion
 
             #region 處理Bundle_Detail_Qty 修改版
 
@@ -599,48 +571,19 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
             }
 
             #endregion
-            #region 處理Bundle_Detail_Qty
 
-            // row = 0;
-            // int Qty_old_rowCount = qtytmp.Rows.Count;
-
-            // foreach (DataRow dr in bundle_Detail_Qty_Tb.Rows) //處理Bundle_Detail_Art
-            // {
-            //    if (dr.RowState != DataRowState.Deleted)
-            //    {
-            //        if (bundle_Detail_Qty_Tb.Rows.Count> Qty_old_rowCount)
-            //        {
-            //            Qty_cmd = Qty_cmd + string.Format(
-            //            @"insert into bundle_Detail_Qty(ID,SizeCode,Qty)
-            //        values('{0}','{1}',{2});"
-            //            , CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
-            //        }
-            //        //if (row >= Qty_old_rowCount) //新增
-            //        //{
-            //        //    Qty_cmd = Qty_cmd + string.Format(
-            //        //    @"insert into bundle_Detail_Qty(ID,SizeCode,Qty)
-            //        //values('{0}','{1}',{2});"
-            //        //    , CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
-            //        //}
-            //        else //覆蓋
-            //        {
-            //            Qty_cmd = Qty_cmd + string.Format(
-            //            @"update bundle_Detail_Qty set SizeCode ='{0}',Qty = {1}
-            //        Where ukey = {2};", dr["SizeCode"], dr["Qty"], qtytmp.Rows[row]["ukey"]);
-            //        }
-            //    }
-            //    row++;
-            // }
-            // bundle_Detail_Qty_Tb.AcceptChanges();//變更Row Status 狀態
-            // int Qty_new_rowCount = bundle_Detail_Qty_Tb.Rows.Count;
-            // if (Qty_old_rowCount > Qty_new_rowCount) //舊的筆數小於新的筆數 表示要先覆蓋再刪除多餘的
-            // {
-            //    for (int i = Qty_new_rowCount; i < Qty_old_rowCount; i++)
-            //    {
-            //        Qty_cmd = Qty_cmd + string.Format(@"Delete from bundle_Detail_Qty where ukey ={0};", qtytmp.Rows[i]["ukey"]);
-            //    }
-            // }
+            #region [Bundle_Detail_Order]
+            Qty_cmd += $@"
+Delete from [Bundle_Detail_Order] where id ='{this.CurrentMaintain["ID"]}';";
+            foreach (DataRow row in this.DetailDatas)
+            {
+                Qty_cmd += $@"
+INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty])
+VALUES('{this.CurrentMaintain["ID"]}','{row["BundleNo"]}','{this.CurrentMaintain["OrderID"]}','{row["Qty"]}');
+";
+            }
             #endregion
+
             DataTable deleteBundle_Detail_Art = new DataTable();
             using (TransactionScope scope = new TransactionScope())
             {
@@ -739,6 +682,7 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -1062,6 +1006,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void ClickCopyAfter()
         {
             int oldstartno = MyUtility.Convert.GetInt(this.CurrentMaintain["startno"]);
@@ -1123,6 +1068,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             dt.DefaultView.Sort = "BundleGroup";
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             P10_Print p = new P10_Print(this.CurrentMaintain);
