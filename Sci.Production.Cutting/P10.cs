@@ -97,16 +97,27 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                     return;
                 }
 
-                DataTable curdtBundle_Detail_Order = this.GetBundle_Detail_Order(this.CurrentDetailData["Bundleno"].ToString());
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                DataTable curdtBundle_Detail_Order = this.GetBundle_Detail_Order(dr["Bundleno"].ToString());
                 this.ShowBundle_Detail_Order(curdtBundle_Detail_Order);
             };
 
-            bundleno.CellFormatting += (s, e) =>
+            bundleno.CellPainting += (s, e) =>
             {
-                DataTable curdtBundle_Detail_Order = this.GetBundle_Detail_Order(this.CurrentDetailData["Bundleno"].ToString());
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                DataTable curdtBundle_Detail_Order = this.GetBundle_Detail_Order(dr["Bundleno"].ToString());
                 if (curdtBundle_Detail_Order.Rows.Count > 1)
                 {
                     e.CellStyle.BackColor = Color.Yellow;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
                 }
             };
 
@@ -275,13 +286,6 @@ order by bundlegroup",
 
             this.getFabricKind();
 
-            string sqlcmd = $@"select distinct [SP#] = OrderID from Bundle_Detail_Order where ID = '{this.CurrentMaintain["ID"]}' order by OrderID";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.dtBundle_Detail_Order);
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
-
             this.btnSPs.ForeColor = this.dtBundle_Detail_Order.Rows.Count > 1 ? System.Drawing.Color.Blue : System.Drawing.Color.Black;
         }
 
@@ -330,6 +334,13 @@ order by bundlegroup",
                         dr2["ukey1"] = ukey;
                     }
                 }
+            }
+
+            string sqlcmd = $@"select distinct [SP#] = OrderID from Bundle_Detail_Order where ID = '{this.CurrentMaintain["ID"]}' order by OrderID";
+            dRes = DBProxy.Current.Select(null, sqlcmd, out this.dtBundle_Detail_Order);
+            if (!dRes)
+            {
+                this.ShowErr(dRes);
             }
         }
 
@@ -572,15 +583,22 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
 
             #endregion
 
-            #region [Bundle_Detail_Order]
-            Qty_cmd += $@"
-Delete from [Bundle_Detail_Order] where id ='{this.CurrentMaintain["ID"]}';";
-            foreach (DataRow row in this.DetailDatas)
+            #region [Bundle_Detail_Order] 不處理(多筆P15)狀況
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
-                Qty_cmd += $@"
+                if (dr.RowState == DataRowState.Deleted)
+                {
+                    Qty_cmd += $@"
+Delete from [Bundle_Detail_Order] where BundleNo ='{dr["BundleNo"]}';";
+                }
+
+                if (dr.RowState == DataRowState.Added)
+                {
+                    Qty_cmd += $@"
 INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty])
-VALUES('{this.CurrentMaintain["ID"]}','{row["BundleNo"]}','{this.CurrentMaintain["OrderID"]}','{row["Qty"]}');
+VALUES('{this.CurrentMaintain["ID"]}','{dr["BundleNo"]}','{this.CurrentMaintain["OrderID"]}','{dr["Qty"]}');
 ";
+                }
             }
             #endregion
 
@@ -713,6 +731,7 @@ VALUES('{this.CurrentMaintain["ID"]}','{row["BundleNo"]}','{this.CurrentMaintain
             this.bundle_Detail_allpart_Tb.Clear();
             this.bundle_Detail_Art_Tb.Clear();
             this.bundle_Detail_Qty_Tb.Clear();
+            this.dtBundle_Detail_Order.Clear();
             this.WorkOrder_Ukey = string.Empty;
             this.CurrentMaintain.EndEdit();
         }
@@ -803,7 +822,7 @@ Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id",
                 this.CurrentMaintain["SewingCell"] = cellid;
 
                 #region Startno
-                int startno = this.startNo_Function(this.CurrentMaintain["OrderID"].ToString());
+                int startno = this.StartNo_Function(this.CurrentMaintain["OrderID"].ToString());
                 this.CurrentMaintain["startno"] = startno;
                 #endregion
 
@@ -946,7 +965,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
                     }
                     #endregion
                     #region startno
-                    int startno = this.startNo_Function(this.CurrentMaintain["OrderID"].ToString());
+                    int startno = this.StartNo_Function(this.CurrentMaintain["OrderID"].ToString());
                     int nGroup = startno - Convert.ToInt32(this.CurrentMaintain["startno"]);
                     this.CurrentMaintain["startno"] = startno;
                     foreach (DataRow dr in this.DetailDatas)
@@ -983,27 +1002,15 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             this.OnDetailEntered();
         }
 
-        public int startNo_Function(string orderid) // Start No 計算
+        private int StartNo_Function(string orderid) // Start No 計算
         {
-            #region startno
-            string max_cmd = string.Format("Select Max(startno+Qty) as Start from Bundle  WITH (NOLOCK) Where OrderID = '{0}'", orderid);
-            DataTable max_st;
-            if (DBProxy.Current.Select(null, max_cmd, out max_st))
-            {
-                if (max_st.Rows[0][0] != DBNull.Value)
-                {
-                    return Convert.ToInt32(max_st.Rows[0]["Start"]);
-                }
-                else
-                {
-                    return 1;
-                }
-            }
-            else
-            {
-                return 1;
-            }
-            #endregion
+            string sqlcmd = $@"
+select isnull(MAX(bd.BundleGroup), 0) + 1
+from Bundle_Detail_Order bdo with(nolock)
+inner join Bundle_Detail bd with(nolock) on bd.BundleNo = bdo.BundleNo
+where bdo.OrderID = '{orderid}'
+";
+            return MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
         }
 
         /// <inheritdoc/>
@@ -1013,7 +1020,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             base.ClickCopyAfter();
             this.CurrentMaintain["ID"] = string.Empty;
             this.CurrentMaintain["Cdate"] = DateTime.Now;
-            int startno = this.startNo_Function(this.CurrentMaintain["OrderID"].ToString());
+            int startno = this.StartNo_Function(this.CurrentMaintain["OrderID"].ToString());
             this.CurrentMaintain["startno"] = startno;
             #region 清除Detail Bundleno,ID
             foreach (DataRow dr in this.DetailDatas)

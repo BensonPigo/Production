@@ -63,28 +63,32 @@
             this.gridBundleCard.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBundleCard.RowTemplate.Height = 24;
             this.gridBundleCard.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridBundleCard.Size = new System.Drawing.Size(898, 416);
+            this.gridBundleCard.ShowCellToolTips = false;
+            this.gridBundleCard.Size = new System.Drawing.Size(925, 416);
             this.gridBundleCard.TabIndex = 0;
             this.gridBundleCard.TabStop = false;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(830, 434);
+            this.btnClose.Location = new System.Drawing.Point(857, 434);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 1;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // P01_BundleCard
             // 
-            this.ClientSize = new System.Drawing.Size(922, 468);
+            this.ClientSize = new System.Drawing.Size(949, 468);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.gridBundleCard);
             this.Name = "P01_BundleCard";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "Bundle Card";
+            this.Controls.SetChildIndex(this.gridBundleCard, 0);
+            this.Controls.SetChildIndex(this.btnClose, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridBundleCard)).EndInit();
             this.ResumeLayout(false);
 

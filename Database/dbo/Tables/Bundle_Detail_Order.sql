@@ -12,7 +12,14 @@
 
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [BDO_OrderID]
     ON [dbo].[Bundle_Detail_Order]([OrderID] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [BDO_BundleNo]
+    ON [dbo].[Bundle_Detail_Order]([BundleNo] ASC);
 
