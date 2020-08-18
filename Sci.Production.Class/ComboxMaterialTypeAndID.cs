@@ -16,7 +16,9 @@ namespace Sci.Production.Class
         {
             this.InitializeComponent();
             this.InitComboMaterialType();
-            this.comboMtlTypeID.Items.Clear();
+
+            // 設定初始值 Value和Display都是空值!
+            MyUtility.Tool.SetupCombox(this.comboMtlTypeID, 1, 1, ",");
         }
 
         private void InitComboMaterialType()
@@ -37,8 +39,7 @@ namespace Sci.Production.Class
         {
             string type = this.comboMaterialType.SelectedValue.ToString();
             if (type.Empty() || type.Contains("All"))
-            {
-                this.comboMtlTypeID.DataSource = null;
+            {   
                 return;
             }
 
