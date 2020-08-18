@@ -29,12 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnQuery = new Sci.Win.UI.Button();
             this.dateInline = new Sci.Win.UI.DateRange();
-            this.label1 = new Sci.Win.UI.Label();
             this.txtSp2 = new Sci.Win.UI.TextBox();
             this.txtSp1 = new Sci.Win.UI.TextBox();
             this.grid1 = new Sci.Win.UI.Grid();
@@ -59,6 +56,7 @@
             this.dateLastSewDate = new Sci.Win.UI.DateRange();
             this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
+            this.label7 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
@@ -97,21 +95,12 @@
             this.dateInline.Size = new System.Drawing.Size(280, 23);
             this.dateInline.TabIndex = 8;
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(227, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(16, 23);
-            this.label1.TabIndex = 26;
-            this.label1.Text = "~";
-            this.label1.TextStyle.Alignment = System.Drawing.ContentAlignment.BottomCenter;
-            // 
             // txtSp2
             // 
             this.txtSp2.BackColor = System.Drawing.Color.White;
             this.txtSp2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSp2.IsSupportEditMode = false;
-            this.txtSp2.Location = new System.Drawing.Point(248, 9);
+            this.txtSp2.Location = new System.Drawing.Point(253, 9);
             this.txtSp2.Name = "txtSp2";
             this.txtSp2.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtSp2.Size = new System.Drawing.Size(115, 23);
@@ -122,7 +111,7 @@
             this.txtSp1.BackColor = System.Drawing.Color.White;
             this.txtSp1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSp1.IsSupportEditMode = false;
-            this.txtSp1.Location = new System.Drawing.Point(107, 9);
+            this.txtSp1.Location = new System.Drawing.Point(114, 9);
             this.txtSp1.Name = "txtSp1";
             this.txtSp1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtSp1.Size = new System.Drawing.Size(115, 23);
@@ -144,22 +133,14 @@
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(12, 121);
+            this.grid1.Location = new System.Drawing.Point(12, 124);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(984, 429);
+            this.grid1.Size = new System.Drawing.Size(984, 426);
             this.grid1.TabIndex = 42;
             // 
             // txtPO
@@ -167,10 +148,10 @@
             this.txtPO.BackColor = System.Drawing.Color.White;
             this.txtPO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtPO.IsSupportEditMode = false;
-            this.txtPO.Location = new System.Drawing.Point(107, 38);
+            this.txtPO.Location = new System.Drawing.Point(114, 38);
             this.txtPO.Name = "txtPO";
             this.txtPO.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtPO.Size = new System.Drawing.Size(127, 23);
+            this.txtPO.Size = new System.Drawing.Size(115, 23);
             this.txtPO.TabIndex = 2;
             // 
             // chkBulk
@@ -178,7 +159,7 @@
             this.chkBulk.AutoSize = true;
             this.chkBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkBulk.IsSupportEditMode = false;
-            this.chkBulk.Location = new System.Drawing.Point(83, 96);
+            this.chkBulk.Location = new System.Drawing.Point(114, 97);
             this.chkBulk.Name = "chkBulk";
             this.chkBulk.Size = new System.Drawing.Size(54, 21);
             this.chkBulk.TabIndex = 3;
@@ -190,7 +171,7 @@
             this.chkSample.AutoSize = true;
             this.chkSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkSample.IsSupportEditMode = false;
-            this.chkSample.Location = new System.Drawing.Point(143, 96);
+            this.chkSample.Location = new System.Drawing.Point(174, 97);
             this.chkSample.Name = "chkSample";
             this.chkSample.Size = new System.Drawing.Size(74, 21);
             this.chkSample.TabIndex = 4;
@@ -199,25 +180,25 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(5, 95);
+            this.label3.Location = new System.Drawing.Point(12, 95);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
+            this.label3.Size = new System.Drawing.Size(99, 23);
             this.label3.TabIndex = 47;
             this.label3.Text = "Category";
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(366, 9);
+            this.label4.Location = new System.Drawing.Point(371, 9);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.Size = new System.Drawing.Size(59, 23);
             this.label4.TabIndex = 48;
             this.label4.Text = "M";
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(366, 38);
+            this.label5.Location = new System.Drawing.Point(371, 38);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
+            this.label5.Size = new System.Drawing.Size(59, 23);
             this.label5.TabIndex = 50;
             this.label5.Text = "Factory";
             // 
@@ -267,9 +248,9 @@
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(513, 95);
+            this.label8.Location = new System.Drawing.Point(12, 67);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(97, 23);
+            this.label8.Size = new System.Drawing.Size(99, 23);
             this.label8.TabIndex = 56;
             this.label8.Text = "Summary By";
             // 
@@ -280,10 +261,10 @@
             this.cmbSummaryBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbSummaryBy.FormattingEnabled = true;
             this.cmbSummaryBy.IsSupportUnselect = true;
-            this.cmbSummaryBy.Location = new System.Drawing.Point(613, 95);
+            this.cmbSummaryBy.Location = new System.Drawing.Point(114, 67);
             this.cmbSummaryBy.Name = "cmbSummaryBy";
             this.cmbSummaryBy.OldText = "";
-            this.cmbSummaryBy.Size = new System.Drawing.Size(130, 24);
+            this.cmbSummaryBy.Size = new System.Drawing.Size(115, 24);
             this.cmbSummaryBy.TabIndex = 10;
             // 
             // grid2
@@ -301,14 +282,6 @@
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid2.Location = new System.Drawing.Point(945, 85);
             this.grid2.Name = "grid2";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
@@ -322,7 +295,7 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.label9.Location = new System.Drawing.Point(5, 9);
+            this.label9.Location = new System.Drawing.Point(12, 9);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(99, 23);
             this.label9.TabIndex = 101;
@@ -332,7 +305,7 @@
             // label10
             // 
             this.label10.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.label10.Location = new System.Drawing.Point(5, 38);
+            this.label10.Location = new System.Drawing.Point(12, 38);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(99, 23);
             this.label10.TabIndex = 102;
@@ -372,9 +345,9 @@
             // label6
             // 
             this.label6.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.label6.Location = new System.Drawing.Point(5, 67);
+            this.label6.Location = new System.Drawing.Point(513, 95);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(99, 23);
+            this.label6.Size = new System.Drawing.Size(97, 23);
             this.label6.TabIndex = 106;
             this.label6.Text = "Last Sew. Date";
             this.label6.TextStyle.Color = System.Drawing.Color.Black;
@@ -396,7 +369,7 @@
             this.dateLastSewDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateLastSewDate.DateBox2.TabIndex = 1;
             this.dateLastSewDate.IsSupportEditMode = false;
-            this.dateLastSewDate.Location = new System.Drawing.Point(107, 67);
+            this.dateLastSewDate.Location = new System.Drawing.Point(613, 95);
             this.dateLastSewDate.Name = "dateLastSewDate";
             this.dateLastSewDate.Size = new System.Drawing.Size(280, 23);
             this.dateLastSewDate.TabIndex = 107;
@@ -410,11 +383,11 @@
             this.txtfactory1.IsProduceFty = false;
             this.txtfactory1.IsSupportEditMode = false;
             this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(444, 38);
+            this.txtfactory1.Location = new System.Drawing.Point(433, 38);
             this.txtfactory1.MDivision = null;
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.Size = new System.Drawing.Size(71, 23);
             this.txtfactory1.TabIndex = 6;
             // 
             // txtMdivision1
@@ -422,15 +395,26 @@
             this.txtMdivision1.BackColor = System.Drawing.Color.White;
             this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtMdivision1.IsSupportEditMode = false;
-            this.txtMdivision1.Location = new System.Drawing.Point(444, 9);
+            this.txtMdivision1.Location = new System.Drawing.Point(433, 9);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision1.Size = new System.Drawing.Size(71, 23);
             this.txtMdivision1.TabIndex = 5;
+            // 
+            // label7
+            // 
+            this.label7.BackColor = System.Drawing.Color.Transparent;
+            this.label7.Location = new System.Drawing.Point(232, 9);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(18, 23);
+            this.label7.TabIndex = 116;
+            this.label7.Text = "～";
+            this.label7.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P42
             // 
             this.ClientSize = new System.Drawing.Size(1008, 562);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.dateLastSewDate);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label12);
@@ -454,7 +438,6 @@
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.dateInline);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtSp2);
             this.Controls.Add(this.txtSp1);
             this.Name = "P42";
@@ -462,7 +445,6 @@
             this.Text = "P42. SubProcess Overview";
             this.Controls.SetChildIndex(this.txtSp1, 0);
             this.Controls.SetChildIndex(this.txtSp2, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.dateInline, 0);
             this.Controls.SetChildIndex(this.btnQuery, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
@@ -486,6 +468,7 @@
             this.Controls.SetChildIndex(this.label12, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.dateLastSewDate, 0);
+            this.Controls.SetChildIndex(this.label7, 0);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
@@ -499,7 +482,6 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Button btnQuery;
         private Win.UI.DateRange dateInline;
-        private Win.UI.Label label1;
         private Win.UI.TextBox txtSp2;
         private Win.UI.TextBox txtSp1;
         private Win.UI.Grid grid1;
@@ -524,5 +506,6 @@
         private Win.UI.Label label12;
         private Win.UI.Label label6;
         private Win.UI.DateRange dateLastSewDate;
+        private Win.UI.Label label7;
     }
 }
