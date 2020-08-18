@@ -795,7 +795,7 @@ select Roll,Dyelot,TicketYds,Scale,Result
             DataTable dt_title;
             DataTable dt_Exp;
             DualResult result;
-
+            string btnName = ((Button)sender).Name;
             // 抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", Env.User.Factory));
@@ -884,7 +884,12 @@ WHERE MainExportID='{this.maindr["ExportID"]}'
 
             Type ReportResourceNamespace = typeof(P01_ShadeBond_Data);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+
             string ReportResourceName = "P01_ShadeBond_Print.rdlc";
+            if (btnName == "btnPrintFormatReport8")
+            {
+                ReportResourceName = "P01_ShadeBond_Print_8.rdlc";
+            }
 
             IReportResource reportresource;
             if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
