@@ -20,6 +20,7 @@
     [PrintName] VARCHAR(10) CONSTRAINT [DF_Issue_PrintName] DEFAULT ('') NULL,
     [ToSisterFty] BIT NOT NULL DEFAULT ((0)), 
     [ToFactory] VARCHAR(8) NULL, 
+    [SewLine] VARCHAR(500) NULL, 
     CONSTRAINT [PK_Issue] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
