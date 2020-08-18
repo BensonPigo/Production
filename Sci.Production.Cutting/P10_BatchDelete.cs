@@ -95,15 +95,15 @@ namespace Sci.Production.Cutting
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text) && !MyUtility.Check.Empty(this.txtSPNo1.Text))
             {
-                sqlwhere += nl + $@" and b.OrderID >= '{this.txtSPNo.Text}' and b.OrderID <= '{this.txtSPNo1.Text}'";
+                sqlwhere += nl + $@" and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.ID = b.ID and bdo.OrderID >= '{this.txtSPNo.Text}' and bdo.OrderID <= '{this.txtSPNo1.Text}')";
             }
             else if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
-                sqlwhere += nl + $@" and b.OrderID like '{this.txtSPNo.Text}%'";
+                sqlwhere += nl + $@"and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.ID = b.ID and bdo.OrderID like >= '{this.txtSPNo.Text}%')";
             }
             else if (!MyUtility.Check.Empty(this.txtSPNo1.Text))
             {
-                sqlwhere += nl + $@" and b.OrderID like '{this.txtSPNo1.Text}%'";
+                sqlwhere += nl + $@"and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.ID = b.ID and bdo.OrderID like >= '{this.txtSPNo1.Text}%')";
             }
 
             string sqlcmd = $@"
