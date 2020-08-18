@@ -78,6 +78,7 @@ select  sd.id,
         sd.ReceivedDate,
         MRName = sd.AddName + ' - ' + Format(sd.AddDate,'yyyy/MM/dd HH:mm:ss'),
         LastEditName = sd.EditName + ' - ' + Format(sd.EditDate,'yyyy/MM/dd HH:mm:ss')
+		,sd.MtlTypeID
 from SampleGarmentTest_Detail sd WITH (NOLOCK)
 left join view_ShowName vs_tech WITH (NOLOCK) on sd.Technician = vs_tech.id
 where sd.id='{0}' order by sd.No
@@ -175,6 +176,7 @@ where sd.id='{0}' order by sd.No
             DataGridViewGeneratorTextColumnSettings ReceiverCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultValid = new DataGridViewGeneratorComboBoxColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings mtlTypeIDComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
 
             Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
             ResultCombo.Add("Pass", "Pass");
@@ -182,6 +184,32 @@ where sd.id='{0}' order by sd.No
             ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
+
+            Dictionary<string, string> mtlTypeCombo = new Dictionary<string, string>();
+            mtlTypeCombo.Add(string.Empty, string.Empty);
+            mtlTypeCombo.Add("KNIT", "KNIT");
+            mtlTypeCombo.Add("WOVEN", "WOVEN");
+            mtlTypeIDComboCell.DataSource = new BindingSource(mtlTypeCombo, null);
+            mtlTypeIDComboCell.ValueMember = "Key";
+            mtlTypeIDComboCell.DisplayMember = "Value";
+
+            mtlTypeIDComboCell.CellEditable += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["MtlTypeID"]) && this.EditMode)
+                {
+                    e.IsEditable = true;
+                }
+                else
+                {
+                    e.IsEditable = false;
+                }
+            };
 
             #region inspDateCell
             inspDateCell.CellValidating += (s, e) =>
@@ -289,6 +317,7 @@ where sd.id='{0}' order by sd.No
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("No", header: "No", integer_places: 8, decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(8))
             .Text("ReportNo", header: "ReportNo", width: Widths.AnsiChars(15))
+            .ComboBox("MtlTypeID", header: "Material" + Environment.NewLine + "Type", width: Widths.AnsiChars(10), settings: mtlTypeIDComboCell)
             .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell)
             .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultComboCell)
             .Text("Technician", header: "Technician", width: Widths.AnsiChars(10), settings: inspectorCell)
@@ -343,6 +372,19 @@ where sd.id='{0}' order by sd.No
         protected override bool ClickSaveBefore()
         {
             DataTable detail_dt = (DataTable)this.detailgridbs.DataSource;
+
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    if (MyUtility.Check.Empty(dr["MtlTypeID"]))
+                    {
+                        MyUtility.Msg.WarningBox("Material Type cannot be empty !! ");
+                        return false;
+                    }
+                }
+            }
+
             if (detail_dt.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Count() > 0)
             {
                 // 更新表頭 ReceiveDate,ReleasedDate ,Deadline,InspDate,Result
@@ -542,21 +584,22 @@ SELECT STUFF(
 
                     List<FGWT> fGWTs = new List<FGWT>();
 
+                    string mtlTypeID = MyUtility.Convert.GetString(dr["MtlTypeID"]);
                     bool containsT = locations.Contains("T");
                     bool containsB = locations.Contains("B");
 
                     // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
                     if (containsT && containsB)
                     {
-                        fGWTs = GetDefaultFGWT(false, false, true);
+                        fGWTs = GetDefaultFGWT(false, false, true, mtlTypeID);
                     }
                     else if (containsT)
                     {
-                        fGWTs = GetDefaultFGWT(containsT, false, false);
+                        fGWTs = GetDefaultFGWT(containsT, false, false, mtlTypeID);
                     }
                     else
                     {
-                        fGWTs = GetDefaultFGWT(false, containsB, false);
+                        fGWTs = GetDefaultFGWT(false, containsB, false, mtlTypeID);
                     }
 
                     string garmentTest_Detail_ID = MyUtility.Convert.GetString(dr["ID"]);
@@ -586,19 +629,20 @@ SELECT STUFF(
                                 break;
                         }
 
-
                         if (fGWT.Scale == null)
                         {
                             insertCmd.Append($@"
 
 INSERT INTO SampleGarmentTest_Detail_FGWT
-           (ID, No, Location, Type ,TestDetail)
+           (ID, No, Location, Type ,TestDetail ,Criteria )
      VALUES
            ( {garmentTest_Detail_ID}
            , {garmentTest_Detail_No}
            , @Location{idx}
            , @Type{idx}
-           , @TestDetail{idx})
+           , @TestDetail{idx}
+           , @Criteria{idx} )
+
 
 ");
                         }
@@ -622,6 +666,7 @@ INSERT INTO SampleGarmentTest_Detail_FGWT
                         parameters.Add(new SqlParameter($"@Location{idx}", location));
                         parameters.Add(new SqlParameter($"@Type{idx}", fGWT.Type));
                         parameters.Add(new SqlParameter($"@TestDetail{idx}", fGWT.TestDetail));
+                        parameters.Add(new SqlParameter($"@Criteria{idx}", fGWT.Criteria));
                         idx++;
                     }
 

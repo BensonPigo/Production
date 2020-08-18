@@ -34,7 +34,6 @@ namespace Sci.Production.Quality
 
             this.comboTemperature.SelectedIndex = 0;
             this.comboMachineModel.SelectedIndex = 0;
-            this.combFGWTMaterial.SelectedIndex = 0;
             this.comboNeck.SelectedIndex = 0;
 
             DataGridViewGeneratorNumericColumnSettings BeforeWash = new DataGridViewGeneratorNumericColumnSettings();
@@ -218,6 +217,24 @@ namespace Sci.Production.Quality
                 }
             };
 
+            BeforeWash1.CellEditable += (s, eve) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Criteria"]))
+                {
+                    eve.IsEditable = true;
+                }
+                else
+                {
+                    eve.IsEditable = false;
+                }
+            };
+
             AfterWash1Cell4.CellValidating += (s, eve) =>
             {
                 if (!this.EditMode || MyUtility.Check.Empty(eve.FormattedValue) || eve.RowIndex == -1)
@@ -241,6 +258,7 @@ namespace Sci.Production.Quality
                     dr["Shrinkage"] = (afterWash - beforeWashNum) / beforeWashNum * 100.0;
                 }
             };
+
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.gridActualShrinkage)
@@ -574,25 +592,11 @@ namespace Sci.Production.Quality
                 dr["Scale"] = eve.FormattedValue;
             };
 
-            BeforeWash1.CellEditable += (s, eve) =>
-            {
-                DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
-
-                if (dr["Scale"] != DBNull.Value)
-                {
-                    eve.IsEditable = false;
-                }
-                else
-                {
-                    eve.IsEditable = true;
-                }
-            };
-
             SizeSpecCell.CellEditable += (s, eve) =>
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value)
+                if (dr["Scale"] != DBNull.Value || MyUtility.Check.Empty(dr["Criteria"]))
                 {
                     eve.IsEditable = false;
                 }
@@ -606,7 +610,7 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value)
+                if (dr["Scale"] != DBNull.Value || MyUtility.Check.Empty(dr["Criteria"]))
                 {
                     eve.IsEditable = false;
                 }
@@ -657,7 +661,7 @@ namespace Sci.Production.Quality
             .Text("LocationText", header: "Location", width: Widths.AnsiChars(12), iseditingreadonly: true)
             .Text("Type", header: "Type", width: Widths.AnsiChars(40), iseditingreadonly: true)
             .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2, settings: BeforeWash1)
-            .Numeric("SizeSpec", header: "Size Spec Meas ", width: Widths.AnsiChars(6), decimal_places: 2,settings: SizeSpecCell)
+            .Numeric("SizeSpec", header: "Size Spec Meas ", width: Widths.AnsiChars(6), decimal_places: 2, settings: SizeSpecCell)
             .Numeric("AfterWash", header: "After Wash", width: Widths.AnsiChars(6), decimal_places: 2, settings: AfterWash1Cell4)
             .Numeric("Shrinkage", header: "Shrikage(%)", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 2)
             .Text("Scale", header: "Scale", width: Widths.AnsiChars(10), settings: ScaleCell)
@@ -693,7 +697,6 @@ namespace Sci.Production.Quality
             this.rdbtnHand.Checked = MyUtility.Convert.GetBool(this.Deatilrow["HandWash"]);
             this.comboTemperature.Text = MyUtility.Convert.GetString(this.Deatilrow["Temperature"]);
             this.comboMachineModel.Text = MyUtility.Convert.GetString(this.Deatilrow["Machine"]);
-            this.combFGWTMaterial.Text = MyUtility.Convert.GetString(this.Deatilrow["FGWTMtlTypeID"]);
             this.txtFibreComposition.Text = MyUtility.Convert.GetString(this.Deatilrow["Composition"]);
             this.comboNeck.Text = MyUtility.Convert.GetBool(this.Deatilrow["Neck"]) ? "YES" : "No";
             this.comboResult.Text = MyUtility.Convert.GetString(this.Deatilrow["Result"]) == "P" ? "Pass" : "Fail";
@@ -835,17 +838,25 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         ,f.TestDetail
         ,[Result]=IIF(f.Scale IS NOT NULL
 	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
-	        ,IIF(AfterWash IS NOT NULL AND BeforeWash IS NOT NULL
-			        ,IIF(gd.FGWTMtlTypeID='KNIT' AND -2 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 3
-					        , 'Pass'
-					        ,IIF(gd.FGWTMtlTypeID='WOVEN' AND -3 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 5
-							        ,'Pass'
-							        ,'Fail'
-						        )
-				        )
-			        ,''
+	        ,IIF( f.BeforeWash IS NOT NULL AND f.AfterWash IS NOT NULL AND f.Criteria IS NOT NULL AND f.Shrinkage IS NOT NULL
+					,( IIF( TestDetail ='%'
+								---- 百分比 判斷方式
+								,IIF( ISNULL(f.Criteria,0) * -1 <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria,0)
+									, 'Pass'
+									, 'Fail'
+								)
+								---- 非百分比 判斷方式
+								,IIF( ISNULL(f.AfterWash,0) - ISNULL(f.BeforeWash,0) < ISNULL(f.Criteria,0)
+									,'Pass'
+									,'Fail'
+								)
+						)
+					)
+					,''
 		        )
         )
+		,gd.MtlTypeID
+		,f.Criteria
 from GarmentTest_Detail_FGWT f 
 LEFT JOIN GarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
@@ -889,17 +900,25 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         ,f.TestDetail
         ,[Result]=IIF(f.Scale IS NOT NULL
 	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
-	        ,IIF( AfterWash IS NOT NULL AND BeforeWash IS NOT NULL
-			        ,IIF(gd.FGWTMtlTypeID='KNIT' AND -2 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 3
-					        , 'Pass'
-					        ,IIF(gd.FGWTMtlTypeID='WOVEN' AND -3 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 5
-							        ,'Pass'
-							        ,'Fail'
-						        )
-				        )
-			        ,''
+	        ,IIF( f.BeforeWash IS NOT NULL AND f.AfterWash IS NOT NULL AND f.Criteria IS NOT NULL AND f.Shrinkage IS NOT NULL
+					,( IIF( TestDetail ='%'
+								---- 百分比 判斷方式
+								,IIF( ISNULL(f.Criteria,0) * -1 <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria,0)
+									, 'Pass'
+									, 'Fail'
+								)
+								---- 非百分比 判斷方式
+								,IIF( ISNULL(f.AfterWash,0) - ISNULL(f.BeforeWash,0) < ISNULL(f.Criteria,0)
+									,'Pass'
+									,'Fail'
+								)
+						)
+					)
+					,''
 		        )
         )
+		,gd.MtlTypeID
+		,f.Criteria
 from GarmentTest_Detail_FGWT f 
 LEFT JOIN GarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
@@ -960,7 +979,6 @@ update GarmentTest_Detail set
     Temperature =  '{this.comboTemperature.Text}',
     TumbleDry =  '{this.rdbtnTumble.Checked}',
     Machine =  '{this.comboMachineModel.Text}',
-    FGWTMtlTypeID =  '{this.combFGWTMaterial.Text}',
     HandWash =  '{this.rdbtnHand.Checked}',
     Composition =  '{this.txtFibreComposition.Text}',
     Neck ='{MyUtility.Convert.GetString(this.comboNeck.Text).EqualString("YES")}'
@@ -3109,7 +3127,7 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
             worksheet.Cells[5, 4] = "adidas Model No.: " + MyUtility.GetValue.Lookup($"SELECT StyleName FROM Style WHERE ID='{this.MasterRow["StyleID"]}'");
 
             worksheet.Cells[6, 1] = "T1 Supplier Ref.: " + MyUtility.GetValue.Lookup($"SELECT FactoryID FROM Orders WHERE ID='{this.MasterRow["OrderID"]}'");
-            worksheet.Cells[6, 3] = "T1 Factory Name: " + MyUtility.GetValue.Lookup($"SELECT BrandFTYCode FROM Orders WHERE ID='{this.MasterRow["OrderID"]}'");
+            worksheet.Cells[6, 3] = "T1 Factory Name: " + MyUtility.GetValue.Lookup($"SELECT o.BrandAreaCode FROM GarmentTest g INNER JOIN Orders o ON g.OrderID = o.ID WHERE g.OrderID='{this.MasterRow["OrderID"]}'");
             worksheet.Cells[6, 4] = "LO to Factory: " + this.txtLotoFactory.Text;
 
             if (this.dateSubmit.Value.HasValue)
@@ -3149,7 +3167,17 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 }
                 else
                 {
-                    worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetDouble(dr["AfterWash"]) - MyUtility.Convert.GetDouble(dr["BeforeWash"]);
+                    if (dr["BeforeWash"] != DBNull.Value && dr["AfterWash"] != DBNull.Value && dr["Shrinkage"] != DBNull.Value)
+                    {
+                        if (MyUtility.Convert.GetString(dr["TestDetail"]) == "%")
+                        {
+                            worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetDouble(dr["Shrinkage"]);
+                        }
+                        else
+                        {
+                            worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetDouble(dr["AfterWash"]) - MyUtility.Convert.GetDouble(dr["BeforeWash"]);
+                        }
+                    }
                 }
 
                 // Test Details

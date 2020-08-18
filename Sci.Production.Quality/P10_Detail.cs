@@ -211,7 +211,6 @@ namespace Sci.Production.Quality
 
             this.comboTemperature.SelectedIndex = 0;
             this.comboMachineModel.SelectedIndex = 0;
-            this.combFGWTMaterial.SelectedIndex = 0;
             this.comboNeck.SelectedIndex = 0;
 
             // Result 選單
@@ -234,7 +233,7 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value)
+                if (dr["Scale"] != DBNull.Value || MyUtility.Check.Empty(dr["Criteria"]))
                 {
                     eve.IsEditable = false;
                 }
@@ -272,7 +271,7 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value)
+                if (dr["Scale"] != DBNull.Value || MyUtility.Check.Empty(dr["Criteria"]))
                 {
                     eve.IsEditable = false;
                 }
@@ -310,7 +309,7 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value)
+                if (dr["Scale"] != DBNull.Value || MyUtility.Check.Empty(dr["Criteria"]))
                 {
                     eve.IsEditable = false;
                 }
@@ -759,7 +758,6 @@ and st.Article = '{this.MasterRow["Article"]}'
 
             this.comboTemperature.Text = MyUtility.Convert.GetString(dr["Temperature"]);
             this.comboMachineModel.Text = MyUtility.Convert.GetString(dr["Machine"]);
-            this.combFGWTMaterial.Text = MyUtility.Convert.GetString(dr["FGWTMtlTypeID"]);
             this.txtFibreComposition.Text = MyUtility.Convert.GetString(dr["Composition"]);
             this.comboNeck.Text = MyUtility.Convert.GetBool(dr["Neck"]) ? "YES" : "No";
         }
@@ -925,17 +923,25 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         ,f.TestDetail
         ,[Result]=IIF(f.Scale IS NOT NULL
 	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
-	        ,IIF(AfterWash IS NOT NULL AND BeforeWash IS NOT NULL
-			        ,IIF(gd.FGWTMtlTypeID='KNIT' AND -2 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 3
-					        , 'Pass'
-					        ,IIF(gd.FGWTMtlTypeID='WOVEN' AND -3 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 5
-							        ,'Pass'
-							        ,'Fail'
-						        )
-				        )
-			        ,''
+	        ,IIF( f.BeforeWash IS NOT NULL AND f.AfterWash IS NOT NULL AND f.Criteria IS NOT NULL AND f.Shrinkage IS NOT NULL
+					,( IIF( TestDetail ='%'
+								---- 百分比 判斷方式
+								,IIF( ISNULL(f.Criteria,0) * -1 <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria,0)
+									, 'Pass'
+									, 'Fail'
+								)
+								---- 非百分比 判斷方式
+								,IIF( ISNULL(f.AfterWash,0) - ISNULL(f.BeforeWash,0) < ISNULL(f.Criteria,0)
+									,'Pass'
+									,'Fail'
+								)
+						)
+					)
+					,''
 		        )
         )
+		,gd.MtlTypeID
+		,f.Criteria
 from SampleGarmentTest_Detail_FGWT f 
 LEFT JOIN SampleGarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
@@ -979,17 +985,25 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         ,f.TestDetail
         ,[Result]=IIF(f.Scale IS NOT NULL
 	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
-	        ,IIF( AfterWash IS NOT NULL AND BeforeWash IS NOT NULL
-			        ,IIF(gd.FGWTMtlTypeID='KNIT' AND -2 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 3
-					        , 'Pass'
-					        ,IIF(gd.FGWTMtlTypeID='WOVEN' AND -3 < (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) AND (ISNULL(AfterWash,0) - ISNULL(BeforeWash,0)) < 5
-							        ,'Pass'
-							        ,'Fail'
-						        )
-				        )
-			        ,''
+	        ,IIF( f.BeforeWash IS NOT NULL AND f.AfterWash IS NOT NULL AND f.Criteria IS NOT NULL AND f.Shrinkage IS NOT NULL
+					,( IIF( TestDetail ='%'
+								---- 百分比 判斷方式
+								,IIF( ISNULL(f.Criteria,0) * -1 <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria,0)
+									, 'Pass'
+									, 'Fail'
+								)
+								---- 非百分比 判斷方式
+								,IIF( ISNULL(f.AfterWash,0) - ISNULL(f.BeforeWash,0) < ISNULL(f.Criteria,0)
+									,'Pass'
+									,'Fail'
+								)
+						)
+					)
+					,''
 		        )
         )
+		,gd.MtlTypeID
+		,f.Criteria
 from SampleGarmentTest_Detail_FGWT f 
 LEFT JOIN SampleGarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
@@ -1029,7 +1043,6 @@ order by LocationText DESC
                             HandWash =  '{this.rdbtnHand.Checked}',
                             Temperature =  {this.comboTemperature.Text},
                             Machine =  '{this.comboMachineModel.Text}',
-                            FGWTMtlTypeID =  '{this.combFGWTMaterial.Text}',
                             Composition =  '{this.txtFibreComposition.Text}',
                             Neck ='{MyUtility.Convert.GetString(this.comboNeck.Text).EqualString("YES")}'
                         where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
@@ -2935,7 +2948,17 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
                 else
                 {
-                    worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetDouble(dr["AfterWash"]) - MyUtility.Convert.GetDouble(dr["BeforeWash"]);
+                    if (dr["BeforeWash"] != DBNull.Value && dr["AfterWash"] != DBNull.Value && dr["Shrinkage"] != DBNull.Value)
+                    {
+                        if (MyUtility.Convert.GetString(dr["TestDetail"]) == "%")
+                        {
+                            worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetDouble(dr["Shrinkage"]);
+                        }
+                        else
+                        {
+                            worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetDouble(dr["AfterWash"]) - MyUtility.Convert.GetDouble(dr["BeforeWash"]);
+                        }
+                    }
                 }
 
                 // Test Details

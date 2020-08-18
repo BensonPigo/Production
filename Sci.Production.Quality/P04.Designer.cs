@@ -491,6 +491,7 @@
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P04";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P04 .Laboratory - Garment Test";
             this.WorkAlias = "Garmenttest";
             this.Controls.SetChildIndex(this.tabs, 0);
