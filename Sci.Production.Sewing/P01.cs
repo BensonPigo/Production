@@ -217,7 +217,7 @@ and SunriseNid != 0
             this.DetailSelectCommand = string.Format(
                 @"
 select  sd.*
-        , [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0 or rft.InspectQty-rft.RejectQty <= 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  )
+        , [RFT] = CONVERT(VARCHAR, convert(Decimal(5,2),  ROUND(sd.QAQty* 1.0 / sd.InlineQty * 1.0 * 100 ,2))) +'%'
         , [Tips] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
         , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
 		, [SewingReasonID]=sr.id
@@ -4328,13 +4328,14 @@ select t.OrderId
 	, SewinglineID='{this.CurrentMaintain["SewingLineID"]}'
 	, FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 	, InspectQty= t.InlineQty - DiffInspectQty.Qty
-	, RejectQty= t.DefectQty
+	, RejectQty= RejectData.Qty--t.DefectQty
 	, [DefectQty] = DefectData.Qty
 	, Shift='{this.CurrentMaintain["Shift"]}'
 	, Team = '{this.CurrentMaintain["Team"]}'
 	, Status='New'
 	, Remark=''
-    ,t.Article,t.ComboType,t.OrderId
+    ,t.Article,t.ComboType
+INTO #tmp2
 from #tmp t
 outer apply(
 	select Qty=count(*)
@@ -4366,6 +4367,42 @@ outer apply(
            and not (ins.Status <> 'Fixed'  or (ins.Status = 'Fixed' and cast(ins.AddDate as date) = ins.InspectionDate))
            and ins.SunriseNid = 0
 ) DiffInspectQty
+outer apply(
+    -- 最後計算RFT 排除Fixed，但若同一天被Reject又被修好這時候也要抓進來並算reject。
+    select Qty=count(*)
+	from Inspection ins with (nolock)
+	where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+           and ins.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+           and ins.Line = '{this.CurrentMaintain["SewingLineID"]}'
+           and ins.Team = '{this.CurrentMaintain["Team"]}'
+           and ins.Shift = '{shift}' 
+           and ins.Article = t.Article
+           and ins.Location = t.ComboType
+           and ins.OrderId = t.OrderId
+           --and not (ins.Status <> 'Fixed'  or (ins.Status = 'Fixed' and cast(ins.AddDate as date) = ins.InspectionDate))
+           and ins.Status IN ('Fixed','Reject','Dispode')
+           and cast(ins.AddDate as date) = ins.InspectionDate
+           and ins.SunriseNid = 0
+) RejectData
+
+
+
+SELECT  OrderId
+	, CDate
+	, SewinglineID
+	, FactoryID 
+	, [InspectQty]=SUM(InspectQty)
+	, [RejectQty]= SUM(RejectQty)
+	, [DefectQty] =SUM(DefectQty)
+	, Shift
+	, Team
+	, Status
+	, Remark
+FROM #tmp2
+GROUP BY  OrderId, CDate, SewinglineID, FactoryID , Shift, Team, Status, Remark
+
+
+drop table #tmp,#tmp2
 ";
 
             using (SqlConnection mesConn = new SqlConnection(Env.Cfg.GetConnection("ManufacturingExecution", DBProxy.Current.DefaultModuleName).ConnectionString))
