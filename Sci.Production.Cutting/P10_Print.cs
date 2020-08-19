@@ -65,7 +65,7 @@ from (
         ,b.Sewinglineid [Line]
         ,b.SewingCell [Cell]
         ,b.POID
-        ,b.Orderid [SP]
+	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
         ,c.StyleID [Style]
         ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
         , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
@@ -86,7 +86,7 @@ from (
         ,b.FabricPanelCode
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-    inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+    inner join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
     inner join brand WITH (NOLOCK) on brand.id = c.brandid
     outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
     outer apply
@@ -108,7 +108,7 @@ from (
         ,b.Sewinglineid [Line]
         ,b.SewingCell [Cell]
         ,b.POID
-        ,b.Orderid [SP]
+	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
         ,c.StyleID [Style]
         ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
         , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
@@ -130,7 +130,7 @@ from (
         ,b.FabricPanelCode
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-    inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+    inner join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
     inner join brand WITH (NOLOCK) on brand.id = c.brandid
     left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
     outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
@@ -169,7 +169,7 @@ from (
 			,b.Sewinglineid [Line]
 			,b.SewingCell [Cell]
             ,b.POID
-			,b.Orderid [SP]
+	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 			,c.StyleID [Style]
 			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
             , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
@@ -191,7 +191,7 @@ from (
         ,b.FabricPanelCode
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+	inner join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
     inner join brand WITH (NOLOCK) on brand.id = c.brandid
 	outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
 	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
@@ -207,7 +207,7 @@ from (
 			,b.Sewinglineid [Line]
 			,b.SewingCell [Cell]
             ,b.POID
-			,b.Orderid [SP]
+	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 			,c.StyleID [Style]
 			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
             , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
@@ -229,7 +229,7 @@ from (
         ,b.FabricPanelCode
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+	inner join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
     inner join brand WITH (NOLOCK) on brand.id = c.brandid
 	outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
 	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
@@ -278,7 +278,7 @@ order by x.[Barcode]");
 select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
 from (
 	select b.id [Bundle_ID]
-		,b.Orderid [SP]
+	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 		,b.POID [POID]
 		,c.StyleID [Style]
 		,b.Sewinglineid [Line]
@@ -296,7 +296,7 @@ from (
 		,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+	left join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
 	outer apply( select a.PatternCode [Cutpart] )[qq]
 	outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 														from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
@@ -307,7 +307,7 @@ from (
 	union all
 
 	select b.id [Bundle_ID]
-		,b.Orderid [SP]
+	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 		,b.POID [POID]
 		,c.StyleID [Style]
 		,b.Sewinglineid [Line]
@@ -325,7 +325,7 @@ from (
 		,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+	left join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
 	left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
 	outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
 	outer apply(select Artwork = '' )as Artwork
@@ -351,7 +351,7 @@ order by x.[Bundle]");
 select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
 from (
 	select b.id [Bundle_ID]
-			,b.Orderid [SP]
+	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 			,b.POID [POID]
 			,c.StyleID [Style]
 			,b.Sewinglineid [Line]
@@ -369,7 +369,7 @@ from (
 			,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+	left join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
 	outer apply ( select a.PatternCode [Cutpart] ) [qq]
 	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 															from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
@@ -380,7 +380,7 @@ from (
 	union all
 
 	select b.id [Bundle_ID]
-			,b.Orderid [SP]
+	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 			,b.POID [POID]
 			,c.StyleID [Style]
 			,b.Sewinglineid [Line]
@@ -398,7 +398,7 @@ from (
 			,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+	left join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
 	outer apply ( select a.PatternCode [Cutpart] ) [qq]
 	outer apply ( select Artwork = '')as Artwork
 	where a.ID= @ID and a.Patterncode = 'ALLPARTS'
@@ -431,47 +431,7 @@ order by x.[Bundle]");
         /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
-            if (this.dtt == null || this.dtt.Rows.Count == 0)
-            {
-                MyUtility.Msg.ErrorBox("Data not found");
-                return false;
-            }
-
-            // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(this.dtt.Rows.Count);
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
-            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", this.CurrentDataRow["ID"].ToString().Substring(0, 3)));
-            objSheets.Cells[3, 1] = "To Line: " + this.CurrentDataRow["sewinglineid"].ToString();
-            objSheets.Cells[3, 3] = "Cell: " + this.CurrentDataRow["SewingCell"].ToString();
-            objSheets.Cells[3, 4] = "Comb: " + this.CurrentDataRow["PatternPanel"].ToString();
-            objSheets.Cells[3, 5] = "Marker No: " + (this.CurrentDataRow["cutref"].ToString() == string.Empty ? string.Empty
-                : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}' and id = '{1}'", this.CurrentDataRow["cutref"].ToString(), this.CurrentDataRow["poid"].ToString())));
-            objSheets.Cells[3, 7] = "Item: " + this.CurrentDataRow["item"].ToString();
-            objSheets.Cells[3, 9] = "Article/Color: " + this.CurrentDataRow["article"].ToString() + "/ " + this.CurrentDataRow["colorid"].ToString();
-            objSheets.Cells[3, 11] = "ID: " + this.CurrentDataRow["ID"].ToString();
-            objSheets.Cells[4, 1] = "SP#: " + this.CurrentDataRow["Orderid"].ToString();
-            objSheets.Cells[4, 4] = "Style#: " + MyUtility.GetValue.Lookup(string.Format("Select Styleid from Orders WITH (NOLOCK) Where id='{0}'", this.CurrentDataRow["Orderid"].ToString()));
-            objSheets.Cells[4, 7] = "Cutting#: " + this.CurrentDataRow["cutno"].ToString();
-            objSheets.Cells[4, 9] = "MasterSP#: " + this.CurrentDataRow["POID"].ToString();
-            objSheets.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
-            MyUtility.Excel.CopyToXls(this.dtt, string.Empty, "Cutting_P10.xltx", 5, false, null, objApp);      // 將datatable copy to excel
-            objSheets.get_Range("D1:D1").ColumnWidth = 11;
-            objSheets.get_Range("E1:E1").Columns.AutoFit();
-            objSheets.get_Range("G1:H1").ColumnWidth = 9;
-            objSheets.get_Range("I1:L1").ColumnWidth = 15;
-
-            objSheets.Range[string.Format("A6:L{0}", this.dtt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
-
-            #region Save & Shwo Excel
-            string strExcelName = Class.MicrosoftFile.GetName("Cutting_P10");
-            objApp.ActiveWorkbook.SaveAs(strExcelName);
-            objApp.Quit();
-            Marshal.ReleaseComObject(objApp);
-            Marshal.ReleaseComObject(objSheets);
-
-            strExcelName.OpenFile();
-            #endregion
+            this.ProcessExcel();
             return true;
         }
 
@@ -480,14 +440,15 @@ order by x.[Bundle]");
         {
             if (this.radioBundleCard.Checked)
             {
-                if (this.dt == null || this.dt.Rows.Count == 0)
+                if (this.dt.Rows.Count == 0)
                 {
                     MyUtility.Msg.ErrorBox("Data not found");
                     return false;
                 }
 
-                this.ShowWaitMessage("Process Excel!");
                 this.SetCount(this.dt.Rows.Count);
+
+                this.ShowWaitMessage("Process Excel!");
                 List<P10_PrintData> data = this.dt.AsEnumerable().Select(row1 => new P10_PrintData()
                 {
                     Group_right = row1["Group_right"].ToString(),
@@ -539,14 +500,12 @@ order by x.[Bundle]");
                 int row_ref = 0;
                 data.ForEach(r =>
                 {
-                    DataTable bdoDt = GetBundle_Detail_Order_Data(r.Barcode);
-                    string sps = GetSpstring(bdoDt);
                     string no = GetNo(r.POID, r.FabricPanelCode, r.Article, r.Size, r.Barcode);
                     string contian;
                     if (this.comboLayout.SelectedValue.ToString() == "0")
                     {
                         contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
-SP#:{sps}
+SP#:{r.SP}
 Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
 Marker#: {r.MarkerNo}
@@ -560,7 +519,7 @@ Qty: {r.Quantity}";
                     else
                     {
                         contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
-SP#:{sps}
+SP#:{r.SP}
 Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
 Marker#: {r.MarkerNo}
@@ -751,143 +710,67 @@ Qty: {r.Quantity}     Item: {r.Item}";
             }
             else
             {
-                #region Bundle Check List
-                if (this.dtt == null || this.dtt.Rows.Count == 0)
-                {
-                    MyUtility.Msg.ErrorBox("Data not found");
-                    return false;
-                }
-
-                // 顯示筆數於PrintForm上Count欄位
-                this.SetCount(this.dtt.Rows.Count);
-
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
-                this.pathName = Env.Cfg.ReportTempDir + "Cutting_BundleChecklist" + DateTime.Now.ToFileTime() + ".xls";
-                string tmpName = Env.Cfg.ReportTempDir + "tmp.xls";
-                if (MyUtility.Excel.CopyToXls(this.dtt, string.Empty, "Cutting_P10.xltx", 5, false, null, objApp, false))
-                {
-                    Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    Excel._Workbook objBook = objApp.ActiveWorkbook;
-                    objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", this.CurrentDataRow["ID"].ToString().Substring(0, 3)));
-                    objSheets.Cells[3, 1] = "To Line: " + this.CurrentDataRow["sewinglineid"].ToString();
-                    objSheets.Cells[3, 3] = "Cell: " + this.CurrentDataRow["SewingCell"].ToString();
-                    objSheets.Cells[3, 4] = "Comb: " + this.CurrentDataRow["PatternPanel"].ToString();
-                    objSheets.Cells[3, 5] = "Marker No: " + (this.CurrentDataRow["cutref"].ToString() == string.Empty ? string.Empty
-                        : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}' and id = '{1}'", this.CurrentDataRow["cutref"].ToString(), this.CurrentDataRow["poid"].ToString())));
-                    objSheets.Cells[3, 7] = "Item: " + this.CurrentDataRow["item"].ToString();
-                    objSheets.Cells[3, 9] = "Article/Color: " + this.CurrentDataRow["article"].ToString() + "/ " + this.CurrentDataRow["colorid"].ToString();
-                    objSheets.Cells[3, 11] = "ID: " + this.CurrentDataRow["ID"].ToString();
-                    objSheets.Cells[4, 1] = "SP#: " + this.CurrentDataRow["Orderid"].ToString();
-                    objSheets.Cells[4, 4] = "Style#: " + MyUtility.GetValue.Lookup(string.Format("Select Styleid from Orders WITH (NOLOCK) Where id='{0}'", this.CurrentDataRow["Orderid"].ToString()));
-                    objSheets.Cells[4, 7] = "Cutting#: " + this.CurrentDataRow["cutno"].ToString();
-                    objSheets.Cells[4, 9] = "MasterSP#: " + this.CurrentDataRow["POID"].ToString();
-                    objSheets.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
-                    objSheets.get_Range("D1:D1").ColumnWidth = 11;
-                    objSheets.get_Range("E1:E1").Columns.AutoFit();
-                    objSheets.get_Range("G1:H1").ColumnWidth = 9;
-                    objSheets.get_Range("I1:L1").ColumnWidth = 15;
-
-                    objSheets.Range[string.Format("A6:L{0}", this.dtt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
-
-                    // Random Excle名稱
-                    Random random = new Random();
-                    this.pathName = Env.Cfg.ReportTempDir + "Cutting_BundleChecklist - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
-                    this.pathName = Path.GetFullPath(this.pathName);
-                    objBook.SaveAs(this.pathName);
-                    PrintDialog pd = new PrintDialog();
-                    if (pd.ShowDialog() == DialogResult.OK)
-                    {
-                        string printer = pd.PrinterSettings.PrinterName;
-                        objBook.PrintOutEx(ActivePrinter: printer);
-                    }
-
-                    objBook.Close();
-                    objApp.Workbooks.Close();
-                    objApp.Quit();
-
-                    if (objSheets != null)
-                    {
-                        Marshal.FinalReleaseComObject(objSheets);    // 釋放sheet
-                    }
-
-                    if (objApp != null)
-                    {
-                        Marshal.FinalReleaseComObject(objApp);          // 釋放objApp
-                    }
-
-                    if (objBook != null)
-                    {
-                        Marshal.FinalReleaseComObject(objBook);
-                    }
-                }
-
-                File.Delete(this.pathName);
-
-                // 刪除存檔
-                #endregion
+                this.ProcessExcel(true);
             }
 
             return true;
         }
 
-        /// <inheritdoc/>
-        public static string GetSpstring(DataTable dt)
+        private void ProcessExcel(bool print = false)
         {
-            string sps = string.Empty;
-            if (dt.Rows.Count > 0)
+            if (this.dtt == null || this.dtt.Rows.Count == 0)
             {
-                sps = dt.Rows[0]["OrderID"].ToString();
-                sps += GetSubSPstring(dt, true, 32);
+                MyUtility.Msg.ErrorBox("Data not found");
+                return;
             }
 
-            return sps;
-        }
+            // 顯示筆數於PrintForm上Count欄位
+            this.SetCount(this.dtt.Rows.Count);
 
-        /// <inheritdoc/>
-        public static string GetSubSPstring(DataTable dt, bool excludefirst, int subCount)
-        {
-            string sps = string.Empty;
+            this.ShowWaitMessage("Process Excel!");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
+            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            Excel.Workbook workbook = excelApp.ActiveWorkbook;
+            MyUtility.Excel.CopyToXls(this.dtt, string.Empty, "Cutting_P10.xltx", 6, false, null, excelApp);      // 將datatable copy to excel
 
-            int i = 0;
-            bool brk = false;
-            foreach (DataRow dr in dt.Rows)
+            worksheet.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", this.CurrentDataRow["ID"].ToString().Substring(0, 3)));
+            worksheet.Cells[3, 1] = "To Line: " + this.CurrentDataRow["sewinglineid"].ToString();
+            worksheet.Cells[3, 3] = "Cell: " + this.CurrentDataRow["SewingCell"].ToString();
+            worksheet.Cells[3, 4] = "Comb: " + this.CurrentDataRow["PatternPanel"].ToString();
+            string sqlcmd = $@"select top 1 MarkerNo from WorkOrder where  CutRef='{this.CurrentDataRow["cutref"]}' and id = '{this.CurrentDataRow["poid"]}'";
+            worksheet.Cells[3, 5] = "Marker No: " + (MyUtility.Check.Empty(this.CurrentDataRow["cutref"]) ? string.Empty : MyUtility.GetValue.Lookup(sqlcmd));
+            worksheet.Cells[3, 7] = "Item: " + this.CurrentDataRow["item"].ToString();
+            worksheet.Cells[3, 9] = "Article/Color: " + this.CurrentDataRow["article"].ToString() + "/ " + this.CurrentDataRow["colorid"].ToString();
+            worksheet.Cells[3, 11] = "ID: " + this.CurrentDataRow["ID"].ToString();
+            worksheet.Cells[4, 1] = "Style#: " + MyUtility.GetValue.Lookup(string.Format("Select Styleid from Orders WITH (NOLOCK) Where id='{0}'", this.CurrentDataRow["Orderid"].ToString()));
+            worksheet.Cells[4, 5] = "Cutting#: " + this.CurrentDataRow["cutno"].ToString();
+            worksheet.Cells[4, 9] = "MasterSP#: " + this.CurrentDataRow["POID"].ToString();
+            worksheet.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
+            sqlcmd = $@"select dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where id = '{this.CurrentDataRow["ID"]}' order by OrderID for XML RAW))";
+            worksheet.Cells[5, 1] = "SP#: " + MyUtility.GetValue.Lookup(sqlcmd);
+
+            worksheet.get_Range("D1:D1").ColumnWidth = 11;
+            worksheet.get_Range("E1:E1").Columns.AutoFit();
+            worksheet.get_Range("G1:H1").ColumnWidth = 9;
+            worksheet.get_Range("I1:L1").ColumnWidth = 15;
+            worksheet.Range[string.Format("A6:L{0}", this.dtt.Rows.Count + 6)].Borders.Weight = 2; // 設定全框線
+
+            this.HideWaitMessage();
+            if (print)
             {
-                if (excludefirst)
+                PrintDialog pd = new PrintDialog();
+                if (pd.ShowDialog() == DialogResult.OK)
                 {
-                    excludefirst = false;
-                    continue;
-                }
-
-                string sp = dr["OrderID"].ToString();
-                sps += "/";
-
-                sps += sp.Length > 10 ? sp.Substring(10) : sp;
-                if (i++ > subCount)
-                {
-                    brk = true;
-                    break;
+                    string printer = pd.PrinterSettings.PrinterName;
+                    workbook.PrintOutEx(ActivePrinter: printer);
                 }
             }
-
-            if (brk)
+            else
             {
-                string sp = dt.Rows[dt.Rows.Count - 1]["OrderID"].ToString();
-                sps += "/.../" + (sp.Length > 10 ? sp.Substring(10) : sp);
+                excelApp.Visible = true;
             }
 
-            return sps;
-        }
-
-        /// <inheritdoc/>
-        public static DataTable GetBundle_Detail_Order_Data(string bundleno)
-        {
-            string sqlcmd = $@"
-select bdo.OrderID
-from Bundle_Detail_Order bdo with(nolock)
-where bundleno = '{bundleno}'
-order by OrderID";
-            DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
-            return dt;
+            Marshal.ReleaseComObject(excelApp);
         }
 
         /// <inheritdoc/>

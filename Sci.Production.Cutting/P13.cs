@@ -94,7 +94,7 @@ select Sel = 0
 	   , Factory =  O.FtyGroup 
 	   , Style = o.StyleID 
 	   , CutRefNo = b.CutRef
-	   , SPNo = b.Orderid
+	    ,[SPNo] = dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where id = b.id order by OrderID for XML RAW))
 	   , Size = b.Sizecode
 	   , Color = b.Colorid
 	   , b.Article
@@ -112,7 +112,7 @@ select Sel = 0
 	   , b.PrintDate
        , b.SewingCell
 from Bundle b
-inner join Orders O with(nolock) on  b.Orderid = o.id  and o.MDivisionID  = b.MDivisionID 
+inner join Orders O with(nolock) on  b.POID = o.id  and o.MDivisionID  = b.MDivisionID 
 where 1=1
 {where}
 ";
@@ -207,7 +207,7 @@ select distinct [Group]
      , [Parts],[Qty]
 from (
   select b.id [Bundle_ID]
-       , b.Orderid [SP]
+	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
        , b.POID [POID]
        , c.StyleID [Style]
        , b.Sewinglineid [Line]
@@ -225,7 +225,7 @@ from (
        , a.Qty [Qty]
   from dbo.Bundle_Detail a WITH (NOLOCK) 
   left join dbo.Bundle b WITH (NOLOCK) on a.id = b.id
-  left join dbo.orders c WITH (NOLOCK) on c.id = b.Orderid and c.MDivisionID  = b.MDivisionID 
+  left join dbo.orders c WITH (NOLOCK) on c.id = b.POID and c.MDivisionID  = b.MDivisionID 
   outer apply ( 
     select [Cutpart] = iif (a.PatternCode = 'ALLPARTS', iif (@extend = '1', a.PatternCode
                                                                           , a.PatternCode)
@@ -245,7 +245,7 @@ from (
 
   union all
   select b.id [Bundle_ID]
-         , b.Orderid [SP]
+	    , SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
          , b.POID [POID]
          , c.StyleID [Style]
          , b.Sewinglineid [Line]
@@ -263,7 +263,7 @@ from (
          , a.Qty [Qty]
   from dbo.Bundle_Detail a WITH (NOLOCK) 
   left join dbo.Bundle b WITH (NOLOCK) on a.id = b.id
-  left join dbo.orders c WITH (NOLOCK) on c.id = b.Orderid and c.MDivisionID  = b.MDivisionID 
+  left join dbo.orders c WITH (NOLOCK) on c.id = b.POID and c.MDivisionID  = b.MDivisionID 
   left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id = a.Id
   outer apply (
     select [Cutpart] = iif (a.PatternCode = 'ALLPARTS', iif(@extend = '1', d.PatternCode
@@ -320,7 +320,7 @@ select distinct [Group]
 	   , [Qty]
 from (
 	select b.id [Bundle_ID]
-			,b.Orderid [SP]
+	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 			,b.POID [POID]
 			,c.StyleID [Style]
 			,b.Sewinglineid [Line]
@@ -338,7 +338,7 @@ from (
 			,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+	left join dbo.orders c WITH (NOLOCK) on c.id=b.POID and c.MDivisionID  = b.MDivisionID 
 	outer apply ( 
 		select [Cutpart]  = iif (a.PatternCode = 'ALLPARTS', iif (@extend = '1', a.PatternCode
 																			   , a.PatternCode)
@@ -358,7 +358,7 @@ from (
 
 	union all
 	select b.id [Bundle_ID]
-		   , b.Orderid [SP]
+	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 		   , b.POID [POID]
 		   , c.StyleID [Style]
 		   , b.Sewinglineid [Line]
@@ -376,7 +376,7 @@ from (
 		   , a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+	left join dbo.orders c WITH (NOLOCK) on c.id=b.POID and c.MDivisionID  = b.MDivisionID 
 	outer apply (
 		select [Cutpart] = iif (a.PatternCode = 'ALLPARTS', iif (@extend = '1', a.PatternCode
 																			  , a.PatternCode)

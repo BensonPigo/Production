@@ -1,6 +1,4 @@
-﻿
-
-CREATE FUNCTION GetSinglelineSP (@XML xml)
+﻿CREATE FUNCTION GetSinglelineSP (@XML xml)
 Returns varchar(max)
 AS
 Begin
@@ -14,9 +12,9 @@ Begin
 		select OrderID from tb where RowNr = 1
 	)
 	,other as (
-		select OrderIDs = IIF(LEN(OrderID) <= 10, OrderID , substring(OrderID,11,3)) FROM tb where RowNr > 1
+		select OrderIDs = IIF(LEN(OrderID) <= 10, OrderID , substring(OrderID,11,6)) FROM tb where RowNr > 1
 	)
 	select @SP1 = firstSP.OrderID, @SP2=@SP2+'/'+OrderIDs from firstSP left join other on 1=1
 
-    Return @SP1
+    Return concat(@SP1,@SP2)
 End

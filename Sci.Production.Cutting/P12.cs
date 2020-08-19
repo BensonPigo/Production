@@ -141,7 +141,7 @@ namespace Sci.Production.Cutting
 
             if (!this.txtSPNoStart.Text.Empty() && !this.txtSPNoEnd.Text.Empty())
             {
-                sqlWheres.Add("b.OrderID  between @SP and @SP1");
+                sqlWheres.Add(@"exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.ID = b.ID and bdo.OrderID between @SP and @SP1)");
             }
 
             if (!this.txtPOID.Text.Empty())
@@ -252,7 +252,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
-    , b.Orderid [SP]
+	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , b.Sewinglineid [Line]
     , b.SewingCell [Cell]
@@ -284,7 +284,7 @@ select
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+inner join dbo.Orders c WITH (NOLOCK) on c.id=b.POID and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
@@ -337,7 +337,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
-    , b.Orderid [SP]
+	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , b.Sewinglineid [Line]
     , b.SewingCell [Cell]
@@ -368,7 +368,7 @@ select
     ,b.FabricPanelCode
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+inner join dbo.Orders c WITH (NOLOCK) on c.id=b.POID and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
@@ -466,7 +466,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
-    , b.Orderid [SP]
+	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , b.Sewinglineid [Line]
     , b.SewingCell [Cell]
@@ -498,7 +498,7 @@ select
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+inner join dbo.Orders c WITH (NOLOCK) on c.id=b.POID and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
@@ -551,7 +551,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
-    , b.Orderid [SP]
+	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , b.Sewinglineid [Line]
     , b.SewingCell [Cell]
@@ -582,7 +582,7 @@ select
     ,b.FabricPanelCode
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+inner join dbo.Orders c WITH (NOLOCK) on c.id=b.POID and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
@@ -1080,14 +1080,12 @@ where bd.BundleNo = '{item.Barcode}'");
             int row_ref = 0;
             data.ForEach(r =>
             {
-                DataTable bdoDt = P10_Print.GetBundle_Detail_Order_Data(r.Barcode);
-                string sps = P10_Print.GetSpstring(bdoDt);
                 string no = P10_Print.GetNo(r.POID, r.FabricPanelCode, r.Article, r.Size, r.Barcode);
                 string contian;
                 if (layout == 1)
                 {
                     contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
-SP#:{sps}
+SP#:{r.SP}
 Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
 Marker#: {r.MarkerNo}
@@ -1101,7 +1099,7 @@ Qty: {r.Quantity}";
                 else
                 {
                     contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
-SP#:{sps}
+SP#:{r.SP}
 Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
 Marker#: {r.MarkerNo}
