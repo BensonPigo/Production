@@ -217,7 +217,7 @@ and SunriseNid != 0
             this.DetailSelectCommand = string.Format(
                 @"
 select  sd.*
-        , [RFT] = CONVERT(VARCHAR, convert(Decimal(5,2),  ROUND(sd.QAQty* 1.0 / sd.InlineQty * 1.0 * 100 ,2))) +'%'
+        , [RFT] = CONVERT(VARCHAR, convert(Decimal(5,2), iif(sd.InlineQty = 0, 0, ROUND(sd.QAQty* 1.0 / sd.InlineQty * 1.0 * 100 ,2)))) +'%'
         , [Tips] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
         , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
 		, [SewingReasonID]=sr.id
