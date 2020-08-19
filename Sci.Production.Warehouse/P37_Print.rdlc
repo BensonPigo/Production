@@ -24,7 +24,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!SEQ.Value</Value>
+                                  <Value>=iif(Fields!GroupNo.Value &gt; 1, "", Fields!SEQ.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -55,7 +55,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!OrderID.Value</Value>
+                                  <Value>=iif(Fields!GroupNo.Value &gt; 1, "", Fields!OrderID.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -1467,6 +1467,10 @@
         </Field>
         <Field Name="Dyelot">
           <DataField>Dyelot</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="GroupNo">
+          <DataField>GroupNo</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Location">
