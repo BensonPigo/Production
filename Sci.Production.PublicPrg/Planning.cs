@@ -398,7 +398,7 @@ OUTER APPLY(----裁剪組合缺少的數量
 	t.OrderID=st0.OrderID AND t.Article=st0.Article AND t.SizeCode=st0.SizeCode
 )IsLackPatternPanel
 where (sub.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0) AND bunD.BundleGroup IS NOT NULL
- {(subprocessIDtmp != "Sorting" && subprocessIDtmp != "Loading" && subprocessIDtmp != "SewingLine" ? $"and BundleArt.SubprocessId='{subprocessIDtmp}'" : string.Empty )}
+ {(subprocessIDtmp != "Sorting" && subprocessIDtmp != "Loading" && subprocessIDtmp != "SewingLine" ? $"and BundleArt.SubprocessId='{subprocessIDtmp}'" : string.Empty)}
 
 select	Orderid
 		, SubprocessId

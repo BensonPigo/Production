@@ -14,11 +14,13 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P40 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewTextBoxColumn col_StatusColor;
-        List<string> sqlWhere = new List<string>();
-        string InlineDate1; string InlineDate2;
+        private List<string> sqlWhere = new List<string>();
+        private string InlineDate1;
+        private string InlineDate2;
         private DataTable dtFormGrid;
         private DataTable dtExcel;
         private DataTable dtBundleGroupQty;
@@ -27,6 +29,7 @@ namespace Sci.Production.Subcon
         private SqlCommand cmd;
         private bool cancel;
 
+        /// <inheritdoc/>
         public P40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -36,6 +39,7 @@ namespace Sci.Production.Subcon
             this.displaySubProcess.Text = "Loading";
         }
 
+        /// <inheritdoc/>
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -124,7 +128,7 @@ namespace Sci.Production.Subcon
             };
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             if ((MyUtility.Check.Empty(this.txtSp1.Text) || MyUtility.Check.Empty(this.txtSp2.Text)) &&
                (MyUtility.Check.Empty(this.dateRangeInlineDate.Value1) || MyUtility.Check.Empty(this.dateRangeInlineDate.Value2)) &&
@@ -155,7 +159,7 @@ namespace Sci.Production.Subcon
             }
         }
 
-        private void bgWorkerUpdateInfo_DoWork(object sender, DoWorkEventArgs e)
+        private void BgWorkerUpdateInfo_DoWork(object sender, DoWorkEventArgs e)
         {
             if (this.bgWorkerUpdateInfo.CancellationPending == true)
             {
@@ -184,7 +188,7 @@ namespace Sci.Production.Subcon
 
             if (!MyUtility.Check.Empty(this.txtSp1.Text) && !MyUtility.Check.Empty(this.txtSp2.Text))
             {
-                this.sqlWhere.Add($@"and b.Orderid between '{this.txtSp1.Text}' and '{this.txtSp2.Text}'");
+                this.sqlWhere.Add($@"and BDO.Orderid between '{this.txtSp1.Text}' and '{this.txtSp2.Text}'");
             }
 
             if (!MyUtility.Check.Empty(this.txtLocation.Text))
@@ -202,7 +206,7 @@ namespace Sci.Production.Subcon
                 this.sqlWhere.Add($@"
 and exists (select 1
 from SewingSchedule_Detail ssd
-where b.Orderid = ssd.OrderID
+where BDO.Orderid = ssd.OrderID
 		and bd.SizeCode = ssd.SizeCode
 		and ssd.SewingLineID = '{this.txtsewingline.Text}')");
             }
@@ -229,7 +233,7 @@ use Production;
 
 -- 準備 Bundle 相關資訊 --
 select	LocationID = isnull (bio.LocationID, '')
-		, b.Orderid
+		, BDO.Orderid
 		, FComb = b.PatternPanel
 		, b.Colorid
 		, Pattern = bd.Patterncode
@@ -238,13 +242,14 @@ select	LocationID = isnull (bio.LocationID, '')
 		, Artwork = isnull (bda.v, '')
 		, Qty = case 
 					when isnull (bio.BundleNo, '') = '' then 0
-					else isnull (bd.Qty, 0)
+					else isnull (BDO.Qty, 0)
 				end
 		, bd.IsPair
         , bd.BundleGroup
 into #BasBundleInfo
 from Bundle b
 inner join Bundle_Detail bd on bd.ID = b.ID
+INNER JOIN Bundle_Detail_Order BDO on BDO.BundleNo = BD.BundleNo
 inner join Orders o on b.Orderid = o.ID  and o.MDivisionID  = b.MDivisionID 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply (
@@ -443,10 +448,11 @@ drop table #BasBundleInfo
 
             try
             {
-                SqlConnection sqlConnection = null;
-                DBProxy.Current.OpenConnection(null, out sqlConnection);
-                this.cmd = new SqlCommand(sqlcmd, sqlConnection);
-                this.cmd.CommandTimeout = 3000; // 設定time out 50分鐘
+                DBProxy.Current.OpenConnection(null, out SqlConnection sqlConnection);
+                this.cmd = new SqlCommand(sqlcmd, sqlConnection)
+                {
+                    CommandTimeout = 3000, // 設定time out 50分鐘
+                };
                 SqlDataAdapter sqad = new SqlDataAdapter(this.cmd);
                 sqad.Fill(this.ds);
 
@@ -462,12 +468,12 @@ drop table #BasBundleInfo
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            this.Dispose();
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             if (this.bgWorkerUpdateInfo.IsBusy)
             {
@@ -499,18 +505,17 @@ drop table #BasBundleInfo
             }
 
             objApp.Rows.AutoFit();
-            string Excelfile = Class.MicrosoftFile.GetName("Subcon_P40");
-            objApp.ActiveWorkbook.SaveAs(Excelfile);
+            string excelfile = Class.MicrosoftFile.GetName("Subcon_P40");
+            objApp.ActiveWorkbook.SaveAs(excelfile);
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);
         }
 
-        private void bgWorkerUpdateInfo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void BgWorkerUpdateInfo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.HideLoadingText();
             this.grid.Cursor = Cursors.Default;
             this.UseWaitCursor = false;
-
             this.btnQuery.Enabled = true;
             if (this.ds != null)
             {

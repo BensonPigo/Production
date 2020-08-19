@@ -1,26 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci;
-using Sci.Data;
-using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
 {
     /// <summary>
     /// P01_Import
     /// </summary>
-    public partial class P01_Import : Sci.Win.Subs.Base
+    public partial class P01_Import : Win.Subs.Base
     {
         private DataRow dr_artworkpo;
         private DataTable dt_artworkpoDetail;
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private bool flag;
         private string poType;
         private DataTable dtArtwork;
@@ -222,8 +218,8 @@ where   f.IsProduceFty=1 and
         {sqlWhere} 
 
 
-SELECT  bd.QTY 
-	,bdl.Orderid 
+SELECT BDO.QTY 
+	,BDO.Orderid 
     ,bdl.Article
     ,bd.SizeCode
 	,s.ArtworkTypeId
@@ -234,6 +230,7 @@ SELECT  bd.QTY
 INTO #Bundle
 FROM Bundle_Detail bd WITH (NOLOCK) 
 INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
+INNER JOIN Bundle_Detail_Order BDO WITH (NOLOCK) on BDO.BundleNo = BD.BundleNo
 INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
 INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
 WHERE   bio.RFIDProcessLocationID='' and
@@ -256,7 +253,7 @@ WHERE   bio.RFIDProcessLocationID='' and
                 strSQLCmd += this.QuoteFromTmsCost();
             }
 
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd, out this.dtArtwork))
             {
                 DualResult resultGetSpecialRecordData = this.GetSpecialRecordData();
@@ -291,7 +288,7 @@ WHERE   bio.RFIDProcessLocationID='' and
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 DataRow ddr = this.gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
@@ -301,7 +298,7 @@ WHERE   bio.RFIDProcessLocationID='' and
                 ddr.EndEdit();
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
                 DataRow ddr = this.gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
@@ -310,7 +307,7 @@ WHERE   bio.RFIDProcessLocationID='' and
                 ddr.EndEdit();
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings col_ReqQtyIssueQty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings col_ReqQtyIssueQty = new DataGridViewGeneratorNumericColumnSettings();
 
             col_ReqQtyIssueQty.CellMouseDoubleClick += (s, e) =>
             {
@@ -320,7 +317,7 @@ WHERE   bio.RFIDProcessLocationID='' and
                     return;
                 }
 
-                var frm = new Sci.Production.Subcon.P01_AccuPoQtyList(dr);
+                var frm = new P01_AccuPoQtyList(dr);
                 frm.ShowDialog();
             };
 
@@ -328,7 +325,7 @@ WHERE   bio.RFIDProcessLocationID='' and
             this.gridBatchImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridBatchImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridBatchImport)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("ArtworkTypeID", header: "Artwork Type", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Numeric("OrderQty", header: "Order Qty", iseditingreadonly: true)
@@ -337,24 +334,22 @@ WHERE   bio.RFIDProcessLocationID='' and
                 .Date("sewinline", header: "Sewinline", iseditingreadonly: true)
                 .Date("SciDelivery", header: "SciDelivery", iseditingreadonly: true)
                 .Text("Article", header: "Article", iseditingreadonly: true)
-                .Text("artworkid", header: "Artwork", iseditingreadonly: true) // 5
+                .Text("artworkid", header: "Artwork", iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("coststitch", header: "Cost" + Environment.NewLine + "(Pcs/Stitch)", iseditingreadonly: true)
-                .Numeric("Stitch", header: this.titleStitch, iseditable: true, iseditingreadonly: true) // 7
+                .Numeric("Stitch", header: this.titleStitch, iseditable: true, iseditingreadonly: true)
                 .Text("PatternCode", header: "Cut Part", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cut Part Name", iseditingreadonly: true)
-                .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, settings: ns2, iseditingreadonly: true) // 10
-                .Numeric("Cost", header: "Cost(USD)", settings: ns, iseditingreadonly: true, decimal_places: 4, integer_places: 4) // 11
-                .Numeric("UnitPrice", header: "Unit Price", settings: ns, iseditable: true, decimal_places: 4, integer_places: 4) // 12
-                .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5) // 13
+                .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, settings: ns2, iseditingreadonly: true)
+                .Numeric("Cost", header: "Cost(USD)", settings: ns, iseditingreadonly: true, decimal_places: 4, integer_places: 4)
+                .Numeric("UnitPrice", header: "Unit Price", settings: ns, iseditable: true, decimal_places: 4, integer_places: 4)
+                .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5)
                 .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14)
                 .Numeric("FarmOut", header: "Farm Out", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("FarmIn", header: "Farm In", iseditingreadonly: true)
-                .Text("IrregularQtyReason", header: "Irregular Qty Reason", iseditingreadonly: true);  // 14
+                .Text("IrregularQtyReason", header: "Irregular Qty Reason", iseditingreadonly: true);
 
-            // this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
-            // this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty/GMT
-            this.gridBatchImport.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;  // UnitPrice
+            this.gridBatchImport.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridBatchImport.Columns["Cost"].Visible = this.flag;
             this.gridBatchImport.Columns["UnitPrice"].Visible = this.flag;
             this.gridBatchImport.Columns["Price"].Visible = this.flag;
@@ -386,8 +381,6 @@ WHERE   bio.RFIDProcessLocationID='' and
             dr2 = dtGridBS1.Select("Selected = 1");
             if (dr2.Length > 0)
             {
-                StringBuilder ids = new StringBuilder();
-
                 foreach (DataRow tmp in dr2)
                 {
                     DataRow[] findrow = this.dt_artworkpoDetail.Select($@"orderid = '{tmp["orderid"].ToString()}' and 
@@ -730,8 +723,7 @@ where  ar.ArtworkTypeID = '{this.dr_artworkpo["artworktypeid"]}' and ar.Status =
     not exists( select 1 from #tmpArtwork t where t.OrderID = ard.orderid)
     {sqlWhere}
 ";
-            DataTable dtResult = new DataTable();
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtArtwork, "OrderID", sqlGetSpecialRecordData, out dtResult, temptablename: "#tmpArtwork");
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtArtwork, "OrderID", sqlGetSpecialRecordData, out DataTable dtResult, temptablename: "#tmpArtwork");
 
             if (!result)
             {
