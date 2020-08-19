@@ -939,5 +939,12 @@ and i.id = '{CurrentMaintain["ID"]}'
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
+
+        private void BtnCutRefNo_Click(object sender, EventArgs e)
+        {
+            var frm = new P62_CuttingRef(this.CurrentMaintain);
+            frm.P62 = this;
+            frm.ShowDialog(this);
+        }
     }
 }
