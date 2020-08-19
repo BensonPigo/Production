@@ -49,6 +49,7 @@
             this.comboCentralizedFactory1 = new Sci.Production.Class.ComboCentralizedFactory(this.components);
             this.comboCentralizedM1 = new Sci.Production.Class.ComboCentralizedM(this.components);
             this.txtbrand1 = new Sci.Production.Class.Txtbrand();
+            this.chkCMPLockDate = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
@@ -162,7 +163,7 @@
             this.chkExcludeSampleFactory.Checked = true;
             this.chkExcludeSampleFactory.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExcludeSampleFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkExcludeSampleFactory.Location = new System.Drawing.Point(12, 321);
+            this.chkExcludeSampleFactory.Location = new System.Drawing.Point(9, 350);
             this.chkExcludeSampleFactory.Name = "chkExcludeSampleFactory";
             this.chkExcludeSampleFactory.Size = new System.Drawing.Size(178, 21);
             this.chkExcludeSampleFactory.TabIndex = 106;
@@ -256,7 +257,7 @@
             this.chkIncludeCancelOrder.Checked = true;
             this.chkIncludeCancelOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 348);
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(10, 377);
             this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
             this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
             this.chkIncludeCancelOrder.TabIndex = 117;
@@ -313,11 +314,23 @@
             this.txtbrand1.Size = new System.Drawing.Size(80, 23);
             this.txtbrand1.TabIndex = 98;
             // 
+            // chkCMPLockDate
+            // 
+            this.chkCMPLockDate.AutoSize = true;
+            this.chkCMPLockDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkCMPLockDate.Location = new System.Drawing.Point(9, 323);
+            this.chkCMPLockDate.Name = "chkCMPLockDate";
+            this.chkCMPLockDate.Size = new System.Drawing.Size(197, 21);
+            this.chkCMPLockDate.TabIndex = 121;
+            this.chkCMPLockDate.Text = "By CMP Monthly Lock Date";
+            this.chkCMPLockDate.UseVisualStyleBackColor = true;
+            // 
             // R05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(591, 400);
+            this.ClientSize = new System.Drawing.Size(591, 432);
+            this.Controls.Add(this.chkCMPLockDate);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.radioSemiMonthly);
             this.Controls.Add(this.radioMonthly);
@@ -367,6 +380,7 @@
             this.Controls.SetChildIndex(this.radioMonthly, 0);
             this.Controls.SetChildIndex(this.radioSemiMonthly, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
+            this.Controls.SetChildIndex(this.chkCMPLockDate, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -395,5 +409,6 @@
         private Win.UI.RadioButton radioMonthly;
         private Win.UI.RadioButton radioSemiMonthly;
         private Win.UI.CheckBox chkIncludeCancelOrder;
+        private Win.UI.CheckBox chkCMPLockDate;
     }
 }
