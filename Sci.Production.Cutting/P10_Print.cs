@@ -18,7 +18,6 @@ namespace Sci.Production.Cutting
     {
         private readonly DataRow CurrentDataRow;
         private DualResult result;
-        private string pathName;
 
         /// <inheritdoc/>
         public P10_Print(DataRow row)
@@ -86,7 +85,7 @@ from (
         ,b.FabricPanelCode
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-    inner join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
+    inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
     inner join brand WITH (NOLOCK) on brand.id = c.brandid
     outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
     outer apply
@@ -130,7 +129,7 @@ from (
         ,b.FabricPanelCode
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-    inner join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
+    inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
     inner join brand WITH (NOLOCK) on brand.id = c.brandid
     left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
     outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
@@ -191,7 +190,7 @@ from (
         ,b.FabricPanelCode
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	inner join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
+	inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
     inner join brand WITH (NOLOCK) on brand.id = c.brandid
 	outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
 	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
@@ -229,7 +228,7 @@ from (
         ,b.FabricPanelCode
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	inner join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
+	inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
     inner join brand WITH (NOLOCK) on brand.id = c.brandid
 	outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
 	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
@@ -296,7 +295,7 @@ from (
 		,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
+	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
 	outer apply( select a.PatternCode [Cutpart] )[qq]
 	outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 														from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
@@ -325,7 +324,7 @@ from (
 		,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
+	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
 	left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
 	outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
 	outer apply(select Artwork = '' )as Artwork
@@ -369,7 +368,7 @@ from (
 			,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
+	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
 	outer apply ( select a.PatternCode [Cutpart] ) [qq]
 	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 															from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
@@ -398,7 +397,7 @@ from (
 			,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Poid
+	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
 	outer apply ( select a.PatternCode [Cutpart] ) [qq]
 	outer apply ( select Artwork = '')as Artwork
 	where a.ID= @ID and a.Patterncode = 'ALLPARTS'
@@ -431,7 +430,7 @@ order by x.[Bundle]");
         /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
-            this.ProcessExcel();
+            this.ExcelProcess();
             return true;
         }
 
@@ -562,7 +561,12 @@ Qty: {r.Quantity}     Item: {r.Item}";
                     workbook.PrintOutEx(ActivePrinter: printer);
                 }
 
+                string excelName = Class.MicrosoftFile.GetName(fileName);
+                excelApp.ActiveWorkbook.SaveAs(excelName);
+                excelApp.Quit();
                 Marshal.ReleaseComObject(excelApp);
+                File.Delete(excelName);
+
                 #region Bundle Card RDLC 先不要刪 / 不要刪 / 不要刪
 
                 // if (this.dt == null || this.dt.Rows.Count == 0)
@@ -710,13 +714,13 @@ Qty: {r.Quantity}     Item: {r.Item}";
             }
             else
             {
-                this.ProcessExcel(true);
+                this.ExcelProcess(true);
             }
 
             return true;
         }
 
-        private void ProcessExcel(bool print = false)
+        private void ExcelProcess(bool print = false)
         {
             if (this.dtt == null || this.dtt.Rows.Count == 0)
             {
@@ -726,12 +730,12 @@ Qty: {r.Quantity}     Item: {r.Item}";
 
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.dtt.Rows.Count);
-
+            string fileName = "Cutting_P10";
             this.ShowWaitMessage("Process Excel!");
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx"); // 預先開啟excel app
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
-            MyUtility.Excel.CopyToXls(this.dtt, string.Empty, "Cutting_P10.xltx", 6, false, null, excelApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(this.dtt, string.Empty, $"{fileName}.xltx", 6, false, null, excelApp);
 
             worksheet.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", this.CurrentDataRow["ID"].ToString().Substring(0, 3)));
             worksheet.Cells[3, 1] = "To Line: " + this.CurrentDataRow["sewinglineid"].ToString();
@@ -742,7 +746,7 @@ Qty: {r.Quantity}     Item: {r.Item}";
             worksheet.Cells[3, 7] = "Item: " + this.CurrentDataRow["item"].ToString();
             worksheet.Cells[3, 9] = "Article/Color: " + this.CurrentDataRow["article"].ToString() + "/ " + this.CurrentDataRow["colorid"].ToString();
             worksheet.Cells[3, 11] = "ID: " + this.CurrentDataRow["ID"].ToString();
-            worksheet.Cells[4, 1] = "Style#: " + MyUtility.GetValue.Lookup(string.Format("Select Styleid from Orders WITH (NOLOCK) Where id='{0}'", this.CurrentDataRow["Orderid"].ToString()));
+            worksheet.Cells[4, 1] = "Style#: " + MyUtility.GetValue.Lookup($"Select Styleid from Orders WITH (NOLOCK) Where id='{this.CurrentDataRow["Orderid"]}'");
             worksheet.Cells[4, 5] = "Cutting#: " + this.CurrentDataRow["cutno"].ToString();
             worksheet.Cells[4, 9] = "MasterSP#: " + this.CurrentDataRow["POID"].ToString();
             worksheet.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
@@ -756,6 +760,9 @@ Qty: {r.Quantity}     Item: {r.Item}";
             worksheet.Range[string.Format("A6:L{0}", this.dtt.Rows.Count + 6)].Borders.Weight = 2; // 設定全框線
 
             this.HideWaitMessage();
+            string excelName = Class.MicrosoftFile.GetName(fileName);
+            excelApp.ActiveWorkbook.SaveAs(excelName);
+
             if (print)
             {
                 PrintDialog pd = new PrintDialog();
@@ -764,13 +771,16 @@ Qty: {r.Quantity}     Item: {r.Item}";
                     string printer = pd.PrinterSettings.PrinterName;
                     workbook.PrintOutEx(ActivePrinter: printer);
                 }
+
+                excelApp.Quit();
+                Marshal.ReleaseComObject(excelApp);
+                File.Delete(excelName);
             }
             else
             {
                 excelApp.Visible = true;
+                Marshal.ReleaseComObject(excelApp);
             }
-
-            Marshal.ReleaseComObject(excelApp);
         }
 
         /// <inheritdoc/>
@@ -834,6 +844,11 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
                 this.toexcel.Enabled = true;
                 this.print.Enabled = true;
             }
+        }
+
+        private void P10_Print_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Dispose();
         }
     }
 }

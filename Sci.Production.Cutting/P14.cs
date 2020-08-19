@@ -12,8 +12,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P14 : Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
         public P14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -21,7 +23,7 @@ namespace Sci.Production.Cutting
             this.EditMode = true;
         }
 
-        DataTable dt = new DataTable();
+        private DataTable dt = new DataTable();
 
         private void P14_FormLoaded(object sender, EventArgs e)
         {
@@ -30,9 +32,8 @@ namespace Sci.Production.Cutting
             this.listControlBindingSource1.DataSource = this.dt;
         }
 
-        private void txtCardNo_KeyPress(object sender, KeyPressEventArgs e)
+        private void TxtCardNo_KeyPress(object sender, KeyPressEventArgs e)
         {
-            int ikc = e.KeyChar;
             if ((!Regex.IsMatch(e.KeyChar.ToString(), "[0-9]")) && ((int)e.KeyChar) != 8)
             {
                 e.Handled = true;
@@ -40,15 +41,17 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void txtBundleNo_Validating(object sender, CancelEventArgs e)
+        private void TxtBundleNo_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtBundleNo.Text))
             {
                 return;
             }
 
-            List<SqlParameter> sqlParameters = new List<SqlParameter>();
-            sqlParameters.Add(new SqlParameter("@BundleNo", this.txtBundleNo.Text));
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@BundleNo", this.txtBundleNo.Text),
+            };
             string sqlchk = $@"select 1 from Bundle_Detail with(nolock) where BundleNo = @BundleNo";
             if (!MyUtility.Check.Seek(sqlchk, sqlParameters))
             {
@@ -59,7 +62,7 @@ namespace Sci.Production.Cutting
 
             #region Datas
             string sqlcmd = $@"
-select  b.Orderid
+select  Orderid=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW))
         , bd.Patterncode
         , b.Cutno
         , b.Colorid
@@ -70,8 +73,7 @@ from Bundle_Detail bd with(nolock)
 inner join Bundle b with(nolock) on b.id = bd.id
 inner join orders o with(nolock) on o.id = b.Orderid and o.MDivisionID  = b.MDivisionID 
 where BundleNo = @BundleNo";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlParameters, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlParameters, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -114,8 +116,7 @@ begin
 end
 drop table #tmp
 ";
-            DataTable combotypeDt;
-            result = DBProxy.Current.Select(null, sqlCombotype, sqlParameters, out combotypeDt);
+            result = DBProxy.Current.Select(null, sqlCombotype, sqlParameters, out DataTable combotypeDt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -130,40 +131,42 @@ drop table #tmp
             #endregion
         }
 
-        private void txtCardNoBundleNoComboType_Validated(object sender, EventArgs e)
+        private void TxtCardNoBundleNoComboType_Validated(object sender, EventArgs e)
         {
-            if (!this.checkempty())
+            if (!this.Checkempty())
             {
                 return;
             }
 
             this.InsertDatas();
-            this.clearall();
+            this.Clearall();
         }
 
-        private void cmdComboType_SelectedIndexChanged(object sender, EventArgs e)
+        private void CmdComboType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!this.checkempty())
+            if (!this.Checkempty())
             {
                 return;
             }
 
             this.InsertDatas();
-            this.clearall();
+            this.Clearall();
         }
 
-        bool IsSuccessful = true;
+        private bool IsSuccessful = true;
 
         private void InsertDatas()
         {
-            List<SqlParameter> sqlParameters = new List<SqlParameter>();
-            sqlParameters.Add(new SqlParameter("@SP", this.disSP.Text));
-            sqlParameters.Add(new SqlParameter("@ComboType", this.cmdComboType.Text));
-            sqlParameters.Add(new SqlParameter("@CutNo", this.disCutNo.Text));
-            sqlParameters.Add(new SqlParameter("@CardNo", this.txtCardNo.Text));
-            sqlParameters.Add(new SqlParameter("@Article", this.disArticle.Text));
-            sqlParameters.Add(new SqlParameter("@SizeName", this.disSize.Text));
-            sqlParameters.Add(new SqlParameter("@Qty", this.disBundleQty.Text));
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@SP", this.disSP.Text),
+                new SqlParameter("@ComboType", this.cmdComboType.Text),
+                new SqlParameter("@CutNo", this.disCutNo.Text),
+                new SqlParameter("@CardNo", this.txtCardNo.Text),
+                new SqlParameter("@Article", this.disArticle.Text),
+                new SqlParameter("@SizeName", this.disSize.Text),
+                new SqlParameter("@Qty", this.disBundleQty.Text),
+            };
 
             string sqlupdatacmd = $@"
 update t set
@@ -226,7 +229,7 @@ End
             this.IsSuccessful = true;
         }
 
-        private bool checkempty()
+        private bool Checkempty()
         {
             if (MyUtility.Check.Empty(this.txtCardNo.Text) || MyUtility.Check.Empty(this.txtBundleNo.Text) || MyUtility.Check.Empty(this.cmdComboType.Text))
             {
@@ -236,7 +239,7 @@ End
             return true;
         }
 
-        private void addmsg(string msg)
+        private void Addmsg(string msg)
         {
             DataRow dr = this.dt.NewRow();
             dr[0] = msg;
@@ -245,20 +248,20 @@ End
             this.grid1.AutoResizeColumns();
         }
 
-        private void grid1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        private void Grid1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
         {
             this.grid1.Rows[e.RowIndex].Cells[0].Style.ForeColor = this.IsSuccessful ? Color.Black : Color.Red;
         }
 
-        private void clearall()
+        private void Clearall()
         {
             if (this.IsSuccessful)
             {
-                this.addmsg($"( {DateTime.Now.ToString("HH:mm:ss")} ) Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
+                this.Addmsg($"( {DateTime.Now.ToString("HH:mm:ss")} ) Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
             }
             else
             {
-                this.addmsg($"( {DateTime.Now.ToString("HH:mm:ss")} ) Not Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
+                this.Addmsg($"( {DateTime.Now.ToString("HH:mm:ss")} ) Not Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
             }
 
             this.txtCardNo.Text = string.Empty;

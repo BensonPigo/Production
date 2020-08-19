@@ -121,6 +121,7 @@
             this.Name = "P10_Print";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "P10. Print";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.P10_Print_FormClosed);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);

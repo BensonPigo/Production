@@ -579,6 +579,7 @@
             this.Name = "P12";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P12. Batch Print Bundle Card";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.P12_FormClosed);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.panel5, 0);

@@ -284,7 +284,7 @@ select
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-inner join dbo.Orders c WITH (NOLOCK) on c.id=b.POID and c.MDivisionID  = b.MDivisionID 
+inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
@@ -368,7 +368,7 @@ select
     ,b.FabricPanelCode
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-inner join dbo.Orders c WITH (NOLOCK) on c.id=b.POID and c.MDivisionID  = b.MDivisionID 
+inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
@@ -498,7 +498,7 @@ select
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-inner join dbo.Orders c WITH (NOLOCK) on c.id=b.POID and c.MDivisionID  = b.MDivisionID 
+inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
@@ -582,7 +582,7 @@ select
     ,b.FabricPanelCode
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-inner join dbo.Orders c WITH (NOLOCK) on c.id=b.POID and c.MDivisionID  = b.MDivisionID 
+inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
@@ -892,7 +892,6 @@ OPTION (RECOMPILE)"
 
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
-            #region excel
             this.grid1.ValidateControl();
             var r = this.dtt.AsEnumerable().Where(row => (bool)row["selected"]).ToList();
             if (r.Count == 0)
@@ -902,14 +901,14 @@ OPTION (RECOMPILE)"
                 return;
             }
 
-            DataTable selects = this.dtt.AsEnumerable()
-                .Where(row => (bool)row["selected"])
-                .CopyToDataTable();
+            DataTable selects = r.CopyToDataTable();
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P12.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(selects, string.Empty, "Cutting_P12.xltx", 1, true, "Bundle,CutRef,POID,SP,Group,Line,SpreadingNoID,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty", objApp);      // 將datatable copy to excel
+            string fileName = "Cutting_P12";
+            string fieldList = "Bundle,CutRef,POID,SP,Group,Line,SpreadingNoID,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(selects, string.Empty, $"{fileName}.xltx", 1, true, fieldList, excelApp);
+            Marshal.ReleaseComObject(excelApp);
             return;
-            #endregion
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -1133,6 +1132,11 @@ Qty: {r.Quantity}     Item: {r.Item}";
 
                 i++;
             });
+        }
+
+        private void P12_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Dispose();
         }
     }
 }
