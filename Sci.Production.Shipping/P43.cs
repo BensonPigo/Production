@@ -46,6 +46,7 @@ where agd.id = '{0}'",
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             foreach (DataRow dr in this.DetailDatas)
@@ -325,6 +326,7 @@ where agd.id = '{0}'",
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -497,6 +499,7 @@ where id = '{1}'",
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))

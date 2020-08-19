@@ -12,10 +12,15 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Planning
 {
+    /// <inheritdoc/>
     public partial class P06 : Win.Tems.QueryForm
     {
         private DataTable QuertData;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P06"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -23,16 +28,15 @@ namespace Sci.Production.Planning
             this.EditMode = true;
             this.gridIcon1.Insert.Visible = false;
             DualResult result;
-            DataTable dt;
-            if (result = DBProxy.Current.Select(null, @"
+            string sqlcmd = @"
 select id='',name='' ,seq=0
 union all
 select ID
        , Name = rtrim(Name),Seq
 from DropDownList WITH (NOLOCK) 
 where Type = 'PMS_CriticalActivity' 
-order by Seq
-", out dt))
+order by Seq";
+            if (result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt))
             {
                 this.comboColumnType.DataSource = dt;
                 this.comboColumnType.DisplayMember = "Name";
@@ -46,6 +50,7 @@ order by Seq
             this.comboColumnType.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             CellDropDownList dropdown = (CellDropDownList)CellDropDownList.GetGridCell("PMS_CriticalActivity");
@@ -60,8 +65,8 @@ order by Seq
                 ComboBox cb = eventArgs.Control as ComboBox;
                 if (cb != null)
                 {
-                    cb.SelectionChangeCommitted -= this.combo_SelectionChangeCommitted;
-                    cb.SelectionChangeCommitted += this.combo_SelectionChangeCommitted;
+                    cb.SelectionChangeCommitted -= this.Combo_SelectionChangeCommitted;
+                    cb.SelectionChangeCommitted += this.Combo_SelectionChangeCommitted;
                 }
             };
             base.OnFormLoaded();
@@ -80,7 +85,7 @@ order by Seq
             this.grid.Columns["NewTargetDate"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void combo_SelectionChangeCommitted(object sender, EventArgs e)
+        private void Combo_SelectionChangeCommitted(object sender, EventArgs e)
         {
             string newValue = ((Ict.Win.UI.DataGridViewComboBoxEditingControl)sender).EditingControlFormattedValue.ToString();
             DataRow dr = this.grid.GetDataRow(this.listControlBindingSource1.Position);
@@ -336,7 +341,7 @@ drop table #tmp
             this.HideWaitMessage();
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSPNo.Text) &&
                 MyUtility.Check.Empty(this.txtbrand.Text) &&
@@ -352,7 +357,7 @@ drop table #tmp
             this.Query();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             DualResult result;
@@ -396,41 +401,45 @@ and s.OrderID=t.OrderID and s.ColumnType=t.DropDownListID
 
 ";
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 try
                 {
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out dtResult, "#tmp", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
+                        throw new Exception(result.Messages.ToString());
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Save successful");
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
+                    transactionscope.Dispose();
+                    result = new DualResult(false, "Commit transaction error.", ex);
                     return;
                 }
                 finally
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                 }
             }
 
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            MyUtility.Msg.InfoBox("Save successful");
             this.Query();
         }
 
-        private void gridIcon1_AppendClick(object sender, EventArgs e)
+        private void GridIcon1_AppendClick(object sender, EventArgs e)
         {
             this.grid.ValidateControl();
             this.listControlBindingSource1.EndEdit();
@@ -457,7 +466,7 @@ and s.OrderID=t.OrderID and s.ColumnType=t.DropDownListID
             }
         }
 
-        private void gridIcon1_RemoveClick(object sender, EventArgs e)
+        private void GridIcon1_RemoveClick(object sender, EventArgs e)
         {
             this.grid.ValidateControl();
             this.listControlBindingSource1.EndEdit();

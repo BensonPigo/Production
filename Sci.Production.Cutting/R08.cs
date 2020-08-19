@@ -26,12 +26,17 @@ namespace Sci.Production.Cutting
         private decimal? Speed;
         private decimal? WorkHoursDay;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R08"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public R08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.Mdivision = this.txtMdivision1.Text;
@@ -50,6 +55,7 @@ namespace Sci.Production.Cutting
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             string sqlcmd = string.Empty;
@@ -424,6 +430,7 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail,#tmpCutRefNull
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.ShowWaitMessage("Excel Processing...");

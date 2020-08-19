@@ -591,7 +591,7 @@ where WorkOrderUkey={0}", masterID);
 
                     if (result == DialogResult.Yes)
                     {
-                        dr["WKETA"] = itemx.WKETA;
+                        dr["WKETA"] = Itemx.WKETA;
                     }
 
                     dr.EndEdit();
@@ -3898,7 +3898,7 @@ and MDivisionID = '{this.KeyWord}'");
                 {
                     form.Activate();
                     P07 activateForm = (P07)form;
-                    activateForm.setTxtSPNo(this.CurrentMaintain["ID"].ToString());
+                    activateForm.SetTxtSPNo(this.CurrentMaintain["ID"].ToString());
                     activateForm.Queryable();
                     return;
                 }
@@ -3931,7 +3931,6 @@ and MDivisionID = '{this.KeyWord}'");
             this.callP07.P07Data(this.CurrentMaintain["ID"].ToString());
         }
 
-
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             if (!this.AnyChange)
@@ -3963,6 +3962,7 @@ DEALLOCATE CURSOR_
                 DBProxy.Current.Execute(null, sqlcmd);
             }
         }
+
         /// <inheritdoc/>
         public static void ProcessColumns(DataRow currentRow)
         {

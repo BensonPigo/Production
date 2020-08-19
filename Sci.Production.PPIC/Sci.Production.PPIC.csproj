@@ -46,6 +46,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Sci.Production.PPIC.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\x86\Debug\Sci.Production.PPIC.XML</DocumentationFile>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>

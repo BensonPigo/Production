@@ -10,6 +10,10 @@ namespace Sci.Production.Shipping
     {
         private string exportID;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P03_COInformation"/> class.
+        /// </summary>
+        /// <param name="exportID"></param>
         public P03_COInformation(string exportID)
         {
             this.InitializeComponent();
@@ -21,6 +25,7 @@ namespace Sci.Production.Shipping
             this.Close();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

@@ -64,7 +64,7 @@
             this.btnExcelImport.TabIndex = 1;
             this.btnExcelImport.Text = "Excel Import";
             this.btnExcelImport.UseVisualStyleBackColor = true;
-            this.btnExcelImport.Click += new System.EventHandler(this.btnExcelImport_Click);
+            this.btnExcelImport.Click += new System.EventHandler(this.BtnExcelImport_Click);
             // 
             // panel2
             // 
@@ -83,7 +83,7 @@
             this.btnImportDate.TabIndex = 2;
             this.btnImportDate.Text = "Import Data";
             this.btnImportDate.UseVisualStyleBackColor = true;
-            this.btnImportDate.Click += new System.EventHandler(this.btnImportDate_Click);
+            this.btnImportDate.Click += new System.EventHandler(this.BtnImportDate_Click);
             // 
             // panel3
             // 

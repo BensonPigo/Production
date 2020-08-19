@@ -16,8 +16,13 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Planning
 {
+    /// <inheritdoc/>
     public partial class R05 : Sci.Win.Tems.PrintForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R05"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

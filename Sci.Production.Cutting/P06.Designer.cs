@@ -308,7 +308,7 @@
             this.btnBatchUpdate.TabIndex = 7;
             this.btnBatchUpdate.Text = "Batch Update";
             this.btnBatchUpdate.UseVisualStyleBackColor = true;
-            this.btnBatchUpdate.Click += new System.EventHandler(this.btnBatchUpdate_Click);
+            this.btnBatchUpdate.Click += new System.EventHandler(this.BtnBatchUpdate_Click);
             // 
             // P06
             // 

@@ -13,10 +13,15 @@ using System.Xml.Linq;
 
 namespace Sci.Production.Centralized
 {
+    /// <inheritdoc/>
     public partial class Sewing_P11 : Win.Tems.QueryForm
     {
         private string Type;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Sewing_P11"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public Sewing_P11(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -83,13 +88,12 @@ namespace Sci.Production.Centralized
                     List<string> mList = this.txtCentralizedmulitM1.Text.Split(',').ToList();
                     whereM = " where MDivisionID in ('" + string.Join("','", mList) + "')";
                     DualResult result = Ict.Result.True;
-                    DataTable data;
                     SqlConnection con;
                     using (con = new SqlConnection(connections))
                     {
                         con.Open();
                         string sqlcmd = $@"select distinct Factory=FTYGroup,nowConnection='{ss}' from Factory WITH (NOLOCK) {whereM} order by Factory";
-                        result = DBProxy.Current.SelectByConn(con, sqlcmd, out data);
+                        result = DBProxy.Current.SelectByConn(con, sqlcmd, out DataTable data);
                         if (!result)
                         {
                             this.ShowErr(result);
@@ -113,13 +117,12 @@ namespace Sci.Production.Centralized
                     List<string> fList = this.txtCentralizedmulitFactory1.Text.Split(',').ToList();
                     whereF = " where FtyGroup in ('" + string.Join("','", fList) + "')";
                     DualResult result = Ict.Result.True;
-                    DataTable data;
                     SqlConnection con;
                     using (con = new SqlConnection(connections))
                     {
                         con.Open();
                         string sqlcmd = $@"select distinct Factory=FTYGroup,nowConnection='{ss}' from Factory WITH (NOLOCK) {whereF} order by Factory";
-                        result = DBProxy.Current.SelectByConn(con, sqlcmd, out data);
+                        result = DBProxy.Current.SelectByConn(con, sqlcmd, out DataTable data);
                         if (!result)
                         {
                             this.ShowErr(result);
@@ -162,9 +165,15 @@ namespace Sci.Production.Centralized
             }
         }
 
+        /// <summary>
+        /// API Data
+        /// </summary>
         public class APIData
         {
-            public string message { get; set; }
+            /// <summary>
+            /// API Message
+            /// </summary>
+            public string Message { get; set; }
         }
 
         private void APILock(string factory, DateTime lockDate, string userID, string api, string nowConnection)
@@ -184,7 +193,7 @@ namespace Sci.Production.Centralized
                 response.EnsureSuccessStatusCode();
                 string responseBody = response.Content.ReadAsStringAsync().Result;
                 var jason = JsonConvert.DeserializeObject<APIData>(responseBody);
-                this.msgList.Add(factory + ":" + jason.message);
+                this.msgList.Add(factory + ":" + jason.Message);
             }
             catch (Exception ex)
             {

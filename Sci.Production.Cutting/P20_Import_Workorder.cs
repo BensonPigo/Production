@@ -9,19 +9,25 @@ using System.Linq;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P20_Import_Workorder : Win.Subs.Base
     {
         private string loginID = Env.User.UserID;
         private string keyWord = Env.User.Keyword;
-        DataTable gridTable;
-        DataTable detailTable;
-        DataTable currentdetailTable;
-        DataRow drCurrentMaintain;
+        private DataTable gridTable;
+        private DataTable detailTable;
+        private DataTable currentdetailTable;
+        private DataRow drCurrentMaintain;
 
-        public P20_Import_Workorder(DataRow _drCurrentMaintain, DataTable dt)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P20_Import_Workorder"/> class.
+        /// </summary>
+        /// <param name="drCurrentMaintain">Main DataRow</param>
+        /// <param name="dt">Detail Table</param>
+        public P20_Import_Workorder(DataRow drCurrentMaintain, DataTable dt)
         {
             this.InitializeComponent();
-            this.drCurrentMaintain = _drCurrentMaintain;
+            this.drCurrentMaintain = drCurrentMaintain;
             this.currentdetailTable = dt;
 
             if (MyUtility.Check.Empty(this.drCurrentMaintain["cDate"]))
@@ -34,12 +40,13 @@ namespace Sci.Production.Cutting
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
-            Layer.CellValidating += (s, e) =>
+            DataGridViewGeneratorNumericColumnSettings layer = new DataGridViewGeneratorNumericColumnSettings();
+            layer.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -87,7 +94,7 @@ namespace Sci.Production.Cutting
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("WorkOderLayer", header: "WorkOrder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("AccuCuttingLayer", header: "Accu. Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
-            .Numeric("CuttingLayer", header: "Cutting Layer", width: Widths.AnsiChars(5), integer_places: 5, maximum: 99999, minimum: 0, settings: Layer)
+            .Numeric("CuttingLayer", header: "Cutting Layer", width: Widths.AnsiChars(5), integer_places: 5, maximum: 99999, minimum: 0, settings: layer)
             .Numeric("LackingLayers", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2)
@@ -96,12 +103,12 @@ namespace Sci.Production.Cutting
             this.gridImport.Columns["CuttingLayer"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.dateEstCutDate.Value) &&
                 MyUtility.Check.Empty(this.txtSP.Text) &&
@@ -115,8 +122,8 @@ namespace Sci.Production.Cutting
             StringBuilder strSQLCmd = new StringBuilder();
             DateTime? estcutdate = this.dateEstCutDate.Value;
             string cutRef = this.txtCutRef.Text;
-            string SPNo = this.txtSP.Text;
-            string FactoryID = this.txtfactory.Text;
+            string sPNo = this.txtSP.Text;
+            string factoryID = this.txtfactory.Text;
             string condition = string.Join(",", this.currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["Workorderukey"].ToString() : string.Empty) + "'"));
             if (MyUtility.Check.Empty(condition))
             {
@@ -172,7 +179,9 @@ outer apply(select CuttingLayer = case when cl.CuttingLayer > a.Layer - isnull(a
 where mDivisionid = '{0}'
 and a.Layer > isnull(acc.AccuCuttingLayer,0)
 and CutRef != ''
-and a.ukey not in ( {1} ) ", this.keyWord, condition));
+and a.ukey not in ( {1} ) ",
+                this.keyWord,
+                condition));
             if (estcutdate.HasValue)
             {
                 strSQLCmd.Append(string.Format(
@@ -187,18 +196,18 @@ and a.ukey not in ( {1} ) ", this.keyWord, condition));
                 and a.CutRef = '{0}'", cutRef));
             }
 
-            if (!MyUtility.Check.Empty(SPNo))
+            if (!MyUtility.Check.Empty(sPNo))
             {
                 strSQLCmd.Append(string.Format(
                     @"
-                and a.orderID='{0}'", SPNo));
+                and a.orderID='{0}'", sPNo));
             }
 
-            if (!MyUtility.Check.Empty(FactoryID))
+            if (!MyUtility.Check.Empty(factoryID))
             {
                 strSQLCmd.Append(string.Format(
                     @"
-                and a.FactoryID='{0}'", FactoryID));
+                and a.FactoryID='{0}'", factoryID));
             }
 
             strSQLCmd.Append(@" order by cutref");
@@ -220,7 +229,7 @@ and a.ukey not in ( {1} ) ", this.keyWord, condition));
             }
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             DataRow[] selDr = this.gridTable.Select("Sel=1", string.Empty);

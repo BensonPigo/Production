@@ -8,8 +8,13 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class B49 : Win.Tems.Input1
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B49"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public B49(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -17,6 +22,7 @@ namespace Sci.Production.Shipping
             this.DefaultFilter = "NeedDeclare = 1";
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             this.txtSubconSupplier.TextBox1.ReadOnly = true;
@@ -24,7 +30,7 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
         }
 
-        private void txtCustomerCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtCustomerCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 @"select NLCode,HSCode,UnitID
@@ -50,7 +56,7 @@ order by NLCode",
             this.CurrentMaintain.EndEdit();
         }
 
-        private void txtCustomerCode_Validating(object sender, CancelEventArgs e)
+        private void TxtCustomerCode_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && this.txtCustomerCode.OldValue != this.txtCustomerCode.Text)
             {
@@ -89,6 +95,7 @@ and NLCode = '{0}'", this.txtCustomerCode.Text), out nLCodeDate))
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             // 修改表身資料,不寫入表頭EditName and EditDate

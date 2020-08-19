@@ -389,7 +389,7 @@
             this.comboType2.OldText = "";
             this.comboType2.Size = new System.Drawing.Size(203, 24);
             this.comboType2.TabIndex = 3;
-            this.comboType2.SelectedIndexChanged += new System.EventHandler(this.comboType2_SelectedIndexChanged);
+            this.comboType2.SelectedIndexChanged += new System.EventHandler(this.ComboType2_SelectedIndexChanged);
             // 
             // txtRemark
             // 
@@ -725,7 +725,7 @@
             this.txtSubconSupplier.Size = new System.Drawing.Size(170, 23);
             this.txtSubconSupplier.TabIndex = 4;
             this.txtSubconSupplier.TextBox1Binding = "";
-            this.txtSubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.txtSubconSupplier_Validating);
+            this.txtSubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSubconSupplier_Validating);
             // 
             // lbExVoucherID
             // 
@@ -761,8 +761,8 @@
             this.txtReason.Name = "txtReason";
             this.txtReason.Size = new System.Drawing.Size(75, 23);
             this.txtReason.TabIndex = 10;
-            this.txtReason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtReason_PopUp);
-            this.txtReason.Validating += new System.ComponentModel.CancelEventHandler(this.txtReason_Validating);
+            this.txtReason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtReason_PopUp);
+            this.txtReason.Validating += new System.ComponentModel.CancelEventHandler(this.TxtReason_Validating);
             // 
             // txtReasonDesc
             // 

@@ -85,6 +85,7 @@ namespace Sci.Production.Shipping
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnDeleteBefore()
         {
             // 該單Approved / Junk都不允許調整資料

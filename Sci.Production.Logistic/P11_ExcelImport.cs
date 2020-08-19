@@ -11,19 +11,26 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Logistic
 {
+    /// <inheritdoc/>
     public partial class P11_ExcelImport : Win.Subs.Base
     {
         private DataTable detailData;
         private DataRow master;
         private DataTable GridData = new DataTable();
 
-        public P11_ExcelImport(DataRow _master, DataTable DetailData)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P11_ExcelImport"/> class.
+        /// </summary>
+        /// <param name="master">DataRow Master</param>
+        /// <param name="detailData">DataTable Detail</param>
+        public P11_ExcelImport(DataRow master, DataTable detailData)
         {
             this.InitializeComponent();
-            this.detailData = DetailData;
-            this.master = _master;
+            this.detailData = detailData;
+            this.master = master;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -64,10 +71,12 @@ namespace Sci.Production.Logistic
 
         }
 
-        private void btnExcelImport_Click(object sender, EventArgs e)
+        private void BtnExcelImport_Click(object sender, EventArgs e)
         {
             this.openFileDialog1.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls";
-            if (this.openFileDialog1.ShowDialog() == DialogResult.OK) // 開窗且有選擇檔案
+
+            // 開窗且有選擇檔案
+            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 this.ShowWaitMessage("Loading...");
                 string filename = this.openFileDialog1.FileName;
@@ -93,13 +102,13 @@ namespace Sci.Production.Logistic
                 // 檢查Excel格式
                 Microsoft.Office.Interop.Excel.Range range = worksheet.Range[$"A{1}:AE{1}"];
                 object[,] objCellArray = range.Value;
-                int[] ItemPosition = new int[intColumnsCount + 1];
-                string[] ItemCheck = { string.Empty, "Packing No.", "CTN#" };
-                string[] ExcelItem = new string[intColumnsCount + 1];
+                int[] itemPosition = new int[intColumnsCount + 1];
+                string[] itemCheck = { string.Empty, "Packing No.", "CTN#" };
+                string[] excelItem = new string[intColumnsCount + 1];
 
                 for (int y = 1; y <= intColumnsCount; y++)
                 {
-                    ExcelItem[y] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, y], "C").ToString().ToUpper();
+                    excelItem[y] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, y], "C").ToString().ToUpper();
                 }
 
                 StringBuilder columnName = new StringBuilder();
@@ -109,16 +118,16 @@ namespace Sci.Production.Logistic
                 {
                     for (int y = 1; y <= intColumnsCount; y++)
                     {
-                        if (ExcelItem[y] == ItemCheck[x].ToUpper())
+                        if (excelItem[y] == itemCheck[x].ToUpper())
                         {
-                            ItemPosition[x] = y;
+                            itemPosition[x] = y;
                             break;
                         }
                     }
 
-                    if (ItemPosition[x] == 0)
+                    if (itemPosition[x] == 0)
                     {
-                        columnName.Append("< " + ItemCheck[x].ToString() + " >, ");
+                        columnName.Append("< " + itemCheck[x].ToString() + " >, ");
                     }
                 }
 
@@ -143,8 +152,8 @@ namespace Sci.Production.Logistic
 
                         DataRow newRow = this.GridData.NewRow();
                         newRow["ID"] = this.master["ID"].ToString();
-                        newRow["PackingListID"] = (objCellArray[1, ItemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]].ToString().Trim(), "C");
-                        newRow["CTNStartNO"] = (objCellArray[1, ItemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]].ToString().Trim(), "C");
+                        newRow["PackingListID"] = (objCellArray[1, itemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[1]].ToString().Trim(), "C");
+                        newRow["CTNStartNO"] = (objCellArray[1, itemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[2]].ToString().Trim(), "C");
 
                         newRow = this.StatusInsert(newRow);
 
@@ -180,13 +189,12 @@ namespace Sci.Production.Logistic
 
         private DataRow StatusInsert(DataRow newRow)
         {
-            string PackingListID = newRow["PackingListID"].ToString();
-            string CTNStartNo = newRow["CTNStartNO"].ToString();
+            string packingListID = newRow["PackingListID"].ToString();
+            string cTNStartNo = newRow["CTNStartNO"].ToString();
 
-            DataTable dt;
             DualResult result;
-            string sqlCmd = $"SELECT * FROM PackingList_Detail WHERE ID='{PackingListID}' AND CTNStartNO='{CTNStartNo}' AND CTNQty = 1 AND QtyPerCTN > 0";
-            result = DBProxy.Current.Select(null, sqlCmd, out dt);
+            string sqlCmd = $"SELECT * FROM PackingList_Detail WHERE ID='{packingListID}' AND CTNStartNO='{cTNStartNo}' AND CTNQty = 1 AND QtyPerCTN > 0";
+            result = DBProxy.Current.Select(null, sqlCmd, out DataTable dt);
 
             // 1
             if (dt.Rows.Count == 0)
@@ -195,27 +203,27 @@ namespace Sci.Production.Logistic
                 return newRow;
             }
 
-            DataRow PackingList_Detail = dt.Rows[0];
+            DataRow packingList_Detail = dt.Rows[0];
 
             // 2
-            if (!MyUtility.Check.Empty(PackingList_Detail["TransferCFADate"]))
+            if (!MyUtility.Check.Empty(packingList_Detail["TransferCFADate"]))
             {
                 newRow["Status"] = "Catron in CFA.";
             }
 
             // 3
-            if (MyUtility.Check.Empty(PackingList_Detail["ReceiveDate"]))
+            if (MyUtility.Check.Empty(packingList_Detail["ReceiveDate"]))
             {
                 newRow["Status"] = "Catron not in Clog.";
             }
 
             // 4
-            if (MyUtility.Check.Seek($"SELECT PulloutID FROM PackingList WHERE ID='{PackingListID}' AND PulloutID  <> '' AND PulloutID IS NOT NULL "))
+            if (MyUtility.Check.Seek($"SELECT PulloutID FROM PackingList WHERE ID='{packingListID}' AND PulloutID  <> '' AND PulloutID IS NOT NULL "))
             {
                 newRow["Status"] = "Catron already pullout.";
             }
 
-            string existIData = MyUtility.GetValue.Lookup($"SELECT TOP 1 ID  FROM ClogGarmentDispose_Detail WHERE PackingListID='{PackingListID}' AND CTNStartNO='{CTNStartNo}' AND ID != '{this.master["ID"]}'");
+            string existIData = MyUtility.GetValue.Lookup($"SELECT TOP 1 ID  FROM ClogGarmentDispose_Detail WHERE PackingListID='{packingListID}' AND CTNStartNO='{cTNStartNo}' AND ID != '{this.master["ID"]}'");
 
             // 5
             if (!MyUtility.Check.Empty(existIData))
@@ -250,13 +258,13 @@ select
         pd.ClogLocationID
 from PackingList_Detail pd with (nolock) 
 left join Orders o with (nolock) on o.ID = pd.OrderID
-WHERE pd.ID='{PackingListID}' AND pd.CTNStartNO='{CTNStartNo}'
+WHERE pd.ID='{packingListID}' AND pd.CTNStartNO='{cTNStartNo}'
 ";
             result = DBProxy.Current.Select(null, sqlCmd, out dt);
 
             if (dt.Rows.Count > 0)
             {
-                if (PackingListID == dt.Rows[0]["ID"].ToString() && CTNStartNo == dt.Rows[0]["CTNStartNO"].ToString())
+                if (packingListID == dt.Rows[0]["ID"].ToString() && cTNStartNo == dt.Rows[0]["CTNStartNO"].ToString())
                 {
                     newRow["OrderID"] = dt.Rows[0]["OrderID"].ToString();
                     newRow["CustPoNo"] = dt.Rows[0]["CustPoNo"].ToString();
@@ -272,7 +280,7 @@ WHERE pd.ID='{PackingListID}' AND pd.CTNStartNO='{CTNStartNo}'
             return newRow;
         }
 
-        private void btnImportDate_Click(object sender, EventArgs e)
+        private void BtnImportDate_Click(object sender, EventArgs e)
         {
             if (this.listControlBindingSource1 == null)
             {

@@ -546,7 +546,7 @@
             0,
             0,
             0});
-            this.numBeginBundleGroup.Validated += new System.EventHandler(this.numBeginBundleGroup_Validated);
+            this.numBeginBundleGroup.Validated += new System.EventHandler(this.NumBeginBundleGroup_Validated);
             // 
             // displayPrintDate
             // 
@@ -602,7 +602,7 @@
             this.txtCutRef.Name = "txtCutRef";
             this.txtCutRef.Size = new System.Drawing.Size(73, 23);
             this.txtCutRef.TabIndex = 1;
-            this.txtCutRef.Validating += new System.ComponentModel.CancelEventHandler(this.txtCutRef_Validating);
+            this.txtCutRef.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCutRef_Validating);
             // 
             // txtSPNo
             // 
@@ -613,8 +613,8 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(108, 23);
             this.txtSPNo.TabIndex = 2;
-            this.txtSPNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSPNo_PopUp);
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
+            this.txtSPNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSPNo_PopUp);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSPNo_Validating);
             // 
             // txtItem
             // 
@@ -704,8 +704,8 @@
             this.txtArticle.Name = "txtArticle";
             this.txtArticle.Size = new System.Drawing.Size(73, 23);
             this.txtArticle.TabIndex = 12;
-            this.txtArticle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtArticle_PopUp);
-            this.txtArticle.Validating += new System.ComponentModel.CancelEventHandler(this.txtArticle_Validating);
+            this.txtArticle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtArticle_PopUp);
+            this.txtArticle.Validating += new System.ComponentModel.CancelEventHandler(this.TxtArticle_Validating);
             // 
             // txtColorID
             // 
@@ -726,7 +726,7 @@
             this.btnGenerate.TabIndex = 23;
             this.btnGenerate.Text = "Generate";
             this.btnGenerate.UseVisualStyleBackColor = true;
-            this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
+            this.btnGenerate.Click += new System.EventHandler(this.BtnGenerate_Click);
             // 
             // btnGarmentList
             // 
@@ -737,7 +737,7 @@
             this.btnGarmentList.TabIndex = 2;
             this.btnGarmentList.Text = "Garment List";
             this.btnGarmentList.UseVisualStyleBackColor = true;
-            this.btnGarmentList.Click += new System.EventHandler(this.btnGarmentList_Click);
+            this.btnGarmentList.Click += new System.EventHandler(this.BtnGarmentList_Click);
             // 
             // txtLineNo
             // 
@@ -748,8 +748,8 @@
             this.txtLineNo.Name = "txtLineNo";
             this.txtLineNo.Size = new System.Drawing.Size(73, 23);
             this.txtLineNo.TabIndex = 18;
-            this.txtLineNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLineNo_PopUp);
-            this.txtLineNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtLineNo_Validating);
+            this.txtLineNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtLineNo_PopUp);
+            this.txtLineNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtLineNo_Validating);
             // 
             // labelFabPanelCode
             // 

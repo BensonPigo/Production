@@ -1206,7 +1206,7 @@
             0,
             0,
             0});
-            this.numTotalDefectPoints.Validated += new System.EventHandler(this.numTotalDefectPoints_Validated);
+            this.numTotalDefectPoints.Validated += new System.EventHandler(this.NumTotalDefectPoints_Validated);
             // 
             // label1
             // 

@@ -6,20 +6,31 @@ using System.Data;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P01_MarkerList : Win.Subs.Input4Plus
     {
-        DataRow MasterData;
+        private DataRow MasterData;
 
-        public P01_MarkerList(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string tablename, DataRow MasterData)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P01_MarkerList"/> class.
+        /// </summary>
+        /// <param name="canedit">Can Edit</param>
+        /// <param name="keyvalue1">keyvalue1</param>
+        /// <param name="keyvalue2">keyvalue2</param>
+        /// <param name="keyvalue3">keyvalue3</param>
+        /// <param name="tablename">Table Name</param>
+        /// <param name="masterData">MasterData</param>
+        public P01_MarkerList(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string tablename, DataRow masterData)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
 
             this.DetailGridAlias = "Order_MarkerList_SizeQty";
             this.DetailKeyField = "Order_MarkerListUkey";
-            this.MasterData = MasterData;
+            this.MasterData = masterData;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery(out DataTable datas)
         {
             datas = null;
@@ -55,6 +66,7 @@ Where mark.id ='{0}' order by mark.Seq",
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -68,12 +80,14 @@ Where mark.id ='{0}' order by mark.Seq",
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnGridRowChanged()
         {
             base.OnGridRowChanged();
             this.SumSizeQty();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridRowChanged()
         {
             base.OnDetailGridRowChanged();

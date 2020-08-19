@@ -49,7 +49,7 @@
             this.dateSOCfmDate.Name = "dateSOCfmDate";
             this.dateSOCfmDate.Size = new System.Drawing.Size(130, 23);
             this.dateSOCfmDate.TabIndex = 58;
-            this.dateSOCfmDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateSOCfmDate_Validating);
+            this.dateSOCfmDate.Validating += new System.ComponentModel.CancelEventHandler(this.DateSOCfmDate_Validating);
             // 
             // btnConfirm
             // 
@@ -60,7 +60,7 @@
             this.btnConfirm.TabIndex = 59;
             this.btnConfirm.Text = "Confirm";
             this.btnConfirm.UseVisualStyleBackColor = true;
-            this.btnConfirm.Click += new System.EventHandler(this.btnConfirm_Click);
+            this.btnConfirm.Click += new System.EventHandler(this.BtnConfirm_Click);
             // 
             // btnCancel
             // 
@@ -71,7 +71,7 @@
             this.btnCancel.TabIndex = 60;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // P05_SOCFMDate
             // 

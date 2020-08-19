@@ -42,7 +42,7 @@
             // 
             // gridbs
             // 
-            this.gridbs.PositionChanged += new System.EventHandler(this.gridbs_PositionChanged);
+            this.gridbs.PositionChanged += new System.EventHandler(this.Gridbs_PositionChanged);
             // 
             // btmcont
             // 
@@ -118,7 +118,7 @@
             this.btnBreakdown.TabIndex = 103;
             this.btnBreakdown.Text = "Breakdown";
             this.btnBreakdown.UseVisualStyleBackColor = true;
-            this.btnBreakdown.Click += new System.EventHandler(this.btnBreakdown_Click);
+            this.btnBreakdown.Click += new System.EventHandler(this.BtnBreakdown_Click);
             // 
             // editpacking
             // 

@@ -8,24 +8,30 @@ using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P01_Cutpartcheck : Win.Subs.Base
     {
         private string _cutid;
         private string _WorkType;
 
-        public P01_Cutpartcheck(string cID, string WorkType)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P01_Cutpartcheck"/> class.
+        /// </summary>
+        /// <param name="cID">Cut ID</param>
+        /// <param name="workType">WorkType</param>
+        public P01_Cutpartcheck(string cID, string workType)
         {
             this.InitializeComponent();
 
             this.Text = string.Format("Cut Parts Check<SP:{0}>)", cID);
             this._cutid = cID;
-            this._WorkType = WorkType;
-            this.requery();
-            this.gridSetup();
+            this._WorkType = workType;
+            this.ReQuery();
+            this.GridSetup();
             this.gridCutpartcheck.AutoResizeColumns();
         }
 
-        private void requery()
+        private void ReQuery()
         {
             #region CUTTING_P01_CutPartsCheck  [Prd Qty]數量計算
             string sql = string.Empty, sql2 = string.Empty;
@@ -54,7 +60,7 @@ namespace Sci.Production.Cutting
 	                                    from (Select id,POID from Orders z WITH (NOLOCK) where z.cuttingsp = '{0}') as x,order_Qty y 
 	                                    where y.id = x.id", this._cutid);
             }
-            else if (this._WorkType == "2") // WorkType == "2"
+            else if (this._WorkType == "2")
             {
                 sql = string.Format(
                     @"with a as (
@@ -107,9 +113,10 @@ namespace Sci.Production.Cutting
         select c.*,z.seq
         from c
         inner join Order_SizeCode z WITH (NOLOCK) on z.id = c.CuttingSP and z.SizeCode = c.SizeCode
-        order by c.id,article,z.seq,PatternPanel", this._cutid, sql2);
-                DataTable gridtb;
-                DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
+        order by c.id,article,z.seq,PatternPanel",
+            this._cutid,
+            sql2);
+                DualResult dr = DBProxy.Current.Select(null, sqlcmd, out DataTable gridtb);
 
                 for (int i = gridtb.Rows.Count - 1; i > 0; i--)
                 {
@@ -133,7 +140,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void gridSetup()
+        private void GridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.gridCutpartcheck)
                 .Text("id", header: "SP #", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -166,7 +173,7 @@ namespace Sci.Production.Cutting
             #endregion
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

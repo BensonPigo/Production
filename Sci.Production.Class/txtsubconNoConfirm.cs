@@ -155,10 +155,11 @@ namespace Sci.Production.Class
             }
 
             selectCommand += " Order by ID";
-            DataTable tbSelect;
-            DBProxy.Current.Select("Production", selectCommand, out tbSelect);
-            SelectItem item = new SelectItem(tbSelect, "ID,Abb,Name", "9,13,40", this.Text, false, ",", "ID,Abb,Name");
-            item.Size = new System.Drawing.Size(690, 555);
+            DBProxy.Current.Select("Production", selectCommand, out DataTable tbSelect);
+            SelectItem item = new SelectItem(tbSelect, "ID,Abb,Name", "9,13,40", this.Text, false, ",", "ID,Abb,Name")
+            {
+                Size = new System.Drawing.Size(690, 555),
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -199,9 +200,8 @@ namespace Sci.Production.Class
                         DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                         DataRow row1 = grid.GetDataRow(e.RowIndex);
 
-                        DataTable subTb;
                         string sql = "select ID,Abb,Name from LocalSupp WITH (NOLOCK) where  Junk =  0 order by ID";
-                        DualResult duR = DBProxy.Current.Select("Production", sql, out subTb);
+                        DualResult duR = DBProxy.Current.Select("Production", sql, out DataTable subTb);
                         if (duR)
                         {
                             SelectItem sele = new SelectItem(subTb, "ID,Abb,Name", "10,20,30", row[suppid].ToString());
@@ -232,13 +232,13 @@ namespace Sci.Production.Class
                         return;
                     }
 
-                    DataRow row = grid.GetDataRow<DataRow>(e.RowIndex), sqlRow;
+                    DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                     string oldValue = row[suppid].ToString();
                     string newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
                     string sql = string.Format("select ID,Abb,Name from LocalSupp WITH (NOLOCK) where  Junk =  0 and ID = '{0}'", newValue);
                     if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
                     {
-                        if (!MyUtility.Check.Seek(sql, out sqlRow, "Production"))
+                        if (!MyUtility.Check.Seek(sql, out DataRow sqlRow, "Production"))
                         {
                             row[suppid] = string.Empty;
                             row.EndEdit();

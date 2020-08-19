@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Centralized
 {
+    /// <inheritdoc/>
     public partial class R21 : Win.Tems.PrintForm
     {
         private DateTime? buyerDlv1;
@@ -816,6 +817,5 @@ and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
 
             return sqlCmd;
         }
-
     }
 }

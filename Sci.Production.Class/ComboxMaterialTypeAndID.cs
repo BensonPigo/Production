@@ -39,7 +39,7 @@ namespace Sci.Production.Class
         {
             string type = this.comboMaterialType.SelectedValue.ToString();
             if (type.Empty() || type.Contains("All"))
-            {   
+            {
                 return;
             }
 

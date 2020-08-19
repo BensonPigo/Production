@@ -42,6 +42,7 @@ namespace Sci.Production.Centralized
             this.comboM.Text = Env.User.Keyword;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             #region load combobox Location M 預設顯示登入的M

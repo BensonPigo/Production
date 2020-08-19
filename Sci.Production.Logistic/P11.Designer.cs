@@ -234,7 +234,7 @@
             this.btnDownloadExcel.TabIndex = 6;
             this.btnDownloadExcel.Text = "Download Excel";
             this.btnDownloadExcel.UseVisualStyleBackColor = true;
-            this.btnDownloadExcel.Click += new System.EventHandler(this.btnDownloadExcel_Click);
+            this.btnDownloadExcel.Click += new System.EventHandler(this.BtnDownloadExcel_Click);
             // 
             // btnExcelImport
             // 
@@ -245,7 +245,7 @@
             this.btnExcelImport.TabIndex = 5;
             this.btnExcelImport.Text = "Excel Import";
             this.btnExcelImport.UseVisualStyleBackColor = true;
-            this.btnExcelImport.Click += new System.EventHandler(this.btnExcelImport_Click);
+            this.btnExcelImport.Click += new System.EventHandler(this.BtnExcelImport_Click);
             // 
             // P11
             // 

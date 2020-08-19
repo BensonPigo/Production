@@ -846,7 +846,7 @@ from #tmp";
             this.gridComplete.ValidateControl();
         }
 
-        private msg p13_msg = new msg();
+        private Msg p13_msg = new Msg();
 
         private void checkOnly_CheckedChanged(object sender, EventArgs e)
         {

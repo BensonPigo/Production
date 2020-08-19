@@ -7,10 +7,14 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P10_BatchDelete : Win.Subs.Base
     {
         private DataTable dtQuery;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P10_BatchDelete"/> class.
+        /// </summary>
         public P10_BatchDelete()
         {
             this.InitializeComponent();
@@ -23,29 +27,29 @@ namespace Sci.Production.Cutting
 
         private void QueryData()
         {
-            DateTime? AddDate1, AddDate2, EstCutDate;
-            AddDate1 = this.dateAddDate.Value1;
-            AddDate2 = this.dateAddDate.Value2;
-            EstCutDate = this.dateEstCutDate.Value;
-            if ((MyUtility.Check.Empty(AddDate1) && MyUtility.Check.Empty(AddDate2)) &&
+            DateTime? addDate1, addDate2, estCutDate;
+            addDate1 = this.dateAddDate.Value1;
+            addDate2 = this.dateAddDate.Value2;
+            estCutDate = this.dateEstCutDate.Value;
+            if ((MyUtility.Check.Empty(addDate1) && MyUtility.Check.Empty(addDate2)) &&
                 MyUtility.Check.Empty(this.txtCutRef.Text) &&
                 MyUtility.Check.Empty(this.txtSPNo.Text) &&
                 MyUtility.Check.Empty(this.txtSPNo1.Text) &&
-                MyUtility.Check.Empty(EstCutDate))
+                MyUtility.Check.Empty(estCutDate))
             {
                 MyUtility.Msg.WarningBox("search condition can't be all empty!!");
                 return;
             }
 
             string sqlwhere = string.Empty;
-            if (!MyUtility.Check.Empty(AddDate1))
+            if (!MyUtility.Check.Empty(addDate1))
             {
-                sqlwhere += $@" and convert(date, b.adddate)  between '{Convert.ToDateTime(AddDate1).ToString("d")}' and '{Convert.ToDateTime(AddDate2).ToString("d")}'";
+                sqlwhere += $@" and convert(date, b.adddate)  between '{Convert.ToDateTime(addDate1).ToString("d")}' and '{Convert.ToDateTime(addDate2).ToString("d")}'";
             }
 
-            if (!MyUtility.Check.Empty(EstCutDate))
+            if (!MyUtility.Check.Empty(estCutDate))
             {
-                sqlwhere += $@" and estdate.estcutdate = '{Convert.ToDateTime(EstCutDate).ToString("d")}'";
+                sqlwhere += $@" and estdate.estcutdate = '{Convert.ToDateTime(estCutDate).ToString("d")}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtCutRef.Text))
@@ -111,6 +115,7 @@ where 1=1
             this.HideWaitMessage();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

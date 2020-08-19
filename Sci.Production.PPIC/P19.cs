@@ -5,8 +5,13 @@ using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class P19 : Win.Tems.QueryForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P19"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P19(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -55,10 +60,9 @@ namespace Sci.Production.PPIC
                 return;
             }
 
-            DateTime inputDate;
             string sqlCmd = string.Empty;
 
-            if (!DateTime.TryParse(this.dateInputDate.Text, out inputDate))
+            if (!DateTime.TryParse(this.dateInputDate.Text, out DateTime inputDate))
             {
                 inputDate = DateTime.Now;
             }

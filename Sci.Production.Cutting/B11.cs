@@ -14,6 +14,42 @@ namespace Sci.Production.Cutting
     public partial class B11 : Win.Tems.Input1
     {
         /// <summary>
+        /// Default Query Sql
+        /// </summary>
+        /// <returns>Sql</returns>
+        public static string DefaultQuerySql()
+        {
+            return $@"
+SELECT seq = 0, 
+       subprocessid = s.id, 
+       s.artworktypeid,
+    StyleUkey=0
+FROM   subprocess s WITH (nolock) 
+WHERE  s.junk = 0 
+       AND s.isselection = 1
+ORDER  BY s.seq ASC
+";
+        }
+
+        /// <summary>
+        /// B10 Query Sql
+        /// </summary>
+        /// <returns>Sql</returns>
+        public static string B10_QuerySql()
+        {
+            return $@"
+SELECT s.seq,
+       subprocessid = s.id, 
+       s.artworktypeid,
+    StyleUkey=0
+FROM   subprocess s WITH (nolock) 
+WHERE  s.junk = 0 
+       AND s.isselection = 1
+ORDER  BY s.seq ASC
+";
+        }
+
+        /// <summary>
         /// B11
         /// </summary>
         /// <param name="menuitem">menuitem</param>
@@ -27,6 +63,7 @@ namespace Sci.Production.Cutting
 
         private DataTable Dt;
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             // 檢查是否存在style
@@ -82,6 +119,7 @@ and s.brandid = '{this.txtbrand1.Text}'
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             // ProcessWithDatatable無法解析tinyint, 先換成int
@@ -104,8 +142,7 @@ from #tmp t
 left join SubProcessSeq_Detail s on t.StyleUkey = s.StyleUkey and t.SubProcessID = s.SubProcessID
 where s.seq is null and t.seq > 0
 ";
-            DataTable dt;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtCloned, string.Empty, sqlcmd, out dt);
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtCloned, string.Empty, sqlcmd, out DataTable dt);
             if (!result)
             {
                 return result;
@@ -114,6 +151,7 @@ where s.seq is null and t.seq > 0
             return base.ClickSave();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -128,6 +166,7 @@ where s.seq is null and t.seq > 0
             this.listControlBindingSource1.DataSource = this.Dt;
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -136,11 +175,13 @@ where s.seq is null and t.seq > 0
             this.txtbrand1.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickCopyBefore()
         {
             return base.ClickCopyBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickCopyAfter()
         {
             base.ClickCopyAfter();
@@ -149,6 +190,7 @@ where s.seq is null and t.seq > 0
             this.CurrentMaintain["BrandID"] = string.Empty;
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             string sqlcmd = $@"delete SubProcessSeq_Detail where styleukey = {this.CurrentMaintain["styleukey"]}";
@@ -161,6 +203,7 @@ where s.seq is null and t.seq > 0
             return base.ClickDeletePost();
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
@@ -180,12 +223,14 @@ where s.seq is null and t.seq > 0
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             this.Query();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -295,7 +340,7 @@ ORDER  BY ss.seq, s.seq
         /// <summary>
         /// 上移
         /// </summary>
-        /// <param name="dataGridView"></param>
+        /// <param name="dataGridView">UI Grid</param>
         public void UpDataGridView(Win.UI.Grid dataGridView)
         {
             try
@@ -333,7 +378,7 @@ ORDER  BY ss.seq, s.seq
         /// <summary>
         /// 下移
         /// </summary>
-        /// <param name="dataGridView"></param>
+        /// <param name="dataGridView">UI Grid</param>
         public void DownDataGridView(Win.UI.Grid dataGridView)
         {
             try
@@ -366,34 +411,6 @@ ORDER  BY ss.seq, s.seq
             {
                 MessageBox.Show(ex.ToString());
             }
-        }
-
-        public static string DefaultQuerySql()
-        {
-            return $@"
-SELECT seq = 0, 
-       subprocessid = s.id, 
-       s.artworktypeid,
-    StyleUkey=0
-FROM   subprocess s WITH (nolock) 
-WHERE  s.junk = 0 
-       AND s.isselection = 1
-ORDER  BY s.seq ASC
-";
-        }
-
-        public static string B10_QuerySql()
-        {
-            return $@"
-SELECT s.seq,
-       subprocessid = s.id, 
-       s.artworktypeid,
-    StyleUkey=0
-FROM   subprocess s WITH (nolock) 
-WHERE  s.junk = 0 
-       AND s.isselection = 1
-ORDER  BY s.seq ASC
-";
         }
     }
 }

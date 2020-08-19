@@ -88,8 +88,6 @@ namespace Sci.Production.PPIC
 
                 string seq1 = seqSplit[0];
                 string seq2 = seqSplit[1];
-
-                DataRow firData;
                 string sqlCmd = string.Format(
                     @"select f.Seq1,f.Seq2,isnull(psd.ColorID,'') as ColorID,isnull(psd.Refno,'') as Refno,
 isnull(psd.SCIRefno,'') as SCIRefno,iif(e.Eta is null, r.ETA, e.Eta) as ETA,isnull(r.ExportId,'') as ExportId,
@@ -106,7 +104,7 @@ group by f.Seq1,f.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.E
                     seq1,
                     seq2);
 
-                if (MyUtility.Check.Seek(sqlCmd, out firData))
+                if (MyUtility.Check.Seek(sqlCmd, out DataRow firData))
                 {
                     this.CurrentData["Seq"] = this.txtSEQ.Text;
                     this.CurrentData["Seq1"] = firData["Seq1"];
@@ -124,7 +122,6 @@ group by f.Seq1,f.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.E
                 }
                 else
                 {
-                    DataRow poData;
                     sqlCmd = string.Format(
                         @"select psd.Refno,psd.SCIRefno,psd.seq1,psd.seq2,psd.FabricType,psd.ColorID, 
 dbo.getmtldesc(psd.ID,psd.SEQ1,psd.SEQ2,2,0) as Description, psd.StockUnit
@@ -144,7 +141,7 @@ and mpd.InQty > 0",
                         seq2,
                         Env.User.Keyword);
 
-                    if (!MyUtility.Check.Seek(sqlCmd, out poData))
+                    if (!MyUtility.Check.Seek(sqlCmd, out DataRow poData))
                     {
                         this.CurrentData["Seq"] = string.Empty;
                         this.CurrentData["Seq1"] = string.Empty;
@@ -185,8 +182,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
                         MyUtility.Convert.GetString(this.CurrentData["Seq1"]),
                         MyUtility.Convert.GetString(this.CurrentData["Seq2"]));
 
-                    DataTable receiveData;
-                    DualResult result = DBProxy.Current.Select(null, sqlCmd, out receiveData);
+                    DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable receiveData);
                     if (result)
                     {
                         if (receiveData.Rows.Count <= 0)
@@ -261,8 +257,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
                     MyUtility.Convert.GetString(this.CurrentData["Seq1"]),
                     MyUtility.Convert.GetString(this.CurrentData["Seq2"]));
 
-                DataTable receiveData;
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out receiveData);
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable receiveData);
                 if (result)
                 {
                     IList<DataRow> selectedReceiveData;
@@ -373,7 +368,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
             }
         }
 
-        private void numTotalDefectPoints_Validated(object sender, EventArgs e)
+        private void NumTotalDefectPoints_Validated(object sender, EventArgs e)
         {
             if (this.EditMode)
             {

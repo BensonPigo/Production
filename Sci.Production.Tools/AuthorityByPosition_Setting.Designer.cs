@@ -112,7 +112,7 @@
             this.btnAllControl.TabIndex = 26;
             this.btnAllControl.Text = "All Control";
             this.btnAllControl.UseVisualStyleBackColor = true;
-            this.btnAllControl.Click += new System.EventHandler(this.btnAllControl_Click);
+            this.btnAllControl.Click += new System.EventHandler(this.BtnAllControl_Click);
             // 
             // btnReadonly
             // 
@@ -122,7 +122,7 @@
             this.btnReadonly.TabIndex = 4;
             this.btnReadonly.Text = "Readonly";
             this.btnReadonly.UseVisualStyleBackColor = true;
-            this.btnReadonly.Click += new System.EventHandler(this.btnReadonly_Click);
+            this.btnReadonly.Click += new System.EventHandler(this.BtnReadonly_Click);
             // 
             // checkJunk
             // 
@@ -328,7 +328,7 @@
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // btnUndo
             // 
@@ -338,7 +338,7 @@
             this.btnUndo.TabIndex = 3;
             this.btnUndo.Text = "Undo";
             this.btnUndo.UseVisualStyleBackColor = true;
-            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
+            this.btnUndo.Click += new System.EventHandler(this.BtnUndo_Click);
             // 
             // AuthorityByPosition_Setting
             // 

@@ -63,8 +63,8 @@ namespace Sci.Production.Class
                     有列在 AccountNoSetting 且 UnselectableShipB03 有勾選會計科目皆不可使用
 
                     判斷方法
-                    1.	統治科目有勾選則『底下所有子科目』皆無法使用
-                    2.	若統制科目沒有勾選則『依照子科目判斷是否有勾選』
+                    1.統治科目有勾選則『底下所有子科目』皆無法使用
+                    2.若統制科目沒有勾選則『依照子科目判斷是否有勾選』
 
                 */
 
@@ -89,8 +89,10 @@ WHERE Junk = 0
 AND ID = @ID
 ORDER BY ID
 ";
-                List<SqlParameter> paras = new List<SqlParameter>();
-                paras.Add(new SqlParameter("@ID", textValue));
+                List<SqlParameter> paras = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", textValue),
+                };
 
                 if (!MyUtility.Check.Seek(cmd, paras))
                 {
@@ -121,8 +123,8 @@ ORDER BY ID
                 有列在 AccountNoSetting 且 UnselectableShipB03 有勾選會計科目皆不可使用
 
                 判斷方法
-                1.	統治科目有勾選則『底下所有子科目』皆無法使用
-                2.	若統制科目沒有勾選則『依照子科目判斷是否有勾選』
+                1.統治科目有勾選則『底下所有子科目』皆無法使用
+                2.若統制科目沒有勾選則『依照子科目判斷是否有勾選』
 
             */
             string b03Filter = $@"
@@ -167,6 +169,7 @@ ORDER BY ID
                     this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                     return;
                 }
+
                 string b03Filter = $@"
 AND ID NOT IN (
 		SELECT ID
@@ -187,8 +190,10 @@ WHERE Junk = 0
 AND ID = @ID
 ORDER BY ID
 ";
-                List<SqlParameter> paras = new List<SqlParameter>();
-                paras.Add(new SqlParameter("@ID", newValue));
+                List<SqlParameter> paras = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", newValue),
+                };
 
                 if (!MyUtility.Check.Seek(cmd, paras))
                 {

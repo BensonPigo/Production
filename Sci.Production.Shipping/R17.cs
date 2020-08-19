@@ -18,12 +18,17 @@ namespace Sci.Production.Shipping
         private string Brand;
         private DataTable PrintTable;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R17"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public R17(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
@@ -51,6 +56,7 @@ namespace Sci.Production.Shipping
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             string where = string.Empty;
@@ -182,6 +188,7 @@ drop table #tmp,#DistinctSeq,#diffSeq,#diffSeqData
             return DBProxy.Current.Select(null, sqlcmd, out this.PrintTable);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.SetCount(this.PrintTable.Rows.Count);

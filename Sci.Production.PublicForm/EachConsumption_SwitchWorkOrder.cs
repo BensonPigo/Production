@@ -13,12 +13,17 @@ using System.Collections.Generic;
 
 namespace Sci.Production.PublicForm
 {
+    /// <inheritdoc/>
     public partial class EachConsumption_SwitchWorkOrder : Win.Subs.Base
     {
         private string loginID = Env.User.UserID;
         private string keyWord = Env.User.Keyword;
         private string cuttingid;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EachConsumption_SwitchWorkOrder"/> class.
+        /// </summary>
+        /// <param name="cutid">Cutting id</param>
         public EachConsumption_SwitchWorkOrder(string cutid)
         {
             this.InitializeComponent();
@@ -26,19 +31,19 @@ namespace Sci.Production.PublicForm
 
             // 589:CUTTING_P01_EachConsumption_SwitchWorkOrder，(1) 若Orders.IsMixmarker=true則只能選第1個選項，第2個選項要disable。
             string sql = string.Format("SELECT IsMixmarker FROM Orders WITH (NOLOCK) WHERE ID='{0}'", this.cuttingid);
-            bool IsMixmarker = MyUtility.GetValue.Lookup(sql) == "1";
-            if (IsMixmarker)
+            bool isMixmarker = MyUtility.GetValue.Lookup(sql) == "1";
+            if (isMixmarker)
             {
                 this.radioBySP.Enabled = false;
             }
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
+        private void BtnOK_Click(object sender, EventArgs e)
         {
             DataTable workorder;
             string cmd = string.Empty;
@@ -63,17 +68,17 @@ left join Order_EachCons_Color_Article b with(nolock)on a.SizeCode = b.SizeCode 
 where a.id = '{this.cuttingid}' and b.Article is null and a.Qty > 0
 and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 ";
-            DataTable DTcheckAS;
-            DualResult result = DBProxy.Current.Select(null, checkArticleSize, out DTcheckAS);
+            DataTable dTcheckAS;
+            DualResult result = DBProxy.Current.Select(null, checkArticleSize, out dTcheckAS);
             if (!result)
             {
                 this.ShowErr(result);
                 return;
             }
 
-            if (DTcheckAS.Rows.Count > 0)
+            if (dTcheckAS.Rows.Count > 0)
             {
-                var m = new Win.UI.MsgGridForm(DTcheckAS, "Switching is stopped for these arctile size are not found in [ Each Consumpotion ], but exists in [ Quantity Breakdown ]", " Do you still want to Switch to WorkOrder ?", null, MessageBoxButtons.YesNo);
+                var m = new Win.UI.MsgGridForm(dTcheckAS, "Switching is stopped for these arctile size are not found in [ Each Consumpotion ], but exists in [ Quantity Breakdown ]", " Do you still want to Switch to WorkOrder ?", null, MessageBoxButtons.YesNo);
 
                 m.Width = 500;
                 m.grid1.Columns[1].Width = 140;
@@ -157,8 +162,8 @@ where  b.fabricpanelcode is null
 
 drop table #tmp1,#tmp2
 ";
-            DataTable DTcheckFabricPanelCode_article_color;
-            worRes = DBProxy.Current.Select(null, checkByFabricPanelCode_article_color, out DTcheckFabricPanelCode_article_color);
+            DataTable dTcheckFabricPanelCode_article_color;
+            worRes = DBProxy.Current.Select(null, checkByFabricPanelCode_article_color, out dTcheckFabricPanelCode_article_color);
             if (!worRes)
             {
                 this.ShowErr(worRes);
@@ -166,16 +171,16 @@ drop table #tmp1,#tmp2
             }
 
             StringBuilder msgFabricPanelCode_article_color = new StringBuilder();
-            if (DTcheckFabricPanelCode_article_color.Rows.Count > 0)
+            if (dTcheckFabricPanelCode_article_color.Rows.Count > 0)
             {
-                foreach (DataRow item in DTcheckFabricPanelCode_article_color.Rows)
+                foreach (DataRow item in dTcheckFabricPanelCode_article_color.Rows)
                 {
                     msgFabricPanelCode_article_color.Append($"FabricPanelCode={item["FabricPanelCode"]}, color={item["ColorID"]}" + Environment.NewLine);
                 }
 
                 msgFabricPanelCode_article_color.Append("do not exist in order_colorcombo. Please check with MR first. Do you want to continue?");
-                DialogResult Result = MyUtility.Msg.QuestionBox(msgFabricPanelCode_article_color.ToString(), "Warning");
-                if (Result == DialogResult.No)
+                DialogResult result1 = MyUtility.Msg.QuestionBox(msgFabricPanelCode_article_color.ToString(), "Warning");
+                if (result1 == DialogResult.No)
                 {
                     return;
                 }
@@ -187,7 +192,7 @@ drop table #tmp1,#tmp2
             #region transaction
 
             // Create the TransactionOptions object
-            TransactionOptions oTranOpt = new TransactionOptions();
+            TransactionOptions oTranOpt = default(TransactionOptions);
 
             // Set the Isolation Level
             oTranOpt.IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted;
@@ -196,12 +201,12 @@ drop table #tmp1,#tmp2
             TimeSpan oTime = new TimeSpan(0, 5, 0);
             oTranOpt.Timeout = oTime;
 
-            TransactionScope _transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt);
-            using (_transactionscope)
+            DualResult dResult;
+            TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt);
+            using (transactionscope)
             {
                 try
                 {
-                    DataTable[] tablesWorkorder;
                     cmd = string.Format(
                     @"
                       select Ukey from Workorder with (nolock) where id= '{0}' and CutRef <> '' and CutRef is not null;
@@ -214,11 +219,9 @@ drop table #tmp1,#tmp2
                       Delete WorkOrder_SizeRatio where id='{0}';
                       Delete WorkOrder_Estcutdate where id='{0}';
                       Delete WorkOrder_PatternPanel where id='{0}'", this.cuttingid);
-                    if (!(worRes = DBProxy.Current.Select(null, cmd, out tablesWorkorder)))
+                    if (!(dResult = DBProxy.Current.Select(null, cmd, out DataTable[] tablesWorkorder)))
                     {
-                        _transactionscope.Dispose();
-                        this.ShowErr(cmd, worRes);
-                        return;
+                        throw new Exception(dResult.Messages.ToString());
                     }
 
                     string exswitch;
@@ -226,8 +229,9 @@ drop table #tmp1,#tmp2
                     {
                         exswitch = string.Format("exec dbo.usp_switchWorkorder '{0}','{1}','{2}','{3}'", worktype, this.cuttingid, this.keyWord, this.loginID);
                     }
-                    else// By SP worktype = 2
+                    else
                     {
+                        // By SP worktype = 2
                         exswitch = string.Format("exec dbo.usp_switchWorkorder_BySP '{0}','{1}','{2}','{3}'", worktype, this.cuttingid, this.keyWord, this.loginID);
                     }
 
@@ -235,16 +239,14 @@ drop table #tmp1,#tmp2
                     sp_excute.DefaultTimeout = 1200; // 因為資料量多會執行較久所以設定timeout20分鐘
 
                     // DualResult dResult = DBProxy.Current.Execute(null, exswitch);
-                    DualResult dResult = sp_excute.Execute(null, exswitch);
+                    dResult = sp_excute.Execute(null, exswitch);
                     if (!dResult)
                     {
-                        _transactionscope.Dispose();
-                        this.ShowErr(exswitch, dResult);
-                        return;
+                        throw new Exception(dResult.Messages.ToString());
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
 
                     if (tablesWorkorder[0].Rows.Count > 0)
                     {
@@ -266,23 +268,30 @@ drop table #tmp1,#tmp2
                                 OrderID = (string)dr["OrderID"],
                             });
                         }
+
                         Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder(deleteWorkOrder));
                         Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
                     }
-                    MyUtility.Msg.InfoBox("Switch successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
+                    transactionscope.Dispose();
+                    dResult = new DualResult(false, "Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
+
+            if (!dResult)
+            {
+                this.ShowErr(dResult);
+                return;
+            }
             #endregion
 
+            MyUtility.Msg.InfoBox("Switch successful");
             this.Close();
         }
     }

@@ -69,6 +69,7 @@ namespace Sci.Production.Shipping
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -131,6 +132,7 @@ namespace Sci.Production.Shipping
             return base.ClickDelete();
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             string sqlupdate = $@"
@@ -147,6 +149,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             base.ClickConfirm();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             string sqlchk = $@"select 1 from BIRInvoice  where ExVoucherID !='' and id = '{this.CurrentMaintain["ID"]}'";
@@ -170,6 +173,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             base.ClickUnconfirm();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             string sqlchk = $@"select 1 from BIRInvoice  where ExVoucherID is not null and id = '{this.CurrentMaintain["ID"]}' and status = 'Approved' ";

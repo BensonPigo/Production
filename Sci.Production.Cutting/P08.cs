@@ -16,11 +16,16 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P08 : Win.Tems.Input6
     {
-        string fileNameExt;
-        string pathName;
+        private string fileNameExt;
+        private string pathName;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P08"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -28,12 +33,12 @@ namespace Sci.Production.Cutting
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Visible = false;
-            DataTable queryDT;
             string querySql = string.Format(
                 @"
 select '' FTYGroup
@@ -42,7 +47,7 @@ union
 select distinct FTYGroup 
 from Factory 
 where MDivisionID = '{0}'", Env.User.Keyword);
-            DBProxy.Current.Select(null, querySql, out queryDT);
+            DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
             this.queryfors.SelectedIndexChanged += (s, e) =>
@@ -61,6 +66,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -86,6 +92,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
@@ -97,6 +104,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickNew()
         {
             this.detailgrid.ValidateControl();
@@ -105,7 +113,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             this.ReloadDatas();
             if (dr == DialogResult.OK)
             {
-                var topID = frm.importedIDs[0];
+                var topID = frm.ImportedIDs[0];
                 int newDataIdx = this.gridbs.Find("ID", topID);
                 this.gridbs.Position = newDataIdx;
             }
@@ -113,14 +121,14 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
 
             #region 存在 Issue 不可 Uncomfirm
-            DataTable dt;
-            string Query = string.Format("Select 1 from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", this.CurrentMaintain["ID"]);
-            DualResult result = DBProxy.Current.Select(null, Query, out dt);
+            string query = string.Format("Select 1 from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", this.CurrentMaintain["ID"]);
+            DualResult result = DBProxy.Current.Select(null, query, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -143,6 +151,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -171,6 +180,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 檢查表頭 Est. Cut Date 只能輸入今天和未來的日期 , 一定要填
@@ -233,6 +243,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
@@ -244,6 +255,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -260,9 +272,10 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             }
 
             this.ShowWaitMessage("Excel processing...");
-            DataTable excelTb;
-            List<SqlParameter> sqlParameters = new List<SqlParameter>();
-            sqlParameters.Add(new SqlParameter("@ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])),
+            };
             string cmdsql = $@"
 declare @CT varchar(13) = @ID
 select 
@@ -313,7 +326,7 @@ outer apply(
 ) as Cuts
 where c.id = @CT
 ";
-            DualResult result = DBProxy.Current.Select(null, cmdsql, sqlParameters, out excelTb);
+            DualResult result = DBProxy.Current.Select(null, cmdsql, sqlParameters, out DataTable excelTb);
             if (!result)
             {
                 this.ShowErr(result);
@@ -362,8 +375,7 @@ where c.id = @CT
                 return;
             }
 
-            DataRow seekdr;
-            if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='022'", out seekdr))
+            if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='022'", out DataRow seekdr))
             {
                 string mailFrom = Env.Cfg.MailFrom;
                 string mailto = seekdr["ToAddress"].ToString();
@@ -404,6 +416,7 @@ where c.id = @CT
             callNextForm.ShowDialog(this);
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             this.ToExcel(true);

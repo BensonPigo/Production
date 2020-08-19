@@ -5,16 +5,24 @@ using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P04_FabricIssueList : Win.Subs.Base
     {
-        DataTable gridTb;
-        string cutplanid;
+        private DataTable gridTb;
+        private string cutplanid;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P04_FabricIssueList"/> class.
+        /// </summary>
         public P04_FabricIssueList()
         {
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P04_FabricIssueList"/> class.
+        /// </summary>
+        /// <param name="str">Cutplan ID</param>
         public P04_FabricIssueList(string str)
         {
             this.InitializeComponent();
@@ -23,6 +31,7 @@ namespace Sci.Production.Cutting
             this.gridFabricIssueList.DataSource = this.gridTb;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -32,7 +41,7 @@ namespace Sci.Production.Cutting
             .Text("Status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

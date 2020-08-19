@@ -39,10 +39,9 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out DataTable mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out DataTable factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboM.Text = Env.User.Keyword;
 
@@ -70,8 +69,10 @@ namespace Sci.Production.PPIC
         private string SelectSewingLine(string line)
         {
             string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}  ", MyUtility.Check.Empty(this.comboFactory.Text) ? string.Empty : string.Format(" where FactoryID = '{0}'", this.comboFactory.Text));
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "3", line, false, ",");
-            item.Width = 300;
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "3", line, false, ",")
+            {
+                Width = 300,
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -591,8 +592,7 @@ select * from @tempPintData where StyleID<>''
 
 drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle,#tmpStmp_step1,#tmpStmp_step2,#tmpTotalWT
 ";
-                    DataTable dtGantt;
-                    DualResult resultCmd = DBProxy.Current.Select(null, sqlcmd, out dtGantt);
+                    DualResult resultCmd = DBProxy.Current.Select(null, sqlcmd, out DataTable dtGantt);
                     if (!resultCmd)
                     {
                         this.ShowErr(resultCmd);
@@ -645,8 +645,7 @@ group by FactoryID
 drop table #tmpFinal_step1
 
 ";
-                    DataTable[] dtGanttSumery;
-                    resultCmd = MyUtility.Tool.ProcessWithDatatable(this.printData, string.Empty, sqlcmd2, out dtGanttSumery);
+                    resultCmd = MyUtility.Tool.ProcessWithDatatable(this.printData, string.Empty, sqlcmd2, out DataTable[] dtGanttSumery);
                     if (!resultCmd)
                     {
                         this.ShowErr(resultCmd);
@@ -1822,7 +1821,7 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
         /// <summary>
         /// ***若邏輯修改, PowerBI StoredProcedure [P_SewingLineSchedule]需一起調整***
         /// </summary>
-        /// <returns></returns>
+        /// <returns>DualResult</returns>
         private DualResult Query_by_StylePerEachSewingDate()
         {
             DualResult result;

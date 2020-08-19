@@ -339,7 +339,7 @@
             this.detailcont.Controls.Add(this.shapeContainer1);
             this.detailcont.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.detailcont.Size = new System.Drawing.Size(1058, 645);
-            this.detailcont.Paint += new System.Windows.Forms.PaintEventHandler(this.detailcont_Paint);
+            this.detailcont.Paint += new System.Windows.Forms.PaintEventHandler(this.Detailcont_Paint);
             // 
             // detailbtm
             // 
@@ -760,7 +760,7 @@
             0,
             0,
             0});
-            this.numVWeight.ValueChanged += new System.EventHandler(this.numVWeight_ValueChanged);
+            this.numVWeight.ValueChanged += new System.EventHandler(this.NumVWeight_ValueChanged);
             this.numVWeight.Validated += new System.EventHandler(this.NumVWeight_Validated);
             // 
             // numExchangeRate
@@ -873,7 +873,7 @@
             0,
             0,
             0});
-            this.numForwarderNQuotation.VisibleChanged += new System.EventHandler(this.numForwarderNQuotation_VisibleChanged);
+            this.numForwarderNQuotation.VisibleChanged += new System.EventHandler(this.NumForwarderNQuotation_VisibleChanged);
             this.numForwarderNQuotation.Validated += new System.EventHandler(this.NumForwarderNQuotation_Validated);
             // 
             // numForwarder1Quotation
@@ -1945,7 +1945,7 @@
             this.txtSubconForwarderN.Size = new System.Drawing.Size(170, 23);
             this.txtSubconForwarderN.TabIndex = 3;
             this.txtSubconForwarderN.TextBox1Binding = "";
-            this.txtSubconForwarderN.Validated += new System.EventHandler(this.txtSubconForwarderN_Validated);
+            this.txtSubconForwarderN.Validated += new System.EventHandler(this.TxtSubconForwarderN_Validated);
             // 
             // txttpeuserPOSMR
             // 

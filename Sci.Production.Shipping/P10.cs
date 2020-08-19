@@ -1130,13 +1130,16 @@ GB#:{dr["ID"]},   Shipping Mode:{dr["ShipModeID"]}
             }
 
             bool edit = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToLower().EqualString("new") && this.Perm.Edit;
-            P10_ContainerTruck callNextForm = new P10_ContainerTruck(edit, null, null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.reload);
+            P10_ContainerTruck callNextForm = new P10_ContainerTruck(edit, null, null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.Reload);
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
             this.Refresh();
         }
 
-        public void reload()
+        /// <summary>
+        /// Reload
+        /// </summary>
+        public void Reload()
         {
             this.OnDetailEntered();
             this.Refresh();

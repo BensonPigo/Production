@@ -16,18 +16,19 @@ namespace Sci.Production.Cutting
         /// <summary>
         /// B08
         /// </summary>
-        /// <param name="menuitem">menuitem</param>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public B08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            DataGridViewGeneratorTextColumnSettings WeaveTypeID = new DataGridViewGeneratorTextColumnSettings();
-            WeaveTypeID.EditingMouseDown += (s, e) =>
+            DataGridViewGeneratorTextColumnSettings weaveTypeID = new DataGridViewGeneratorTextColumnSettings();
+            weaveTypeID.EditingMouseDown += (s, e) =>
             {
                 if (e.Button == MouseButtons.Right)
                 {
@@ -47,8 +48,7 @@ namespace Sci.Production.Cutting
                     }
 
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                    DataTable dt;
-                    DBProxy.Current.Select(null, $"Select id from WeaveType WITH (NOLOCK) where junk=0", out dt);
+                    DBProxy.Current.Select(null, $"Select id from WeaveType WITH (NOLOCK) where junk=0", out DataTable dt);
                     SelectItem sele = new SelectItem(dt, "ID", "10@300,300", dr["WeaveTypeID"].ToString());
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -60,7 +60,7 @@ namespace Sci.Production.Cutting
                     dr.EndEdit();
                 }
             };
-            WeaveTypeID.CellValidating += (s, e) =>
+            weaveTypeID.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -97,7 +97,7 @@ namespace Sci.Production.Cutting
             };
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-           .Text("WeaveTypeID", header: "WeaveType", width: Widths.AnsiChars(20), settings: WeaveTypeID)
+           .Text("WeaveTypeID", header: "WeaveType", width: Widths.AnsiChars(20), settings: weaveTypeID)
            .Numeric("LayerLowerBound", header: "LayerLowerBound", width: Widths.AnsiChars(8))
            .Numeric("LayerUpperBound", header: "LayerUpperBound", width: Widths.AnsiChars(8))
            .Numeric("ActualSpeed", header: "ActualSpeed\n(M/Min)", width: Widths.AnsiChars(8), integer_places: 2, decimal_places: 3, maximum: 99.999M, minimum: 0)
@@ -110,12 +110,14 @@ namespace Sci.Production.Cutting
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEdit()
         {
             this.txtID.ReadOnly = true;
             return base.ClickEdit();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region WeaveTypeID,LayerLowerBound,LayerUpperBound,ActualSpeed必輸入,不能是0 .. LayerLowerBound不能大於LayerUpperBound

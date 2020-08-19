@@ -479,7 +479,9 @@ and exists (select 1
             ) a
             inner join Order_QtyShip oq WITH (NOLOCK) on a.OrderID = oq.Id 
                                                          and a.OrderShipmodeSeq = oq.Seq 
-                                                         and oq.BuyerDelivery between '{0}' and '{1}' )", Convert.ToDateTime(this.Delivery1).ToString("d"), Convert.ToDateTime(this.Delivery2).ToString("d")));
+                                                         and oq.BuyerDelivery between '{0}' and '{1}' )",
+                    Convert.ToDateTime(this.Delivery1).ToString("d"),
+                    Convert.ToDateTime(this.Delivery2).ToString("d")));
             }
 
             #endregion

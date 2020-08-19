@@ -50,12 +50,14 @@ namespace Sci.Production.PPIC
             this.btnShipmentFinished.Visible = this.dataType == "1"; // Shipment Finished
             this.btnBacktoPPICMasterList.Visible = this.dataType != "1"; // Back to P01. PPIC Master List
 
-            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("0", string.Empty);
-            comboBox1_RowSource.Add("1", "Subcon-in from sister factory (same M division)");
-            comboBox1_RowSource.Add("2", "Subcon-in from sister factory (different M division)");
-            comboBox1_RowSource.Add("3", "Subcon-in from non-sister factory");
-            comboBox1_RowSource.Add(string.Empty, string.Empty);
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>
+            {
+                { "0", string.Empty },
+                { "1", "Subcon-in from sister factory (same M division)" },
+                { "2", "Subcon-in from sister factory (different M division)" },
+                { "3", "Subcon-in from non-sister factory" },
+                { string.Empty, string.Empty },
+            };
             this.comboSubconInType.DataSource = new BindingSource(comboBox1_RowSource, null);
             this.comboSubconInType.ValueMember = "Key";
             this.comboSubconInType.DisplayMember = "Value";
@@ -125,8 +127,10 @@ namespace Sci.Production.PPIC
             base.OnFormLoaded();
 
             // 新增Batch Shipment Finished按鈕
-            Win.UI.Button btn = new Win.UI.Button();
-            btn.Text = "Batch Shipment Finished";
+            Win.UI.Button btn = new Win.UI.Button
+            {
+                Text = "Batch Shipment Finished",
+            };
             btn.Click += new EventHandler(this.Btn_Click);
             this.browsetop.Controls.Add(btn);
             btn.Size = new Size(180, 30); // 預設是(80,30)
@@ -148,7 +152,7 @@ namespace Sci.Production.PPIC
         protected override void ClickCopyAfter()
         {
             DataRow dataRow = this.CurrentMaintain;
-            base.ClickNew();
+            this.ClickNew();
             this.DoNewAfter();
             this.CurrentMaintain["LocalOrder"] = dataRow["LocalOrder"];
             this.CurrentMaintain["BrandID"] = dataRow["BrandID"];
@@ -209,9 +213,8 @@ namespace Sci.Production.PPIC
             this.displayOutstandingReason2.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Delivery_OutStand' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OutstandingReason"])));
             this.displayFinalUpdateOutstandingReasondate.Value = MyUtility.Check.Empty(this.CurrentMaintain["OutstandingDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["OutstandingDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
-            DataRow styleData;
             string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate,ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
-            if (MyUtility.Check.Seek(sqlCmd, out styleData))
+            if (MyUtility.Check.Seek(sqlCmd, out DataRow styleData))
             {
                 this.displayDescription.Value = MyUtility.Convert.GetString(styleData["Description"]);
                 this.checkExceptionForm.Value = MyUtility.Convert.GetString(styleData["ExpectionForm"]);
@@ -242,10 +245,12 @@ namespace Sci.Production.PPIC
                 this.editFtyRemark.Text = string.Empty;
                 this.dateStyleApv.Value = null;
             }
+
             #endregion
             #region 填Buyer欄位值, 修改Special id1, Special id2, Special id3顯示值
-            DataRow brandData;
-            if (MyUtility.Check.Seek(string.Format("select ID,Customize1,Customize2,Customize3,BuyerID from Brand WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])), out brandData))
+            #endregion
+            #region 填Buyer欄位值, 修改Special id1, Special id2, Special id3顯示值
+            if (MyUtility.Check.Seek(string.Format("select ID,Customize1,Customize2,Customize3,BuyerID from Brand WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])), out DataRow brandData))
             {
                 this.displayBuyer.Value = MyUtility.Convert.GetString(brandData["BuyerID"]);
                 this.labelSpecialId1.Text = MyUtility.Convert.GetString(brandData["Customize1"]);
@@ -259,11 +264,13 @@ namespace Sci.Production.PPIC
                 this.labelSpecialId2.Text = string.Empty;
                 this.labelSpecialId3.Text = string.Empty;
             }
+
             #endregion
             #region 填PO SMR, PO Handle欄位值
-            DataRow pOData;
+            #endregion
+            #region 填PO SMR, PO Handle欄位值
             sqlCmd = string.Format("select POSMR,POHandle,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
-            if (MyUtility.Check.Seek(sqlCmd, out pOData))
+            if (MyUtility.Check.Seek(sqlCmd, out DataRow pOData))
             {
                 this.txttpeuser3.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POSMR"]);
                 this.txttpeuser4.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POHandle"]);
@@ -275,16 +282,18 @@ namespace Sci.Production.PPIC
                 this.txttpeuser4.DisplayBox1Binding = string.Empty;
                 this.PcHandleText.DisplayBox1Binding = string.Empty;
             }
+
             #endregion
             #region 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T, OrderCombo 欄位值
-            System.Data.DataTable ordersData;
+            #endregion
+            #region 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T, OrderCombo 欄位值
             sqlCmd = string.Format(
                 @"select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList,
 isnull([dbo].getCuttingComboList(o.ID,o.CuttingSP),'') as CuttingList,
 isnull([dbo].getMTLExport(o.POID,o.MTLExport),'') as MTLExport,
 isnull([dbo].getPulloutComplete(o.ID,o.PulloutComplete),'') as PulloutComplete,
 isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ordersData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out System.Data.DataTable ordersData);
             if (result)
             {
                 if (ordersData.Rows.Count > 0)
@@ -593,13 +602,14 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 #endregion
 
                 // 檢查是否幫姊妹廠代工
-                List<SqlParameter> cmds = new List<SqlParameter>();
-                cmds.Add(new SqlParameter("@ProgramID", this.CurrentMaintain["ProgramID"].ToString()));
-                cmds.Add(new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"].ToString()));
-                cmds.Add(new SqlParameter("@M", this.CurrentMaintain["MDivisionID"].ToString()));
-                System.Data.DataTable sCIFtyData;
+                List<SqlParameter> cmds = new List<SqlParameter>
+                {
+                    new SqlParameter("@ProgramID", this.CurrentMaintain["ProgramID"].ToString()),
+                    new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"].ToString()),
+                    new SqlParameter("@M", this.CurrentMaintain["MDivisionID"].ToString()),
+                };
                 string sqlCmd = @"select ID from SCIFty WITH (NOLOCK) where ID = @programid";
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out sCIFtyData);
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out System.Data.DataTable sCIFtyData);
                 if (result && sCIFtyData.Rows.Count < 1)
                 {
                     this.CurrentMaintain["SubconInType"] = 3;
@@ -607,12 +617,11 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 }
                 else
                 {
-                    if (MyUtility.Check.Seek(
-                        @"
+                    sqlCmd = @"
 select ID from SCIFty s WITH (NOLOCK)
 where id = @ProgramID
-and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDivisionID)
-", cmds, null))
+and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDivisionID)";
+                    if (MyUtility.Check.Seek(sqlCmd, cmds, null))
                     {
                         this.CurrentMaintain["SubconInType"] = 1;
                     }
@@ -766,8 +775,10 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         {
             IList<DataRow> styleData;
             string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 ";
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "15,8,10,28,5,7,7,6", string.Empty, "Style,Season,Brand,Description,CdCode,CPU,Unit,Ukey", columndecimals: "0,0,0,0,0,3,0,0");
-            item.Size = new Size(950, 500);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "15,8,10,28,5,7,7,6", string.Empty, "Style,Season,Brand,Description,CdCode,CPU,Unit,Ukey", columndecimals: "0,0,0,0,0,3,0,0")
+            {
+                Size = new Size(950, 500),
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -828,12 +839,13 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             // sql參數
             SqlParameter sp1 = new SqlParameter("@styleid", style);
 
-            IList<SqlParameter> cmds = new List<SqlParameter>();
-            cmds.Add(sp1);
+            IList<SqlParameter> cmds = new List<SqlParameter>
+            {
+                sp1,
+            };
 
-            System.Data.DataTable styleData;
             string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 and ID = @styleid";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out System.Data.DataTable styleData);
             if (!result || styleData.Rows.Count <= 0)
             {
                 if (!result)
@@ -957,14 +969,12 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         }
 
         // Po Rematk
-        private void btnPoRemark_Click(object sender, EventArgs e)
+        private void BtnPoRemark_Click(object sender, EventArgs e)
         {
-            System.Data.DataTable data;
-
             // 串接規則Orders.ID=PO.ID
             string sqlCmd = string.Format("select PoRemark from PO WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"]);
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out data);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out System.Data.DataTable data);
             if (!result)
             {
                 this.ShowErr(result);
@@ -1046,8 +1056,10 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
 
         private void SetColumn1toText(sxrc.XltRptTable tbl)
         {
-            sxrc.XlsColumnInfo c1 = new sxrc.XlsColumnInfo(1);
-            c1.NumberFormate = "@";
+            sxrc.XlsColumnInfo c1 = new sxrc.XlsColumnInfo(1)
+            {
+                NumberFormate = "@",
+            };
             tbl.LisColumnInfo.Add(c1);
         }
 
@@ -1165,7 +1177,6 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
 
         private void GetCustCDKit()
         {
-            DataRow tmp;
             string cmd = string.Empty;
             cmd = @"
             SELECT DISTINCT c.Kit
@@ -1175,7 +1186,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             WHERE o.ID=@OrderId ";
 
             // 主索引鍵：CustCD.ID+CustCD.BrandID
-            bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@OrderId", this.CurrentDataRow["ID"]), new SqlParameter("@BrandID", this.CurrentDataRow["BrandID"]) }, out tmp, null);
+            bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@OrderId", this.CurrentDataRow["ID"]), new SqlParameter("@BrandID", this.CurrentDataRow["BrandID"]) }, out DataRow tmp, null);
             if (res && tmp["Kit"] != null)
             {
                 this.displayKit.Text = tmp["Kit"].ToString();
@@ -1200,7 +1211,6 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
 
         private DataRow GetTitleDataByCustCD(string poid, string id, bool byCustCD = true)
         {
-            DataRow drvar;
             string cmd = string.Empty;
             if (byCustCD)
             {
@@ -1219,7 +1229,7 @@ OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOL
 where POID = @poid group by POID,b.spno";
             }
 
-            bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@poid", poid), new SqlParameter("@ID", id) }, out drvar, null);
+            bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@poid", poid), new SqlParameter("@ID", id) }, out DataRow drvar, null);
             if (res)
             {
                 return drvar;
@@ -1321,8 +1331,7 @@ where POID = @poid group by POID,b.spno";
         private void BtnShipmentFinished_Click(object sender, EventArgs e)
         {
             // orders.CFMDate15天(包含)內的資料不能被關單
-            System.Data.DataTable chkDt;
-            DualResult result = DBProxy.Current.Select(null, $"select [Result] = 'SP:' + id + ' order CFMDate is ' + FORMAT(CFMDate,'yyyy/MM/dd') from dbo.orders WITH (NOLOCK) where POID = '{this.CurrentMaintain["POID"]}' and CFMDate >= convert(date,getdate()-15)", out chkDt);
+            DualResult result = DBProxy.Current.Select(null, $"select [Result] = 'SP:' + id + ' order CFMDate is ' + FORMAT(CFMDate,'yyyy/MM/dd') from dbo.orders WITH (NOLOCK) where POID = '{this.CurrentMaintain["POID"]}' and CFMDate >= convert(date,getdate()-15)", out System.Data.DataTable chkDt);
             if (result == false)
             {
                 this.ShowErr(result);
@@ -1556,18 +1565,17 @@ where POID = @poid group by POID,b.spno";
             pb.ShowDialog(this);
         }
 
-        private void btnExpectionFormRemark_Click(object sender, EventArgs e)
+        private void BtnExpectionFormRemark_Click(object sender, EventArgs e)
         {
-            DataRow styleData;
             string sqlCmd = string.Format("select ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
-            if (MyUtility.Check.Seek(sqlCmd, out styleData))
+            if (MyUtility.Check.Seek(sqlCmd, out DataRow styleData))
             {
                 Win.Tools.EditMemo form = new Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
                 form.ShowDialog(this);
             }
         }
 
-        private void btnPFHistory_Click(object sender, EventArgs e)
+        private void BtnPFHistory_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -1594,13 +1602,12 @@ where POID = @poid group by POID,b.spno";
         /// <summary>
         /// Cancel Order 檢查總產出數量必須 = 總裝箱數量，並且每一個箱子都必須轉移到 Clog
         /// </summary>
-        /// <param name="POID">採購項目POID</param>
+        /// <param name="pOID">採購項目POID</param>
         /// <returns>錯誤訊息 or 不能Finished的訂單</returns>
-        public static string ChkCancelOrder(string POID)
+        public static string ChkCancelOrder(string pOID)
         {
             DualResult result;
             string errmsg = string.Empty;
-            System.Data.DataTable[] dtPacking;
             string sql = $@"
 -- show整個採購組合總裝箱數量和總產出數量
 select 
@@ -1623,7 +1630,7 @@ outer apply(
 	from Order_Qty oq
 	where oq.ID = o.ID
 )Output
-where o.poid= '{POID}'
+where o.poid= '{pOID}'
 group by o.ID
 
 -- 判斷是否有進Clog
@@ -1631,12 +1638,12 @@ select distinct pd.OrderID, pd.ID
 from PackingList_Detail pd
 inner join Orders o on pd.OrderID= o.ID
 inner join PackingList p on p.ID = pd.ID
-where o.poid= '{POID}'
+where o.poid= '{pOID}'
 and pd.ReceiveDate is null
 and p.Type in ('L', 'B')
 ";
 
-            if (!(result = DBProxy.Current.Select(null, sql, out dtPacking)))
+            if (!(result = DBProxy.Current.Select(null, sql, out System.Data.DataTable[] dtPacking)))
             {
                 errmsg = "Update data fail! \r\n" + result.ToString();
                 return errmsg;

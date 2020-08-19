@@ -59,7 +59,7 @@
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(350, 100);
             this.radioPanel1.TabIndex = 0;
-            this.radioPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.radioPanel1_Paint);
+            this.radioPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.RadioPanel1_Paint);
             // 
             // checkExtendAllParts
             // 
