@@ -1999,6 +1999,8 @@
     <None Include="Properties\DataSources\P33_PrintData.datasource">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Properties\DataSources\P37.datasource" />
+    <None Include="Properties\DataSources\P37_PrintData.datasource" />
     <None Include="Properties\DataSources\P45_PrintData.datasource" />
     <None Include="Properties\DataSources\P61_PrintData.datasource" />
     <None Include="Sci.Production.Warehouse.ruleset" />
