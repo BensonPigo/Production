@@ -314,8 +314,8 @@ select
 	,sa.[ArtworkName]
 	,sa.[Qty]
 	,sa.[Price]
-	,[Cost] =Case when [ArtworkTypeID] = 'Printing' then PrintingCost.Cost
-	              when [ArtworkTypeID] = 'EMBROIDERY' then [dbo].[GetEmboideryCost]('{countryID}',Season.SeasonSCIID, sa.Qty, 0)
+	,[Cost] =Case when sa.[ArtworkTypeID] = 'Printing' and sa.PrintType <> 'C' then PrintingCost.Cost
+	              when sa.[ArtworkTypeID] = 'EMBROIDERY' then [dbo].[GetEmboideryCost]('{countryID}',Season.SeasonSCIID, sa.Qty, 0)
 				  else sa.Cost
 				  end
 	,sa.[Remark]
