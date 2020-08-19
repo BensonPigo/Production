@@ -357,6 +357,7 @@ SET
 ,a.Length = b.Length
 ,a.Width = b.Width
 ,a.AntiMigration = isnull(b.AntiMigration,0)
+,a.PrintType = b.PrintType
 from Production.dbo.Style_Artwork as a 
 inner join Trade_To_Pms.dbo.Style_Artwork as b ON a.TradeUkey=b.Ukey
 -------------------------- INSERT INTO 抓
@@ -388,6 +389,7 @@ INSERT INTO Production.dbo.Style_Artwork(
 ,Length
 ,Width
 ,AntiMigration
+,PrintType
 )
 select 
  b.StyleUkey
@@ -416,6 +418,7 @@ select
 ,b.Length
 ,b.Width
 ,isnull(b.AntiMigration,0)
+,b.PrintType
 from Trade_To_Pms.dbo.Style_Artwork as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Artwork as a WITH (NOLOCK) where a.TradeUkey = b.Ukey)
 
