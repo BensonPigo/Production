@@ -4,6 +4,8 @@
     {
         public string NoID { get; set; }
 
+        public string GroupNo { get; set; }
+
         public string OrderID { get; set; }
 
         public string SEQ { get; set; }
