@@ -43,6 +43,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Sci.Production.Class.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -416,11 +417,11 @@
     <Compile Include="TxtsubconNoConfirm.Designer.cs">
       <DependentUpon>TxtsubconNoConfirm.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtSpSeq.cs">
+    <Compile Include="TxtSpSeq.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="txtSpSeq.designer.cs">
-      <DependentUpon>txtSpSeq.cs</DependentUpon>
+    <Compile Include="TxtSpSeq.designer.cs">
+      <DependentUpon>TxtSpSeq.cs</DependentUpon>
     </Compile>
     <Compile Include="TxtSubconReason.cs">
       <SubType>UserControl</SubType>
@@ -715,8 +716,8 @@
     <EmbeddedResource Include="TxtsubconNoConfirm.resx">
       <DependentUpon>TxtsubconNoConfirm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="txtSpSeq.resx">
-      <DependentUpon>txtSpSeq.cs</DependentUpon>
+    <EmbeddedResource Include="TxtSpSeq.resx">
+      <DependentUpon>TxtSpSeq.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtSubconReason.resx">
       <DependentUpon>TxtSubconReason.cs</DependentUpon>

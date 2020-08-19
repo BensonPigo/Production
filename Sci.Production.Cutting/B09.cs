@@ -25,6 +25,7 @@ namespace Sci.Production.Cutting
             this.txtfactory.MDivision = this.txtMdivision;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.txtMdivision.Text))
@@ -64,6 +65,7 @@ and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Deta
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
             string[] subprocessID = this.txtSubprocess.Text.Split('+');
@@ -90,12 +92,14 @@ and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Deta
         private string Subprocess;
         private string ArtworkType;
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickCopyBefore()
         {
             this.LeadTime = this.numLeadTime.Value;
@@ -105,6 +109,7 @@ and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Deta
             return base.ClickCopyBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickCopyAfter()
         {
             base.ClickCopyAfter();
@@ -114,6 +119,7 @@ and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Deta
             this.disArtworkType.Text = this.ArtworkType;
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             string sqlcmd = $@"delete SubprocessLeadTime_Detail where id = {this.CurrentMaintain["ID"]}";
@@ -167,8 +173,7 @@ order by s.id asc
             }
 
             string sqlcmd = $@"select ID from Subprocess where junk = 0 and IsSelection=1";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -201,7 +206,7 @@ order by s.id asc
             this.disArtworkType.Text = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ArtworkTypeId"])).JoinToString("+");
         }
 
-        private void txtMdivision_TextChanged(object sender, EventArgs e)
+        private void TxtMdivision_TextChanged(object sender, EventArgs e)
         {
             if (this.EditMode)
             {

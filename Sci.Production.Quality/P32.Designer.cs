@@ -76,7 +76,7 @@
             this.labelStatus = new Sci.Win.UI.Label();
             this.txtshift = new Sci.Production.Class.TxtDropDownList();
             this.txtCFA = new Sci.Production.Class.Txtuser();
-            this.txtSpSeq = new Sci.Production.Class.txtSpSeq();
+            this.txtSpSeq = new Sci.Production.Class.TxtSpSeq();
             this.disArticle = new Sci.Win.UI.DisplayBox();
             this.label9 = new Sci.Win.UI.Label();
             this.disInsCtn = new Sci.Win.UI.DisplayBox();
@@ -835,7 +835,7 @@
         private Win.UI.DisplayBox disDest;
         private Win.UI.DisplayBox disBrand;
         private Win.UI.DisplayBox disPO;
-        private Class.txtSpSeq txtSpSeq;
+        private Class.TxtSpSeq txtSpSeq;
         private Win.UI.EditBox editBoxRemark;
         private Win.UI.DateBox dateAuditDate;
         private Win.UI.ListControlBindingSource dataSourceQtyBreakdown;

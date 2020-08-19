@@ -398,6 +398,7 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
             return base.ClickSave();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();

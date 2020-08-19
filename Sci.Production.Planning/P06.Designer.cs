@@ -84,8 +84,8 @@
             this.gridIcon1.Size = new System.Drawing.Size(100, 32);
             this.gridIcon1.TabIndex = 55;
             this.gridIcon1.Text = "gridIcon1";
-            this.gridIcon1.AppendClick += new System.EventHandler(this.gridIcon1_AppendClick);
-            this.gridIcon1.RemoveClick += new System.EventHandler(this.gridIcon1_RemoveClick);
+            this.gridIcon1.AppendClick += new System.EventHandler(this.GridIcon1_AppendClick);
+            this.gridIcon1.RemoveClick += new System.EventHandler(this.GridIcon1_RemoveClick);
             // 
             // comboColumnType
             // 
@@ -219,7 +219,7 @@
             this.btnQuery.TabIndex = 6;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // btnSave
             // 
@@ -230,7 +230,7 @@
             this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // grid
             // 

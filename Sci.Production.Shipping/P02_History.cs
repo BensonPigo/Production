@@ -9,6 +9,10 @@ namespace Sci.Production.Shipping
     {
         private string HCNo;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P02_History"/> class.
+        /// </summary>
+        /// <param name="hCNo"></param>
         public P02_History(string hCNo)
         {
             this.InitializeComponent();

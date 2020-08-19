@@ -681,8 +681,10 @@
         private Win.UI.Panel panel3;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel5;
+        /// <inheritdoc/>
         public Win.UI.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
+        /// <inheritdoc/>
         public System.Windows.Forms.TabPage tabPage2;
         private Win.UI.Label label1;
         private Win.UI.Button btnClose;
@@ -706,6 +708,7 @@
         private Win.UI.Label label6;
         private Win.UI.Label label7;
         private Win.UI.Label label8;
+        /// <inheritdoc/>
         public System.Windows.Forms.TabPage LoadingQutput;
         private Win.UI.Panel panel10;
         private Win.UI.NumericBox numLoadingQty;

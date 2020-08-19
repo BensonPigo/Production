@@ -17,10 +17,10 @@ namespace Sci.Production.IE
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-
             this.displayCode.Text = this.grid.SelectedRows[0].Cells["MachineGroup"].Value.ToString();
         }
     }

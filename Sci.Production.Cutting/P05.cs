@@ -13,13 +13,18 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P05 : Win.Tems.Input6
     {
         private string loginID = Env.User.UserID;
         private string keyWord = Env.User.Keyword;
-        string fileNameExt;
-        string pathName;
+        private string fileNameExt;
+        private string pathName;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P05"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -27,10 +32,10 @@ namespace Sci.Production.Cutting
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", this.keyWord);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable queryDT;
             string querySql = string.Format(
                 @"
 select '' FTYGroup
@@ -39,7 +44,7 @@ union
 select distinct FTYGroup 
 from Factory 
 where MDivisionID = '{0}'", Env.User.Keyword);
-            DBProxy.Current.Select(null, querySql, out queryDT);
+            DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
             this.queryfors.SelectedIndexChanged += (s, e) =>
@@ -58,6 +63,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             };
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
@@ -72,6 +78,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -92,6 +99,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             this.detailgrid.Columns["ReqQty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             #region 判斷Confirmed
@@ -106,6 +114,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             #region 清空Cutplan 的request
@@ -120,6 +129,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.ClickDeletePost();
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -134,36 +144,41 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             #endregion
             #region transaction
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updSql)))
                     {
-                        _transactionscope.Dispose();
-                        return;
+                        throw new Exception(upResult.Messages.ToString());
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
+                    transactionscope.Dispose();
+                    upResult = new DualResult(false, "Commit transaction error.", ex);
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            if (!upResult)
+            {
+                this.ShowErr(upResult);
+                return;
+            }
+
+            MyUtility.Msg.WarningBox("Successfully");
+            transactionscope.Dispose();
+            transactionscope = null;
 
             #endregion
 
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -176,6 +191,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -189,33 +205,34 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             #endregion
             string updSql = string.Format("update MarkerReq set Status = 'New', editdate = getdate(), editname = '{0}' Where id='{1}'", this.loginID, this.CurrentMaintain["ID"]);
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updSql)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -223,6 +240,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             this.CurrentMaintain["mDivisionid"] = this.keyWord;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             #region 判斷Encode 不可,MarkerReqid 存在
@@ -235,6 +253,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["cutplanid"]))
@@ -258,6 +277,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
             string updateCutplan = string.Format("Update Cutplan set MarkerReqid = '{0}' where id ='{1}'", this.CurrentMaintain["ID"], this.CurrentMaintain["Cutplanid"]);
@@ -270,13 +290,14 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailUIConvertToUpdate()
         {
-            base.OnDetailUIConvertToMaintain();
+            this.OnDetailUIConvertToMaintain();
             this.txtCutplan.ReadOnly = true;
         }
 
-        private void txtCutplan_Validating(object sender, CancelEventArgs e)
+        private void TxtCutplan_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -289,8 +310,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             }
 
             string cmd = string.Format("Select * from Cutplan WITH (NOLOCK) Where id='{0}' and mDivisionid = '{1}'", this.txtCutplan.Text, this.keyWord);
-            DataRow cutdr;
-            if (!MyUtility.Check.Seek(cmd, out cutdr, null))
+            if (!MyUtility.Check.Seek(cmd, out DataRow cutdr, null))
             {
                 this.txtCutplan.Text = string.Empty;
                 MyUtility.Msg.WarningBox("<Cutplan ID> data not found!");
@@ -317,12 +337,11 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             }
         }
 
-        private void txtCutplan_Validated(object sender, EventArgs e)
+        private void TxtCutplan_Validated(object sender, EventArgs e)
         {
-            base.OnValidated(e);
+            this.OnValidated(e);
             string cmd = string.Format("Select * from Cutplan WITH (NOLOCK) Where id='{0}' and mDivisionid = '{1}'", this.txtCutplan.Text, this.keyWord);
-            DataRow cutdr;
-            if (MyUtility.Check.Seek(cmd, out cutdr, null))
+            if (MyUtility.Check.Seek(cmd, out DataRow cutdr, null))
             {
                 this.displayCutCell.Text = cutdr["Cutcellid"].ToString();
 
@@ -407,9 +426,8 @@ DROP TABLE #temp1,#temp2
 
 ", this.txtCutplan.Text);
 
-                DataTable markerTb;
                 DataTable gridTb = (DataTable)this.detailgridbs.DataSource;
-                DualResult dResult = DBProxy.Current.Select(null, marker2sql, out markerTb);
+                DualResult dResult = DBProxy.Current.Select(null, marker2sql, out DataTable markerTb);
                 foreach (DataRow dr in markerTb.Rows)
                 {
                     DataRow ndr = gridTb.NewRow();
@@ -430,7 +448,6 @@ DROP TABLE #temp1,#temp2
 
         private bool ToExcel(bool autoSave)
         {
-            DataTable ExcelTb;
             string cmdsql = string.Format(
             @"
             Select  o.styleid,a.orderid,o.seasonid,a.sizeRatio,a.markerno,a.markername,
@@ -448,7 +465,7 @@ DROP TABLE #temp1,#temp2
             From MarkerReq_Detail a WITH (NOLOCK) left join Orders o WITH (NOLOCK) on a.orderid=o.id
             where a.id = '{0}'
             ", this.CurrentDetailData["ID"]);
-            DualResult dResult = DBProxy.Current.Select(null, cmdsql, out ExcelTb);
+            DualResult dResult = DBProxy.Current.Select(null, cmdsql, out DataTable excelTb);
             if (dResult)
             {
                 string str = Env.Cfg.XltPathDir;
@@ -457,7 +474,7 @@ DROP TABLE #temp1,#temp2
                 // Microsoft.Office.Interop.Excel._Workbook objBook = null;
 
                 // if (MyUtility.Excel.CopyToXls(ExcelTb,"", "Cutting_P05.xltx", 5, !autoSave, null, objApp, false))
-                if (MyUtility.Excel.CopyToXls(ExcelTb, string.Empty, "Cutting_P05.xltx", 5, showExcel: false, excelApp: objApp))
+                if (MyUtility.Excel.CopyToXls(excelTb, string.Empty, "Cutting_P05.xltx", 5, showExcel: false, excelApp: objApp))
                 {// 將datatable copy to excel
                     Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                     Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
@@ -537,7 +554,7 @@ DROP TABLE #temp1,#temp2
             return true;
         }
 
-        private void btnSendMail_Click(object sender, EventArgs e)
+        private void BtnSendMail_Click(object sender, EventArgs e)
         {
             // createfolder();
             if (!this.ToExcel(true))
@@ -545,8 +562,7 @@ DROP TABLE #temp1,#temp2
                 return;
             }
 
-            DataRow seekdr;
-            if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='004'", out seekdr))
+            if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='004'", out DataRow seekdr))
             {
                 string mailFrom = Env.Cfg.MailFrom;
                 string mailto = seekdr["ToAddress"].ToString();
@@ -555,19 +571,19 @@ DROP TABLE #temp1,#temp2
                 string subject = "<" + this.CurrentMaintain["mDivisionid"].ToString() + ">BulkMarkerRequest#:" + this.CurrentMaintain["ID"].ToString();
 
                 var email = new MailTo(mailFrom, mailto, cc, subject + "-" + this.fileNameExt, this.pathName, content, false, true);
-                DialogResult DR = email.ShowDialog(this);
-                if (DR == DialogResult.OK)
+                DialogResult dr = email.ShowDialog(this);
+                if (dr == DialogResult.OK)
                 {
-                    DateTime NOW = DateTime.Now;
-                    string sql = string.Format("Update MarkerReq set sendDate = '{0}'  where id ='{1}'", NOW.ToString("yyyy/MM/dd HH:mm:ss"), this.CurrentMaintain["ID"]);
-                    DualResult Result;
-                    if (!(Result = DBProxy.Current.Execute(null, sql)))
+                    DateTime now = DateTime.Now;
+                    string sql = string.Format("Update MarkerReq set sendDate = '{0}'  where id ='{1}'", now.ToString("yyyy/MM/dd HH:mm:ss"), this.CurrentMaintain["ID"]);
+                    DualResult result;
+                    if (!(result = DBProxy.Current.Execute(null, sql)))
                     {
-                        this.ShowErr(sql, Result);
+                        this.ShowErr(sql, result);
                     }
                     else
                     {
-                        this.CurrentMaintain["sendDate"] = NOW;
+                        this.CurrentMaintain["sendDate"] = now;
                         this.OnDetailEntered();
                     }
                 }
@@ -587,6 +603,7 @@ DROP TABLE #temp1,#temp2
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             this.ToExcel(false);

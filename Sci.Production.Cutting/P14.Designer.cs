@@ -145,8 +145,8 @@
             this.txtBundleNo.Name = "txtBundleNo";
             this.txtBundleNo.Size = new System.Drawing.Size(147, 23);
             this.txtBundleNo.TabIndex = 0;
-            this.txtBundleNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtBundleNo_Validating);
-            this.txtBundleNo.Validated += new System.EventHandler(this.txtCardNoBundleNoComboType_Validated);
+            this.txtBundleNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBundleNo_Validating);
+            this.txtBundleNo.Validated += new System.EventHandler(this.TxtCardNoBundleNoComboType_Validated);
             // 
             // cmdComboType
             // 
@@ -159,7 +159,7 @@
             this.cmdComboType.OldText = "";
             this.cmdComboType.Size = new System.Drawing.Size(147, 24);
             this.cmdComboType.TabIndex = 1;
-            this.cmdComboType.SelectedIndexChanged += new System.EventHandler(this.cmdComboType_SelectedIndexChanged);
+            this.cmdComboType.SelectedIndexChanged += new System.EventHandler(this.CmdComboType_SelectedIndexChanged);
             // 
             // txtCardNo
             // 
@@ -169,8 +169,8 @@
             this.txtCardNo.Name = "txtCardNo";
             this.txtCardNo.Size = new System.Drawing.Size(147, 23);
             this.txtCardNo.TabIndex = 2;
-            this.txtCardNo.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtCardNo_KeyPress);
-            this.txtCardNo.Validated += new System.EventHandler(this.txtCardNoBundleNoComboType_Validated);
+            this.txtCardNo.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtCardNo_KeyPress);
+            this.txtCardNo.Validated += new System.EventHandler(this.TxtCardNoBundleNoComboType_Validated);
             // 
             // disSP
             // 
@@ -285,7 +285,7 @@
             this.grid1.ShowCellToolTips = false;
             this.grid1.Size = new System.Drawing.Size(493, 79);
             this.grid1.TabIndex = 29;
-            this.grid1.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.grid1_RowsAdded);
+            this.grid1.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.Grid1_RowsAdded);
             // 
             // P14
             // 

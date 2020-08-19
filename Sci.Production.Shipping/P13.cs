@@ -7,8 +7,13 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P13 : Win.Tems.QueryForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P13"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -16,6 +21,7 @@ namespace Sci.Production.Shipping
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -131,12 +137,12 @@ order by o.ID
             this.listControlBindingSource1.DataSource = dt;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             this.Find();
         }

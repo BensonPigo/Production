@@ -151,14 +151,14 @@
             this.insertIntoRecordToolStripMenuItem.Name = "insertIntoRecordToolStripMenuItem";
             this.insertIntoRecordToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.insertIntoRecordToolStripMenuItem.Text = "Insert into Record";
-            this.insertIntoRecordToolStripMenuItem.Click += new System.EventHandler(this.insertIntoRecordToolStripMenuItem_Click);
+            this.insertIntoRecordToolStripMenuItem.Click += new System.EventHandler(this.InsertIntoRecordToolStripMenuItem_Click);
             // 
             // deleteRecordToolStripMenuItem
             // 
             this.deleteRecordToolStripMenuItem.Name = "deleteRecordToolStripMenuItem";
             this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.deleteRecordToolStripMenuItem.Text = "Delete Record";
-            this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.deleteRecordToolStripMenuItem_Click);
+            this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.DeleteRecordToolStripMenuItem_Click);
             // 
             // grid_allpart
             // 
@@ -205,14 +205,14 @@
             this.allpart_insert.Name = "allpart_insert";
             this.allpart_insert.Size = new System.Drawing.Size(175, 22);
             this.allpart_insert.Text = "Insert into Record";
-            this.allpart_insert.Click += new System.EventHandler(this.allpart_insert_Click);
+            this.allpart_insert.Click += new System.EventHandler(this.Allpart_insert_Click);
             // 
             // allpart_delete
             // 
             this.allpart_delete.Name = "allpart_delete";
             this.allpart_delete.Size = new System.Drawing.Size(175, 22);
             this.allpart_delete.Text = "Delete Record";
-            this.allpart_delete.Click += new System.EventHandler(this.allpart_delete_Click);
+            this.allpart_delete.Click += new System.EventHandler(this.Allpart_delete_Click);
             // 
             // btnOK
             // 
@@ -232,7 +232,7 @@
             this.btnCancel.TabIndex = 10;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnGarment
             // 
@@ -242,7 +242,7 @@
             this.btnGarment.TabIndex = 8;
             this.btnGarment.Text = "Garment List";
             this.btnGarment.UseVisualStyleBackColor = true;
-            this.btnGarment.Click += new System.EventHandler(this.btnGarment_Click);
+            this.btnGarment.Click += new System.EventHandler(this.BtnGarment_Click);
             // 
             // button_RighttoLeft
             // 
@@ -253,7 +253,7 @@
             this.button_RighttoLeft.TabIndex = 7;
             this.button_RighttoLeft.Text = "<";
             this.button_RighttoLeft.UseVisualStyleBackColor = true;
-            this.button_RighttoLeft.Click += new System.EventHandler(this.button_RighttoLeft_Click);
+            this.button_RighttoLeft.Click += new System.EventHandler(this.Button_RighttoLeft_Click);
             // 
             // button_LefttoRight
             // 
@@ -264,7 +264,7 @@
             this.button_LefttoRight.TabIndex = 6;
             this.button_LefttoRight.Text = ">";
             this.button_LefttoRight.UseVisualStyleBackColor = true;
-            this.button_LefttoRight.Click += new System.EventHandler(this.button_LefttoRight_Click);
+            this.button_LefttoRight.Click += new System.EventHandler(this.Button_LefttoRight_Click);
             // 
             // button_Qty
             // 
@@ -275,7 +275,7 @@
             this.button_Qty.TabIndex = 3;
             this.button_Qty.Text = "<";
             this.button_Qty.UseVisualStyleBackColor = true;
-            this.button_Qty.Click += new System.EventHandler(this.button_Qty_Click);
+            this.button_Qty.Click += new System.EventHandler(this.Button_Qty_Click);
             // 
             // labelNoOfBundle
             // 
@@ -453,7 +453,7 @@
             this.grid_Size.Size = new System.Drawing.Size(253, 138);
             this.grid_Size.TabIndex = 65;
             this.grid_Size.TabStop = false;
-            this.grid_Size.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid_Size_CellDoubleClick);
+            this.grid_Size.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid_Size_CellDoubleClick);
             // 
             // chkTone
             // 

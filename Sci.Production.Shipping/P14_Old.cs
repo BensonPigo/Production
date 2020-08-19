@@ -8,20 +8,26 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P14_Old : Win.Tems.QueryForm
     {
-       private DataTable dtCertOfOrigin;
-       private DataTable dtExport;
-       private DataSet ds = new DataSet();
+        private DataTable dtCertOfOrigin;
+        private DataTable dtExport;
+        private DataSet ds = new DataSet();
 
-       public P14_Old(ToolStripMenuItem menuitem)
-            : base(menuitem)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P14_Old"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
+        public P14_Old(ToolStripMenuItem menuitem)
+             : base(menuitem)
         {
             this.InitializeComponent();
             this.EditMode = true;
         }
 
-       protected override void OnFormLoaded()
+        /// <inheritdoc/>
+        protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
@@ -103,12 +109,12 @@ namespace Sci.Production.Shipping
             #endregion
         }
 
-       private void BtnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.QueryData();
         }
 
-       private void BtnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             this.gridCertOfOrigin.ValidateControl();
             DataTable dt = this.dtCertOfOrigin.Copy();
@@ -189,7 +195,7 @@ Values(s.SuppID,s.FormXPayINV,s.COName,convert(date,s.ReceiveDate),s.Carrier,s.A
             this.QueryData();
         }
 
-       private void QueryData()
+        private void QueryData()
         {
             string sqlcmd;
             string sqlwhere = string.Empty;

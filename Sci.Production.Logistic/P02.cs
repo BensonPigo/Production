@@ -41,8 +41,10 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            TextBox a = new TextBox();
-            a.Text = Env.User.Keyword;
+            TextBox a = new TextBox
+            {
+                Text = Env.User.Keyword,
+            };
             this.txtcloglocationLocationNo.MDivisionObjectName = a;
 
             DataGridViewGeneratorCheckBoxColumnSettings col_chk = new DataGridViewGeneratorCheckBoxColumnSettings();
@@ -122,14 +124,16 @@ namespace Sci.Production.Logistic
             // 若有輸入 TransferSlipNo 必須增加條件對應至 PackingList_Detail 【OrderID, CtnNum】
             string strTransferSlipNoFilte = string.Format(@"and t.TransferSlipNo = '{0}' and b.OrderID = t.OrderID and b.CTNStartNo = t.CTNStartNo", this.txtTransferSlipNo.Text.Trim());
 
-            Dictionary<string, string> dicSqlFilte = new Dictionary<string, string>();
-            dicSqlFilte.Add("PackingList ID", !MyUtility.Check.Empty(this.txtPackID.Text) ? string.Format("and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()) : string.Empty);
-            dicSqlFilte.Add("Order ID", !MyUtility.Check.Empty(this.txtSPNo.Text) ? string.Format("and c.ID = '{0}'", this.txtSPNo.Text.ToString().Trim()) : string.Empty);
-            dicSqlFilte.Add("Orders CustPONo", !MyUtility.Check.Empty(this.txtPONo.Text) ? string.Format("and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()) : string.Empty);
-            dicSqlFilte.Add("Orders FtyGroup", !MyUtility.Check.Empty(this.txtfactory.Text) ? string.Format(@"and c.FtyGroup = '{0}'", this.txtfactory.Text.Trim()) : string.Empty);
-            dicSqlFilte.Add("TransferToClog AddDate Start", !MyUtility.Check.Empty(this.dateTimePicker1.Text) ? string.Format("where t.AddDate >= cast('{0}' as datetime)", this.dateTimePicker1.Text.ToString().Trim()) : string.Empty);
-            dicSqlFilte.Add("TransferToClog AddDate End", !MyUtility.Check.Empty(this.dateTimePicker2.Text) ? string.Format("and t.AddDate <= cast('{0}' as datetime)", this.dateTimePicker2.Text.ToString().Trim()) : string.Empty);
-            dicSqlFilte.Add("TransferToClog TransferSlipNo", !MyUtility.Check.Empty(this.txtTransferSlipNo.Text) ? strTransferSlipNoFilte : string.Empty);
+            Dictionary<string, string> dicSqlFilte = new Dictionary<string, string>
+            {
+                { "PackingList ID", !MyUtility.Check.Empty(this.txtPackID.Text) ? string.Format("and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()) : string.Empty },
+                { "Order ID", !MyUtility.Check.Empty(this.txtSPNo.Text) ? string.Format("and c.ID = '{0}'", this.txtSPNo.Text.ToString().Trim()) : string.Empty },
+                { "Orders CustPONo", !MyUtility.Check.Empty(this.txtPONo.Text) ? string.Format("and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()) : string.Empty },
+                { "Orders FtyGroup", !MyUtility.Check.Empty(this.txtfactory.Text) ? string.Format(@"and c.FtyGroup = '{0}'", this.txtfactory.Text.Trim()) : string.Empty },
+                { "TransferToClog AddDate Start", !MyUtility.Check.Empty(this.dateTimePicker1.Text) ? string.Format("where t.AddDate >= cast('{0}' as datetime)", this.dateTimePicker1.Text.ToString().Trim()) : string.Empty },
+                { "TransferToClog AddDate End", !MyUtility.Check.Empty(this.dateTimePicker2.Text) ? string.Format("and t.AddDate <= cast('{0}' as datetime)", this.dateTimePicker2.Text.ToString().Trim()) : string.Empty },
+                { "TransferToClog TransferSlipNo", !MyUtility.Check.Empty(this.txtTransferSlipNo.Text) ? strTransferSlipNoFilte : string.Empty },
+            };
             #endregion
 
             string sqlCmd = string.Format(
@@ -249,9 +253,8 @@ PackingList_Detail b WITH (NOLOCK) ,
 Orders c WITH (NOLOCK) , 
 Country d WITH (NOLOCK) 
 where 1=0";
-                DataTable selectDataTable;
                 DualResult selectResult;
-                if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable)))
+                if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out DataTable selectDataTable)))
                 {
                     MyUtility.Msg.WarningBox("Connection faile.!");
                     return;
@@ -381,7 +384,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                         }
 
                                         string packinglistid = seekData["id"].ToString().Trim();
-                                        string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                        string cTNStartNo = seekData["CTNStartNo"].ToString().Trim();
                                         sqlCmd = string.Format(
                                             @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
                                                                             from Orders a WITH (NOLOCK) 
@@ -394,7 +397,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                         if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                         {
                                             dr["packinglistid"] = packinglistid.Trim();
-                                            dr["CTNStartNo"] = CTNStartNo.Trim();
+                                            dr["CTNStartNo"] = cTNStartNo.Trim();
                                             dr["StyleID"] = seekData["StyleID"];
                                             dr["SeasonID"] = seekData["SeasonID"];
                                             dr["BrandID"] = seekData["BrandID"];
@@ -452,7 +455,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                     dr["TransferDate"] = seekData["TransferDate"];
 
                                     string packinglistid = seekData["id"].ToString().Trim();
-                                    string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                    string cTNStartNo1 = seekData["CTNStartNo"].ToString().Trim();
                                     string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
                                     if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
                                     {
@@ -471,7 +474,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                     {
                                         dr["packinglistid"] = packinglistid.Trim();
-                                        dr["CTNStartNo"] = CTNStartNo.Trim();
+                                        dr["CTNStartNo"] = cTNStartNo1.Trim();
                                         dr["StyleID"] = seekData["StyleID"];
                                         dr["SeasonID"] = seekData["SeasonID"];
                                         dr["BrandID"] = seekData["BrandID"];

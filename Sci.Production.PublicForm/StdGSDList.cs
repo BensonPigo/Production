@@ -8,6 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
+    /// <inheritdoc/>
     public partial class StdGSDList : Win.Subs.Base
     {
         private long styleUkey;
@@ -16,13 +17,18 @@ namespace Sci.Production.PublicForm
         private DataTable gridData3;
         private DataTable tmpData;
 
-        public StdGSDList(long StyleUKey)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StdGSDList"/> class.
+        /// </summary>
+        /// <param name="styleUKey">styleUKey</param>
+        public StdGSDList(long styleUKey)
         {
             this.InitializeComponent();
-            this.styleUkey = StyleUKey;
+            this.styleUkey = styleUKey;
             MyUtility.Tool.SetupCombox(this.comboTypeFilter, 2, 1, "A,All,T,Top,B,Bottom,I,Inner,O,Outer");
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -79,7 +85,8 @@ group by i.Location,i.ArtworkTypeID
                 MyUtility.Msg.ErrorBox("Query Summary by artwork fail!\r\n" + result.ToString());
             }
 
-            if (this.gridData2.Rows.Count == 0) // 若舊資料IETMS_Summary沒有資料
+            // 若舊資料IETMS_Summary沒有資料
+            if (this.gridData2.Rows.Count == 0)
             {
                 sqlCmd = $@"
 select id.Location,M.ArtworkTypeID,
@@ -181,7 +188,7 @@ Group by mt.ID,mt.Description,mt.DescCH,mt.RPM,mt.Stitches,ies.location", this.s
                  .Numeric("tms", header: "TMS(sec)", width: Widths.AnsiChars(8));
         }
 
-        private void btnCIPF_Click(object sender, EventArgs e)
+        private void BtnCIPF_Click(object sender, EventArgs e)
         {
             string ietmsUKEY = MyUtility.GetValue.Lookup($@"
 select distinct i.Ukey
@@ -267,7 +274,7 @@ where s.Ukey = {this.styleUkey}
         }
 
         // Type Filter
-        private void comboTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.gridData1 != null)
             {
@@ -288,9 +295,9 @@ where s.Ukey = {this.styleUkey}
         }
 
         // To Excel
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
-            DataTable ExcelTable;
+            DataTable excelTable;
             try
             {
                 string ietmsUKEY = MyUtility.GetValue.Lookup($@"
@@ -344,7 +351,7 @@ select
 from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Packing'
 order by seq
 ";
-                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "Seq,Type,OperationID,MachineDesc,Mold,OperationDescEN,Annotation,Frequency,MtlFactorID,SMV,newSMV,SeamLength,ttlSeamLength,Location", sqlCmd, out ExcelTable);
+                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "Seq,Type,OperationID,MachineDesc,Mold,OperationDescEN,Annotation,Frequency,MtlFactorID,SMV,newSMV,SeamLength,ttlSeamLength,Location", sqlCmd, out excelTable);
             }
             catch (Exception ex)
             {
@@ -352,11 +359,11 @@ order by seq
                 return;
             }
 
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
             SaveFileDialog dlg = new SaveFileDialog();
             dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     // 指定"我的文件"路徑
+            dlg.InitialDirectory = myDocumentsPath;     // 指定"我的文件"路徑
             dlg.Title = "Save as Excel File";
 
             // dlg.FileName = "StdGSDList_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
@@ -366,7 +373,7 @@ order by seq
             // {
 
             // Open document
-            bool result = MyUtility.Excel.CopyToXls(ExcelTable, string.Empty, "PPIC_P01_StdGSDList.xltx", headerRow: 1);
+            bool result = MyUtility.Excel.CopyToXls(excelTable, string.Empty, "PPIC_P01_StdGSDList.xltx", headerRow: 1);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString(), "Warning");

@@ -6,16 +6,22 @@ using System.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class P08_FreightList : Win.Tems.QueryForm
     {
         private DataRow Master;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P08_FreightList"/> class.
+        /// </summary>
+        /// <param name="master">DataRow</param>
         public P08_FreightList(DataRow master)
         {
             this.InitializeComponent();
             this.Master = master;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -71,8 +77,7 @@ outer apply(
 	where id = e.Forwarder
 ) Supp
 where es.DutyID = '{this.Master["ID"]}'";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);

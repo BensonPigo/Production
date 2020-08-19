@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class R09 : Win.Tems.PrintForm
     {
         private string strM;
@@ -24,6 +25,10 @@ namespace Sci.Production.Cutting
 
         private DataTable printData;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R09"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -31,6 +36,7 @@ namespace Sci.Production.Cutting
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.strM = this.txtMdivision.Text;
@@ -46,6 +52,7 @@ namespace Sci.Production.Cutting
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             StringBuilder strSqlCmd = new StringBuilder();
@@ -427,6 +434,7 @@ drop table #tmp
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -454,8 +462,8 @@ drop table #tmp
             worksheet.Columns["W:X"].ColumnWidth = 10;
             worksheet.Columns["AA:AH"].ColumnWidth = 12;
             objApp.Rows.AutoFit();
-            string Excelfile = Class.MicrosoftFile.GetName("Cutting_R09");
-            objApp.ActiveWorkbook.SaveAs(Excelfile);
+            string excelfile = Class.MicrosoftFile.GetName("Cutting_R09");
+            objApp.ActiveWorkbook.SaveAs(excelfile);
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);
             return true;

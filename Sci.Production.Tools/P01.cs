@@ -9,27 +9,31 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Tools
 {
+    /// <inheritdoc/>
     public partial class P01 : Sci.Win.Tems.Base
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P01"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private static List<string> outputFromStoredProcedure_List = new List<string>();
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             this.EditMode = true;
             base.OnFormLoaded();
-
-
             this.grid.IsEditingReadOnly = false;
 
             #region -- 欄位設定 --
-            Helper.Controls.Grid.Generator(this.grid)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+            this.Helper.Controls.Grid.Generator(this.grid)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("SuppID", header: "Supp#", width: Widths.AnsiChars(15))
                 .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(5))
                 .Text("APIThread", header: "API Thread", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -43,7 +47,7 @@ namespace Sci.Production.Tools
             this.Search();
         }
 
-        private void btnFilter_Click(object sender, EventArgs e)
+        private void BtnFilter_Click(object sender, EventArgs e)
         {
             if (!MyUtility.Check.Empty(this.txtsupplier.TextBox1.Text))
             {
@@ -51,41 +55,39 @@ namespace Sci.Production.Tools
             }
             else
             {
-                this.listControlBindingSource1.Filter = "";
+                this.listControlBindingSource1.Filter = string.Empty;
             }
         }
 
-        private void btnEditSave_Click(object sender, EventArgs e)
+        private void BtnEditSave_Click(object sender, EventArgs e)
         {
             if (this.btnEditSave.Text == "Edit")
             {
                 this.btnEditSave.Text = "Save";
                 this.RunTime.ReadOnly = false;
                 this.RunTime.IsSupportEditMode = true;
-
             }
             else
             {
                 this.btnEditSave.Text = "Edit";
                 this.RunTime.ReadOnly = true;
                 this.RunTime.IsSupportEditMode = false;
-
-                int AutomationAutoRunTime = (int)this.RunTime.Value.Value;
+                int automationAutoRunTime = (int)this.RunTime.Value.Value;
 
                 string cmd = $@"
 UPDATE System
-SET AutomationAutoRunTime = {AutomationAutoRunTime}
+SET AutomationAutoRunTime = {automationAutoRunTime}
 ";
-                DualResult Result = DBProxy.Current.Execute(null, cmd);
+                DualResult result = DBProxy.Current.Execute(null, cmd);
 
-                if (!Result)
+                if (!result)
                 {
-                    this.ShowErr(Result);
+                    this.ShowErr(result);
                 }
             }
         }
 
-        private void btnRun_Click(object sender, EventArgs e)
+        private void BtnRun_Click(object sender, EventArgs e)
         {
             DataTable gridData = (DataTable)this.listControlBindingSource1.DataSource;
             outputFromStoredProcedure_List.Clear();
@@ -98,14 +100,12 @@ SET AutomationAutoRunTime = {AutomationAutoRunTime}
                 return;
             }
 
-            //////////
-            ///
             this.ShowWaitMessage("Processing...");
 
             DualResult result;
 
             // 正常執行但是Fail
-            DataTable FailDt = gridData.Clone();
+            DataTable failDt = gridData.Clone();
 
             // 其他例外狀況(例如找不到這筆資料的Ukey)
             DataTable otherFailDt = gridData.Clone();
@@ -115,14 +115,12 @@ SET AutomationAutoRunTime = {AutomationAutoRunTime}
 
             foreach (DataRow selecteData in selecteDatas)
             {
-
-                DataTable resultDt;
                 string cmdText = $@"
 declare @dd bit
-exec dbo.SentJsonToAGV {(Int64)selecteData["Ukey"]},'{Sci.Env.User.UserID}', @dd OUTPUT
+exec dbo.SentJsonToAGV {(long)selecteData["Ukey"]},'{Sci.Env.User.UserID}', @dd OUTPUT
 SELECT [Result]= @dd
 ";
-                result = DBProxy.Current.Select(null, cmdText, out resultDt);
+                result = DBProxy.Current.Select(null, cmdText, out DataTable resultDt);
 
                 if (!result)
                 {
@@ -138,16 +136,14 @@ SELECT [Result]= @dd
                 else if (!(bool)resultDt.Rows[0]["Result"])
                 {
                     DataRow nRow = selecteData;
-                    FailDt.ImportRow(nRow);
+                    failDt.ImportRow(nRow);
                 }
                 else
                 {
                     DataRow nRow = selecteData;
                     successDt.ImportRow(nRow);
                 }
-
             }
-
 
             #region 統整最後結果
 
@@ -156,33 +152,25 @@ SELECT [Result]= @dd
                 MyUtility.Msg.ShowMsgGrid(otherFailDt, msg: "Can not find this resent data!!");
             }
 
-
-            if (FailDt.Rows.Count > 0)
+            if (failDt.Rows.Count > 0)
             {
-                MyUtility.Msg.ShowMsgGrid(FailDt, msg: "Resent fail!!");
+                MyUtility.Msg.ShowMsgGrid(failDt, msg: "Resent fail!!");
             }
 
             // 無失敗才跳成功訊息
-            if (otherFailDt.Rows.Count == 0 && FailDt.Rows.Count == 0 && successDt.Rows.Count > 0)
+            if (otherFailDt.Rows.Count == 0 && failDt.Rows.Count == 0 && successDt.Rows.Count > 0)
             {
                 MyUtility.Msg.InfoBox("Success!!");
             }
-
             #endregion
-
-
 
             this.HideWaitMessage();
 
             this.Search();
         }
 
-        
-
         private void Search()
         {
-
-            DataTable dt;
             string cmd = $@"
 SELECT [Selected]=0
     , SuppID
@@ -197,10 +185,8 @@ FROM AutomationErrMsg a WITH(NOLOCK)
 LEFT JOIN Supp s WITH(NOLOCK) ON a.SuppID=s.ID
 ";
 
-            DBProxy.Current.Select(null, cmd, out dt);
-
+            DBProxy.Current.Select(null, cmd, out DataTable dt);
             this.listControlBindingSource1.DataSource = dt;
-
         }
     }
 }

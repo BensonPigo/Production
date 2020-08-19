@@ -18,8 +18,8 @@ namespace Sci.Production.Planning
         private DataTable[] printData;
         private StringBuilder condition = new StringBuilder();
         private StringBuilder datelist = new StringBuilder();
-        List<SqlParameter> listPar = new List<SqlParameter>();
-        string strWhere = string.Empty;
+        private List<SqlParameter> listPar = new List<SqlParameter>();
+        private string strWhere = string.Empty;
 
         /// <summary>
         /// R14

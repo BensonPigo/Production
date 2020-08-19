@@ -8,30 +8,33 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class R05 : Win.Tems.PrintForm
     {
-        DataTable printData;
-        string WorkOrder;
-        string factory;
-        DateTime? Est_CutDate1;
-        DateTime? Est_CutDate2;
+        private DataTable printData;
+        private string WorkOrder;
+        private string factory;
+        private DateTime? Est_CutDate1;
+        private DateTime? Est_CutDate2;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R05"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable WorkOrder;
-            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, WorkOrder);
+            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out DataTable workOrder);
+            MyUtility.Tool.SetupCombox(this.comboM, 1, workOrder);
             this.comboM.Text = Env.User.Keyword;
 
-            DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out DataTable factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.SelectedIndex = 0;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.WorkOrder = this.comboM.Text;
@@ -47,7 +50,7 @@ namespace Sci.Production.Cutting
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -164,7 +167,7 @@ where 1=1
             return Ict.Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

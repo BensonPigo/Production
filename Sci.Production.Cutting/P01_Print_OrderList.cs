@@ -13,12 +13,18 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P01_Print_OrderList : Win.Tems.QueryForm
     {
-        string _id;
-        int _finished;
+        private string _id;
+        private int _finished;
         private DataTable dtColor;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P01_Print_OrderList"/> class.
+        /// </summary>
+        /// <param name="args">ID</param>
+        /// <param name="f">Finished</param>
         public P01_Print_OrderList(string args, int f = 0)
         {
             this._id = args;
@@ -32,8 +38,7 @@ namespace Sci.Production.Cutting
             if (this.radioCuttingWorkOrder.Checked)
             {
                 #region rdCheck_CuttingWorkOrder
-                DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_print_CuttingWorkOrder", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_print_CuttingWorkOrder", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out DataTable[] dts);
 
                 if (!res)
                 {
@@ -51,9 +56,9 @@ namespace Sci.Production.Cutting
                 DataRow dr2 = dts[1].Rows[0];
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_CuttingWorkOrder.xltx");
                 sxrc sxr = new sxrc(xltPath);
-                string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
+                string cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
 
-                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
+                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", cuttingfactory, "Factory", "ID"));
                 sxr.DicDatas.Add(sxr.VPrefix + "PoList", dr["PoList"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "StyleID", dr["StyleID"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "CutLine", dr["CutLine"]);
@@ -154,8 +159,7 @@ select [SP] =
 			)t
 			for xml path('')),1,1,'')
 ";
-                DataTable dtHeader;
-                DualResult result = DBProxy.Current.Select(null, sqlcmd, new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dtHeader);
+                DualResult result = DBProxy.Current.Select(null, sqlcmd, new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out DataTable dtHeader);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -185,10 +189,11 @@ select [SP] =
                 sxr.DicDatas.Add(sxr.VPrefix + "StyleID", MyUtility.Convert.GetString(dtHeader.Rows[0]["StyleID"]));
                 sxr.DicDatas.Add(sxr.VPrefix + "OrderQty", "Order Qty: " + MyUtility.Convert.GetString(dtHeader.Rows[0]["Qty"]));
                 sxr.DicDatas.Add(sxr.VPrefix + "Pattern", "Used the pattern of " + MyUtility.Convert.GetString(dtHeader.Rows[0]["Pattern"]));
-                sxrc.XltRptTable dt = new sxrc.XltRptTable(dt0);
-
-                // 不顯示標題列
-                dt.ShowHeader = false;
+                sxrc.XltRptTable dt = new sxrc.XltRptTable(dt0)
+                {
+                    // 不顯示標題列
+                    ShowHeader = false,
+                };
                 sxr.ActionAfterFillData = this.SetPageAutoFit;
                 sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
                 sxr.Save(Class.MicrosoftFile.GetName("Cutting_P01_CuttingTape"));
@@ -222,11 +227,12 @@ select [SP] =
             if (this.radioCuttingschedule.Checked)
             {
                 #region rdCheck_CuttingSchedule
-                DataTable[] dts;
-                List<SqlParameter> lsp = new List<SqlParameter>();
-                lsp.Add(new SqlParameter("@M", Env.User.Keyword));
-                lsp.Add(new SqlParameter("@Finished", this._finished));
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_print_cuttingschedule", lsp, out dts);
+                List<SqlParameter> lsp = new List<SqlParameter>
+                {
+                    new SqlParameter("@M", Env.User.Keyword),
+                    new SqlParameter("@Finished", this._finished),
+                };
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_print_cuttingschedule", lsp, out DataTable[] dts);
 
                 if (!res)
                 {
@@ -245,9 +251,9 @@ select [SP] =
 
                 sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[0]);
 
-                string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
+                string cuttingfactory1 = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
 
-                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
+                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", cuttingfactory1, "Factory", "ID"));
 
                 Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                 string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
@@ -277,9 +283,11 @@ select [SP] =
             if (this.radioEachConsumption.Checked)
             {
                 #region Each Consumption (Cutting Combo)
-                DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_EachConsumption",
-                    new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP(
+                    string.Empty,
+                    "Cutting_P01print_EachConsumption",
+                    new List<SqlParameter> { new SqlParameter("@OrderID", this._id) },
+                    out DataTable[] dts);
 
                 if (!res)
                 {
@@ -304,13 +312,13 @@ select [SP] =
                 for (int sgIdx = 1; sgIdx < dts.Length; sgIdx++)
                 {
                     string idxStr = (sgIdx - 1).ToString();
-                    string SizeGroup = dts[sgIdx].Rows[0]["SizeGroup"].ToString();
-                    string MarkerDownloadID = dts[sgIdx].Compute("MAX(MarkerDownloadID)", string.Empty).ToString();
+                    string sizeGroup = dts[sgIdx].Rows[0]["SizeGroup"].ToString();
+                    string markerDownloadID = dts[sgIdx].Compute("MAX(MarkerDownloadID)", string.Empty).ToString();
 
                     dts[sgIdx].Columns.RemoveAt(1);
                     dts[sgIdx].Columns.RemoveAt(0);
 
-                    this.extra_P01_EachConsumptionCuttingCombo(dts[sgIdx]);
+                    this.Extra_P01_EachConsumptionCuttingCombo(dts[sgIdx]);
 
                     sxr.DicDatas.Add(sxr.VPrefix + "APPLYNO" + idxStr, dr["APPLYNO"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "MARKERNO" + idxStr, dr["MARKERNO"]);
@@ -347,10 +355,10 @@ select [SP] =
                     dt.IntFreezeColumn = 3;
 
                     sxr.DicDatas.Add(sxr.VPrefix + "tbl1" + idxStr, dt);
-                    sxr.DicDatas.Add(sxr.VPrefix + "SizeGroup" + idxStr, SizeGroup);
-                    sxr.DicDatas.Add(sxr.VPrefix + "MarkerDownloadID" + idxStr, MarkerDownloadID);
+                    sxr.DicDatas.Add(sxr.VPrefix + "SizeGroup" + idxStr, sizeGroup);
+                    sxr.DicDatas.Add(sxr.VPrefix + "MarkerDownloadID" + idxStr, markerDownloadID);
 
-                    sxrc.ReplaceAction a = this.exMethod;
+                    sxrc.ReplaceAction a = this.ExMethod;
                     sxr.DicDatas.Add(sxr.VPrefix + "exAction" + idxStr, a);
                 }
 
@@ -364,8 +372,7 @@ select [SP] =
             if (this.radioTTLConsumption.Checked)
             {
                 #region TTL consumption (PO Combo)
-                DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_TTLconsumption", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_TTLconsumption", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out DataTable[] dts);
 
                 if (!res)
                 {
@@ -442,8 +449,7 @@ select [SP] =
             if (this.radioColorQtyBDown.Checked)
             {
                 #region Color & Q'ty B'Down (PO Combo)
-                DataTable rpt3;
-                DualResult res = DBProxy.Current.Select(string.Empty, "select b.POComboList,Style=StyleID+'-'+SeasonID from dbo.Orders a WITH (NOLOCK) inner join Order_POComboList b WITH (NOLOCK) on a.id = b.ID where a.ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) }, out rpt3);
+                DualResult res = DBProxy.Current.Select(string.Empty, "select b.POComboList,Style=StyleID+'-'+SeasonID from dbo.Orders a WITH (NOLOCK) inner join Order_POComboList b WITH (NOLOCK) on a.id = b.ID where a.ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) }, out DataTable rpt3);
                 if (rpt3.Rows.Count <= 0)
                 {
                     MyUtility.Msg.InfoBox("Data not find!");
@@ -453,15 +459,14 @@ select [SP] =
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ColorCombo_SizeBreakdown.xltx");
 
                 sxrc sxr = new sxrc(xltPath);
-                string POComboList = rpt3.Rows[0]["POComboList"].ToString();
+                string pOComboList = rpt3.Rows[0]["POComboList"].ToString();
                 string sty = rpt3.Rows[0]["Style"].ToString();
 
-                sxr.DicDatas.Add(sxr.VPrefix + "SP", POComboList);
+                sxr.DicDatas.Add(sxr.VPrefix + "SP", pOComboList);
                 sxr.DicDatas.Add(sxr.VPrefix + "Style", sty);
                 sxr.DicDatas.Add(sxr.VPrefix + "Now", DateTime.Now);
 
-                DataTable[] dts;
-                res = DBProxy.Current.SelectSP(string.Empty, "Cutting_Color_P01_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", this._id), new SqlParameter("@ByType", "2") }, out dts);
+                res = DBProxy.Current.SelectSP(string.Empty, "Cutting_Color_P01_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", this._id), new SqlParameter("@ByType", "2") }, out DataTable[] dts);
 
                 if (!res)
                 {
@@ -494,9 +499,8 @@ select [SP] =
             if (this.radioQtyBreakdown_PoCombbySPList.Checked)
             {
                 #region rdcheck_QtyBreakdown_PoCombbySPList
-                DataTable[] dts;
                 DualResult result;
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_QtyBreakdown_PoCombbySPList", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_QtyBreakdown_PoCombbySPList", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out DataTable[] dts);
 
                 if (!res)
                 {
@@ -513,26 +517,26 @@ select [SP] =
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_QtyBreakdown_PoCombbySPList.xltx");
 
                 // keepApp=true 產生excel後才可修改編輯
-                sxrc sxr = new sxrc(xltPath, keepApp: true);
-                sxr.BoOpenFile = true;
-                DataTable dtQtyList;
-                DataTable dtOrder;
-                result = DBProxy.Current.Select(string.Empty, string.Format(@"select dbo.getPOComboList('{0}','{0}') as qtylist ", this._id), out dtQtyList);
+                sxrc sxr = new sxrc(xltPath, keepApp: true)
+                {
+                    BoOpenFile = true,
+                };
+                result = DBProxy.Current.Select(string.Empty, string.Format(@"select dbo.getPOComboList('{0}','{0}') as qtylist ", this._id), out DataTable dtQtyList);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString(), "error");
                     return false;
                 }
 
-                result = DBProxy.Current.Select(string.Empty, string.Format(@"select id,StyleID,SeasonID,CdCodeID,FactoryID,BrandID,ProgramID from orders where id='{0}'", this._id), out dtOrder);
+                result = DBProxy.Current.Select(string.Empty, string.Format(@"select id,StyleID,SeasonID,CdCodeID,FactoryID,BrandID,ProgramID from orders where id='{0}'", this._id), out DataTable dtOrder);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString(), "error");
                     return false;
                 }
 
-                string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
-                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
+                string cuttingfactory2 = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
+                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", cuttingfactory2, "Factory", "ID"));
                 sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[0]);
 
                 #region Sheet1
@@ -552,11 +556,13 @@ select [SP] =
                 string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
                 wks.get_Range(string.Format("A1:{0}1", sc)).Merge();
                 wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
+
+                #endregion
+                #region Sheet2
                 #endregion
 
                 #region Sheet2
-                DataTable[] dt_Sheet2;
-                result = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_QtyBreakdown_PoCombbySPList_TableOfGoods", new List<SqlParameter> { new SqlParameter("@PoID", this._id) }, out dt_Sheet2);
+                result = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_QtyBreakdown_PoCombbySPList_TableOfGoods", new List<SqlParameter> { new SqlParameter("@PoID", this._id) }, out DataTable[] dt_Sheet2);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString(), "error");
@@ -576,8 +582,7 @@ select [SP] =
                 }
 
                 // 計算orders.Qty
-                DataTable dtQty;
-                result = DBProxy.Current.Select(string.Empty, string.Format(@"select sum(qty) as totalQty from orders	where poid='{0}' ", this._id), out dtQty);
+                result = DBProxy.Current.Select(string.Empty, string.Format(@"select sum(qty) as totalQty from orders	where poid='{0}' ", this._id), out DataTable dtQty);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString(), "error");
@@ -588,15 +593,14 @@ select [SP] =
                 DataTable dtSheet2 = dt_Sheet2[0].Copy();
                 dtSheet2.Columns.Remove("Article");
                 sxrc.XltRptTable dt2 = new sxrc.XltRptTable(dtSheet2);
-                sxr.DicDatas.Add(sxr.VPrefix + "Title2", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
+                sxr.DicDatas.Add(sxr.VPrefix + "Title2", MyUtility.GetValue.Lookup("NameEN", cuttingfactory2, "Factory", "ID"));
                 sxr.DicDatas.Add(sxr.VPrefix + "QTYSP", "QTY_SP_NO:" + dtQtyList.Rows[0]["qtylist"].ToString() + "= " + dtQty.Rows[0]["totalQty"] + "PCS");
                 sxr.DicDatas.Add(sxr.VPrefix + "Style", "STYLE: " + dtOrder.Rows[0]["StyleID"].ToString() + " - " + dtOrder.Rows[0]["SeasonID"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "CDCode", "CD CCODE: " + dtOrder.Rows[0]["CdCodeID"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "Factory", "FACTORY: " + dtOrder.Rows[0]["FactoryID"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "Customer", "CUSTOMER: " + dtOrder.Rows[0]["BrandID"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "Program", "PROGRAM: " + dtOrder.Rows[0]["ProgramID"].ToString());
-                DataTable dtMarkerNo;
-                result = DBProxy.Current.Select(string.Empty, string.Format(@"select top 1 MarkerNo from order_eachcons where id='{0}'", this._id), out dtMarkerNo);
+                result = DBProxy.Current.Select(string.Empty, string.Format(@"select top 1 MarkerNo from order_eachcons where id='{0}'", this._id), out DataTable dtMarkerNo);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString(), "error");
@@ -623,18 +627,15 @@ select [SP] =
                 sxr.Save(Class.MicrosoftFile.GetName("Cutting_P01_QtyBreakdown_PoCombbySPList"));
 
                 // 不同的Article 需要合併以及變色次數
-                DataTable dtArticle;
-                MyUtility.Tool.ProcessWithDatatable(dt_Sheet2[0], "article", "select distinct article from #tmp where article <>'ZZ'", out dtArticle);
+                MyUtility.Tool.ProcessWithDatatable(dt_Sheet2[0], "article", "select distinct article from #tmp where article <>'ZZ'", out DataTable dtArticle);
 
                 // 依照Article數量取得隨機的顏色
                 this.RandomColor(dtArticle);
 
                 #region 合併Sheet2表身Columns
-                DataTable dtSewLing;
-                MyUtility.Tool.ProcessWithDatatable(dt_Sheet2[0], "article,Sewing Line", "select distinct article,[Sewing Line] from #tmp where [Sewing Line] is not null order by article,[Sewing Line]", out dtSewLing);
+                MyUtility.Tool.ProcessWithDatatable(dt_Sheet2[0], "article,Sewing Line", "select distinct article,[Sewing Line] from #tmp where [Sewing Line] is not null order by article,[Sewing Line]", out DataTable dtSewLing);
 
-                DataTable dtMerge;
-                MyUtility.Tool.ProcessWithDatatable(dt_Sheet2[0], "SHELL A/ SIZE,Article", "select distinct [SHELL A/ SIZE],Article from #tmp order by Article,[SHELL A/ SIZE] ", out dtMerge);
+                MyUtility.Tool.ProcessWithDatatable(dt_Sheet2[0], "SHELL A/ SIZE,Article", "select distinct [SHELL A/ SIZE],Article from #tmp order by Article,[SHELL A/ SIZE] ", out DataTable dtMerge);
 
                 int rangeMerge1 = 0;
                 int rangeMerge2 = 0;
@@ -711,18 +712,16 @@ select [SP] =
                 // 計算SewingLine 底部清單放置位置 9=表身資料第一筆 + 總共表身資料筆數 + 1(一行Date+一行空白)
                 int countLine = 9 + dt_Sheet2[0].Rows.Count + 2;
                 DataTable dtBottom = dt_Sheet2[1].Copy();
-                DataTable distLine;
                 int countTotal = 0;
 
-                MyUtility.Tool.ProcessWithDatatable(dt_Sheet2[1], "SewingLineID", "select distinct SewingLineID from #tmp order by SewingLineID", out distLine);
+                MyUtility.Tool.ProcessWithDatatable(dt_Sheet2[1], "SewingLineID", "select distinct SewingLineID from #tmp order by SewingLineID", out DataTable distLine);
 
                 for (int li = 0; li < distLine.Rows.Count; li++)
                 {
                     wkcolor.Cells[countLine + countTotal + li, 1] = "LINE " + distLine.Rows[li]["SewingLineID"];
                     wkcolor.Cells[countLine + countTotal + li, 1].Font.Bold = true;
 
-                    DataTable dtline2;
-                    MyUtility.Tool.ProcessWithDatatable(dtBottom, "SewingLineID,colorid,colorName,Article,Category,SizeList,No,Qty,buyerdelivery", string.Format("select * from #tmp where SewingLineID='{0}' order by SewingLineID,Category desc,buyerdelivery,article", distLine.Rows[li]["SewingLineID"]), out dtline2);
+                    MyUtility.Tool.ProcessWithDatatable(dtBottom, "SewingLineID,colorid,colorName,Article,Category,SizeList,No,Qty,buyerdelivery", string.Format("select * from #tmp where SewingLineID='{0}' order by SewingLineID,Category desc,buyerdelivery,article", distLine.Rows[li]["SewingLineID"]), out DataTable dtline2);
 
                     // 組合SewingLine 資料
                     for (int lii = 0; lii < dtline2.Rows.Count; lii++)
@@ -750,16 +749,16 @@ select [SP] =
                 wkcolor.Range["A8", string.Format("{0}8", wholRange)].Interior.Color = Color.FromArgb(146, 208, 80);
                 wkcolor.Range["A8", string.Format("{0}8", wholRange)].Font.Color = Color.FromArgb(255, 0, 0);
 
-                int ArticleID = 0;
+                int articleID = 0;
                 for (int i = 0; i < dt_Sheet2[0].Rows.Count; i++)
                 {
                     string currentArticle = dt_Sheet2[0].Rows[i]["Article"].ToString();
-                    string distArticle = dtArticle.Rows[ArticleID]["Article"].ToString();
+                    string distArticle = dtArticle.Rows[articleID]["Article"].ToString();
                     string currentLine = dt_Sheet2[0].Rows[i]["Sewing Line"].ToString();
 
-                    int red = MyUtility.Convert.GetInt(this.dtColor.Rows[ArticleID]["redNo"]);
-                    int green = MyUtility.Convert.GetInt(this.dtColor.Rows[ArticleID]["greenNo"]);
-                    int blue = MyUtility.Convert.GetInt(this.dtColor.Rows[ArticleID]["blueNo"]);
+                    int red = MyUtility.Convert.GetInt(this.dtColor.Rows[articleID]["redNo"]);
+                    int green = MyUtility.Convert.GetInt(this.dtColor.Rows[articleID]["greenNo"]);
+                    int blue = MyUtility.Convert.GetInt(this.dtColor.Rows[articleID]["blueNo"]);
 
                     if (currentArticle == distArticle)
                     {
@@ -768,9 +767,9 @@ select [SP] =
                     else
                     {
                         wkcolor.Range[string.Format("A{0}", 9 + i - 1), string.Format("{0}{1}", wholRange, 9 + i - 1)].Interior.Color = Color.FromArgb(146, 208, 80);
-                        if (ArticleID < dtArticle.Rows.Count - 1)
+                        if (articleID < dtArticle.Rows.Count - 1)
                         {
-                            ArticleID++;
+                            articleID++;
                             i--;
                         }
                     }
@@ -806,8 +805,7 @@ select [SP] =
                 #region 加總
 
                 // 取得所有Size
-                DataTable dtSize;
-                DBProxy.Current.Select(string.Empty, string.Format(
+                string sqlCmd = string.Format(
                     @"
 select distinct sizecode,Seq
 	from Order_SizeCode 
@@ -827,7 +825,8 @@ select distinct sizecode,Seq
 	)
 	and id = '{0}'
 	order by Seq
-", this._id), out dtSize);
+", this._id);
+                DBProxy.Current.Select(string.Empty, sqlCmd, out DataTable dtSize);
 
                 DataTable dtTotalNub = new DataTable();
                 dtTotalNub.Columns.Add("NubPosition", typeof(int));
@@ -840,16 +839,16 @@ select distinct sizecode,Seq
                     DataRow[] drArtCnt = dt_Sheet2[0].Select(string.Format("Article='{0}' and SPNO <>'' ", dt_Sheet2[0].Rows[i]["Article"]));
 
                     // 取得報表為Total columns
-                    string TotalCol = MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[9 + i, 1]).Text);
+                    string totalCol = MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[9 + i, 1]).Text);
 
                     // 字串為空值代表被合併存格所以跳下一筆資料
-                    if (TotalCol.Length == 0)
+                    if (totalCol.Length == 0)
                     {
                         continue;
                     }
 
                     // 橫向Total
-                    if (TotalCol.ToString().Substring(0, 5).ToUpper() == "TOTAL")
+                    if (totalCol.ToString().Substring(0, 5).ToUpper() == "TOTAL")
                     {
                         for (int ii = 0; ii < dtSize.Rows.Count; ii++)
                         {
@@ -992,8 +991,7 @@ select distinct sizecode,Seq
             if (this.radioEachConsVSOrderQtyBDown.Checked)
             {
                 #region Each cons. vs Order Q'ty B'Down (PO Combo)
-                DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_Eachcons_vs_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_Eachcons_vs_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out DataTable[] dts);
 
                 if (!res)
                 {
@@ -1008,7 +1006,7 @@ select distinct sizecode,Seq
                 }
 
                 DataRow dr = dts[0].Rows[0];
-                this.extra_P01_EachconsVSOrderQTYBDownPOCombo(dts[1]);
+                this.Extra_P01_EachconsVSOrderQTYBDownPOCombo(dts[1]);
 
                 string xltPath = Env.Cfg.XltPathDir + "\\Cutting_P01_EachconsVSOrderQTYBDownPOCombo.xltx";
 
@@ -1016,8 +1014,8 @@ select distinct sizecode,Seq
                 excel.Visible = false;
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-                string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
-                worksheet.Cells[1, 1] = MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID");
+                string cuttingfactory3 = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
+                worksheet.Cells[1, 1] = MyUtility.GetValue.Lookup("NameEN", cuttingfactory3, "Factory", "ID");
                 worksheet.Cells[2, 2] = dr["ORDERNO"];
                 worksheet.Cells[3, 2] = dr["StyleID"];
 
@@ -1155,11 +1153,11 @@ select distinct sizecode,Seq
                             // 左側的資料
                             if (i >= count_left * 2 * 44 && i < ((count_left * 2) + 1) * 44)
                             {
-                                int BordeCnt = 50 + (46 * (count_left - 1)) + (countRow_left - 1);
+                                int bordeCnt = 50 + (46 * (count_left - 1)) + (countRow_left - 1);
                                 if (!MyUtility.Check.Empty(dts[1].Rows[i]["#"].ToString()))
                                 {
-                                    worksheet.Range["A" + BordeCnt, "F" + BordeCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                                    worksheet.Range["A" + BordeCnt, "F" + BordeCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
+                                    worksheet.Range["A" + bordeCnt, "F" + bordeCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                                    worksheet.Range["A" + bordeCnt, "F" + bordeCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
                                 }
 
                                 worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 1] = dts[1].Rows[i]["#"].ToString();
@@ -1174,11 +1172,11 @@ select distinct sizecode,Seq
                             // 右側的資料
                             else
                             {
-                                int BorderCnt = 50 + (46 * (count_right - 1)) + (countRow_Right - 1);
+                                int borderCnt = 50 + (46 * (count_right - 1)) + (countRow_Right - 1);
                                 if (!MyUtility.Check.Empty(dts[1].Rows[i]["#"].ToString()))
                                 {
-                                    worksheet.Range["H" + BorderCnt, "M" + BorderCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                                    worksheet.Range["H" + BorderCnt, "M" + BorderCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
+                                    worksheet.Range["H" + borderCnt, "M" + borderCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                                    worksheet.Range["H" + borderCnt, "M" + borderCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
                                 }
 
                                 worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 8] = dts[1].Rows[i]["#"].ToString();
@@ -1215,8 +1213,7 @@ select distinct sizecode,Seq
             if (this.radioMarkerList.Checked)
             {
                 #region Marker List
-                DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "cutting_P01_MarkerList", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "cutting_P01_MarkerList", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out DataTable[] dts);
 
                 if (!res)
                 {
@@ -1239,11 +1236,11 @@ select distinct sizecode,Seq
                 for (int sgIdx = 1; sgIdx < dts.Length; sgIdx++)
                 {
                     string idxStr = (sgIdx - 1).ToString();
-                    string SizeGroup = dts[sgIdx].Rows[0]["SizeGroup"].ToString();
+                    string sizeGroup1 = dts[sgIdx].Rows[0]["SizeGroup"].ToString();
 
                     dts[sgIdx].Columns.RemoveAt(0);
 
-                    this.extra_P01_EachConsumptionCuttingCombo(dts[sgIdx]);
+                    this.Extra_P01_EachConsumptionCuttingCombo(dts[sgIdx]);
 
                     sxr.DicDatas.Add(sxr.VPrefix + "REPORTNAME" + idxStr, dr["REPORTNAME"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO" + idxStr, dr["ORDERNO"]);
@@ -1253,8 +1250,8 @@ select distinct sizecode,Seq
                     sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[sgIdx]);
 
                     #region 補上空白的SizeCode
-                    int SizeCodeCnt = dt.Columns.Count - 2 - 3;
-                    int addEmptySizecode = 8 - SizeCodeCnt;
+                    int sizeCodeCnt = dt.Columns.Count - 2 - 3;
+                    int addEmptySizecode = 8 - sizeCodeCnt;
                     for (int i = 0; i < addEmptySizecode; i++)
                     {
                         dt.Columns.Add(new string(' ', i + 1));
@@ -1284,13 +1281,13 @@ select distinct sizecode,Seq
                     dt.BoFreezePanes = true;
                     dt.IntFreezeColumn = 3;
                     dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2) { ColumnWidth = (decimal)5.88 });
-                    sxr.DicDatas.Add(sxr.VPrefix + "SizeGroup" + idxStr, SizeGroup);
+                    sxr.DicDatas.Add(sxr.VPrefix + "SizeGroup" + idxStr, sizeGroup1);
 
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Range["B3", "B3"].WrapText = 1;
                     wks.get_Range("A3").RowHeight = 16.5;
                     wks.get_Range("A4").RowHeight = 16.5;
-                    sxrc.ReplaceAction a = this.exMethod;
+                    sxrc.ReplaceAction a = this.ExMethod;
                     sxr.DicDatas.Add(sxr.VPrefix + "exAction" + idxStr, a);
                 }
 
@@ -1304,8 +1301,7 @@ select distinct sizecode,Seq
             if (this.radioConsumptionCalculateByMarkerListConsPerPC.Checked)
             {
                 #region Consumption Calculate by Marker List Cons/Per pc
-                DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out DataTable[] dts);
 
                 if (!res)
                 {
@@ -1320,25 +1316,29 @@ select distinct sizecode,Seq
                 }
 
                 DataRow dr = dts[0].Rows[0];
-                this.extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(dts[1]);
+                this.Extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(dts[1]);
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xltx");
-                sxrc sxr = new sxrc(xltPath, true);
-                sxr.AllowRangeTransferToString = false;
-                string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
-                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
+                sxrc sxr = new sxrc(xltPath, true)
+                {
+                    AllowRangeTransferToString = false,
+                };
+                string cuttingfactory4 = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
+                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", cuttingfactory4, "Factory", "ID"));
                 sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO", dr["ORDERNO"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "STYLENO", dr["STYLENO"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
                 sxr.DicDatas.Add(sxr.VPrefix + "FTY", dr["FACTORY"]);
-                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[1]);
-                dt.ShowHeader = false;
+                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[1])
+                {
+                    ShowHeader = false,
+                };
 
                 // 欄位水平對齊
                 for (int i = 1; i <= dt.Columns.Count; i++)
                 {
                     Microsoft.Office.Interop.Excel.XlHAlign xha = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;
-                    if (i <= 3) // <= 2
+                    if (i <= 3)
                     {
                         xha = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
                     }
@@ -1387,39 +1387,41 @@ select distinct sizecode,Seq
             this.dtColor.Columns.Add("greenNo", typeof(int));
             this.dtColor.Columns.Add("blueNo", typeof(int));
 
-            Hashtable ht = new Hashtable();
-            ht.Add(0, "188,16,127");
-            ht.Add(1, "34,4,252");
-            ht.Add(2, "102,0,204");
-            ht.Add(3, "204,51,0");
-            ht.Add(4, "255,51,153");
-            ht.Add(5, "0,102,102");
-            ht.Add(6, "102,51,0");
-            ht.Add(7, "255,51,0");
-            ht.Add(8, "204,0,255");
-            ht.Add(9, "51,102,204");
-            ht.Add(10, "204,0,255");
-            ht.Add(11, "239,79,67");
-            ht.Add(12, "255,0,102");
-            ht.Add(13, "79,98,40");
-            ht.Add(14, "0,102,153");
-            ht.Add(15, "153,51,255");
-            ht.Add(16, "165,0,33");
-            ht.Add(17, "0,51,0");
-            ht.Add(18, "255,0,0");
-            ht.Add(19, "0,0,153");
-            ht.Add(20, "255,0,255");
-            ht.Add(21, "0,128,128");
-            ht.Add(22, "255,102,0");
-            ht.Add(23, "0,51,204");
-            ht.Add(24, "153,0,153");
-            ht.Add(25, "51,102,153");
-            ht.Add(26, "153,0,153");
-            ht.Add(27, "188,16,127");
-            ht.Add(28, "153,0,153");
-            ht.Add(29, "34,4,252");
-            ht.Add(30, "255,0,102");
-            ht.Add(31, "79,98,40");
+            Hashtable ht = new Hashtable
+            {
+                { 0, "188,16,127" },
+                { 1, "34,4,252" },
+                { 2, "102,0,204" },
+                { 3, "204,51,0" },
+                { 4, "255,51,153" },
+                { 5, "0,102,102" },
+                { 6, "102,51,0" },
+                { 7, "255,51,0" },
+                { 8, "204,0,255" },
+                { 9, "51,102,204" },
+                { 10, "204,0,255" },
+                { 11, "239,79,67" },
+                { 12, "255,0,102" },
+                { 13, "79,98,40" },
+                { 14, "0,102,153" },
+                { 15, "153,51,255" },
+                { 16, "165,0,33" },
+                { 17, "0,51,0" },
+                { 18, "255,0,0" },
+                { 19, "0,0,153" },
+                { 20, "255,0,255" },
+                { 21, "0,128,128" },
+                { 22, "255,102,0" },
+                { 23, "0,51,204" },
+                { 24, "153,0,153" },
+                { 25, "51,102,153" },
+                { 26, "153,0,153" },
+                { 27, "188,16,127" },
+                { 28, "153,0,153" },
+                { 29, "34,4,252" },
+                { 30, "255,0,102" },
+                { 31, "79,98,40" },
+            };
 
             for (int i = 0; i < dtArticle.Rows.Count; i++)
             {
@@ -1440,27 +1442,31 @@ select distinct sizecode,Seq
             wks.UsedRange.EntireColumn.AutoFit();
         }
 
-        void SetColumn(sxrc.XltRptTable tbl, Microsoft.Office.Interop.Excel.XlHAlign Alignment)
+        private void SetColumn(sxrc.XltRptTable tbl, Microsoft.Office.Interop.Excel.XlHAlign alignment)
         {
-            sxrc.XlsColumnInfo xlc1 = new sxrc.XlsColumnInfo(tbl.Columns[0].ColumnName);
-            xlc1.NumberFormate = "@";
+            sxrc.XlsColumnInfo xlc1 = new sxrc.XlsColumnInfo(tbl.Columns[0].ColumnName)
+            {
+                NumberFormate = "@",
+            };
             tbl.LisColumnInfo.Add(xlc1);
 
             for (int i = 1; i < tbl.Columns.Count; i++)
             {
-                sxrc.XlsColumnInfo xlc = new sxrc.XlsColumnInfo(tbl.Columns[i].ColumnName);
-                xlc.Alignment = Alignment;
+                sxrc.XlsColumnInfo xlc = new sxrc.XlsColumnInfo(tbl.Columns[i].ColumnName)
+                {
+                    Alignment = alignment,
+                };
                 tbl.LisColumnInfo.Add(xlc);
             }
         }
 
-        void extra_P01_EachConsumptionCuttingCombo(DataTable dt)
+        private void Extra_P01_EachConsumptionCuttingCombo(DataTable dt)
         {
-            string COMB = string.Empty;
+            string cOMB = string.Empty;
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 DataRow dr = dt.Rows[i];
-                if (COMB != dr["COMB"].ToString().Trim())
+                if (cOMB != dr["COMB"].ToString().Trim())
                 {
                     DataRow ndr = dt.NewRow();
                     ndr["COMB"] = dr["COMB"];
@@ -1469,7 +1475,7 @@ select distinct sizecode,Seq
                     dt.Rows.InsertAt(ndr, i);
 
                     i += 1;
-                    COMB = dr["COMB"].ToString().Trim();
+                    cOMB = dr["COMB"].ToString().Trim();
                 }
 
                 dr["COMB"] = string.Empty;
@@ -1491,7 +1497,7 @@ select distinct sizecode,Seq
             }
         }
 
-        void exMethod(Microsoft.Office.Interop.Excel.Worksheet oSheet, int rowNo, int columnNo)
+        private void ExMethod(Microsoft.Office.Interop.Excel.Worksheet oSheet, int rowNo, int columnNo)
         {
             Microsoft.Office.Interop.Excel.Range rg = oSheet.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell, Type.Missing);
             int rows = rg.Row;
@@ -1565,24 +1571,24 @@ select distinct sizecode,Seq
             dt.Rows.InsertAt(dr, idx);
         }
 
-        void addSubTotalRow(DataTable dt, decimal tot, int idx, int Qty)
+        private void AddSubTotalRow1(DataTable dt, decimal tot, int idx, int qty)
         {
             DataRow dr = dt.NewRow();
             dr["TOTAL(Inclcut. use)"] = tot;
             dr["M/WEIGHT"] = "SubTotal";
-            dr["CONS/PC"] = Qty == 0 ? 0 : Math.Round(tot / Qty, 3);
+            dr["CONS/PC"] = qty == 0 ? 0 : Math.Round(tot / qty, 3);
             dt.Rows.InsertAt(dr, idx);
         }
 
-        void extra_P01_EachconsVSOrderQTYBDownPOCombo(DataTable dt)
+        private void Extra_P01_EachconsVSOrderQTYBDownPOCombo(DataTable dt)
         {
-            this.addTotal(dt, 1, "Sub.TTL:", true);
-            this.addTotal(dt, 0, "Total:", false);
-            this.removeRepeat(dt, 0, true);
-            this.removeRepeat(dt, 1, false);
+            this.AddTotal1(dt, 1, "Sub.TTL:", true);
+            this.AddTotal1(dt, 0, "Total:", false);
+            this.RemoveRepeat1(dt, 0, true);
+            this.RemoveRepeat1(dt, 1, false);
         }
 
-        void addTotal(DataTable dt, int cidx, string txt, bool exRow)
+        private void AddTotal1(DataTable dt, int cidx, string txt, bool exRow)
         {
             string col2tmp = string.Empty;
             decimal sCutQty = 0;
@@ -1606,7 +1612,7 @@ select distinct sizecode,Seq
                     else
                     {
                         col2tmp = col2;
-                        this.addSubTotalRow(txt, dt, sCutQty, sOrderQty, sBalance, i);
+                        this.AddSubTotalRow2(txt, dt, sCutQty, sOrderQty, sBalance, i);
 
                         if (exRow)
                         {
@@ -1647,10 +1653,10 @@ select distinct sizecode,Seq
                 sBalance += decimal.Parse(dt.Rows[i]["Balance"].ToString());
             }
 
-            this.addSubTotalRow(txt, dt, sCutQty, sOrderQty, sBalance, dt.Rows.Count);
+            this.AddSubTotalRow2(txt, dt, sCutQty, sOrderQty, sBalance, dt.Rows.Count);
         }
 
-        void addSubTotalRow(string txt, DataTable dt, decimal sCutQty, decimal sOrderQty, decimal sBalance, int idx)
+        private void AddSubTotalRow2(string txt, DataTable dt, decimal sCutQty, decimal sOrderQty, decimal sBalance, int idx)
         {
             DataRow dr = dt.NewRow();
             dr["Size"] = txt;
@@ -1660,7 +1666,7 @@ select distinct sizecode,Seq
             dt.Rows.InsertAt(dr, idx);
         }
 
-        void removeRepeat(DataTable dt, int cidx, bool addNewRow)
+        private void RemoveRepeat1(DataTable dt, int cidx, bool addNewRow)
         {
             string col2tmp = string.Empty;
             for (int i = 0; i < dt.Rows.Count; i++)
@@ -1712,7 +1718,7 @@ select distinct sizecode,Seq
             }
         }
 
-        void extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(DataTable dt)
+        private void Extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(DataTable dt)
         {
             // removeRepeat(dt, new int[] {0,1} );
             this.ChangeColumnDataType(dt, "Q'ty/PCS", typeof(string));
@@ -1764,18 +1770,18 @@ select distinct sizecode,Seq
             return true;
         }
 
-        void AddTotal(DataTable dt, int[] cidx)
+        private void AddTotal(DataTable dt, int[] cidx)
         {
             string col2tmp = string.Empty;
 
             decimal sOrderQty = 0;
             decimal sUsageCon = 0;
-            string Unit = string.Empty;
+            string unit = string.Empty;
 
-            string PUnit = string.Empty;
-            decimal PCon = 0;
-            string PLUSName = string.Empty;
-            decimal Total = 0;
+            string pUnit = string.Empty;
+            decimal pCon = 0;
+            string pLUSName = string.Empty;
+            decimal total = 0;
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 string col2 = string.Empty; // dt.Rows[i][cidx].ToString();
@@ -1798,8 +1804,8 @@ select distinct sizecode,Seq
                     else
                     {
                         col2tmp = col2;
-                        this.addSubTotalRow_06(Unit, dt, sOrderQty, sUsageCon, i);
-                        this.addSubTotalRow_06_2(PUnit, PLUSName, dt, PCon, Total, i + 1);
+                        this.AddSubTotalRow_06(unit, dt, sOrderQty, sUsageCon, i);
+                        this.AddSubTotalRow_06_2(pUnit, pLUSName, dt, pCon, total, i + 1);
 
                         // if (exRow)
                         //    dt.Rows.InsertAt(dt.NewRow(), i + 1);
@@ -1817,23 +1823,23 @@ select distinct sizecode,Seq
                 {
                 }
 
-                Unit = dt.Rows[i]["Unit"].ToString();
+                unit = dt.Rows[i]["Unit"].ToString();
                 dt.Rows[i]["Unit"] = DBNull.Value;
                 sOrderQty += decimal.Parse(dt.Rows[i]["Order Qty"].ToString());
                 sUsageCon += decimal.Parse(dt.Rows[i]["CONSUMPTION"].ToString());
 
-                PUnit = dt.Rows[i]["Unit."].ToString();
+                pUnit = dt.Rows[i]["Unit."].ToString();
                 dt.Rows[i]["Unit."] = DBNull.Value;
-                PCon = decimal.Parse(dt.Rows[i]["CONSUMPTION."].ToString());
+                pCon = decimal.Parse(dt.Rows[i]["CONSUMPTION."].ToString());
                 dt.Rows[i]["CONSUMPTION."] = DBNull.Value;
-                PLUSName = dt.Rows[i]["PLUS(YDS/%)"].ToString();
+                pLUSName = dt.Rows[i]["PLUS(YDS/%)"].ToString();
                 dt.Rows[i]["PLUS(YDS/%)"] = DBNull.Value;
-                Total = decimal.Parse(dt.Rows[i]["TOTAL"].ToString());
+                total = decimal.Parse(dt.Rows[i]["TOTAL"].ToString());
                 dt.Rows[i]["TOTAL"] = DBNull.Value;
             }
 
-            this.addSubTotalRow_06(Unit, dt, sOrderQty, sUsageCon, dt.Rows.Count);
-            this.addSubTotalRow_06_2(PUnit, PLUSName, dt, PCon, Total, dt.Rows.Count);
+            this.AddSubTotalRow_06(unit, dt, sOrderQty, sUsageCon, dt.Rows.Count);
+            this.AddSubTotalRow_06_2(pUnit, pLUSName, dt, pCon, total, dt.Rows.Count);
         }
 
         private void RemoveRepeat(DataTable dt, int[] cidx)
@@ -1877,35 +1883,35 @@ select distinct sizecode,Seq
             }
         }
 
-        void addSubTotalRow_06(string Unit, DataTable dt, decimal sOrderQty, decimal sUsageCon, int idx)
+        private void AddSubTotalRow_06(string unit, DataTable dt, decimal sOrderQty, decimal sUsageCon, int idx)
         {
             DataRow dr = dt.NewRow();
             dr["Q'ty/PCS"] = "TTL";
-            dr["Unit"] = Unit;
+            dr["Unit"] = unit;
             dr["Order Qty"] = sOrderQty;
             dr["CONSUMPTION"] = sUsageCon;
             dt.Rows.InsertAt(dr, idx);
         }
 
-        void addSubTotalRow_06_2(string PUnit, string PLUSName, DataTable dt, decimal PCon, decimal Total, int idx)
+        private void AddSubTotalRow_06_2(string pUnit, string pLUSName, DataTable dt, decimal pCon, decimal total, int idx)
         {
             DataRow dr = dt.NewRow();
             dr["CONSUMPTION"] = "SubTotal";
-            dr["Unit."] = PUnit;
-            dr["CONSUMPTION."] = PCon;
-            dr["PLUS(YDS/%)"] = PLUSName;
-            dr["TOTAL"] = Total;
+            dr["Unit."] = pUnit;
+            dr["CONSUMPTION."] = pCon;
+            dr["PLUS(YDS/%)"] = pLUSName;
+            dr["TOTAL"] = total;
 
             dt.Rows.InsertAt(dr, idx);
             dt.Rows.InsertAt(dt.NewRow(), idx + 1);
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             this.ToExcel();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }

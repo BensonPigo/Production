@@ -387,8 +387,8 @@
             this.txtCustomerCode.Name = "txtCustomerCode";
             this.txtCustomerCode.Size = new System.Drawing.Size(100, 23);
             this.txtCustomerCode.TabIndex = 2;
-            this.txtCustomerCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtCustomerCode_PopUp);
-            this.txtCustomerCode.Validating += new System.ComponentModel.CancelEventHandler(this.txtCustomerCode_Validating);
+            this.txtCustomerCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCustomerCode_PopUp);
+            this.txtCustomerCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCustomerCode_Validating);
             // 
             // dispHSCode
             // 

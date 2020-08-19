@@ -7,33 +7,50 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P07 : Win.Tems.QueryForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P07"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.EditMode = true;
-            this.setDetailGrid();
+            this.SetDetailGrid();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P07"/> class.
+        /// </summary>
+        /// <param name="sp">SP</param>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P07(string sp, ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.EditMode = true;
-            this.setDetailGrid();
+            this.SetDetailGrid();
         }
 
-        // 隨著 P02上下筆SP#切換資料
-        public void P07Data(string P02SPNo)
+        /// <summary>
+        /// 隨著 P02上下筆SP#切換資料
+        /// </summary>
+        /// <param name="p02SPNo">P02 SP No</param>
+        public void P07Data(string p02SPNo)
         {
             this.EditMode = true;
-            this.txtCuttingSPNo.Text = P02SPNo;
+            this.txtCuttingSPNo.Text = p02SPNo;
             this.Queryable();
         }
 
-        public void setTxtSPNo(string spNo)
+        /// <summary>
+        /// Set Txt SP No
+        /// </summary>
+        /// <param name="spNo">sp No</param>
+        public void SetTxtSPNo(string spNo)
         {
             this.txtCuttingSPNo.Text = spNo;
             this.txtfactoryByM.Text = string.Empty;
@@ -45,7 +62,10 @@ namespace Sci.Production.Cutting
             this.txtCutplanID.Text = string.Empty;
         }
 
-        public void setDetailGrid()
+        /// <summary>
+        /// Set Detail Grid
+        /// </summary>
+        public void SetDetailGrid()
         {
             #region set grid
             this.Helper.Controls.Grid.Generator(this.gridDetail)
@@ -77,14 +97,16 @@ namespace Sci.Production.Cutting
             #endregion
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.Queryable();
         }
 
+        /// <summary>
+        /// Query table
+        /// </summary>
         public void Queryable()
         {
-            DataTable detailTb = null;
             this.gridDetail.DataSource = null;
             string cutsp = this.txtCuttingSPNo.Text;
             string sp = this.txtSPNo.Text;
@@ -185,7 +207,7 @@ From
             }
 
             sql = sql + where;
-            DualResult dResult = DBProxy.Current.Select(null, sql, out detailTb);
+            DualResult dResult = DBProxy.Current.Select(null, sql, out DataTable detailTb);
             if (!dResult)
             {
                 this.ShowErr(dResult);
@@ -202,7 +224,7 @@ From
             this.gridbs.DataSource = detailTb;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

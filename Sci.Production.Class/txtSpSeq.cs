@@ -4,82 +4,93 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class txtSpSeq : Sci.Win.UI._UserControl
+    /// <summary>
+    /// TxtSpSeq
+    /// </summary>
+    public partial class TxtSpSeq : Sci.Win.UI._UserControl
     {
-
         private string oldSP = string.Empty;
         private string oldSeq = string.Empty;
 
-        public txtSpSeq()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtSpSeq"/> class.
+        /// </summary>
+        public TxtSpSeq()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-
+        /// <summary>
+        /// SP Binding
+        /// </summary>
         [Bindable(true)]
         public string TextBoxSPBinding
         {
+            get
+            {
+                return this.TextBoxSP.Text;
+            }
+
             set
             {
-                this.txtSp.Text = value;
-                if (!Env.DesignTime)
-                {
-                    //if (this.textBox1.Text == "" || MyUtility.Check.Empty(this.textBox1.Text))
-                    //{
-                    //    return;
-                    //}
-
-                    //Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
-                    //this.DisplayBox1.Text = myUsername;
-
-                }
+                this.TextBoxSP.Text = value;
             }
-            get { return txtSp.Text; }
         }
+
+        /// <summary>
+        /// Seq Binding
+        /// </summary>
         [Bindable(true)]
         public string TextBoxSeqBinding
         {
+            get
+            {
+                return this.TextBoxSeq.Text;
+            }
+
             set
             {
-                this.txtSeq.Text = value;
+                this.TextBoxSeq.Text = value;
             }
-            get { return txtSeq.Text; }
         }
 
-        public Sci.Win.UI.TextBox TextBoxSP
-        {
-            get { return this.txtSp; }
-        }
+        /// <summary>
+        /// SP
+        /// </summary>
+        public Win.UI.TextBox TextBoxSP { get; private set; }
 
-        public Sci.Win.UI.TextBox TextBoxSeq
-        {
-            get { return this.txtSeq; }
-        }
+        /// <summary>
+        /// Seq
+        /// </summary>
+        public Win.UI.TextBox TextBoxSeq { get; private set; }
 
-        private void txtSp_Validating(object sender, CancelEventArgs e)
+        private void TxtSp_Validating(object sender, CancelEventArgs e)
         {
-            string OrderID = this.txtSp.Text;
-            string Seq = this.txtSeq.Text;
-            if (MyUtility.Check.Empty(OrderID))
+            string orderID = this.TextBoxSP.Text;
+            string seq = this.TextBoxSeq.Text;
+            if (MyUtility.Check.Empty(orderID))
             {
                 return;
             }
-            List<SqlParameter> paras = new List<SqlParameter>();
-            paras.Add(new SqlParameter("@ID", OrderID));
 
-            bool exists = MyUtility.Check.Seek($@"
+            List<SqlParameter> paras = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", orderID),
+            };
+
+            bool exists = MyUtility.Check.Seek(
+                $@"
 SELECT 1 
 FROM Orders o
 INNER JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
 WHERE o.ID=@ID 
 AND o.Category IN('B', 'S', 'G')
-AND ISNULL(ot.IsGMTMaster,0) = 0
-",paras);
+AND ISNULL(ot.IsGMTMaster,0) = 0",
+                paras);
             if (!exists)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
@@ -87,22 +98,20 @@ AND ISNULL(ot.IsGMTMaster,0) = 0
                 return;
             }
 
-            bool IsSameM = MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID=@ID AND MDivisionID = '{Sci.Env.User.Keyword}'", paras);
+            bool isSameM = MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID=@ID AND MDivisionID = '{Env.User.Keyword}'", paras);
 
-            if (!IsSameM)
+            if (!isSameM)
             {
                 MyUtility.Msg.InfoBox("MDivisionID is different!!");
                 e.Cancel = true;
                 return;
             }
 
-            DataTable dt;
             DualResult result;
 
-            paras.Add(new SqlParameter("@Seq", Seq));
+            paras.Add(new SqlParameter("@Seq", seq));
 
             string cmd = string.Empty;
-
 
             cmd = $@"
 SELECT ID , Seq
@@ -110,143 +119,125 @@ FROM Order_QtyShip
 WHERE ID = @ID
 ";
 
-            result = DBProxy.Current.Select(null, cmd, paras, out dt);
+            result = DBProxy.Current.Select(null, cmd, paras, out DataTable dt);
 
             if (result)
             {
-                // = 0
                 if (dt.Rows.Count == 0)
                 {
-                    if (!MyUtility.Check.Empty(Seq))
+                    // = 0
+                    if (!MyUtility.Check.Empty(seq))
                     {
                         MyUtility.Msg.InfoBox("SP# & Seq not found !!");
                         e.Cancel = true;
                     }
                 }
-                // > 1
                 else if (dt.Rows.Count > 1)
                 {
-
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "ID,Seq", "15,10", OrderID, "ID,Seq");
-                    item.Width = 600;
-                    DialogResult Dresult = item.ShowDialog();
-                    if (Dresult == DialogResult.OK)
+                    // > 1
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "ID,Seq", "15,10", orderID, "ID,Seq")
+                    {
+                        Width = 600,
+                    };
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.OK)
                     {
                         IList<DataRow> selectedDatas = item.GetSelecteds();
-                        Seq = selectedDatas[0]["Seq"].ToString();
-                        this.txtSeq.Text = Seq;
+                        seq = selectedDatas[0]["Seq"].ToString();
+                        this.TextBoxSeq.Text = seq;
                     }
                 }
                 else if (dt.Rows.Count == 1)
                 {
-                    Seq = dt.Rows[0]["Seq"].ToString();
-                    this.txtSeq.Text = Seq;
+                    seq = dt.Rows[0]["Seq"].ToString();
+                    this.TextBoxSeq.Text = seq;
                 }
             }
             else
             {
-                string msg = "";
+                string msg = string.Empty;
 
-                foreach (var Message in result.Messages)
+                foreach (var message in result.Messages)
                 {
-                    msg += Message + "\r\n";
+                    msg += message + "\r\n";
                 }
 
                 MyUtility.Msg.WarningBox("DB Query Error : " + msg);
             }
-
-            // 強制把binding的Text寫到DataRow
-            //this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
-            //this.TextBoxSPBinding = this.txtSp.Text;
-            //foreach (var binding in this.DataBindings.Cast<Binding>().ToList())
-            //{
-
-            //}
         }
 
-        private void txtSeq_Validating(object sender, CancelEventArgs e)
+        private void TxtSeq_Validating(object sender, CancelEventArgs e)
         {
-            string OrderID = this.txtSp.Text;
-            string Seq = this.txtSeq.Text;
-            if (MyUtility.Check.Empty(Seq))
+            string orderID = this.TextBoxSP.Text;
+            string seq = this.TextBoxSeq.Text;
+            if (MyUtility.Check.Empty(seq))
             {
                 return;
             }
 
-            DataTable dt;
             DualResult result;
-            List<SqlParameter> paras = new List<SqlParameter>();
-            paras.Add(new SqlParameter("@ID", OrderID));
-            paras.Add(new SqlParameter("@Seq", Seq));
+            List<SqlParameter> paras = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", orderID),
+                new SqlParameter("@Seq", seq),
+            };
 
             string cmd = string.Empty;
-
-            // OrderID 為空，不觸發自動帶入/跳出視窗
-            if (MyUtility.Check.Empty(OrderID))
+            if (MyUtility.Check.Empty(orderID))
             {
-
+                // OrderID 為空，不觸發自動帶入/跳出視窗
             }
-            // OrderID 為空，觸發自動帶入/跳出視窗
             else
             {
+                // OrderID 為空，觸發自動帶入/跳出視窗
                 cmd = $@"
 SELECT ID , Seq
 FROM Order_QtyShip
 WHERE ID = @ID AND Seq = @Seq
 ";
-                result = DBProxy.Current.Select(null, cmd, paras, out dt);
+                result = DBProxy.Current.Select(null, cmd, paras, out DataTable dt);
                 if (dt.Rows.Count == 0)
                 {
                     MyUtility.Msg.InfoBox("SP# & Seq not found !!");
                     e.Cancel = true;
                 }
             }
-
-
-
-            // 強制把binding的Text寫到DataRow
-            //this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
-
-            foreach (var binding in this.DataBindings.Cast<Binding>().ToList())
-            {
-
-            }
         }
 
-        private void txtSeq_Leave(object sender, System.EventArgs e)
+        private void TxtSeq_Leave(object sender, System.EventArgs e)
         {
-            string newSeq = this.txtSeq.Text;
+            string newSeq = this.TextBoxSeq.Text;
 
             if (newSeq != this.oldSeq)
             {
-
-                string OrderID = this.txtSp.Text;
+                string orderID = this.TextBoxSP.Text;
 
                 // SP Seq都不為空才驗證
-                if (!MyUtility.Check.Empty(OrderID) && !MyUtility.Check.Empty(newSeq))
+                if (!MyUtility.Check.Empty(orderID) && !MyUtility.Check.Empty(newSeq))
                 {
-                    DataTable dt;
                     DualResult result;
-                    List<SqlParameter> paras = new List<SqlParameter>();
-                    paras.Add(new SqlParameter("@ID", OrderID));
-                    paras.Add(new SqlParameter("@Seq", newSeq));
+                    List<SqlParameter> paras = new List<SqlParameter>
+                    {
+                        new SqlParameter("@ID", orderID),
+                        new SqlParameter("@Seq", newSeq),
+                    };
 
                     string cmd = $@"
 SELECT ID , Seq
 FROM Order_QtyShip
 WHERE ID = @ID AND Seq = @Seq
 ";
-                    result = DBProxy.Current.Select(null, cmd, paras, out dt);
+                    result = DBProxy.Current.Select(null, cmd, paras, out DataTable dt);
                     if (dt.Rows.Count == 0)
                     {
                         // 驗證失敗清空
                         MyUtility.Msg.InfoBox("SP# & Seq not found !!");
-                        this.txtSeq.Text = string.Empty;
+                        this.TextBoxSeq.Text = string.Empty;
                         return;
                     }
 
-                    //驗證通過
-                    this.oldSeq = this.txtSeq.Text;
+                    // 驗證通過
+                    this.oldSeq = this.TextBoxSeq.Text;
                 }
                 else
                 {
@@ -255,48 +246,44 @@ WHERE ID = @ID AND Seq = @Seq
             }
         }
 
-        private void txtSp_Leave(object sender, System.EventArgs e)
+        private void TxtSp_Leave(object sender, System.EventArgs e)
         {
-            string newSp = this.txtSp.Text;
-
-
+            string newSp = this.TextBoxSP.Text;
             if (newSp != this.oldSP)
             {
-                string Seq = this.txtSeq.Text;
+                string seq = this.TextBoxSeq.Text;
 
                 // SP Seq都不為空才驗證
-                if (!MyUtility.Check.Empty(newSp) && !MyUtility.Check.Empty(Seq))
+                if (!MyUtility.Check.Empty(newSp) && !MyUtility.Check.Empty(seq))
                 {
-                    DataTable dt;
                     DualResult result;
-                    List<SqlParameter> paras = new List<SqlParameter>();
-                    paras.Add(new SqlParameter("@ID", newSp));
-                    paras.Add(new SqlParameter("@Seq", Seq));
+                    List<SqlParameter> paras = new List<SqlParameter>
+                    {
+                        new SqlParameter("@ID", newSp),
+                        new SqlParameter("@Seq", seq),
+                    };
 
                     string cmd = $@"
 SELECT ID , Seq
 FROM Order_QtyShip
 WHERE ID = @ID AND Seq = @Seq
 ";
-                    result = DBProxy.Current.Select(null, cmd, paras, out dt);
+                    result = DBProxy.Current.Select(null, cmd, paras, out DataTable dt);
                     if (dt.Rows.Count == 0)
                     {
                         // 驗證失敗清空
                         MyUtility.Msg.InfoBox("SP# & Seq not found !!");
-                        this.txtSp.Text = string.Empty;
+                        this.TextBoxSP.Text = string.Empty;
                     }
 
-
-                    //驗證通過
-                    this.oldSP = this.txtSp.Text;
+                    // 驗證通過
+                    this.oldSP = this.TextBoxSP.Text;
                 }
                 else
                 {
                     this.oldSP = newSp;
                 }
-
             }
         }
     }
-
 }

@@ -25,7 +25,7 @@ namespace Sci.Production.Warehouse
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
         DataTable master;
         DataTable detail;
-        private msg p29_msg = new msg();
+        private Msg p29_msg = new Msg();
 
         public P29(ToolStripMenuItem menuitem)
             : base(menuitem)

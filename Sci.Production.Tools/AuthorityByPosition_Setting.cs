@@ -8,6 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Tools
 {
+    /// <inheritdoc/>
     public partial class AuthorityByPosition_Setting : Win.Subs.Base
     {
         private DualResult result = null;
@@ -22,7 +23,12 @@ namespace Sci.Production.Tools
         private DataRow _refDr = null;
         private string sqlCmd = string.Empty;
 
-        public AuthorityByPosition_Setting(Int64 pass0_PKey, DataRow refDr)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthorityByPosition_Setting"/> class.
+        /// </summary>
+        /// <param name="pass0_PKey">Pass0 PKey</param>
+        /// <param name="refDr">DataRow</param>
+        public AuthorityByPosition_Setting(long pass0_PKey, DataRow refDr)
         {
             this.InitializeComponent();
             this._refDr = refDr;
@@ -30,7 +36,7 @@ namespace Sci.Production.Tools
             this.sqlCmd = string.Format(
                 @"SELECT Menu.MenuName, MenuDetail.*
                                                 FROM Menu, MenuDetail 
-                                                WHERE Menu.PKey = MenuDetail.UKey AND MenuDetail.PKey = {0}", (Int64)this._refDr["FKMenu"]);
+                                                WHERE Menu.PKey = MenuDetail.UKey AND MenuDetail.PKey = {0}", (long)this._refDr["FKMenu"]);
             if (this.result = DBProxy.Current.Select(null, this.sqlCmd, out this.dtMenuDetail))
             {
                 this.checkNew.Enabled = (bool)this.dtMenuDetail.Rows[0]["CanNew"];
@@ -104,7 +110,7 @@ namespace Sci.Production.Tools
             this.gridPositionAuthority.DataSource = this.listControlBindingSource1;
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             if (!(this.result = DBProxy.Current.GetTableSchema(null, "Pass2", out this.itsPass2)))
             {
@@ -116,7 +122,7 @@ namespace Sci.Production.Tools
             {
                 if ((int)dr["Sele"] == 1)
                 {
-                    this.drs = this.dtPass2.Select(string.Format("FKPass0 = {0} AND FKMenu = {1}", (Int64)dr["PKey"], (Int64)this._refDr["FKMenu"]));
+                    this.drs = this.dtPass2.Select(string.Format("FKPass0 = {0} AND FKMenu = {1}", (long)dr["PKey"], (long)this._refDr["FKMenu"]));
                     if (this.drs.Length > 0)
                     {
                         this.drs[0]["Used"] = "Y";
@@ -139,8 +145,8 @@ namespace Sci.Production.Tools
                     else
                     {
                         DataRow newRow = this.dtPass2.NewRow();
-                        newRow["FKPass0"] = (Int64)dr["PKey"];
-                        newRow["FKMenu"] = (Int64)this._refDr["FKMenu"];
+                        newRow["FKPass0"] = (long)dr["PKey"];
+                        newRow["FKMenu"] = (long)this._refDr["FKMenu"];
                         newRow["MenuName"] = this.dtMenuDetail.Rows[0]["MenuName"].ToString();
                         newRow["BarPrompt"] = this.dtMenuDetail.Rows[0]["BarPrompt"].ToString();
                         newRow["Used"] = "Y";
@@ -164,8 +170,8 @@ namespace Sci.Production.Tools
                 }
             }
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -181,34 +187,39 @@ namespace Sci.Production.Tools
                             this.result = DBProxy.Current.Insert(null, this.itsPass2, dr);
                         }
 
-                        if (!this.result.IsEmpty)
+                        if (!this.result)
                         {
-                            _transactionscope.Dispose();
-                            MyUtility.Msg.ErrorBox("Update failed, Pleaes re-try");
-                            return;
+                            throw new Exception(this.result.Messages.ToString());
                         }
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Update successful");
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.ErrorBox("Update transaction error.\n" + ex);
+                    transactionscope.Dispose();
+                    this.result = new DualResult(false, "Update transaction error.\n", ex);
                 }
             }
 
+            if (!this.result)
+            {
+                transactionscope.Dispose();
+                this.ShowErr(this.result);
+                return;
+            }
+
+            MyUtility.Msg.InfoBox("Update successful");
             this.DialogResult = DialogResult.OK;
         }
 
-        private void btnUndo_Click(object sender, EventArgs e)
+        private void BtnUndo_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
         }
 
-        private void btnReadonly_Click(object sender, EventArgs e)
+        private void BtnReadonly_Click(object sender, EventArgs e)
         {
             this.checkNew.Checked = false;
             this.checkEdit.Checked = false;
@@ -227,7 +238,7 @@ namespace Sci.Production.Tools
             this.checkJunk.Checked = false;
         }
 
-        private void btnAllControl_Click(object sender, EventArgs e)
+        private void BtnAllControl_Click(object sender, EventArgs e)
         {
             this.checkNew.Checked = this.checkNew.Enabled;
             this.checkEdit.Checked = this.checkEdit.Enabled;

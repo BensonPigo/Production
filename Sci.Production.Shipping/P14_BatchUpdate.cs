@@ -15,6 +15,9 @@ namespace Sci.Production.Shipping
     {
         private DataTable dtBatchUpdate = new DataTable();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P14_BatchUpdate"/> class.
+        /// </summary>
         public P14_BatchUpdate()
         {
             this.InitializeComponent();
@@ -22,6 +25,7 @@ namespace Sci.Production.Shipping
             this.gridBatchUpdate.SupportEditMode = Win.UI.AdvEditModesReadOnly.True;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

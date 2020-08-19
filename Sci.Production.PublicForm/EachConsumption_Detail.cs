@@ -7,17 +7,28 @@ namespace Sci.Production.PublicForm
 {
     public partial class EachConsumption_Detail : Win.Subs.Input4Plus
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EachConsumption_Detail"/> class.
+        /// </summary>
         public EachConsumption_Detail()
         {
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EachConsumption_Detail"/> class.
+        /// </summary>
+        /// <param name="canedit"></param>
+        /// <param name="keyvalue1"></param>
+        /// <param name="keyvalue2"></param>
+        /// <param name="keyvalue3"></param>
         public EachConsumption_Detail(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -41,6 +52,7 @@ namespace Sci.Production.PublicForm
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery(out DataTable datas)
         {
             datas = null;

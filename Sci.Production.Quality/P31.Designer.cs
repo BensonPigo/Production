@@ -84,7 +84,7 @@
             this.ByCarton = new Sci.Win.UI.Button();
             this.btnCreateInsRecord = new Sci.Win.UI.Button();
             this.btnByRecord = new Sci.Win.UI.Button();
-            this.txtSpSeq = new Sci.Production.Class.txtSpSeq();
+            this.txtSpSeq = new Sci.Production.Class.TxtSpSeq();
             this.label1 = new Sci.Win.UI.Label();
             this.disSeason = new Sci.Win.UI.DisplayBox();
             this.label22 = new Sci.Win.UI.Label();
@@ -940,7 +940,7 @@
         private Win.UI.DisplayBox disBrand;
         private Win.UI.DisplayBox disPO;
         private Win.UI.CheckBox chkForThird;
-        private Class.txtSpSeq txtSpSeq;
+        private Class.TxtSpSeq txtSpSeq;
         private Win.UI.EditBox editBoxRemark;
         private Win.UI.DateBox dateLastCarton;
         private Win.UI.DateBox datePullOut;

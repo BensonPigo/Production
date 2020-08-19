@@ -4,16 +4,26 @@ using Ict.Win;
 
 namespace Sci.Production.Tools
 {
+    /// <inheritdoc/>
     public partial class AuthorityByPosition_History : Win.Subs.Input4
     {
         // private DataTable dtPass1 = null;
         // private DualResult result = null;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthorityByPosition_History"/> class.
+        /// </summary>
+        /// <param name="canedit">Can Edit</param>
+        /// <param name="keyvalue1">keyvalue1</param>
+        /// <param name="keyvalue2">keyvalue2</param>
+        /// <param name="keyvalue3">keyvalue3</param>
         public AuthorityByPosition_History(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -25,6 +35,7 @@ namespace Sci.Production.Tools
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -38,7 +49,7 @@ namespace Sci.Production.Tools
             }
         }
 
-        private void save_Click(object sender, EventArgs e)
+        private void Save_Click(object sender, EventArgs e)
         {
             this.append.Visible = false;
             this.revise.Visible = false;

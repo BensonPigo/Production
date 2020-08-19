@@ -6,12 +6,20 @@ using Ict.Win;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P02_PackingMethod : Win.Subs.Input4
     {
         private string cuttingid;
 
-        DataTable ODT;
+        private DataTable ODT;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P02_PackingMethod"/> class.
+        /// </summary>
+        /// <param name="canedit">Can Edit</param>
+        /// <param name="keyvalue1">keyvalue1</param>
+        /// <param name="keyvalue2">keyvalue2</param>
+        /// <param name="keyvalue3">keyvalue3</param>
         public P02_PackingMethod(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
@@ -19,6 +27,7 @@ namespace Sci.Production.Cutting
             this.cuttingid = keyvalue1;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -26,6 +35,7 @@ namespace Sci.Production.Cutting
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery(out DataTable datas)
         {
             string cmdsql = string.Format(
@@ -53,13 +63,13 @@ Where cuttingsp = '{0}'",
             return Ict.Result.True;
         }
 
-        private void btnBreakdown_Click(object sender, EventArgs e)
+        private void BtnBreakdown_Click(object sender, EventArgs e)
         {
             PPIC.P01_QtyCTN callNextForm = new PPIC.P01_QtyCTN(this.ODT.Rows[0]);
             callNextForm.ShowDialog(this);
         }
 
-        private void gridbs_PositionChanged(object sender, EventArgs e)
+        private void Gridbs_PositionChanged(object sender, EventArgs e)
         {
             DBProxy.Current.Select(null, string.Format("SELECT *,isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList FROM ORDERS o WITH (NOLOCK)  WHERE ID = '{0}'", this.CurrentData["id"]), out this.ODT);
             this.btnBreakdown.Enabled = this.ODT.Rows.Count != 0 && MyUtility.Convert.GetString(this.ODT.Rows[0]["CtnType"]) == "2";

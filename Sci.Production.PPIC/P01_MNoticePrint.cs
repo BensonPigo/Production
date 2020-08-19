@@ -60,9 +60,8 @@ namespace Sci.Production.PPIC
 
             foreach (var control in this.groupBox1.Controls)
             {
-                if (control is Win.UI.RadioButton)
+                if (control is Win.UI.RadioButton rdb)
                 {
-                    Win.UI.RadioButton rdb = (Win.UI.RadioButton)control;
                     rdb.CheckedChanged += this.Rd_CheckedChanged;
                 }
             }
@@ -127,12 +126,14 @@ namespace Sci.Production.PPIC
                 }
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xltx");
-                sxrc sxr = new sxrc(xltPath, true);
-                sxr.BoOpenFile = false;
-                sxr.AddPrintRange = true;
-                sxr.SetPrinterAtLocal = true;
-                sxr.FontName = "Times New Roman";
-                sxr.FontSize = 14;
+                sxrc sxr = new sxrc(xltPath, true)
+                {
+                    BoOpenFile = false,
+                    AddPrintRange = true,
+                    SetPrinterAtLocal = true,
+                    FontName = "Times New Roman",
+                    FontSize = 14,
+                };
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_NOW", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_MAKER", drvar["MAKER"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_STYLENO", drvar["sty"].ToString());
@@ -144,15 +145,14 @@ namespace Sci.Production.PPIC
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_pono", drvar["pono"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate", drvar["delDate"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_ChangeMemoDate", drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
-
-                System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", poid), new SqlParameter("@WithZ", this.checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out dts);
-
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", poid), new SqlParameter("@WithZ", this.checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out System.Data.DataTable[] dts);
                 sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                 for (int i = 3; i <= 18; i++)
                 {
-                    sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
-                    xcinfo.NumberFormate = "@";
+                    sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft)
+                    {
+                        NumberFormate = "@",
+                    };
                     xltTbl.LisColumnInfo.Add(xcinfo);
                 }
 
@@ -161,18 +161,16 @@ namespace Sci.Production.PPIC
                 sxrc.ReplaceAction ra = this.ForSizeSpec;
                 sxr.DicDatas.Add(sxr.VPrefix + "ExtraAction", ra);
 
-                System.Data.DataTable dt;
-                DualResult getIds = DBProxy.Current.Select(
-string.Empty,
-@"select a.ID, a.FactoryID as MAKER, a.StyleID+'-'+ a.SeasonID as sty, a.QTY , a.CustCdID as CustCD, a.CustPONo as pono, a.BuyerDelivery as delDate, a.Customize1 , a.Customize2 as SI,Br.Customize2
-,ChangeMemoDate
+                string sqlcmd =
+                    @"
+select a.ID, a.FactoryID as MAKER, a.StyleID+'-'+ a.SeasonID as sty, a.QTY , a.CustCdID as CustCD, a.CustPONo as pono, a.BuyerDelivery as delDate, a.Customize1 , a.Customize2 as SI,Br.Customize2
+    ,ChangeMemoDate
 from Orders a 
 LEFT JOIN Brand Br ON a.BrandID = Br.ID 
 where poid = @poid
 and (SMnorderApv is not null or MnorderApv is not null)
-order by ID",
-new List<SqlParameter> { new SqlParameter("poid", poid) },
-out dt);
+order by ID";
+                DualResult getIds = DBProxy.Current.Select(string.Empty, sqlcmd, new List<SqlParameter> { new SqlParameter("poid", poid) }, out System.Data.DataTable dt);
                 if (!getIds && dt.Rows.Count <= 0)
                 {
                     DualResult failResult = new DualResult(false, "Error:" + getIds.ToString());
@@ -279,12 +277,14 @@ out dt);
                 }
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice_Combo.xltx");
-                sxrc sxr = new sxrc(xltPath);
-                sxr.BoOpenFile = false;
-                sxr.AddPrintRange = true;
-                sxr.SetPrinterAtLocal = true;
-                sxr.FontName = "Times New Roman";
-                sxr.FontSize = 14;
+                sxrc sxr = new sxrc(xltPath)
+                {
+                    BoOpenFile = false,
+                    AddPrintRange = true,
+                    SetPrinterAtLocal = true,
+                    FontName = "Times New Roman",
+                    FontSize = 14,
+                };
                 sxr.CopySheets.Add("1,2,3", dtOrderCombo.Rows.Count - 1);
                 sxr.VarToSheetName = sxr.VPrefix + "sname";
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -301,8 +301,7 @@ out dt);
 
                     DataRow drvar = this.GetTitleDataByCustCD(poid, orderComboID);
 
-                    System.Data.DataTable[] dts;
-                    DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report04", new List<SqlParameter> { new SqlParameter("@ID", orderComboID), new SqlParameter("@WithZ", this.checkAdditionally.Checked), new SqlParameter("@ByType", 1) }, out dts);
+                    DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report04", new List<SqlParameter> { new SqlParameter("@ID", orderComboID), new SqlParameter("@WithZ", this.checkAdditionally.Checked), new SqlParameter("@ByType", 1) }, out System.Data.DataTable[] dts);
 
                     // 顯示筆數於PrintForm上Count欄位
                     this.SetCount(dts[10].Rows.Count);
@@ -342,8 +341,10 @@ out dt);
                     sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                     for (int i = 3; i <= 18; i++)
                     {
-                        sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
-                        xcinfo.NumberFormate = "@";
+                        sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft)
+                        {
+                            NumberFormate = "@",
+                        };
                         xltTbl.LisColumnInfo.Add(xcinfo);
                     }
 
@@ -434,12 +435,13 @@ out dt);
 
                         sxr.DicDatas.Add(sxr.VPrefix + "SheetThreeNote" + idxStr + sxr.CRPrefix + sIdx, noteMsg);
 
-                        System.Data.DataTable[] dts2;
-                        List<SqlParameter> lis2 = new List<SqlParameter>();
-                        lis2.Add(new SqlParameter("@OrderID", dr["ID"]));
-                        lis2.Add(new SqlParameter("@ByType", "0"));
+                        List<SqlParameter> lis2 = new List<SqlParameter>
+                        {
+                            new SqlParameter("@OrderID", dr["ID"]),
+                            new SqlParameter("@ByType", "0"),
+                        };
 
-                        res = DBProxy.Current.SelectSP(string.Empty, "Order_Report_QtyBreakdown", lis2, out dts2);
+                        res = DBProxy.Current.SelectSP(string.Empty, "Order_Report_QtyBreakdown", lis2, out System.Data.DataTable[] dts2);
 
                         if (res)
                         {
@@ -462,7 +464,6 @@ out dt);
 
         private System.Data.DataTable GetDtByComboID(string poid)
         {
-            System.Data.DataTable dt;
             string strSqlSelect = @"
 SELECT distinct OrderComboID from Orders
 outer apply (select 1 as cnt from Orders tmp where tmp.OrderComboID = Orders.ID) cnt
@@ -470,7 +471,7 @@ WHERE Orders.POID = @POID
 and (SMnorderApv is not null or MnorderApv is not null)
 ";
 
-            DualResult res = DBProxy.Current.Select(string.Empty, strSqlSelect, new List<SqlParameter> { new SqlParameter("@POID", poid) }, out dt);
+            DualResult res = DBProxy.Current.Select(string.Empty, strSqlSelect, new List<SqlParameter> { new SqlParameter("@POID", poid) }, out System.Data.DataTable dt);
 
             if (res && dt.Rows.Count > 0)
             {
@@ -484,8 +485,10 @@ and (SMnorderApv is not null or MnorderApv is not null)
 
         private void SetColumn1toText(sxrc.XltRptTable tbl)
         {
-            sxrc.XlsColumnInfo c1 = new sxrc.XlsColumnInfo(1);
-            c1.NumberFormate = "@";
+            sxrc.XlsColumnInfo c1 = new sxrc.XlsColumnInfo(1)
+            {
+                NumberFormate = "@",
+            };
             tbl.LisColumnInfo.Add(c1);
         }
 
@@ -509,7 +512,6 @@ and (SMnorderApv is not null or MnorderApv is not null)
 
         private DataRow GetTitleDataByCustCD(string poid, string id, bool byCustCD = true)
         {
-            DataRow drvar;
             string cmd = string.Empty;
             if (byCustCD)
             {
@@ -570,7 +572,7 @@ and (SMnorderApv is not null or MnorderApv is not null)
 group by POID,b.spno,br.Customize2";
             }
 
-            bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@poid", poid), new SqlParameter("@ID", id) }, out drvar, null);
+            bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@poid", poid), new SqlParameter("@ID", id) }, out DataRow drvar, null);
             if (res)
             {
                 return drvar;
@@ -593,8 +595,7 @@ group by POID,b.spno,br.Customize2";
 
             List<string> msgList = new List<string>();
 
-            System.Data.DataTable sP_note;
-            DBProxy.Current.Select(null, $"SELECT  Junk,NeedProduction,KeepPanels,IsBuyBack  FROM Orders WITH(NOLOCK) WHERE ID='{orderID}'", out sP_note);
+            DBProxy.Current.Select(null, $"SELECT  Junk,NeedProduction,KeepPanels,IsBuyBack  FROM Orders WITH(NOLOCK) WHERE ID='{orderID}'", out System.Data.DataTable sP_note);
 
             if (MyUtility.Convert.GetBool(sP_note.Rows[0]["Junk"]) && MyUtility.Convert.GetBool(sP_note.Rows[0]["NeedProduction"]))
             {
@@ -661,10 +662,8 @@ group by POID,b.spno,br.Customize2";
                 q++;
             }
 
-            System.Data.DataTable sP_note;
-            System.Data.DataTable isBuyBackDt;
-            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,IsBuyBack FROM Orders WITH(NOLOCK) WHERE ID IN ('{spList.JoinToString("','")}')", out sP_note);
-            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,IsBuyBack FROM Orders WITH(NOLOCK) WHERE POID ='{poid}' AND IsBuyBack = 1", out isBuyBackDt);
+            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,IsBuyBack FROM Orders WITH(NOLOCK) WHERE ID IN ('{spList.JoinToString("','")}')", out System.Data.DataTable sP_note);
+            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,IsBuyBack FROM Orders WITH(NOLOCK) WHERE POID ='{poid}' AND IsBuyBack = 1", out System.Data.DataTable isBuyBackDt);
 
             foreach (DataRow dr in sP_note.Rows)
             {

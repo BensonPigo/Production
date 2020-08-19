@@ -11,41 +11,45 @@ using System.Linq;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class R02 : Win.Tems.PrintForm
     {
-        DataTable[] printData;
-        string MD;
-        string Factory;
-        string CutCell1;
-        string CutCell2;
-        string SpreadingNo1;
-        string SpreadingNo2;
-        string[] cuttings;
-        DateTime? dateR_CuttingDate1;
-        DateTime? dateR_CuttingDate2;
-        StringBuilder condition_CuttingDate = new StringBuilder();
-        DataTable Maintb;
-        string NameEN;
-        string strExcelName;
-        string selected_splitWorksheet = "CutCell";
+        private DataTable[] printData;
+        private string MD;
+        private string Factory;
+        private string CutCell1;
+        private string CutCell2;
+        private string SpreadingNo1;
+        private string SpreadingNo2;
+        private string[] cuttings;
+        private DateTime? dateR_CuttingDate1;
+        private DateTime? dateR_CuttingDate2;
+        private StringBuilder condition_CuttingDate = new StringBuilder();
+        private DataTable Maintb;
+        private string NameEN;
+        private string strExcelName;
+        private string selected_splitWorksheet = "CutCell";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R02"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable WorkOrder;
 
             // Set ComboM
-            DBProxy.Current.Select(null, @"Select Distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, WorkOrder);
+            DBProxy.Current.Select(null, @"Select Distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out DataTable workOrder);
+            MyUtility.Tool.SetupCombox(this.comboM, 1, workOrder);
             this.comboM.Text = Env.User.Keyword;
 
             // Set ComboFactory
-            this.setComboFactory();
+            this.SetComboFactory();
             this.comboFactory.Text = Env.User.Factory;
         }
 
-        private void radioByOneDayDetial_CheckedChanged(object sender, EventArgs e)
+        private void RadioByOneDayDetial_CheckedChanged(object sender, EventArgs e)
         {
             this.dateCuttingDate.Control2.Visible = !this.radioByOneDayDetial.Checked;
             if (this.radioByOneDayDetial.Checked)
@@ -58,7 +62,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void dateCuttingDate_Leave(object sender, EventArgs e)
+        private void DateCuttingDate_Leave(object sender, EventArgs e)
         {
             if (this.radioBySummary.Checked || this.radioByDetail.Checked)
             {
@@ -69,7 +73,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.dateCuttingDate.Value1))
@@ -109,14 +113,14 @@ namespace Sci.Production.Cutting
 
             // 避免1、2這樣的條件再>=、<=的篩選有誤，因此補0成01、02
             // 若包含文字符號則不處理
-            int Cell1, Cell2, Spreading1, Spreading2;
-            bool IsCell1Number, IsCell2Number, IsSpreading1Number, IsSpreading2Number;
+            int cell1, cell2, spreading1, spreading2;
+            bool isCell1Number, isCell2Number, isSpreading1Number, isSpreading2Number;
 
             // this.CutCell1
-            IsCell1Number = int.TryParse(this.txtCutCellStart.Text.Trim(), out Cell1);
-            if (IsCell1Number)
+            isCell1Number = int.TryParse(this.txtCutCellStart.Text.Trim(), out cell1);
+            if (isCell1Number)
             {
-                this.CutCell1 = Cell1.ToString("D2");
+                this.CutCell1 = cell1.ToString("D2");
             }
             else
             {
@@ -124,10 +128,10 @@ namespace Sci.Production.Cutting
             }
 
             // this.CutCell2
-            IsCell2Number = int.TryParse(this.txtCutCellEnd.Text.Trim(), out Cell2);
-            if (IsCell2Number)
+            isCell2Number = int.TryParse(this.txtCutCellEnd.Text.Trim(), out cell2);
+            if (isCell2Number)
             {
-                this.CutCell2 = Cell2.ToString("D2");
+                this.CutCell2 = cell2.ToString("D2");
             }
             else
             {
@@ -135,10 +139,10 @@ namespace Sci.Production.Cutting
             }
 
             // SpreadingNo1
-            IsSpreading1Number = int.TryParse(this.txtSpreadingNoStart.Text.Trim(), out Spreading1);
-            if (IsSpreading1Number)
+            isSpreading1Number = int.TryParse(this.txtSpreadingNoStart.Text.Trim(), out spreading1);
+            if (isSpreading1Number)
             {
-                this.SpreadingNo1 = Spreading1.ToString("D2");
+                this.SpreadingNo1 = spreading1.ToString("D2");
             }
             else
             {
@@ -146,10 +150,10 @@ namespace Sci.Production.Cutting
             }
 
             // SpreadingNo2
-            IsSpreading2Number = int.TryParse(this.txtSpreadingNoEnd.Text.Trim(), out Spreading2);
-            if (IsSpreading2Number)
+            isSpreading2Number = int.TryParse(this.txtSpreadingNoEnd.Text.Trim(), out spreading2);
+            if (isSpreading2Number)
             {
-                this.SpreadingNo2 = Spreading2.ToString("D2");
+                this.SpreadingNo2 = spreading2.ToString("D2");
             }
             else
             {
@@ -159,7 +163,7 @@ namespace Sci.Production.Cutting
             return base.ValidateInput();
         }
 
-        // 非同步讀取資料
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.NameEN = MyUtility.GetValue.Lookup("NameEN", Env.User.Factory, "Factory ", "id");
@@ -243,9 +247,9 @@ where   Cutplan.MDivisionID ='{this.MD}'";
 
             DBProxy.Current.Select(null, scell, out this.Maintb);
 
-            int SheetsCount = this.Maintb.Rows.Count; // CutCel總數
+            int sheetsCount = this.Maintb.Rows.Count; // CutCel總數
 
-            if (SheetsCount == 0)
+            if (sheetsCount == 0)
             {
                 return Ict.Result.F("Data not found!");
             }
@@ -255,7 +259,7 @@ where   Cutplan.MDivisionID ='{this.MD}'";
             #region radiobtnByM
             if (this.radioByDetail.Checked)
             {
-                for (int i = 0; i < SheetsCount; i++)
+                for (int i = 0; i < sheetsCount; i++)
                 {
                     sqlCmd.Append(string.Format("IF OBJECT_ID('tempdb.dbo.#tmpall{0}','U')IS NOT NULL DROP TABLE #tmpall{0}", i));
                     sqlCmd.Append(@"
@@ -427,7 +431,7 @@ drop table #tmpall");
             #region radioBtnByCutCell
             if (this.radioByOneDayDetial.Checked)
             {
-                for (int i = 0; i < SheetsCount; i++)
+                for (int i = 0; i < sheetsCount; i++)
                 {
                     sqlCmd.Append(string.Format("IF OBJECT_ID('tempdb.dbo.#tmpall{0}','U')IS NOT NULL DROP TABLE #tmpall{0}", i));
                     sqlCmd.Append(@"
@@ -633,7 +637,7 @@ drop table #tmpall");
             #region radiobtn By Summary
             if (this.radioBySummary.Checked)
             {
-                for (int i = 0; i < SheetsCount; i++)
+                for (int i = 0; i < sheetsCount; i++)
                 {
                     sqlCmd.Append($@"
 select distinct
@@ -827,8 +831,8 @@ drop table #tmp{i}
                 return failResult;
             }
 
-            this.cuttings = new string[SheetsCount];
-            for (int i = 0; i < SheetsCount; i++)
+            this.cuttings = new string[sheetsCount];
+            for (int i = 0; i < sheetsCount; i++)
             {
                 this.cuttings[i] = this.printData[i].Rows.Count.ToString() + " cuttings";
             }
@@ -941,16 +945,16 @@ drop table #tmp{i}
             return Ict.Result.True;
         }
 
-        bool boolsend = false;
+        private bool boolsend = false;
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.SetCount(this.printData[0].Rows.Count);
 
-            int CutCellcount = this.Maintb.Rows.Count; // CutCel總數
+            int cutCellcount = this.Maintb.Rows.Count; // CutCel總數
             bool countrow = false;
-            for (int i = 0; i < CutCellcount; i++)
+            for (int i = 0; i < cutCellcount; i++)
             {
                 if (this.printData[i].Rows.Count > 0)
                 {
@@ -972,7 +976,7 @@ drop table #tmp{i}
                 objApp.Cells[1, 1] = this.NameEN;
 
                 // 先準備複製幾頁
-                for (int i = 0; i < CutCellcount; i++)
+                for (int i = 0; i < cutCellcount; i++)
                 {
                     if (i > 0)
                     {
@@ -982,7 +986,7 @@ drop table #tmp{i}
                     }
                 }
 
-                for (int i = 0; i < CutCellcount; i++)
+                for (int i = 0; i < cutCellcount; i++)
                 {
                     if (this.printData[i].Rows.Count == 0)
                     {
@@ -1071,7 +1075,7 @@ drop table #tmp{i}
                 objApp.Cells[1, 1] = this.NameEN;
 
                 // 先準備複製幾頁
-                for (int i = 0; i < CutCellcount; i++)
+                for (int i = 0; i < cutCellcount; i++)
                 {
                     if (i > 0)
                     {
@@ -1081,7 +1085,7 @@ drop table #tmp{i}
                     }
                 }
 
-                for (int i = 0; i < CutCellcount; i++)
+                for (int i = 0; i < cutCellcount; i++)
                 {
                     if (this.printData[i].Rows.Count == 0)
                     {
@@ -1165,7 +1169,7 @@ drop table #tmp{i}
                 objApp.Cells[1, 1] = this.NameEN;
 
                 // 先準備複製幾頁
-                for (int i = 0; i < CutCellcount; i++)
+                for (int i = 0; i < cutCellcount; i++)
                 {
                     if (i > 0)
                     {
@@ -1175,7 +1179,7 @@ drop table #tmp{i}
                     }
                 }
 
-                for (int i = 0; i < CutCellcount; i++)
+                for (int i = 0; i < cutCellcount; i++)
                 {
                     if (this.printData[i].Rows.Count == 0)
                     {
@@ -1234,7 +1238,7 @@ drop table #tmp{i}
             return true;
         }
 
-        private void btnSendMail_Click(object sender, EventArgs e)
+        private void BtnSendMail_Click(object sender, EventArgs e)
         {
             this.boolsend = true;
             this.toexcel.PerformClick();
@@ -1242,17 +1246,17 @@ drop table #tmp{i}
 
         private void Send_Mail()
         {
-            StringBuilder CuttingDate = new StringBuilder();
+            StringBuilder cuttingDate = new StringBuilder();
             StringBuilder cutcell = new StringBuilder();
-            CuttingDate.Clear();
+            cuttingDate.Clear();
             if (!MyUtility.Check.Empty(this.dateR_CuttingDate1))
             {
-                CuttingDate.Append(string.Format(@"{0}", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")));
+                cuttingDate.Append(string.Format(@"{0}", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.dateR_CuttingDate2))
             {
-                CuttingDate.Append(string.Format(@"~{0}", Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d")));
+                cuttingDate.Append(string.Format(@"~{0}", Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.CutCell1))
@@ -1268,14 +1272,19 @@ drop table #tmp{i}
             string mailcmd = "select * from mailto WITH (NOLOCK) where id = '005'";
             DataTable maildt;
             DBProxy.Current.Select(null, mailcmd, out maildt);
-            string ToAddress = MyUtility.Convert.GetString(maildt.Rows[0]["ToAddress"]);
-            string CcAddress = MyUtility.Convert.GetString(maildt.Rows[0]["CcAddress"]);
-            string Subject = MyUtility.Convert.GetString(maildt.Rows[0]["Subject"]) + "-" + CuttingDate;
+            string toAddress = MyUtility.Convert.GetString(maildt.Rows[0]["ToAddress"]);
+            string ccAddress = MyUtility.Convert.GetString(maildt.Rows[0]["CcAddress"]);
+            string subject = MyUtility.Convert.GetString(maildt.Rows[0]["Subject"]) + "-" + cuttingDate;
 
-            var email = new MailTo(Env.Cfg.MailFrom, ToAddress, CcAddress,
-                Subject,
+            var email = new MailTo(
+                Env.Cfg.MailFrom,
+                toAddress,
+                ccAddress,
+                subject,
                 this.strExcelName,
-                "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + this.MD, false, true);
+                "\r\nFilter as below description:\r\nCutting Date: " + cuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + this.MD,
+                false,
+                true);
             email.ShowDialog(this);
 
             // tmpFile
@@ -1290,7 +1299,7 @@ drop table #tmp{i}
             }
         }
 
-        private void setComboFactory()
+        private void SetComboFactory()
         {
             string sqlCmd = string.Format(
                 @"
@@ -1300,28 +1309,28 @@ Select Distinct ID
 from Factory
 where   junk = 0 
         and MDivisionID = '{0}'", this.comboM.Text);
-            DataTable Factory;
-            DBProxy.Current.Select(null, sqlCmd, out Factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, Factory);
+            DataTable factory;
+            DBProxy.Current.Select(null, sqlCmd, out factory);
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.Text = string.Empty;
         }
 
-        private void comboM_TextChanged(object sender, EventArgs e)
+        private void ComboM_TextChanged(object sender, EventArgs e)
         {
-            this.setComboFactory();
+            this.SetComboFactory();
         }
 
-        private void radioByCutCell_CheckedChanged(object sender, EventArgs e)
-        {
-            this.ByCutCell_SpreadingNo_change();
-        }
-
-        private void radioBySpreadingNo_CheckedChanged(object sender, EventArgs e)
+        private void RadioByCutCell_CheckedChanged(object sender, EventArgs e)
         {
             this.ByCutCell_SpreadingNo_change();
         }
 
-        private void radioGroup1_Paint(object sender, PaintEventArgs e)
+        private void RadioBySpreadingNo_CheckedChanged(object sender, EventArgs e)
+        {
+            this.ByCutCell_SpreadingNo_change();
+        }
+
+        private void RadioGroup1_Paint(object sender, PaintEventArgs e)
         {
             // 把GroupBox的框線改成透明
             GroupBox box = sender as GroupBox;

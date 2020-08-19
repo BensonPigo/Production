@@ -684,7 +684,7 @@
             this.btnPFHistory.TabIndex = 193;
             this.btnPFHistory.Text = "PF";
             this.btnPFHistory.UseVisualStyleBackColor = true;
-            this.btnPFHistory.Click += new System.EventHandler(this.btnPFHistory_Click);
+            this.btnPFHistory.Click += new System.EventHandler(this.BtnPFHistory_Click);
             // 
             // btnEConsMNFailed
             // 
@@ -705,7 +705,7 @@
             this.btnPoRemark.TabIndex = 192;
             this.btnPoRemark.Text = "P/O Remark";
             this.btnPoRemark.UseVisualStyleBackColor = true;
-            this.btnPoRemark.Click += new System.EventHandler(this.btnPoRemark_Click);
+            this.btnPoRemark.Click += new System.EventHandler(this.BtnPoRemark_Click);
             // 
             // label1
             // 
@@ -3257,7 +3257,7 @@
             this.btnExpectionFormRemark.TabIndex = 4;
             this.btnExpectionFormRemark.Text = "R";
             this.btnExpectionFormRemark.UseVisualStyleBackColor = true;
-            this.btnExpectionFormRemark.Click += new System.EventHandler(this.btnExpectionFormRemark_Click);
+            this.btnExpectionFormRemark.Click += new System.EventHandler(this.BtnExpectionFormRemark_Click);
             // 
             // displayIsMixMarker
             // 

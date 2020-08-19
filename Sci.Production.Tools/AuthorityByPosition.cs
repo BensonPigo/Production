@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Tools
 {
+    /// <inheritdoc/>
     public partial class AuthorityByPosition : Win.Tems.Input6
     {
         private string sqlCmd = string.Empty;
@@ -22,41 +23,47 @@ namespace Sci.Production.Tools
         private DataRow newRow = null;
         private string strChangeMemo = string.Empty;
         private string ID = string.Empty;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckNew = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckEdit = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckDelete = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckPrint = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckConfirm = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckUnConfirm = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckSend = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckRecall = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckCheck = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckUnCheck = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckClose = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckUnClose = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckReceive = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckReturn = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckJunk = null;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn ckUnJunk = null;
 
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckNew = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckEdit = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckDelete = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckPrint = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckConfirm = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckUnConfirm = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckSend = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckRecall = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckCheck = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckUnCheck = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckClose = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckUnClose = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckReceive = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckReturn = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckJunk = null;
-        Ict.Win.UI.DataGridViewCheckBoxColumn ckUnJunk = null;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthorityByPosition"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public AuthorityByPosition(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
 
             // 新增Update function List按鈕
-            Win.UI.Button btn = new Win.UI.Button();
-            btn.Text = "Update Function List";
+            Win.UI.Button btn = new Win.UI.Button
+            {
+                Text = "Update Function List",
+            };
             btn.Click += new EventHandler(this.BtnUpdate_Click);
             this.browsetop.Controls.Add(btn);
             btn.Size = new Size(165, 30);
             btn.Enabled = Env.User.IsAdmin;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            Int64 relationKey = (e.Master == null) ? -1 : (Int64)e.Master["PKey"];
+            long relationKey = (e.Master == null) ? -1 : (long)e.Master["PKey"];
 
             this.sqlCmd = string.Format(
                 @"SELECT A.*, B.MenuNo, B.BarNo 
@@ -73,6 +80,7 @@ namespace Sci.Production.Tools
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -80,7 +88,7 @@ namespace Sci.Production.Tools
             this.GetMenuData();
             if (this.dtDetailMenu != null)
             {
-                Dictionary<String, String> filterOptions = new Dictionary<String, String>();
+                Dictionary<string, string> filterOptions = new Dictionary<string, string>();
                 DataTable dtDistinct = this.dtDetailMenu.DefaultView.ToTable(true, new string[] { "MenuName" });
                 foreach (DataRow dr in dtDistinct.Rows)
                 {
@@ -97,6 +105,7 @@ namespace Sci.Production.Tools
             this.comboMenuFilter.ReadOnly = false;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -107,6 +116,7 @@ namespace Sci.Production.Tools
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -122,7 +132,7 @@ namespace Sci.Production.Tools
                             return;
                         }
 
-                        AuthorityByPosition_Setting frm = new AuthorityByPosition_Setting((Int64)this.CurrentMaintain["PKey"], dr);
+                        AuthorityByPosition_Setting frm = new AuthorityByPosition_Setting((long)this.CurrentMaintain["PKey"], dr);
                         frm.ShowDialog(this);
                         if (frm.DialogResult == DialogResult.OK)
                         {
@@ -174,6 +184,7 @@ namespace Sci.Production.Tools
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -186,7 +197,7 @@ namespace Sci.Production.Tools
                 newRow = this.dtDetail.NewRow();
                 newRow["MenuName"] = dr["MenuName"].ToString();
                 newRow["BarPrompt"] = dr["BarPrompt"].ToString();
-                newRow["FKMenu"] = (Int64)dr["PKey"];
+                newRow["FKMenu"] = (long)dr["PKey"];
                 if (dr["BarPrompt"].ToString().ToUpper() == "SWITCH FACTORY")
                 {
                     newRow["Used"] = "Y";
@@ -219,18 +230,21 @@ namespace Sci.Production.Tools
             this.LockCheckBox(string.Empty);
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.LockCheckBox(string.Empty);
         }
 
+        /// <inheritdoc/>
         protected override void ClickCopyAfter()
         {
             base.ClickCopyAfter();
             this.LockCheckBox(string.Empty);
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["ID"].ToString()))
@@ -263,12 +277,14 @@ namespace Sci.Production.Tools
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
             DBProxy.Current.Insert(null, this.itsPassEdit, this.newRow);
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (!(this.result = DBProxy.Current.GetTableSchema(null, "PassEdit_History", out this.itsPassEdit)))
@@ -286,6 +302,7 @@ namespace Sci.Production.Tools
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             foreach (DataRow dr in this.dtPassEdit.Rows)
@@ -296,6 +313,7 @@ namespace Sci.Production.Tools
             return base.ClickDeletePost();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -305,7 +323,7 @@ namespace Sci.Production.Tools
         }
 
         // 檢查Position是否重複
-        private void txtPosition_Validating(object sender, CancelEventArgs e)
+        private void TxtPosition_Validating(object sender, CancelEventArgs e)
         {
             // 先記錄原本的Position,排除自己後check輸入的是否存在DB
             if (this.ID.ToString().ToUpper() != this.txtPosition.Text.ToUpper())
@@ -527,8 +545,11 @@ namespace Sci.Production.Tools
             }
         }
 
-        // 根據DetailMenu權限控制Grid CheckBox Cell是否能編輯
-        protected void LockCheckBox(String menuOption)
+        /// <summary>
+        /// 根據DetailMenu權限控制Grid CheckBox Cell是否能編輯
+        /// </summary>
+        /// <param name="menuOption">Menu Option</param>
+        protected void LockCheckBox(string menuOption)
         {
             this.dtDetail = (DataTable)this.detailgridbs.DataSource;
             if (this.dtDetail == null)
@@ -547,7 +568,7 @@ namespace Sci.Production.Tools
             int index = 0;
             foreach (DataRowView dr in this.dtDetail.DefaultView)
             {
-                drs = this.dtDetailMenu.Select(string.Format("PKey = {0}", (Int64)dr["FKMenu"]));
+                drs = this.dtDetailMenu.Select(string.Format("PKey = {0}", (long)dr["FKMenu"]));
                 this.detailgrid.Rows[index].Cells[this.ckNew.Index].ReadOnly = (drs.Length > 0) ? !((bool)drs[0]["CanNew"]) : true;
                 this.detailgrid.Rows[index].Cells[this.ckEdit.Index].ReadOnly = (drs.Length > 0) ? !((bool)drs[0]["CanEdit"]) : true;
                 this.detailgrid.Rows[index].Cells[this.ckDelete.Index].ReadOnly = (drs.Length > 0) ? !((bool)drs[0]["CanDelete"]) : true;
@@ -582,8 +603,10 @@ namespace Sci.Production.Tools
             }
         }
 
-        // Modify History
-        private void btnModifyHistory_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Modify History
+        /// </summary>
+        private void BtnModifyHistory_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null)
             {
@@ -595,7 +618,7 @@ namespace Sci.Production.Tools
         }
 
         // ComboBox SelectChange
-        private void comboMenuFilter_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboMenuFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             // if (this.EditMode)
             // {
@@ -604,10 +627,9 @@ namespace Sci.Production.Tools
             // }
         }
 
-        // Print
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            DataTable dtExcel;
             DualResult result;
             string cmd = @"
 select b.ID
@@ -632,7 +654,7 @@ select b.ID
 from Pass2 a
 inner join pass0 b on a.FKPass0=b.PKey
 order by b.pkey,a.MenuName,BarPrompt";
-            if (!(result = DBProxy.Current.Select(null, cmd, out dtExcel)))
+            if (!(result = DBProxy.Current.Select(null, cmd, out DataTable dtExcel)))
             {
                 return result;
             }

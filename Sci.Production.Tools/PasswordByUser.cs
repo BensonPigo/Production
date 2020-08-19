@@ -12,9 +12,10 @@ using Sci.Production.Class;
 
 namespace Sci.Production.Tools
 {
+    /// <inheritdoc/>
     public partial class PasswordByUser : Win.Tems.Input1
     {
-        OpenFileDialog openfiledialog;
+        private OpenFileDialog openfiledialog;
         private string file;
         private PictureSubPage picturePage;
         private DataTable dtPass2 = null;
@@ -24,6 +25,10 @@ namespace Sci.Production.Tools
         private string sqlCmd = string.Empty;
         private string destination_path; // 放圖檔的路徑
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PasswordByUser"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public PasswordByUser(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -63,15 +68,17 @@ namespace Sci.Production.Tools
                     if (seleItem.ShowDialog(this) == DialogResult.OK)
                     {
                         listSelect = seleItem.GetSelecteds();
-                        this.CurrentMaintain["FKPass0"] = (Int64)listSelect[0]["PKey"];
+                        this.CurrentMaintain["FKPass0"] = (long)listSelect[0]["PKey"];
                         this.CurrentMaintain["Position"] = listSelect[0]["ID"].ToString();
                     }
                 };
             }
 
-            Dictionary<string, string> codePageSource = new Dictionary<string, string>();
-            codePageSource.Add("950", "繁體中文");
-            codePageSource.Add("0", "English");
+            Dictionary<string, string> codePageSource = new Dictionary<string, string>
+            {
+                { "950", "繁體中文" },
+                { "0", "English" },
+            };
             this.comboLanguage.DataSource = new BindingSource(codePageSource, null);
             this.comboLanguage.ValueMember = "Key";
             this.comboLanguage.DisplayMember = "Value";
@@ -79,6 +86,7 @@ namespace Sci.Production.Tools
             this.destination_path = UserESignature.GetESignaturePath();
         }
 
+        /// <inheritdoc/>
         protected override void SearchGridColumns()
         {
             if (this.locatefor.Text.Trim() == string.Empty)
@@ -123,6 +131,7 @@ namespace Sci.Production.Tools
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -152,12 +161,14 @@ namespace Sci.Production.Tools
             this.grid1.DataSource = this.listControlBindingSource1;
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             this.CurrentMaintain["CodePage"] = "0";
             base.ClickNewAfter();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["Position"]))
@@ -243,6 +254,7 @@ namespace Sci.Production.Tools
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -294,14 +306,16 @@ namespace Sci.Production.Tools
             this.listControlBindingSource1.DataSource = this.dtPass2;
         }
 
-        private void btnSetPic_Click(object sender, EventArgs e)
+        private void BtnSetPic_Click(object sender, EventArgs e)
         {
             if (this.destination_path != null)
             {
                 if (this.openfiledialog == null)
                 {
-                    this.openfiledialog = new OpenFileDialog();
-                    this.openfiledialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.TIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*";
+                    this.openfiledialog = new OpenFileDialog
+                    {
+                        Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.TIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*",
+                    };
                 }
 
                 if (this.openfiledialog.ShowDialog() != DialogResult.OK)
@@ -314,7 +328,7 @@ namespace Sci.Production.Tools
             }
         }
 
-        private void btnShowImg_Click(object sender, EventArgs e)
+        private void BtnShowImg_Click(object sender, EventArgs e)
         {
             switch (this.EditMode)
             {
@@ -346,6 +360,7 @@ namespace Sci.Production.Tools
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             if (MyUtility.Check.Empty(this.btnShowImg))
@@ -366,7 +381,7 @@ namespace Sci.Production.Tools
             base.OnEditModeChanged();
         }
 
-        private void txtEMailAddr_Validating(object sender, CancelEventArgs e)
+        private void TxtEMailAddr_Validating(object sender, CancelEventArgs e)
         {
             // 20190610先不要驗證, 太久了
             // if (!this.EditMode || MyUtility.Check.Empty(this.txtEMailAddr.Text))

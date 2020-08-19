@@ -6,6 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
+    /// <inheritdoc/>
     public partial class GarmentList_ColorArticle : Win.Subs.Base
     {
         private string styleukey;
@@ -13,24 +14,34 @@ namespace Sci.Production.PublicForm
         private string cid;
         private string FC;
 
-        public GarmentList_ColorArticle(string ukey, string styukey, string id, string F)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GarmentList_ColorArticle"/> class.
+        /// </summary>
+        /// <param name="ukey">ukey</param>
+        /// <param name="styukey">styukey</param>
+        /// <param name="id">id</param>
+        /// <param name="f">F</param>
+        public GarmentList_ColorArticle(string ukey, string styukey, string id, string f)
         {
             this.InitializeComponent();
             this.sukey = ukey;
             this.cid = id;
-            this.FC = F;
+            this.FC = f;
             this.styleukey = styukey;
-            this.requery();
-            this.gridSetup();
+            this.Requery();
+            this.GridSetup();
         }
 
-        private void requery()
+        private void Requery()
         {
-            string sqlcmd = String.Format(
+            string sqlcmd = string.Format(
                 @"
 Select *
 from Pattern_GL_Article a WITH (NOLOCK),(SELECT DISTINCT PatternPanel FROM Order_ColorCombo WHERE Id='{1}' and FabricPanelCode='{2}')b
-            Where a.PatternUkey = '{0}'", this.sukey, this.cid, this.FC);
+            Where a.PatternUkey = '{0}'",
+                this.sukey,
+                this.cid,
+                this.FC);
             DataTable gridtb;
             DualResult sqldr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
             if (!sqldr)
@@ -41,7 +52,7 @@ from Pattern_GL_Article a WITH (NOLOCK),(SELECT DISTINCT PatternPanel FROM Order
             this.gridColorArticle.DataSource = gridtb;
         }
 
-        private void gridSetup()
+        private void GridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.gridColorArticle)
                 .Text("ArticleGroup", header: "Article Group", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -51,7 +62,7 @@ from Pattern_GL_Article a WITH (NOLOCK),(SELECT DISTINCT PatternPanel FROM Order
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

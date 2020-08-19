@@ -10,14 +10,20 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P21 : Win.Tems.Base
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P21"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -77,15 +83,14 @@ namespace Sci.Production.Cutting
                 else
                 {
                     // 搜尋時若有多筆資料，直接選第一筆
-                    DualResult resultCheck = DBProxy.Current.Select(null, $@"
+                    string sqlCmd = $@"
                                     select TOP 1 w.ID ,CutCellid ,w.FactoryID ,[EstCutDate]=MAX(EstCutDate) ,[ActCutDate]=Max(c.cDate)
                                     from WorkOrder W 
                                     Left JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderUkey
                                     Left JOIN CuttingOutput C on CD.ID=C.ID
                                     where w.CutRef = '{newValue}' AND w.MDivisionId='{Env.User.Keyword}'
-                                    GROUP BY w.ID,CutCellid,w.FactoryID
-                                    ", out dt_CutRef);
-
+                                    GROUP BY w.ID,CutCellid,w.FactoryID";
+                    DualResult resultCheck = DBProxy.Current.Select(null, sqlCmd, out dt_CutRef);
                     if (!resultCheck)
                     {
                         this.ShowErr(resultCheck);
@@ -139,8 +144,8 @@ namespace Sci.Production.Cutting
                 DataRow selectedRow = this.gridP21.GetDataRow(e.RowIndex);
                 string oldValue = selectedRow["Seq1"].ToString();
                 string newValue = e.FormattedValue.ToString();
-                string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
-                string CutRefNo = selectedRow["CutRef"].ToString();
+                string cuttingSpNO = selectedRow["CuttingSpNO"].ToString();
+                string cutRefNo = selectedRow["CutRef"].ToString();
 
                 // 沒有異動
                 if (oldValue.Equals(newValue) || e.RowIndex == -1)
@@ -149,7 +154,7 @@ namespace Sci.Production.Cutting
                 }
 
                 // 若CutRef#為空則清空
-                if (MyUtility.Check.Empty(CutRefNo))
+                if (MyUtility.Check.Empty(cutRefNo))
                 {
                     MyUtility.Msg.WarningBox("Please enter CutRef# first.");
                     selectedRow["Seq1"] = string.Empty;
@@ -179,8 +184,8 @@ namespace Sci.Production.Cutting
                 DataRow selectedRow = this.gridP21.GetDataRow(e.RowIndex);
                 string oldValue = selectedRow["Seq2"].ToString();
                 string newValue = e.FormattedValue.ToString();
-                string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
-                string CutRefNo = selectedRow["CutRef"].ToString();
+                string cuttingSpNO1 = selectedRow["CuttingSpNO"].ToString();
+                string cutRefNo1 = selectedRow["CutRef"].ToString();
 
                 // 沒有異動
                 if (oldValue.Equals(newValue) || e.RowIndex == -1)
@@ -189,7 +194,7 @@ namespace Sci.Production.Cutting
                 }
 
                 // 若CutRef#為空則清空
-                if (MyUtility.Check.Empty(CutRefNo))
+                if (MyUtility.Check.Empty(cutRefNo1))
                 {
                     MyUtility.Msg.WarningBox("Please enter CutRef# first.");
                     selectedRow["Seq2"] = string.Empty;
@@ -219,7 +224,7 @@ namespace Sci.Production.Cutting
                 DataRow selectedRow = this.gridP21.GetDataRow(e.RowIndex);
                 string oldValue = selectedRow["Roll"].ToString();
                 string newValue = e.FormattedValue.ToString();
-                string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
+                string cuttingSpNO2 = selectedRow["CuttingSpNO"].ToString();
                 string dyelot = selectedRow["Dyelot"].ToString();
 
                 // 沒有異動
@@ -236,11 +241,11 @@ namespace Sci.Production.Cutting
                 DataRow selectedRow = this.gridP21.GetDataRow(e.RowIndex);
                 string oldValue = selectedRow["Dyelot"].ToString();
                 string newValue = e.FormattedValue.ToString();
-                string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
-                string Roll = selectedRow["Roll"].ToString();
+                string cuttingSpNO3 = selectedRow["CuttingSpNO"].ToString();
+                string roll = selectedRow["Roll"].ToString();
 
                 // 沒有異動
-                if (oldValue.Equals(newValue) || e.RowIndex == -1 || MyUtility.Check.Empty(Roll))
+                if (oldValue.Equals(newValue) || e.RowIndex == -1 || MyUtility.Check.Empty(roll))
                 {
                     return;
                 }
@@ -334,13 +339,13 @@ WHERE 1=0
             #endregion
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             P21_QueryRevised form = new P21_QueryRevised();
             form.ShowDialog();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             DataRow[] allEmptyData;
             DataRow[] noEmptyData;
@@ -382,22 +387,19 @@ WHERE 1=0
             }
 
             // 開始UPDATE
-            using (TransactionScope _transactionscope = new TransactionScope())
+            this.ShowWaitMessage("Data Loading....");
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
-                    this.ShowWaitMessage("Data Loading....");
                     returnResult = DBProxy.Current.Inserts(null, tableSchema, noEmptyData);
-
                     if (!returnResult)
                     {
-                        _transactionscope.Dispose();
-                        return;
+                        throw new Exception(returnResult.Messages.ToString());
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Successfully");
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
 
                     // 將更新的資料從畫面上去掉
                     foreach (DataRow item in noEmptyData)
@@ -409,20 +411,27 @@ WHERE 1=0
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
+                    transactionscope.Dispose();
+                    returnResult = new DualResult(false, "Commit transaction error.", ex);
                 }
                 finally
                 {
                     this.HideWaitMessage();
                 }
             }
+
+            if (!returnResult)
+            {
+                this.ShowErr(returnResult);
+                return;
+            }
+
+            MyUtility.Msg.InfoBox("Successfully");
         }
 
         #region Grid Icon事件
 
-        private void gridIcon1_AppendClick(object sender, EventArgs e)
+        private void GridIcon1_AppendClick(object sender, EventArgs e)
         {
            DataTable gridData = (DataTable)this.listControlBindingSource1.DataSource;
            DataRow nRow = gridData.NewRow();
@@ -431,7 +440,7 @@ WHERE 1=0
             // gridData.ImportRow(nRow);
         }
 
-        private void gridIcon1_InsertClick(object sender, EventArgs e)
+        private void GridIcon1_InsertClick(object sender, EventArgs e)
         {
             if (this.gridP21.RowCount != 0)
             {
@@ -448,7 +457,7 @@ WHERE 1=0
             }
         }
 
-        private void gridIcon1_RemoveClick(object sender, EventArgs e)
+        private void GridIcon1_RemoveClick(object sender, EventArgs e)
         {
             if (this.gridP21.RowCount != 0)
             {
@@ -469,9 +478,7 @@ WHERE 1=0
         /// <summary>
         /// 觸發事件：游標在Grid cell裡面按下任何按鍵
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void gridP21_EditingKeyProcessing(object sender, Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs e)
+        private void GridP21_EditingKeyProcessing(object sender, Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs e)
         {
             bool isLastRow = this.gridP21.CurrentRow.Index == this.gridP21.Rows.Count - 1;
             bool isLastColumn = this.gridP21.CurrentCell.IsInEditMode;

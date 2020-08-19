@@ -8,21 +8,27 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Basic
 {
+    /// <inheritdoc/>
     public partial class B04_BatchApprove : Win.Forms.Base
     {
-        Action reloadParant;
+        private Action reloadParant;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
         private DataTable master;
         private DataTable detail;
 
-        public B04_BatchApprove(Action ReloadParant)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B04_BatchApprove"/> class.
+        /// </summary>
+        /// <param name="reloadParant">Action reload</param>
+        public B04_BatchApprove(Action reloadParant)
         {
             this.InitializeComponent();
             this.EditMode = true;
-            this.reloadParant = ReloadParant;
+            this.reloadParant = reloadParant;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -72,7 +78,6 @@ namespace Sci.Production.Basic
 
         private void Query()
         {
-            DataSet datas = null;
             this.master = null;
             this.detail = null;
             #region
@@ -123,7 +128,7 @@ DROP TABLE #Master
 
 ";
             #endregion
-            if (!SQL.Selects(string.Empty, sqlCmd, out datas))
+            if (!SQL.Selects(string.Empty, sqlCmd, out DataSet datas))
             {
                 MyUtility.Msg.WarningBox(sqlCmd, "DB error!!");
                 return;
@@ -177,7 +182,7 @@ DROP TABLE #Master
             }
         }
 
-        private void chkIncludeApproved_CheckedChanged(object sender, EventArgs e)
+        private void ChkIncludeApproved_CheckedChanged(object sender, EventArgs e)
         {
             // 若勾選，不判斷[LocalSupp_Bank].Status, 符合條件資料全帶出, Status='Confirmed' 底色反灰
             if (this.chkIncludeApproved.Checked)
@@ -203,7 +208,7 @@ DROP TABLE #Master
             }
         }
 
-        private void btnconfirm_Click(object sender, EventArgs e)
+        private void Btnconfirm_Click(object sender, EventArgs e)
         {
             if (this.master == null || this.master.Rows.Count == 0)
             {
@@ -218,7 +223,6 @@ DROP TABLE #Master
             }
 
             DataTable selectdt = this.master.Select("Selected = 1 AND Status='New'").CopyToDataTable();
-
             DualResult upResult;
             string chkstatus = $@"
 SELECT t.ID ,t.PKey
@@ -226,8 +230,7 @@ FROM #tmp s
 INNER JOIN LocalSupp_Bank t on s.ID=t.ID AND s.PKey = t.PKey
 WHERE t.status = 'New'
 ";
-            DataTable dt;
-            if (!(upResult = MyUtility.Tool.ProcessWithDatatable(selectdt, string.Empty, chkstatus, out dt)))
+            if (!(upResult = MyUtility.Tool.ProcessWithDatatable(selectdt, string.Empty, chkstatus, out DataTable dt)))
             {
                 this.ShowErr(upResult);
                 return;

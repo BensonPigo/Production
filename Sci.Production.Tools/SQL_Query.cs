@@ -12,8 +12,13 @@ using Microsoft.SqlServer.Management.Smo;
 
 namespace Sci.Production.Tools
 {
+    /// <inheritdoc/>
     public partial class SQL_Query : Win.Tems.QueryForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SQL_Query"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public SQL_Query(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -21,21 +26,20 @@ namespace Sci.Production.Tools
             this.GridSetup();
         }
 
-        string sqlcmd;
+        private string sqlcmd;
 
         private void GridSetup()
         {
             this.gridSQLQuery.AutoGenerateColumns = true;
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.DataSource = null;
 
             this.sqlcmd = this.editSQL.Text;
             DualResult result;
-            DataTable dt;
-            result = DBProxy.Current.Select(string.Empty, this.sqlcmd, null, out dt);
+            result = DBProxy.Current.Select(string.Empty, this.sqlcmd, null, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(this.sqlcmd, result);
@@ -45,7 +49,7 @@ namespace Sci.Production.Tools
             this.listControlBindingSource1.DataSource = dt;
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (this.checkBox1.Checked)
             {
@@ -57,7 +61,7 @@ namespace Sci.Production.Tools
             }
         }
 
-        private void btnSqlUpdate_Click(object sender, EventArgs e)
+        private void BtnSqlUpdate_Click(object sender, EventArgs e)
         {
             string[] dirs = Directory.GetFiles(Env.Cfg.ReportTempDir, "*.sql");
             string subject = string.Format("DataBase={0}, Account={1}, Factory={2} SQL Update Success !!", DBProxy.Current.DefaultModuleName, Env.User.UserName, Env.User.Factory);
@@ -69,52 +73,58 @@ namespace Sci.Production.Tools
                 return;
             }
 
+            Exception exception = null;
             foreach (string dir in dirs)
             {
                 string script = File.ReadAllText(dir);
 
                 // DualResult upResult;
-                TransactionScope _transactionscope = new TransactionScope();
-                using (_transactionscope)
+                TransactionScope transactionscope = new TransactionScope();
+                using (transactionscope)
                 {
                     try
                     {
-                        SqlConnection connection;
-                        DBProxy.Current.OpenConnection("Production", out connection);
+                        DBProxy.Current.OpenConnection("Production", out SqlConnection connection);
 
                         using (connection)
-                       {
+                        {
                             Server db = new Server(new ServerConnection(connection));
                             db.ConnectionContext.ExecuteNonQuery(script);
                         }
 
-                        _transactionscope.Complete();
-                        _transactionscope.Dispose();
+                        transactionscope.Complete();
+                        transactionscope.Dispose();
                     }
                     catch (Exception ex)
                     {
-                        _transactionscope.Dispose();
-                        this.ShowErr("Commit transaction error.", ex);
+                        transactionscope.Dispose();
+                        exception = ex;
                         subject = string.Format("DataBase={0}, Account={1}, Factory={2} SQL Update Fail !!", DBProxy.Current.DefaultModuleName, Env.User.UserName, Env.User.Factory);
                         desc = subject + string.Format(
                             @"
 ------------------------------------------------------------
 {0}
 -----------------------------------------------------------", ex.ToString());
-                        this.sendmail(subject, desc);
-                        return;
+                        this.Sendmail(subject, desc);
+                        break;
                     }
                 }
 
-                _transactionscope.Dispose();
-                _transactionscope = null;
+                transactionscope.Dispose();
+                transactionscope = null;
+            }
+
+            if (exception != null)
+            {
+                this.ShowErr("Commit transaction error.", exception);
+                return;
             }
 
             MyUtility.Msg.InfoBox("Update completed !!");
-            this.sendmail(subject, desc);
+            this.Sendmail(subject, desc);
         }
 
-        private void sendmail(string subject, string desc)
+        private void Sendmail(string subject, string desc)
         {
             string sql_update_receiver = ConfigurationManager.AppSettings["sql_update_receiver"];
             Win.Tools.MailTo mail = new Win.Tools.MailTo(Env.Cfg.MailFrom, sql_update_receiver, string.Empty, subject, string.Empty, desc, true, true);

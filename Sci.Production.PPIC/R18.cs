@@ -20,15 +20,15 @@ namespace Sci.Production.PPIC
         private List<SqlParameter> listPar = new List<SqlParameter>();
 
         /// <summary>
-        /// R18
+        /// Initializes a new instance of the <see cref="R18"/> class.
         /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
 
-            DataTable dtFty;
-            DualResult result = DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) where IsProduceFty = 1", out dtFty);
+            DualResult result = DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) where IsProduceFty = 1", out DataTable dtFty);
             if (!result)
             {
                 this.ShowErr(result);
@@ -224,10 +224,7 @@ drop table #tmpBaseICR
             return DBProxy.Current.Select(null, this.sqlGetData, this.listPar, out this.dtResult);
         }
 
-        /// <summary>
-        /// ToExcel
-        /// </summary>
-        /// <returns>true</returns>
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (this.dtResult == null || this.dtResult.Rows.Count == 0)

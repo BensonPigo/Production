@@ -8,29 +8,33 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class R04 : Win.Tems.PrintForm
     {
-        DataTable printData;
-        string MDivision;
-        string Factory;
-        string CutCell1;
-        string CutCell2;
-        DateTime? Est_CutDate1;
-        DateTime? Est_CutDate2;
-        StringBuilder condition_Est_CutDate = new StringBuilder();
+        private DataTable printData;
+        private string MDivision;
+        private string Factory;
+        private string CutCell1;
+        private string CutCell2;
+        private DateTime? Est_CutDate1;
+        private DateTime? Est_CutDate2;
+        private StringBuilder condition_Est_CutDate = new StringBuilder();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R04"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable WorkOrder;
-            DBProxy.Current.Select(null, "select distinct ID from MDivision WITH (NOLOCK) ", out WorkOrder);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, WorkOrder);
+            DBProxy.Current.Select(null, "select distinct ID from MDivision WITH (NOLOCK) ", out DataTable workOrder);
+            MyUtility.Tool.SetupCombox(this.comboM, 1, workOrder);
             this.comboM.Text = Env.User.Keyword;
             this.comboFactory.SetDataSource();
         }
 
-        private void radioByM_CheckedChanged(object sender, EventArgs e)
+        private void RadioByM_CheckedChanged(object sender, EventArgs e)
         {
             if (this.radioByM.Checked)
             {
@@ -41,7 +45,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void radioByCutCell_CheckedChanged(object sender, EventArgs e)
+        private void RadioByCutCell_CheckedChanged(object sender, EventArgs e)
         {
             if (this.radioByCutCell.Checked)
             {
@@ -51,7 +55,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void radioByFactory_CheckedChanged(object sender, EventArgs e)
+        private void RadioByFactory_CheckedChanged(object sender, EventArgs e)
         {
             if (this.radioByFactory.Checked)
             {
@@ -65,12 +69,12 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void comboM_TextChanged(object sender, EventArgs e)
+        private void ComboM_TextChanged(object sender, EventArgs e)
         {
             this.comboFactory.SetDataSource(this.comboM.Text);
         }
 
-        private void radioByDetail_CheckedChanged(object sender, EventArgs e)
+        private void RadioByDetail_CheckedChanged(object sender, EventArgs e)
         {
             if (this.radioByDetail.Checked)
             {
@@ -81,7 +85,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.MDivision = this.comboM.Text;
@@ -91,9 +95,8 @@ namespace Sci.Production.Cutting
 
             // CutCell1 = txt_CutCell1.Text;
             // CutCell2 = txt_CutCell2.Text;
-            int c1, c2;
             bool bc1, bc2;
-            bc1 = int.TryParse(this.txtCutCellStart.Text.Trim(), out c1);
+            bc1 = int.TryParse(this.txtCutCellStart.Text.Trim(), out int c1);
             if (bc1)
             {
                 this.CutCell1 = c1.ToString("D2");
@@ -106,7 +109,7 @@ namespace Sci.Production.Cutting
             // 若CutCell2為空則=CutCell1
             if (!MyUtility.Check.Empty(this.txtCutCellEnd.Text.Trim()))
             {
-                bc2 = int.TryParse(this.txtCutCellEnd.Text.Trim(), out c2);
+                bc2 = int.TryParse(this.txtCutCellEnd.Text.Trim(), out int c2);
                 if (bc2)
                 {
                     this.CutCell2 = c2.ToString("D2");
@@ -130,7 +133,7 @@ namespace Sci.Production.Cutting
             return base.ValidateInput();
         }
 
-        // 非同步讀取資料
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -143,7 +146,8 @@ while @startDate <= @EndDate
 begin
 	insert into #dateranges values(@startDate)	set @startDate =  DATEADD(DAY, 1,@startDate)
 end",
-                Convert.ToDateTime(this.Est_CutDate1).ToString("d"), Convert.ToDateTime(this.Est_CutDate2).ToString("d")));
+                Convert.ToDateTime(this.Est_CutDate1).ToString("d"),
+                Convert.ToDateTime(this.Est_CutDate2).ToString("d")));
 
             #region radiobtnByM
             if (this.radioByM.Checked)
@@ -612,7 +616,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
             return Ict.Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

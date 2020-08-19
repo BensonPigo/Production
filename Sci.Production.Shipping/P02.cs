@@ -2032,8 +2032,9 @@ and Dest='{this.CurrentMaintain["Dest"]}'
 
         private string NametoTag(string n)
         {
-            if (n == "Brand") // 因為trade來的設定資料是Buyer
+            if (n == "Brand")
             {
+                // 因為trade來的設定資料是Buyer
                 n = "Buyer";
             }
 

@@ -12,6 +12,9 @@ namespace Sci.Production.Shipping
 {
     public partial class P05_BatchImportSO : Win.Subs.Base
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P05_BatchImportSO"/> class.
+        /// </summary>
         public P05_BatchImportSO()
         {
             this.InitializeComponent();
@@ -21,6 +24,7 @@ namespace Sci.Production.Shipping
             this.comboShipper.Text = Env.User.Keyword;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

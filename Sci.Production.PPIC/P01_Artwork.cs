@@ -6,16 +6,22 @@ using System.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class P01_Artwork : Win.Subs.Base
     {
         private string Order_ArtworkId;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P01_Artwork"/> class.
+        /// </summary>
+        /// <param name="iD">Artwork ID</param>
         public P01_Artwork(string iD)
         {
             this.InitializeComponent();
             this.Order_ArtworkId = iD;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -38,8 +44,7 @@ outer apply(
 )art
 WHERE oa.ID = '{this.Order_ArtworkId}'
 ORDER BY ArtworkTypeID,Article";
-            DataTable artworkUnit;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out artworkUnit);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable artworkUnit);
 
             this.Helper.Controls.Grid.Generator(this.ArtworkGrid)
                .Text("ArtworkTypeID", header: "Artwork Type", width: Widths.AnsiChars(20))
@@ -98,8 +103,7 @@ ORDER BY ArtworkTypeID,Article";
                                 where o.POID = (SELECT POID FROM Orders WHERE ID='{this.Order_ArtworkId}') 
                                 group by oa.PatternCode,oa.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID
                                 order by oa.ArtworkTypeID";
-            DataTable head;
-            result = DBProxy.Current.Select(null, sqlCmd, out head);
+            result = DBProxy.Current.Select(null, sqlCmd, out DataTable head);
             if (!result)
             {
                 this.ShowErr(result);
@@ -213,8 +217,7 @@ group by bao.ArtworkTypeID,
 
 drop table #baseArtworkOrderQty,#comboBySP
 ";
-            DataTable[] dtComboResults;
-            result = DBProxy.Current.Select(null, sqlCmd, out dtComboResults);
+            result = DBProxy.Current.Select(null, sqlCmd, out DataTable[] dtComboResults);
 
             if (!result)
             {
@@ -222,7 +225,7 @@ drop table #baseArtworkOrderQty,#comboBySP
                 return;
             }
 
-            DataTable Left = dtComboResults[1];
+            DataTable left = dtComboResults[1];
 
             // 一組key對應的只會有一組 PatternCode
             DataTable value = dtComboResults[0];
@@ -253,7 +256,7 @@ drop table #baseArtworkOrderQty,#comboBySP
             }
 
             // 依據id開始填row
-            foreach (DataRow leftitem in Left.Rows)
+            foreach (DataRow leftitem in left.Rows)
             {
                 DataRow row;
                 row = dt.NewRow();

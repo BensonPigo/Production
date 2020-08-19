@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class R17 : Win.Tems.PrintForm
     {
         private DataTable printData;
@@ -20,7 +21,10 @@ namespace Sci.Production.PPIC
         private DateTime? Cdate_S;
         private DateTime? Cdate_E;
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R17"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R17(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

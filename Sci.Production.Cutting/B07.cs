@@ -7,6 +7,10 @@ namespace Sci.Production.Cutting
 {
     public partial class B07 : Win.Tems.Input1
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B07"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public B07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -16,6 +20,7 @@ Cutting Time = Set up time + Total Cutting Perimeter/Actual Speed+
 Window time*Marker Length/Window Length";
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -39,6 +44,7 @@ Window time*Marker Length/Window Length";
 from CuttingTime s where WeaveTypeID = '{this.CurrentMaintain["ID"]}'");
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             // 修改表身資料,不寫入表頭EditName and EditDate

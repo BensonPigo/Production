@@ -13,10 +13,15 @@ using System.Linq;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P12 : Win.Tems.QueryForm
     {
-        BindingList<P12_PrintData> Data = new BindingList<P12_PrintData>();
+        private BindingList<P12_PrintData> Data = new BindingList<P12_PrintData>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P12"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -26,27 +31,27 @@ namespace Sci.Production.Cutting
             this.comboSortBy.SelectedIndex = 0;
         }
 
-        string Cut_Ref;
-        string Cut_Ref1;
-        string SP;
-        string SP1;
-        string POID;
-        string Bundle;
-        string Bundle1;
-        DateTime? Est_CutDate;
-        string Cell;
-        string size;
-        string Sort_by;
-        string Extend;
-        DualResult result;
-        DataTable dtt;
-        string Addname;
-        DateTime? AddDate;
-        string Cutno;
-        string Comb;
-        string SpreadingNoID;
+        private string Cut_Ref;
+        private string Cut_Ref1;
+        private string SP;
+        private string SP1;
+        private string POID;
+        private string Bundle;
+        private string Bundle1;
+        private DateTime? Est_CutDate;
+        private string Cell;
+        private string size;
+        private string Sort_by;
+        private string Extend;
+        private DualResult result;
+        private DataTable dtt;
+        private string Addname;
+        private DateTime? AddDate;
+        private string Cutno;
+        private string Comb;
+        private string SpreadingNoID;
 
-        void GridSetup()
+        private void GridSetup()
         {
             this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
@@ -79,7 +84,7 @@ namespace Sci.Production.Cutting
                 ;
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty()
                 && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty()
@@ -134,9 +139,10 @@ namespace Sci.Production.Cutting
             string sqlWhere = string.Empty;
             string sb = string.Empty;
             string declare = string.Empty;
-            List<string> sqlWheres = new List<string>();
-
-            sqlWheres.Add("b.MDivisionID=@Keyword");
+            List<string> sqlWheres = new List<string>
+            {
+                "b.MDivisionID=@Keyword",
+            };
 
             if (!this.txtCutRefStart.Text.Empty() && !this.txtCutRefEnd.Text.Empty())
             {
@@ -227,8 +233,9 @@ namespace Sci.Production.Cutting
 
             string sqlcmd = string.Empty;
 
-            if (this.checkExtendAllParts.Checked) // 有勾[Extend All Parts]
+            if (this.checkExtendAllParts.Checked)
             {
+                // 有勾[Extend All Parts]
                 #region SQL
 
                 DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
@@ -437,8 +444,9 @@ OPTION (RECOMPILE)"
 ;
                 #endregion
             }
-            else // 沒勾[Extend All Parts]
+            else
             {
+                // 沒勾[Extend All Parts]
                 #region SQL
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Env.User.Keyword}'
@@ -659,15 +667,15 @@ OPTION (RECOMPILE)"
             this.HideWaitMessage();
         }
 
-        private void btnBundleCard_Click(object sender, EventArgs e)
+        private void BtnBundleCard_Click(object sender, EventArgs e)
         {
             #region report
 
             bool checkone = false;
             for (int i = 0; i < this.grid1.Rows.Count; i++)
             {
-                if (!MyUtility.Check.Empty(this.grid1[0, i].Value) // 判斷是否為空值
-                    && (bool)this.grid1[0, i].Value == true)　// 判斷是否有打勾
+                if (!MyUtility.Check.Empty(this.grid1[0, i].Value)
+                    && (bool)this.grid1[0, i].Value == true)
                 {
                     checkone = true;
                 }
@@ -743,7 +751,7 @@ OPTION (RECOMPILE)"
                         pdata.Patterncode = dr["Patterncode"].ToString();
                         pdata.MarkerNo = dr["MarkerNo"].ToString();
                         pdata.Season = dr["Seasonid"].ToString();
-                        pdata.brand = dr["brand"].ToString();
+                        pdata.Brand = dr["brand"].ToString();
                         pdata.item = dr["item"].ToString();
                         pdata.EXCESS1 = dr["IsEXCESS"].ToString();
                         pdata.CutRef = tmpCut;
@@ -770,7 +778,7 @@ OPTION (RECOMPILE)"
                         pdata.Patterncode2 = dr["Patterncode"].ToString();
                         pdata.MarkerNo2 = dr["MarkerNo"].ToString();
                         pdata.Season2 = dr["Seasonid"].ToString();
-                        pdata.brand2 = dr["brand"].ToString();
+                        pdata.Brand2 = dr["brand"].ToString();
                         pdata.item2 = dr["item"].ToString();
                         pdata.EXCESS2 = dr["IsEXCESS"].ToString();
                         pdata.CutRef2 = tmpCut;
@@ -797,7 +805,7 @@ OPTION (RECOMPILE)"
                         pdata.Patterncode3 = dr["Patterncode"].ToString();
                         pdata.MarkerNo3 = dr["MarkerNo"].ToString();
                         pdata.Season3 = dr["Seasonid"].ToString();
-                        pdata.brand3 = dr["brand"].ToString();
+                        pdata.Brand3 = dr["brand"].ToString();
                         pdata.item3 = dr["item"].ToString();
                         pdata.EXCESS3 = dr["IsEXCESS"].ToString();
                         pdata.CutRef3 = tmpCut;
@@ -818,19 +826,21 @@ OPTION (RECOMPILE)"
             var res = data;
 
             // 指定是哪個 RDLC
-            Type ReportResourceNamespace = typeof(P12_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P12_Print.rdlc";
+            Type reportResourceNamespace = typeof(P12_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P12_Print.rdlc";
             IReportResource reportresource;
-            if (!(this.result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(this.result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 this.ShowException(this.result);
                 return;
             }
 
-            ReportDefinition report = new ReportDefinition();
-            report.ReportDataSource = res;
-            report.ReportResource = reportresource;
+            ReportDefinition report = new ReportDefinition
+            {
+                ReportDataSource = res,
+                ReportResource = reportresource,
+            };
 
             // 開啟 report view
             var frm = new Win.Subs.ReportView(report);
@@ -861,7 +871,8 @@ where bd.BundleNo = '{0}'",
                             from Bundle b WITH (NOLOCK)
                             inner join Bundle_Detail bd WITH (NOLOCK) on b.id=bd.ID
                             where bd.BundleNo = '{1}'",
-                    item.SP, item.Barcode));
+                    item.SP,
+                    item.Barcode));
             }
 
             frm.viewer.Print += (s, eArgs) =>
@@ -880,7 +891,7 @@ where bd.BundleNo = '{0}'",
             #endregion
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             #region excel
             this.grid1.ValidateControl();
@@ -902,7 +913,7 @@ where bd.BundleNo = '{0}'",
             #endregion
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

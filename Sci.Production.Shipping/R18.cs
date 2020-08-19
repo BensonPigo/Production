@@ -16,6 +16,10 @@ namespace Sci.Production.Shipping
         private string localSuppID_Where;
         private string Status_Where;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R18"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public R18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -48,6 +52,7 @@ namespace Sci.Production.Shipping
             this.txtShippingExpenseID_e.Text = item.GetSelectedString();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.ShippingExpenseID_s_Where = string.Empty;
@@ -81,6 +86,7 @@ namespace Sci.Production.Shipping
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             string sqlCmd = string.Empty;
@@ -118,6 +124,7 @@ WHERE 1=1
             return DBProxy.Current.Select(null, sqlCmd, out this.PrintTable);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.SetCount(this.PrintTable.Rows.Count);

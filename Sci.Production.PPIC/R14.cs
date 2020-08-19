@@ -9,11 +9,16 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class R14 : Win.Tems.PrintForm
     {
         private DataTable dtPrint;
         private string sqlcmd;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R14"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -21,12 +26,14 @@ namespace Sci.Production.PPIC
             this.txtMdivision.Text = Env.User.Keyword;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             this.comboDropDownList.SelectedIndex = 4;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             string where = string.Empty;
@@ -135,11 +142,13 @@ where 1=1
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             return DBProxy.Current.Select(string.Empty, this.sqlcmd, out this.dtPrint);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dtPrint.Rows.Count == 0)

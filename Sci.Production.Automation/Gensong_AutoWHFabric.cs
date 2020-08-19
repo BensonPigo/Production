@@ -1,27 +1,22 @@
-﻿using Ict;
-using Newtonsoft.Json;
-using Sci.Data;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Sci.Production.Automation.UtilityAutomation;
 
 namespace Sci.Production.Automation
 {
+    /// <inheritdoc/>
     public class Gensong_AutoWHFabric
     {
         private static readonly string GensongSuppID = "3A0174";
         private static readonly string moduleName = "AutoWHFabric";
         private AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS();
 
-        public static bool IsGensong_AutoWHFabricEnable
-        {
-            get { return IsModuleAutomationEnable(GensongSuppID, moduleName); }
-        }
+        /// <inheritdoc/>
+        public static bool IsGensong_AutoWHFabricEnable => IsModuleAutomationEnable(GensongSuppID, moduleName);
 
         /// <summary>
         /// Receive_Detail
@@ -62,7 +57,7 @@ namespace Sci.Production.Automation
                     IsInspection = (bool)dr["IsInspection"],
                     Junk = (bool)dr["Junk"],
                     Barcode = dr["Barcode"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Receiving_Detail", bodyObject));
@@ -104,7 +99,7 @@ namespace Sci.Production.Automation
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Junk = (bool)dr["Junk"],
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Issue_Detail", bodyObject));
@@ -115,10 +110,15 @@ namespace Sci.Production.Automation
         /// <summary>
         /// WHClose To Gensong
         /// </summary>
-        /// <param name="strKey">PoID</param>
+        /// <param name="dtMaster">Master DataSource</param>
         public void SentWHCloseToGensongAutoWHFabric(DataTable dtMaster)
         {
-            if (true) return;// 暫未開放
+            if (true)
+            {
+                return; // 暫未開放
+            }
+
+            /*
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
             {
                 return;
@@ -140,15 +140,21 @@ namespace Sci.Production.Automation
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("WHClose", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            */
         }
 
         /// <summary>
         /// SubTransfer_Detail To Gensong
         /// </summary>
-        /// <param name="dtDetail">Detail DataSource</param>
+        /// <param name="dtMaster">Master DataSource</param>
         public void SentSubTransfer_DetailToGensongAutoWHFabric(DataTable dtMaster)
         {
-            if (true) return;// 暫未開放
+            if (true)
+            {
+                return; // 暫未開放
+            }
+
+            /*
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
@@ -160,7 +166,7 @@ namespace Sci.Production.Automation
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
             string sqlcmd = @"
-select distinct 
+select distinct
 [ID] = sd.ID
 ,s.Type
 ,sd.FromPOID,sd.FromSeq1,sd.FromSeq2,sd.FromRoll,sd.FromDyelot,sd.FromStockType
@@ -172,17 +178,17 @@ select distinct
 from Production.dbo.SubTransfer_Detail sd
 inner join #tmp s on sd.ID=s.Id
 outer apply(
-		select Barcode
-		from Production.dbo.FtyInventory
-		where POID = sd.ToPOID and Seq1=sd.ToSeq1
-		and Seq2=sd.ToSeq2 and Roll=sd.ToRoll and Dyelot=sd.ToDyelot
-	)fty
+    select Barcode
+    from Production.dbo.FtyInventory
+    where POID = sd.ToPOID and Seq1=sd.ToSeq1
+    and Seq2=sd.ToSeq2 and Roll=sd.ToRoll and Dyelot=sd.ToDyelot
+)fty
 where 1=1
 and exists(
-		select 1 from Production.dbo.PO_Supp_Detail 
-		where id = sd.ToPOID and seq1=sd.ToSeq1 and seq2=sd.ToSeq2 
-		and FabricType='F'
-	)
+    select 1 from Production.dbo.PO_Supp_Detail
+    where id = sd.ToPOID and seq1=sd.ToSeq1 and seq2=sd.ToSeq2
+    and FabricType='F'
+)
 and s.Type in ('A','B','D')
 ";
             DataTable dt = new DataTable();
@@ -219,15 +225,21 @@ and s.Type in ('A','B','D')
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("SubTransfer_Detail", bodyObject));
 
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            */
         }
 
         /// <summary>
         /// MtlLocation To Gensong
         /// </summary>
-        /// <param name="strKey">ID</param>
+        /// <param name="dtMaster">Master DataSource</param>
         public void SentMtlLocationToGensongAutoWHFabric(DataTable dtMaster)
         {
-            if (true) return;// 暫未開放
+            if (true)
+            {
+                return; // 暫未開放
+            }
+
+            /*
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
@@ -250,6 +262,7 @@ and s.Type in ('A','B','D')
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("MtlLocation", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            */
         }
 
         /// <summary>
@@ -278,7 +291,7 @@ and s.Type in ('A','B','D')
                     Refno = s["Refno"].ToString(),
                     FabricRelaxationID = s["FabricRelaxationID"].ToString(),
                     RelaxTime = (decimal)s["RelaxTime"],
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("RefnoRelaxtime", bodyObject));
@@ -291,7 +304,12 @@ and s.Type in ('A','B','D')
         /// <param name="dtDetail">Detail DataSource</param>
         public void SentCutplan_DetailToGensongAutoWHFabric(DataTable dtDetail)
         {
-            if (true) return;// 暫未開放
+            if (true)
+            {
+                return; // 暫未開放
+            }
+
+            /*
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
@@ -316,39 +334,39 @@ select distinct
     ,[SizeCode] = SizeCode.value
     ,cp2.WorkorderUkey
     ,[Junk] = case when s.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
-	,[CmdTime] = GETDATE()
+    ,[CmdTime] = GETDATE()
     from  Production.dbo.Cutplan_Detail cp2
     inner join Production.dbo.Cutplan cp1 on cp2.id = cp1.id
     inner join Production.dbo.WorkOrder wo on cp2.POID = wo.ID and cp2.CutRef = wo.CutRef
     outer apply(
         select value = STUFF((
-        	select CONCAT(',',SizeCode)
-        	from(
-        		select distinct SizeCode
-        		from Production.dbo.WorkOrder_Distribute
-        		where WorkOrderUkey = wo.Ukey
-        		)s
-        		for xml path('')
-        	),1,1,'')
+            select CONCAT(',',SizeCode)
+            from(
+                select distinct SizeCode
+                from Production.dbo.WorkOrder_Distribute
+                where WorkOrderUkey = wo.Ukey
+                )s
+                for xml path('')
+            ),1,1,'')
     ) SizeCode
     outer apply(
         select value = STUFF((
-        	select CONCAT(',',Article)
-        	from(
-        		select distinct Article
-        		from Production.dbo.WorkOrder_Distribute
-        		where WorkOrderUkey = wo.Ukey
-        		and Article !=''
-        		)s
-        		for xml path('')
-        	),1,1,'')
+            select CONCAT(',',Article)
+            from(
+                select distinct Article
+                from Production.dbo.WorkOrder_Distribute
+                where WorkOrderUkey = wo.Ukey
+                and Article !=''
+                )s
+            for xml path('')
+            ),1,1,'')
     ) Article
     where exists(
         select 1 from Issue_Detail where cp2.ID = CutplanID
     )
-	and exists(
-		select 1 from #tmp s where s.ID = cp2.ID and s.WorkorderUkey = cp2.WorkorderUkey
-	)
+    and exists(
+        select 1 from #tmp s where s.ID = cp2.ID and s.WorkorderUkey = cp2.WorkorderUkey
+    )
 ";
             DataTable dt = new DataTable();
             MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dt);
@@ -378,16 +396,22 @@ select distinct
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Cutplan_Detail", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            */
         }
 
         /// <summary>
         /// BorrowBack to Gensong
         /// </summary>
         /// <param name="dtDetail">bool</param>
-        /// <param name="IsConfirmed">bool</param>
-        public void SentBorrowBackToGensongAutoWHFabric(DataTable dtDetail,bool IsConfirmed)
+        /// <param name="isConfirmed">bool Confirmed</param>
+        public void SentBorrowBackToGensongAutoWHFabric(DataTable dtDetail, bool isConfirmed)
         {
-            if (true) return;// 暫未開放
+            if (true)
+            {
+                return; // 暫未開放
+            }
+
+            /*
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
@@ -416,12 +440,13 @@ select distinct
                     ToStockType = dr["ToStockType"].ToString(),
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
-                    Junk = IsConfirmed,
+                    Junk = isConfirmed,
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("BorrowBack", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            */
         }
 
         /// <summary>
@@ -430,7 +455,12 @@ select distinct
         /// <param name="dtMaster">dtMaster</param>
         public void SentReturnReceiptToGensongAutoWHFabric(DataTable dtMaster)
         {
-            if (true) return;// 暫未開放
+            if (true)
+            {
+                return; // 暫未開放
+            }
+
+            /*
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
@@ -459,10 +489,10 @@ inner join #tmp rr on rrd.Id=rr.Id
 inner join FtyInventory f on rrd.FtyInventoryUkey = f.ukey
 where 1=1
 and exists(
-	select 1 
-	from PO_Supp_Detail psd
-	where psd.ID= rrd.POID and psd.SEQ1 = rrd.Seq1
-	and psd.SEQ2 = rrd.Seq2 and psd.FabricType='F'
+    select 1
+    from PO_Supp_Detail psd
+    where psd.ID= rrd.POID and psd.SEQ1 = rrd.Seq1
+    and psd.SEQ2 = rrd.Seq2 and psd.FabricType='F'
 )
 ";
             DataTable dt = new DataTable();
@@ -498,19 +528,24 @@ and exists(
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("ReturnReceipt", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+
+            */
         }
 
         private object CreateGensongStructure(string tableName, object structureID)
         {
-            Dictionary<string, object> resultObj = new Dictionary<string, object>();
-            resultObj.Add("TableArray", new string[] { tableName });
+            Dictionary<string, object> resultObj = new Dictionary<string, object>
+            {
+                { "TableArray", new string[] { tableName } },
+            };
 
-            Dictionary<string, object> dataStructure = new Dictionary<string, object>();
-            dataStructure.Add(tableName, structureID);
+            Dictionary<string, object> dataStructure = new Dictionary<string, object>
+            {
+                { tableName, structureID },
+            };
             resultObj.Add("DataTable", dataStructure);
 
             return resultObj;
         }
-
     }
 }

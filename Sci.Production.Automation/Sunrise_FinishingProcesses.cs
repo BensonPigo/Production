@@ -1,32 +1,26 @@
-﻿using Ict;
-using Newtonsoft.Json;
-using Sci.Data;
-using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Data;
-using System.Dynamic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Sci.Production.Automation.UtilityAutomation;
 
 namespace Sci.Production.Automation
 {
+    /// <inheritdoc/>
     public class Sunrise_FinishingProcesses
     {
         private static readonly string sunriseSuppID = "3A0134";
         private static readonly string moduleName = "FinishingProcesses";
         private AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS();
 
-        public static bool IsSunrise_FinishingProcessesEnable
-        {
-            get { return IsModuleAutomationEnable(sunriseSuppID, moduleName); }
-        }
+        /// <inheritdoc/>
+        public static bool IsSunrise_FinishingProcessesEnable => IsModuleAutomationEnable(sunriseSuppID, moduleName);
 
         /// <summary>
-        /// SentSubprocessToAGV
+        /// SentPackingToFinishingProcesses
         /// </summary>
-        /// <param name="dtSubprocess">dtSubprocess</param>
+        /// <param name="listID">List ID</param>
+        /// <param name="actionType">Action Type</param>
         public void SentPackingToFinishingProcesses(string listID, string actionType)
         {
             if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
@@ -49,6 +43,10 @@ namespace Sci.Production.Automation
             SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
+        /// <summary>
+        /// SentLocalItemToFinishingProcesses
+        /// </summary>
+        /// <param name="listRefNo">List RefNo</param>
         public void SentLocalItemToFinishingProcesses(string listRefNo)
         {
             if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
@@ -72,15 +70,18 @@ namespace Sci.Production.Automation
 
         private object CreateSunriseStructure(string tableName, object structureID)
         {
-            Dictionary<string, object> resultObj = new Dictionary<string, object>();
-            resultObj.Add("TableArray", new string[] { tableName });
+            Dictionary<string, object> resultObj = new Dictionary<string, object>
+            {
+                { "TableArray", new string[] { tableName } },
+            };
 
-            Dictionary<string, object> dataStructure = new Dictionary<string, object>();
-            dataStructure.Add(tableName, structureID);
+            Dictionary<string, object> dataStructure = new Dictionary<string, object>
+            {
+                { tableName, structureID },
+            };
             resultObj.Add("DataTable", dataStructure);
 
             return resultObj;
         }
-
     }
 }

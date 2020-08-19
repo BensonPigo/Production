@@ -9,11 +9,17 @@ using Sci.Utility.Excel;
 
 namespace Sci.Production.PublicForm
 {
+    /// <inheritdoc/>
     public partial class Print_OrderList : Win.Tems.QueryForm
     {
-        string _id;
-        int _finished;
+        private string _id;
+        private int _finished;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Print_OrderList"/> class.
+        /// </summary>
+        /// <param name="args">args</param>
+        /// <param name="f">f</param>
         public Print_OrderList(string args, int f = 0)
         {
             this._id = args;
@@ -28,8 +34,11 @@ namespace Sci.Production.PublicForm
             {
                 #region Each Consumption (Cutting Combo)
                 DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_EachConsumption",
-                    new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP(
+                    string.Empty,
+                    "Cutting_P01print_EachConsumption",
+                    new List<SqlParameter> { new SqlParameter("@OrderID", this._id) },
+                    out dts);
 
                 if (!res)
                 {
@@ -54,13 +63,13 @@ namespace Sci.Production.PublicForm
                 for (int sgIdx = 1; sgIdx < dts.Length; sgIdx++)
                 {
                     string idxStr = (sgIdx - 1).ToString();
-                    string SizeGroup = dts[sgIdx].Rows[0]["SizeGroup"].ToString();
-                    string MarkerDownloadID = dts[sgIdx].Compute("MAX(MarkerDownloadID)", string.Empty).ToString();
+                    string sizeGroup = dts[sgIdx].Rows[0]["SizeGroup"].ToString();
+                    string markerDownloadID = dts[sgIdx].Compute("MAX(MarkerDownloadID)", string.Empty).ToString();
 
                     dts[sgIdx].Columns.RemoveAt(1);
                     dts[sgIdx].Columns.RemoveAt(0);
 
-                    this.extra_P01_EachConsumptionCuttingCombo(dts[sgIdx]);
+                    this.Extra_P01_EachConsumptionCuttingCombo(dts[sgIdx]);
 
                     sxr.DicDatas.Add(sxr.VPrefix + "APPLYNO" + idxStr, dr["APPLYNO"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "MARKERNO" + idxStr, dr["MARKERNO"]);
@@ -97,10 +106,10 @@ namespace Sci.Production.PublicForm
                     dt.IntFreezeColumn = 3;
 
                     sxr.DicDatas.Add(sxr.VPrefix + "tbl1" + idxStr, dt);
-                    sxr.DicDatas.Add(sxr.VPrefix + "SizeGroup" + idxStr, SizeGroup);
-                    sxr.DicDatas.Add(sxr.VPrefix + "MarkerDownloadID" + idxStr, MarkerDownloadID);
+                    sxr.DicDatas.Add(sxr.VPrefix + "SizeGroup" + idxStr, sizeGroup);
+                    sxr.DicDatas.Add(sxr.VPrefix + "MarkerDownloadID" + idxStr, markerDownloadID);
 
-                    sxrc.ReplaceAction a = this.exMethod;
+                    sxrc.ReplaceAction a = this.ExMethod;
                     sxr.DicDatas.Add(sxr.VPrefix + "exAction" + idxStr, a);
                 }
 
@@ -130,7 +139,7 @@ namespace Sci.Production.PublicForm
                 }
 
                 DataRow dr = dts[0].Rows[0];
-                this.extra_P01_Report_TTLconsumptionPOCombo(dts[1], Convert.ToInt32(dr["QTY"]));
+                this.Extra_P01_Report_TTLconsumptionPOCombo(dts[1], Convert.ToInt32(dr["QTY"]));
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_TTLconsumptionPOCombo.xltx");
                 sxrc sxr = new sxrc(xltPath);
@@ -189,7 +198,7 @@ namespace Sci.Production.PublicForm
             return true;
         }
 
-        void SetColumn(sxrc.XltRptTable tbl, Microsoft.Office.Interop.Excel.XlHAlign Alignment)
+        private void SetColumn(sxrc.XltRptTable tbl, Microsoft.Office.Interop.Excel.XlHAlign alignment)
         {
             sxrc.XlsColumnInfo xlc1 = new sxrc.XlsColumnInfo(tbl.Columns[0].ColumnName);
             xlc1.NumberFormate = "@";
@@ -198,18 +207,18 @@ namespace Sci.Production.PublicForm
             for (int i = 1; i < tbl.Columns.Count; i++)
             {
                 sxrc.XlsColumnInfo xlc = new sxrc.XlsColumnInfo(tbl.Columns[i].ColumnName);
-                xlc.Alignment = Alignment;
+                xlc.Alignment = alignment;
                 tbl.LisColumnInfo.Add(xlc);
             }
         }
 
-        void extra_P01_EachConsumptionCuttingCombo(DataTable dt)
+        private void Extra_P01_EachConsumptionCuttingCombo(DataTable dt)
         {
-            string COMB = string.Empty;
+            string cOMB = string.Empty;
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 DataRow dr = dt.Rows[i];
-                if (COMB != dr["COMB"].ToString().Trim())
+                if (cOMB != dr["COMB"].ToString().Trim())
                 {
                     DataRow ndr = dt.NewRow();
                     ndr["COMB"] = dr["COMB"];
@@ -218,7 +227,7 @@ namespace Sci.Production.PublicForm
                     dt.Rows.InsertAt(ndr, i);
 
                     i += 1;
-                    COMB = dr["COMB"].ToString().Trim();
+                    cOMB = dr["COMB"].ToString().Trim();
                 }
 
                 dr["COMB"] = string.Empty;
@@ -240,7 +249,7 @@ namespace Sci.Production.PublicForm
             }
         }
 
-        void exMethod(Microsoft.Office.Interop.Excel.Worksheet oSheet, int rowNo, int columnNo)
+        private void ExMethod(Microsoft.Office.Interop.Excel.Worksheet oSheet, int rowNo, int columnNo)
         {
             Microsoft.Office.Interop.Excel.Range rg = oSheet.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell, Type.Missing);
             int rows = rg.Row;
@@ -268,7 +277,7 @@ namespace Sci.Production.PublicForm
             }
         }
 
-        void extra_P01_Report_TTLconsumptionPOCombo(DataTable dt, int Qty)
+        private void Extra_P01_Report_TTLconsumptionPOCombo(DataTable dt, int qty)
         {
             string coltmp = string.Empty;
             decimal totaltmp = 0;
@@ -285,7 +294,7 @@ namespace Sci.Production.PublicForm
                     else
                     {
                         coltmp = col1content;
-                        this.addSubTotalRow(dt, totaltmp, i, Qty);
+                        this.AddSubTotalRow(dt, totaltmp, i, qty);
 
                         totaltmp = 0;
                         i += 1;
@@ -302,27 +311,27 @@ namespace Sci.Production.PublicForm
                 totaltmp += decimal.Parse(dt.Rows[i]["TOTAL(Inclcut. use)"].ToString());
             }
 
-            this.addSubTotalRow(dt, totaltmp, dt.Rows.Count, Qty);
+            this.AddSubTotalRow(dt, totaltmp, dt.Rows.Count, qty);
         }
 
-        void addSubTotalRow(DataTable dt, decimal tot, int idx, int Qty)
+        private void AddSubTotalRow(DataTable dt, decimal tot, int idx, int qty)
         {
             DataRow dr = dt.NewRow();
             dr["TOTAL(Inclcut. use)"] = tot;
             dr["M/WEIGHT"] = "SubTotal";
-            dr["CONS/PC"] = Qty == 0 ? 0 : Math.Round(tot / Qty, 3);
+            dr["CONS/PC"] = qty == 0 ? 0 : Math.Round(tot / qty, 3);
             dt.Rows.InsertAt(dr, idx);
         }
 
-        void extra_P01_EachconsVSOrderQTYBDownPOCombo(DataTable dt)
+        private void Extra_P01_EachconsVSOrderQTYBDownPOCombo(DataTable dt)
         {
-            this.addTotal(dt, 1, "Sub.TTL:", true);
-            this.addTotal(dt, 0, "Total:", false);
-            this.removeRepeat(dt, 0, true);
-            this.removeRepeat(dt, 1, false);
+            this.AddTotal(dt, 1, "Sub.TTL:", true);
+            this.AddTotal(dt, 0, "Total:", false);
+            this.RemoveRepeat(dt, 0, true);
+            this.RemoveRepeat(dt, 1, false);
         }
 
-        void addTotal(DataTable dt, int cidx, string txt, bool exRow)
+        private void AddTotal(DataTable dt, int cidx, string txt, bool exRow)
         {
             string col2tmp = string.Empty;
             decimal sCutQty = 0;
@@ -346,7 +355,7 @@ namespace Sci.Production.PublicForm
                     else
                     {
                         col2tmp = col2;
-                        this.addSubTotalRow(txt, dt, sCutQty, sOrderQty, sBalance, i);
+                        this.AddSubTotalRow(txt, dt, sCutQty, sOrderQty, sBalance, i);
 
                         if (exRow)
                         {
@@ -387,10 +396,10 @@ namespace Sci.Production.PublicForm
                 sBalance += decimal.Parse(dt.Rows[i]["Balance"].ToString());
             }
 
-            this.addSubTotalRow(txt, dt, sCutQty, sOrderQty, sBalance, dt.Rows.Count);
+            this.AddSubTotalRow(txt, dt, sCutQty, sOrderQty, sBalance, dt.Rows.Count);
         }
 
-        void addSubTotalRow(string txt, DataTable dt, decimal sCutQty, decimal sOrderQty, decimal sBalance, int idx)
+        private void AddSubTotalRow(string txt, DataTable dt, decimal sCutQty, decimal sOrderQty, decimal sBalance, int idx)
         {
             DataRow dr = dt.NewRow();
             dr["Size"] = txt;
@@ -400,7 +409,7 @@ namespace Sci.Production.PublicForm
             dt.Rows.InsertAt(dr, idx);
         }
 
-        void removeRepeat(DataTable dt, int cidx, bool addNewRow)
+        private void RemoveRepeat(DataTable dt, int cidx, bool addNewRow)
         {
             string col2tmp = string.Empty;
             for (int i = 0; i < dt.Rows.Count; i++)
@@ -452,15 +461,15 @@ namespace Sci.Production.PublicForm
             }
         }
 
-        void extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(DataTable dt)
+        private void Extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(DataTable dt)
         {
             // removeRepeat(dt, new int[] {0,1} );
             this.ChangeColumnDataType(dt, "Q'ty/PCS", typeof(string));
             this.ChangeColumnDataType(dt, "CONSUMPTION.", typeof(string));
             this.ChangeColumnDataType(dt, "CONSUMPTION", typeof(string));
 
-            this.addTotal(dt, new int[] { 0, 1 });
-            this.removeRepeat(dt, new int[] { 0, 1 });
+            this.AddTotal(dt, new int[] { 0, 1 });
+            this.RemoveRepeat(dt, new int[] { 0, 1 });
         }
 
         private bool ChangeColumnDataType(DataTable table, string columnname, Type newtype)
@@ -504,18 +513,18 @@ namespace Sci.Production.PublicForm
             return true;
         }
 
-        void addTotal(DataTable dt, int[] cidx)
+        private void AddTotal(DataTable dt, int[] cidx)
         {
             string col2tmp = string.Empty;
 
             decimal sOrderQty = 0;
             decimal sUsageCon = 0;
-            string Unit = string.Empty;
+            string unit = string.Empty;
 
-            string PUnit = string.Empty;
-            decimal PCon = 0;
-            string PLUSName = string.Empty;
-            decimal Total = 0;
+            string pUnit = string.Empty;
+            decimal pCon = 0;
+            string pLUSName = string.Empty;
+            decimal total = 0;
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 string col2 = string.Empty; // dt.Rows[i][cidx].ToString();
@@ -538,8 +547,8 @@ namespace Sci.Production.PublicForm
                     else
                     {
                         col2tmp = col2;
-                        this.addSubTotalRow_06(Unit, dt, sOrderQty, sUsageCon, i);
-                        this.addSubTotalRow_06_2(PUnit, PLUSName, dt, PCon, Total, i + 1);
+                        this.AddSubTotalRow_06(unit, dt, sOrderQty, sUsageCon, i);
+                        this.AddSubTotalRow_06_2(pUnit, pLUSName, dt, pCon, total, i + 1);
 
                         // if (exRow)
                         //    dt.Rows.InsertAt(dt.NewRow(), i + 1);
@@ -557,26 +566,26 @@ namespace Sci.Production.PublicForm
                 {
                 }
 
-                Unit = dt.Rows[i]["Unit"].ToString();
+                unit = dt.Rows[i]["Unit"].ToString();
                 dt.Rows[i]["Unit"] = DBNull.Value;
                 sOrderQty += decimal.Parse(dt.Rows[i]["Order Qty"].ToString());
                 sUsageCon += decimal.Parse(dt.Rows[i]["CONSUMPTION"].ToString());
 
-                PUnit = dt.Rows[i]["Unit."].ToString();
+                pUnit = dt.Rows[i]["Unit."].ToString();
                 dt.Rows[i]["Unit."] = DBNull.Value;
-                PCon = decimal.Parse(dt.Rows[i]["CONSUMPTION."].ToString());
+                pCon = decimal.Parse(dt.Rows[i]["CONSUMPTION."].ToString());
                 dt.Rows[i]["CONSUMPTION."] = DBNull.Value;
-                PLUSName = dt.Rows[i]["PLUS(YDS/%)"].ToString();
+                pLUSName = dt.Rows[i]["PLUS(YDS/%)"].ToString();
                 dt.Rows[i]["PLUS(YDS/%)"] = DBNull.Value;
-                Total = decimal.Parse(dt.Rows[i]["TOTAL"].ToString());
+                total = decimal.Parse(dt.Rows[i]["TOTAL"].ToString());
                 dt.Rows[i]["TOTAL"] = DBNull.Value;
             }
 
-            this.addSubTotalRow_06(Unit, dt, sOrderQty, sUsageCon, dt.Rows.Count);
-            this.addSubTotalRow_06_2(PUnit, PLUSName, dt, PCon, Total, dt.Rows.Count);
+            this.AddSubTotalRow_06(unit, dt, sOrderQty, sUsageCon, dt.Rows.Count);
+            this.AddSubTotalRow_06_2(pUnit, pLUSName, dt, pCon, total, dt.Rows.Count);
         }
 
-        void removeRepeat(DataTable dt, int[] cidx)
+        private void RemoveRepeat(DataTable dt, int[] cidx)
         {
             string col2tmp = string.Empty;
             for (int i = 0; i < dt.Rows.Count; i++)
@@ -616,35 +625,35 @@ namespace Sci.Production.PublicForm
             }
         }
 
-        void addSubTotalRow_06(string Unit, DataTable dt, decimal sOrderQty, decimal sUsageCon, int idx)
+        private void AddSubTotalRow_06(string unit, DataTable dt, decimal sOrderQty, decimal sUsageCon, int idx)
         {
             DataRow dr = dt.NewRow();
             dr["Q'ty/PCS"] = "TTL";
-            dr["Unit"] = Unit;
+            dr["Unit"] = unit;
             dr["Order Qty"] = sOrderQty;
             dr["CONSUMPTION"] = sUsageCon;
             dt.Rows.InsertAt(dr, idx);
         }
 
-        void addSubTotalRow_06_2(string PUnit, string PLUSName, DataTable dt, decimal PCon, decimal Total, int idx)
+        private void AddSubTotalRow_06_2(string pUnit, string pLUSName, DataTable dt, decimal pCon, decimal total, int idx)
         {
             DataRow dr = dt.NewRow();
             dr["CONSUMPTION"] = "SubTotal";
-            dr["Unit."] = PUnit;
-            dr["CONSUMPTION."] = PCon;
-            dr["PLUS(YDS/%)"] = PLUSName;
-            dr["TOTAL"] = Total;
+            dr["Unit."] = pUnit;
+            dr["CONSUMPTION."] = pCon;
+            dr["PLUS(YDS/%)"] = pLUSName;
+            dr["TOTAL"] = total;
 
             dt.Rows.InsertAt(dr, idx);
             dt.Rows.InsertAt(dt.NewRow(), idx + 1);
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             this.ToExcel();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }

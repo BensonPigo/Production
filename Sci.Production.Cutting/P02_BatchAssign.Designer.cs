@@ -147,7 +147,7 @@
             this.btnClose.TabIndex = 23;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // shapeContainer1
             // 
@@ -176,7 +176,7 @@
             this.btnConfirm.TabIndex = 22;
             this.btnConfirm.Text = "Confirm";
             this.btnConfirm.UseVisualStyleBackColor = true;
-            this.btnConfirm.Click += new System.EventHandler(this.btnConfirm_Click);
+            this.btnConfirm.Click += new System.EventHandler(this.BtnConfirm_Click);
             // 
             // shapeContainer2
             // 
@@ -313,7 +313,7 @@
             this.txtBatchUpdateEstCutDate.Name = "txtBatchUpdateEstCutDate";
             this.txtBatchUpdateEstCutDate.Size = new System.Drawing.Size(130, 23);
             this.txtBatchUpdateEstCutDate.TabIndex = 11;
-            this.txtBatchUpdateEstCutDate.Validating += new System.ComponentModel.CancelEventHandler(this.txtBatchUpdateEstCutDate_Validating);
+            this.txtBatchUpdateEstCutDate.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBatchUpdateEstCutDate_Validating);
             // 
             // labShift
             // 
@@ -331,7 +331,7 @@
             this.btnBatchUpdateEstCutDate.TabIndex = 12;
             this.btnBatchUpdateEstCutDate.Text = "Batch Assign";
             this.btnBatchUpdateEstCutDate.UseVisualStyleBackColor = true;
-            this.btnBatchUpdateEstCutDate.Click += new System.EventHandler(this.btnBatchUpdateEstCutDate_Click);
+            this.btnBatchUpdateEstCutDate.Click += new System.EventHandler(this.BtnBatchUpdateEstCutDate_Click);
             // 
             // txtSpreadingNo
             // 
@@ -378,8 +378,8 @@
             this.txtSeq2.Name = "txtSeq2";
             this.txtSeq2.Size = new System.Drawing.Size(41, 23);
             this.txtSeq2.TabIndex = 14;
-            this.txtSeq2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeq2_PopUp);
-            this.txtSeq2.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeq2_Validating);
+            this.txtSeq2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq2_PopUp);
+            this.txtSeq2.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSeq2_Validating);
             // 
             // txtSeq1
             // 
@@ -389,8 +389,8 @@
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Size = new System.Drawing.Size(54, 23);
             this.txtSeq1.TabIndex = 13;
-            this.txtSeq1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeq1_PopUp);
-            this.txtSeq1.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeq1_Validating);
+            this.txtSeq1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq1_PopUp);
+            this.txtSeq1.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSeq1_Validating);
             // 
             // panel7
             // 
@@ -504,7 +504,7 @@
             this.btnFilter.TabIndex = 24;
             this.btnFilter.Text = "Filter";
             this.btnFilter.UseVisualStyleBackColor = true;
-            this.btnFilter.Click += new System.EventHandler(this.btnFilter_Click);
+            this.btnFilter.Click += new System.EventHandler(this.BtnFilter_Click);
             // 
             // labelEstCutDate
             // 
@@ -557,7 +557,7 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(108, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSPNo_PopUp);
+            this.txtSPNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSPNo_PopUp);
             // 
             // txtCutCell
             // 

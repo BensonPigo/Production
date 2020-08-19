@@ -13,27 +13,34 @@ using System.Linq;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P03 : Win.Tems.QueryForm
     {
-        DataTable detailTb;
-        Ict.Win.UI.DataGridViewDateBoxColumn col_estcutdate;
+        private DataTable detailTb;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_estcutdate;
         private string loginID = Env.User.UserID;
         private string keyWord = Env.User.Keyword;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNo;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_cutcell;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P03"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.gridDetail.DataSource = this.gridbs;
             this.gridbs.DataSource = this.detailTb;
-            this.setDetailGrid();
+            this.SetDetailGrid();
             this.txtCell1.MDivisionID = this.keyWord;
         }
 
-        Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNo;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_cutcell;
-
-        public void setDetailGrid()
+        /// <summary>
+        /// Set Detail Grid
+        /// </summary>
+        public void SetDetailGrid()
         {
             this.gridDetail.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             DataGridViewGeneratorTextColumnSettings col_cutreason = TxtcutReason.Cellcutreason.GetGridCell("RC");
@@ -99,10 +106,10 @@ namespace Sci.Production.Cutting
                 e.CellStyle.BackColor = Color.Pink;
                 e.CellStyle.ForeColor = Color.Red;
             };
-            this.changeeditable();
+            this.Changeeditable();
         }
 
-        private void changeeditable() // Grid Cell 物件設定
+        private void Changeeditable() // Grid Cell 物件設定
         {
             #region col_SpreadingNo
             this.col_SpreadingNo.EditingMouseDown += (s, e) =>
@@ -112,9 +119,8 @@ namespace Sci.Production.Cutting
                     // Parent form 若是非編輯狀態就 return
                     DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    DataTable SpreadingNoTb;
-                    DBProxy.Current.Select(null, $"Select id from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.keyWord}' and junk=0", out SpreadingNoTb);
-                    sele = new SelectItem(SpreadingNoTb, "ID", "10@400,300", dr["NewSpreadingNoID"].ToString(), false, ",");
+                    DBProxy.Current.Select(null, $"Select id from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.keyWord}' and junk=0", out DataTable spreadingNoTb);
+                    sele = new SelectItem(spreadingNoTb, "ID", "10@400,300", dr["NewSpreadingNoID"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -152,9 +158,8 @@ namespace Sci.Production.Cutting
                     return;
                 }
 
-                DataRow SpreadingNodr;
                 string sqlSpreading = $"Select 1 from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.keyWord}' and  id = '{newvalue}' and junk=0";
-                if (!MyUtility.Check.Seek(sqlSpreading, out SpreadingNodr))
+                if (!MyUtility.Check.Seek(sqlSpreading, out DataRow spreadingNodr))
                 {
                     dr["NewSpreadingNoID"] = string.Empty;
                     dr.EndEdit();
@@ -175,8 +180,7 @@ namespace Sci.Production.Cutting
                     // Parent form 若是非編輯狀態就 return
                     DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    DataTable cellTb;
-                    DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.keyWord), out cellTb);
+                    DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.keyWord), out DataTable cellTb);
                     sele = new SelectItem(cellTb, "ID", "10@300,300", dr["CutCellid"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -217,9 +221,7 @@ namespace Sci.Production.Cutting
                     return;
                 }
 
-                DataTable cellTb;
-                DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.keyWord), out cellTb);
-
+                DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.keyWord), out DataTable cellTb);
                 DataRow[] seledr = cellTb.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
                 {
@@ -236,7 +238,7 @@ namespace Sci.Production.Cutting
             #endregion
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.Queryable();
         }
@@ -355,7 +357,7 @@ From
             this.gridbs.DataSource = this.detailTb;
         }
 
-        private void dateNewEstCutDate_Validating(object sender, CancelEventArgs e)
+        private void DateNewEstCutDate_Validating(object sender, CancelEventArgs e)
         {
             if (this.dateNewEstCutDate.Value != null && this.dateNewEstCutDate.Value < DateTime.Today)
             {
@@ -364,7 +366,7 @@ From
             }
         }
 
-        private void btnUpdate_Click(object sender, EventArgs e)
+        private void BtnUpdate_Click(object sender, EventArgs e)
         {
             this.gridDetail.ValidateControl();
             if (this.detailTb == null)
@@ -373,7 +375,7 @@ From
             }
 
             string reason = this.txtcutReason.TextBox1.Text;
-            string SpreadingNo = this.txtSpreadingNo1.Text;
+            string spreadingNo = this.txtSpreadingNo1.Text;
             string cell = this.txtCell1.Text;
             string shift = this.txtShift.Text;
             foreach (DataRow dr in this.detailTb.Rows)
@@ -390,19 +392,19 @@ From
                     }
 
                     dr["cutreasonid"] = reason;
-                    dr["NewSpreadingNoID"] = SpreadingNo;
+                    dr["NewSpreadingNoID"] = spreadingNo;
                     dr["NewCutcellid"] = cell;
                     dr["NewShift"] = shift;
                 }
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             this.gridDetail.ValidateControl();
             string update = string.Empty;
@@ -437,9 +439,9 @@ From
                     }
 
                     string newestcutdate = MyUtility.Check.Empty(dr["newestcutdate"]) ? "Null" : $"'{((DateTime)dr["newestcutdate"]).ToShortDateString()}'";
-                    string NewCutcellid = MyUtility.Check.Empty(dr["NewCutcellid"]) ? "Null" : $"'{dr["NewCutcellid"]}'";
-                    string NewSpreadingNoID = MyUtility.Check.Empty(dr["NewSpreadingNoID"]) ? "Null" : $"'{dr["NewSpreadingNoID"]}'";
-                    string NewShift = MyUtility.Check.Empty(dr["NewShift"]) ? "''" : $"'{dr["NewShift"]}'";
+                    string newCutcellid = MyUtility.Check.Empty(dr["NewCutcellid"]) ? "Null" : $"'{dr["NewCutcellid"]}'";
+                    string newSpreadingNoID = MyUtility.Check.Empty(dr["NewSpreadingNoID"]) ? "Null" : $"'{dr["NewSpreadingNoID"]}'";
+                    string newShift = MyUtility.Check.Empty(dr["NewShift"]) ? "''" : $"'{dr["NewShift"]}'";
                     string orgEstCutDate = ((DateTime)dr["EstCutDate"]).ToShortDateString();
                     if (!MyUtility.Check.Empty(dr["newestcutdate"]))
                     {
@@ -463,7 +465,7 @@ From
 
                     update = update + $@"
 Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate      ,NewEstCutDate  ,CutReasonid              ,ID             ,OrgCutCellid       ,NewCutCellid   ,OrgSpreadingNoID         ,NewSpreadingNoID       , OrgShift         ,NewShift   , AddDate, AddName) 
-Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}',{newestcutdate},'{dr["CutReasonid"]}','{dr["ID"]}','{dr["Cutcellid"]}',{NewCutcellid},'{dr["SpreadingNoID"]}',{NewSpreadingNoID} ,'{dr["Shift"]}'  ,{NewShift}    ,getdate(),'{Env.User.UserID}');";
+Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}',{newestcutdate},'{dr["CutReasonid"]}','{dr["ID"]}','{dr["Cutcellid"]}',{newCutcellid},'{dr["SpreadingNoID"]}',{newSpreadingNoID} ,'{dr["Shift"]}'  ,{newShift}    ,getdate(),'{Env.User.UserID}');";
                 }
             }
 
@@ -529,9 +531,8 @@ where ukey not in ({inUkey})
 and MDivisionId = '{item.MDivisionId}'
 and CutRef = '{item.CutRef}'
 ";
-                DataTable chkdt;
                 DualResult result;
-                result = DBProxy.Current.Select(null, csqlhk, out chkdt);
+                result = DBProxy.Current.Select(null, csqlhk, out DataTable chkdt);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -580,30 +581,33 @@ and CutRef = '{item.CutRef}'
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
                     {
-                        _transactionscope.Dispose();
-                        this.ShowErr(upResult);
-                        return;
+                        throw new Exception(upResult.Messages.ToString());
                     }
 
-                    _transactionscope.Complete();
+                    transactionscope.Complete();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
+                    transactionscope.Dispose();
+                    upResult = new DualResult(false, "Commit transaction error.", ex);
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            if (!upResult)
+            {
+                this.ShowErr(upResult);
+                return;
+            }
+
+            transactionscope.Dispose();
+            transactionscope = null;
             MyUtility.Msg.InfoBox("Finished");
 
             this.Queryable();

@@ -14,12 +14,17 @@ using System.IO;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P10_Print : Win.Tems.PrintForm
     {
-        DualResult result;
-        DataRow CurrentDataRow;
-        string pathName;
+        private DualResult result;
+        private DataRow CurrentDataRow;
+        private string pathName;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P10_Print"/> class.
+        /// </summary>
+        /// <param name="row">DataRow</param>
         public P10_Print(DataRow row)
         {
             this.InitializeComponent();
@@ -27,10 +32,11 @@ namespace Sci.Production.Cutting
             this.toexcel.Enabled = false;
         }
 
-        string Bundle_Card;
-        string Bundle_Check_list;
-        string Extend_All_Parts;
+        private string Bundle_Card;
+        private string Bundle_Check_list;
+        private string Extend_All_Parts;
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.Bundle_Card = this.radioBundleCard.Checked.ToString();
@@ -39,9 +45,10 @@ namespace Sci.Production.Cutting
             return base.ValidateInput();
         }
 
-        DataTable dtt;
-        DataTable dt;
+        private DataTable dtt;
+        private DataTable dt;
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             if (this.radioBundleCard.Checked == true)
@@ -50,10 +57,12 @@ namespace Sci.Production.Cutting
                 DataRow row = this.CurrentDataRow;
                 string id = row["ID"].ToString();
 
-                List<SqlParameter> pars = new List<SqlParameter>();
-                pars.Add(new SqlParameter("@ID", id));
-                pars.Add(new SqlParameter("@CutRef", this.CurrentDataRow["cutref"].ToString()));
-                pars.Add(new SqlParameter("@POID", this.CurrentDataRow["POID"].ToString()));
+                List<SqlParameter> pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", id),
+                    new SqlParameter("@CutRef", this.CurrentDataRow["cutref"].ToString()),
+                    new SqlParameter("@POID", this.CurrentDataRow["POID"].ToString()),
+                };
                 if (this.checkExtendAllParts.Checked)
                 {
                     pars.Add(new SqlParameter("@extend", "1"));
@@ -64,8 +73,9 @@ namespace Sci.Production.Cutting
                 }
 
                 string scmd = string.Empty;
-                if (this.checkExtendAllParts.Checked) // 有勾[Extend All Parts]
+                if (this.checkExtendAllParts.Checked)
                 {
+                    // 有勾[Extend All Parts]
                     #region SQL
                     scmd = string.Format(@"
 select distinct *
@@ -162,8 +172,9 @@ outer apply
 order by x.[Barcode]");
                     #endregion
                 }
-                else // 沒勾[Extend All Parts]
+                else
                 {
+                    // 沒勾[Extend All Parts]
                     #region SQL
                     scmd = string.Format(@"
 select distinct *
@@ -261,8 +272,10 @@ order by x.[Barcode]");
                 #region excel
                 DataRow row = this.CurrentDataRow;
                 string id = row["ID"].ToString();
-                List<SqlParameter> lis = new List<SqlParameter>();
-                lis.Add(new SqlParameter("@ID", id));
+                List<SqlParameter> lis = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", id),
+                };
                 if (this.checkExtendAllParts.Checked)
                 {
                     lis.Add(new SqlParameter("@extend", "1"));
@@ -273,8 +286,9 @@ order by x.[Barcode]");
                 }
 
                 string sqlcmd = string.Empty;
-                if (this.checkExtendAllParts.Checked) // 有勾[Extend All Parts]
+                if (this.checkExtendAllParts.Checked)
                 {
+                    // 有勾[Extend All Parts]
                     #region SQL
                     sqlcmd = string.Format(@"
 select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
@@ -348,8 +362,9 @@ outer apply
 order by x.[Bundle]");
                     #endregion
                 }
-                else // 沒勾[Extend All Parts]
+                else
                 {
+                    // 沒勾[Extend All Parts]
                     #region SQL
                     sqlcmd = string.Format(@"
 select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
@@ -433,6 +448,7 @@ order by x.[Bundle]");
             return this.result;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dtt == null || this.dtt.Rows.Count == 0)
@@ -479,6 +495,7 @@ order by x.[Bundle]");
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToPrint(ReportDefinition report)
         {
             if (this.radioBundleCard.Checked)
@@ -544,8 +561,8 @@ order by x.[Bundle]");
                         Quantity = row1["Quantity"].ToString(),
                         Barcode = row1["Barcode"].ToString(),
                         Season = row1["Seasonid"].ToString(),
-                        brand = row1["brand"].ToString(),
-                        item = row1["item"].ToString(),
+                        Brand = row1["brand"].ToString(),
+                        Item = row1["item"].ToString(),
                         EXCESS1 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
                         NoBundleCardAfterSubprocess1 = row1["NoBundleCardAfterSubprocess"].ToString(),
                         Replacement1 = string.Empty,
@@ -570,8 +587,8 @@ order by x.[Bundle]");
                      Quantity2 = row1["Quantity"].ToString(),
                      Barcode2 = row1["Barcode"].ToString(),
                      Season2 = row1["Seasonid"].ToString(),
-                     brand2 = row1["brand"].ToString(),
-                     item2 = row1["item"].ToString(),
+                     Brand2 = row1["brand"].ToString(),
+                     Item2 = row1["item"].ToString(),
                      EXCESS2 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
                      NoBundleCardAfterSubprocess2 = row1["NoBundleCardAfterSubprocess"].ToString(),
                      Replacement2 = string.Empty,
@@ -597,8 +614,8 @@ order by x.[Bundle]");
                     Quantity3 = row1["Quantity"].ToString(),
                     Barcode3 = row1["Barcode"].ToString(),
                     Season3 = row1["Seasonid"].ToString(),
-                    brand3 = row1["brand"].ToString(),
-                    item3 = row1["item"].ToString(),
+                    Brand3 = row1["brand"].ToString(),
+                    Item3 = row1["item"].ToString(),
                     EXCESS3 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
                     NoBundleCardAfterSubprocess3 = row1["NoBundleCardAfterSubprocess"].ToString(),
                     Replacement3 = string.Empty,
@@ -606,12 +623,12 @@ order by x.[Bundle]");
 
                 report.ReportDataSource = data;
 
-                Type ReportResourceNamespace = typeof(P10_PrintData);
-                Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-                string ReportResourceName = "P10_Print.rdlc";
+                Type reportResourceNamespace = typeof(P10_PrintData);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P10_Print.rdlc";
 
                 IReportResource reportresource;
-                if (!(this.result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+                if (!(this.result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
                 {
                     this.ShowException(this.result);
                     return this.result;
@@ -620,9 +637,11 @@ order by x.[Bundle]");
                 report.ReportResource = reportresource;
 
                 // 開啟 report view
-                var frm = new Win.Subs.ReportView(report);
-                frm.MdiParent = this.MdiParent;
-                frm.DirectPrint = true;
+                var frm = new Win.Subs.ReportView(report)
+                {
+                    MdiParent = this.MdiParent,
+                    DirectPrint = true,
+                };
                 frm.ShowDialog();
                 #endregion
             }
@@ -722,7 +741,7 @@ order by x.[Bundle]");
         //    //System.IO.File.Delete(filePath);
         //    return true;
         // }
-        private void radioPanel1_Paint(object sender, PaintEventArgs e)
+        private void RadioPanel1_Paint(object sender, PaintEventArgs e)
         {
             if (this.radioBundleCard.Checked == true)
             {

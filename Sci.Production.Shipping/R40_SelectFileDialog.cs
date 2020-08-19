@@ -5,6 +5,9 @@ namespace Sci.Production.Shipping
 {
     public partial class R40_SelectFileDialog : Win.Forms.Base
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R40_SelectFileDialog"/> class.
+        /// </summary>
         public R40_SelectFileDialog()
         {
             this.InitializeComponent();

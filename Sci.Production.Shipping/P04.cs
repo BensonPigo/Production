@@ -58,6 +58,7 @@ where ed.ID = '{0}'", masterID);
              return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -144,7 +145,7 @@ where ed.ID = '{0}'", masterID);
         protected override bool ClickSaveBefore()
         {
             string sqlCmd = string.Empty;
-            DataTable _dataTable = new DataTable();
+            DataTable dataTable = new DataTable();
             #region 存檔不可為空判斷
 
             // Type = 3 (Transfer out) Arrive Port Date and Dox Rcv Date 可以為空
@@ -279,10 +280,10 @@ where ed.ID = '{0}'", masterID);
                             and len(ShipModeID) > 0
                             and Junk = 0 ",
                       MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-                DBProxy.Current.Select(null, sqlCmd, out _dataTable);
-                if (_dataTable.Rows.Count > 0)
+                DBProxy.Current.Select(null, sqlCmd, out dataTable);
+                if (dataTable.Rows.Count > 0)
                 {
-                    bool bolHasValue = _dataTable.AsEnumerable().Distinct().Where(x => !x["ShipModeID"].Equals(this.comboShippMode.SelectedValue.ToString())).ToList().Count() > 0;
+                    bool bolHasValue = dataTable.AsEnumerable().Distinct().Where(x => !x["ShipModeID"].Equals(this.comboShippMode.SelectedValue.ToString())).ToList().Count() > 0;
                     if (bolHasValue)
                     {
                         MyUtility.Msg.WarningBox("Can not revise < Shipping Mode > because share expense shipping mode is different.");
@@ -443,7 +444,7 @@ where ed.ID = '{0}'", masterID);
             }
         }
 
-        private void radioTransferIn_CheckedChanged(object sender, EventArgs e)
+        private void RadioTransferIn_CheckedChanged(object sender, EventArgs e)
         {
             if (this.EditMode)
             {

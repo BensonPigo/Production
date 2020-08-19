@@ -6,35 +6,36 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
-    /// <summary>
-    /// EditRemark
-    /// </summary>
-    /// <param name="strTableNm"></param>
-    /// <param name="strColumnNm"></param>
-    /// <param name="drData"></param>
+    /// <inheritdoc/>
     public partial class EditRemark : Win.Subs.Base
     {
-        string _tableNm;
-        string _columnNm;
-        DataRow dr;
+        private string _tableNm;
+        private string _columnNm;
+        private DataRow dr;
 
-        public EditRemark(string tableNm, string columnNm, DataRow Data)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditRemark"/> class.
+        /// </summary>
+        /// <param name="tableNm">tableNm</param>
+        /// <param name="columnNm">columnNm</param>
+        /// <param name="data">DataRow</param>
+        public EditRemark(string tableNm, string columnNm, DataRow data)
         {
             this.InitializeComponent();
 
             this._tableNm = tableNm;
             this._columnNm = columnNm;
-            this.dr = Data;
+            this.dr = data;
 
             this.edit_Remark.Text = this.dr[columnNm].ToString();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             string sqlcmd = string.Empty;
             string sqlwhere = string.Empty;
