@@ -1222,7 +1222,7 @@ drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"])
                 return null;
             }
 
-            DataTable dtDyelot = dt.DefaultView.ToTable(distinct: true, new string[] { "Dyelot", "ReleaseQty" }).DefaultView.ToTable();
+            DataTable dtDyelot = dt.DefaultView.ToTable(distinct: true, columnNames: new string[] { "Dyelot", "ReleaseQty" }).DefaultView.ToTable();
 
             dt = dt.Select("balanceqty<>0").CopyToDataTable();
             if (dt.AsEnumerable().Any(n => ((decimal)n["qty"]).EqualDecimal(request)))
