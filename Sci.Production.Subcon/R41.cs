@@ -9,55 +9,55 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R41 : Win.Tems.PrintForm
     {
-        string SubProcess;
-        string SP;
-        string M;
-        string Factory;
-        string CutRef1;
-        string CutRef2;
-        string processLocation;
-        DateTime? dateBundle1;
-        DateTime? dateBundle2;
-        DateTime? dateBundleScanDate1;
-        DateTime? dateBundleScanDate2;
-        DateTime? dateEstCutDate1;
-        DateTime? dateEstCutDate2;
-        DateTime? dateBDelivery1;
-        DateTime? dateBDelivery2;
-        DateTime? dateSewInLine1;
-        DateTime? dateSewInLine2;
+        private string SubProcess;
+        private string SP;
+        private string M;
+        private string Factory;
+        private string CutRef1;
+        private string CutRef2;
+        private string processLocation;
+        private DateTime? dateBundle1;
+        private DateTime? dateBundle2;
+        private DateTime? dateBundleScanDate1;
+        private DateTime? dateBundleScanDate2;
+        private DateTime? dateEstCutDate1;
+        private DateTime? dateEstCutDate2;
+        private DateTime? dateBDelivery1;
+        private DateTime? dateBDelivery2;
+        private DateTime? dateSewInLine1;
+        private DateTime? dateSewInLine2;
 
+        /// <inheritdoc/>
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboload();
+            this.Comboload();
             this.comboFactory.SetDataSource();
             this.comboRFIDProcessLocation.SetDataSource();
             this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
-        private void comboload()
+        private void Comboload()
         {
-            DualResult Result;
-
-            DataTable dtM;
-            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtM))
+            DualResult result;
+            if (result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out DataTable dtM))
             {
                 this.comboM.DataSource = dtM;
                 this.comboM.DisplayMember = "ID";
             }
             else
             {
-                this.ShowErr(Result);
+                this.ShowErr(result);
             }
         }
 
         #region ToExcel3步驟
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.SubProcess = this.txtsubprocess.Text;
@@ -91,13 +91,13 @@ namespace Sci.Production.Subcon
             return base.ValidateInput();
         }
 
-        // 非同步讀取資料
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             return Ict.Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region Append畫面上的條件
@@ -123,7 +123,7 @@ namespace Sci.Production.Subcon
 
             if (!MyUtility.Check.Empty(this.SP))
             {
-                sqlWhereFirstQuery.Append(string.Format(@" and b.Orderid = '{0}'", this.SP));
+                sqlWhereFirstQuery.Append(string.Format(@" and BDO.Orderid = '{0}'", this.SP));
             }
 
             if (!MyUtility.Check.Empty(this.dateBundle1))
@@ -218,6 +218,7 @@ into #tmp_Workorder
 from Bundle b WITH (NOLOCK)
 {joinWorkOrder}
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id 
+INNER JOIN Bundle_Detail_Order BDO on BDO.BundleNo = BD.BundleNo
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno --and bio.SubProcessId = s.Id
@@ -232,7 +233,7 @@ Select
     [RFIDProcessLocationID] = isnull(bio.RFIDProcessLocationID,''),
     [EXCESS] = iif(b.IsEXCESS = 0, '','Y'),
     [Cut Ref#] = isnull(b.CutRef,''),
-    [SP#] = b.Orderid,
+    [SP#] = dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,
@@ -483,10 +484,11 @@ drop table #tmp_Workorder
             #region 分段抓取資料填入excel
             this.ShowLoadingText($"Data Loading , please wait …");
             DataTable tmpDatas = new DataTable();
-            SqlConnection conn = null;
-            DBProxy.Current.OpenConnection(this.ConnectionName, out conn);
-            var cmd = new SqlCommand(sqlResult, conn);
-            cmd.CommandTimeout = 3000;
+            DBProxy.Current.OpenConnection(this.ConnectionName, out SqlConnection conn);
+            var cmd = new SqlCommand(sqlResult, conn)
+            {
+                CommandTimeout = 3000,
+            };
             var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             int loadCounts = 0;
             int loadCounts2 = 0;

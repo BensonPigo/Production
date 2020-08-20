@@ -16,6 +16,8 @@
 
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [BDO_OrderID]
     ON [dbo].[Bundle_Detail_Order]([OrderID] ASC);
@@ -23,10 +25,16 @@ CREATE NONCLUSTERED INDEX [BDO_OrderID]
 
 GO
 CREATE NONCLUSTERED INDEX [BDO_BundleNo]
-    ON [dbo].[Bundle_Detail_Order]([BundleNo] ASC);
+    ON [dbo].[Bundle_Detail_Order]([BundleNo] ASC)
+    INCLUDE([OrderID]);
+
+
 
 
 GO
 CREATE NONCLUSTERED INDEX [BDO_ID]
-    ON [dbo].[Bundle_Detail_Order]([ID] ASC);
+    ON [dbo].[Bundle_Detail_Order]([ID] ASC)
+    INCLUDE([OrderID]);
+
+
 

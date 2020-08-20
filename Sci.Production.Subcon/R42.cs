@@ -9,59 +9,49 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R42 : Win.Tems.PrintForm
     {
-        StringBuilder sqlCmd;
-        string SubProcess;
-        string SP;
-        string M;
-        string Factory;
-        string CutRef1;
-        string CutRef2;
-        string processLocation;
-        DateTime? dateBundle1;
-        DateTime? dateBundle2;
-        DateTime? dateBundleTransDate1;
-        DateTime? dateBundleTransDate2;
+        private StringBuilder sqlCmd;
+        private string SubProcess;
+        private string SP;
+        private string M;
+        private string Factory;
+        private string CutRef1;
+        private string CutRef2;
+        private string processLocation;
+        private DateTime? dateBundle1;
+        private DateTime? dateBundle2;
+        private DateTime? dateBundleTransDate1;
+        private DateTime? dateBundleTransDate2;
 
+        /// <inheritdoc/>
         public R42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboload();
+            this.Comboload();
             this.comboFactory.SetDataSource();
             this.comboRFIDProcessLocation.SetDataSource();
             this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
         // string date = "";
-        private void comboload()
+        private void Comboload()
         {
-            // DataTable dtSubprocessID;
-            DualResult Result;
-
-            // if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess WITH (NOLOCK) where Junk = 0 ",
-            //    out dtSubprocessID))
-            // {
-            //    this.comboSubProcess.DataSource = dtSubprocessID;
-            //    this.comboSubProcess.DisplayMember = "ID";
-            // }
-            // else { ShowErr(Result); }
-            DataTable dtfactory;
-            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtfactory))
+            DualResult result;
+            if (result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out DataTable dtfactory))
             {
                 this.comboM.DataSource = dtfactory;
                 this.comboM.DisplayMember = "ID";
             }
             else
             {
-                this.ShowErr(Result);
+                this.ShowErr(result);
             }
         }
 
-        #region ToExcel3步驟
-
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.dateBundleCDate.Value1) && MyUtility.Check.Empty(this.dateBundleCDate.Value2) &&
@@ -85,7 +75,7 @@ namespace Sci.Production.Subcon
             return base.ValidateInput();
         }
 
-        // 非同步讀取資料
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.sqlCmd = new StringBuilder();
@@ -101,7 +91,7 @@ Select
             [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
 			[FabricKind] = FabricKind.val,
             [Cut Ref#] = b.CutRef,
-            [SP#] = b.Orderid,
+            [SP#] = dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where BundleNo = bt.BundleNo order by OrderID for XML RAW)),
             [Master SP#] = b.POID,
             [M] = b.MDivisionid,
             [Factory] = o.FtyGroup,
@@ -195,7 +185,7 @@ Select
 
                 if (!MyUtility.Check.Empty(this.SP))
                 {
-                    this.sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", this.SP));
+                    this.sqlCmd.Append(string.Format(@" and exists(select 1 from Bundle_Detail_Order with(nolock) where bundleNo = bd.bundleNo and Orderid= '{0}')", this.SP));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundle1))
@@ -246,7 +236,7 @@ Select
             [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
 			[FabricKind] = FabricKind.val,
             [Cut Ref#] = b.CutRef,
-            [SP#] = b.Orderid,
+            [SP#] = dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where BundleNo = bt.BundleNo order by OrderID for XML RAW)),
             [Master SP#] = b.POID,
             [M] = b.MDivisionid,
             [Factory] = o.FtyGroup,
@@ -344,7 +334,7 @@ where 1=1
 
                 if (!MyUtility.Check.Empty(this.SP))
                 {
-                    this.sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", this.SP));
+                    this.sqlCmd.Append(string.Format(@" and exists(select 1 from Bundle_Detail_Order with(nolock) where bundleNo = bd.bundleNo and Orderid= '{0}')", this.SP));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundle1))
@@ -372,7 +362,7 @@ where 1=1
             return Ict.Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R42_Bundle Transaction detail (RFID).xltx"); // 預先開啟excel app
@@ -388,10 +378,11 @@ where 1=1
             #region 分段抓取資料填入excel
             this.ShowLoadingText($"Data Loading , please wait …");
             DataTable tmpDatas = new DataTable();
-            SqlConnection conn = null;
-            DBProxy.Current.OpenConnection(this.ConnectionName, out conn);
-            var cmd = new SqlCommand(this.sqlCmd.ToString(), conn);
-            cmd.CommandTimeout = 3000;
+            DBProxy.Current.OpenConnection(this.ConnectionName, out SqlConnection conn);
+            var cmd = new SqlCommand(this.sqlCmd.ToString(), conn)
+            {
+                CommandTimeout = 3000,
+            };
             var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             int loadCounts = 0;
             int loadCounts2 = 0;
@@ -470,7 +461,6 @@ where 1=1
             return true;
         }
 
-        #endregion
         private void DataTableClearAll(DataTable target)
         {
             target.Rows.Clear();
