@@ -57,7 +57,7 @@ into #tmp_Dropdownlist
 from Tradedb.Trade.dbo.Dropdownlist d
 where d.type = 'PulseCheck'
 and d.Name in (
-	'Performed',
+	'Sewing CPU',
 	'Working Days',
 	'Avg Working Hours',
 	'PPH',
@@ -681,7 +681,7 @@ END
 DECLARE CURSOR_ CURSOR FOR
 select a.CountryID
 	, a.Zone
-	,[Performed] = cast(c.[Total CPU Included Subcon-In] - isnull(op.[Subcon-Out Total CPU(sister)],0) as decimal(18,2))
+	,[SewingCPU] = cast(c.[Total CPU Included Subcon-In] - isnull(op.[Subcon-Out Total CPU(sister)],0) as decimal(18,2))
 	,[Working Days] = cast(e.[Working Days] as decimal(18, 0))
 	,[Avg Working Hours] =cast(a.[Avg Working Hours] as decimal(18,2))
 	,[PPH] = cast(a.[PPH] as decimal(18,2))
@@ -707,7 +707,7 @@ left join #tmp_PAMSAttendance att on a.CountryID = att.CountryID and a.Zone = at
 
 declare @_CountryID as varchar(8)
 	, @_Zone as varchar(8)
-	, @Performed as decimal(18,6)
+	, @SewingCPU as decimal(18,6)
 	, @WorkingDays as decimal(18,6)
 	, @AvgWorkingHours as decimal(18,6)
 	, @PPH as decimal(18,6)
@@ -721,7 +721,7 @@ declare @_CountryID as varchar(8)
 	, @TTLDLWorkingHour as decimal(18,6)
 
 OPEN CURSOR_
-FETCH NEXT FROM CURSOR_ INTO @_CountryID, @_Zone, @Performed, @WorkingDays, @AvgWorkingHours, @PPH, @Efficiency, @DirectManpower, @PerformedLoading, @PerformedCapacity, @CMPAbsent, @SubprocessCPU, @TTLDLWorkingHour
+FETCH NEXT FROM CURSOR_ INTO @_CountryID, @_Zone, @SewingCPU, @WorkingDays, @AvgWorkingHours, @PPH, @Efficiency, @DirectManpower, @PerformedLoading, @PerformedCapacity, @CMPAbsent, @SubprocessCPU, @TTLDLWorkingHour
 While @@FETCH_STATUS = 0
 Begin	
 	--Avg Working Hours
@@ -785,19 +785,19 @@ Begin
 	end  
 
 
-	--Performed
-	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'Performed' and [Description] = 'Monthly CMP Report'
+	--Sewing CPU
+	select @ItemID = ID from #tmp_Dropdownlist where [Name] = 'Sewing CPU' and [Description] = 'Monthly CMP Report'
 	if exists(select 1 from tradedb.trade.dbo.PulseCheck where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone)
 	begin
 		update tradedb.trade.dbo.PulseCheck
-		set value = @Performed, EditName = @UserID, EditDate =GETDATE()
+		set value = @SewingCPU, EditName = @UserID, EditDate =GETDATE()
 		where ItemID = @ItemID and [Year] = @Year and [Month] = @Month and Region = @_CountryID and Zone = @_Zone
 	end
 	else
 	begin
 		insert into tradedb.trade.dbo.PulseCheck
 		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
-		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @Performed, @UserID, GETDATE(), null, null
+		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @SewingCPU, @UserID, GETDATE(), null, null
 	end  
 
 	--Working Days
@@ -889,7 +889,7 @@ Begin
 		([ItemID],[Year],[Month],[Region],[Zone],[Value],[AddName],[AddDate],[EditName],[EditDate])
 		select @ItemID, @Year, @Month, @_CountryID, @_Zone, @TTLDLWorkingHour, @UserID, GETDATE(), null, null
 	end
-FETCH NEXT FROM CURSOR_ INTO @_CountryID, @_Zone, @Performed, @WorkingDays, @AvgWorkingHours, @PPH, @Efficiency, @DirectManpower, @PerformedLoading, @PerformedCapacity, @CMPAbsent, @SubprocessCPU, @TTLDLWorkingHour
+FETCH NEXT FROM CURSOR_ INTO @_CountryID, @_Zone, @SewingCPU, @WorkingDays, @AvgWorkingHours, @PPH, @Efficiency, @DirectManpower, @PerformedLoading, @PerformedCapacity, @CMPAbsent, @SubprocessCPU, @TTLDLWorkingHour
 End
 CLOSE CURSOR_
 DEALLOCATE CURSOR_ 
