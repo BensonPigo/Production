@@ -49,7 +49,7 @@ namespace Sci.Production.Shipping
                 IList<SqlParameter> cmds = new List<SqlParameter>();
                 cmds.Add(new SqlParameter("@id", this.txtSPNo.Text));
 
-                string sqlCmd = "select Orders.ID from Orders WITH (NOLOCK) ,factory WITH (NOLOCK) where Orders.ID = @id and Orders.FactoryID = Factory.ID and Factory.IsProduceFty = 1";
+                string sqlCmd = "select Orders.ID from Orders WITH (NOLOCK) ,factory WITH (NOLOCK) where Orders.ID = @id and Orders.FactoryID = Factory.ID ";
                 DataTable orderData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
 
