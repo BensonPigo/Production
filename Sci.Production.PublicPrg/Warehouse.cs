@@ -1148,6 +1148,7 @@ where   poid = '{1}'
             List<DataRow> items = new List<DataRow>();
             string sqlcmd;
             DataTable dt;
+            decimal accu_issue = 0;
 
             // 此筆需求數 = 總需求數 - 已經issue總數
             decimal request = decimal.Parse(materials["requestqty"].ToString()) - decimal.Parse(materials["accu_issue"].ToString());
@@ -1187,19 +1188,16 @@ select
 	, roll = RTRIM(LTRIM(roll))
 	, stocktype
 	, Dyelot = RTRIM(LTRIM(a.Dyelot))
-	, inqty - OutQty + AdjustQty qty
+	, qty = inqty - OutQty + AdjustQty
 	, inqty
 	, outqty
 	, adjustqty
-	, inqty - OutQty + AdjustQty balanceqty
-    , ReleaseAVG = ReleaseQty/ count(*) over (partition by a.Dyelot)
-	, ReleaseQty
-	, GroupQty
+    , ReleaseQty
+	, balanceqty = inqty - OutQty + AdjustQty 
     , running_total = sum(inqty-OutQty+AdjustQty) over (order by t.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty desc
                                                         rows between unbounded preceding and current row)
 from #tmp t
 inner join FtyInventory a on a.POID = '{0}' and a.Seq1 = t.Seq1 and a.Seq2 = t.Seq2 and a.Dyelot = t.Dyelot and a.StockType = '{2}'
-where inqty - OutQty + AdjustQty <> 0
 
 drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"]);
 
@@ -1216,6 +1214,9 @@ drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"])
                 return null;
             }
 
+            DataTable dtDyelot = dt.DefaultView.ToTable(distinct: true, new string[] { "Dyelot", "ReleaseQty" }).DefaultView.ToTable();
+
+            dt = dt.Select("balanceqty<>0").CopyToDataTable();
             if (dt.AsEnumerable().Any(n => ((decimal)n["qty"]).EqualDecimal(request)))
             {
                 items.Add(dt.AsEnumerable().Where(n => ((decimal)n["qty"]).EqualDecimal(request)).CopyToDataTable().Rows[0]);
@@ -1224,47 +1225,30 @@ drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"])
             {
                 #region AutoPick
                 /*
-                 總需求數request = Cutting.P08 Cutting Tape Plan表身Release Qty總和
-                 ReleaseAVG = Cutting Tap Plan 同一個Dyelot ReleaseQty / 相同Dyelot的總數
-                 FtyBalance = 單一筆庫存量, IssueQty不可超過庫存量
-                 Auto Pick: 庫存量和CutTapePlan Release數量, 誰比較小就當IssueQty
-                 相同的Dyelot 要平均分配ReleaseQty
+                 1.Group by Dyelot和ReleaseQty
+                 2.相同Dyelot依序分配數量,把RelsQty扣完為止
+                 3.當前資料 若庫存 > 剩餘RelsQty,則剩餘數全部給該筆, 其餘沒分配的Dyelot則不顯示
                  */
-
-                findrow = dt.AsEnumerable().CopyToDataTable();
-
-                if (findrow != null)
+                foreach (DataRow drDyelot in dtDyelot.Rows)
                 {
-                    decimal balance = request;
-
-                    for (int i = 0;  i < findrow.Rows.Count; i++)
+                    decimal balQty = MyUtility.Convert.GetDecimal(drDyelot["ReleaseQty"]);
+                    foreach (DataRow dr2 in dt.Rows)
                     {
-                        DataRow find = items.Find(item => item["ftyinventoryukey"].ToString() == findrow.Rows[i]["ftyinventoryukey"].ToString());
-                        decimal ReleaseAVG = (decimal)findrow.Rows[i]["ReleaseAVG"];
-                        decimal FtyBalance = (decimal)findrow.Rows[i]["balanceqty"];
-
-                        if (MyUtility.Check.Empty(find))
+                        // 找出相同的Dtelot
+                        if (string.Compare(dr2["Dyelot"].ToString(), drDyelot["Dyelot"].ToString(), ignoreCase: true) == 0)
                         {
-                            // 平均分配Request
-                            if (balance > 0m)
+                            if (balQty >= (decimal)dr2["balanceqty"])
                             {
-                                if (FtyBalance > ReleaseAVG)
-                                {
-                                    findrow.Rows[i]["qty"] = ReleaseAVG;
-                                    items.Add(findrow.Rows[i]);
-                                    balance -= ReleaseAVG;
-                                }
-                                else
-                                {
-                                    findrow.Rows[i]["qty"] = FtyBalance;
-                                    items.Add(findrow.Rows[i]);
-                                    balance -= FtyBalance;
-                                }
+                                dr2["qty"] = dr2["balanceqty"];
+                                items.Add(dr2);
+                                balQty -= (decimal)dr2["qty"];
                             }
-                        }
-                        else
-                        {
-                            break;
+                            else
+                            {
+                                dr2["qty"] = balQty;
+                                items.Add(dr2);
+                                break;
+                            }
                         }
                     }
                 }
