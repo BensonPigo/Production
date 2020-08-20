@@ -80,6 +80,7 @@ namespace Sci.Production.Subcon
         {
             this.sqlCmd = new StringBuilder();
 
+            // 效能: 看起來多餘的寫法, SP#分兩個欄位撈, 存入#tmp再組起來, 直接組起來要花4倍時間
             // 因為BundleTransfer 的table太肥，如果有用到這個條件則修改寫法
             if (this.dateBundleTransDate1 == null && this.dateBundleTransDate2 == null)
             {
@@ -87,94 +88,86 @@ namespace Sci.Production.Subcon
 
                 this.sqlCmd.Append(@"
 Select
-            [Bundle#] = bt.BundleNo,
-            [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
-			[FabricKind] = FabricKind.val,
-            [Cut Ref#] = b.CutRef,
-            [SP#] = dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where BundleNo = bt.BundleNo order by OrderID for XML RAW)),
-            [Master SP#] = b.POID,
-            [M] = b.MDivisionid,
-            [Factory] = o.FtyGroup,
-            [Style] = o.StyleID,
-            [Season] = o.SeasonID,
-            [Brand] = o.BrandID,
-            [Comb] = b.PatternPanel,
-            [Cutno] = b.Cutno,
-            [Article] = b.Article,
-            [Color] = b.ColorId,
-            [Line] = b.SewinglineId,
-			bt.SewingLineID,
-            [Cell] = b.SewingCell,
-            [Pattern] = bd.PatternCode,
-            [PtnDesc] = bd.PatternDesc,
-            [Group] = bd.BundleGroup,
-            [Size] = bd.SizeCode,
-            --[Artwork] = stuff(sub.sub,1,1,''),
-            [Qty] = bd.Qty,
-            [RFID Reader] = bt.RFIDReaderId,
-            [Sub-process] = bt.SubprocessId,
-            [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
-            [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
-            [Type] = case when bt.Type = '1' then 'IN'
-			              when bt.Type = '2' then 'Out'
-			              when bt.Type = '3' then 'In/Out' end,
-            [TagId] = bt.TagId,
-            [TransferDate] = CAST(TransferDate AS DATE),
-            [TransferTime] = TransferDate,
-            bt.LocationID
-            ,b.item
-			,bt.PanelNo
-			,CutCellID
-            --CAST ( bt.TransferDate AS DATE) AS TransferDate
-            from BundleTransfer  bt WITH (NOLOCK)
-            left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
-            left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
-            left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
-            inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
-            outer apply(
-                select sub = 1
-                from Bundle_Detail_Art bda WITH (NOLOCK) 
-                where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.PostSewingSubProcess = 1
-                and bda.SubprocessId = bt.SubprocessId
-            ) as ps
-            outer apply(
-                select sub = 1
-                from Bundle_Detail_Art bda WITH (NOLOCK) 
-                where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.NoBundleCardAfterSubprocess = 1
-                and bda.SubprocessId = bt.SubprocessId
-            ) as nbs 
-            /*outer apply(
-	             select sub= (
-		             Select distinct concat('+', bda.SubprocessId)
-		             from Bundle_Detail_Art bda WITH (NOLOCK) 
-		             where bda.Bundleno = bd.Bundleno
-		             for xml path('')
-	             )
-            ) as sub*/
-			outer apply(
-				SELECT top 1 [val] = DD.id + '-' + DD.NAME 
-				FROM dropdownlist DD 
-				OUTER apply(
-						SELECT OB.kind, 
-							OCC.id, 
-							OCC.article, 
-							OCC.colorid, 
-							OCC.fabricpanelcode, 
-							OCC.patternpanel 
-						FROM order_colorcombo OCC WITH (NOLOCK)
-						INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
-					) LIST 
-					WHERE LIST.id = b.poid 
-					AND LIST.patternpanel = b.patternpanel 
-					AND DD.[type] = 'FabricKind' 
-					AND DD.id = LIST.kind 
-			)FabricKind
-            where 1=1
+    [Bundle#] = bt.BundleNo,
+    [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
+	[FabricKind] = FabricKind.val,
+    [Cut Ref#] = b.CutRef,
+    [SP#] = b.Orderid,
+	sps = (select concat('/',IIF(LEN(OrderID) <= 10, OrderID , substring(OrderID,11,6))) from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID offset 1 rows for xml path('')),
+    [Master SP#] = b.POID,
+    [M] = b.MDivisionid,
+    [Factory] = o.FtyGroup,
+    [Style] = o.StyleID,
+    [Season] = o.SeasonID,
+    [Brand] = o.BrandID,
+    [Comb] = b.PatternPanel,
+    [Cutno] = b.Cutno,
+    [Article] = b.Article,
+    [Color] = b.ColorId,
+    [Line] = b.SewinglineId,
+	bt.SewingLineID,
+    [Cell] = b.SewingCell,
+    [Pattern] = bd.PatternCode,
+    [PtnDesc] = bd.PatternDesc,
+    [Group] = bd.BundleGroup,
+    [Size] = bd.SizeCode,
+    [Qty] = bd.Qty,
+    [RFID Reader] = bt.RFIDReaderId,
+    [Sub-process] = bt.SubprocessId,
+    [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
+    [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
+    [Type] = case when bt.Type = '1' then 'IN'
+			        when bt.Type = '2' then 'Out'
+			        when bt.Type = '3' then 'In/Out' end,
+    [TagId] = bt.TagId,
+    [TransferDate] = CAST(TransferDate AS DATE),
+    [TransferTime] = TransferDate,
+    bt.LocationID
+    ,b.item
+	,bt.PanelNo
+	,CutCellID
+into #tmp
+from BundleTransfer  bt WITH (NOLOCK)
+left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
+left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
+left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
+outer apply(
+    select sub = 1
+    from Bundle_Detail_Art bda WITH (NOLOCK) 
+    where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.PostSewingSubProcess = 1
+    and bda.SubprocessId = bt.SubprocessId
+) as ps
+outer apply(
+    select sub = 1
+    from Bundle_Detail_Art bda WITH (NOLOCK) 
+    where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.NoBundleCardAfterSubprocess = 1
+    and bda.SubprocessId = bt.SubprocessId
+) as nbs 
+outer apply(
+	SELECT top 1 [val] = DD.id + '-' + DD.NAME 
+	FROM dropdownlist DD 
+	OUTER apply(
+			SELECT OB.kind, 
+				OCC.id, 
+				OCC.article, 
+				OCC.colorid, 
+				OCC.fabricpanelcode, 
+				OCC.patternpanel 
+			FROM order_colorcombo OCC WITH (NOLOCK)
+			INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
+		) LIST 
+		WHERE LIST.id = b.poid 
+		AND LIST.patternpanel = b.patternpanel 
+		AND DD.[type] = 'FabricKind' 
+		AND DD.id = LIST.kind 
+)FabricKind
+where 1=1
             ");
                 #endregion
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(this.SubProcess))
-                {// ();
+                {
                     this.sqlCmd.Append($@" and (bt.SubprocessId in ('{this.SubProcess.Replace(",", "','")}') or '{this.SubProcess}'='')");
                 }
 
@@ -232,43 +225,45 @@ Select
 --Replace1
 
 Select 
-            [Bundle#] = bt.BundleNo,
-            [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
-			[FabricKind] = FabricKind.val,
-            [Cut Ref#] = b.CutRef,
-            [SP#] = dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where BundleNo = bt.BundleNo order by OrderID for XML RAW)),
-            [Master SP#] = b.POID,
-            [M] = b.MDivisionid,
-            [Factory] = o.FtyGroup,
-            [Style] = o.StyleID,
-            [Season] = o.SeasonID,
-            [Brand] = o.BrandID,
-            [Comb] = b.PatternPanel,
-            [Cutno] = b.Cutno,
-            [Article] = b.Article,
-            [Color] = b.ColorId,
-            [Line] = b.SewinglineId,
-            bt.SewingLineID,
-            [Cell] = b.SewingCell,
-            [Pattern] = bd.PatternCode,
-            [PtnDesc] = bd.PatternDesc,
-            [Group] = bd.BundleGroup,
-            [Size] = bd.SizeCode,
-            [Qty] = b.Qty,
-            [RFID Reader] = bt.RFIDReaderId,
-            [Sub-process] = bt.SubprocessId,
-            [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
-            [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
-            [Type] = case when bt.Type = '1' then 'IN'
-			              when bt.Type = '2' then 'Out'
-			              when bt.Type = '3' then 'In/Out' end,
-            [TagId] = bt.TagId,
-            [TransferDate] = CAST(bt.TransferDate AS DATE),
-            [TransferTime] = bt.TransferDate,
-            bt.LocationID
-            ,b.item
-			,bt.PanelNo
-			,bt.CutCellID
+    [Bundle#] = bt.BundleNo,
+    [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
+    [FabricKind] = FabricKind.val,
+    [Cut Ref#] = b.CutRef,
+    [SP#] = b.Orderid,
+	sps = (select concat('/',IIF(LEN(OrderID) <= 10, OrderID , substring(OrderID,11,6))) from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID offset 1 rows for xml path('')),
+    [Master SP#] = b.POID,
+    [M] = b.MDivisionid,
+    [Factory] = o.FtyGroup,
+    [Style] = o.StyleID,
+    [Season] = o.SeasonID,
+    [Brand] = o.BrandID,
+    [Comb] = b.PatternPanel,
+    [Cutno] = b.Cutno,
+    [Article] = b.Article,
+    [Color] = b.ColorId,
+    [Line] = b.SewinglineId,
+    bt.SewingLineID,
+    [Cell] = b.SewingCell,
+    [Pattern] = bd.PatternCode,
+    [PtnDesc] = bd.PatternDesc,
+    [Group] = bd.BundleGroup,
+    [Size] = bd.SizeCode,
+    [Qty] = b.Qty,
+    [RFID Reader] = bt.RFIDReaderId,
+    [Sub-process] = bt.SubprocessId,
+    [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
+    [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
+    [Type] = case when bt.Type = '1' then 'IN'
+			        when bt.Type = '2' then 'Out'
+			        when bt.Type = '3' then 'In/Out' end,
+    [TagId] = bt.TagId,
+    [TransferDate] = CAST(bt.TransferDate AS DATE),
+    [TransferTime] = bt.TransferDate,
+    bt.LocationID
+    ,b.item
+    ,bt.PanelNo
+    ,bt.CutCellID
+into #tmp
 from BundleTransfer  bt WITH (NOLOCK, Index(BundleTransferDate))
 inner join Bundle_Detail bd on bd.BundleNo = bt.BundleNo
 left join Bundle b on b.id = bd.id
@@ -307,7 +302,7 @@ outer apply(
 where 1=1
 ");
                 if (!MyUtility.Check.Empty(this.SubProcess))
-                {// ();
+                {
                     this.sqlCmd.Append($@" and (bt.SubprocessId in ('{this.SubProcess.Replace(",", "','")}') or '{this.SubProcess}'='')" + Environment.NewLine);
                 }
 
@@ -358,6 +353,16 @@ where 1=1
                 }
             }
 
+            this.sqlCmd.Append(@"
+select [Bundle#],[RFIDProcessLocationID],[FabricKind],[Cut Ref#],
+	[SP#] = concat([SP#],sps),
+	[Master SP#],[M],[Factory],[Style],[Season],[Brand],[Comb],[Cutno],[Article],[Color],[Line],SewingLineID,
+	[Cell],[Pattern],[PtnDesc],[Group],[Size],[Qty],[RFID Reader],[Sub-process],[Post Sewing SubProcess],
+	[No Bundle Card After Subprocess],[Type],[TagId],[TransferDate],[TransferTime],LocationID,item,PanelNo,CutCellID
+from #tmp
+
+drop table #tmp
+");
             DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
             return Ict.Result.True;
         }
@@ -454,8 +459,6 @@ where 1=1
             Marshal.ReleaseComObject(objApp);          // 釋放objApp
             Marshal.ReleaseComObject(workbook);
 
-            // printData.Clear();
-            // printData.Dispose();
             strExcelName.OpenFile();
             #endregion
             return true;
