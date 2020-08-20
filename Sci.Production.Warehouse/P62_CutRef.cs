@@ -43,8 +43,8 @@ outer apply (
 		For XML path('')
 	),1,2,'')
 ) art
-where ct2.ID='{this.dr["cutplanid"]}'
-order by ct2.FabricCombo,ct2.MarkerName,ct2.Seq1,ct2.Seq2
+where ct2.ID='{this.dr["cutplanid"]}' and i.ID = '{this.dr["id"]}'
+order by ct2.Seq1,ct2.Seq2
 ");
 
             DataTable selectDataTable1;
