@@ -1162,15 +1162,23 @@ where   poid = '{1}'
             decimal request = decimal.Parse(materials["requestqty"].ToString()) - decimal.Parse(materials["accu_issue"].ToString());
             sqlcmd = string.Format(
                 @"
-select a.Seq1, a.Seq2, ctpd.Dyelot, sum(a.inqty-a.OutQty+a.AdjustQty) as GroupQty
+select distinct a.Seq1, a.Seq2, ctpd.Dyelot 
+,GroupQty = sum(a.InQty-a.OutQty+a.AdjustQty)
+,ReleaseQty = ReleaseQty.value
 into #tmp
 from  CutTapePlan_Detail ctpd
 inner join CutTapePlan ctp on ctp.ID = ctpd.ID
 inner join PO_Supp_Detail psd on psd.ColorID = ctpd.ColorID and psd.Refno = ctpd.RefNo and psd.ID = ctp.CuttingID
 inner join FtyInventory a on a.POID = '{0}' and a.Seq1 = psd.Seq1 and a.Seq2 = psd.Seq2 and a.Dyelot = ctpd.Dyelot
+outer apply(
+	select value= sum(ReleaseQty)
+	from CutTapePlan_Detail
+	where ID = ctp.ID
+	and Dyelot = ctpd.Dyelot
+)ReleaseQty
 where ctpd.id = '{1}' and a.Seq1 between '01' and '99' and a.StockType = '{2}'
 and ctpd.ColorID = '{3}'
-group by a.Seq1, a.Seq2, ctpd.Dyelot, ctpd.ColorID
+group by a.Seq1, a.Seq2, ctpd.Dyelot, ctpd.ColorID,ReleaseQty.value
 
 select
 	location = Stuff ((select ',' + t.mtllocationid 
@@ -1188,11 +1196,12 @@ select
 	, roll = RTRIM(LTRIM(roll))
 	, stocktype
 	, Dyelot = RTRIM(LTRIM(a.Dyelot))
-	, inqty - OutQty + AdjustQty qty
+	, qty = inqty - OutQty + AdjustQty
 	, inqty
 	, outqty
 	, adjustqty
-	, inqty - OutQty + AdjustQty balanceqty
+    , ReleaseQty
+	, balanceqty = inqty - OutQty + AdjustQty 
     , running_total = sum(inqty-OutQty+AdjustQty) over (order by t.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty desc
                                                         rows between unbounded preceding and current row)
 from #tmp t
@@ -1213,6 +1222,8 @@ drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"])
                 return null;
             }
 
+            DataTable dtDyelot = dt.DefaultView.ToTable(distinct: true, new string[] { "Dyelot", "ReleaseQty" }).DefaultView.ToTable();
+
             dt = dt.Select("balanceqty<>0").CopyToDataTable();
             if (dt.AsEnumerable().Any(n => ((decimal)n["qty"]).EqualDecimal(request)))
             {
@@ -1221,70 +1232,31 @@ drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"])
             else
             {
                 #region AutoPick
-                foreach (DataRow dr2 in dt.Rows)
+                /*
+                 1.Group by Dyelot和ReleaseQty
+                 2.相同Dyelot依序分配數量,把RelsQty扣完為止
+                 3.當前資料 若庫存 > 剩餘RelsQty,則剩餘數全部給該筆, 其餘沒分配的Dyelot則不顯示
+                 */
+                foreach (DataRow drDyelot in dtDyelot.Rows)
                 {
-                    if ((decimal)dr2["running_total"] < request)
+                    decimal balQty = MyUtility.Convert.GetDecimal(drDyelot["ReleaseQty"]);
+                    foreach (DataRow dr2 in dt.Rows)
                     {
-                        items.Add(dr2);
-                        accu_issue = decimal.Parse(dr2["running_total"].ToString());
-                    }
-                    else
-                    {
-                        // 依照最後一塊料的Dyelot來找到對應的Group來取得最後一塊料
-                        findrow = dt.AsEnumerable().Where(row => row["Dyelot"].EqualString(dr2["Dyelot"].ToString())).CopyToDataTable();
-                        break;
-                    }
-                }
-
-                if (accu_issue < request && findrow != null) // 累計發料數小於需求數時，再反向取得最後一塊料。
-                {
-                    decimal balance = request - accu_issue;
-
-                    for (int i = findrow.Rows.Count - 1; i >= 0; i--)
-                    {
-                        DataRow find = items.Find(item => item["ftyinventoryukey"].ToString() == findrow.Rows[i]["ftyinventoryukey"].ToString());
-                        if (MyUtility.Check.Empty(find)) // if overlape
+                        // 找出相同的Dtelot
+                        if (string.Compare(dr2["Dyelot"].ToString(), drDyelot["Dyelot"].ToString(), ignoreCase: true) == 0)
                         {
-                            if (balance > 0m)
+                            if (balQty >= (decimal)dr2["balanceqty"])
                             {
-                                if (balance >= (decimal)findrow.Rows[i]["qty"])
-                                {
-                                    items.Add(findrow.Rows[i]);
-                                    balance -= (decimal)findrow.Rows[i]["qty"];
-                                }
-                                else// 最後裁切
-                                {
-                                    // P10最後裁切若有小數點需無條件進位
-                                    if (isIssue)
-                                    {
-                                        if (balance >= (decimal)findrow.Rows[i]["qty"])
-                                        {
-                                            items.Add(findrow.Rows[i]);
-                                            balance = 0m;
-                                        }
-                                        else
-                                        {
-                                            findrow.Rows[i]["qty"] = balance;
-                                            items.Add(findrow.Rows[i]);
-                                            balance = 0m;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        findrow.Rows[i]["qty"] = balance;
-                                        items.Add(findrow.Rows[i]);
-                                        balance = 0m;
-                                    }
-                                }
+                                dr2["qty"] = dr2["balanceqty"];
+                                items.Add(dr2);
+                                balQty -= (decimal)dr2["qty"];
                             }
                             else
                             {
+                                dr2["qty"] = balQty;
+                                items.Add(dr2);
                                 break;
                             }
-                        }
-                        else
-                        {
-                            break;
                         }
                     }
                 }
