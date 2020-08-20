@@ -2765,6 +2765,33 @@ inner join #tmp pd  on pd2.Ukey	= pd.Ukey
         }
         #endregion
 
+        /// <summary>
+        /// 更新 PackingList的 EstCTNBooking 與 EstCTNArrive
+        /// </summary>
+        /// <param name="id">PackingList.ID</param>
+        /// <param name="dtBooking">PackingList.EstCTNBooking (yyyy/MM/dd)</param>
+        /// <param name="dtArrive">PackingList.EstCTNArrive (yyyy/MM/dd)</param>
+        /// <returns>bool</returns>
+        public static DualResult UpdPackingListCTNBookingAndArrive(string id, DateTime? dtBooking, DateTime? dtArrive)
+        {
+            DualResult result;
+            if (id.Empty())
+            {
+                return new DualResult(false, "ID is empty");
+            }
+
+            string booking = dtBooking.HasValue ? dtBooking.Value.ToString("yyyy/MM/dd") : string.Empty;
+            string arrive = dtArrive.HasValue ? dtArrive.Value.ToString("yyyy/MM/dd") : string.Empty;
+            string sqlCmd = $@"
+update PackingList 
+    set EstCTNBooking = '{booking}'
+        , EstCTNArrive = '{arrive}' 
+where ID = '{id}'";
+
+            result = DBProxy.Current.Execute(null, sqlCmd);
+            return result;
+        }
+
         #region P03 Save Check
         private static StringBuilder Ctn_no_combine(string sP, string seq, DataTable detailDatas)
         {
