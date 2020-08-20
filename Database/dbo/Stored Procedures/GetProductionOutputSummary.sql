@@ -180,8 +180,11 @@ into #tmpBase
 from #tmpBaseStep1 tbs
 inner join Orders o with(nolock) on o.ID = tbs.ID
 inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
-left join SewingOutput_Detail_Detail sdd with (nolock) on o.ID = sdd.OrderId
-left join SewingOutput s with (nolock) on sdd.ID = s.ID and (@IsByCMPLockDate = 0 or s.OutputDate <= @SewLock)
+left join SewingOutput_Detail_Detail sdd with (nolock) on o.ID = sdd.OrderId and 
+														  exists (	select 1 
+																	from SewingOutput so with (nolock) 
+																	where sdd.ID = so.ID and (@IsByCMPLockDate = 0 or so.OutputDate <= @SewLock))
+left join SewingOutput s with (nolock) on sdd.ID = s.ID 
 left join Order_Location ol with (nolock) on ol.OrderId = sdd.OrderId and ol.Location = sdd.ComboType
 left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = sdd.ComboType
 --left join (  Order_BuyBack_Qty obq with (nolock) on obq.OrderIDFrom = o.ID
