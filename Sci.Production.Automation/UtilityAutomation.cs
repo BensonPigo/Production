@@ -14,13 +14,13 @@ namespace Sci.Production.Automation
     /// </summary>
     public static class UtilityAutomation
     {
-        public static string Sci { get { return "SCI"; } }
+        /// <inheritdoc/>
+        public static string Sci => "SCI";
 
-        public static bool IsAutomationEnable
-        {
-            get { return MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production"); }
-        }
+        /// <inheritdoc/>
+        public static bool IsAutomationEnable => MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
 
+        /// <inheritdoc/>
         public static string ModuleType
         {
             get
@@ -36,11 +36,23 @@ namespace Sci.Production.Automation
             }
         }
 
+        /// <summary>
+        /// IsModuleAutomationEnable
+        /// </summary>
+        /// <param name="suppid">Supp ID</param>
+        /// <param name="module">Module</param>
+        /// <returns>bool</returns>
         public static bool IsModuleAutomationEnable(string suppid, string module)
         {
             return IsAutomationEnable && MyUtility.Check.Seek($"select 1 from dbo.WebApiURL where SuppID = '{suppid}' and ModuleName = '{module}'  and ModuleType = '{ModuleType}' and Junk = 0 ", "Production");
         }
 
+        /// <summary>
+        /// AppendBaseInfo
+        /// </summary>
+        /// <param name="bodyObject">dynamic Body Object</param>
+        /// <param name="apiTag">ApiTag</param>
+        /// <returns>dynamic</returns>
         public static dynamic AppendBaseInfo(dynamic bodyObject, string apiTag)
         {
             dynamic newBodyObject = bodyObject;
@@ -49,6 +61,10 @@ namespace Sci.Production.Automation
             return newBodyObject;
         }
 
+        /// <summary>
+        /// SaveAutomationErrMsg
+        /// </summary>
+        /// <param name="automationErrMsg">Automation Err Msg</param>
         public static void SaveAutomationErrMsg(AutomationErrMsg automationErrMsg)
         {
             string saveSql = $@"
@@ -58,13 +74,13 @@ namespace Sci.Production.Automation
             List<SqlParameter> listPar = new List<SqlParameter>()
             {
                new SqlParameter("@SuppID", automationErrMsg.suppID),
-                new SqlParameter("@ModuleName", automationErrMsg.moduleName),
-                new SqlParameter("@APIThread", automationErrMsg.apiThread),
-                new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
-                new SqlParameter("@ErrorCode", automationErrMsg.errorCode),
-                new SqlParameter("@ErrorMsg", automationErrMsg.errorMsg),
-                new SqlParameter("@JSON", automationErrMsg.json),
-                new SqlParameter("@AddName", Env.User.UserID)
+               new SqlParameter("@ModuleName", automationErrMsg.moduleName),
+               new SqlParameter("@APIThread", automationErrMsg.apiThread),
+               new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
+               new SqlParameter("@ErrorCode", automationErrMsg.errorCode),
+               new SqlParameter("@ErrorMsg", automationErrMsg.errorMsg),
+               new SqlParameter("@JSON", automationErrMsg.json),
+               new SqlParameter("@AddName", Env.User.UserID),
             };
 
             DualResult result = DBProxy.Current.Execute("Production", saveSql, listPar);
@@ -75,12 +91,23 @@ namespace Sci.Production.Automation
             }
         }
 
+        /// <summary>
+        /// AutomationExceptionHandler
+        /// </summary>
+        /// <param name="task">Task</param>
         public static void AutomationExceptionHandler(Task task)
         {
             var exception = task.Exception;
             MyUtility.Msg.ErrorBox(exception.ToString());
         }
 
+        /// <summary>
+        /// SendWebAPI
+        /// </summary>
+        /// <param name="baseUrl">Base Url</param>
+        /// <param name="requestUri">Request Url</param>
+        /// <param name="jsonBody">Json Body</param>
+        /// <param name="automationErrMsg">Automation Err Msg</param>
         public static void SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
         {
             WebApiBaseResult webApiBaseResult;
@@ -93,14 +120,24 @@ namespace Sci.Production.Automation
             }
         }
 
+        /// <summary>
+        /// Automation Err Msg PMS
+        /// </summary>
         public class AutomationErrMsgPMS : AutomationErrMsg
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="AutomationErrMsgPMS"/> class.
+            /// </summary>
             public AutomationErrMsgPMS()
             {
                 this.suppID = Sci;
                 this.moduleName = Sci;
             }
 
+            /// <summary>
+            /// Set Err Info
+            /// </summary>
+            /// <param name="result">DualResult</param>
             public void SetErrInfo(DualResult result)
             {
                 this.errorCode = string.Empty;
@@ -109,6 +146,10 @@ namespace Sci.Production.Automation
             }
         }
 
+        /// <summary>
+        /// Get Sci Url
+        /// </summary>
+        /// <returns>WebApiURL.URL</returns>
         public static string GetSciUrl()
         {
             return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{Sci}' and ModuleName = '{Sci}' and ModuleType = '{ModuleType}' ", "Production");

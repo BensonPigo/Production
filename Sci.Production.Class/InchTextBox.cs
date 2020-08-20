@@ -1,12 +1,7 @@
-﻿using Sci.Win.UI;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-
 
 namespace Sci.Production.Class
 {
@@ -123,8 +118,7 @@ namespace Sci.Production.Class
         /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
-            int v;
-            if (this.InputType.GetValueOrDefault(UnitTypeEnum.InchText) == UnitTypeEnum.InchText && int.TryParse(this.Text, out v) == true && v.ToString() == this.Text)
+            if (this.InputType.GetValueOrDefault(UnitTypeEnum.InchText) == UnitTypeEnum.InchText && int.TryParse(this.Text, out int v) == true && v.ToString() == this.Text)
             {
                 this.Text += "\"";
             }
@@ -241,12 +235,11 @@ namespace Sci.Production.Class
         /// <inheritdoc/>
         private bool TryValidateForInchDecimal(string value)
         {
-            decimal v;
             if (string.IsNullOrWhiteSpace(value))
             {
                 this.InchValue = default(Inch);
             }
-            else if (decimal.TryParse(value, out v) == false)
+            else if (decimal.TryParse(value, out decimal v) == false)
             {
                 return false;
             }
@@ -267,12 +260,11 @@ namespace Sci.Production.Class
         /// <inheritdoc/>
         private bool TryValidateForCm(string value)
         {
-            decimal v;
             if (string.IsNullOrWhiteSpace(value))
             {
                 this.InchValue = default(Inch);
             }
-            else if (decimal.TryParse(value, out v) == false)
+            else if (decimal.TryParse(value, out decimal v) == false)
             {
                 return false;
             }
@@ -309,7 +301,7 @@ namespace Sci.Production.Class
         /// <summary>
         /// CM
         /// </summary>
-        CM
+        CM,
     }
 
     /// <summary>
@@ -323,8 +315,7 @@ namespace Sci.Production.Class
         /// <inheritdoc/>
         public static Inch FromCmText(string text)
         {
-            decimal v;
-            if (decimal.TryParse(text, out v) == true)
+            if (decimal.TryParse(text, out decimal v) == true)
             {
                 return FromCmDecimal(v);
             }
@@ -482,8 +473,7 @@ namespace Sci.Production.Class
             }
 
             var part = text.Split('\"');
-            var intPartValue = 0;
-            if (int.TryParse("0" + part[0].ToString(), out intPartValue) == false)
+            if (int.TryParse("0" + part[0].ToString(), out int intPartValue) == false)
             {
                 return null;
             }
@@ -495,9 +485,8 @@ namespace Sci.Production.Class
             else
             {
                 var pricing = part[1].Split("//".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                decimal pric1, pric2;
-                if (decimal.TryParse(pricing[0], out pric1) == false ||
-                    decimal.TryParse(pricing[1], out pric2) == false)
+                if (decimal.TryParse(pricing[0], out decimal pric1) == false ||
+                    decimal.TryParse(pricing[1], out decimal pric2) == false)
                 {
                     return null;
                 }

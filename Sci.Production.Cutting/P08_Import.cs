@@ -16,15 +16,20 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P08_Import : Win.Subs.Base
     {
-        DataTable gridTable;
+        private DataTable gridTable;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P08_Import"/> class.
+        /// </summary>
         public P08_Import()
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -136,8 +141,10 @@ and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) > 0
 
             this.listControlBindingSource1.DataSource = null;
             this.gridTable = null;
-            List<SqlParameter> sqlParameters = new List<SqlParameter>();
-            sqlParameters.Add(new SqlParameter("@ID", this.txtCuttingID.Text));
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", this.txtCuttingID.Text),
+            };
 
             string sqlcmd = $@"
 declare @CuttingID varchar(13) = @ID
@@ -256,12 +263,13 @@ order by MarkerName, ColorID
             }
         }
 
-        public List<string> importedIDs = new List<string>();
+        /// <inheritdoc/>
+        public List<string> ImportedIDs { get; set; } = new List<string>();
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
-            this.importedIDs.Clear();
+            this.ImportedIDs.Clear();
             if (this.listControlBindingSource1.DataSource == null || this.gridTable.Rows.Count == 0)
             {
                 return;
@@ -348,7 +356,7 @@ order by MarkerName, ColorID
             #endregion
 
             string cutTapePlanID = MyUtility.GetValue.GetID(Env.User.Keyword + "CT", "CutTapePlan");
-            this.importedIDs.Add(cutTapePlanID);
+            this.ImportedIDs.Add(cutTapePlanID);
             string insertsql = $@"
 INSERT INTO [dbo].[CutTapePlan]
            ([ID]
@@ -405,18 +413,21 @@ from #tmp
 ";
             #region transaction
             DualResult upResult;
-            DataTable odt;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
-                if (!(upResult = MyUtility.Tool.ProcessWithDatatable(seldt, string.Empty, insertsql, out odt)))
+                if (!(upResult = MyUtility.Tool.ProcessWithDatatable(seldt, string.Empty, insertsql, out DataTable odt)))
                 {
-                    _transactionscope.Dispose(); // TransactionScope 內彈窗前,先主動釋放,不然會咬住
-                    this.ShowErr(upResult);
-                    return;
+                    transactionscope.Dispose();
                 }
 
-                _transactionscope.Complete();
+                transactionscope.Complete();
+            }
+
+            if (!upResult)
+            {
+                this.ShowErr(upResult);
+                return;
             }
 
             MyUtility.Msg.WarningBox("Successfully");
@@ -441,8 +452,11 @@ from #tmp
             }
 
             DataTable seldt = this.gridTable.Select("selected = 1").CopyToDataTable();
-            Parallel.ForEach(seldt.AsEnumerable(), row => { row["ReleaseQty"] = 0;
-                row["Selected"] = 0; });
+            Parallel.ForEach(seldt.AsEnumerable(), row =>
+            {
+                row["ReleaseQty"] = 0;
+                row["Selected"] = 0;
+            });
             this.gridTable.Merge(seldt);
         }
 

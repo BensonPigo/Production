@@ -92,7 +92,7 @@ namespace Sci.Production.Quality
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.detailgrid.AutoResizeColumns();
+            //this.detailgrid.AutoResizeColumns();
             DataTable dt;
             DualResult result;
             string cmd = "select * from dbo.GetSCI(@poid,'')";
@@ -124,7 +124,7 @@ namespace Sci.Production.Quality
 
             if (this.CurrentMaintain["Result"].ToString() == "P")
             {
-                 this.txtLastResult.Text = "Pass";
+                this.txtLastResult.Text = "Pass";
             }
             else
             {
@@ -259,6 +259,7 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings ReceiverCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultValid = new DataGridViewGeneratorComboBoxColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings mtlTypeIDComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings SizeCell = new DataGridViewGeneratorTextColumnSettings();
 
             Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
@@ -267,6 +268,32 @@ namespace Sci.Production.Quality
             ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
+
+            Dictionary<string, string> mtlTypeCombo = new Dictionary<string, string>();
+            mtlTypeCombo.Add(string.Empty, string.Empty);
+            mtlTypeCombo.Add("KNIT", "KNIT");
+            mtlTypeCombo.Add("WOVEN", "WOVEN");
+            mtlTypeIDComboCell.DataSource = new BindingSource(mtlTypeCombo, null);
+            mtlTypeIDComboCell.ValueMember = "Key";
+            mtlTypeIDComboCell.DisplayMember = "Value";
+
+            mtlTypeIDComboCell.CellEditable += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["MtlTypeID"]))
+                {
+                    e.IsEditable = true;
+                }
+                else
+                {
+                    e.IsEditable = false;
+                }
+            };
 
             #region inspDateCell
             inspDateCell.CellValidating += (s, e) =>
@@ -561,17 +588,18 @@ namespace Sci.Production.Quality
             .Numeric("No", header: "No. Of Test", integer_places: 8, decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(8))
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), settings: SizeCell)
             .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell)
+            .ComboBox("MtlTypeID", header: "Material" + Environment.NewLine + "Type", width: Widths.AnsiChars(10), settings: mtlTypeIDComboCell)
             .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultComboCell) // .Get(out ResultComboCell)
-            .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10), settings: inspectorCell)
+            .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(18), settings: inspectorCell)
             .Text("Showname", header: "Inspector Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Remark", header: "Comments", width: Widths.AnsiChars(10), settings: CommentsCell)
             .Button("Send", null, header: "Send", width: Widths.AnsiChars(5), onclick: this.btnSend)
             .Text("Sender", header: "Sender", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("SendDate", header: "Send Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
 
-             // 將Receive換成button,按Receive之後將登入帳號填入Receiver、Receive填入今天的日期 20161020
+            // 將Receive換成button,按Receive之後將登入帳號填入Receiver、Receive填入今天的日期 20161020
             .Button("Receive", null, header: "Receive", width: Widths.AnsiChars(5), onclick: this.btnReceive)
-            .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("AddName", header: "Add Name", width: Widths.AnsiChars(25), iseditingreadonly: true) // addName + addDate
             .Text("LastEditName", header: "Last Edit Name", width: Widths.AnsiChars(25), iseditingreadonly: true); // editName + editDate
@@ -622,6 +650,18 @@ namespace Sci.Production.Quality
             {
                 MyUtility.Msg.WarningBox("SP# cannot be empty !! ");
                 return false;
+            }
+
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    if (MyUtility.Check.Empty(dr["MtlTypeID"]))
+                    {
+                        MyUtility.Msg.WarningBox("Material Type cannot be empty !! ");
+                        return false;
+                    }
+                }
             }
 
             return base.ClickSaveBefore();
@@ -745,21 +785,22 @@ SELECT STUFF(
 
                     List<FGWT> fGWTs = new List<FGWT>();
 
+                    string mtlTypeID = MyUtility.Convert.GetString(dr["MtlTypeID"]);
                     bool containsT = locations.Contains("T");
                     bool containsB = locations.Contains("B");
 
                     // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
                     if (containsT && containsB)
                     {
-                        fGWTs = GetDefaultFGWT(false, false, true);
+                        fGWTs = GetDefaultFGWT(false, false, true, mtlTypeID);
                     }
                     else if (containsT)
                     {
-                        fGWTs = GetDefaultFGWT(containsT, false, false);
+                        fGWTs = GetDefaultFGWT(containsT, false, false, mtlTypeID);
                     }
                     else
                     {
-                        fGWTs = GetDefaultFGWT(false, containsB, false);
+                        fGWTs = GetDefaultFGWT(false, containsB, false, mtlTypeID);
                     }
 
                     string garmentTest_Detail_ID = MyUtility.Convert.GetString(dr["ID"]);
@@ -794,13 +835,14 @@ SELECT STUFF(
                             insertCmd.Append($@"
 
 INSERT INTO GarmentTest_Detail_FGWT
-           (ID, No, Location, Type ,TestDetail)
+           (ID, No, Location, Type ,TestDetail ,Criteria )
      VALUES
            ( {garmentTest_Detail_ID}
            , {garmentTest_Detail_No}
            , @Location{idx}
            , @Type{idx}
-           , @TestDetail{idx})
+           , @TestDetail{idx}
+           , @Criteria{idx} )
 
 ");
                         }
@@ -824,6 +866,7 @@ INSERT INTO GarmentTest_Detail_FGWT
                         parameters.Add(new SqlParameter($"@Location{idx}", location));
                         parameters.Add(new SqlParameter($"@Type{idx}", fGWT.Type));
                         parameters.Add(new SqlParameter($"@TestDetail{idx}", fGWT.TestDetail));
+                        parameters.Add(new SqlParameter($"@Criteria{idx}", fGWT.Criteria));
                         idx++;
                     }
 

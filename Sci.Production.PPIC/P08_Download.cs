@@ -10,17 +10,23 @@ using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class P08_Download : Win.Tems.QueryForm
     {
-        DataRow Master;
-        string ClipPath;
+        private DataRow Master;
+        private string ClipPath;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P08_Download"/> class.
+        /// </summary>
+        /// <param name="master">DataRow</param>
         public P08_Download(DataRow master)
         {
             this.InitializeComponent();
             this.Master = master;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -50,8 +56,7 @@ outer apply(
 	select value=iif(SourceFile like '%.%',s.Data,null)
 )x
 where TableName = 'ReplacementReport' AND UniqueKey = '{this.Master["ID"]}'";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -91,10 +96,12 @@ where TableName = 'ReplacementReport' AND UniqueKey = '{this.Master["ID"]}'";
                 return;
             }
 
-            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            saveFileDialog1.Filter = "*|*";
-            saveFileDialog1.Title = "Save File";
-            saveFileDialog1.FileName = dr["FileName"].ToString();
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog
+            {
+                Filter = "*|*",
+                Title = "Save File",
+                FileName = dr["FileName"].ToString(),
+            };
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {

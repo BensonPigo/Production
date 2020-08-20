@@ -1490,7 +1490,7 @@ and Forwarder = '{this.txtSubconForwarderN.TextBox1.Text}'";
             }
         }
 
-        private void txtSubconForwarderN_Validated(object sender, EventArgs e)
+        private void TxtSubconForwarderN_Validated(object sender, EventArgs e)
         {
             if (this.txtSubconForwarderN.TextBox1.Text != this.txtSubconForwarderN.TextBox1.OldValue)
             {
@@ -1498,17 +1498,17 @@ and Forwarder = '{this.txtSubconForwarderN.TextBox1.Text}'";
             }
         }
 
-        private void numVWeight_ValueChanged(object sender, EventArgs e)
+        private void NumVWeight_ValueChanged(object sender, EventArgs e)
         {
             this.numVWeightOldValue = this.numVWeight.OldValue.HasValue ? this.numVWeight.OldValue.Value : 0;
         }
 
-        private void numForwarderNQuotation_VisibleChanged(object sender, EventArgs e)
+        private void NumForwarderNQuotation_VisibleChanged(object sender, EventArgs e)
         {
             this.numForwarderNQuotationOldValue = this.numForwarderNQuotation.OldValue.HasValue ? this.numForwarderNQuotation.OldValue.Value : 0;
         }
 
-        private void detailcont_Paint(object sender, PaintEventArgs e)
+        private void Detailcont_Paint(object sender, PaintEventArgs e)
         {
         }
     }

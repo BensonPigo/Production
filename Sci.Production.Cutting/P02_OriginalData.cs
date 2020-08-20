@@ -6,16 +6,22 @@ using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P02_OriginalData : Win.Tems.QueryForm
     {
-        DataRow CurrDataRow;
+        private DataRow CurrDataRow;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P02_OriginalData"/> class.
+        /// </summary>
+        /// <param name="currDataRow">DataRow</param>
         public P02_OriginalData(DataRow currDataRow)
         {
             this.InitializeComponent();
             this.CurrDataRow = currDataRow;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -134,14 +140,6 @@ namespace Sci.Production.Cutting
 
         private void Query()
         {
-            DataTable wdtO;
-            DataTable wdtN;
-            DataTable pdtO;
-            DataTable pdtN;
-            DataTable sdtO;
-            DataTable sdtN;
-            DataTable ddtO;
-            DataTable ddtN;
             DualResult result;
             string sqlcmd;
             #region WorkOrder Ori
@@ -304,7 +302,7 @@ outer apply(
 ) as fi
 where wdd.workorderukey = '{this.CurrDataRow["ukey"]}'
 ";
-            result = DBProxy.Current.Select(null, sqlcmd, out wdtO);
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable wdtO);
             if (!result)
             {
                 this.ShowErr(result);
@@ -484,7 +482,7 @@ outer apply(
 ) as fi
 where a.ukey in ({inUkey})
 ";
-            result = DBProxy.Current.Select(null, sqlcmd, out wdtN);
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable wdtN);
             if (!result)
             {
                 this.ShowErr(result);
@@ -498,7 +496,7 @@ where a.ukey in ({inUkey})
 select p.* from WorkOrder_PatternPanelRevisedMarkerOriginalData p  WITH (NOLOCK)
 inner join WorkOrderRevisedMarkerOriginalData_Detail w WITH (NOLOCK) on w.WorkorderUkeyRevisedMarkerOriginalUkey = p.WorkOrderRevisedMarkerOriginalDataUkey
 where w.workorderukey = '{this.CurrDataRow["ukey"]}' ";
-            result = DBProxy.Current.Select(null, sqlcmd, out pdtO);
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable pdtO);
             if (!result)
             {
                 this.ShowErr(result);
@@ -509,7 +507,7 @@ where w.workorderukey = '{this.CurrDataRow["ukey"]}' ";
             sqlcmd = $@"
 select * from WorkOrder_PatternPanel  WITH (NOLOCK)
 where WorkOrderUkey in ({inUkey}) ";
-            result = DBProxy.Current.Select(null, sqlcmd, out pdtN);
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable pdtN);
             if (!result)
             {
                 this.ShowErr(result);
@@ -524,7 +522,7 @@ Select *
 from WorkOrder_SizeRatioRevisedMarkerOriginalData s WITH (NOLOCK) 
 inner join WorkOrderRevisedMarkerOriginalData_Detail w WITH (NOLOCK) on w.WorkorderUkeyRevisedMarkerOriginalUkey = s.WorkOrderRevisedMarkerOriginalDataUkey
 where w.workorderukey = '{this.CurrDataRow["ukey"]}' ";
-            result = DBProxy.Current.Select(null, sqlcmd, out sdtO);
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable sdtO);
             if (!result)
             {
                 this.ShowErr(result);
@@ -533,7 +531,7 @@ where w.workorderukey = '{this.CurrDataRow["ukey"]}' ";
             this.listControlBindingSource5.DataSource = sdtO;
 
             sqlcmd = $@"Select * from Workorder_SizeRatio WITH (NOLOCK) where WorkOrderUkey in ({inUkey})";
-            result = DBProxy.Current.Select(null, sqlcmd, out sdtN);
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable sdtN);
             if (!result)
             {
                 this.ShowErr(result);
@@ -548,7 +546,7 @@ Select *
 from WorkOrder_DistributeRevisedMarkerOriginalData d WITH (NOLOCK) 
 inner join WorkOrderRevisedMarkerOriginalData_Detail w WITH (NOLOCK) on w.WorkorderUkeyRevisedMarkerOriginalUkey = d.WorkOrderRevisedMarkerOriginalDataUkey
 where w.workorderukey = '{this.CurrDataRow["ukey"]}'";
-            result = DBProxy.Current.Select(null, sqlcmd, out ddtO);
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable ddtO);
             if (!result)
             {
                 this.ShowErr(result);
@@ -557,7 +555,7 @@ where w.workorderukey = '{this.CurrDataRow["ukey"]}'";
             this.listControlBindingSource7.DataSource = ddtO;
 
             sqlcmd = $@"Select * From Workorder_distribute WITH (NOLOCK) where WorkOrderUkey in ({inUkey}) ";
-            result = DBProxy.Current.Select(null, sqlcmd, out ddtN);
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable ddtN);
             if (!result)
             {
                 this.ShowErr(result);

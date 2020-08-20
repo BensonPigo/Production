@@ -103,13 +103,13 @@ where se.WKNo = '{0}' and se.junk=0", this.id);
                 bool checkResult = true;
                 for (int i = 0; i <= this.gridExpenseData.Rows.Count - 1; i++)
                 {
-                    string DebitNote = this.gridExpenseData.Rows[i].Cells[5].Value.ToString();
-                    if (MyUtility.Check.Empty(DebitNote))
+                    string debitNote = this.gridExpenseData.Rows[i].Cells[5].Value.ToString();
+                    if (MyUtility.Check.Empty(debitNote))
                     {
                         continue;
                     }
 
-                    if (DebitNote.Length != 13 || !(DebitNote.StartsWith("SD") || DebitNote.StartsWith("IC") || DebitNote.StartsWith("DB")))
+                    if (debitNote.Length != 13 || !(debitNote.StartsWith("SD") || debitNote.StartsWith("IC") || debitNote.StartsWith("DB")))
                     {
                         checkResult = false;
                     }

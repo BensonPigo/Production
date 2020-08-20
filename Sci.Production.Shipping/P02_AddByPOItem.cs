@@ -396,13 +396,13 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnDeleteBefore()
         {
             if (MyUtility.Convert.GetString(this.CurrentData["Category"]) == "1")
             {
-                DialogResult DiaR = MyUtility.Msg.QuestionBox($@"All the items of PL# {this.CurrentData["PackingListID"]} will be deleted.");
-
-                if (DiaR == DialogResult.No)
+                DialogResult diaR = MyUtility.Msg.QuestionBox($@"All the items of PL# {this.CurrentData["PackingListID"]} will be deleted.");
+                if (diaR == DialogResult.No)
                 {
                     return false;
                 }
@@ -440,7 +440,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             else
             {
                 // 刪除最後一筆才清空PL的HC#
-                DualResult result = DBProxy.Current.Execute(null, $@"
+                string sqlCmd = $@"
 declare @count int = 0;
 
 SELECT @count=Count(ID)
@@ -449,8 +449,8 @@ WHERE PackingListID='{this.CurrentData["PackingListID"]}'
 
 update PackingList set ExpressID = ''
 FROM PackingList
-WHERE ID='{this.CurrentData["PackingListID"]}' AND @count <= 1
-");
+WHERE ID='{this.CurrentData["PackingListID"]}' AND @count <= 1";
+                DualResult result = DBProxy.Current.Execute(null, sqlCmd);
                 if (!result)
                 {
                     failResult = new DualResult(false, "Update packing list fail!! Pls try again.\r\n" + result.ToString());

@@ -11,10 +11,15 @@ using System.Xml.Linq;
 
 namespace Sci.Production.Tools
 {
+    /// <inheritdoc/>
     public partial class SwitchFactory : Win.Tems.QueryForm
     {
-        string OriginalDatasource;
+        private string OriginalDatasource;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SwitchFactory"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public SwitchFactory(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -29,6 +34,7 @@ namespace Sci.Production.Tools
             this.DialogResult = DialogResult.Cancel;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -60,16 +66,15 @@ namespace Sci.Production.Tools
             }
 
             DualResult result;
-            DataTable dtPass1;
             string cmd = string.Format("SELECT ID, Factory FROM Pass1 WHERE ID = '{0}'", Env.User.UserID);
-            if (!(result = DBProxy.Current.Select(null, cmd, out dtPass1)))
+            if (!(result = DBProxy.Current.Select(null, cmd, out DataTable dtPass1)))
             {
                 MyUtility.Msg.ErrorBox(result.ToString());
                 this.Close();
                 return;
             }
 
-            Dictionary<String, String> factoryOption = new Dictionary<String, String>();
+            Dictionary<string, string> factoryOption = new Dictionary<string, string>();
             string[] factories = dtPass1.Rows[0]["Factory"].ToString().Split(new char[] { ',' });
             if (factories.Length > 0)
             {
@@ -85,9 +90,8 @@ namespace Sci.Production.Tools
             }
         }
 
-        private void btnLogin_Click(object sender, EventArgs e)
+        private void BtnLogin_Click(object sender, EventArgs e)
         {
-            DataTable dtFactory;
             DualResult result;
             if (MyUtility.Check.Empty((string)this.comboFactory.SelectedValue))
             {
@@ -100,7 +104,7 @@ namespace Sci.Production.Tools
                 bool isFactoryChanged = !newFactory.EqualString(Env.User.Factory);
 
                 // if (!(result = DBProxy.Current.Select(null, string.Format("SELECT id FROM MDivision WHERE ID = '{0}'", (string)this.comboBox1.SelectedValue), out dtFactory)))
-                if (!(result = DBProxy.Current.Select(null, string.Format("SELECT MDivisionid FROM Factory WHERE ID = '{0}'", newFactory), out dtFactory)))
+                if (!(result = DBProxy.Current.Select(null, string.Format("SELECT MDivisionid FROM Factory WHERE ID = '{0}'", newFactory), out DataTable dtFactory)))
                 {
                     this.ShowErr(result.ToString());
                     return;
@@ -138,7 +142,7 @@ namespace Sci.Production.Tools
             }
         }
 
-        private void btnExit_Click(object sender, EventArgs e)
+        private void BtnExit_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             if (ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty)
@@ -159,7 +163,7 @@ namespace Sci.Production.Tools
             this.Close();
         }
 
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.comboBox2.SelectedValue == null)
             {
@@ -168,17 +172,15 @@ namespace Sci.Production.Tools
 
             DBProxy.Current.DefaultModuleName = this.comboBox2.SelectedValue2.ToString();
             DualResult result;
-            DataTable dtPass1;
-            DataRow drpass1;
             string cmd = string.Format("SELECT ID, Factory FROM Pass1 WHERE ID = '{0}'", Env.User.UserID);
-            if (!(result = DBProxy.Current.Select(null, cmd, out dtPass1)))
+            if (!(result = DBProxy.Current.Select(null, cmd, out DataTable dtPass1)))
             {
                 this.Close();
                 MyUtility.Msg.ErrorBox(result.ToString());
                 return;
             }
 
-            if (!MyUtility.Check.Seek(cmd, out drpass1))
+            if (!MyUtility.Check.Seek(cmd, out DataRow drpass1))
             {
                 MyUtility.Msg.WarningBox("Account does not exist!");
                 this.comboFactory.Text = string.Empty;
@@ -186,7 +188,7 @@ namespace Sci.Production.Tools
                 return;
             }
 
-            Dictionary<String, String> factoryOption = new Dictionary<String, String>();
+            Dictionary<string, string> factoryOption = new Dictionary<string, string>();
             string[] factories = dtPass1.Rows[0]["Factory"].ToString().Split(new char[] { ',' });
             if (factories.Length > 0)
             {
@@ -205,7 +207,7 @@ namespace Sci.Production.Tools
         {
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
             var hasConnectionNamedQuery = docx.Descendants("modules").Elements().Select(e => e.FirstAttribute.Value).ToList();
-            Dictionary<String, String> SystemOption = new Dictionary<String, String>();
+            Dictionary<string, string> systemOption = new Dictionary<string, string>();
             string[] strSevers = ConfigurationManager.AppSettings["TaipeiServer"].Split(new char[] { ',' });
             if (strSevers.Length > 0 && hasConnectionNamedQuery.Count > 0)
             {
@@ -215,7 +217,7 @@ namespace Sci.Production.Tools
                     {
                         if (strSever == hasConnectionNamedQuery[i])
                         {
-                            SystemOption.Add(hasConnectionNamedQuery[i].Trim(), hasConnectionNamedQuery[i].Replace("PMSDB_", string.Empty).Replace("testing_", string.Empty).Trim().ToUpper());
+                            systemOption.Add(hasConnectionNamedQuery[i].Trim(), hasConnectionNamedQuery[i].Replace("PMSDB_", string.Empty).Replace("testing_", string.Empty).Trim().ToUpper());
                             break;
                         }
                     }
@@ -223,11 +225,11 @@ namespace Sci.Production.Tools
 
                 this.comboBox2.ValueMember = "Key";
                 this.comboBox2.DisplayMember = "Value";
-                this.comboBox2.DataSource = new BindingSource(SystemOption, null);
+                this.comboBox2.DataSource = new BindingSource(systemOption, null);
             }
         }
 
-        private void checkBoxTestEnvironment_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxTestEnvironment_CheckedChanged(object sender, EventArgs e)
         {
             if (this.checkBoxTestEnvironment.Checked)
             {

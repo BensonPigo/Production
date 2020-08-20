@@ -118,7 +118,7 @@
             this.btnFilter.TabIndex = 2;
             this.btnFilter.Text = "Filter";
             this.btnFilter.UseVisualStyleBackColor = true;
-            this.btnFilter.Click += new System.EventHandler(this.btnFilter_Click);
+            this.btnFilter.Click += new System.EventHandler(this.BtnFilter_Click);
             // 
             // btnEditSave
             // 
@@ -129,7 +129,7 @@
             this.btnEditSave.TabIndex = 4;
             this.btnEditSave.Text = "Edit";
             this.btnEditSave.UseVisualStyleBackColor = true;
-            this.btnEditSave.Click += new System.EventHandler(this.btnEditSave_Click);
+            this.btnEditSave.Click += new System.EventHandler(this.BtnEditSave_Click);
             // 
             // label2
             // 
@@ -189,7 +189,7 @@
             this.btnRun.TabIndex = 5;
             this.btnRun.Text = "Run";
             this.btnRun.UseVisualStyleBackColor = true;
-            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
+            this.btnRun.Click += new System.EventHandler(this.BtnRun_Click);
             // 
             // panel7
             // 

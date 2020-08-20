@@ -18,8 +18,8 @@ namespace Sci.Production.PPIC
     public partial class P04 : Win.Tems.Input1
     {
         private string destination_path; // 放圖檔的路徑
-        DataTable dtFinishingProcess;
-        DataTable dtFinishingProcessAll;
+        private DataTable dtFinishingProcess;
+        private DataTable dtFinishingProcessAll;
 
         /// <summary>
         /// P04
@@ -80,13 +80,14 @@ namespace Sci.Production.PPIC
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
-            this.comboPressing2DataSource();
+            this.ComboPressing2DataSource();
         }
 
-        private void comboPressing2DataSource()
+        private void ComboPressing2DataSource()
         {
             if (this.comboPressing2 != null && this.CurrentMaintain != null)
             {
@@ -212,7 +213,7 @@ from Style s
 left join Pass1 p on s.TPEEditName = p.ID
 where s.ukey = {this.CurrentMaintain["ukey"]}");
 
-            this.comboPressing2DataSource();
+            this.ComboPressing2DataSource();
         }
 
         /// <inheritdoc/>
@@ -324,9 +325,8 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
                     return false;
                 }
 
-                DataTable styleUkey;
                 string sqlCmd = "select MIN(Ukey)-1 as NewUkey from Style WITH (NOLOCK) ";
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out styleUkey);
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable styleUkey);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox("Get Ukey fail!!\r\n" + result.ToString());
@@ -342,8 +342,10 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
-            List<SqlParameter> cmds = new List<SqlParameter>();
-            cmds.Add(new SqlParameter("@k", this.CurrentMaintain["Ukey"].ToString()));
+            List<SqlParameter> cmds = new List<SqlParameter>
+            {
+                new SqlParameter("@k", this.CurrentMaintain["Ukey"].ToString()),
+            };
             string sqlcmd = "Select StyleUkey From Style_TmsCost WITH (NOLOCK) where StyleUkey = @k";
 
             // 若沒有對應Ukey資料則新增
@@ -401,8 +403,10 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
         {
             Win.Tools.SelectItem item;
             string sqlCmd = "select distinct ID from Season WITH (NOLOCK) where Junk = 0 order by ID desc";
-            item = new Win.Tools.SelectItem(sqlCmd, "11", this.Text);
-            item.Width = 300;
+            item = new Win.Tools.SelectItem(sqlCmd, "11", this.Text)
+            {
+                Width = 300,
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -466,8 +470,7 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
                 }
                 else
                 {
-                    DataRow cDCodeRow;
-                    if (MyUtility.Check.Seek(string.Format("select Cpu,ComboPcs from CDCode WITH (NOLOCK) where ID = '{0}'", this.txtcdcode.Text), out cDCodeRow))
+                    if (MyUtility.Check.Seek(string.Format("select Cpu,ComboPcs from CDCode WITH (NOLOCK) where ID = '{0}'", this.txtcdcode.Text), out DataRow cDCodeRow))
                     {
                         this.CurrentMaintain["CPU"] = cDCodeRow["Cpu"];
                     }

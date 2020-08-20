@@ -70,7 +70,7 @@
             this.btnExit.TabIndex = 99;
             this.btnExit.Text = "Exit";
             this.btnExit.UseVisualStyleBackColor = true;
-            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            this.btnExit.Click += new System.EventHandler(this.BtnExit_Click);
             // 
             // btnLogin
             // 
@@ -81,7 +81,7 @@
             this.btnLogin.TabIndex = 98;
             this.btnLogin.Text = "Login";
             this.btnLogin.UseVisualStyleBackColor = true;
-            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
+            this.btnLogin.Click += new System.EventHandler(this.BtnLogin_Click);
             // 
             // txtPassword
             // 
@@ -133,7 +133,7 @@
             this.comboBox2.Size = new System.Drawing.Size(131, 24);
             this.comboBox2.TabIndex = 104;
             this.comboBox2.Visible = false;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.ComboBox2_SelectedIndexChanged);
             // 
             // label4
             // 
@@ -156,7 +156,7 @@
             this.checkBoxTestEnvironment.Text = "Test Environment";
             this.checkBoxTestEnvironment.UseVisualStyleBackColor = true;
             this.checkBoxTestEnvironment.Visible = false;
-            this.checkBoxTestEnvironment.CheckedChanged += new System.EventHandler(this.checkBoxTestEnvironment_CheckedChanged);
+            this.checkBoxTestEnvironment.CheckedChanged += new System.EventHandler(this.CheckBoxTestEnvironment_CheckedChanged);
             // 
             // SwitchFactory
             // 

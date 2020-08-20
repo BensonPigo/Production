@@ -55,11 +55,11 @@ namespace Sci.Production.Basic
                 this.btnBankDetail.ForeColor = Color.Black;
             }
 
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, $@"
+            string sqlcmd = $@"
 SELECT * FROM LocalSupp_Bank_Detail WHERE Pkey=(
 SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}' AND Status = 'Confirmed'ORDER BY ApproveDate DESC
-)", out dt);
+)";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
 
             this.chkPayByChk.Checked = MyUtility.GetValue.Lookup($"SELECT TOP 1 ByCheck FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}' AND Status = 'Confirmed'ORDER BY ApproveDate DESC") == "True" ? true : false;
 
@@ -173,8 +173,6 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
         /// <summary>
         /// B04_FormLoaded
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void B04_FormLoaded(object sender, EventArgs e)
         {
             MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, "0,Exclude Junk,1,Include Junk");
@@ -218,6 +216,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
             this.RenewData();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();
@@ -226,9 +225,9 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
             this.RenewData();
         }
 
-        Form batchapprove;
+        private Form batchapprove;
 
-        private void btnBatchApprove_Click(object sender, EventArgs e)
+        private void BtnBatchApprove_Click(object sender, EventArgs e)
         {
             if (!this.Perm.Confirm)
             {
@@ -238,7 +237,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
 
             if (this.batchapprove == null || this.batchapprove.IsDisposed)
             {
-                this.batchapprove = new B04_BatchApprove(this.reload);
+                this.batchapprove = new B04_BatchApprove(this.Reload);
                 this.batchapprove.Show();
             }
             else
@@ -247,12 +246,14 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
             }
         }
 
-        public void reload()
+        /// <inheritdoc/>
+        public void Reload()
         {
             this.ReloadDatas();
             this.RenewData();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             this.CurrentMaintain["Status"] = "New";

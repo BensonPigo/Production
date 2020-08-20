@@ -581,11 +581,11 @@ end;",
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             // 修改表身資料,不寫入表頭EditName and EditDate
-            ITableSchema pass1Schema;
-            var ok = DBProxy.Current.GetTableSchema(null, "Orders", out pass1Schema);
+            var ok = DBProxy.Current.GetTableSchema(null, "Orders", out ITableSchema pass1Schema);
             pass1Schema.IsSupportEditDate = false;
             pass1Schema.IsSupportEditName = false;
 

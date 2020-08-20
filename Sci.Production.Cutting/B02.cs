@@ -11,6 +11,10 @@ namespace Sci.Production.Cutting
     {
         private string keyWord = Env.User.Keyword;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B02"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -18,18 +22,21 @@ namespace Sci.Production.Cutting
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             this.CurrentMaintain["mDivisionid"] = this.keyWord;
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtCellNo.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
             if (this.CurrentMaintain.RowState == DataRowState.Added ||

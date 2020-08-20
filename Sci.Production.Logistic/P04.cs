@@ -48,12 +48,14 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("1", string.Empty);
-            comboBox1_RowSource.Add("2", "Ctn#");
-            comboBox1_RowSource.Add("3", "Colorway");
-            comboBox1_RowSource.Add("4", "Color");
-            comboBox1_RowSource.Add("5", "Size");
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>
+            {
+                { "1", string.Empty },
+                { "2", "Ctn#" },
+                { "3", "Colorway" },
+                { "4", "Color" },
+                { "5", "Size" },
+            };
             this.comboxbs1 = new BindingSource(comboBox1_RowSource, null);
             this.comboFilter.DataSource = this.comboxbs1;
             this.comboFilter.ValueMember = "Key";
@@ -98,7 +100,7 @@ namespace Sci.Production.Logistic
             {
                 if (this.gridPackID.Columns[e.ColumnIndex].Name == this.col_chk.Name)
                 {
-                    this.calcCTNQty();
+                    this.CalcCTNQty();
                 }
             };
 
@@ -246,10 +248,9 @@ namespace Sci.Production.Logistic
                             //                                    where id = @id and CTNStartNo = @ctnStartNo;";
 
                             // ClogLocationId更新，EditLocationDate才要寫入，不過原本作法全部覆蓋，因此需要自己撈資料來比對
-                            DataTable tmpTable;
                             string chkCmd = string.Format(@"SELECT ClogLocationId FROM PackingList_Detail PL WITH (NOLOCK) WHERE id ='{0}' AND CTNStartNo = '{1}' ", currentRow["ID"].ToString(), currentRow["CTNStartNo"].ToString());
 
-                            DualResult result1CHK = DBProxy.Current.Select(null, chkCmd, out tmpTable);
+                            DualResult result1CHK = DBProxy.Current.Select(null, chkCmd, out DataTable tmpTable);
 
                             string updateCmd = string.Empty;
 
@@ -267,28 +268,38 @@ namespace Sci.Production.Logistic
                             }
 
                             #region 準備sql參數資料
-                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                            sp1.ParameterName = "@clogLocationId";
-                            sp1.Value = currentRow["ClogLocationId"].ToString();
+                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@clogLocationId",
+                                Value = currentRow["ClogLocationId"].ToString(),
+                            };
 
                             // System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
                             // sp2.ParameterName = "@clogReceiveID";
                             // sp2.Value = currentRow["ClogReceiveID"].ToString();
-                            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                            sp3.ParameterName = "@id";
-                            sp3.Value = currentRow["ID"].ToString();
+                            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@id",
+                                Value = currentRow["ID"].ToString(),
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-                            sp4.ParameterName = "@orderId";
-                            sp4.Value = currentRow["OrderId"].ToString();
+                            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@orderId",
+                                Value = currentRow["OrderId"].ToString(),
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-                            sp5.ParameterName = "@ctnStartNo";
-                            sp5.Value = currentRow["CTNStartNo"].ToString();
+                            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@ctnStartNo",
+                                Value = currentRow["CTNStartNo"].ToString(),
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-                            sp6.ParameterName = "@remark";
-                            sp6.Value = currentRow["Remark"].ToString();
+                            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@remark",
+                                Value = currentRow["Remark"].ToString(),
+                            };
 
                             System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
                             System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter();
@@ -301,14 +312,16 @@ namespace Sci.Production.Logistic
                             }
 
                             // EditLocationDate
-                            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                            cmds.Add(sp1);
+                            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                            {
+                                sp1,
 
-                            // cmds.Add(sp2);
-                            cmds.Add(sp3);
-                            cmds.Add(sp4);
-                            cmds.Add(sp5);
-                            cmds.Add(sp6);
+                                // cmds.Add(sp2);
+                                sp3,
+                                sp4,
+                                sp5,
+                                sp6,
+                            };
 
                             if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
                             {
@@ -467,9 +480,8 @@ namespace Sci.Production.Logistic
             }
 
             DualResult result;
-            IReportResource reportresource;
             ReportDefinition rd = new ReportDefinition();
-            if (!(result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(this.GetType()), this.GetType(), "P04_PrintMoveTicket.rdlc", out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(this.GetType()), this.GetType(), "P04_PrintMoveTicket.rdlc", out IReportResource reportresource)))
             {
                 MyUtility.Msg.ErrorBox(result.ToString());
             }
@@ -714,11 +726,11 @@ order by rn");
             ((List<string>)this.comboBox2_RowSource4).Sort();
             ((List<string>)this.comboBox2_RowSource5).Sort();
 
-            this.calcCTNQty();
+            this.CalcCTNQty();
             return true;
         }
 
-        private void calcCTNQty()
+        private void CalcCTNQty()
         {
             if (this.listControlBindingSource1.DataSource != null)
             {

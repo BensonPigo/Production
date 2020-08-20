@@ -51,15 +51,15 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.Location = new System.Drawing.Point(438, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(430, 48);
+            this.toexcel.Location = new System.Drawing.Point(438, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(430, 84);
+            this.close.Location = new System.Drawing.Point(438, 84);
             // 
             // labelReportContent
             // 
@@ -290,7 +290,7 @@
             // 
             // R14
             // 
-            this.ClientSize = new System.Drawing.Size(522, 296);
+            this.ClientSize = new System.Drawing.Size(530, 305);
             this.Controls.Add(this.rdbtnContainer);
             this.Controls.Add(this.rdbtnSummary);
             this.Controls.Add(this.rdbtnDetail);
@@ -314,6 +314,9 @@
             this.Name = "R14";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R14. Ship Plan Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

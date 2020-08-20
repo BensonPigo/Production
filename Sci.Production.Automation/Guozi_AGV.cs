@@ -6,12 +6,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Sci.Production.Automation.UtilityAutomation;
 
 namespace Sci.Production.Automation
 {
+    /// <inheritdoc/>
     public class Guozi_AGV
     {
         private readonly string guoziSuppID = "3A0197";
@@ -56,7 +55,7 @@ namespace Sci.Production.Automation
                         EstCutDate = (DateTime?)dr["EstCutDate"],
                         ID = dr["ID"].ToString(),
                         OrderID = dr["OrderID"].ToString(),
-                        CutCellID = dr["CutCellID"].ToString()
+                        CutCellID = dr["CutCellID"].ToString(),
                     });
             }
 
@@ -71,7 +70,7 @@ namespace Sci.Production.Automation
         /// <summary>
         /// SentBundleToAGV
         /// </summary>
-        /// <param name="dtBundle">dtBundle</param>
+        /// <param name="funListBundle">List BundleToAGV_PostBody</param>
         public void SentBundleToAGV(Func<List<BundleToAGV_PostBody>> funListBundle)
         {
             if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
@@ -79,7 +78,6 @@ namespace Sci.Production.Automation
                 return;
             }
 
-            DataTable dtBundle_SubProcess;
             string apiThread = "SentBundleToAGV";
             string suppAPIThread = "api/GuoziAGV/SentDataByApiTag";
             string sqlGetData;
@@ -118,7 +116,7 @@ outer apply( select [Value] = spd.Seq
             inner join SubProcessSeq_Detail spd with (nolock) on o.StyleUkey = spd.StyleUkey and spd.SubProcessID = bda.SubProcessID
             where o.ID = '{bundle.OrderID}') Seq
 where bda.BundleNo = '{bundle.BundleNo}'";
-                DualResult result = DBProxy.Current.Select(null, sqlGetData, out dtBundle_SubProcess);
+                DualResult result = DBProxy.Current.Select(null, sqlGetData, out DataTable dtBundle_SubProcess);
                 if (!result)
                 {
                     this.automationErrMsg.SetErrInfo(result);
@@ -157,7 +155,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                 .Select(s => new
                 {
                     ID = s["ID"].ToString(),
-                    Junk = s["Junk"] == DBNull.Value ? false : (bool)s["Junk"]
+                    Junk = s["Junk"] == DBNull.Value ? false : (bool)s["Junk"],
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SubProcess"));
@@ -186,7 +184,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                 .Select(s => new
                 {
                     ID = s["ID"].ToString(),
-                    Junk = s["Junk"] == DBNull.Value ? false : (bool)s["Junk"]
+                    Junk = s["Junk"] == DBNull.Value ? false : (bool)s["Junk"],
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "CutCell"));
@@ -215,7 +213,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                 .Select(s => new
                 {
                     ID = s["ID"].ToString(),
-                    Junk = s["Junk"] == DBNull.Value ? false : (bool)s["Junk"]
+                    Junk = s["Junk"] == DBNull.Value ? false : (bool)s["Junk"],
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingLine"));
@@ -248,7 +246,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                     SewingLineID = s["SewingLineID"].ToString(),
                     Inline = (DateTime?)s["Inline"],
                     Offline = (DateTime?)s["Offline"],
-                    StdOutput = (int)s["StdOutput"]
+                    StdOutput = (int)s["StdOutput"],
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingSchedule"));
@@ -280,7 +278,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
             dynamic bodyObject = new ExpandoObject();
             bodyObject.WorkOrder = dtWorkOrder.Select(s => new
             {
-                Ukey = s
+                Ukey = s,
             });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "WorkOrder"));
@@ -291,7 +289,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <summary>
         /// SentDeleteWorkOrder_Distribute
         /// </summary>
-        /// <param name="dtWorkOrder_Distribute">dtSewingSchedule</param>
+        /// <param name="deleteWorkOrder_Distribute">List WorkOrder_Distribute</param>
         public void SentDeleteWorkOrder_Distribute(List<WorkOrder_Distribute> deleteWorkOrder_Distribute)
         {
             if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
@@ -317,12 +315,30 @@ where bda.BundleNo = '{bundle.BundleNo}'";
             SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
+        /// <summary>
+        /// WorkOrder Distribute
+        /// </summary>
         public class WorkOrder_Distribute
         {
-            public long WorkOrderUkey;
-            public string OrderID;
-            public string Article;
-            public string SizeCode;
+            /// <summary>
+            /// WorkOrder Ukey
+            /// </summary>
+            public long WorkOrderUkey { get; set; }
+
+            /// <summary>
+            /// Order ID
+            /// </summary>
+            public string OrderID { get; set; }
+
+            /// <summary>
+            /// Article
+            /// </summary>
+            public string Article { get; set; }
+
+            /// <summary>
+            /// SizeCode
+            /// </summary>
+            public string SizeCode { get; set; }
         }
 
         /// <summary>
@@ -345,7 +361,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
             bodyObject.Bundle = dtBundle.AsEnumerable()
                 .Select(s => new
                 {
-                    BundleNo = (string)s["BundleNo"]
+                    BundleNo = (string)s["BundleNo"],
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle"));
@@ -373,7 +389,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
             bodyObject.Bundle_SubProcess = dtBundle_SubProcess.AsEnumerable()
                 .Select(s => new
                 {
-                    Ukey = (long)s["Ukey"]
+                    Ukey = (long)s["Ukey"],
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle_SubProcess"));
@@ -401,7 +417,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
             bodyObject.SewingSchedule = dtSewingSchedule.AsEnumerable()
                 .Select(s => new
                 {
-                    ID = (long)s["ID"]
+                    ID = (long)s["ID"],
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingSchedule"));
@@ -411,32 +427,100 @@ where bda.BundleNo = '{bundle.BundleNo}'";
 
         private class WorkOrderToAGV_PostBody
         {
-            public DataTable WorkOrder_Distribute;
-            public long Ukey;
-            public string CutRef;
-            public DateTime? EstCutDate;
-            public string ID;
-            public string OrderID;
-            public string CutCellID;
+            public DataTable WorkOrder_Distribute { get; set; }
+
+            public long Ukey { get; set; }
+
+            public string CutRef { get; set; }
+
+            public DateTime? EstCutDate { get; set; }
+
+            public string ID { get; set; }
+
+            public string OrderID { get; set; }
+
+            public string CutCellID { get; set; }
         }
 
+        /// <summary>
+        /// BundleToAGV PostBody
+        /// </summary>
         public class BundleToAGV_PostBody
         {
-            public DataTable Bundle_SubProcess;
-            public string ID;
-            public string BundleNo;
-            public string CutRef;
-            public string OrderID;
-            public string Article;
-            public string PatternPanel;
-            public string FabricPanelCode;
-            public string PatternCode;
-            public string PatternDesc;
-            public decimal BundleGroup;
-            public string SizeCode;
-            public decimal Qty;
-            public string SewingLineID;
-            public DateTime? AddDate;
+            /// <summary>
+            /// Bundle SubProcess
+            /// </summary>
+            public DataTable Bundle_SubProcess { get; set; }
+
+            /// <summary>
+            /// Bundle ID
+            /// </summary>
+            public string ID { get; set; }
+
+            /// <summary>
+            /// Bundle No
+            /// </summary>
+            public string BundleNo { get; set; }
+
+            /// <summary>
+            /// CutRef
+            /// </summary>
+            public string CutRef { get; set; }
+
+            /// <summary>
+            /// Order ID
+            /// </summary>
+            public string OrderID { get; set; }
+
+            /// <summary>
+            /// Article
+            /// </summary>
+            public string Article { get; set; }
+
+            /// <summary>
+            /// PatternPanel
+            /// </summary>
+            public string PatternPanel { get; set; }
+
+            /// <summary>
+            /// FabricPanel Code
+            /// </summary>
+            public string FabricPanelCode { get; set; }
+
+            /// <summary>
+            /// PatternCode
+            /// </summary>
+            public string PatternCode { get; set; }
+
+            /// <summary>
+            /// PatternDesc
+            /// </summary>
+            public string PatternDesc { get; set; }
+
+            /// <summary>
+            /// Bundle Group
+            /// </summary>
+            public decimal BundleGroup { get; set; }
+
+            /// <summary>
+            /// SizeCode
+            /// </summary>
+            public string SizeCode { get; set; }
+
+            /// <summary>
+            /// Bundle Qty
+            /// </summary>
+            public decimal Qty { get; set; }
+
+            /// <summary>
+            /// SewingLine ID
+            /// </summary>
+            public string SewingLineID { get; set; }
+
+            /// <summary>
+            /// AddDate
+            /// </summary>
+            public DateTime? AddDate { get; set; }
         }
     }
 }

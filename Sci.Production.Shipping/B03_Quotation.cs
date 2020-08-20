@@ -161,7 +161,7 @@ namespace Sci.Production.Shipping
             var suppId = string.Empty;
             var price = 0.0;
             var currencyId = string.Empty;
-            DateTime? QuotDate = null;
+            DateTime? quotDate = null;
 
             #region 選取的報價資料
             switch (MyUtility.Convert.GetString(this.CurrentMaintain["ChooseSupp"]))
@@ -170,30 +170,30 @@ namespace Sci.Production.Shipping
                     suppId = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID1"]);
                     price = MyUtility.Convert.GetDouble(this.CurrentMaintain["Price1"]);
                     currencyId = MyUtility.Convert.GetString(this.CurrentMaintain["CurrencyID1"]);
-                    QuotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate1"]);
+                    quotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate1"]);
                     break;
                 case "2":
                     suppId = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID2"]);
                     price = MyUtility.Convert.GetDouble(this.CurrentMaintain["Price2"]);
                     currencyId = MyUtility.Convert.GetString(this.CurrentMaintain["CurrencyID2"]);
-                    QuotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate2"]);
+                    quotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate2"]);
                     break;
                 case "3":
                     suppId = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID3"]);
                     price = MyUtility.Convert.GetDouble(this.CurrentMaintain["Price3"]);
                     currencyId = MyUtility.Convert.GetString(this.CurrentMaintain["CurrencyID3"]);
-                    QuotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate3"]);
+                    quotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate3"]);
                     break;
                 case "4":
                     suppId = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID4"]);
                     price = MyUtility.Convert.GetDouble(this.CurrentMaintain["Price4"]);
                     currencyId = MyUtility.Convert.GetString(this.CurrentMaintain["CurrencyID4"]);
-                    QuotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate4"]);
+                    quotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate4"]);
                     break;
             }
             #endregion
 
-            if (MyUtility.Check.Empty(suppId) || MyUtility.Check.Empty(currencyId) || MyUtility.Check.Empty(price) || MyUtility.Check.Empty(QuotDate))
+            if (MyUtility.Check.Empty(suppId) || MyUtility.Check.Empty(currencyId) || MyUtility.Check.Empty(price) || MyUtility.Check.Empty(quotDate))
             {
                 MyUtility.Msg.WarningBox("Data can't be empty!!");
                 return false;

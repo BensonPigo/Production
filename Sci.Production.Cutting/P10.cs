@@ -16,15 +16,21 @@ using static Sci.Production.Automation.Guozi_AGV;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P10 : Win.Tems.Input6
     {
-        string keyword = Env.User.Keyword;
-        string LoginId = Env.User.UserID;
-        DataTable bundle_Detail_allpart_Tb;
-        DataTable bundle_Detail_Art_Tb;
-        DataTable bundle_Detail_Qty_Tb;
-        string WorkOrder_Ukey;
+        private string keyword = Env.User.Keyword;
+        private string LoginId = Env.User.UserID;
+        private DataTable bundle_Detail_allpart_Tb;
+        private DataTable bundle_Detail_Art_Tb;
+        private DataTable bundle_Detail_Qty_Tb;
+        private string WorkOrder_Ukey;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P10"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
+        /// <param name="history">History</param>
         public P10(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
         {
@@ -41,10 +47,10 @@ namespace Sci.Production.Cutting
             this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = Bundle.Orderid)  = '{Env.User.Factory}'";
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable queryDT;
             string querySql = string.Format(
                 @"
 select '' FTYGroup
@@ -53,7 +59,7 @@ union
 select distinct FTYGroup 
 from Factory WITH (NOLOCK)
 where MDivisionID = '{0}'", Env.User.Keyword);
-            DBProxy.Current.Select(null, querySql, out queryDT);
+            DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
 
             // 取得當前登入工廠index
@@ -81,6 +87,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             };
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -100,6 +107,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.OnGridSetup();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             #region 主 Detail
@@ -180,6 +188,7 @@ order by bundlegroup",
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -188,12 +197,11 @@ order by bundlegroup",
                 return;
             }
 
-            this.queryTable();
+            this.QueryTable();
             string orderid = this.CurrentMaintain["OrderID"].ToString();
             string cutref = (this.CurrentMaintain["Cutref"] == null) ? string.Empty : this.CurrentMaintain["Cutref"].ToString();
             string cuttingid = string.Empty;
-            DataTable orders;
-            if (DBProxy.Current.Select(null, string.Format("Select * from Orders WITH (NOLOCK) Where id='{0}'", orderid), out orders))
+            if (DBProxy.Current.Select(null, string.Format("Select * from Orders WITH (NOLOCK) Where id='{0}'", orderid), out DataTable orders))
             {
                 if (orders.Rows.Count != 0)
                 {
@@ -236,18 +244,21 @@ order by bundlegroup",
             if (!MyUtility.Check.Empty(this.CurrentMaintain["printdate"]))
             {
                 DateTime? lastTime = (DateTime?)this.CurrentMaintain["printdate"];
-                string FtyLastupdate = lastTime == null ? string.Empty : ((DateTime)lastTime).ToString("yyyy/MM/dd HH:mm:ss");
-                this.displayPrintDate.Text = FtyLastupdate;
+                string ftyLastupdate = lastTime == null ? string.Empty : ((DateTime)lastTime).ToString("yyyy/MM/dd HH:mm:ss");
+                this.displayPrintDate.Text = ftyLastupdate;
             }
             else
             {
                 this.displayPrintDate.Text = string.Empty;
             }
 
-            this.getFabricKind();
+            this.GetFabricKind();
         }
 
-        public void queryTable()
+        /// <summary>
+        /// Query Table
+        /// </summary>
+        public void QueryTable()
         {
             string masterID = (this.CurrentMaintain == null) ? string.Empty : this.CurrentMaintain["id"].ToString();
             string allPart_cmd = string.Format(@"Select 0 as sel,*, 0 as ukey1,'' as annotation from Bundle_Detail_Allpart  WITH (NOLOCK) Where id ='{0}' ", masterID);
@@ -284,10 +295,10 @@ order by bundlegroup",
                     }
                 }
 
-                DataRow[] Artar = this.bundle_Detail_Art_Tb.Select(string.Format("Bundleno='{0}'", dr["Bundleno"]));
+                DataRow[] artar = this.bundle_Detail_Art_Tb.Select(string.Format("Bundleno='{0}'", dr["Bundleno"]));
                 if (allar.Length > 0)
                 {
-                    foreach (DataRow dr2 in Artar)
+                    foreach (DataRow dr2 in artar)
                     {
                         dr2["ukey1"] = ukey;
                     }
@@ -295,6 +306,7 @@ order by bundlegroup",
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -307,6 +319,7 @@ order by bundlegroup",
             this.bundle_Detail_Qty_Tb.Clear();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["OrderID"]))
@@ -327,8 +340,7 @@ order by bundlegroup",
                 return false;
             }
 
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, $"select CuttingP10mustCutRef from system", out dt);
+            DualResult result = DBProxy.Current.Select(null, $"select CuttingP10mustCutRef from system", out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -343,8 +355,8 @@ order by bundlegroup",
 
             if (this.IsDetailInserting)
             {
-                string Keyword = this.keyword + "BC";
-                string cid = MyUtility.GetValue.GetID(Keyword, "Bundle", Convert.ToDateTime(this.CurrentMaintain["cdate"]), sequenceMode: 2);
+                string keyword = this.keyword + "BC";
+                string cid = MyUtility.GetValue.GetID(keyword, "Bundle", Convert.ToDateTime(this.CurrentMaintain["cdate"]), sequenceMode: 2);
                 if (string.IsNullOrWhiteSpace(cid))
                 {
                     return false;
@@ -370,6 +382,7 @@ order by bundlegroup",
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePre()
         {
             #region 填入Bundleno
@@ -410,11 +423,11 @@ order by bundlegroup",
             return base.ClickSavePre();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            string allpart_cmd = string.Empty, Art_cmd = string.Empty, Qty_cmd = string.Empty;
+            string allpart_cmd = string.Empty, art_cmd1 = string.Empty, qty_cmd1 = string.Empty;
             #region 先撈出實體Table 為了平行判斷筆數 DataTable allparttmp, arttmp, qtytmp
-            DataTable allparttmp, arttmp, qtytmp;
             string masterID = (this.CurrentMaintain == null) ? string.Empty : this.CurrentMaintain["id"].ToString();
 
             // string allPart_cmd = string.Format(@"Select b.* from Bundle_Detail_Allpart b WITH (NOLOCK) left join Bundle_Detail a WITH (NOLOCK) on a.id = b.id where b.id='{0}' ", masterID);
@@ -422,19 +435,19 @@ order by bundlegroup",
             string allPart_cmd = string.Format(@"select * from Bundle_Detail_Allpart WITH (NOLOCK) where id='{0}'  ", masterID);
             string art_cmd = string.Format(@"Select b.* from Bundle_Detail_art b WITH (NOLOCK) left join Bundle_Detail a WITH (NOLOCK) on a.Bundleno = b.bundleno and a.id = b.id where b.id='{0}'", masterID);
             string qty_cmd = string.Format(@"Select a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
-            DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out allparttmp);
+            DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out DataTable allparttmp);
             if (!dRes)
             {
                 this.ShowErr(allPart_cmd, dRes);
             }
 
-            dRes = DBProxy.Current.Select(null, art_cmd, out arttmp);
+            dRes = DBProxy.Current.Select(null, art_cmd, out DataTable arttmp);
             if (!dRes)
             {
                 this.ShowErr(art_cmd, dRes);
             }
 
-            dRes = DBProxy.Current.Select(null, qty_cmd, out qtytmp);
+            dRes = DBProxy.Current.Select(null, qty_cmd, out DataTable qtytmp);
             if (!dRes)
             {
                 this.ShowErr(qty_cmd, dRes);
@@ -449,13 +462,20 @@ order by bundlegroup",
              * 再新增更改的資料
              */
             allpart_cmd = allpart_cmd + string.Format(@"Delete from bundle_Detail_allpart where id ='{0}'", masterID);
-            foreach (DataRow dr in this.bundle_Detail_allpart_Tb.Rows) // 處理Bundle_Detail_AllPart
+
+            // 處理Bundle_Detail_AllPart
+            foreach (DataRow dr in this.bundle_Detail_allpart_Tb.Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
                     allpart_cmd = allpart_cmd + string.Format(
                 @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts,isPair,Location) values('{0}','{1}','{2}','{3}','{4}','{5}');",
-                this.CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"], dr["isPair"], dr["Location"]);
+                this.CurrentMaintain["ID"],
+                dr["PatternCode"],
+                dr["PatternDesc"],
+                dr["Parts"],
+                dr["isPair"],
+                dr["Location"]);
                 }
             }
             #endregion
@@ -465,14 +485,16 @@ order by bundlegroup",
             * 先刪除原有資料
             * 再新增更改的資料
             */
-            Art_cmd = Art_cmd + string.Format(
+            art_cmd1 = art_cmd1 + string.Format(
                 @"
 select ID,Ukey into #tmpOldBundle_Detail_Art from bundle_Detail_Art with (nolock) where  id='{0}'
 delete from bundle_Detail_Art where id='{0}'", masterID);
 
             // 將SubProcessID不是單一筆的資料拆開
             DataTable bundle_Detail_Art_Tb_copy = this.bundle_Detail_Art_Tb.Copy();
-            bundle_Detail_Art_Tb_copy.Clear();// 只有結構,沒有資料
+
+            // 只有結構,沒有資料
+            bundle_Detail_Art_Tb_copy.Clear();
             int ukey = 1;
             foreach (DataRow dr1 in this.bundle_Detail_Art_Tb.Rows)
             {
@@ -499,14 +521,19 @@ delete from bundle_Detail_Art where id='{0}'", masterID);
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    Art_cmd = Art_cmd + string.Format(
+                    art_cmd1 = art_cmd1 + string.Format(
                @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid,NoBundleCardAfterSubprocess,PostSewingSubProcess) 
                         values('{0}','{1}','{2}','{3}',{4},{5});",
-               this.CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"], MyUtility.Convert.GetBool(dr["NoBundleCardAfterSubprocess"]) ? 1 : 0, MyUtility.Convert.GetBool(dr["PostSewingSubProcess"]) ? 1 : 0);
+               this.CurrentMaintain["ID"],
+               dr["Bundleno"],
+               dr["PatternCode"],
+               dr["SubProcessid"],
+               MyUtility.Convert.GetBool(dr["NoBundleCardAfterSubprocess"]) ? 1 : 0,
+               MyUtility.Convert.GetBool(dr["PostSewingSubProcess"]) ? 1 : 0);
                 }
             }
 
-            Art_cmd = Art_cmd + $@"select Ukey  
+            art_cmd1 = art_cmd1 + $@"select Ukey  
 from #tmpOldBundle_Detail_Art tda
 where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID = bda.ID and tda.Ukey = bda.Ukey) ";
             #endregion
@@ -554,15 +581,19 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
            * 先刪除原有資料
            * 再新增更改的資料
            */
-            Qty_cmd = Qty_cmd + string.Format(@"Delete from bundle_Detail_Qty where id ='{0}'", masterID);
-            foreach (DataRow dr in this.bundle_Detail_Qty_Tb.Rows) // 處理Bundle_Detail_Art
+            qty_cmd1 = qty_cmd1 + string.Format(@"Delete from bundle_Detail_Qty where id ='{0}'", masterID);
+
+            // 處理Bundle_Detail_Art
+            foreach (DataRow dr in this.bundle_Detail_Qty_Tb.Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    Qty_cmd = Qty_cmd + string.Format(
+                    qty_cmd1 = qty_cmd1 + string.Format(
                     @"insert into bundle_Detail_Qty(ID,SizeCode,Qty) 
                     values('{0}','{1}',{2});",
-                    this.CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
+                    this.CurrentMaintain["ID"],
+                    dr["sizecode"],
+                    dr["Qty"]);
                 }
             }
 
@@ -621,24 +652,23 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
                     }
                 }
 
-                if (!MyUtility.Check.Empty(Art_cmd))
+                if (!MyUtility.Check.Empty(art_cmd1))
                 {
-                    if (!(upResult = DBProxy.Current.Select(null, Art_cmd, out deleteBundle_Detail_Art)))
+                    if (!(upResult = DBProxy.Current.Select(null, art_cmd1, out deleteBundle_Detail_Art)))
                     {
                         return upResult;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(Qty_cmd))
+                if (!MyUtility.Check.Empty(qty_cmd1))
                 {
-                    if (!(upResult = DBProxy.Current.Execute(null, Qty_cmd)))
+                    if (!(upResult = DBProxy.Current.Execute(null, qty_cmd1)))
                     {
                         return upResult;
                     }
                 }
 
                 scope.Complete();
-
             }
 
             #region sent data to GZ WebAPI
@@ -693,8 +723,7 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
                     DataRow dr = deletedDetail.NewRow();
                     dr["BundleNo"] = s["BundleNo", DataRowVersion.Original];
                     return dr;
-                }
-                ).CopyToDataTable();
+                }).CopyToDataTable();
                 Task.Run(() => new Guozi_AGV().SentDeleteBundle(deletedDetail));
             }
 
@@ -707,12 +736,13 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
         }
 
-        private void clear()
+        private void Clear()
         {
             this.displaySeason.Text = string.Empty;
             this.displayStyle.Text = string.Empty;
@@ -741,7 +771,7 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
             this.CurrentMaintain.EndEdit();
         }
 
-        private void txtCutRef_Validating(object sender, CancelEventArgs e)
+        private void TxtCutRef_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -756,7 +786,7 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
 
             if (this.txtCutRef.Text == string.Empty)
             {
-                this.clear();
+                this.Clear();
                 return;
             }
 
@@ -796,11 +826,11 @@ Select a.*
 ) as Qty
 From workorder a WITH (NOLOCK) ,orders b WITH (NOLOCK) 
 Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id",
-                this.txtCutRef.Text, this.keyword);
-            DataRow cutdr;
-            if (!MyUtility.Check.Seek(cmd, out cutdr, null))
+                this.txtCutRef.Text,
+                this.keyword);
+            if (!MyUtility.Check.Seek(cmd, out DataRow cutdr, null))
             {
-                this.clear();
+                this.Clear();
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("<Cut Ref#> data not found!");
                 return;
@@ -827,7 +857,7 @@ Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id",
                 this.CurrentMaintain["SewingCell"] = cellid;
 
                 #region Startno
-                int startno = this.startNo_Function(this.CurrentMaintain["OrderID"].ToString());
+                int startno = this.StartNo_Function(this.CurrentMaintain["OrderID"].ToString());
                 this.CurrentMaintain["startno"] = startno;
                 #endregion
 
@@ -846,14 +876,14 @@ Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id",
                     this.WorkOrder_Ukey = this.WorkOrder_Ukey + dr["Ukey"].ToString() + ",";
                 }
 
-                this.getFabricKind();
+                this.GetFabricKind();
                 this.CurrentMaintain.EndEdit();
             }
 
             ((DataTable)this.detailgridbs.DataSource).Clear();
         }
 
-        private void txtSPNo_PopUp(object sender, TextBoxPopUpEventArgs e)
+        private void TxtSPNo_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["Cutref"]) || MyUtility.Check.Empty(this.CurrentMaintain["POID"]))
             {
@@ -869,7 +899,8 @@ Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id",
 select distinct b.orderid 
 from workorder a WITH (NOLOCK) , workorder_distribute b WITH (NOLOCK) 
 where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
-                this.CurrentMaintain["Cutref"], cuttingid);
+                this.CurrentMaintain["Cutref"],
+                cuttingid);
             item = new Win.Tools.SelectItem(selectCommand, "20", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -880,7 +911,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             this.txtSPNo.Text = item.GetSelectedString();
         }
 
-        private void txtSPNo_Validating(object sender, CancelEventArgs e)
+        private void TxtSPNo_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -907,8 +938,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
                 }
 
                 string work_cmd = string.Format("Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{0}' and b.orderid ='{1}' and a.MDivisionId = '{2}'", this.CurrentMaintain["Cutref"], newvalue, Env.User.Keyword);
-                DataTable articleTb;
-                if (DBProxy.Current.Select(null, work_cmd, out articleTb))
+                if (DBProxy.Current.Select(null, work_cmd, out DataTable articleTb))
                 {
                     if (articleTb.Rows.Count == 0)
                     {
@@ -940,8 +970,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             else
             {
                 string selectCommand = string.Format("select a.* from orders a WITH (NOLOCK) where a.id = '{0}' and mDivisionid='{1}' ", newvalue, this.keyword);
-                DataRow cutdr;
-                if (MyUtility.Check.Seek(selectCommand, out cutdr, null))
+                if (MyUtility.Check.Seek(selectCommand, out DataRow cutdr, null))
                 {
                     if (cutdr["Sewline"].ToString().Length > 2)
                     {
@@ -970,7 +999,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
                     }
                     #endregion
                     #region startno
-                    int startno = this.startNo_Function(this.CurrentMaintain["OrderID"].ToString());
+                    int startno = this.StartNo_Function(this.CurrentMaintain["OrderID"].ToString());
                     int nGroup = startno - Convert.ToInt32(this.CurrentMaintain["startno"]);
                     this.CurrentMaintain["startno"] = startno;
                     foreach (DataRow dr in this.DetailDatas)
@@ -981,9 +1010,8 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
                     #region Article colorid
                     if (MyUtility.Check.Empty(this.CurrentMaintain["PatternPanel"]))
                     {
-                        string ColorComb_cmd = string.Format("Select top(1) article,colorid from order_colorcombo WITH (NOLOCK) where id ='{0}' and patternpanel = '{1}'", cutdr["POID"], this.CurrentMaintain["PatternPanel"]);
-                        DataRow colordr;
-                        if (MyUtility.Check.Seek(ColorComb_cmd, out colordr))
+                        string colorComb_cmd = string.Format("Select top(1) article,colorid from order_colorcombo WITH (NOLOCK) where id ='{0}' and patternpanel = '{1}'", cutdr["POID"], this.CurrentMaintain["PatternPanel"]);
+                        if (MyUtility.Check.Seek(colorComb_cmd, out DataRow colordr))
                         {
                             this.CurrentMaintain["Article"] = colordr["Article"];
                             this.CurrentMaintain["colorid"] = colordr["colorid"];
@@ -993,26 +1021,30 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
                 }
             }
 
-            this.getFabricKind();
+            this.GetFabricKind();
         }
 
-        private void btnGarmentList_Click(object sender, EventArgs e)
+        private void BtnGarmentList_Click(object sender, EventArgs e)
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", this.CurrentMaintain["poid"].ToString(), "Orders", "ID");
-            var Sizelist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+            List<string> sizelist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
 
             PublicForm.GarmentList callNextForm =
-    new PublicForm.GarmentList(ukey, this.CurrentMaintain["poid"].ToString(), this.txtCutRef.Text, Sizelist);
+    new PublicForm.GarmentList(ukey, this.CurrentMaintain["poid"].ToString(), this.txtCutRef.Text, sizelist);
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
         }
 
-        public int startNo_Function(string orderid) // Start No 計算
+        /// <summary>
+        /// Start No 計算
+        /// </summary>
+        /// <param name="orderid">Order ID</param>
+        /// <returns>Max Bundle.(startno+Qty)</returns>
+        public int StartNo_Function(string orderid)
         {
             #region startno
             string max_cmd = string.Format("Select Max(startno+Qty) as Start from Bundle  WITH (NOLOCK) Where OrderID = '{0}'", orderid);
-            DataTable max_st;
-            if (DBProxy.Current.Select(null, max_cmd, out max_st))
+            if (DBProxy.Current.Select(null, max_cmd, out DataTable max_st))
             {
                 if (max_st.Rows[0][0] != DBNull.Value)
                 {
@@ -1030,13 +1062,14 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void ClickCopyAfter()
         {
             int oldstartno = MyUtility.Convert.GetInt(this.CurrentMaintain["startno"]);
             base.ClickCopyAfter();
             this.CurrentMaintain["ID"] = string.Empty;
             this.CurrentMaintain["Cdate"] = DateTime.Now;
-            int startno = this.startNo_Function(this.CurrentMaintain["OrderID"].ToString());
+            int startno = this.StartNo_Function(this.CurrentMaintain["OrderID"].ToString());
             this.CurrentMaintain["startno"] = startno;
             #region 清除Detail Bundleno,ID
             foreach (DataRow dr in this.DetailDatas)
@@ -1065,7 +1098,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             #endregion
         }
 
-        private void numBeginBundleGroup_Validated(object sender, EventArgs e)
+        private void NumBeginBundleGroup_Validated(object sender, EventArgs e)
         {
             decimal no = (decimal)this.numBeginBundleGroup.Value;
             decimal oldvalue = (decimal)this.numBeginBundleGroup.OldValue;
@@ -1076,7 +1109,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             }
         }
 
-        private void btnGenerate_Click(object sender, EventArgs e)
+        private void BtnGenerate_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["article"]) || MyUtility.Check.Empty(this.CurrentMaintain["PatternPanel"]))
             {
@@ -1091,6 +1124,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             dt.DefaultView.Sort = "BundleGroup";
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             P10_Print p = new P10_Print(this.CurrentMaintain);
@@ -1100,14 +1134,15 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             string sqlcmd = string.Format(
                 @"update Bundle set PrintDate = '{0}' where ID = '{1}';
                   update Bundle_Detail set PrintDate = '{0}' where ID = '{1}';",
-                dtn, this.CurrentMaintain["ID"]);
+                dtn,
+                this.CurrentMaintain["ID"]);
             DBProxy.Current.Execute(null, sqlcmd);
             return true;
         }
 
-        int at;
+        private int at;
 
-        private void txtArticle_PopUp(object sender, TextBoxPopUpEventArgs e)
+        private void TxtArticle_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             string selectCommand, sqlwhere = string.Empty;
             Win.Tools.SelectItem item;
@@ -1129,7 +1164,9 @@ select distinct Article ,w.Colorid
 from workorder w WITH (NOLOCK) 
 inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
 where Article!='' and w.cutref='{0}' and w.mDivisionid = '{1}' {2}",
-                    this.CurrentMaintain["cutref"].ToString(), this.keyword, sqlwhere);
+                    this.CurrentMaintain["cutref"].ToString(),
+                    this.keyword,
+                    sqlwhere);
                 item = new Win.Tools.SelectItem(selectCommand, "20", this.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
@@ -1150,7 +1187,9 @@ select distinct count(Article)
 from workorder w WITH (NOLOCK) 
 inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
 where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}' {2}",
-                        this.CurrentMaintain["Orderid"].ToString(), this.keyword, sqlwhere);
+                        this.CurrentMaintain["Orderid"].ToString(),
+                        this.keyword,
+                        sqlwhere);
                     string count = MyUtility.GetValue.Lookup(scount, null);
                     if (count != "0")
                     {
@@ -1160,7 +1199,9 @@ select distinct Article ,w.Colorid
 from workorder w WITH (NOLOCK) 
 inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
 where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}' {2}",
-                            this.CurrentMaintain["Orderid"].ToString(), this.keyword, sqlwhere);
+                            this.CurrentMaintain["Orderid"].ToString(),
+                            this.keyword,
+                            sqlwhere);
                         this.at = 1;
                     }
                     else
@@ -1189,7 +1230,7 @@ ORDER BY Seq",
             }
         }
 
-        private void txtArticle_Validating(object sender, CancelEventArgs e)
+        private void TxtArticle_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -1211,7 +1252,8 @@ ORDER BY Seq",
 select Article 
 from Workorder_Distribute WITH (NOLOCK) 
 where Article!='' and WorkorderUkey in ({0}) and Article='{1}'",
-                    MyUtility.Check.Empty(this.WorkOrder_Ukey) ? string.Empty : this.WorkOrder_Ukey.Trim().Substring(0, this.WorkOrder_Ukey.Length - 1), newvalue);
+                    MyUtility.Check.Empty(this.WorkOrder_Ukey) ? string.Empty : this.WorkOrder_Ukey.Trim().Substring(0, this.WorkOrder_Ukey.Length - 1),
+                    newvalue);
                 if (DBProxy.Current.Select(null, sql, out dtTEMP))
                 {
                     if (dtTEMP.Rows.Count == 0)
@@ -1259,7 +1301,7 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'",
             }
         }
 
-        private void txtLineNo_PopUp(object sender, TextBoxPopUpEventArgs e)
+        private void TxtLineNo_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -1286,7 +1328,7 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'",
             this.RenewData();
         }
 
-        private void txtLineNo_Validating(object sender, CancelEventArgs e)
+        private void TxtLineNo_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -1301,7 +1343,9 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'",
 
             string sql = string.Format(
                 @"Select ID  From SewingLine WITH (NOLOCK)  
-                    where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}') and ID='{1}'", Env.User.Keyword, newvalue);
+                    where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}') and ID='{1}'",
+                Env.User.Keyword,
+                newvalue);
             string tmp = MyUtility.GetValue.Lookup(sql);
             if (string.IsNullOrWhiteSpace(tmp))
             {
@@ -1314,10 +1358,10 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'",
 
         private void TxtFabricCombo_Validating(object sender, CancelEventArgs e)
         {
-            this.getFabricKind();
+            this.GetFabricKind();
         }
 
-        private void getFabricKind()
+        private void GetFabricKind()
         {
             string sqlcmd = $@"
 SELECT TOP 1 DD.id + '-' + DD.NAME 
@@ -1346,7 +1390,6 @@ AND DD.id = LIST.kind ";
         protected override DualResult ClickDeletePost()
         {
             string id = this.CurrentMaintain["ID"].ToString();
-            DataTable dtBundle_Detail_Art;
             string deleteBundleDetailQty = $@"
 select Ukey from Bundle_Detail_Art with (nolock) where id = '{id}'
 
@@ -1361,7 +1404,7 @@ from Bundle_Detail_Art
 where id = '{id}'
 ";
 
-            DualResult result = DBProxy.Current.Select(null, deleteBundleDetailQty, out dtBundle_Detail_Art);
+            DualResult result = DBProxy.Current.Select(null, deleteBundleDetailQty, out DataTable dtBundle_Detail_Art);
 
             if (result == false)
             {

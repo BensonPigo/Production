@@ -11,13 +11,18 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P21_QueryRevised : Win.Forms.Base
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P21_QueryRevised"/> class.
+        /// </summary>
         public P21_QueryRevised()
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -42,7 +47,7 @@ namespace Sci.Production.Cutting
                 DataRow selectedRow = this.gridP21Query.GetDataRow(e.RowIndex);
                 string oldValue = selectedRow["Seq1"].ToString();
                 string newValue = e.FormattedValue.ToString();
-                string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
+                string cuttingSpNO = selectedRow["CuttingSpNO"].ToString();
 
                 // 沒有異動
                 if (oldValue.Equals(newValue) || e.RowIndex == -1)
@@ -73,7 +78,7 @@ namespace Sci.Production.Cutting
                 DataRow selectedRow = this.gridP21Query.GetDataRow(e.RowIndex);
                 string oldValue = selectedRow["Seq2"].ToString();
                 string newValue = e.FormattedValue.ToString();
-                string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
+                string cuttingSpNO1 = selectedRow["CuttingSpNO"].ToString();
 
                 // 沒有異動
                 if (oldValue.Equals(newValue) || e.RowIndex == -1)
@@ -104,7 +109,7 @@ namespace Sci.Production.Cutting
                 DataRow selectedRow = this.gridP21Query.GetDataRow(e.RowIndex);
                 string oldValue = selectedRow["Roll"].ToString();
                 string newValue = e.FormattedValue.ToString();
-                string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
+                string cuttingSpNO2 = selectedRow["CuttingSpNO"].ToString();
                 string dyelot = selectedRow["Dyelot"].ToString();
 
                 // 沒有異動，修改Roll時，Dyelot不為空才驗證
@@ -128,11 +133,11 @@ namespace Sci.Production.Cutting
                 DataRow selectedRow = this.gridP21Query.GetDataRow(e.RowIndex);
                 string oldValue = selectedRow["Dyelot"].ToString();
                 string newValue = e.FormattedValue.ToString();
-                string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
-                string Roll = selectedRow["Roll"].ToString();
+                string cuttingSpNO3 = selectedRow["CuttingSpNO"].ToString();
+                string roll = selectedRow["Roll"].ToString();
 
                 // 沒有異動
-                if (oldValue.Equals(newValue) || e.RowIndex == -1 || MyUtility.Check.Empty(Roll))
+                if (oldValue.Equals(newValue) || e.RowIndex == -1 || MyUtility.Check.Empty(roll))
                 {
                     return;
                 }
@@ -188,12 +193,12 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.Query();
         }
 
-        private void btnUpdate_Click(object sender, EventArgs e)
+        private void BtnUpdate_Click(object sender, EventArgs e)
         {
             #region 變數宣告
 
@@ -247,7 +252,7 @@ namespace Sci.Production.Cutting
             returnResult = DBProxy.Current.GetTableSchema(null, "CuttingOutputFabricRecord", out tableSchema);
 
             // 開始UPDATE
-            using (TransactionScope _transactionscope = new TransactionScope())
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
@@ -257,14 +262,12 @@ namespace Sci.Production.Cutting
                         returnResult = DBProxy.Current.UpdateByChanged(null, tableSchema, item, out different);
                         if (!returnResult)
                         {
-                            _transactionscope.Dispose();
-                            return;
+                            throw new Exception(returnResult.Messages.ToString());
                         }
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Successfully");
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
 
                     // 將更新的資料從畫面上去掉
                     foreach (DataRow item in selectedRow)
@@ -274,14 +277,21 @@ namespace Sci.Production.Cutting
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
+                    transactionscope.Dispose();
+                    returnResult = new DualResult(false, "Commit transaction error.", ex);
                 }
             }
+
+            if (!returnResult)
+            {
+                this.ShowErr(returnResult);
+                return;
+            }
+
+            MyUtility.Msg.InfoBox("Successfully");
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void BtnDelete_Click(object sender, EventArgs e)
         {
             #region 參數宣告
             DataRow[] selectedRow;
@@ -320,30 +330,34 @@ namespace Sci.Production.Cutting
             returnResult = DBProxy.Current.GetTableSchema(null, "CuttingOutputFabricRecord", out tableSchema);
 
             // 開始Delete
-            using (TransactionScope _transactionscope = new TransactionScope())
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
                     returnResult = DBProxy.Current.Deletes(null, tableSchema, selectedRow);
                     if (!returnResult)
                     {
-                        _transactionscope.Dispose();
-                        return;
+                        throw new Exception(returnResult.Messages.ToString());
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Successfully");
-
-                    this.Query();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
+                    transactionscope.Dispose();
+                    returnResult = new DualResult(false, "Commit transaction error.", ex);
                 }
             }
+
+            if (!returnResult)
+            {
+                this.ShowErr(returnResult);
+                return;
+            }
+
+            MyUtility.Msg.InfoBox("Successfully");
+            this.Query();
         }
 
         //---自行定義---

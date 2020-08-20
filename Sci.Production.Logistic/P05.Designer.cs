@@ -244,7 +244,7 @@
             this.btnToDRExcel.TabIndex = 8;
             this.btnToDRExcel.Text = "To DR(For PH)";
             this.btnToDRExcel.UseVisualStyleBackColor = true;
-            this.btnToDRExcel.Click += new System.EventHandler(this.btnToDRExcel_Click);
+            this.btnToDRExcel.Click += new System.EventHandler(this.BtnToDRExcel_Click);
             // 
             // P05
             // 

@@ -46,6 +46,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Sci.Production.Warehouse.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -2008,6 +2009,8 @@
     <None Include="Properties\DataSources\P33_PrintData.datasource">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Properties\DataSources\P37.datasource" />
+    <None Include="Properties\DataSources\P37_PrintData.datasource" />
     <None Include="Properties\DataSources\P45_PrintData.datasource" />
     <None Include="Properties\DataSources\P61_PrintData.datasource" />
     <None Include="Sci.Production.Warehouse.ruleset" />

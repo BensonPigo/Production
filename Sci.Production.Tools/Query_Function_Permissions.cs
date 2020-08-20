@@ -14,6 +14,10 @@ namespace Sci.Production.Tools
     {
         private DataTable dtQuery;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Query_Function_Permissions"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public Query_Function_Permissions(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -21,6 +25,7 @@ namespace Sci.Production.Tools
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

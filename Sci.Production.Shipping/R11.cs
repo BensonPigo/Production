@@ -220,7 +220,9 @@ as (
                         sqlCmd.Append(string.Format(
                             @"
 and exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.PulloutDate >= '{0}' and p.PulloutDate <= '{1}')
-", Convert.ToDateTime(this.date1).ToString("d"), Convert.ToDateTime(this.date2).ToString("d")));
+",
+                            Convert.ToDateTime(this.date1).ToString("d"),
+                            Convert.ToDateTime(this.date2).ToString("d")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate1))

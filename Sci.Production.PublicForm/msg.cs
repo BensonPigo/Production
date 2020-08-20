@@ -3,21 +3,29 @@ using System.Windows.Forms;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class msg : Form
+    /// <inheritdoc/>
+    public partial class Msg : Form
     {
-        public msg()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Msg"/> class.
+        /// </summary>
+        public Msg()
         {
             this.InitializeComponent();
             this.picInfo.Image = System.Drawing.SystemIcons.Information.ToBitmap();
         }
 
+        /// <summary>
+        /// Show Msg
+        /// </summary>
+        /// <param name="msg">msg</param>
         public void Show(string msg)
         {
             this.editBoxMsg.Text = msg;
             this.ShowDialog();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             this.Close();
         }

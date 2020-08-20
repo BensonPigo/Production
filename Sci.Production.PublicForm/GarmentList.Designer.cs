@@ -77,7 +77,7 @@
             this.btnClose.TabIndex = 1;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnArticleForFCode
             // 
@@ -88,7 +88,7 @@
             this.btnArticleForFCode.TabIndex = 2;
             this.btnArticleForFCode.Text = "Article for F_Code";
             this.btnArticleForFCode.UseVisualStyleBackColor = true;
-            this.btnArticleForFCode.Click += new System.EventHandler(this.btnArticleForFCode_Click);
+            this.btnArticleForFCode.Click += new System.EventHandler(this.BtnArticleForFCode_Click);
             // 
             // GarmentList
             // 

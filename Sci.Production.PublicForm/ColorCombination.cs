@@ -7,6 +7,7 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
+    /// <inheritdoc/>
     public partial class ColorCombination : Win.Subs.Base
     {
         private string cutid;
@@ -14,23 +15,31 @@ namespace Sci.Production.PublicForm
         private DataTable colortb;
         private DataTable dtQTWith;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ColorCombination"/> class.
+        /// </summary>
         public ColorCombination()
         {
             this.InitializeComponent();
         }
 
-        public ColorCombination(string cID, string _Styleukey)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ColorCombination"/> class.
+        /// </summary>
+        /// <param name="cID">cID</param>
+        /// <param name="styleukey">styleukey</param>
+        public ColorCombination(string cID, string styleukey)
         {
             this.InitializeComponent();
             this.cutid = cID;
-            this.Styleukey = _Styleukey;
+            this.Styleukey = styleukey;
 
             this.GetQTWith();  // 參考TRADE的方式抓[QT WITH]資料
-            this.requery();
-            this.color();
+            this.Requery();
+            this.Color();
         }
 
-        private void requery()
+        private void Requery()
         {
             this.Helper.Controls.Grid.Generator(this.gridFabric)
             .Text("FabricCode", header: "Fabric#", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -196,12 +205,12 @@ ORDER BY o.FabricCode
             this.listControlBindingSource3.DataSource = gridFabric;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void color()
+        private void Color()
         {
             string brandid = MyUtility.GetValue.Lookup("Brandid", this.cutid, "Orders", "ID");
             #region SQL CMD 串出ColorComb 所有Color, 含在Color_Mutiple
@@ -245,7 +254,9 @@ ORDER BY o.FabricCode
                                     where e.ukey = f.ColorUkey and f.Brandid = '{1}' 
                                 ) h 
                                 where g.brandid = h.brandid and g.id = h.ColorID and g.BrandId = '{1}' 
-                            ) ord order by id ", this.cutid, brandid); // 串出所有Colorid
+                            ) ord order by id ",
+                            this.cutid,
+                            brandid); // 串出所有Colorid
             #endregion
 
             DualResult sqlresult = DBProxy.Current.Select(null, colorsql, out this.colortb);

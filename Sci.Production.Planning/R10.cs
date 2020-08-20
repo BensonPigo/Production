@@ -670,7 +670,7 @@ namespace Sci.Production.Planning
             var isSCIDelivery = MyUtility.Convert.GetBool(paras["isSCIDelivery"]);
             var brandID = paras["BrandID"].ToString();
             var mdivisionID = paras["MDivisionID"].ToString();
-            var Fty = paras["Fty"].ToString();
+            var fty = paras["Fty"].ToString();
             var byBrand = paras.ContainsKey("CalculateByBrand") ? Convert.ToBoolean(paras["CalculateByBrand"]) : false;
             var zone = paras["Zone"].ToString();
             DualResult result = new DualResult(true);
@@ -769,12 +769,12 @@ namespace Sci.Production.Planning
                     {
                         if (reportType == 1)
                         {
-                            this.TransferReport1(dic[art].Item1, reportType, intYear, byBrand, zone, mdivisionID, Fty, sxrc.ExcelApp.Worksheets[1], ref sheetStart);
+                            this.TransferReport1(dic[art].Item1, reportType, intYear, byBrand, zone, mdivisionID, fty, sxrc.ExcelApp.Worksheets[1], ref sheetStart);
                             this.TransferReport1_Summary(dic[art].Item1, intYear, sxrc.ExcelApp.Worksheets[2], ref sheetStart_sum, art, artworkUnitStr);
                         }
                         else
                         {
-                            this.TransferReport2(dic[art].Item1, reportType, intYear, intMonth, isSCIDelivery, zone, mdivisionID, Fty, sxrc.ExcelApp.Worksheets[1], ref sheetStart);
+                            this.TransferReport2(dic[art].Item1, reportType, intYear, intMonth, isSCIDelivery, zone, mdivisionID, fty, sxrc.ExcelApp.Worksheets[1], ref sheetStart);
                         }
                     }
                     else
@@ -957,18 +957,18 @@ namespace Sci.Production.Planning
 
                     // 5 By non-sister
                     int nonSisStart = sheetStart;
-                    DataTable dtByNonSister = SafeGetDt(dt2, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
-                    SetTableToRow(wks, intYear, sheetStart, "non-sister sub-in", dtByNonSister, "OrderCapacity");
-                    DrawBottomLine(wks, sheetStart, 1);
+                    DataTable dtByNonSister = this.SafeGetDt(dt2, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
+                    this.SetTableToRow(wks, intYear, sheetStart, "non-sister sub-in", dtByNonSister, "OrderCapacity");
+                    this.DrawBottomLine(wks, sheetStart, 1);
                     sheetStart += 1;
 
                     lisSumFtyNonSis.Add(ftyStart.ToString() + "," + nonSisStart.ToString());
 
                     // Shortage
                     int shortageStart = sheetStart;
-                    DataTable dtByShortage = SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
-                    SetTableToRow(wks, intYear, sheetStart, "Shortage", dtByShortage, "OrderShortage");
-                    DrawBottomLine(wks, sheetStart, 1);
+                    DataTable dtByShortage = this.SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
+                    this.SetTableToRow(wks, intYear, sheetStart, "Shortage", dtByShortage, "OrderShortage");
+                    this.DrawBottomLine(wks, sheetStart, 1);
                     shortageLis.Add(sheetStart.ToString());
                     sheetStart += 1;
 

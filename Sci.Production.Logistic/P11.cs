@@ -184,8 +184,7 @@ inner join ClogGarmentDispose_Detail cd with (nolock) on c.ID = cd.ID
 inner join ClogGarmentDispose_Detail cd1 on cd1.ID = '{this.CurrentMaintain["ID"]}' and cd.PackingListID = cd1.PackingListID and cd.CTNStartNO = cd1.CTNStartNO
 where c.Status = 'Confirmed' and c.ID <> '{this.CurrentMaintain["ID"]}'";
 
-            DataTable dtDisposeConfirmed;
-            result = DBProxy.Current.Select(null, sqlCheckConfirmed, out dtDisposeConfirmed);
+            result = DBProxy.Current.Select(null, sqlCheckConfirmed, out DataTable dtDisposeConfirmed);
             if (!result)
             {
                 this.ShowErr(result);
@@ -314,13 +313,13 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
             p11_Import.ShowDialog();
         }
 
-        private void btnExcelImport_Click(object sender, EventArgs e)
+        private void BtnExcelImport_Click(object sender, EventArgs e)
         {
             P11_ExcelImport callNextForm = new P11_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
         }
 
-        private void btnDownloadExcel_Click(object sender, EventArgs e)
+        private void BtnDownloadExcel_Click(object sender, EventArgs e)
         {
             // 呼叫執行檔絕對路徑
             DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);

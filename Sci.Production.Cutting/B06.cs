@@ -7,6 +7,10 @@ namespace Sci.Production.Cutting
 {
     public partial class B06 : Win.Tems.Input1
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B06"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public B06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -16,6 +20,7 @@ No. of Roll + Set up time + (Machine Spreading Time*Marker Length*Layer) +
 Separator Time*(Dye Lot-1)  + Forward Time";
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -47,6 +52,7 @@ Separator Time*(Dye Lot-1)  + Forward Time";
 from SpreadingTime s where WeaveTypeID = '{this.CurrentMaintain["ID"]}'");
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             // 修改表身資料,不寫入表頭EditName and EditDate

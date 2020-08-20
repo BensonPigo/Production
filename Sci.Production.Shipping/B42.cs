@@ -61,6 +61,7 @@ namespace Sci.Production.Shipping
             btn2.Size = new Size(120, 30);
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
@@ -163,11 +164,11 @@ where vdd.ID = '{0}'
             #region Type column set
             DataGridViewGeneratorComboBoxColumnSettings typeCol = new DataGridViewGeneratorComboBoxColumnSettings();
 
-            Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
-            ResultCombo.Add("A", "A");
-            ResultCombo.Add("F", "F");
-            ResultCombo.Add("L", "L");
-            typeCol.DataSource = new BindingSource(ResultCombo, null);
+            Dictionary<string, string> resultCombo = new Dictionary<string, string>();
+            resultCombo.Add("A", "A");
+            resultCombo.Add("F", "F");
+            resultCombo.Add("L", "L");
+            typeCol.DataSource = new BindingSource(resultCombo, null);
             typeCol.ValueMember = "Key";
             typeCol.DisplayMember = "Value";
 

@@ -22,6 +22,10 @@ namespace Sci.Production.Shipping
         private string category;
         private string shipMode;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R20"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public R20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -41,6 +45,7 @@ group by fe.Type";
             MyUtility.Tool.SetupCombox(this.comboCategory, 2, category);
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (!this.dateArrivePortDate.HasValue1 || !this.dateArrivePortDate.HasValue2)
@@ -61,6 +66,7 @@ group by fe.Type";
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             string sqlCmd = string.Empty;
@@ -184,6 +190,7 @@ drop table #tmp_FtyExport;
             return DBProxy.Current.Select(null, sqlCmd, paras, out this.PrintTable);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.SetCount(this.PrintTable[0].Rows.Count);

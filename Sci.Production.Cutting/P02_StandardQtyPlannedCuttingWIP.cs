@@ -12,26 +12,32 @@ using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P02_StandardQtyPlannedCuttingWIP : Win.Tems.QueryForm
     {
-        string ID;
-        string finalmsg;
-        DataTable DistqtyTb;
-        DataTable detailData;
-        DataTable summaryData;
-        DataTable dtG;
-        DataTable dtF;
-        DateTime MinInLine;
-        DateTime MaxOffLine;
-        List<string> FtyFroup = new List<string>();
-        List<InOffLineList> AllDataTmp = new List<InOffLineList>();
-        List<InOffLineList> AllData = new List<InOffLineList>();
-        List<InOffLineList_byFabricPanelCode> AllDataTmp2 = new List<InOffLineList_byFabricPanelCode>();
-        List<InOffLineList_byFabricPanelCode> AllData2 = new List<InOffLineList_byFabricPanelCode>();
-        List<PublicPrg.Prgs.Day> Days = new List<PublicPrg.Prgs.Day>();
-        List<PublicPrg.Prgs.Day> Days2 = new List<PublicPrg.Prgs.Day>();
-        List<LeadTime> LeadTimeList = new List<LeadTime>();
+        private string ID;
+        private string finalmsg;
+        private DataTable DistqtyTb;
+        private DataTable detailData;
+        private DataTable summaryData;
+        private DataTable dtG;
+        private DataTable dtF;
+        private DateTime MinInLine;
+        private DateTime MaxOffLine;
+        private List<string> FtyFroup = new List<string>();
+        private List<InOffLineList> AllDataTmp = new List<InOffLineList>();
+        private List<InOffLineList> AllData = new List<InOffLineList>();
+        private List<InOffLineList_byFabricPanelCode> AllDataTmp2 = new List<InOffLineList_byFabricPanelCode>();
+        private List<InOffLineList_byFabricPanelCode> AllData2 = new List<InOffLineList_byFabricPanelCode>();
+        private List<PublicPrg.Prgs.Day> Days = new List<PublicPrg.Prgs.Day>();
+        private List<PublicPrg.Prgs.Day> Days2 = new List<PublicPrg.Prgs.Day>();
+        private List<LeadTime> LeadTimeList = new List<LeadTime>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P02_StandardQtyPlannedCuttingWIP"/> class.
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <param name="distqtyTb">Distqty Tb</param>
         public P02_StandardQtyPlannedCuttingWIP(string id, DataTable distqtyTb)
         {
             this.InitializeComponent();
@@ -39,6 +45,7 @@ namespace Sci.Production.Cutting
             this.DistqtyTb = distqtyTb;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -66,9 +73,8 @@ namespace Sci.Production.Cutting
             }
 
             #region 起手資料
-            DataTable dt_Schedule;
             string cmd = $@"SELECT s.* FROM SewingSchedule s INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID WHERE s.OrderID in ('{string.Join("','", orderIDs)}')";
-            DualResult result = DBProxy.Current.Select(null, cmd, out dt_Schedule);
+            DualResult result = DBProxy.Current.Select(null, cmd, out DataTable dt_Schedule);
             if (!result)
             {
                 this.finalmsg = result.ToString();
@@ -121,7 +127,7 @@ namespace Sci.Production.Cutting
             }
 
             this.Days = this.Days
-                .Select(s => new { Date = s.Date.Date, IsHoliday = s.IsHoliday }).Distinct()
+                .Select(s => new { s.Date.Date, s.IsHoliday }).Distinct()
                 .Select(s => new PublicPrg.Prgs.Day { Date = s.Date.Date, IsHoliday = s.IsHoliday })
                 .OrderBy(o => o.Date).ToList();
             #endregion
@@ -142,7 +148,7 @@ namespace Sci.Production.Cutting
 
             this.bgWorkerUpdateInfo.ReportProgress(90);
 
-            List<DataTable> LeadTimeList = GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
+            List<DataTable> leadTimeList = GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
 
             if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
             {
@@ -151,8 +157,8 @@ namespace Sci.Production.Cutting
 
             this.bgWorkerUpdateInfo.ReportProgress(95);
 
-            this.summaryData = LeadTimeList[0];
-            this.detailData = LeadTimeList[1];
+            this.summaryData = leadTimeList[0];
+            this.detailData = leadTimeList[1];
 
             this.dtG = this.summaryData.Clone();
             foreach (DataRow item in this.summaryData.Rows)
@@ -160,9 +166,10 @@ namespace Sci.Production.Cutting
                 DataRow drdStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Std. Qty'")[0];
                 this.dtG.ImportRow(drdStdQty);
                 DataRow drdAccStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Std. Qty'")[0];
-
                 DataRow drdAccCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
-                for (int i = 2; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
+
+                // 2 是日期欄位開始
+                for (int i = 2; i < this.detailData.Columns.Count; i++)
                 {
                     string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdAccCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
                     if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == string.Empty && MyUtility.Convert.GetString(drdAccStdQty[i]) == string.Empty)
@@ -207,9 +214,8 @@ namespace Sci.Production.Cutting
             }
 
             #region 起手資料
-            DataTable dt_Schedule;
             string cmd = $@"SELECT s.* FROM SewingSchedule s INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID WHERE s.OrderID in ('{string.Join("','", orderIDs)}')";
-            DualResult result = DBProxy.Current.Select(null, cmd, out dt_Schedule);
+            DualResult result = DBProxy.Current.Select(null, cmd, out DataTable dt_Schedule);
             if (!result)
             {
                 this.finalmsg = result.ToString();
@@ -282,7 +288,7 @@ namespace Sci.Production.Cutting
 
             this.bgWorkerUpdateInfo.ReportProgress(90);
 
-            List<DataTable> LeadTimeList = GetCutting_WIP_DataTable(this.Days2, this.AllData2.OrderBy(o => o.OrderID).ToList());
+            List<DataTable> leadTimeList = GetCutting_WIP_DataTable(this.Days2, this.AllData2.OrderBy(o => o.OrderID).ToList());
 
             if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
             {
@@ -291,8 +297,8 @@ namespace Sci.Production.Cutting
 
             this.bgWorkerUpdateInfo.ReportProgress(95);
 
-            this.summaryData = LeadTimeList[0];
-            this.detailData = LeadTimeList[1];
+            this.summaryData = leadTimeList[0];
+            this.detailData = leadTimeList[1];
 
             this.dtF = this.summaryData.Clone();
             foreach (DataRow item in this.summaryData.Rows)
@@ -300,9 +306,10 @@ namespace Sci.Production.Cutting
                 DataRow drdStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Std. Qty'")[0];
                 this.dtF.ImportRow(drdStdQty);
                 DataRow drdAccStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Std. Qty'")[0];
-
                 DataRow drdAccCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
-                for (int i = 3; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
+
+                // 2 是日期欄位開始
+                for (int i = 3; i < this.detailData.Columns.Count; i++)
                 {
                     string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdAccCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
                     if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == string.Empty && MyUtility.Convert.GetString(drdAccStdQty[i]) == string.Empty)
@@ -344,7 +351,7 @@ namespace Sci.Production.Cutting
 
             this.gridGarment.AutoResizeColumns();
 
-            int ColumnIndex = 1;
+            int columnIndex = 1;
             foreach (var day in this.Days)
             {
                 // string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
@@ -353,10 +360,10 @@ namespace Sci.Production.Cutting
                 // 假日的話粉紅色
                 if (day.IsHoliday)
                 {
-                    this.gridGarment.Columns[ColumnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
+                    this.gridGarment.Columns[columnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
                 }
 
-                ColumnIndex++;
+                columnIndex++;
             }
 
             // 扣除無產出的日期
@@ -369,8 +376,6 @@ namespace Sci.Production.Cutting
                                                                 && (MyUtility.Convert.GetInt(y.CutQty) > 0 || MyUtility.Convert.GetInt(y.StdQty) > 0)) // 不同於R01,是因此只有顯示CutQty,StdQty資料
                                                                .Any())
                                        .Any())
-
-                    // && day.IsHoliday
                 {
                     removeDays.Add(day);
                 }
@@ -385,15 +390,15 @@ namespace Sci.Production.Cutting
                 }
             }
 
-            ColumnIndex = 1;
+            columnIndex = 1;
             foreach (var day in this.Days)
             {
                 if (removeDays.Where(o => o.Date == day.Date).Any())
                 {
-                    this.gridGarment.Columns[ColumnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
+                    this.gridGarment.Columns[columnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
                 }
 
-                ColumnIndex++;
+                columnIndex++;
             }
 
             #region 關閉排序功能
@@ -418,7 +423,7 @@ namespace Sci.Production.Cutting
                 ;
             }
 
-            int ColumnIndex = 2;
+            int columnIndex = 2;
             foreach (var day in this.Days2)
             {
                 // string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
@@ -427,10 +432,10 @@ namespace Sci.Production.Cutting
                 // 假日的話粉紅色
                 if (day.IsHoliday)
                 {
-                    this.gridFabric_Panel_Code.Columns[ColumnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
+                    this.gridFabric_Panel_Code.Columns[columnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
                 }
 
-                ColumnIndex++;
+                columnIndex++;
             }
 
             // 扣除無產出的日期
@@ -444,8 +449,6 @@ namespace Sci.Production.Cutting
                                                                     && (MyUtility.Convert.GetInt(y.CutQty) > 0 || MyUtility.Convert.GetInt(y.StdQty) > 0)) // 不同於R01,是因此只有顯示CutQty,StdQty資料
                                                                 .Any())
                                        .Any())
-
-                    // && day.IsHoliday
                 {
                     removeDays.Add(day);
                 }
@@ -460,15 +463,15 @@ namespace Sci.Production.Cutting
                 }
             }
 
-            ColumnIndex = 2;
+            columnIndex = 2;
             foreach (var day in this.Days2)
             {
                 if (removeDays.Where(o => o.Date == day.Date).Any())
                 {
-                    this.gridFabric_Panel_Code.Columns[ColumnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
+                    this.gridFabric_Panel_Code.Columns[columnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
                 }
 
-                ColumnIndex++;
+                columnIndex++;
             }
 
             this.gridFabric_Panel_Code.Columns[0].Width = 115;
@@ -488,13 +491,14 @@ namespace Sci.Production.Cutting
             return;
         }
 
+        /// <summary>
+        /// Check Subprocess LeadTime
+        /// </summary>
+        /// <param name="orderIDs">List Order ID</param>
+        /// <returns>bool</returns>
         public bool Check_Subprocess_LeadTime(List<string> orderIDs)
         {
-            DataTable PoID_dt;
-            DataTable GarmentTb;
-            DataTable LeadTime_dt;
             DualResult result;
-
             string cmd = $@"
 SELECT  DISTINCT OrderID, s.MDivisionID, s.FactoryID
 INTO #OrderList
@@ -511,7 +515,7 @@ INNER JOIN Orders b ON a.OrderID= b.ID
 
 drop table #OrderList
 ";
-            result = DBProxy.Current.Select(null, cmd, out PoID_dt);
+            result = DBProxy.Current.Select(null, cmd, out DataTable poID_dt);
 
             if (!result)
             {
@@ -519,46 +523,41 @@ drop table #OrderList
                 return false;
             }
 
-            this.FtyFroup = PoID_dt.AsEnumerable().Select(o => o["FtyGroup"].ToString()).Distinct().ToList();
-            List<string> Msg = new List<string>();
+            this.FtyFroup = poID_dt.AsEnumerable().Select(o => o["FtyGroup"].ToString()).Distinct().ToList();
+            List<string> msg = new List<string>();
 
-            foreach (DataRow dr in PoID_dt.Rows)
+            foreach (DataRow dr in poID_dt.Rows)
             {
-                string POID = dr["POID"].ToString();
-                string OrderID = dr["OrderID"].ToString();
-                string MDivisionID = dr["MDivisionID"].ToString();
-                string FactoryID = dr["FactoryID"].ToString();
+                string pOID = dr["POID"].ToString();
+                string orderID = dr["OrderID"].ToString();
+                string mDivisionID = dr["MDivisionID"].ToString();
+                string factoryID = dr["FactoryID"].ToString();
+                GetGarmentListTable(string.Empty, pOID, string.Empty, out DataTable garmentTb);
+                List<string> annotationList = garmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
+                List<string> annotationList_Final = new List<string>();
 
-                GetGarmentListTable(string.Empty, POID, string.Empty, out GarmentTb);
-
-                List<string> AnnotationList = GarmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
-
-                List<string> AnnotationList_Final = new List<string>();
-
-                foreach (var Annotation in AnnotationList)
+                foreach (var annotation in annotationList)
                 {
-                    foreach (var item in Annotation.Split('+'))
+                    foreach (var item in annotation.Split('+'))
                     {
                         string input = string.Empty;
                         for (int i = 0; i <= item.Length - 1; i++)
                         {
                             // 排除掉數字
-                            int x = 0;
-                            if (!int.TryParse(item[i].ToString(), out x))
+                            if (!int.TryParse(item[i].ToString(), out int x))
                             {
                                 input += item[i].ToString();
                             }
                         }
 
-                        if (!AnnotationList_Final.Contains(input) && MyUtility.Check.Seek($"SELECT 1 FROM Subprocess WHERE ID='{input}' "))
+                        if (!annotationList_Final.Contains(input) && MyUtility.Check.Seek($"SELECT 1 FROM Subprocess WHERE ID='{input}' "))
                         {
-                            AnnotationList_Final.Add(input);
+                            annotationList_Final.Add(input);
                         }
                     }
                 }
 
-                string AnnotationStr = AnnotationList_Final.OrderBy(o => o.ToString()).JoinToString("+");
-
+                string annotationStr = annotationList_Final.OrderBy(o => o.ToString()).JoinToString("+");
                 string chk_LeadTime = $@"
 SELECT DISTINCT SD.ID
                 ,Subprocess.IDs
@@ -575,11 +574,11 @@ OUTER APPLY(
 	)
 	,1,1,'')
 )Subprocess
-WHERE Subprocess.IDs = '{AnnotationStr}'
-and s.MDivisionID = '{MDivisionID}'
-and s.FactoryID = '{FactoryID}'
+WHERE Subprocess.IDs = '{annotationStr}'
+and s.MDivisionID = '{mDivisionID}'
+and s.FactoryID = '{factoryID}'
 ";
-                result = DBProxy.Current.Select(null, chk_LeadTime, out LeadTime_dt);
+                result = DBProxy.Current.Select(null, chk_LeadTime, out DataTable leadTime_dt);
                 if (!result)
                 {
                     this.finalmsg = result.ToString();
@@ -587,25 +586,25 @@ and s.FactoryID = '{FactoryID}'
                 }
 
                 // 收集需要顯示訊息的Subprocess ID
-                if (LeadTime_dt.Rows.Count == 0 && AnnotationStr != string.Empty)
+                if (leadTime_dt.Rows.Count == 0 && annotationStr != string.Empty)
                 {
-                    Msg.Add(MDivisionID + ";" + FactoryID + ";" + AnnotationStr);
+                    msg.Add(mDivisionID + ";" + factoryID + ";" + annotationStr);
                 }
                 else
                 {
                     // 記錄下加工段的Lead Time
                     LeadTime o = new LeadTime()
                     {
-                        OrderID = OrderID,
-                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]), // 加工段為空，LeadTimeDay = 0
+                        OrderID = orderID,
+                        LeadTimeDay = MyUtility.Check.Empty(annotationStr) ? 0 : Convert.ToInt32(leadTime_dt.Rows[0]["LeadTime"]), // 加工段為空，LeadTimeDay = 0
                     };
                     this.LeadTimeList.Add(o);
                 }
             }
 
-            if (Msg.Count > 0)
+            if (msg.Count > 0)
             {
-                string message = "<" + Msg.Distinct().OrderBy(o => o).JoinToString(">" + Environment.NewLine + "<") + ">";
+                string message = "<" + msg.Distinct().OrderBy(o => o).JoinToString(">" + Environment.NewLine + "<") + ">";
                 message = message.Replace(";", "><");
                 message += Environment.NewLine + @"Please set cutting lead time in [Cutting_B09. Subprocess Lead Time].
 When the settings are complete, can be use this function!!
@@ -622,9 +621,6 @@ When the settings are complete, can be use this function!!
         private void Grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex > 0)
-
-                // (e.ColumnIndex > 0 && this.tabControl1.SelectedIndex == 0) ||
-                // (e.ColumnIndex > 0 && this.tabControl1.SelectedIndex == 1))
             {
                 return;
             }

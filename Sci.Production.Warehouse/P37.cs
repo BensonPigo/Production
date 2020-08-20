@@ -181,6 +181,7 @@ namespace Sci.Production.Warehouse
             DataTable dtDetail;
             string sqlcmd = @"
 select  ROW_NUMBER() OVER(ORDER BY R.POID,R.SEQ1,R.SEQ2) AS NoID
+        ,ROW_NUMBER() OVER(Partition by R.POID,R.SEQ1,R.SEQ2 ORDER BY R.POID,R.SEQ1,R.SEQ2) AS GroupNo
 		,R.poid AS SP,R.seq1  + '-' +R.seq2 as SEQ
 		,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
 		          AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
@@ -217,6 +218,7 @@ where R.id= @ID";
                 .Select(row1 => new P37_PrintData()
                 {
                     NoID = row1["NoID"].ToString(),
+                    GroupNo = row1["GroupNo"].ToString(),
                     OrderID = row1["SP"].ToString(),
                     SEQ = row1["SEQ"].ToString(),
                     Desc = row1["desc"].ToString(),

@@ -6,22 +6,28 @@ using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P01_BundleCard : Win.Subs.Base
     {
         private string cutid;
         private string M;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P01_BundleCard"/> class.
+        /// </summary>
+        /// <param name="cID">Cut ID</param>
+        /// <param name="m">M</param>
         public P01_BundleCard(string cID, string m)
         {
             this.InitializeComponent();
             this.cutid = cID;
             this.M = m;
-            this.requery();
-            this.gridSetup();
+            this.ReQuery();
+            this.GridSetup();
             this.gridBundleCard.AutoResizeColumns();
         }
 
-        private void requery()
+        private void ReQuery()
         {
             string sqlcmd = $@"
 Select a.id,b.BundleNo,a.orderid,a.cdate,a.cutref,a.PatternPanel,a.cutno,b.sizecode,b.bundlegroup,b.Qty,b.PrintDate
@@ -31,12 +37,11 @@ inner join Orders o WITH (NOLOCK) on a.Orderid = o.ID and a.MDivisionID = o.MDiv
 where a.POID = '{this.cutid}' and a.MDivisionID  = '{this.M}'
 order by b.BundleNo
 ";
-            DataTable gridtb;
-            DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
+            DualResult dr = DBProxy.Current.Select(null, sqlcmd, out DataTable gridtb);
             this.gridBundleCard.DataSource = gridtb;
         }
 
-        private void gridSetup()
+        private void GridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.gridBundleCard)
                 .Text("bundleno", header: "Bundle No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -51,7 +56,7 @@ order by b.BundleNo
                 .DateTime("PrintDate", header: "PrintDate", width: Widths.AnsiChars(8), iseditingreadonly: true);
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

@@ -7,17 +7,28 @@ namespace Sci.Production.PublicForm
 {
     public partial class EachConsumption_DownloadIdList : Win.Subs.Input4
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EachConsumption_DownloadIdList"/> class.
+        /// </summary>
         public EachConsumption_DownloadIdList()
         {
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EachConsumption_DownloadIdList"/> class.
+        /// </summary>
+        /// <param name="canedit"></param>
+        /// <param name="keyvalue1"></param>
+        /// <param name="keyvalue2"></param>
+        /// <param name="keyvalue3"></param>
         public EachConsumption_DownloadIdList(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery(out DataTable datas)
         {
             datas = null;
@@ -42,6 +53,7 @@ Group by ID, MarkerDownloadID", this.KeyValue1);
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.grid)

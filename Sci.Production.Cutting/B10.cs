@@ -12,12 +12,17 @@ namespace Sci.Production.Cutting
     {
         private DataTable Dt;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B10"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public B10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -57,6 +62,7 @@ ORDER  BY s.seq ASC
             this.listControlBindingSource1.DataSource = this.Dt;
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
@@ -77,6 +83,7 @@ ORDER  BY s.seq ASC
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             // ProcessWithDatatable無法解析tinyint, 先換成int

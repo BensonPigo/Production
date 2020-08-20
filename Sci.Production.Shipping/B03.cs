@@ -183,7 +183,7 @@ namespace Sci.Production.Shipping
             callNextForm.ShowDialog(this);
         }
 
-        Form batchapprove;
+        private Form batchapprove;
 
         private void BtnBatchApprove_Click(object sender, EventArgs e)
         {
@@ -195,7 +195,7 @@ namespace Sci.Production.Shipping
 
             if (this.batchapprove == null || this.batchapprove.IsDisposed)
             {
-                this.batchapprove = new B03_BatchApprove(this.reload);
+                this.batchapprove = new B03_BatchApprove(this.Reload);
                 this.batchapprove.Show();
             }
             else
@@ -204,7 +204,7 @@ namespace Sci.Production.Shipping
             }
         }
 
-        public void reload()
+        public void Reload()
         {
             this.ReloadDatas();
             this.RenewData();
@@ -228,6 +228,7 @@ namespace Sci.Production.Shipping
             this.ReloadDatas();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -257,6 +258,7 @@ namespace Sci.Production.Shipping
             this.RenewData();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();

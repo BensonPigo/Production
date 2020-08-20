@@ -164,7 +164,7 @@
             this.chkPaybyCheck.TabIndex = 3;
             this.chkPaybyCheck.Text = "Pay by Check";
             this.chkPaybyCheck.UseVisualStyleBackColor = true;
-            this.chkPaybyCheck.CheckedChanged += new System.EventHandler(this.chkPaybyCheck_CheckedChanged);
+            this.chkPaybyCheck.CheckedChanged += new System.EventHandler(this.ChkPaybyCheck_CheckedChanged);
             // 
             // txtAbb
             // 

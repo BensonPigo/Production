@@ -310,6 +310,7 @@ order by TRY_CONVERT(int, SUBSTRING(vd.NLCode, 3, LEN(vd.NLCode))), vd.NLCode", 
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             string sqldelete = $@"delete [VNContractQtyAdjust_Detail] where id = '{this.CurrentMaintain["id"]}'";
@@ -426,6 +427,7 @@ order by TRY_CONVERT(int, SUBSTRING(vd.NLCode, 3, LEN(vd.NLCode))), vd.NLCode", 
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
             string insertuUdataDetail = $@"
@@ -492,6 +494,7 @@ drop table #tmp,#tmps
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             if (MyUtility.Check.Empty(this.CurrentDetailData))

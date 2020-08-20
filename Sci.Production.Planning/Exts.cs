@@ -48,12 +48,12 @@ namespace Sci.Production.Class
         /// <summary>
         /// ToDictionary
         /// </summary>
-        /// <typeparam name="KEY">KEY</typeparam>
+        /// <typeparam name="TKEY">KEY</typeparam>
         /// <param name="datas">DataTable</param>
         /// <param name="keyselector">Func</param>
         /// <param name="ignore_deleted">bool</param>
         /// <returns>dic</returns>
-        public static IDictionary<KEY, DataRow> ToDictionary<KEY>(this DataTable datas, Func<DataRow, KEY> keyselector, bool ignore_deleted = false)
+        public static IDictionary<TKEY, DataRow> ToDictionary<TKEY>(this DataTable datas, Func<DataRow, TKEY> keyselector, bool ignore_deleted = false)
         {
             if (keyselector == null)
             {
@@ -65,7 +65,7 @@ namespace Sci.Production.Class
                 return null;
             }
 
-            var dic = new Dictionary<KEY, DataRow>();
+            var dic = new Dictionary<TKEY, DataRow>();
             foreach (DataRow it in datas.Rows)
             {
                 if (ignore_deleted && it.RowState == DataRowState.Deleted)
@@ -84,12 +84,12 @@ namespace Sci.Production.Class
         /// <summary>
         /// ToDictionaryList
         /// </summary>
-        /// <typeparam name="KEY">KEY</typeparam>
+        /// <typeparam name="TKEY">KEY</typeparam>
         /// <param name="datas">DataTable</param>
         /// <param name="keyselector">Func</param>
         /// <param name="ignore_deleted">bool</param>
         /// <returns>dic</returns>
-        public static IDictionary<KEY, IList<DataRow>> ToDictionaryList<KEY>(this DataTable datas, Func<DataRow, KEY> keyselector, bool ignore_deleted = false)
+        public static IDictionary<TKEY, IList<DataRow>> ToDictionaryList<TKEY>(this DataTable datas, Func<DataRow, TKEY> keyselector, bool ignore_deleted = false)
         {
             if (keyselector == null)
             {
@@ -101,7 +101,7 @@ namespace Sci.Production.Class
                 return null;
             }
 
-            var dic = new Dictionary<KEY, IList<DataRow>>();
+            var dic = new Dictionary<TKEY, IList<DataRow>>();
             foreach (DataRow it in datas.Rows)
             {
                 if (ignore_deleted && it.RowState == DataRowState.Deleted)

@@ -161,7 +161,7 @@
             this.btnShowImg.TabIndex = 57;
             this.btnShowImg.Text = "Show";
             this.btnShowImg.UseVisualStyleBackColor = true;
-            this.btnShowImg.Click += new System.EventHandler(this.btnShowImg_Click);
+            this.btnShowImg.Click += new System.EventHandler(this.BtnShowImg_Click);
             // 
             // btnSetPic
             // 
@@ -172,7 +172,7 @@
             this.btnSetPic.TabIndex = 56;
             this.btnSetPic.Text = "...";
             this.btnSetPic.UseVisualStyleBackColor = true;
-            this.btnSetPic.Click += new System.EventHandler(this.btnSetPic_Click);
+            this.btnSetPic.Click += new System.EventHandler(this.BtnSetPic_Click);
             // 
             // disBoxESignature
             // 
@@ -308,7 +308,7 @@
             this.txtEMailAddr.Name = "txtEMailAddr";
             this.txtEMailAddr.Size = new System.Drawing.Size(362, 23);
             this.txtEMailAddr.TabIndex = 9;
-            this.txtEMailAddr.Validating += new System.ComponentModel.CancelEventHandler(this.txtEMailAddr_Validating);
+            this.txtEMailAddr.Validating += new System.ComponentModel.CancelEventHandler(this.TxtEMailAddr_Validating);
             // 
             // editFactory
             // 

@@ -108,7 +108,7 @@
             this.btnQuery.TabIndex = 12;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // gridSQLQuery
             // 
@@ -153,7 +153,7 @@
             this.btnSqlUpdate.Text = "SQL Update";
             this.btnSqlUpdate.UseVisualStyleBackColor = true;
             this.btnSqlUpdate.Visible = false;
-            this.btnSqlUpdate.Click += new System.EventHandler(this.btnSqlUpdate_Click);
+            this.btnSqlUpdate.Click += new System.EventHandler(this.BtnSqlUpdate_Click);
             // 
             // checkBox1
             // 
@@ -163,7 +163,7 @@
             this.checkBox1.Size = new System.Drawing.Size(15, 14);
             this.checkBox1.TabIndex = 2;
             this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
             // 
             // panel1
             // 

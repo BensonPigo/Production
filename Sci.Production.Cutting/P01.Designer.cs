@@ -530,7 +530,7 @@
             this.btnMarkerList.TabIndex = 23;
             this.btnMarkerList.Text = "Marker List";
             this.btnMarkerList.UseVisualStyleBackColor = true;
-            this.btnMarkerList.Click += new System.EventHandler(this.btnMarkerList_Click);
+            this.btnMarkerList.Click += new System.EventHandler(this.BtnMarkerList_Click);
             // 
             // btnEachCons
             // 
@@ -541,7 +541,7 @@
             this.btnEachCons.TabIndex = 24;
             this.btnEachCons.Text = "Each Cons.";
             this.btnEachCons.UseVisualStyleBackColor = true;
-            this.btnEachCons.Click += new System.EventHandler(this.btnEachCons_Click);
+            this.btnEachCons.Click += new System.EventHandler(this.BtnEachCons_Click);
             // 
             // btnBundleCard
             // 
@@ -552,7 +552,7 @@
             this.btnBundleCard.TabIndex = 25;
             this.btnBundleCard.Text = "Bundle Card";
             this.btnBundleCard.UseVisualStyleBackColor = true;
-            this.btnBundleCard.Click += new System.EventHandler(this.btnBundleCard_Click);
+            this.btnBundleCard.Click += new System.EventHandler(this.BtnBundleCard_Click);
             // 
             // btnQuantitybreakdown
             // 
@@ -563,7 +563,7 @@
             this.btnQuantitybreakdown.TabIndex = 28;
             this.btnQuantitybreakdown.Text = "Quantity breakdown";
             this.btnQuantitybreakdown.UseVisualStyleBackColor = true;
-            this.btnQuantitybreakdown.Click += new System.EventHandler(this.btnQuantitybreakdown_Click);
+            this.btnQuantitybreakdown.Click += new System.EventHandler(this.BtnQuantitybreakdown_Click);
             // 
             // btnCutPartsCheckSummary
             // 
@@ -574,7 +574,7 @@
             this.btnCutPartsCheckSummary.TabIndex = 27;
             this.btnCutPartsCheckSummary.Text = "Cut Parts Check Summary";
             this.btnCutPartsCheckSummary.UseVisualStyleBackColor = true;
-            this.btnCutPartsCheckSummary.Click += new System.EventHandler(this.btnCutPartsCheckSummary_Click);
+            this.btnCutPartsCheckSummary.Click += new System.EventHandler(this.BtnCutPartsCheckSummary_Click);
             // 
             // btnCutPartsCheck
             // 
@@ -585,7 +585,7 @@
             this.btnCutPartsCheck.TabIndex = 26;
             this.btnCutPartsCheck.Text = "Cut Parts Check";
             this.btnCutPartsCheck.UseVisualStyleBackColor = true;
-            this.btnCutPartsCheck.Click += new System.EventHandler(this.btnCutPartsCheck_Click);
+            this.btnCutPartsCheck.Click += new System.EventHandler(this.BtnCutPartsCheck_Click);
             // 
             // btnGarmentList
             // 
@@ -596,7 +596,7 @@
             this.btnGarmentList.TabIndex = 31;
             this.btnGarmentList.Text = "Garment List";
             this.btnGarmentList.UseVisualStyleBackColor = true;
-            this.btnGarmentList.Click += new System.EventHandler(this.btnGarmentList_Click);
+            this.btnGarmentList.Click += new System.EventHandler(this.BtnGarmentList_Click);
             // 
             // btnProductionkit
             // 
@@ -607,7 +607,7 @@
             this.btnProductionkit.TabIndex = 30;
             this.btnProductionkit.Text = "Production kit";
             this.btnProductionkit.UseVisualStyleBackColor = true;
-            this.btnProductionkit.Click += new System.EventHandler(this.btnProductionkit_Click);
+            this.btnProductionkit.Click += new System.EventHandler(this.BtnProductionkit_Click);
             // 
             // btnColorCombo
             // 
@@ -618,7 +618,7 @@
             this.btnColorCombo.TabIndex = 29;
             this.btnColorCombo.Text = "Color Combo";
             this.btnColorCombo.UseVisualStyleBackColor = true;
-            this.btnColorCombo.Click += new System.EventHandler(this.btnColorCombo_Click);
+            this.btnColorCombo.Click += new System.EventHandler(this.BtnColorCombo_Click);
             // 
             // dateEarliestSewingOffline
             // 

@@ -8,23 +8,28 @@ using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P01_Cutpartchecksummary : Win.Subs.Base
     {
         private string cutid;
 
         private DataTable fabcodetb; // PatternPanel Table
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P01_Cutpartchecksummary"/> class.
+        /// </summary>
+        /// <param name="cID">Cut ID</param>
         public P01_Cutpartchecksummary(string cID)
         {
             this.InitializeComponent();
             this.Text = string.Format("Cut Parts Check Summary<SP:{0}>)", cID);
             this.cutid = cID;
-            this.requery();
-            this.gridSetup();
+            this.ReQuery();
+            this.GridSetup();
             this.gridCutpartchecksummary.AutoResizeColumns();
         }
 
-        private void requery()
+        private void ReQuery()
         {
             #region 找出有哪些部位
             string fabcodesql = string.Format(
@@ -44,7 +49,9 @@ namespace Sci.Production.Cutting
 
             #region 建立Grid
             string settbsql = "Select a.id,article,a.sizecode,a.qty,'' as complete"; // 寫SQL建立Table
-            foreach (DataRow dr in this.fabcodetb.Rows) // 組動態欄位
+
+            // 組動態欄位
+            foreach (DataRow dr in this.fabcodetb.Rows)
             {
                 settbsql = settbsql + ", 0 as " + dr["PatternPanel"];
             }
@@ -55,8 +62,7 @@ namespace Sci.Production.Cutting
                                                 and c.id=b.poid and c.SizeCode = a.SizeCode
                                                 order by id,article,c.Seq",
                 this.cutid);
-            DataTable gridtb;
-            DualResult gridResult = DBProxy.Current.Select(null, settbsql, out gridtb);
+            DualResult gridResult = DBProxy.Current.Select(null, settbsql, out DataTable gridtb);
             if (!gridResult)
             {
                 this.ShowErr(gridResult);
@@ -71,9 +77,7 @@ namespace Sci.Production.Cutting
             from Workorder a WITH (NOLOCK) , workorder_Distribute b WITH (NOLOCK) , Order_fabriccode c WITH (NOLOCK) 
             Where a.id = '{0}' and a.ukey = b.workorderukey and a.Id  = c.id and a.FabricPanelCode = c.FabricPanelCode 
             and b.article !=''", this.cutid);
-            DataTable getqtytb;
-
-            gridResult = DBProxy.Current.Select(null, getqtysql, out getqtytb);
+            gridResult = DBProxy.Current.Select(null, getqtysql, out DataTable getqtytb);
             if (!gridResult)
             {
                 this.ShowErr(gridResult);
@@ -92,7 +96,6 @@ namespace Sci.Production.Cutting
 
             #region 判斷是否Complete
             bool complete = true;
-            DataTable panneltb;
             fabcodesql = string.Format(
                 @"
 select distinct occ.Article,occ.Patternpanel
@@ -105,7 +108,7 @@ inner join Order_EachCons_Color_Article oeca WITH (NOLOCK) on oeca.Order_EachCon
 where o.CuttingSP = '{0}'
 and o.junk = 0
 ", this.cutid);
-            gridResult = DBProxy.Current.Select(null, fabcodesql, out panneltb);
+            gridResult = DBProxy.Current.Select(null, fabcodesql, out DataTable panneltb);
             if (!gridResult)
             {
                 this.ShowErr(gridResult);
@@ -134,7 +137,7 @@ and o.junk = 0
             this.gridCutpartchecksummary.DataSource = gridtb;
         }
 
-        private void gridSetup()
+        private void GridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.gridCutpartchecksummary)
                 .Text("id", header: "SP #", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -176,10 +179,8 @@ and o.junk = 0
 
             for (int i = 0; i < this.fabcodetb.Rows.Count; i++)
             {
-                Ict.Win.UI.DataGridViewNumericBoxColumn col_color;
-
                 this.Helper.Controls.Grid.Generator(this.gridCutpartchecksummary)
-                    .Numeric(this.fabcodetb.Rows[i]["PatternPanel"].ToString().Trim(), header: this.fabcodetb.Rows[i]["PatternPanel"].ToString(), width: Widths.AnsiChars(7)).Get(out col_color);
+                    .Numeric(this.fabcodetb.Rows[i]["PatternPanel"].ToString().Trim(), header: this.fabcodetb.Rows[i]["PatternPanel"].ToString(), width: Widths.AnsiChars(7)).Get(out Ict.Win.UI.DataGridViewNumericBoxColumn col_color);
 
                 col_color.CellFormatting += (s, e) =>
                 {
@@ -202,7 +203,7 @@ and o.junk = 0
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

@@ -1,30 +1,32 @@
 ﻿using Ict;
 using Sci.Data;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Centralized
 {
+    /// <inheritdoc/>
     public partial class Basic_B18 : Sci.Win.Tems.Input1
     {
         private string oldID = string.Empty;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Basic_B18"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public Basic_B18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             this.oldID = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
@@ -41,8 +43,7 @@ namespace Sci.Production.Centralized
             }
 
             string cmd = "SELECT ID ,Name FROM FinanceTW.dbo.AccountNo WHERE Junk = 0 ORDER BY ID";
-            DataTable dt;
-            DBProxy.Current.Select("ProductionTPE", cmd, out dt);
+            DBProxy.Current.Select("ProductionTPE", cmd, out DataTable dt);
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "ID,Name", "8,30", this.txtAccountNo.Text);
 
@@ -57,14 +58,12 @@ namespace Sci.Production.Centralized
 
             this.CurrentMaintain["ID"] = MyUtility.Convert.GetString(dr[0]["ID"]);
             this.disAccountNoname.Text = MyUtility.Convert.GetString(dr[0]["Name"]);
-
         }
 
         private void TxtAccountNo_Validating(object sender, CancelEventArgs e)
         {
             if (this.oldID != this.txtAccountNo.Text)
             {
-
                 string newID = this.txtAccountNo.Text;
 
                 if (MyUtility.Check.Empty(newID))
@@ -117,8 +116,7 @@ SELECT b.ID ,b.Name ,[Unselectable]=
 FROM FinanceTW.dbo.AccountNo b
 WHERE b.Junk=0 
 ";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select("ProductionTPE", sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select("ProductionTPE", sqlcmd, out DataTable dt);
 
             if (!result)
             {
@@ -147,6 +145,5 @@ WHERE b.Junk=0
             #endregion
             return true;
         }
-
     }
 }

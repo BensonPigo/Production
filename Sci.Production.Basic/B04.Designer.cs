@@ -474,7 +474,7 @@ namespace Sci.Production.Basic
             this.btnBatchApprove.TabIndex = 21;
             this.btnBatchApprove.Text = "Batch Approve";
             this.btnBatchApprove.UseVisualStyleBackColor = true;
-            this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
+            this.btnBatchApprove.Click += new System.EventHandler(this.BtnBatchApprove_Click);
             // 
             // gridBankDetail
             // 

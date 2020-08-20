@@ -9,19 +9,24 @@ using System.Transactions;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P04_Import : Win.Subs.Base
     {
         private string loginID = Env.User.UserID;
         private string keyWord = Env.User.Keyword;
-        DataTable gridTable;
-        DataTable detailTable;
+        private DataTable gridTable;
+        private DataTable detailTable;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P04_Import"/> class.
+        /// </summary>
         public P04_Import()
         {
             this.InitializeComponent();
             this.txtCutCell.MDivisionID = this.keyWord;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             DBProxy.Current.Select(null, "Select 0 as Sel, '' as poid,'' as cuttingid,'' as brandid,'' as styleid,'' as cutcellid,'' as cutref ,'' as SpreadingNoID from cutplan where 1=0", out this.gridTable);
@@ -43,12 +48,12 @@ namespace Sci.Production.Cutting
             this.txtSpreadingNo.MDivision = Env.User.Keyword;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.dateEstCutDate.Value))
             {
@@ -90,7 +95,6 @@ and estcutdate = '{estcutdate}'";
                 sqlcmd = sqlcmd + string.Format(" and a.spreadingNoID = '{0}'", spreadingNo);
             }
 
-            DataRow queryRow, ordersRow;
             DualResult dResult = DBProxy.Current.Select(null, sqlcmd, out this.detailTable);
             if (dResult)
             {
@@ -98,7 +102,7 @@ and estcutdate = '{estcutdate}'";
                 {
                     foreach (DataRow dr in this.detailTable.Rows)
                     {
-                        if (MyUtility.Check.Seek(string.Format("Select top(1) * from WorkOrder_Distribute where workorderukey='{0}' and orderid !='' and orderid !='Excess'", dr["Ukey"]), null, out queryRow))
+                        if (MyUtility.Check.Seek(string.Format("Select top(1) * from WorkOrder_Distribute where workorderukey='{0}' and orderid !='' and orderid !='Excess'", dr["Ukey"]), null, out DataRow queryRow))
                         {
                             dr["orderid_b"] = queryRow["OrderId"];
                             dr["article_b"] = queryRow["article"];
@@ -125,7 +129,7 @@ and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR Sp
                         {
                             DataRow newdr = this.gridTable.NewRow();
                             newdr["sel"] = 1;
-                            MyUtility.Check.Seek(string.Format("Select * from orders where id='{0}'", dr["ID"]), out ordersRow);
+                            MyUtility.Check.Seek(string.Format("Select * from orders where id='{0}'", dr["ID"]), out DataRow ordersRow);
                             newdr["POID"] = ordersRow["poid"];
                             newdr["Cuttingid"] = dr["ID"];
                             newdr["brandid"] = ordersRow["brandid"];
@@ -153,16 +157,17 @@ and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR Sp
             }
         }
 
-        public List<string> importedIDs = new List<string>();
+        /// <inheritdoc/>
+        public List<string> ImportedIDs { get; set; } = new List<string>();
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             if (this.gridTable.Rows.Count == 0)
             {
                 return;
             }
 
-            this.importedIDs.Clear();
+            this.ImportedIDs.Clear();
             DataRow[] importay;
 
             string id = MyUtility.GetValue.GetID(this.keyWord + "CP", "Cutplan");
@@ -172,7 +177,6 @@ and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR Sp
             try
             {
                 string remark;
-                DataTable cutplan_DetailTb;
                 foreach (DataRow dr in this.gridTable.Rows)
                 {
                     remark = string.Empty;
@@ -183,20 +187,30 @@ and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR Sp
                             iu += string.Format(
                                 @"
 insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID,SpreadingNoID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}','{8}');
-", id, dr["CuttingID"], this.keyWord, dr["cutcellid"], this.dateEstCutDate.Text, "New", this.loginID, dr["POId"], dr["SpreadingNoID"]);
+",
+                                id,
+                                dr["CuttingID"],
+                                this.keyWord,
+                                dr["cutcellid"],
+                                this.dateEstCutDate.Text,
+                                "New",
+                                this.loginID,
+                                dr["POId"],
+                                dr["SpreadingNoID"]);
+
                             importay = this.detailTable.Select($@"id = '{dr["CuttingID"]}' 
 and cutcellid = '{dr["cutcellid"]}' 
 and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR SpreadingNoID = '' " : "='" + dr["SpreadingNoID"].ToString() + "'")})");
 
-                            this.importedIDs.Add(id);
+                            this.ImportedIDs.Add(id);
                             if (importay.Length > 0)
                             {
                                 foreach (DataRow ddr in importay)
                                 {
-                                    DualResult Result = DBProxy.Current.Select(null, string.Format("Select * from WorkOrder_Distribute Where workorderukey = '{0}'", ddr["Ukey"]), out cutplan_DetailTb);
-                                    if (!Result)
+                                    DualResult result = DBProxy.Current.Select(null, string.Format("Select * from WorkOrder_Distribute Where workorderukey = '{0}'", ddr["Ukey"]), out DataTable cutplan_DetailTb);
+                                    if (!result)
                                     {
-                                        this.ShowErr(Result);
+                                        this.ShowErr(result);
                                         return;
                                     }
 
@@ -212,7 +226,18 @@ and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR Sp
                                     iu = iu + string.Format(
                                         @"
 insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrderUkey,POID,Remark) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}','{10}');
-", id, ddr["Sewinglineid"], ddr["Cutref"], ddr["Cutno"], ddr["OrderID"], dr["styleid"], ddr["Colorid"], ddr["Cons"], ddr["Ukey"], dr["POID"], remark);
+",
+                                        id,
+                                        ddr["Sewinglineid"],
+                                        ddr["Cutref"],
+                                        ddr["Cutno"],
+                                        ddr["OrderID"],
+                                        dr["styleid"],
+                                        ddr["Colorid"],
+                                        ddr["Cons"],
+                                        ddr["Ukey"],
+                                        dr["POID"],
+                                        remark);
                                 }
 
                                 // 265: CUTTING_P04_Import_Import From Work Order，將id回寫至Workorder.CutplanID
@@ -220,7 +245,13 @@ insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,
                                     @"
 update Workorder set CutplanID = '{0}' 
 where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}' and isnull(SpreadingNoID,'') = '{5}' ;
-", id, dr["CuttingID"], dr["cutcellid"], this.keyWord, this.dateEstCutDate.Text, dr["SpreadingNoID"]);
+",
+                                    id,
+                                    dr["CuttingID"],
+                                    dr["cutcellid"],
+                                    this.keyWord,
+                                    this.dateEstCutDate.Text,
+                                    dr["SpreadingNoID"]);
                             }
 
                             idnum++;
@@ -232,26 +263,34 @@ where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and m
             catch (Exception ex)
             {
                 this.ShowErr(ex);
-                this.importedIDs.Clear();
+                this.ImportedIDs.Clear();
                 return;
             }
 
             #region transaction
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 if (!(upResult = DBProxy.Current.Execute(null, iu)))
                 {
-                    this.ShowErr(upResult);
-                    return;
+                    transactionscope.Dispose();
                 }
                 else
                 {
-                    _transactionscope.Complete();
-                    MyUtility.Msg.WarningBox("Successfully");
+                    transactionscope.Complete();
                 }
             }
+
+            if (!upResult)
+            {
+                this.ShowErr(upResult);
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox("Successfully");
+            }
+
             #endregion
             this.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.Close();

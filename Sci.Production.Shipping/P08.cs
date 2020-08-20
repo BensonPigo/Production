@@ -219,11 +219,11 @@ where sd.ID = '{0}'", masterID);
 
             if (this.CurrentMaintain["Status"].ToString() != "Approved" && this.EditMode)
             {
-                string LocalSuppID = this.CurrentMaintain["LocalSuppID"].ToString();
+                string localSuppID = this.CurrentMaintain["LocalSuppID"].ToString();
 
-                string IsFactory = MyUtility.GetValue.Lookup($@"SELECT IsFactory FROM LocalSupp WHERE ID = '{LocalSuppID}'");
+                string isFactory = MyUtility.GetValue.Lookup($@"SELECT IsFactory FROM LocalSupp WHERE ID = '{localSuppID}'");
 
-                if (MyUtility.Check.Empty(IsFactory) ? false : Convert.ToBoolean(IsFactory))
+                if (MyUtility.Check.Empty(isFactory) ? false : Convert.ToBoolean(isFactory))
                 {
                     this.txtcurrency.ReadOnly = false;
                     this.txtcurrency.IsSupportEditMode = true;
@@ -440,6 +440,7 @@ where sd.ID = '{0}'", masterID);
             this.txtSubconSupplier.TextBox1.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override void ClickCopyAfter()
         {
             base.ClickCopyAfter();
@@ -1103,7 +1104,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             this.comboType2.SelectedIndex = -1;
         }
 
-        private void txtReason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtReason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -1123,7 +1124,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             this.txtReasonDesc.Text = item.GetSelecteds()[0]["Description"].ToString();
         }
 
-        private void txtReason_Validating(object sender, CancelEventArgs e)
+        private void TxtReason_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -1148,7 +1149,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             this.CurrentMaintain["Reason"] = this.txtReason.Text;
         }
 
-        private void comboType2_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboType2_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.comboType.SelectedValue == null || this.comboType2.SelectedValue == null || !this.EditMode || !this.IsDetailInserting)
             {
@@ -1215,22 +1216,22 @@ Non SP# Sample/Mock-up
             }
         }
 
-        private void txtSubconSupplier_Validating(object sender, CancelEventArgs e)
+        private void TxtSubconSupplier_Validating(object sender, CancelEventArgs e)
         {
-            string LocalSuppID = this.txtSubconSupplier.TextBox1.Text;
+            string localSuppID = this.txtSubconSupplier.TextBox1.Text;
 
             DataTable dt;
-            DBProxy.Current.Select(null, $@"SELECT * FROM LocalSupp WHERE ID = '{LocalSuppID}'", out dt);
+            DBProxy.Current.Select(null, $@"SELECT * FROM LocalSupp WHERE ID = '{localSuppID}'", out dt);
 
             if (dt.Rows.Count > 0)
             {
-                string IsFactory = dt.Rows[0]["IsFactory"].ToString();
-                string CurrencyID = dt.Rows[0]["CurrencyID"].ToString();
+                string isFactory = dt.Rows[0]["IsFactory"].ToString();
+                string currencyID = dt.Rows[0]["CurrencyID"].ToString();
 
-                this.CurrentMaintain["LocalSuppID"] = LocalSuppID;
-                this.CurrentMaintain["CurrencyID"] = CurrencyID;
+                this.CurrentMaintain["LocalSuppID"] = localSuppID;
+                this.CurrentMaintain["CurrencyID"] = currencyID;
 
-                if (MyUtility.Check.Empty(IsFactory) ? false : Convert.ToBoolean(IsFactory))
+                if (MyUtility.Check.Empty(isFactory) ? false : Convert.ToBoolean(isFactory))
                 {
                     this.txtcurrency.ReadOnly = false;
                     this.txtcurrency.IsSupportEditMode = true;

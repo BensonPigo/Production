@@ -40,8 +40,10 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            TextBox a = new TextBox();
-            a.Text = Env.User.Keyword;
+            TextBox a = new TextBox
+            {
+                Text = Env.User.Keyword,
+            };
             this.txtcloglocationLocationNo.MDivisionObjectName = a;
 
             DataGridViewGeneratorTextColumnSettings clogLocation = Txtcloglocation.CellClogLocation.GetGridCell(Env.User.Keyword);
@@ -71,12 +73,14 @@ namespace Sci.Production.Logistic
             string strTransferEnd = this.dateTransferDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateTransferDate.Value2).ToString("yyyy/MM/dd");
 
             #region SqlParameter
-            List<SqlParameter> listSQLParameter = new List<SqlParameter>();
-            listSQLParameter.Add(new SqlParameter("@OrderID", this.txtSPNo.Text));
-            listSQLParameter.Add(new SqlParameter("@PoNo", this.txtPONo.Text));
-            listSQLParameter.Add(new SqlParameter("@PackID", this.txtPackID.Text));
-            listSQLParameter.Add(new SqlParameter("@TransferStart", strTransferStart));
-            listSQLParameter.Add(new SqlParameter("@TransferEnd", strTransferEnd));
+            List<SqlParameter> listSQLParameter = new List<SqlParameter>
+            {
+                new SqlParameter("@OrderID", this.txtSPNo.Text),
+                new SqlParameter("@PoNo", this.txtPONo.Text),
+                new SqlParameter("@PackID", this.txtPackID.Text),
+                new SqlParameter("@TransferStart", strTransferStart),
+                new SqlParameter("@TransferEnd", strTransferEnd),
+            };
             #endregion
 
             #region SQL Filter
@@ -494,8 +498,6 @@ order by p2.ID,p2.CTNStartNo
             }
 
             this.ShowWaitMessage("Data Processing...");
-            DataRow drSelect;
-
             StringBuilder warningmsg = new StringBuilder();
             IList<string> insertCmds = new List<string>();
             IList<string> updateCmds = new List<string>();
@@ -508,7 +510,7 @@ from PackingList_detail p2
 inner join PackingList p1 on p2.id=p1.id
 left join pullout p on p1.PulloutID = p.id
 where p2.id='{dr["id"].ToString().Trim()}' 
-and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and p2.DisposeFromClog= 0", out drSelect))
+and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and p2.DisposeFromClog= 0", out DataRow drSelect))
                 {
                     warningmsg.Append($@"<CNT#: {dr["id"]}{dr["CTNStartNo"]}> does not exist!" + Environment.NewLine);
                     continue;
@@ -651,7 +653,7 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Env.User.Keyword}','{dr["OrderID"
             this.grid.ResumeLayout();
         }
 
-        private void chkUpdateOriLocation_CheckedChanged(object sender, EventArgs e)
+        private void ChkUpdateOriLocation_CheckedChanged(object sender, EventArgs e)
         {
             if (this.grid.RowCount == 0 || this.grid == null)
             {

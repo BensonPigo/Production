@@ -29,13 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabDetail = new System.Windows.Forms.TabPage();
-            this.combFGWTMaterial = new Sci.Win.UI.ComboBox();
-            this.label41 = new Sci.Win.UI.Label();
             this.txtLotoFactory = new Sci.Win.UI.TextBox();
             this.label40 = new Sci.Win.UI.Label();
             this.comboResult = new Sci.Win.UI.ComboBox();
@@ -122,10 +120,6 @@
             this.gridAppearance = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabFGWT = new System.Windows.Forms.TabPage();
-            this.panel8 = new Sci.Win.UI.Panel();
-            this.panel7 = new Sci.Win.UI.Panel();
-            this.label43 = new System.Windows.Forms.Label();
-            this.label42 = new System.Windows.Forms.Label();
             this.panel6 = new Sci.Win.UI.Panel();
             this.gridFGWT = new Sci.Win.UI.Grid();
             this.btnEncode = new Sci.Win.UI.Button();
@@ -149,7 +143,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.tabFGWT.SuspendLayout();
-            this.panel7.SuspendLayout();
             this.panel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).BeginInit();
             this.SuspendLayout();
@@ -171,8 +164,6 @@
             // 
             // tabDetail
             // 
-            this.tabDetail.Controls.Add(this.combFGWTMaterial);
-            this.tabDetail.Controls.Add(this.label41);
             this.tabDetail.Controls.Add(this.txtLotoFactory);
             this.tabDetail.Controls.Add(this.label40);
             this.tabDetail.Controls.Add(this.comboResult);
@@ -217,32 +208,6 @@
             this.tabDetail.TabIndex = 0;
             this.tabDetail.Text = "Detail";
             // 
-            // combFGWTMaterial
-            // 
-            this.combFGWTMaterial.AutoCompleteCustomSource.AddRange(new string[] {
-            "KNIT",
-            "WOVEN"});
-            this.combFGWTMaterial.BackColor = System.Drawing.Color.White;
-            this.combFGWTMaterial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.combFGWTMaterial.FormattingEnabled = true;
-            this.combFGWTMaterial.IsSupportUnselect = true;
-            this.combFGWTMaterial.Items.AddRange(new object[] {
-            "KNIT",
-            "WOVEN"});
-            this.combFGWTMaterial.Location = new System.Drawing.Point(127, 301);
-            this.combFGWTMaterial.Name = "combFGWTMaterial";
-            this.combFGWTMaterial.OldText = "";
-            this.combFGWTMaterial.Size = new System.Drawing.Size(121, 24);
-            this.combFGWTMaterial.TabIndex = 44;
-            // 
-            // label41
-            // 
-            this.label41.Location = new System.Drawing.Point(5, 301);
-            this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(119, 23);
-            this.label41.TabIndex = 43;
-            this.label41.Text = "FGWT Material";
-            // 
             // txtLotoFactory
             // 
             this.txtLotoFactory.BackColor = System.Drawing.Color.White;
@@ -285,7 +250,7 @@
             this.comboNeck.Items.AddRange(new object[] {
             "Yes",
             "No"});
-            this.comboNeck.Location = new System.Drawing.Point(403, 331);
+            this.comboNeck.Location = new System.Drawing.Point(403, 307);
             this.comboNeck.Name = "comboNeck";
             this.comboNeck.OldText = "";
             this.comboNeck.Size = new System.Drawing.Size(121, 24);
@@ -364,7 +329,7 @@
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label18.Location = new System.Drawing.Point(8, 335);
+            this.label18.Location = new System.Drawing.Point(8, 311);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(389, 20);
             this.label18.TabIndex = 33;
@@ -657,14 +622,14 @@
             this.gridActualShrinkage.Location = new System.Drawing.Point(0, 0);
             this.gridActualShrinkage.Name = "gridActualShrinkage";
             this.gridActualShrinkage.ReadOnly = true;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridActualShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridActualShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridActualShrinkage.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridActualShrinkage.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridActualShrinkage.RowTemplate.Height = 24;
@@ -1295,14 +1260,14 @@
             this.gridAppearance.Location = new System.Drawing.Point(6, 21);
             this.gridAppearance.Name = "gridAppearance";
             this.gridAppearance.ReadOnly = true;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAppearance.RowTemplate.Height = 24;
@@ -1313,8 +1278,6 @@
             // 
             // tabFGWT
             // 
-            this.tabFGWT.Controls.Add(this.panel8);
-            this.tabFGWT.Controls.Add(this.panel7);
             this.tabFGWT.Controls.Add(this.panel6);
             this.tabFGWT.Location = new System.Drawing.Point(4, 25);
             this.tabFGWT.Name = "tabFGWT";
@@ -1323,53 +1286,13 @@
             this.tabFGWT.TabIndex = 1;
             this.tabFGWT.Text = "FGWT";
             // 
-            // panel8
-            // 
-            this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel8.Location = new System.Drawing.Point(3, 418);
-            this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(1045, 6);
-            this.panel8.TabIndex = 3;
-            // 
-            // panel7
-            // 
-            this.panel7.Controls.Add(this.label43);
-            this.panel7.Controls.Add(this.label42);
-            this.panel7.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel7.Location = new System.Drawing.Point(3, 424);
-            this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(1045, 53);
-            this.panel7.TabIndex = 2;
-            // 
-            // label43
-            // 
-            this.label43.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label43.AutoSize = true;
-            this.label43.ForeColor = System.Drawing.Color.Red;
-            this.label43.Location = new System.Drawing.Point(6, 28);
-            this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(497, 17);
-            this.label43.TabIndex = 9;
-            this.label43.Text = "WOVEN： When -3 < (AfterWash - BeforeWash) < +5 Result Pass, other Fail.";
-            // 
-            // label42
-            // 
-            this.label42.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label42.AutoSize = true;
-            this.label42.ForeColor = System.Drawing.Color.Red;
-            this.label42.Location = new System.Drawing.Point(6, 6);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(480, 17);
-            this.label42.TabIndex = 8;
-            this.label42.Text = "KNIT ： When -2 < (AfterWash - BeforeWash) < +3 Result Pass, other Fail.";
-            // 
             // panel6
             // 
             this.panel6.Controls.Add(this.gridFGWT);
-            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel6.Location = new System.Drawing.Point(3, 3);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(1045, 415);
+            this.panel6.Size = new System.Drawing.Size(1045, 474);
             this.panel6.TabIndex = 1;
             // 
             // gridFGWT
@@ -1388,20 +1311,20 @@
             this.gridFGWT.Location = new System.Drawing.Point(0, 0);
             this.gridFGWT.Name = "gridFGWT";
             this.gridFGWT.ReadOnly = true;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridFGWT.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridFGWT.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFGWT.RowTemplate.Height = 24;
             this.gridFGWT.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridFGWT.ShowCellToolTips = false;
-            this.gridFGWT.Size = new System.Drawing.Size(1045, 415);
+            this.gridFGWT.Size = new System.Drawing.Size(1045, 474);
             this.gridFGWT.TabIndex = 1;
             // 
             // btnEncode
@@ -1505,8 +1428,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.tabFGWT.ResumeLayout(false);
-            this.panel7.ResumeLayout(false);
-            this.panel7.PerformLayout();
             this.panel6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).EndInit();
             this.ResumeLayout(false);
@@ -1608,14 +1529,8 @@
         private Win.UI.ComboBox comboResult;
         private Win.UI.TextBox txtLotoFactory;
         private Win.UI.Label label40;
-        private Win.UI.ComboBox combFGWTMaterial;
-        private Win.UI.Label label41;
         private Win.UI.Panel panel6;
         private Win.UI.Grid gridFGWT;
-        private Win.UI.Panel panel7;
-        private System.Windows.Forms.Label label43;
-        private System.Windows.Forms.Label label42;
         private Win.UI.Button btnToFGWT;
-        private Win.UI.Panel panel8;
     }
 }

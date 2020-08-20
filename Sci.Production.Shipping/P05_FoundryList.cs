@@ -5,18 +5,25 @@ using System.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P05_FoundryList : Win.Subs.Base
     {
         private string GMTBookingID;
         private string ShipModeID;
 
-        public P05_FoundryList(string _GMTBookingID, string _ShipModeID)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P05_FoundryList"/> class.
+        /// </summary>
+        /// <param name="gMTBookingID">GMTBooking ID</param>
+        /// <param name="shipModeID">ShipModeID</param>
+        public P05_FoundryList(string gMTBookingID, string shipModeID)
         {
             this.InitializeComponent();
-            this.GMTBookingID = _GMTBookingID;
-            this.ShipModeID = _ShipModeID;
+            this.GMTBookingID = gMTBookingID;
+            this.ShipModeID = shipModeID;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

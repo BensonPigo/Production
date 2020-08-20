@@ -18,6 +18,10 @@ namespace Sci.Production.Shipping
         private string strStatus;
         private DataTable dtPrintTable;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R15"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public R15(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -27,6 +31,7 @@ namespace Sci.Production.Shipping
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.dateAddDate1 = this.dateAddDate.Value1;
@@ -38,6 +43,7 @@ namespace Sci.Production.Shipping
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             StringBuilder sqlcmd = new StringBuilder();
@@ -146,6 +152,7 @@ where 1=1");
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dtPrintTable == null || this.dtPrintTable.Rows.Count == 0)

@@ -7,8 +7,13 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P15 : Win.Tems.Input6
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P15"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P15(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -17,6 +22,7 @@ namespace Sci.Production.Shipping
             this.detailgrid.AllowUserToOrderColumns = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -181,9 +187,10 @@ and Junk = 0
             this.detailgrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string ExportID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
+            string exportID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
 
             this.DetailSelectCommand = $@"
 select	e.ID
@@ -218,12 +225,13 @@ outer apply (
 					for xml path('')					
 				), 1, 1, '')
 ) ContainerNo
-where e.MainExportID = '{ExportID}'
+where e.MainExportID = '{exportID}'
 order by e.ID
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings colContainers = new DataGridViewGeneratorTextColumnSettings();
