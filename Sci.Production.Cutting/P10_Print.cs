@@ -508,12 +508,12 @@ SP#:{r.SP}
 Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
 Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}     No: {no}
+Cut#: {r.Body_Cut}
 Color: {r.Color}
 Size: {r.Size}     Part: {r.Parts}
 Dese: {r.Desc}
 Sub Process: {r.Artwork}
-Qty: {r.Quantity}";
+Qty: {r.Quantity}     No: {no}";
                     }
                     else
                     {
