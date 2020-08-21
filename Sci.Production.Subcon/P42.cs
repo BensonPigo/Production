@@ -121,7 +121,11 @@ where b.Orderid = '{drSelected["OrderID"]}'
                 ;
             }
 
-            int subprocessStartColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["OffLineDate"].Ordinal;
+            this.Helper.Controls.Grid.Generator(this.grid1)
+                .Date("LastSewDate", header: "Last Sew. Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("SewQty", header: "Sew. Qty", width: Widths.AnsiChars(6), iseditingreadonly: true);
+
+            int subprocessStartColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["SewQty"].Ordinal;
             int BundleReplacementColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["BundleReplacement"].Ordinal;
             foreach (DataColumn column in ((DataTable)this.listControlBindingSource1.DataSource).Columns)
             {
@@ -192,9 +196,10 @@ where b.Orderid = '{drSelected["OrderID"]}'
                 MyUtility.Check.Empty(this.txtPO.Text) &&
                 MyUtility.Check.Empty(this.dateSCIDelivery.Value1) &&
                 MyUtility.Check.Empty(this.dateInline.Value1) &&
-                MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
+                MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) &&
+                !this.dateLastSewDate.HasValue)
             {
-                MyUtility.Msg.WarningBox("SP#, P.O., SCI Delivery, Inline Date and Buyer Delivery cannot all empty.");
+                MyUtility.Msg.WarningBox("SP#, P.O., SCI Delivery, Inline Date, Last Sew. Date and Buyer Delivery cannot all empty.");
                 return;
             }
 
@@ -247,6 +252,11 @@ where b.Orderid = '{drSelected["OrderID"]}'
                 where += $" and o.BuyerDelivery between '{((DateTime)this.dateBuyerDelivery.Value1).ToString("d")}' and '{((DateTime)this.dateBuyerDelivery.Value2).ToString("d")}' ";
             }
 
+            if (this.dateLastSewDate.HasValue)
+            {
+                where += $" and vsis.LastSewDate between '{((DateTime)this.dateLastSewDate.Value1).ToString("d")}' and '{((DateTime)this.dateLastSewDate.Value2).ToString("d")}' ";
+            }
+
             if (!MyUtility.Check.Empty(this.dateInline.Value1))
             {
                 if (summaryType == 0)
@@ -277,10 +287,13 @@ where b.Orderid = '{drSelected["OrderID"]}'
 	w.CutCellid,
 	o.SewLine,
 	InLineDate=o.SewInLine,
-	OffLineDate=o.SewOffLine
+	OffLineDate=o.SewOffLine,
+    vsis.LastSewDate,
+    vsis.SewQty
 into #tmpOrders
 from orders o with(nolock)
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
+left join dbo.View_SewingInfoSP vsis WITH (NOLOCK) on vsis.OrderID = o.ID
 outer apply(
 	select CutCellid=STUFF((
 		select concat(',',w1.CutCellid)
@@ -444,7 +457,8 @@ from #tmp
 PIVOT(min(Status) for SubProcessID in('+@AllSubprocess+N'))as pt
 
 select 
-	o.FactoryID,OrderID=o.ID,o.POID,o.CustPONo,o.ProgramID,o.StyleID,o.BrandID,o.SeasonID,o.CutCellid,o.SewLine,o.InLineDate,o.OffLineDate,
+	o.FactoryID,OrderID=o.ID,o.POID,o.CustPONo,o.ProgramID,o.StyleID,o.BrandID,o.SeasonID,o.CutCellid,o.SewLine,o.InLineDate,o.OffLineDate, o.LastSewDate,
+    o.SewQty,
 	'+@Col+N'
     ,BundleReplacement=RQ
 from #tmpOrders o
@@ -484,11 +498,14 @@ select
 	w.CutCellid,
 	o.SewLine,
 	InLineDate=s.Inline,
-	OffLineDate=s.Offline
+	OffLineDate=s.Offline,
+    vsis.LastSewDate,
+    vsis.SewQty
 into #tmpOrders
 from orders o with(nolock)
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 left join Order_Qty oq with(nolock) on oq.ID = o.ID
+left join dbo.View_SewingInfoArticleSize vsis WITH (NOLOCK) on vsis.OrderID = oq.ID and vsis.Article = oq.Article and vsis.SizeCode = oq.SizeCode
 outer apply(
 	select CutCellid=STUFF((
 		select concat(',',w1.CutCellid)
@@ -667,7 +684,8 @@ from #tmp
 PIVOT(min(Status) for SubProcessID in('+@AllSubprocess+N'))as pt
 
 select 
-	o.FactoryID,OrderID=o.ID,o.POID,o.CustPONo,o.ProgramID,o.StyleID,o.BrandID,o.SeasonID,o.Article,o.Sizecode,o.CutCellid,o.SewLine,o.InLineDate,o.OffLineDate,
+	o.FactoryID,OrderID=o.ID,o.POID,o.CustPONo,o.ProgramID,o.StyleID,o.BrandID,o.SeasonID,o.Article,o.Sizecode,o.CutCellid,o.SewLine,o.InLineDate,o.OffLineDate, o.LastSewDate,
+    o.SewQty,
 	'+@Col+N'
     ,BundleReplacement=RQ
 from #tmpOrders o

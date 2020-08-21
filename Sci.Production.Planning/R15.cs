@@ -75,9 +75,10 @@ namespace Sci.Production.Planning
                 MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) &&
                 MyUtility.Check.Empty(this.dateCutOffDate.Value1) &&
                 MyUtility.Check.Empty(this.datePlanDate.Value1) &&
+                !this.dateLastSewDate.HasValue &&
                 (MyUtility.Check.Empty(this.txtSPNoStart.Text) || MyUtility.Check.Empty(this.txtSPNoEnd.Text)))
             {
-                MyUtility.Msg.WarningBox("< SCI Delivery > \r\n< Buyer Delivery > \r\n< Sewing Inline > \r\n< Cut Off Date > \r\n< Cust RQS Date > \r\n< Plan Date > \r\n< SP# > \r\ncan't be empty!!");
+                MyUtility.Msg.WarningBox("< SCI Delivery > \r\n< Buyer Delivery > \r\n< Sewing Inline > \r\n< Cut Off Date > \r\n< Cust RQS Date > \r\n< Plan Date > \r\n< SP# > \r\n< Last Sew. Date > \r\ncan't be empty!!");
                 return false;
             }
 
@@ -460,6 +461,13 @@ namespace Sci.Production.Planning
             {
                 sqlCmd.Append(@" and o.id <= @spno2 ");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@spno2", this.spno2));
+            }
+
+            if (this.dateLastSewDate.HasValue)
+            {
+                sqlCmd.Append($@" and exists(select 1 from View_SewingInfoSP vsis with (nolock) where vsis.OrderID = o.ID and vsis.LastSewDate between @LastSewDateFrom and @LastSewDateTo) ");
+                cmds.Add(new System.Data.SqlClient.SqlParameter("@LastSewDateFrom", this.dateLastSewDate.DateBox1.Value));
+                cmds.Add(new System.Data.SqlClient.SqlParameter("@LastSewDateTo", this.dateLastSewDate.DateBox2.Value));
             }
 
             if (!MyUtility.Check.Empty(this.brandid))
@@ -1068,6 +1076,13 @@ WHERE 1=1 {whereIncludeCancelOrder} "));
             {
                 sqlCmd.Append(@" and o.mdivisionid = @MDivision");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@MDivision", this.mdivision));
+            }
+
+            if (this.dateLastSewDate.HasValue)
+            {
+                sqlCmd.Append($@" and exists(select 1 from View_SewingInfoSP vsis with (nolock) where vsis.OrderID = o.ID and vsis.LastSewDate between @LastSewDateFrom and @LastSewDateTo) ");
+                cmds.Add(new System.Data.SqlClient.SqlParameter("@LastSewDateFrom", this.dateLastSewDate.DateBox1.Value));
+                cmds.Add(new System.Data.SqlClient.SqlParameter("@LastSewDateTo", this.dateLastSewDate.DateBox2.Value));
             }
 
             if (!MyUtility.Check.Empty(this.factory))
