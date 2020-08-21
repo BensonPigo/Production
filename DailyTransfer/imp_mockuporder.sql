@@ -49,7 +49,7 @@ else
 --1. 優先取得Production.dbo.DateInfo
 	Set @DateInfoName ='imp_MockupOrder';
 	declare @Odate_s date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
-	declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
+	SET @Remark = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 	if @Odate_s is Null

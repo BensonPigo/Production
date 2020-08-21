@@ -56,7 +56,7 @@ else
 declare @DateInfoName2 varchar(30) ='SewingOutput2';
 declare @DateStart2 date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName2);
 declare @DateEnd2 date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName2);
-declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
+set @Remark = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 if @DateStart2 is Null
