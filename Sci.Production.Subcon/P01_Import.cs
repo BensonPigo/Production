@@ -618,7 +618,7 @@ select  Selected = 0
 from  #baseArtworkReq bar
 inner join Orders o with (nolock) on o.ID = bar.OrderID
 inner join dbo.Order_Artwork oa WITH (NOLOCK) on oa.ID = bar.OrderID and 
-                                                 (bar.Article = oa.Article or bar.Article = '') and
+                                                 (bar.Article = oa.Article or bar.Article = '' or oa.Article = '----') and
                                                  oa.ArtworkTypeID = bar.ArtworkTypeID and
                                                  oa.ArtworkID = bar.ArtworkID      and
                                                  oa.PatternCode = bar.PatternCode  and
