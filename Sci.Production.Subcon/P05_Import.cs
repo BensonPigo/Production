@@ -357,7 +357,9 @@ where id ='{this.dr_artworkReq["artworktypeid"]}'
             string tmpcurrentReq = string.Empty;
 
             strSQLCmd = $@"
-select  [LocalSuppId] = '{this.dr_artworkReq["LocalSuppId"]}'
+--使用distinct是因為 Order_Artwork若同時有正常Article與----資料時，會抓出重複資料
+select  distinct
+        [LocalSuppId] = '{this.dr_artworkReq["LocalSuppId"]}'
 		, [orderID] = o.ID
         , oq.Article
         , oq.SizeCode
@@ -377,7 +379,9 @@ select  [LocalSuppId] = '{this.dr_artworkReq["LocalSuppId"]}'
 into #baseArtworkReq
 from  orders o WITH (NOLOCK)
 inner join Order_Qty oq with (nolock) on o.ID = oq.ID
-inner join dbo.Order_Artwork oa on oa.ID = o.ID and oq.Article = oa.Article and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
+inner join dbo.Order_Artwork oa on  oa.ID = o.ID and 
+                                    (oq.Article = oa.Article or oa.Article = '----') and 
+                                    oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
 left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 where f.IsProduceFty=1
