@@ -880,6 +880,86 @@ INSERT INTO GarmentTest_Detail_FGWT
                         }
                     }
                     #endregion
+
+                    #region 寫入GarmentTest_Detail_FGPT
+
+                    List<FGPT> fGPTs = new List<FGPT>();
+
+                    bool isRugbyFootBall = MyUtility.Check.Seek($@"select 1 from Style s where s.id='{this.CurrentMaintain["StyleID"]}' AND s.BrandID='{this.CurrentMaintain["BrandID"]}' AND s.SeasonID='{this.CurrentMaintain["SeasonID"]}' AND s.ProgramID like '%FootBall%'");
+                    bool isLining = MyUtility.Check.Seek($@"select 1 from Style s where s.id='{this.CurrentMaintain["StyleID"]}' AND s.BrandID='{this.CurrentMaintain["BrandID"]}' AND s.SeasonID='{this.CurrentMaintain["SeasonID"]}' AND s.Description  like '%with lining%' ");
+
+                    // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
+                    if (containsT && containsB)
+                    {
+                        fGPTs = GetDefaultFGPT(false, false, true, isRugbyFootBall, isLining, "S");
+                    }
+                    else if (containsT)
+                    {
+                        fGPTs = GetDefaultFGPT(containsT, false, false, isRugbyFootBall, isLining, "T");
+                    }
+                    else
+                    {
+                        fGPTs = GetDefaultFGPT(false, containsB, false, isRugbyFootBall, isLining, "B");
+                    }
+
+                    insertCmd.Clear();
+                    parameters.Clear();
+                    idx = 0;
+
+                    foreach (var fGPT in fGPTs)
+                    {
+                        string location = string.Empty;
+
+                        switch (fGPT.Location)
+                        {
+                            case "Top":
+                                location = "T";
+                                break;
+                            case "Bottom":
+                                location = "B";
+                                break;
+                            case "Full": // Top+Bottom = Full
+                                location = "S";
+                                break;
+                            default:
+                                location = fGPT.Location;
+                                break;
+                        }
+
+                        insertCmd.Append($@"
+
+INSERT INTO GarmentTest_Detail_FGPT
+           (ID,No,Location,Type,TestDetail,TestUnit,Criteria,TestName)
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx}
+           , @TestDetail{idx}
+           , @TestUnit{idx}
+           , @Criteria{idx}  
+           , @TestName{idx})
+
+");
+                        parameters.Add(new SqlParameter($"@Location{idx}", location));
+                        parameters.Add(new SqlParameter($"@Type{idx}", fGPT.Type));
+                        parameters.Add(new SqlParameter($"@TestDetail{idx}", fGPT.TestDetail));
+                        parameters.Add(new SqlParameter($"@TestUnit{idx}", fGPT.TestUnit));
+                        parameters.Add(new SqlParameter($"@Criteria{idx}", fGPT.Criteria));
+                        parameters.Add(new SqlParameter($"@TestName{idx}", fGPT.TestName));
+                        idx++;
+                    }
+
+                    // 找不到才Insert
+                    if (!MyUtility.Check.Seek($"SELECT 1 FROM GarmentTest_Detail_FGPT WHERE ID ='{garmentTest_Detail_ID}' AND NO='{garmentTest_Detail_No}'"))
+                    {
+                        DualResult r = DBProxy.Current.Execute(null, insertCmd.ToString(), parameters);
+                        if (!r)
+                        {
+                            this.ShowErr(r);
+                        }
+                    }
+                    #endregion
                 }
             }
 

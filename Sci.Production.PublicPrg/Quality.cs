@@ -5,6 +5,7 @@ using Sci.Data;
 using Ict;
 using Ict.Win;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sci.Production.PublicPrg
 {
@@ -207,7 +208,7 @@ namespace Sci.Production.PublicPrg
         }
 
         /// <summary>
-        /// GarmentTest_Detail_FGWT 和 SampleGarmentTest_Detail的欄位物件
+        /// GarmentTest_Detail_FGWT 和 SampleGarmentTest_Detail_FGWT的欄位物件
         /// </summary>
         public class FGWT
         {
@@ -220,6 +221,26 @@ namespace Sci.Production.PublicPrg
             public string TestDetail { get; set; }
 
             public double Criteria { get; set; }
+        }
+
+        /// <summary>
+        /// GarmentTest_Detail_FGPT 和 SampleGarmentTest_Detail_FGPT的欄位物件
+        /// </summary>
+        public class FGPT
+        {
+            public string Location { get; set; }
+
+            public string Type { get; set; }
+
+            public string Scale { get; set; }
+
+            public string TestDetail { get; set; }
+
+            public double Criteria { get; set; }
+
+            public string TestUnit { get; set; }
+
+            public string TestName { get; set; }
         }
 
         /// <summary>
@@ -312,9 +333,9 @@ namespace Sci.Production.PublicPrg
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment g) width of top of leg", Criteria = percent_three_two },
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: skirt a) length from waist to bottom hem", Criteria = percent_three_two },
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: skirt b) width at waistband", Criteria = percent_three_two },
-                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: skirt c) width below top/bottom edge of waistband (average)" , Criteria = percent_three_two},
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: skirt c) width below top/bottom edge of waistband (average)", Criteria = percent_three_two},
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of skirt a) length from waist to bottom hem", Criteria = percent_three_two },
-                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of skirt b) width at waistband" , Criteria = percent_three_two},
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of skirt b) width at waistband", Criteria = percent_three_two},
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of skirt c) width below top/bottom edge of waistband (average)", Criteria = percent_three_two },
             };
 
@@ -363,7 +384,7 @@ namespace Sci.Production.PublicPrg
                 new FGWT() { Location = string.Empty, TestDetail = "cm", Type = "spirality: Garment - hem opening in cm", Criteria = cm },
                 new FGWT() { Location = string.Empty, TestDetail = "grade", Type = "appearance after laundering: Garment - colour change", Scale = string.Empty },
                 new FGWT() { Location = string.Empty, TestDetail = "grade", Type = "appearance after laundering: Garment - staining", Scale = string.Empty },
-                new FGWT() { Location = string.Empty, TestDetail = "pass/fail",Type = "appearance after laundering: Garment - physical changes", Scale = string.Empty },
+                new FGWT() { Location = string.Empty, TestDetail = "pass/fail", Type = "appearance after laundering: Garment - physical changes", Scale = string.Empty },
             };
 
             if (isTop)
@@ -387,6 +408,184 @@ namespace Sci.Production.PublicPrg
             }
 
             return defaultFGWTList;
+        }
+
+        /// <summary>
+        /// 取得預設FGPT
+        /// </summary>
+        /// <returns>res</returns>
+        public static List<FGPT> GetDefaultFGPT(bool isTop, bool isBottom, bool isTop_Bottom, bool isRugbyFootBall, bool isLining,/*, string mtlTypeID*/ string location)
+        {
+            List<FGPT> defaultFGPTList = new List<FGPT>();
+
+            int liningCriteria = 130;
+            int lowerFullBodywearCriteria = 250;
+
+            /*除了以上兩種情況，都以Scale欄位作為標準，因此不寫入Criteria欄位視作百分比欄位*/
+
+            List<FGPT> upperOnly = new List<FGPT>()
+            {
+                new FGPT() { Location = "Top", TestDetail = "mm", TestUnit = "mm", TestName = "PHX-AP0413", Type = "seam slippage: Garment - weft - upper bodywear 150N", Criteria = 4 },
+                new FGPT() { Location = "Top", TestDetail = "mm", TestUnit = "mm", TestName = "PHX-AP0413", Type = "seam slippage: Garment - warp - upper bodywear 150N", Criteria = 4 },
+                new FGPT() { Location = "Top", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - weft - upper bodywear 150N", Criteria = 150 },
+                new FGPT() { Location = "Top", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - warp - upper bodywear 150N", Criteria = 150 },
+                new FGPT() { Location = "Top", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No seam breakage: Garment - weft - upper bodywear 150N", Criteria = 150 },
+                new FGPT() { Location = "Top", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No seam breakage: Garment - warp - upper bodywear 150N", Criteria = 150 },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - length direction - upper body wear", Criteria = 150 },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - width direction - upper body wear", Criteria = 150 },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - upper body wear", Criteria = 150 },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - upper body wear", Criteria = 150 },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - length direction - upper bodywear", Criteria = 150 },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP045", Type = "seam breakage: Garment - width direction - upper bodywear", Criteria = 150 },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP045", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - upper bodywear", Criteria = 150 },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP045", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - upper bodywear", Criteria = 150 },
+            };
+
+            List<FGPT> lowerOnly = new List<FGPT>()
+            {
+                new FGPT() { Location = "Bottom", TestDetail = "mm", TestUnit = "mm", TestName = "PHX-AP0413", Type = "seam slippage: Garment - weft - lower body wear/ full body wear 160N", Criteria = 4 },
+                new FGPT() { Location = "Bottom", TestDetail = "mm", TestUnit = "mm", TestName = "PHX-AP0413", Type = "seam slippage: Garment - warp - lower body wear/ full body wear 160N", Criteria = 4 },
+                new FGPT() { Location = "Bottom", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - weft - lower body wear/ full body wear 160N", Criteria = 160 },
+                new FGPT() { Location = "Bottom", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - warp - lower body wear/ full body wear 160N", Criteria = 160 },
+                new FGPT() { Location = "Bottom", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No seam breakage: Garment - weft - lower body wear/ full body wear 160N", Criteria = 160 },
+                new FGPT() { Location = "Bottom", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No seam breakage: Garment - warp - lower body wear/ full body wear 160N", Criteria = 160 },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450",  Type = "seam breakage: Garment - length direction - lower body wear/ full body wear", Criteria = 250 },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - width direction - lower body wear/ full body wear", Criteria = lowerFullBodywearCriteria },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - lower body wear/ full body wear", Criteria = lowerFullBodywearCriteria },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - lower body wear/ full body wear", Criteria = lowerFullBodywearCriteria },
+            };
+
+            List<FGPT> fullBody = new List<FGPT>()
+            {
+                new FGPT() { Location = "Full", TestDetail = "mm", TestUnit = "mm", TestName = "PHX-AP0413", Type = "seam slippage: Garment - weft - lower body wear/ full body wear 160N", Criteria = 4 },
+                new FGPT() { Location = "Full", TestDetail = "mm", TestUnit = "mm", TestName = "PHX-AP0413", Type = "seam slippage: Garment - warp - lower body wear/ full body wear 160N", Criteria = 4 },
+                new FGPT() { Location = "Full", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - weft - lower body wear/ full body wear 160N", Criteria = lowerFullBodywearCriteria },
+                new FGPT() { Location = "Full", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - warp - lower body wear/ full body wear 160N", Criteria = 160 },
+                new FGPT() { Location = "Full", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No seam breakage: Garment - weft - lower body wear/ full body wear 160N", Criteria = 160 },
+                new FGPT() { Location = "Full", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No seam breakage: Garment - warp - lower body wear/ full body wear 160N", Criteria = 160 },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - width direction - lower body wear/ full body wear", Criteria = lowerFullBodywearCriteria },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - length direction - lower body wear/ full body wear", Criteria = lowerFullBodywearCriteria },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - lower body wear/ full body wear", Criteria = lowerFullBodywearCriteria },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - lower body wear/ full body wear", Criteria = lowerFullBodywearCriteria },
+
+            };
+
+            List<FGPT> lining_Upper = new List<FGPT>()
+            {
+                new FGPT() { Location = "Top", TestDetail = "mm", TestUnit = "mm", TestName = "PHX-AP0413", Type = "seam slippage: Garment - weft - lining of upper bodywear 130N", Criteria = 4 },
+                new FGPT() { Location = "Top", TestDetail = "mm", TestUnit = "mm", TestName = "PHX-AP0413", Type = "seam slippage: Garment - warp - lining of upper bodywear 130N", Criteria = 4 },
+                new FGPT() { Location = "Top", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - weft - lining of upper bodywear 130N", Criteria = 130 },
+                new FGPT() { Location = "Top", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - warp - lining of upper bodywear 130N", Criteria = 130 },
+                new FGPT() { Location = "Top", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No seam breakage: Garment - weft - lining of upper bodywear 130N", Criteria = 130 },
+                new FGPT() { Location = "Top", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No seam breakage: Garment - warp - lining of upper bodywear 130N", Criteria = 130 },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - length direction - lining upper body wear", Criteria = liningCriteria },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - length direction - lining of upper bodywear", Criteria = liningCriteria },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - width direction - lining upper body wear", Criteria = liningCriteria },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - width direction - lining of upper bodywear", Criteria = liningCriteria },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - lining upper body wear", Criteria = liningCriteria },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - lining of upper bodywear", Criteria = liningCriteria },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - lining upper body wear", Criteria = liningCriteria },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - lining of upper bodywear", Criteria = liningCriteria },
+            };
+
+            List<FGPT> lining_Lower = new List<FGPT>()
+            {
+                new FGPT() { Location = "Bottom", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - weft - lining of lower body wear/ full body wear 130N", Criteria = 130 },
+                new FGPT() { Location = "Bottom", TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - warp - lining of lower body wear/ full body wear 130N", Criteria = 130 },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0413", Type = "No seam breakage: Garment - warp - lining of lower body wear/ full body wear 130N", Criteria = 130 },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - length direction - lining of lower body wear/ full body wear", Criteria = liningCriteria },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - length direction - lining of lower body wear/ full body", Criteria = liningCriteria },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - width direction - lining of lower body wear/ full body wear", Criteria = liningCriteria },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - width direction - lining of lower body wear/ full body", Criteria = liningCriteria },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - lining of lower body wear/ full body wear", Criteria = liningCriteria },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - lining of lower body wear/ full body", Criteria = liningCriteria },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - lining of lower body wear/ full body wear", Criteria = liningCriteria },
+                new FGPT() { Location = "Bottom", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - lining of lower body wear/ full body", Criteria = liningCriteria },
+            };
+
+            List<FGPT> lining_Full = new List<FGPT>()
+            {
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - weft - lining of lower body wear/ full body wear 130N", Criteria = liningCriteria },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - warp - lining of lower body wear/ full body wear 130N", Criteria = liningCriteria },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0413", Type = "No seam breakage: Garment - warp - lining of lower body wear/ full body wear 130N", Criteria = 130 },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - length direction - lining of lower body wear/ full body wear", Criteria = liningCriteria },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - length direction - lining of lower body wear/ full body", Criteria = liningCriteria },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - width direction - lining of lower body wear/ full body wear", Criteria = liningCriteria },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - width direction - lining of lower body wear/ full body", Criteria = liningCriteria },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - lining of lower body wear/ full body wear", Criteria = liningCriteria },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - lining of lower body wear/ full body", Criteria = liningCriteria },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - lining of lower body wear/ full body wear", Criteria = liningCriteria },
+                new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - lining of lower body wear/ full body", Criteria = liningCriteria },
+            };
+
+            List<FGPT> rugby_FootBall = new List<FGPT>()
+            {
+                new FGPT() { TestDetail = "mm", TestUnit = "mm", TestName = "PHX-AP0413", Type = "seam slippage: Garment - weft - Rugby/Football 160N", Criteria = 4 },
+                new FGPT() { TestDetail = "mm", TestUnit = "mm", TestName = "PHX-AP0413", Type = "seam slippage: Garment - warp - Rugby/Football 160N", Criteria = 4 },
+                new FGPT() { TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - weft - Rugby/Football 160N", Criteria = 160 },
+                new FGPT() { TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No fabric breakage: Garment - warp - Rugby/Football 160N", Criteria = 160 },
+                new FGPT() { TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No seam breakage: Garment - weft -Rugby/Football 160N", Criteria = 160 },
+                new FGPT() { TestDetail = "pass/fail", TestUnit = "N", TestName = "PHX-AP0413", Type = "No seam breakage: Garment - warp - Rugby/Football 160N", Criteria = 160 },
+            };
+
+            if (isLining)
+            {
+                if (isTop)
+                {
+                    defaultFGPTList.AddRange(lining_Upper);
+                    defaultFGPTList.AddRange(upperOnly);
+                }
+
+                if (isBottom)
+                {
+                    defaultFGPTList.AddRange(lining_Lower);
+                    defaultFGPTList.AddRange(lowerOnly);
+                }
+
+                if (isTop_Bottom)
+                {
+                    defaultFGPTList.AddRange(lining_Full);
+                    defaultFGPTList.AddRange(fullBody);
+                }
+            }
+            else
+            {
+                if (isTop)
+                {
+                    defaultFGPTList.AddRange(upperOnly);
+                }
+
+                if (isBottom)
+                {
+                    defaultFGPTList.AddRange(lowerOnly);
+                }
+
+                if (isTop_Bottom)
+                {
+                    defaultFGPTList.AddRange(fullBody);
+                }
+            }
+
+            if (isRugbyFootBall)
+            {
+                foreach (var fGPT in rugby_FootBall)
+                {
+                    fGPT.Location = location;
+                }
+
+                defaultFGPTList.AddRange(rugby_FootBall);
+            }
+
+            defaultFGPTList.Add(new FGPT()
+            {
+                Location = string.Empty,
+                Type = "odour: Garment",
+                TestDetail = "pass/fail",
+                TestUnit = "Pass/Fail",
+                TestName = "PHX-AP0451",
+            });
+
+            return defaultFGPTList.OrderBy(o => o.Type).ToList();
         }
     }
 }

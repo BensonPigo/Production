@@ -32,6 +32,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabDetail = new System.Windows.Forms.TabPage();
             this.txtLotoFactory = new Sci.Win.UI.TextBox();
@@ -122,12 +123,16 @@
             this.tabFGWT = new System.Windows.Forms.TabPage();
             this.panel6 = new Sci.Win.UI.Panel();
             this.gridFGWT = new Sci.Win.UI.Grid();
+            this.tabFGPT = new System.Windows.Forms.TabPage();
+            this.panel7 = new Sci.Win.UI.Panel();
+            this.gridFGPT = new Sci.Win.UI.Grid();
             this.btnEncode = new Sci.Win.UI.Button();
             this.btnAmend = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnPDF = new Sci.Win.UI.Button();
             this.btnToFGWT = new Sci.Win.UI.Button();
+            this.btnToFGPT = new Sci.Win.UI.Button();
             this.tabControl1.SuspendLayout();
             this.tabDetail.SuspendLayout();
             this.tabShrinkage.SuspendLayout();
@@ -145,6 +150,9 @@
             this.tabFGWT.SuspendLayout();
             this.panel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).BeginInit();
+            this.tabFGPT.SuspendLayout();
+            this.panel7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridFGPT)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -156,6 +164,7 @@
             this.tabControl1.Controls.Add(this.tabShrinkage);
             this.tabControl1.Controls.Add(this.tabAppearance);
             this.tabControl1.Controls.Add(this.tabFGWT);
+            this.tabControl1.Controls.Add(this.tabFGPT);
             this.tabControl1.Location = new System.Drawing.Point(0, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -1327,6 +1336,58 @@
             this.gridFGWT.Size = new System.Drawing.Size(1045, 474);
             this.gridFGWT.TabIndex = 1;
             // 
+            // tabFGPT
+            // 
+            this.tabFGPT.Controls.Add(this.panel7);
+            this.tabFGPT.Location = new System.Drawing.Point(4, 25);
+            this.tabFGPT.Name = "tabFGPT";
+            this.tabFGPT.Padding = new System.Windows.Forms.Padding(3);
+            this.tabFGPT.Size = new System.Drawing.Size(1051, 480);
+            this.tabFGPT.TabIndex = 3;
+            this.tabFGPT.Text = "FGPT";
+            // 
+            // panel7
+            // 
+            this.panel7.Controls.Add(this.gridFGPT);
+            this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel7.Location = new System.Drawing.Point(3, 3);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(1045, 474);
+            this.panel7.TabIndex = 1;
+            // 
+            // gridFGPT
+            // 
+            this.gridFGPT.AllowUserToAddRows = false;
+            this.gridFGPT.AllowUserToDeleteRows = false;
+            this.gridFGPT.AllowUserToResizeRows = false;
+            this.gridFGPT.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridFGPT.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridFGPT.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridFGPT.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridFGPT.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridFGPT.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridFGPT.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridFGPT.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridFGPT.Location = new System.Drawing.Point(0, 0);
+            this.gridFGPT.Name = "gridFGPT";
+            this.gridFGPT.ReadOnly = true;
+            this.gridFGPT.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridFGPT_EditingKeyProcessing);
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridFGPT.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.gridFGPT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridFGPT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridFGPT.RowTemplate.Height = 24;
+            this.gridFGPT.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridFGPT.ShowCellToolTips = false;
+            this.gridFGPT.Size = new System.Drawing.Size(1045, 474);
+            this.gridFGPT.TabIndex = 1;
+            // 
             // btnEncode
             // 
             this.btnEncode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -1393,9 +1454,21 @@
             this.btnToFGWT.UseVisualStyleBackColor = true;
             this.btnToFGWT.Click += new System.EventHandler(this.BtnToFGWT_Click);
             // 
+            // btnToFGPT
+            // 
+            this.btnToFGPT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToFGPT.Location = new System.Drawing.Point(589, 541);
+            this.btnToFGPT.Name = "btnToFGPT";
+            this.btnToFGPT.Size = new System.Drawing.Size(97, 30);
+            this.btnToFGPT.TabIndex = 7;
+            this.btnToFGPT.Text = "To FGPT";
+            this.btnToFGPT.UseVisualStyleBackColor = true;
+            this.btnToFGPT.Click += new System.EventHandler(this.BtnToFGPT_Click);
+            // 
             // P04_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1059, 572);
+            this.Controls.Add(this.btnToFGPT);
             this.Controls.Add(this.btnToFGWT);
             this.Controls.Add(this.btnPDF);
             this.Controls.Add(this.btnEdit);
@@ -1430,6 +1503,9 @@
             this.tabFGWT.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).EndInit();
+            this.tabFGPT.ResumeLayout(false);
+            this.panel7.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridFGPT)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1532,5 +1608,9 @@
         private Win.UI.Panel panel6;
         private Win.UI.Grid gridFGWT;
         private Win.UI.Button btnToFGWT;
+        private System.Windows.Forms.TabPage tabFGPT;
+        private Win.UI.Panel panel7;
+        private Win.UI.Grid gridFGPT;
+        private Win.UI.Button btnToFGPT;
     }
 }
