@@ -14,7 +14,7 @@ namespace Sci.Production.PublicPrg
         /// </summary>
         /// <param name="orderID"></param>
         /// <returns>bool</returns>
-        public static bool UpdateOrdersCTN(string orderID)
+        public static DualResult UpdateOrdersCTN(string orderID)
         {
             string sqlCmd;
 
@@ -53,12 +53,8 @@ PackErrCTN = (
 where ID = '{0}'",
                 orderID);
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
-            if (!result)
-            {
-                return false;
-            }
 
-            return true;
+            return result;
         }
 
         /// <summary>
