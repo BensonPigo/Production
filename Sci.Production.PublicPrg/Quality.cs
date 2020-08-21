@@ -533,16 +533,19 @@ namespace Sci.Production.PublicPrg
                 if (isTop)
                 {
                     defaultFGPTList.AddRange(lining_Upper);
+                    defaultFGPTList.AddRange(upperOnly);
                 }
 
                 if (isBottom)
                 {
                     defaultFGPTList.AddRange(lining_Lower);
+                    defaultFGPTList.AddRange(lowerOnly);
                 }
 
                 if (isTop_Bottom)
                 {
                     defaultFGPTList.AddRange(lining_Full);
+                    defaultFGPTList.AddRange(fullBody);
                 }
             }
             else

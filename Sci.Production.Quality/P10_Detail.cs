@@ -384,7 +384,8 @@ namespace Sci.Production.Quality
                     if (MyUtility.Convert.GetString(eve.FormattedValue) != "≦4" && MyUtility.Convert.GetString(eve.FormattedValue) != "<=4" && MyUtility.Convert.GetString(eve.FormattedValue) != ">4")
                     {
                         MyUtility.Msg.WarningBox("Must be [<=4] or [≦4] or [>4] !!");
-                        eve.Cancel = true;
+                        eve.FormattedValue = string.Empty;
+                        dr["3Test"] = string.Empty;
                         return;
                     }
 
@@ -398,7 +399,8 @@ namespace Sci.Production.Quality
                     if (!int.TryParse(eve.FormattedValue.ToString(), out t))
                     {
                         MyUtility.Msg.WarningBox("Must be integer!!");
-                        eve.Cancel = true;
+                        eve.FormattedValue = string.Empty;
+                        dr["3Test"] = string.Empty;
                         return;
                     }
 
@@ -410,9 +412,11 @@ namespace Sci.Production.Quality
                     if (MyUtility.Convert.GetString(eve.FormattedValue).ToUpper() != "PASS" && MyUtility.Convert.GetString(eve.FormattedValue) != "FAIL")
                     {
                         MyUtility.Msg.WarningBox("Must be [Pass] or [Fail] !!");
-                        eve.Cancel = true;
+                        eve.FormattedValue = string.Empty;
+                        dr["3Test"] = string.Empty;
                         return;
                     }
+
                     switch (MyUtility.Convert.GetString(eve.FormattedValue).ToUpper())
                     {
                         case "PASS":
@@ -876,7 +880,7 @@ namespace Sci.Production.Quality
             .Text("LocationText", header: "Location", width: Widths.AnsiChars(12), iseditingreadonly: true)
             .Text("Type", header: "Type", width: Widths.AnsiChars(70), iseditingreadonly: true)
             .Text("3test", header: "3 test", width: Widths.AnsiChars(10), settings: threeTestCell)
-            .ComboBox("TestUnit", header: "mm/N", width: Widths.AnsiChars(10), settings: mm_N_ComboCell)
+            .ComboBox("TestUnit", header: "Test Detail", width: Widths.AnsiChars(10), iseditable: false, settings: mm_N_ComboCell)
             .Text("Result", header: "Result", width: Widths.AnsiChars(6), iseditingreadonly: true)
             ;
 
@@ -1242,6 +1246,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 					END
 		,f.*
         ,[Result]=	CASE WHEN  f.TestUnit = 'N' AND f.[3Test] !='' THEN IIF( Cast( f.[3Test] as INT) >= f.Criteria ,'Pass' ,'Fail')
+						 WHEN  f.TestUnit = 'mm' THEN IIF(  f.[3Test] = '<=4' OR f.[3Test] = '≦4','Pass' ,'Fail')
 						 WHEN  f.TestUnit = 'Pass/Fail'  THEN f.[3Test]
 					 	 ELSE ''
 					END
@@ -1273,6 +1278,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 					END
 		,f.*
         ,[Result]=	CASE WHEN  f.TestUnit = 'N' AND f.[3Test] !='' THEN IIF( Cast( f.[3Test] as INT) >= f.Criteria ,'Pass' ,'Fail')
+						 WHEN  f.TestUnit = 'mm' THEN IIF(  f.[3Test] = '<=4' OR f.[3Test] = '≦4','Pass' ,'Fail')
 						 WHEN  f.TestUnit = 'Pass/Fail'  THEN f.[3Test]
 					 	 ELSE ''
 					END
@@ -1342,6 +1348,7 @@ order by LocationText DESC
                 this.btnenable();
 
                 this.gridAppearance.ForeColor = Color.Black;
+                this.gridFGPT.Columns["3Test"].DefaultCellStyle.BackColor = Color.White;
             }
             else
             {
@@ -1377,6 +1384,8 @@ order by LocationText DESC
                         }
                     }
                 }
+
+                this.gridFGPT.Columns["3Test"].DefaultCellStyle.BackColor = Color.Pink;
 
                 this.btnEncode.Enabled = false;
                 this.btnAmend.Enabled = false;
@@ -3389,6 +3398,28 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             Marshal.ReleaseComObject(objApp);
             strExcelName.OpenFile();
             #endregion
+        }
+
+        private void GridFGPT_EditingKeyProcessing(object sender, Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs e)
+        {
+            bool isLastRow = this.gridFGPT.CurrentRow.Index == this.gridFGPT.Rows.Count - 1;
+            bool isLastColumn = this.gridFGPT.CurrentCell.IsInEditMode;
+            int nextRowIndex = this.gridFGPT.CurrentRow.Index + 1;
+
+            // 在Yardage按下Tab，且是最後一Row
+            if (e.KeyData == Keys.Tab /*&& this.gridFGPT.CurrentCell.OwningColumn.Name != "3Test" && isLastRow*/)
+            {
+
+                //// 若是最後一筆，則跳到一列
+                if (isLastRow)
+                {
+                    this.gridFGPT.CurrentCell = this.gridFGPT.Rows[0].Cells[1];
+                }
+                else
+                {
+                    this.gridFGPT.CurrentCell = this.gridFGPT.Rows[nextRowIndex].Cells[1];
+                }
+            }
         }
     }
 }
