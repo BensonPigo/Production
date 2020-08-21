@@ -1092,7 +1092,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 					END
 		,f.*
         ,[Result]=	CASE WHEN  f.TestUnit = 'N' AND f.[3Test] !='' THEN IIF( Cast( f.[3Test] as INT) >= f.Criteria ,'Pass' ,'Fail')
-						 WHEN  f.TestUnit = 'mm' THEN IIF(  f.[3Test] = '<=4' OR f.[3Test] = '≦4','Pass' ,'Fail')
+						 WHEN  f.TestUnit = 'mm' THEN IIF(  f.[3Test] = '<=4' OR f.[3Test] = '≦4','Pass' , IIF( f.[3Test]='>4','Fail','')  )
 						 WHEN  f.TestUnit = 'Pass/Fail'  THEN f.[3Test]
 					 	 ELSE ''
 					END
@@ -1195,7 +1195,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 					END
 		,f.*
         ,[Result]=	CASE WHEN  f.TestUnit = 'N' AND f.[3Test] !='' THEN IIF( Cast( f.[3Test] as INT) >= f.Criteria ,'Pass' ,'Fail')
-						 WHEN  f.TestUnit = 'mm' THEN IIF(  f.[3Test] = '<=4' OR f.[3Test] = '≦4','Pass' ,'Fail')
+						 WHEN  f.TestUnit = 'mm' THEN IIF(  f.[3Test] = '<=4' OR f.[3Test] = '≦4','Pass' , IIF( f.[3Test]='>4','Fail','')  )
 						 WHEN  f.TestUnit = 'Pass/Fail'  THEN f.[3Test]
 					 	 ELSE ''
 					END
