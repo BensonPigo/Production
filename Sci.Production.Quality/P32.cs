@@ -13,17 +13,19 @@ using Widths = Ict.Win.Widths;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P32 : Sci.Win.Tems.Input6
     {
-        public string _Type = string.Empty;
+        private string _Type = string.Empty;
         private P32Header _sourceHeader = new P32Header();
-        public string _oldStage = string.Empty;
+        private string _oldStage = string.Empty;
         private bool _canConfirm = false;
 
+        /// <inheritdoc/>
         public P32(ToolStripMenuItem menuitem, string type)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Text = type == "1" ? "P32. CFA Inspection Record " : "P321. CFA Inspection Record (History)";
             this._Type = type;
             this._sourceHeader = null;
@@ -46,10 +48,11 @@ namespace Sci.Production.Quality
             this.comboTeam.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         public P32(ToolStripMenuItem menuitem, string type, P32Header sourceHeader = null)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Text = type == "1" ? "P32. CFA Inspection Record " : "P321. CFA Inspection Record (History)";
             this._Type = type;
             this._sourceHeader = sourceHeader;
@@ -72,6 +75,7 @@ namespace Sci.Production.Quality
             this.comboTeam.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -89,21 +93,23 @@ namespace Sci.Production.Quality
             
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
 
             this.AutoInsertBySP(this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["Seq"].ToString());
 
-            this.cauculateSQR();
+            this.CauculateSQR();
 
             this.Reset_comboStage(this.CurrentMaintain["OrderID"].ToString());
 
-            this.comboStage_Change(CurrentMaintain["Stage"].ToString());
+            this.ComboStage_Change(this.CurrentMaintain["Stage"].ToString());
 
             this.CalInsepectionCtn(this.IsDetailInserting);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region Defect Code 事件
@@ -121,14 +127,14 @@ namespace Sci.Production.Quality
                     DualResult Dresult;
                     if (!(Dresult = DBProxy.Current.Select(null, sqlcmd, out dt)))
                     {
-                        ShowErr(sqlcmd, Dresult);
+                        this.ShowErr(sqlcmd, Dresult);
                         return;
                     }
 
 
                     Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt
                             , "ID,Description,GarmentDefectTypeID"
-                            , "5,70,3", CurrentDetailData["GarmentDefectCodeID"].ToString()
+                            , "5,70,3", this.CurrentDetailData["GarmentDefectCodeID"].ToString()
                             , "Defect Code,Description,Type");
 
                     DialogResult result = selepoitem.ShowDialog();
@@ -136,11 +142,11 @@ namespace Sci.Production.Quality
 
                     selectedDatas = selepoitem.GetSelecteds();
 
-                    CurrentDetailData["GarmentDefectTypeID"] = selectedDatas[0]["GarmentDefectTypeID"];
-                    CurrentDetailData["GarmentDefectCodeID"] = selectedDatas[0]["ID"];
-                    CurrentDetailData["Description"] = selectedDatas[0]["Description"];
+                    this.CurrentDetailData["GarmentDefectTypeID"] = selectedDatas[0]["GarmentDefectTypeID"];
+                    this.CurrentDetailData["GarmentDefectCodeID"] = selectedDatas[0]["ID"];
+                    this.CurrentDetailData["Description"] = selectedDatas[0]["Description"];
 
-                    CurrentDetailData.EndEdit();
+                    this.CurrentDetailData.EndEdit();
                 }
             };
 
@@ -148,13 +154,13 @@ namespace Sci.Production.Quality
             {
                 if (!this.EditMode) return;
 
-                if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["GarmentDefectCodeID"].ToString()) != 0)
+                if (String.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["GarmentDefectCodeID"].ToString()) != 0)
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        CurrentDetailData["GarmentDefectTypeID"] = string.Empty;
-                        CurrentDetailData["GarmentDefectCodeID"] = string.Empty;
-                        CurrentDetailData["Description"] = string.Empty;
+                        this.CurrentDetailData["GarmentDefectTypeID"] = string.Empty;
+                        this.CurrentDetailData["GarmentDefectCodeID"] = string.Empty;
+                        this.CurrentDetailData["Description"] = string.Empty;
                     }
                     else
                     {
@@ -167,7 +173,7 @@ namespace Sci.Production.Quality
                         DualResult Dresult;
                         if (!(Dresult = DBProxy.Current.Select(null, sqlcmd, paras, out dt)))
                         {
-                            ShowErr(sqlcmd, Dresult);
+                            this.ShowErr(sqlcmd, Dresult);
                             return;
                         }
 
@@ -182,13 +188,13 @@ namespace Sci.Production.Quality
                         {
                             row = dt.Rows[0];
 
-                            CurrentDetailData["GarmentDefectTypeID"] = row["GarmentDefectTypeID"];
-                            CurrentDetailData["GarmentDefectCodeID"] = e.FormattedValue;
-                            CurrentDetailData["Description"] = row["Description"];
+                            this.CurrentDetailData["GarmentDefectTypeID"] = row["GarmentDefectTypeID"];
+                            this.CurrentDetailData["GarmentDefectCodeID"] = e.FormattedValue;
+                            this.CurrentDetailData["Description"] = row["Description"];
                         }
                     }
 
-                    CurrentDetailData.EndEdit();
+                    this.CurrentDetailData.EndEdit();
                 }
             };
 
@@ -209,14 +215,14 @@ namespace Sci.Production.Quality
                     DualResult Dresult;
                     if (!(Dresult = DBProxy.Current.Select(null, sqlcmd, out dt)))
                     {
-                        ShowErr(sqlcmd, Dresult);
+                        this.ShowErr(sqlcmd, Dresult);
                         return;
                     }
 
 
                     Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt
                             , "ID,Description"
-                            , "5,70,3", CurrentDetailData["CFAAreaID"].ToString()
+                            , "5,70,3", this.CurrentDetailData["CFAAreaID"].ToString()
                             , "Area Code,Area Desc");
 
                     DialogResult result = selepoitem.ShowDialog();
@@ -224,22 +230,22 @@ namespace Sci.Production.Quality
 
                     selectedDatas = selepoitem.GetSelecteds();
 
-                    CurrentDetailData["CFAAreaID"] = selectedDatas[0]["ID"];
-                    CurrentDetailData["CfaAreaDesc"] = selectedDatas[0]["Description"];
+                    this.CurrentDetailData["CFAAreaID"] = selectedDatas[0]["ID"];
+                    this.CurrentDetailData["CfaAreaDesc"] = selectedDatas[0]["Description"];
 
-                    CurrentDetailData.EndEdit();
+                    this.CurrentDetailData.EndEdit();
                 }
             };
             AreaCodeSet.CellValidating += (s, e) =>
             {
                 if (!this.EditMode) return;
 
-                if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["CFAAreaID"].ToString()) != 0)
+                if (String.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["CFAAreaID"].ToString()) != 0)
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        CurrentDetailData["CFAAreaID"] = string.Empty;
-                        CurrentDetailData["CfaAreaDesc"] = string.Empty;
+                        this.CurrentDetailData["CFAAreaID"] = string.Empty;
+                        this.CurrentDetailData["CfaAreaDesc"] = string.Empty;
                     }
                     else
                     {
@@ -252,7 +258,7 @@ namespace Sci.Production.Quality
                         DualResult Dresult;
                         if (!(Dresult = DBProxy.Current.Select(null, sqlcmd, paras, out dt)))
                         {
-                            ShowErr(sqlcmd, Dresult);
+                            this.ShowErr(sqlcmd, Dresult);
                             return;
                         }
 
@@ -267,12 +273,12 @@ namespace Sci.Production.Quality
                         {
                             row = dt.Rows[0];
 
-                            CurrentDetailData["CFAAreaID"] = e.FormattedValue;
-                            CurrentDetailData["CfaAreaDesc"] = row["Description"];
+                            this.CurrentDetailData["CFAAreaID"] = e.FormattedValue;
+                            this.CurrentDetailData["CfaAreaDesc"] = row["Description"];
                         }
                     }
 
-                    CurrentDetailData.EndEdit();
+                    this.CurrentDetailData.EndEdit();
                 }
             };
             #endregion
@@ -285,15 +291,15 @@ namespace Sci.Production.Quality
                 if (!this.EditMode) return;
 
                 // 總DefectQty
-                CurrentDetailData["Qty"] = e.FormattedValue;
-                CurrentDetailData.EndEdit();
+                this.CurrentDetailData["Qty"] = e.FormattedValue;
+                this.CurrentDetailData.EndEdit();
 
-                this.cauculateSQR();
+                this.CauculateSQR();
             };
 
 
             #region -- 欄位設定 --
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("GarmentDefectTypeID", header: "Defect Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("GarmentDefectCodeid", header: "Defect Code", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: DefectCodeSet)
             .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
@@ -315,6 +321,7 @@ namespace Sci.Production.Quality
             #endregion 可編輯欄位變色
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
@@ -341,49 +348,50 @@ WHERE a.ID ='{masterID}'
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             string TempId = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CI", "CFAInspectionRecord", DateTime.Now);
 
-            CurrentMaintain["ID"] = TempId;
-            CurrentMaintain["Status"] = "New";
-            CurrentMaintain["AuditDate"] = DateTime.Now;
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            CurrentMaintain["CFA"] = Sci.Env.User.UserID;
-            CurrentMaintain["Stage"] = "";
-            CurrentMaintain["SewingLineID"] = "";
-            CurrentMaintain["Result"] = "";
-            CurrentMaintain["Team"] = "";
+            this.CurrentMaintain["ID"] = TempId;
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["AuditDate"] = DateTime.Now;
+            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["CFA"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["Stage"] = "";
+            this.CurrentMaintain["SewingLineID"] = "";
+            this.CurrentMaintain["Result"] = "";
+            this.CurrentMaintain["Team"] = "";
             this.disInsCtn.Value = 0;
 
-            comboStage_Change(CurrentMaintain["Stage"].ToString());
+            this.ComboStage_Change(this.CurrentMaintain["Stage"].ToString());
 
             if (this._sourceHeader != null)
             {
-                CurrentMaintain["OrderID"] = _sourceHeader.OrderID;
-                CurrentMaintain["Seq"] = _sourceHeader.Seq;
-                this.disPO.Value = _sourceHeader.PO;
-                this.disStyle.Value = _sourceHeader.Style;
-                this.disBrand.Value = _sourceHeader.Brand;
-                this.disSeason.Value = _sourceHeader.Season;
-                CurrentMaintain["MDivisionid"] = _sourceHeader.M;
-                CurrentMaintain["FactoryID"] = _sourceHeader.Factory;
-                this.disOrderQty.Value = _sourceHeader.OrderQty;
-                this.disDest.Value = _sourceHeader.Dest;
-                this.disArticle.Value = _sourceHeader.Article;
-                this.dateBuyerDev.Value = MyUtility.Convert.GetDate(_sourceHeader.BuyerDev);
+                this.CurrentMaintain["OrderID"] = this._sourceHeader.OrderID;
+                this.CurrentMaintain["Seq"] = this._sourceHeader.Seq;
+                this.disPO.Value = this._sourceHeader.PO;
+                this.disStyle.Value = this._sourceHeader.Style;
+                this.disBrand.Value = this._sourceHeader.Brand;
+                this.disSeason.Value = this._sourceHeader.Season;
+                this.CurrentMaintain["MDivisionid"] = this._sourceHeader.M;
+                this.CurrentMaintain["FactoryID"] = this._sourceHeader.Factory;
+                this.disOrderQty.Value = this._sourceHeader.OrderQty;
+                this.disDest.Value = this._sourceHeader.Dest;
+                this.disArticle.Value = this._sourceHeader.Article;
+                this.dateBuyerDev.Value = MyUtility.Convert.GetDate(this._sourceHeader.BuyerDev);
 
             }
 
             this.Reset_comboStage(this.CurrentMaintain["OrderID"].ToString());
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Status"].ToString() != "New")
+            if (this.CurrentMaintain["Status"].ToString() != "New")
             {
                 MyUtility.Msg.WarningBox("The record status is confimed, you can not modify.");
                 return false;
@@ -391,6 +399,7 @@ WHERE a.ID ='{masterID}'
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             string updateCmd = "";
@@ -462,6 +471,7 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
             base.ClickConfirm();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             string updateCmd = "";
@@ -542,6 +552,7 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
             base.ClickUnconfirm();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["CFA"]) ||
@@ -669,6 +680,7 @@ where OrderID = '{this.CurrentMaintain["OrderID"]}' AND OrderShipmodeSeq = '{thi
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
             // Inspection stage為Staggered且Inspection result Fail不需要將檢驗的箱號回寫PackingList_Detail.StaggeredCFAInspectionRecordID
@@ -716,6 +728,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             string updateCmd = $@"UPDATE PackingList_Detail SET StaggeredCFAInspectionRecordID = '' WHERE StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}' ";
@@ -723,6 +736,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
             return base.ClickDeletePost();
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -765,13 +779,11 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
             }
         }
 
-
-
-        private void comboStage_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboStage_SelectedIndexChanged(object sender, EventArgs e)
         {
             this._oldStage = this.CurrentMaintain["Stage"].ToString();
             this.CurrentMaintain["Stage"] = this.comboStage.SelectedItem.ToString();
-            comboStage_Change(this.comboStage.SelectedItem.ToString());
+            this.ComboStage_Change(this.comboStage.SelectedItem.ToString());
             if (this._oldStage != this.CurrentMaintain["Stage"].ToString())
             {
                 this.CurrentMaintain["Result"] = string.Empty;
@@ -780,11 +792,11 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
             this.CalInsepectionCtn(this.IsDetailInserting);
         }
 
-        private void txtSpSeq_Leave(object sender, EventArgs e)
+        private void TxtSpSeq_Leave(object sender, EventArgs e)
         {
             string newOrderID = this.txtSpSeq.TextBoxSPBinding;
             string newSeq = this.txtSpSeq.TextBoxSeqBinding;
-            if (CurrentMaintain != null)
+            if (this.CurrentMaintain != null)
             {
                 string oldOrderID = this.CurrentMaintain["OrderID"].ToString();
                 string oldSeq = this.CurrentMaintain["Seq"].ToString();
@@ -825,12 +837,12 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
         private void numInspectQty_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.CurrentMaintain["InspectQty"] = this.numInspectQty.Value;
-            this.cauculateSQR();
+            this.CauculateSQR();
         }
 
         private void comboTeam_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (CurrentMaintain != null)
+            if (this.CurrentMaintain != null)
             {
                 //this.CurrentMaintain["Team"] = this.comboTeam.SelectedItem.ToString();
             }
@@ -838,7 +850,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
 
         private void comboResult_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (CurrentMaintain != null)
+            if (this.CurrentMaintain != null)
             {
                 //this.CurrentMaintain["Result"] = this.comboResult.SelectedItem.ToString();
             }
@@ -1002,7 +1014,7 @@ DROP TABLE #MixCTNStartNo
             }
         }
 
-        private void txtInspectedCarton_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        private void TxtInspectedCarton_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (this.EditMode && this.txtInspectedCarton.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Any())
             {
@@ -1060,30 +1072,23 @@ AND (StaggeredCFAInspectionRecordID = @ID OR StaggeredCFAInspectionRecordID = ''
             }
         }
 
-
-        private void comboStage_Change(string Stage)
+        private void ComboStage_Change(string stage)
         {
             if (!this.EditMode)
             {
                 this.txtInspectedCarton.IsSupportEditMode = false;
                 this.txtInspectedCarton.ReadOnly = true;
 
-                this.txtSewingLine.IsSupportEditMode = false;
-                this.txtSewingLine.ReadOnly = true;
-
                 this.txtshift.IsSupportEditMode = false;
                 this.txtshift.ReadOnly = true;
                 return;
             }
 
-            // 只有選擇Staggered時Inspected Carton、Line、Shift才可以欄位才可以編輯，選到其他Stage時請一併清除這些欄位資料。
-            if (Stage == "Staggered")
+            // 只有選擇Staggered時Inspected Carton、Shift才可以欄位才可以編輯，選到其他Stage時請一併清除這些欄位資料。
+            if (stage == "Staggered")
             {
                 this.txtInspectedCarton.IsSupportEditMode = true;
                 this.txtInspectedCarton.ReadOnly = false;
-
-                this.txtSewingLine.IsSupportEditMode = true;
-                this.txtSewingLine.ReadOnly = false;
 
                 this.txtshift.IsSupportEditMode = true;
                 this.txtshift.ReadOnly = false;
@@ -1095,39 +1100,14 @@ AND (StaggeredCFAInspectionRecordID = @ID OR StaggeredCFAInspectionRecordID = ''
                 this.txtInspectedCarton.IsSupportEditMode = false;
                 this.txtInspectedCarton.ReadOnly = true;
 
-                this.CurrentMaintain["SewingLineID"] = string.Empty;
-                this.txtSewingLine.Text = string.Empty;
-                this.txtSewingLine.IsSupportEditMode = false;
-                this.txtSewingLine.ReadOnly = true;
-
                 this.CurrentMaintain["Shift"] = string.Empty;
                 this.txtshift.Text = string.Empty;
                 this.txtshift.IsSupportEditMode = false;
                 this.txtshift.ReadOnly = true;
             }
 
-            // Inspection stage若是Final、3rd party則要檢查 CFAInspectionRecord中相同SP#、SEQ之前已經相同的Status(要排除自己)
-            // 若有則不能選，並跳出警告視窗
-//            if (Stage == "Final" || Stage == "3rd party")
-//            {
-//                bool hasSameSpSeq = MyUtility.Check.Seek($@"
-//SELECT 1 
-//FROM CFAInspectionRecord WITH(NOLOCK)
-//WHERE ID <> '{this.CurrentMaintain["ID"]}'
-//AND OrderID = '{this.CurrentMaintain["OrderID"]}'
-//AND Seq = '{this.CurrentMaintain["Seq"]}'
-//AND Stage = '{this.CurrentMaintain["Stage"]}'
-//");
-//                if (hasSameSpSeq)
-//                {
-//                    MyUtility.Msg.InfoBox("There is already same SP# and Seq CFA Inspection Record.");
-//                    this.comboStage.SelectedIndex = 0;
-//                    this.CurrentMaintain["Stage"] = string.Empty;
-//                }
-//            }
-
             // Stage若是3rd party則要檢查Order_QtyShip.CFAIs3rdInspect是否為1，若不是則不能存檔，並跳出警告視窗
-            if (Stage == "3rd party" )
+            if (stage == "3rd party" )
             {
                 bool CFAIs3rdInspect = MyUtility.Check.Seek($@"
 SELECT 1
@@ -1148,13 +1128,17 @@ AND CFAIs3rdInspect = 1
             }
 
             // Final的時候Inspection result才能有Fail but release
-            if (Stage == "Final")
-                Reset_comboResult(true);
+            if (stage == "Final")
+            {
+                this.Reset_comboResult(true);
+            }
             else
-                Reset_comboResult(false);
+            {
+                this.Reset_comboResult(false);
+            }
         }
 
-        private void cauculateSQR()
+        private void CauculateSQR()
         {
             // 總DefectQty
             decimal totalDefectQty = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).Select(o => new { Qty = MyUtility.Convert.GetDecimal(o["Qty"]) }).ToList().Sum(o => o.Qty);
@@ -1175,42 +1159,42 @@ AND CFAIs3rdInspect = 1
 
         }
 
-        private void AutoInsertBySP(string OrderID, string Seq)
+        private void AutoInsertBySP(string orderID, string seq)
         {
 
             this.disSeason.Value = MyUtility.GetValue.Lookup($@"
 SELECT  SeasonID
 FROM Orders  WITH(NOLOCK)
-WHERE ID = '{OrderID}'
+WHERE ID = '{orderID}'
 ");
 
             this.disPO.Value = MyUtility.GetValue.Lookup($@"
 SELECT  CustPoNo
 FROM Orders  WITH(NOLOCK)
-WHERE ID = '{OrderID}'
+WHERE ID = '{orderID}'
 ");
             this.disStyle.Value = MyUtility.GetValue.Lookup($@"
 SELECT  StyleID
 FROM Orders  WITH(NOLOCK)
-WHERE ID = '{OrderID}'
+WHERE ID = '{orderID}'
 ");
 
             this.disBrand.Value = MyUtility.GetValue.Lookup($@"
 SELECT  BrandID
 FROM Orders  WITH(NOLOCK)
-WHERE ID = '{OrderID}'
+WHERE ID = '{orderID}'
 ");
 
             this.dateBuyerDev.Value = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($@"
 SELECT BuyerDelivery
 FROM Order_QtyShip  WITH(NOLOCK)
-WHERE ID = '{OrderID}' AND Seq ='{Seq}'
+WHERE ID = '{orderID}' AND Seq ='{seq}'
 "));
 
             this.disOrderQty.Value = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"
 SELECT Qty
 FROM Order_QtyShip  WITH(NOLOCK)
-WHERE ID = '{OrderID}' AND Seq ='{Seq}'
+WHERE ID = '{orderID}' AND Seq ='{seq}'
 "));
 
 
@@ -1218,23 +1202,23 @@ WHERE ID = '{OrderID}' AND Seq ='{Seq}'
 SELECT c.Alias
 FROM Orders o
 INNER JOIN Country c ON o.Dest = c.ID
-WHERE o.ID = '{OrderID}'
+WHERE o.ID = '{orderID}'
 ");
 
             this.disArticle.Value = MyUtility.GetValue.Lookup($@"
 SELECT STUFF(
     (SELECT DISTINCT ','+Article 
     FROM Order_QtyShip_Detail 
-    WHERE ID = '{OrderID}' AND Seq = '{Seq}'
+    WHERE ID = '{orderID}' AND Seq = '{seq}'
     FOR XML PATH('')
     )
 ,1,1,'')
 ");
         }
 
-        private void Reset_comboStage(string OrderID)
+        private void Reset_comboStage(string orderID)
         {
-            bool IsSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{OrderID}' "));
+            bool IsSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{orderID}' "));
 
             this.comboStage.Items.Clear();
             this.comboStage.Items.AddRange(new object[] {
@@ -1248,16 +1232,15 @@ SELECT STUFF(
                 this.comboStage.Items.RemoveAt(2);
             }
 
-            comboStage.SelectedItem = CurrentMaintain["Stage"].ToString();
+            this.comboStage.SelectedItem = this.CurrentMaintain["Stage"].ToString();
         }
 
-
-        private void Reset_comboResult(bool IsFinal = false)
+        private void Reset_comboResult(bool isFinal = false)
         {
             this.comboResult.Items.Clear();
 
             // Final的時候Inspection result才能有Fail but release
-            if (!IsFinal)
+            if (!isFinal)
             {
                 this.comboResult.Items.AddRange(new object[] {
                     "",
@@ -1273,7 +1256,7 @@ SELECT STUFF(
                     "Fail but release"});
             }
 
-            comboResult.SelectedItem = CurrentMaintain["Result"].ToString();
+            this.comboResult.SelectedItem = this.CurrentMaintain["Result"].ToString();
         }
 
         private void CalInsepectionCtn(bool isClickNew)

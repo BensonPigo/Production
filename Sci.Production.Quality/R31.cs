@@ -134,7 +134,7 @@ oq.CFAFinalInspectResult
 
 FROM Order_QtyShip oq
 INNER JOIN Orders o ON o.ID = oq.Id
-INNER JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
+LEFT JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
 INNER JOIN Factory f ON o.FactoryID = f.ID
 LEFT JOIN Country c ON o.Dest = c.ID
 INNER JOIN Style s ON o.StyleID=s.ID AND s.SeasonID = o.SeasonID
@@ -220,7 +220,6 @@ OUTER APPLY (
 		AND Seq=oq.Seq
 )ThirdInsCtn
 WHERE 1=1
-AND ISNULL(ot.IsGMTMaster,0) = 0
 ");
             #endregion
 

@@ -86,10 +86,8 @@ namespace Sci.Production.Class
                 $@"
 SELECT 1 
 FROM Orders o
-INNER JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
 WHERE o.ID=@ID 
-AND o.Category IN('B', 'S', 'G')
-AND ISNULL(ot.IsGMTMaster,0) = 0",
+AND o.Category IN('B', 'S', 'G')",
                 paras);
             if (!exists)
             {

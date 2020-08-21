@@ -596,7 +596,7 @@
             this.comboStage.OldText = "";
             this.comboStage.Size = new System.Drawing.Size(135, 24);
             this.comboStage.TabIndex = 8;
-            this.comboStage.SelectedIndexChanged += new System.EventHandler(this.comboStage_SelectedIndexChanged);
+            this.comboStage.SelectedIndexChanged += new System.EventHandler(this.ComboStage_SelectedIndexChanged);
             // 
             // comboResult
             // 
@@ -627,7 +627,7 @@
             this.txtInspectedCarton.Size = new System.Drawing.Size(135, 23);
             this.txtInspectedCarton.TabIndex = 10;
             this.txtInspectedCarton.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtInspectedCarton_PopUp);
-            this.txtInspectedCarton.Validating += new System.ComponentModel.CancelEventHandler(this.txtInspectedCarton_Validating);
+            this.txtInspectedCarton.Validating += new System.ComponentModel.CancelEventHandler(this.TxtInspectedCarton_Validating);
             // 
             // numInspectQty
             // 
@@ -744,7 +744,7 @@
             this.txtSpSeq.TabIndex = 3;
             this.txtSpSeq.TextBoxSeqBinding = "";
             this.txtSpSeq.TextBoxSPBinding = "";
-            this.txtSpSeq.Leave += new System.EventHandler(this.txtSpSeq_Leave);
+            this.txtSpSeq.Leave += new System.EventHandler(this.TxtSpSeq_Leave);
             // 
             // disArticle
             // 
