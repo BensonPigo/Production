@@ -1,46 +1,46 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
-using Sci.Data;
-using Ict;
-using System.Data.SqlClient;
-using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P11_AutoPick : Win.Subs.Base
     {
-        StringBuilder sbSizecode;
-        string poid;
-        string issueid;
-        string cutplanid;
-        string orderid;
-        public DataTable BOA;
-        public DataTable BOA_Orderlist;
-        public DataTable BOA_PO;
-        public DataTable BOA_PO_Size;
-        public DataTable dtIssueBreakDown;
-        bool combo;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
+        private StringBuilder sbSizecode;
+        private string poid;
+        private string issueid;
+        private string orderid;
+        private DataTable BOA_PO_Size;
+        private DataTable dtIssueBreakDown;
+        private bool combo;
 
-        public P11_AutoPick(string _issueid, string _poid, string _cutplanid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo)
+        /// <inheritdoc/>
+        public DataTable BOA_PO { get; set; }
+
+        /// <inheritdoc/>
+        public Dictionary<DataRow, DataTable> DictionaryDatas { get; set; }
+
+        /// <inheritdoc/>
+        public P11_AutoPick(string issueid, string poid, string orderid, DataTable dtIssueBreakDown, StringBuilder sbSizecode, bool combo)
         {
             this.InitializeComponent();
-            this.poid = _poid;
-            this.issueid = _issueid;
-            this.cutplanid = _cutplanid;
-            this.orderid = _orderid;
-            this.dtIssueBreakDown = _dtIssueBreakDown;
-            this.sbSizecode = _sbSizecode;
-            this.combo = _combo;
+            this.poid = poid;
+            this.issueid = issueid;
+            this.orderid = orderid;
+            this.dtIssueBreakDown = dtIssueBreakDown;
+            this.sbSizecode = sbSizecode;
+            this.combo = combo;
             this.Text += string.Format(" ({0})", this.poid);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -71,22 +71,14 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
-            // POPrg.BOAExpend(poid, "0", 1, out BOA, out BOA_Orderlist);
-            SqlConnection sqlConnection = null;
-
-            // SqlCommand sqlCmd = null;
             DataSet dataSet = new DataSet();
 
-            // SqlDataAdapter sqlDataAdapter = null;
             DataTable[] result = null;
 
-            this.BOA = null;
-            this.BOA_Orderlist = null;
             this.BOA_PO = null;
             this.BOA_PO_Size = null;
 
-            string sqlcmd;
-            sqlcmd = string.Format(
+            string sqlcmd = string.Format(
                 @";
 ;WITH UNPIVOT_1 AS (
     SELECT * 
@@ -417,8 +409,10 @@ with cte as(
   group by poid, seq1, seq2, SizeCode
 )
 select  z.*
-        , qty = isnull (cte.qty, 0)
-        , ori_qty = isnull (cte.qty, 0)   
+        , Autopickqty = isnull (cte.qty, 0)
+        , qty = ISNULL(cte.qty, 0)
+        , ori_qty = isnull (cte.qty, 0) -- 不確定用在哪先保留
+        , Diffqty = 0.0--之後用庫存總數去分配時再計算
 from (
     select  x.poid
             , x.seq1
@@ -434,10 +428,11 @@ from (
          ) as x
 	where Order_SizeCode.id = '{3}'
 ) z 
-left join cte on cte.SizeCode = z.SizeCode 
-                 and cte.poid = z.poid 
-                 and cte.seq1 = z.seq1 
+left join cte on cte.SizeCode = z.SizeCode
+                 and cte.poid = z.poid
+                 and cte.seq1 = z.seq1
                  and cte.seq2 = z.seq2
+
 order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1),
                 this.issueid,
                 this.orderid,
@@ -451,32 +446,24 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
             // 呼叫procedure，取得BOA展開結果
             try
             {
-                // SqlConnection conn;
-                DBProxy.Current.OpenConnection(null, out sqlConnection);
+                string aaa = this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1).Replace("[", string.Empty).Replace("]", string.Empty);
+                var rESULT = MyUtility.Tool.ProcessWithDatatable(this.dtIssueBreakDown, "OrderID,Article," + aaa, sqlcmd, out result, "#tmp");
 
-                // DataTable source = null, a = null; ;
-                string aaa = this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1).Replace("[", string.Empty).Replace("]", string.Empty); // .Replace("[", "").Replace("]", "")
-                var RESULT = MyUtility.Tool.ProcessWithDatatable(this.dtIssueBreakDown, "OrderID,Article," + aaa, sqlcmd, out result, "#tmp", conn: sqlConnection);
-
-                if (!RESULT)
+                if (!rESULT)
                 {
-                    this.ShowErr(RESULT);
-                }
-
-                if (!RESULT)
-                {
+                    this.ShowErr(rESULT);
                     return;
                 }
 
                 if (result.Length > 0)
                 {
                     dataSet.Tables.AddRange(result);
-                    this.BOA = result[0];
-                    this.BOA_Orderlist = result[1];
                     this.BOA_PO = result[2];
                     this.BOA_PO.DefaultView.Sort = "poid,seq1,seq2";
                     this.BOA_PO_Size = result[3];
                     this.BOA_PO.ColumnsStringAdd("Output");
+                    this.BOA_PO.ColumnsStringAdd("OutputAutoPick");
+                    this.BOA_PO.ColumnsStringAdd("AutoPickqty");
 
                     DataRelation relation = new DataRelation(
                         "rel1",
@@ -493,30 +480,49 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
                         tmp.ColumnsStringAdd("seq2");
                         tmp.ColumnsStringAdd("seq");
                         tmp.ColumnsStringAdd("sizecode");
+                        tmp.ColumnsDecimalAdd("Autopickqty");
                         tmp.ColumnsDecimalAdd("qty");
                         tmp.ColumnsDecimalAdd("ori_qty");
-
+                        tmp.ColumnsDecimalAdd("Diffqty");
+                        decimal balqty = MyUtility.Convert.GetDecimal(dr["balanceqty"]); // 庫存總數
                         var drs = dr.GetChildRows(relation);
                         if (drs.Count() > 0)
                         {
                             // Qty 在這邊計算原因：細項中每一個 SizeCode 的數量都有做四捨五入
                             // 若在組 SQL 時就先將數量做加總，四捨五入後的結果會有差異
                             #region 計算每一個項的 Output & Qty
-                            var Output = string.Empty;
-                            decimal TotalQty = 0;
+                            string output = string.Empty;
+                            string output_ori = string.Empty;
+                            decimal totalQty = drs.AsEnumerable().Sum(s => MyUtility.Convert.GetDecimal(s["qty"]));
+                            decimal totalQty_ori = totalQty;
+                            totalQty = totalQty > balqty ? balqty : totalQty;
+                            decimal totalQty2 = totalQty;
                             foreach (DataRow dr2 in drs)
                             {
-                                if (Convert.ToDecimal(dr2["qty"]) != 0)
+                                if (MyUtility.Convert.GetDecimal(dr2["qty"]) > 0)
                                 {
-                                    Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
-                                    TotalQty += Convert.ToDecimal(dr2["qty"]);
+                                    output_ori += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
                                 }
 
+                                if (totalQty < MyUtility.Convert.GetDecimal(dr2["qty"]))
+                                {
+                                    dr2["qty"] = totalQty;
+                                }
+
+                                if (MyUtility.Convert.GetDecimal(dr2["qty"]) > 0)
+                                {
+                                    output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
+                                }
+
+                                dr2["diffqty"] = MyUtility.Convert.GetDecimal(dr2["AutoPickqty"]) - MyUtility.Convert.GetDecimal(dr2["qty"]);
                                 tmp.ImportRow(dr2);
+                                totalQty -= MyUtility.Convert.GetDecimal(dr2["qty"]);
                             }
 
-                            dr["Output"] = Output;
-                            dr["Qty"] = Math.Round(TotalQty, 2);
+                            dr["Output"] = output;
+                            dr["OutputAutoPick"] = output_ori;
+                            dr["Qty"] = Math.Round(totalQty2, 2);
+                            dr["AutoPickqty"] = Math.Round(totalQty_ori, 2);
                             #endregion
                         }
 
@@ -544,25 +550,22 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
                             // 連同detail資料也顯示0
                             if (tmp.Rows.Count > 0 && Convert.ToDouble(dr["qty"]) > 0)
                             {
-                                foreach (DataRow tmp_dr in tmp.Rows)
-                                {
-                                    tmp_dr["qty"] = 0;
-                                }
+                                tmp.AsEnumerable().ToList().ForEach(row => row["qty"] = 0);
                             }
                         }
 
                         if (tmp.Rows.Count > 0)
                         {
-                            this.dictionaryDatas.Add(dr, tmp);
+                            this.DictionaryDatas.Add(dr, tmp);
                         }
                         else
                         {
-                            this.dictionaryDatas.Add(dr, new DataTable());
+                            this.DictionaryDatas.Add(dr, new DataTable());
                         }
                     }
 
                     this.BOA_PO.Columns.Remove("ColorMultipleID");
-                    var tmp2 = this.dictionaryDatas.Count;
+                    var tmp2 = this.DictionaryDatas.Count;
                 }
             }
             catch (Exception ex)
@@ -572,7 +575,6 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
             finally
             {
                 dataSet.Dispose();
-                sqlConnection.Close();
             }
 
             this.listControlBindingSource1.DataSource = this.BOA_PO;
@@ -591,23 +593,16 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
                     return;
                 }
 
-                var frm = new P11_AutoPick_Detail(this.combo, this.poid, this.orderid, this.BOA_PO, e.RowIndex, e.ColumnIndex, this);
-
-                this.dictionaryDatasAcceptChanges();
-
-                DialogResult DResult = frm.ShowDialog(this);
+                var frm = new P11_AutoPick_Detail(this.combo, this.poid, this.orderid, this.BOA_PO, e.RowIndex, this);
+                this.DictionaryDatasAcceptChanges();
+                frm.ShowDialog(this);
             };
             #endregion
             DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
                 var dr = this.gridAutoPick.GetDataRow<DataRow>(e.RowIndex);
-                if (dr == null)
-                {
-                    return;
-                }
-
-                if (Convert.ToDecimal(e.FormattedValue) == Convert.ToDecimal(dr["qty"]))
+                if (dr == null || Convert.ToDecimal(e.FormattedValue) == Convert.ToDecimal(dr["qty"]))
                 {
                     return;
                 }
@@ -628,51 +623,54 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
             this.gridAutoPick.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridAutoPick.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridAutoPick)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
-                 .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                 .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                 .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                 .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .EditText("Description", header: "Description", width: Widths.AnsiChars(23), iseditingreadonly: true)
-                 .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                 .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Text("GarmentSize", header: "Garment\r\nSize", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
-                 .Numeric("qty", header: "Pick Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, settings: ns2)
-                 .Text("Output", header: "Output", width: Widths.AnsiChars(10), settings: ns)
-                 .Text("Balanceqty", header: "Bulk Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("suppcolor", header: "Supp Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                  .Text("sizecode", header: "SizeCode", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Text("sizeunit", header: "Size Unit", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                 .Text("remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                  .Text("usageqty", header: "Usage Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                  .Text("usageunit", header: "Usage Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 ;
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .EditText("Description", header: "Description", width: Widths.AnsiChars(23), iseditingreadonly: true)
+                .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("GarmentSize", header: "Garment\r\nSize", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
+                .Numeric("qty", header: "Pick Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, settings: ns2)
+                .Text("Output", header: "Pick Output", width: Widths.AnsiChars(10), settings: ns)
+                .Text("Balanceqty", header: "Bulk Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("AutoPickqty", header: "AutoPick \r\n Calculation \r\n Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                .Text("OutputAutoPick", header: "AutoPick \r\n Calculation \r\n Output", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("suppcolor", header: "Supp Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("sizecode", header: "SizeCode", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("sizeunit", header: "Size Unit", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("usageqty", header: "Usage Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("usageunit", header: "Usage Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                ;
             this.gridAutoPick.Columns["qty"].Frozen = true;  // Qty
             this.gridAutoPick.Columns["Output"].DefaultCellStyle.BackColor = Color.Pink;   // Qty
             #endregion
 
         }
 
-        public void sum_subDetail(DataRow target, DataTable source)
+        /// <inheritdoc/>
+        public void Sum_subDetail(DataRow target, DataTable source)
         {
             DataTable tmpDt = source;
             DataRow dr = target;
             if (tmpDt != null)
             {
-                var Output = string.Empty;
-                decimal SumQTY = 0;
+                var output = string.Empty;
+                decimal sumQTY = 0;
                 foreach (DataRow dr2 in tmpDt.ToList())
                 {
                     if (Convert.ToDecimal(dr2["qty"]) != 0)
                     {
-                        Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
-                        SumQTY += Convert.ToDecimal(dr2["qty"]);
+                        output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
+                        sumQTY += Convert.ToDecimal(dr2["qty"]);
                     }
                 }
 
-                dr["Output"] = Output;
-                dr["qty"] = Math.Round(SumQTY, 2);
+                dr["Output"] = output;
+                dr["qty"] = Math.Round(sumQTY, 2);
             }
 
             if (Convert.ToDecimal(dr["qty"]) > 0)
@@ -685,12 +683,12 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
             }
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnPick_Click(object sender, EventArgs e)
+        private void BtnPick_Click(object sender, EventArgs e)
         {
             this.gridAutoPick.ValidateControl();
             DataRow[] dr2 = this.BOA_PO.Select("Selected = 1");
@@ -703,167 +701,50 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
             this.DialogResult = DialogResult.OK;
         }
 
-        public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp")
+        /// <inheritdoc/>
+        public DataTable GetAutoDetailDataTable(int rowIndex)
         {
-            result = null;
-            StringBuilder sb = new StringBuilder();
-            if (temptablename.TrimStart().StartsWith("#"))
-            {
-                sb.Append(string.Format("create table {0} (", temptablename));
-            }
-            else
-            {
-                sb.Append(string.Format("create table #{0} (", temptablename));
-            }
-
-            string[] cols = tmp_columns.Split(',');
-            for (int i = 0; i < cols.Length; i++)
-            {
-                if (MyUtility.Check.Empty(cols[i]))
-                {
-                    continue;
-                }
-
-                switch (Type.GetTypeCode(source.Columns[cols[i]].DataType))
-                {
-                    case TypeCode.Boolean:
-                        sb.Append(string.Format("[{0}] bit", cols[i]));
-                        break;
-
-                    case TypeCode.Char:
-                        sb.Append(string.Format("[{0}] varchar(1)", cols[i]));
-                        break;
-
-                    case TypeCode.DateTime:
-                        sb.Append(string.Format("[{0}] datetime", cols[i]));
-                        break;
-
-                    case TypeCode.Decimal:
-                        sb.Append(string.Format("[{0}] numeric(24,8)", cols[i]));
-                        break;
-
-                    case TypeCode.Int32:
-                        sb.Append(string.Format("[{0}] int", cols[i]));
-                        break;
-
-                    case TypeCode.String:
-                        sb.Append(string.Format("[{0}] varchar(max)", cols[i]));
-                        break;
-
-                    case TypeCode.Int64:
-                        sb.Append(string.Format("[{0}] bigint", cols[i]));
-                        break;
-                    default:
-                        break;
-                }
-
-                if (i < cols.Length - 1)
-                {
-                    sb.Append(",");
-                }
-            }
-
-            sb.Append(")");
-
-            SqlConnection conn;
-            DBProxy.Current.OpenConnection(null, out conn);
-
-            try
-            {
-                DualResult result2 = DBProxy.Current.ExecuteByConn(conn, sb.ToString());
-                if (!result2)
-                {
-                    MyUtility.Msg.ShowException(null, result2);
-                    return;
-                }
-
-                using (SqlBulkCopy bulkcopy = new SqlBulkCopy(conn))
-                {
-                    bulkcopy.BulkCopyTimeout = 60;
-                    if (temptablename.TrimStart().StartsWith("#"))
-                    {
-                        bulkcopy.DestinationTableName = temptablename.Trim();
-                    }
-                    else
-                    {
-                        bulkcopy.DestinationTableName = string.Format("#{0}", temptablename.Trim());
-                    }
-
-                    for (int i = 0; i < cols.Length; i++)
-                    {
-                        bulkcopy.ColumnMappings.Add(cols[i], cols[i]);
-                    }
-
-                    bulkcopy.WriteToServer(source);
-                    bulkcopy.Close();
-                }
-
-                result2 = DBProxy.Current.SelectByConn(conn, sqlcmd, out result);
-                if (!result2)
-                {
-                    MyUtility.Msg.ShowException(null, result2);
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                conn.Close();
-            }
-        }
-
-        public DataTable getAutoDetailDataTable(int RowIndex)
-        {
-            DataTable tmpDt = this.dictionaryDatas[this.gridAutoPick.GetDataRow(RowIndex)];
+            DataTable tmpDt = this.DictionaryDatas[this.gridAutoPick.GetDataRow(rowIndex)];
             return tmpDt;
         }
 
-        public DataRow getAutoDetailDataRow(int RowIndex)
+        /// <inheritdoc/>
+        public DataRow GetAutoDetailDataRow(int rowIndex)
         {
-            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(RowIndex);
+            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(rowIndex);
             return tmpDt;
         }
 
-        public DataRow getNeedChangeDataRow(int RowIndex)
+        /// <inheritdoc/>
+        public DataRow GetNeedChangeDataRow(int rowIndex)
         {
-            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(RowIndex);
+            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(rowIndex);
             return tmpDt;
         }
 
-        public void dictionaryDatasRejectChanges()
+        /// <inheritdoc/>
+        public void DictionaryDatasRejectChanges()
         {
-            var d = this.dictionaryDatas.AsEnumerable().ToList();
+            var d = this.DictionaryDatas.AsEnumerable().ToList();
             for (int i = 0; i < d.Count; i++)
             {
                 d[i].Value.RejectChanges();
             }
 
             return;
-            ////批次RejectChanges
-            // foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
-            // {
-            //    item.Value.RejectChanges();
-            // }
         }
 
-        public void dictionaryDatasAcceptChanges()
+        /// <inheritdoc/>
+        public void DictionaryDatasAcceptChanges()
         {
             // 批次RejectChanges
-            var d = this.dictionaryDatas.AsEnumerable().ToList();
+            var d = this.DictionaryDatas.AsEnumerable().ToList();
             for (int i = 0; i < d.Count; i++)
             {
                 d[i].Value.AcceptChanges();
             }
 
             return;
-
-            // foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
-            // {
-            //    item.Value.AcceptChanges();
-            // }
         }
     }
 }

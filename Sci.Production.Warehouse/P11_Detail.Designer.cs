@@ -50,6 +50,8 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.labelTotalIssueQty = new Sci.Win.UI.Label();
             this.displayTotalIssueQty = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayDiffqty = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -65,6 +67,8 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.label1);
+            this.btmcont.Controls.Add(this.displayDiffqty);
             this.btmcont.Controls.Add(this.labelTotalIssueQty);
             this.btmcont.Controls.Add(this.displayTotalIssueQty);
             this.btmcont.Location = new System.Drawing.Point(0, 517);
@@ -78,6 +82,8 @@
             this.btmcont.Controls.SetChildIndex(this.prev, 0);
             this.btmcont.Controls.SetChildIndex(this.displayTotalIssueQty, 0);
             this.btmcont.Controls.SetChildIndex(this.labelTotalIssueQty, 0);
+            this.btmcont.Controls.SetChildIndex(this.displayDiffqty, 0);
+            this.btmcont.Controls.SetChildIndex(this.label1, 0);
             // 
             // append
             // 
@@ -87,12 +93,12 @@
             // save
             // 
             this.save.Location = new System.Drawing.Point(838, 5);
-            this.save.Click += new System.EventHandler(this.save_Click);
+            this.save.Click += new System.EventHandler(this.Save_Click);
             // 
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(918, 5);
-            this.undo.Click += new System.EventHandler(this.undo_Click);
+            this.undo.Click += new System.EventHandler(this.Undo_Click);
             // 
             // revise
             // 
@@ -322,12 +328,30 @@
             this.displayTotalIssueQty.Size = new System.Drawing.Size(124, 23);
             this.displayTotalIssueQty.TabIndex = 117;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(263, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(106, 23);
+            this.label1.TabIndex = 120;
+            this.label1.Text = "Diff with bal. qty";
+            // 
+            // displayDiffqty
+            // 
+            this.displayDiffqty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDiffqty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDiffqty.Location = new System.Drawing.Point(372, 8);
+            this.displayDiffqty.Name = "displayDiffqty";
+            this.displayDiffqty.Size = new System.Drawing.Size(124, 23);
+            this.displayDiffqty.TabIndex = 119;
+            // 
             // P11_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1008, 557);
             this.Controls.Add(this.gridBreakDown);
             this.Controls.Add(this.groupBox1);
             this.Name = "P11_Detail";
+            this.OnLineHelpID = "Sci.Win.Subs.Input8A";
             this.Text = "P11. Output Detail";
             this.Controls.SetChildIndex(this.groupBox1, 0);
             this.Controls.SetChildIndex(this.gridBreakDown, 0);
@@ -368,5 +392,7 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Label labelTotalIssueQty;
         private Win.UI.DisplayBox displayTotalIssueQty;
+        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayDiffqty;
     }
 }

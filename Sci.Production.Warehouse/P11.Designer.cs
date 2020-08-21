@@ -140,7 +140,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(2057, 128);
+            this.gridicon.Location = new System.Drawing.Point(2110, 128);
             // 
             // refresh
             // 
@@ -229,7 +229,7 @@
             this.txtRequest.Name = "txtRequest";
             this.txtRequest.Size = new System.Drawing.Size(107, 23);
             this.txtRequest.TabIndex = 1;
-            this.txtRequest.Validating += new System.ComponentModel.CancelEventHandler(this.txtRequest_Validating);
+            this.txtRequest.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRequest_Validating);
             // 
             // labelIssueDate
             // 
@@ -331,7 +331,7 @@
             this.btnAutoPick.TabIndex = 5;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
-            this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
+            this.btnAutoPick.Click += new System.EventHandler(this.BtnAutoPick_Click);
             // 
             // label25
             // 
@@ -356,7 +356,7 @@
             this.btnBreakDown.TabIndex = 6;
             this.btnBreakDown.Text = "Issue B\'down";
             this.btnBreakDown.UseVisualStyleBackColor = true;
-            this.btnBreakDown.Click += new System.EventHandler(this.btnBreakDown_Click);
+            this.btnBreakDown.Click += new System.EventHandler(this.BtnBreakDown_Click);
             // 
             // editArticle
             // 
@@ -407,7 +407,7 @@
             this.btnBOA.TabIndex = 7;
             this.btnBOA.Text = "BOA";
             this.btnBOA.UseVisualStyleBackColor = true;
-            this.btnBOA.Click += new System.EventHandler(this.btnBOA_Click);
+            this.btnBOA.Click += new System.EventHandler(this.BtnBOA_Click);
             // 
             // btnClear
             // 
@@ -419,7 +419,7 @@
             this.btnClear.TabIndex = 8;
             this.btnClear.Text = "Clear Qty=0";
             this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
             // 
             // txtOrderID
             // 
@@ -430,8 +430,8 @@
             this.txtOrderID.Name = "txtOrderID";
             this.txtOrderID.Size = new System.Drawing.Size(107, 23);
             this.txtOrderID.TabIndex = 3;
-            this.txtOrderID.Validating += new System.ComponentModel.CancelEventHandler(this.txtOrderID_Validating);
-            this.txtOrderID.Validated += new System.EventHandler(this.txtOrderID_Validated);
+            this.txtOrderID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtOrderID_Validating);
+            this.txtOrderID.Validated += new System.EventHandler(this.TxtOrderID_Validated);
             // 
             // labelOrderID
             // 
@@ -479,7 +479,7 @@
             this.checkByCombo.TabIndex = 2;
             this.checkByCombo.Text = "By Combo";
             this.checkByCombo.UseVisualStyleBackColor = true;
-            this.checkByCombo.CheckedChanged += new System.EventHandler(this.checkByCombo_CheckedChanged);
+            this.checkByCombo.CheckedChanged += new System.EventHandler(this.CheckByCombo_CheckedChanged);
             // 
             // P11
             // 
@@ -498,6 +498,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P11";
+            this.OnLineHelpID = "Sci.Win.Tems.Input8";
             this.SubGridAlias = "Issue_size";
             this.Text = "P11. Issue Sewing Material by Transfer Guide";
             this.UnApvChkValue = "Confirmed";

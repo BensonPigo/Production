@@ -1,42 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using Ict.Win;
-using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P11_AutoPick_Detail : Win.Subs.Base
     {
-        DataTable dt_detail;
+        private P11_AutoPick P11Autopick = null;
+        private Win.MatrixHelper _matrix;
+        private bool combo;
+        private string poid;
+        private string orderid;
+        private DataTable dt;
+        private int DataRowIndex;
+        private Win.UI.ListControlBindingSource gridbs = new Win.UI.ListControlBindingSource();
 
-        P11_AutoPick P11Autopick = null;
-        Win.MatrixHelper _matrix;
-        bool combo;
-        string poid;
-        string orderid;
-        DataTable dt;
-        int DataRowIndex;
-        int DataColumIndex;
-        public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
-        protected Win.UI.ListControlBindingSource gridbs = new Win.UI.ListControlBindingSource();
-
-        protected DataTable dtArtwork;
-
-        public P11_AutoPick_Detail(bool _combo, string _poid, string _orderid, DataTable _dt, int _DataRowIndex, int _DataColumIndex, P11_AutoPick _P11Autopick)
+        /// <inheritdoc/>
+        public P11_AutoPick_Detail(bool combo, string poid, string orderid, DataTable dt, int dataRowIndex, P11_AutoPick p11Autopick)
         {
-            this.combo = _combo; // 上面GRID使用
-            this.poid = _poid; // 上面GRID使用
-            this.orderid = _orderid; // 上面GRID使用
-            this.dt = _dt;
-            this.DataRowIndex = _DataRowIndex;
-            this.DataColumIndex = _DataColumIndex;
-            this.P11Autopick = _P11Autopick;
+            this.combo = combo; // 上面GRID使用
+            this.poid = poid; // 上面GRID使用
+            this.orderid = orderid; // 上面GRID使用
+            this.dt = dt;
+            this.DataRowIndex = dataRowIndex;
+            this.P11Autopick = p11Autopick;
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         public void SetRightGrid(DataTable datas)
         {
             if (datas != null)
@@ -44,8 +40,6 @@ namespace Sci.Production.Warehouse
                 this.gridbs.DataSource = null;
             }
 
-            // datas.AcceptChanges();
-            this.dt_detail = datas;
             this.gridbs.DataSource = datas;
 
             string[] sary = new string[this.dtX.Rows.Count];
@@ -60,11 +54,10 @@ namespace Sci.Production.Warehouse
             this.gridbs.MoveFirst();
         }
 
+        /// <inheritdoc/>
         public void SetDisplayBox(string strpoid, string strseq1, string strseq2)
         {
-            DataRow dr;
-            if (MyUtility.Check.Seek(
-                string.Format(
+            string sqlcmd = string.Format(
                 @"
 select  p.*
         , concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
@@ -76,7 +69,11 @@ select  p.*
                                             and seq2 = p.seq2)t for xml path('')) [orderlist]
 from dbo.po_supp_detail p WITH (NOLOCK) 
 where id='{0}' and seq1='{1}' and seq2='{2}'",
-                strpoid, strseq1, strseq2), out dr))
+                strpoid,
+                strseq1,
+                strseq2);
+
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
             {
                 this.displySeqNo.Text = dr["seq"].ToString();
                 this.displyUnit.Text = dr["StockUnit"].ToString();
@@ -86,15 +83,14 @@ where id='{0}' and seq1='{1}' and seq2='{2}'",
                 this.displySpecial.Text = dr["special"].ToString();
                 this.editOrderList.Text = dr["orderlist"].ToString();
                 this.eb_desc.Text = dr["description"].ToString();
-
-                // Rate = Convert.ToDecimal(dr["RATE"].ToString());
             }
         }
 
-        DataTable dtIssueBreakdown;
-        DataTable dtX;
-        DataTable dtY;
+        private DataTable dtIssueBreakdown;
+        private DataTable dtX;
+        private DataTable dtY;
 
+        /// <inheritdoc/>
         public void SetTopGrid()
         {
             #region -- matrix breakdown setting
@@ -115,7 +111,7 @@ where id='{0}' and seq1='{1}' and seq2='{2}'",
             #endregion
             if (this.combo)
             {
-                DBProxy.Current.Select(null, string.Format(
+                string sqlcmd = string.Format(
                     @"
 select  '' as Total
         , o.id
@@ -135,16 +131,20 @@ select  '' as Total
 from dbo.Orders o WITH (NOLOCK) 
 inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
 where o.POID = '{0}'
-group by sizecode", this.poid), out this.dtIssueBreakdown);
-                DBProxy.Current.Select(null, string.Format(
+group by sizecode", this.poid);
+                DBProxy.Current.Select(null, sqlcmd, out this.dtIssueBreakdown);
+
+                sqlcmd = string.Format(
                     @"
 select distinct os.* 
 from dbo.Order_SizeCode os WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.POID = os.Id
 inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
 where  o.POID='{0}'
-order by seq", this.poid), out this.dtX);
-                DBProxy.Current.Select(null, string.Format(
+order by seq", this.poid);
+                DBProxy.Current.Select(null, sqlcmd, out this.dtX);
+
+                sqlcmd = string.Format(
                     @"
 select  sum(oq.qty) Total
         , oq.article
@@ -160,11 +160,12 @@ select  sum(oq.qty) Total
         , '' 
 from dbo.Orders o WITH (NOLOCK) 
 inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
-where o.POID = '{0}'", this.poid), out this.dtY);
+where o.POID = '{0}'", this.poid);
+                DBProxy.Current.Select(null, sqlcmd, out this.dtY);
             }
             else
             {
-                DBProxy.Current.Select(null, string.Format(
+                string sqlcmd = string.Format(
                     @"
 select  '' as Total
         , ID
@@ -182,16 +183,20 @@ select  '' as Total
         , convert(varchar,sum(qty)) qty2 
 from dbo.Order_Qty WITH (NOLOCK) 
 where id='{0}' 
-group by sizecode", this.orderid), out this.dtIssueBreakdown);
-                DBProxy.Current.Select(null, string.Format(
+group by sizecode", this.orderid);
+                DBProxy.Current.Select(null, sqlcmd, out this.dtIssueBreakdown);
+
+                sqlcmd = string.Format(
                     @"
 select os.* 
 from dbo.Order_SizeCode os WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.POID = os.Id
 inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
 where  o.id = '{0}'
-order by seq", this.orderid), out this.dtX);
-                DBProxy.Current.Select(null, string.Format(
+order by seq", this.orderid);
+                DBProxy.Current.Select(null, sqlcmd, out this.dtX);
+
+                sqlcmd = string.Format(
                     @"
 select  sum(qty) Total
         , '{0}' as ID
@@ -205,7 +210,8 @@ select  sum(qty) Total
         , ''
         , 'TTL' 
 from dbo.Order_qty WITH (NOLOCK) 
-where id='{0}' ", this.orderid), out this.dtY);
+where id='{0}' ", this.orderid);
+                DBProxy.Current.Select(null, sqlcmd, out this.dtY);
             }
 
             this._matrix.Clear();
@@ -213,6 +219,7 @@ where id='{0}' ", this.orderid), out this.dtY);
             ((DataTable)this.listControlBindingSource1.DataSource).Rows[0].Delete();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -223,45 +230,42 @@ where id='{0}' ", this.orderid), out this.dtY);
             DataGridViewGeneratorNumericColumnSettings issueQtySet = new DataGridViewGeneratorNumericColumnSettings();
             issueQtySet.CellValidating += (s, e) =>
             {
-                this.gridAutoPickDetail.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = e.FormattedValue;
-                if (e.ColumnIndex == 1)
-                {
-                    this.computeTotalIssueQty();
-                }
+                DataRow dr = this.gridAutoPickDetail.GetDataRow<DataRow>(e.RowIndex);
+                dr["Qty"] = e.FormattedValue;
+                dr["Diffqty"] = MyUtility.Convert.GetDecimal(dr["Autopickqty"]) - MyUtility.Convert.GetDecimal(dr["Qty"]);
+                dr.EndEdit();
+                this.ComputeTotalQty();
             };
             #endregion
-            /*
-             * 請注意 如果以後 gridAutoPickDetail 有追加欄位
-             * 1. 請確認 computTotalIssueQty => Cells 所指定的欄位是 QTY
-             * 2. 確認 issueQtySet 中 ColumnIndex 判斷的是 QTY 欄位
-            */
             this.Helper.Controls.Grid.Generator(this.gridAutoPickDetail)
                 .Text("sizecode", header: "SizeCode", iseditingreadonly: true, width: Widths.AnsiChars(6))
+                .Numeric("Autopickqty", header: "Autopick qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                 .Numeric("qty", header: "Issue Qty", iseditable: true, decimal_places: 2, integer_places: 10, settings: issueQtySet)
+                .Numeric("Diffqty", header: "Diff. Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                 ;
             #region computTotalIssueQty
-            this.computeTotalIssueQty();
+            this.ComputeTotalQty();
             #endregion
             this.gridAutoPickDetail.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        bool isSaved = false;
+        private bool isSaved = false;
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
-            this.SetRightGrid(this.P11Autopick.getAutoDetailDataTable(this.DataRowIndex));
-            DataRow tmpDt = this.P11Autopick.getAutoDetailDataRow(this.DataRowIndex);
+            this.SetRightGrid(this.P11Autopick.GetAutoDetailDataTable(this.DataRowIndex));
+            DataRow tmpDt = this.P11Autopick.GetAutoDetailDataRow(this.DataRowIndex);
             this.SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
 
             // DataRowIndex//要改變原本表單的資料 要現在的索引
-            this.P11Autopick.sum_subDetail(this.P11Autopick.getNeedChangeDataRow(this.DataRowIndex), this.P11Autopick.getAutoDetailDataTable(this.DataRowIndex));
+            this.P11Autopick.Sum_subDetail(this.P11Autopick.GetNeedChangeDataRow(this.DataRowIndex), this.P11Autopick.GetAutoDetailDataTable(this.DataRowIndex));
 
             this.P11Autopick.BOA_PO.AcceptChanges();
             this.isSaved = true;
             this.Close();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.P11Autopick.BOA_PO.RejectChanges();
             this.Close();
@@ -271,16 +275,16 @@ where id='{0}' ", this.orderid), out this.dtY);
         {
             this.SetTopGrid();
 
-            this.SetRightGrid(this.P11Autopick.getAutoDetailDataTable(this.DataRowIndex));
+            this.SetRightGrid(this.P11Autopick.GetAutoDetailDataTable(this.DataRowIndex));
 
-            DataRow tmpDt = this.P11Autopick.getAutoDetailDataRow(this.DataRowIndex);
+            DataRow tmpDt = this.P11Autopick.GetAutoDetailDataRow(this.DataRowIndex);
             this.SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
         }
 
         // 下一筆
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
-            this.DataRowIndex = this.DataRowIndex + 1;
+            this.DataRowIndex++;
             if (this.DataRowIndex > this.dt.Rows.Count - 1)
             {
                 this.DataRowIndex = this.dt.Rows.Count - 1;
@@ -288,22 +292,22 @@ where id='{0}' ", this.orderid), out this.dtY);
             }
             else
             {
-                this.SetRightGrid(this.P11Autopick.getAutoDetailDataTable(this.DataRowIndex));
-                DataRow tmpDt = this.P11Autopick.getAutoDetailDataRow(this.DataRowIndex);
+                this.SetRightGrid(this.P11Autopick.GetAutoDetailDataTable(this.DataRowIndex));
+                DataRow tmpDt = this.P11Autopick.GetAutoDetailDataRow(this.DataRowIndex);
                 this.SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
 
                 // DataRowIndex = DataRowIndex - 1;//要改變原本表單的資料 要退回上一筆索引
-                this.P11Autopick.sum_subDetail(this.P11Autopick.getNeedChangeDataRow(this.DataRowIndex - 1), this.P11Autopick.getAutoDetailDataTable(this.DataRowIndex - 1));
+                this.P11Autopick.Sum_subDetail(this.P11Autopick.GetNeedChangeDataRow(this.DataRowIndex - 1), this.P11Autopick.GetAutoDetailDataTable(this.DataRowIndex - 1));
             }
             #region 重新計算 Total Issue Qty
-            this.computeTotalIssueQty();
+            this.ComputeTotalQty();
             #endregion
         }
 
         // 上一筆
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
-            this.DataRowIndex = this.DataRowIndex - 1; // 上一筆索引-1
+            this.DataRowIndex--; // 上一筆索引-1
 
             if (this.DataRowIndex == -1)
             {
@@ -312,15 +316,15 @@ where id='{0}' ", this.orderid), out this.dtY);
             }
             else
             {
-                this.SetRightGrid(this.P11Autopick.getAutoDetailDataTable(this.DataRowIndex));
-                DataRow tmpDt = this.P11Autopick.getAutoDetailDataRow(this.DataRowIndex);
+                this.SetRightGrid(this.P11Autopick.GetAutoDetailDataTable(this.DataRowIndex));
+                DataRow tmpDt = this.P11Autopick.GetAutoDetailDataRow(this.DataRowIndex);
                 this.SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
 
                 // DataRowIndex = DataRowIndex +1;//要改變原本表單的資料 要退回上一筆索引
-                this.P11Autopick.sum_subDetail(this.P11Autopick.getNeedChangeDataRow(this.DataRowIndex + 1), this.P11Autopick.getAutoDetailDataTable(this.DataRowIndex + 1));
+                this.P11Autopick.Sum_subDetail(this.P11Autopick.GetNeedChangeDataRow(this.DataRowIndex + 1), this.P11Autopick.GetAutoDetailDataTable(this.DataRowIndex + 1));
             }
             #region 重新計算 Total Issue Qty
-            this.computeTotalIssueQty();
+            this.ComputeTotalQty();
             #endregion
         }
 
@@ -329,26 +333,17 @@ where id='{0}' ", this.orderid), out this.dtY);
             if (!this.isSaved)
             {
                 this.P11Autopick.BOA_PO.RejectChanges();
-                this.P11Autopick.dictionaryDatasRejectChanges();
+                this.P11Autopick.DictionaryDatasRejectChanges();
             }
 
             this.listControlBindingSource1.DataSource = null;
             this.gridbs.DataSource = null;
         }
 
-        private void computeTotalIssueQty()
+        private void ComputeTotalQty()
         {
-            /*
-             * 請注意 如果以後 gridAutoPickDetail 有追加欄位
-             * 請把確認 Cells 所指定的欄位是 QTY
-            */
-            decimal totalQty = 0;
-            for (int i = 0; i < this.gridAutoPickDetail.Rows.Count; i++)
-            {
-                totalQty += decimal.Parse(this.gridAutoPickDetail.Rows[i].Cells[1].Value.ToString());
-            }
-
-            this.displayTotalIssueQty.Value = totalQty;
+            this.displayTotalIssueQty.Value = MyUtility.Convert.GetDecimal(((DataTable)this.gridbs.DataSource).Compute("sum(Qty)", string.Empty));
+            this.displayDiffqty.Value = MyUtility.Convert.GetDecimal(((DataTable)this.gridbs.DataSource).Compute("sum(Diffqty)", string.Empty));
         }
     }
 }
