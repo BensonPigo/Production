@@ -632,15 +632,16 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
         }
 
         /// <inheritdoc/>
-        protected override void ClickSaveAfter()
+        protected override DualResult ClickSavePost()
         {
-            base.ClickSaveAfter();
-            string deleteSql = $@"delete Issue_Size where id = '{this.CurrentMaintain["id"]}' and Qty = 0";
+            string deleteSql = $@"delete Issue_Size where id = '{this.CurrentMaintain["id"]}' and Qty = 0 and AutoPickQty = 0";
             DualResult result = DBProxy.Current.Execute(null, deleteSql);
             if (!result)
             {
-                this.ShowErr(result);
+                return result;
             }
+
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
@@ -1864,7 +1865,6 @@ and Factory.mdivisionid = '{Env.User.Keyword}'
                 return;
             }
 
-            // DBProxy.Current.Execute(null, string.Format("delete from dbo.issue_breakdown where id='{0}';", CurrentMaintain["id"].ToString()));
             this.CurrentMaintain["cutplanid"] = string.Empty;
             if (MyUtility.Check.Empty(this.poid))
             {
