@@ -59,6 +59,7 @@ namespace Sci.Production.Centralized
             this.comboM.Text = Env.User.Keyword;
             #endregion
             this.comboSummaryBy.SelectedIndex = 0;
+            base.OnFormLoaded();
         }
 
         /// <inheritdoc/>
@@ -118,7 +119,7 @@ namespace Sci.Production.Centralized
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
 
             // 查詢 PMSDB
-            string[] strSevers = ConfigurationManager.AppSettings["PMSDBServerMatchFactory"].Split(new char[] { ';' });
+            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
             List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
             foreach (string ss in strSevers)
             {
