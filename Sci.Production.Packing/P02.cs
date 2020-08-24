@@ -1822,8 +1822,9 @@ DECLARE @tempRemainder TABLE (
 --將PackingGuide_Detail資料存放至Cursor
 DECLARE cursor_packguide CURSOR FOR
 	SELECT a.RefNo,a.Article,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW ,isnull(cb.BarCode,''), a.RefNoForBalance, a.CombineBalance
-		, [BookingVW] = case when ISNULL(a.RefNoForBalance,'') = '' then l.BookingVW else lb.BookingVW end
-		, [APPEstAmtVW] = case when ISNULL(a.RefNoForBalance,'') = '' then l.APPEstAmtVW else lb.APPEstAmtVW end
+			, l.BookingVW, l.APPEstAmtVW
+			, [BookingVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.BookingVW else lb.BookingVW end
+			, [APPEstAmtVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.APPEstAmtVW else lb.APPEstAmtVW end
 	FROM PackingGuide_Detail a WITH (NOLOCK) 
 	LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 	LEFT JOIN Order_Article c WITH (NOLOCK) ON c.Id = @orderid AND a.Article = c.Article
@@ -1863,7 +1864,9 @@ DECLARE @refno VARCHAR(21),
 		@RefNoForBalance VARCHAR(21),
         @CombineBalance bit,
 		@APPBookingVW NUMERIC(20,2),
-		@APPEstAmtVW NUMERIC(20,2)
+		@APPEstAmtVW NUMERIC(20,2),
+		@APPBookingVW_Balance NUMERIC(20,2),
+		@APPEstAmtVW_Balance NUMERIC(20,2)
 
 --宣告變數: 記錄程式中的資料
 DECLARE @currentqty INT, --目前數量
@@ -1892,7 +1895,7 @@ SET @ttlnnw = 0
 --開始run cursor
 OPEN cursor_packguide
 --將第一筆資料填入變數
-FETCH NEXT FROM cursor_packguide INTO @refno, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@BarCode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW
+FETCH NEXT FROM cursor_packguide INTO @refno, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@BarCode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	IF @qtyperctn > 0
@@ -1938,7 +1941,7 @@ BEGIN
 							SELECT @GwBalance = CtnWeight FROM LocalItem WHERE RefNo = @RefNoForBalance
 							-- 有設定尾箱的料號
 							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW)
-								VALUES (@RefNoForBalance, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+@GwBalance, (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@BarCode, @APPBookingVW, @APPEstAmtVW)
+								VALUES (@RefNoForBalance, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+@GwBalance, (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@BarCode, @APPBookingVW_Balance, @APPEstAmtVW_Balance)
 						END
 					END
 
@@ -1947,7 +1950,7 @@ BEGIN
 		END
 
 	--將下一筆資料填入變數
-	FETCH NEXT FROM cursor_packguide INTO @refno, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@BarCode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_packguide INTO @refno, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@BarCode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
 END
 
 --關閉cursor與參數的關聯
@@ -2504,7 +2507,9 @@ DECLARE @refno VARCHAR(21),
 		@RefNoForBalance VARCHAR(21),
         @CombineBalance bit,
 		@APPBookingVW NUMERIC(20,2),
-		@APPEstAmtVW NUMERIC(20,2)
+		@APPEstAmtVW NUMERIC(20,2),
+		@APPBookingVW_Balance NUMERIC(20,2),
+		@APPEstAmtVW_Balance NUMERIC(20,2)
 
 --宣告變數: 記錄程式中的資料
 DECLARE @currentqty INT, --目前數量
@@ -2542,8 +2547,9 @@ BEGIN
 	--將PackingGuide_Detail資料存放至Cursor
 	DECLARE cursor_packguide CURSOR FOR
 	    SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW , isnull(cb.BarCode,''), a.RefNoForBalance, a.CombineBalance
-    		, [BookingVW] = case when ISNULL(a.RefNoForBalance,'') = '' then l.BookingVW else lb.BookingVW end
-		    , [APPEstAmtVW] = case when ISNULL(a.RefNoForBalance,'') = '' then l.APPEstAmtVW else lb.APPEstAmtVW end
+			, l.BookingVW, l.APPEstAmtVW
+			, [BookingVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.BookingVW else lb.BookingVW end
+			, [APPEstAmtVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.APPEstAmtVW else lb.APPEstAmtVW end
 	    FROM PackingGuide_Detail a WITH (NOLOCK) 
 	    LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 	    LEFT JOIN Order_SizeCode d WITH (NOLOCK) ON d.Id = b.POID AND a.SizeCode = d.SizeCode
@@ -2570,7 +2576,7 @@ BEGIN
 
 	OPEN cursor_packguide
 	--將第一筆資料填入變數
-	FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @Barcode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @Barcode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		IF @qtyperctn > 0
@@ -2615,7 +2621,7 @@ BEGIN
 							SELECT @GwBalance = CtnWeight FROM LocalItem WHERE RefNo = @RefNoForBalance
 							-- 有設定尾箱的料號
 							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode, APPBookingVW, APPEstAmtVW)
-								VALUES (@RefNoForBalance, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+@GwBalance, (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@Barcode, @APPBookingVW, @APPEstAmtVW)
+								VALUES (@RefNoForBalance, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+@GwBalance, (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@Barcode, @APPBookingVW_Balance, @APPEstAmtVW_Balance)
 						END
 					END
 	
@@ -2623,7 +2629,7 @@ BEGIN
 			END
 		END
 		--將下一筆資料填入變數
-		FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@Barcode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW
+		FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@Barcode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
 	END
 	--關閉cursor與參數的關聯
 	CLOSE cursor_packguide
