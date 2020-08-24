@@ -1819,6 +1819,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
 
                             if (subConCol != 9999)
                             {
+                                objArray[intRowsStart, subConCol - 1] = string.Empty;
                                 if (!MyUtility.Check.Empty(sdr["Supp"]))
                                 {
                                     objArray[intRowsStart, subConCol - 1] = sdr["Supp"];
