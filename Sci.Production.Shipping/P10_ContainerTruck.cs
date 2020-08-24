@@ -16,7 +16,7 @@ namespace Sci.Production.Shipping
     {
         private string ShipPlanID;
         private Dictionary<string, string> di_CYCFS = new Dictionary<string, string>();
-        Action reloadParant;
+        private Action reloadParant;
 
         /// <summary>
         /// P05_ContainerTruck
@@ -26,7 +26,8 @@ namespace Sci.Production.Shipping
         /// <param name="keyvalue2">keyvalue2</param>
         /// <param name="keyvalue3">keyvalue3</param>
         /// <param name="shipPlanID">shipPlanID</param>
-        public P10_ContainerTruck(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string shipPlanID, Action ReloadParant)
+        /// <param name="reloadParant">Action</param>
+        public P10_ContainerTruck(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string shipPlanID, Action reloadParant)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             this.ShipPlanID = shipPlanID;
@@ -35,7 +36,7 @@ namespace Sci.Production.Shipping
             this.di_CYCFS.Add("40 STD", "40 STD");
             this.di_CYCFS.Add("40HQ", "40HQ");
             this.di_CYCFS.Add("45HQ", "45HQ");
-            this.reloadParant = ReloadParant;
+            this.reloadParant = reloadParant;
         }
 
         /// <inheritdoc/>
@@ -46,9 +47,9 @@ namespace Sci.Production.Shipping
             DataGridViewGeneratorTextColumnSettings id = new DataGridViewGeneratorTextColumnSettings();
 
             // 限制最大字數，避免寫入DB錯誤
-            DataGridViewGeneratorTextColumnSettings CTNRNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20 };
-            DataGridViewGeneratorTextColumnSettings SealNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 15 };
-            DataGridViewGeneratorTextColumnSettings TruckNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20 };
+            DataGridViewGeneratorTextColumnSettings cTNRNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20 };
+            DataGridViewGeneratorTextColumnSettings sealNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 15 };
+            DataGridViewGeneratorTextColumnSettings truckNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20 };
 
             id.EditingMouseDown += (s, e) =>
             {
@@ -129,9 +130,9 @@ and g.CYCFS = 'CY-CY'
             .ComboBox("Type", header: "Container Type", width: Widths.AnsiChars(20)).Get(out cbb_CYCFS)
             .Text("ID", header: "GB#", width: Widths.AnsiChars(20), settings: id)
             .Text("CYCFS", header: "Loading Type", iseditable: false)
-            .Text("CTNRNo", header: "Container#", width: Widths.AnsiChars(20), settings: CTNRNo)
-            .Text("SealNo", header: "Seal#", width: Widths.AnsiChars(15), settings: SealNo)
-            .Text("TruckNo", header: "Truck#/Traile#", width: Widths.AnsiChars(20), settings: TruckNo)
+            .Text("CTNRNo", header: "Container#", width: Widths.AnsiChars(20), settings: cTNRNo)
+            .Text("SealNo", header: "Seal#", width: Widths.AnsiChars(15), settings: sealNo)
+            .Text("TruckNo", header: "Truck#/Traile#", width: Widths.AnsiChars(20), settings: truckNo)
             .Text("AddBy", header: "Add by", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Text("EditBy", header: "Edit by", width: Widths.AnsiChars(30), iseditingreadonly: true);
 
@@ -222,12 +223,14 @@ and concat(gc.id, gc.CTNRNo,gc.TruckNo)not in ({inPkey})
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void OnSaveAfter()
         {
             base.OnSaveAfter();
             this.reloadParant();
         }
 
+        /// <inheritdoc/>
         protected override void OnRequired()
         {
             base.OnRequired();

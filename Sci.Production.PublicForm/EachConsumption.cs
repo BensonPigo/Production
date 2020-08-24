@@ -10,24 +10,29 @@ using Sci.Production.PublicPrg;
 #pragma warning disable 0414
 namespace Sci.Production.PublicForm
 {
+    /// <inheritdoc/>
     public partial class EachConsumption : Win.Subs.Input4Plus
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EachConsumption"/> class.
+        /// </summary>
         public EachConsumption()
         {
             this.InitializeComponent();
         }
 
         private DataTable sizetb;
-        private String _isCuttingPiece;
+        private string _isCuttingPiece;
         private int _cuttingPiece;
 
         /// <summary>
         /// inner class.
         /// </summary>
-        class SizeQtyInfo
+        private class SizeQtyInfo
         {
-            public DataRow master = null;
-            public DataTable sizeQty = null;
+            public DataRow Master { get; set; } = null;
+
+            public DataTable SizeQty { get; set; } = null;
         }
 
         // ITableSchema _sizeQtyTableschema;
@@ -36,14 +41,18 @@ namespace Sci.Production.PublicForm
         /// <summary>
         /// Internal used.
         /// </summary>
-        IDictionary<DataRow, SizeQtyInfo> _sizeQtyInfos = new Dictionary<DataRow, SizeQtyInfo>();
+        private IDictionary<DataRow, SizeQtyInfo> _sizeQtyInfos = new Dictionary<DataRow, SizeQtyInfo>();
 
         /// <summary>
-        /// Internal used.
+        /// Initializes a new instance of the <see cref="EachConsumption"/> class.
         /// </summary>
-        // SizeQtyInfo _sizeQtyAttached;
-        // private bool isSizeQtyGridCurrentChanging { get { return 0 < _isSizeQtyGridCurrentChanging; } }
-       // private bool IsSizeQtyAttached { get { return null != _sizeQtyAttached; } }
+        /// <param name="canedit">Can Edit</param>
+        /// <param name="keyvalue1">keyvalue1</param>
+        /// <param name="keyvalue2">keyvalue2</param>
+        /// <param name="keyvalue3">keyvalue3</param>
+        /// <param name="cuttingPiece">Cutting Piece</param>
+        /// <param name="switchToWorkorder">Switch To Workorder</param>
+        /// <param name="canSwitch">Can Switch</param>
         public EachConsumption(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, bool cuttingPiece, bool switchToWorkorder, bool canSwitch)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
@@ -58,8 +67,8 @@ namespace Sci.Production.PublicForm
                 this._cuttingPiece = 1;
             }
 
-            bool EditSwitch2Order = Prgs.GetAuthority(Env.User.UserID, "P01.Cutting Master List", "CanEdit");
-            if (EditSwitch2Order && switchToWorkorder)
+            bool editSwitch2Order = Prgs.GetAuthority(Env.User.UserID, "P01.Cutting Master List", "CanEdit");
+            if (editSwitch2Order && switchToWorkorder)
             {
                 this.btnSwitchtoWorkOrder.Enabled = true;
             }
@@ -69,6 +78,7 @@ namespace Sci.Production.PublicForm
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery(out DataTable datas)
         {
             // return base.OnRequery();
@@ -133,6 +143,7 @@ Where a.ID = '{0}' Order by a.Seq", this.KeyValue1);
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -156,6 +167,7 @@ Where a.ID = '{0}' Order by a.Seq", this.KeyValue1);
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnGridRowChanged()
         {
             if (MyUtility.Check.Empty(this.CurrentData))
@@ -179,7 +191,10 @@ select Article =
 stuff( ( select distinct concat(',', Article )
 from Order_EachCons_Article  
 where id='{0}' and Order_EachConsUkey='{1}' 
-for xml path('')),1,1,'')  ", row["id"], row["Ukey"]), out dr))
+for xml path('')),1,1,'')  ",
+                row["id"],
+                row["Ukey"]),
+                out dr))
             {
                 this.editForArticle.Text = dr["Article"].ToString();
             }
@@ -191,7 +206,7 @@ for xml path('')),1,1,'')  ", row["id"], row["Ukey"]), out dr))
             this.detailgrid.AutoResizeColumns();
         }
 
-        private void btnDetail_Click(object sender, EventArgs e)
+        private void BtnDetail_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentData;
             if (dr == null)
@@ -203,7 +218,7 @@ for xml path('')),1,1,'')  ", row["id"], row["Ukey"]), out dr))
             frm.ShowDialog(this);
         }
 
-        private void btnDownloadIdList_Click(object sender, EventArgs e)
+        private void BtnDownloadIdList_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentData;
             if (dr == null)
@@ -215,7 +230,7 @@ for xml path('')),1,1,'')  ", row["id"], row["Ukey"]), out dr))
             frm.ShowDialog(this);
         }
 
-        private void btnSwitchtoWorkOrder_Click(object sender, EventArgs e)
+        private void BtnSwitchtoWorkOrder_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentData;
             if (dr == null)

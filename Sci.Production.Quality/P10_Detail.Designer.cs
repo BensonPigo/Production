@@ -32,10 +32,9 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.combFGWTMaterial = new Sci.Win.UI.ComboBox();
-            this.label41 = new Sci.Win.UI.Label();
             this.txtLotoFactory = new Sci.Win.UI.TextBox();
             this.label40 = new Sci.Win.UI.Label();
             this.comboResult = new Sci.Win.UI.ComboBox();
@@ -122,17 +121,18 @@
             this.gridAppearance = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabFGWT = new System.Windows.Forms.TabPage();
-            this.panel10 = new Sci.Win.UI.Panel();
-            this.label43 = new System.Windows.Forms.Label();
-            this.label42 = new System.Windows.Forms.Label();
             this.panel11 = new Sci.Win.UI.Panel();
             this.gridFGWT = new Sci.Win.UI.Grid();
+            this.tabFGPT = new System.Windows.Forms.TabPage();
+            this.panel10 = new Sci.Win.UI.Panel();
+            this.gridFGPT = new Sci.Win.UI.Grid();
             this.panel1 = new Sci.Win.UI.Panel();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.btnAmend = new Sci.Win.UI.Button();
             this.btnEncode = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
+            this.btnToFGPT = new Sci.Win.UI.Button();
             this.btnToFGWT = new Sci.Win.UI.Button();
             this.btnPDF = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
@@ -154,9 +154,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.tabFGWT.SuspendLayout();
-            this.panel10.SuspendLayout();
             this.panel11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).BeginInit();
+            this.tabFGPT.SuspendLayout();
+            this.panel10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridFGPT)).BeginInit();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -168,6 +170,7 @@
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabFGWT);
+            this.tabControl1.Controls.Add(this.tabFGPT);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -177,8 +180,6 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.combFGWTMaterial);
-            this.tabPage1.Controls.Add(this.label41);
             this.tabPage1.Controls.Add(this.txtLotoFactory);
             this.tabPage1.Controls.Add(this.label40);
             this.tabPage1.Controls.Add(this.comboResult);
@@ -222,32 +223,6 @@
             this.tabPage1.Size = new System.Drawing.Size(1134, 420);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Detail";
-            // 
-            // combFGWTMaterial
-            // 
-            this.combFGWTMaterial.AutoCompleteCustomSource.AddRange(new string[] {
-            "KNIT",
-            "WOVEN"});
-            this.combFGWTMaterial.BackColor = System.Drawing.Color.White;
-            this.combFGWTMaterial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.combFGWTMaterial.FormattingEnabled = true;
-            this.combFGWTMaterial.IsSupportUnselect = true;
-            this.combFGWTMaterial.Items.AddRange(new object[] {
-            "KNIT",
-            "WOVEN"});
-            this.combFGWTMaterial.Location = new System.Drawing.Point(122, 308);
-            this.combFGWTMaterial.Name = "combFGWTMaterial";
-            this.combFGWTMaterial.OldText = "";
-            this.combFGWTMaterial.Size = new System.Drawing.Size(121, 24);
-            this.combFGWTMaterial.TabIndex = 60;
-            // 
-            // label41
-            // 
-            this.label41.Location = new System.Drawing.Point(0, 308);
-            this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(119, 23);
-            this.label41.TabIndex = 59;
-            this.label41.Text = "FGWT Material";
             // 
             // txtLotoFactory
             // 
@@ -298,7 +273,7 @@
             this.comboNeck.Items.AddRange(new object[] {
             "Yes",
             "No"});
-            this.comboNeck.Location = new System.Drawing.Point(401, 336);
+            this.comboNeck.Location = new System.Drawing.Point(398, 310);
             this.comboNeck.Name = "comboNeck";
             this.comboNeck.OldText = "";
             this.comboNeck.Size = new System.Drawing.Size(121, 24);
@@ -377,7 +352,7 @@
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label18.Location = new System.Drawing.Point(6, 340);
+            this.label18.Location = new System.Drawing.Point(3, 314);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(389, 20);
             this.label18.TabIndex = 49;
@@ -1257,10 +1232,10 @@
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.panel8);
-            this.tabPage3.Location = new System.Drawing.Point(4, 25);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1134, 420);
+            this.tabPage3.Size = new System.Drawing.Size(1134, 423);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "Appearance";
             // 
@@ -1270,7 +1245,7 @@
             this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel8.Location = new System.Drawing.Point(3, 3);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(1128, 414);
+            this.panel8.Size = new System.Drawing.Size(1128, 417);
             this.panel8.TabIndex = 0;
             // 
             // gridAppearance
@@ -1303,60 +1278,27 @@
             this.gridAppearance.RowTemplate.Height = 24;
             this.gridAppearance.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAppearance.ShowCellToolTips = false;
-            this.gridAppearance.Size = new System.Drawing.Size(1128, 414);
+            this.gridAppearance.Size = new System.Drawing.Size(1128, 417);
             this.gridAppearance.TabIndex = 1;
             this.gridAppearance.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.gridAppearance_CellBeginEdit);
             // 
             // tabFGWT
             // 
-            this.tabFGWT.Controls.Add(this.panel10);
             this.tabFGWT.Controls.Add(this.panel11);
-            this.tabFGWT.Location = new System.Drawing.Point(4, 25);
+            this.tabFGWT.Location = new System.Drawing.Point(4, 22);
             this.tabFGWT.Name = "tabFGWT";
             this.tabFGWT.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFGWT.Size = new System.Drawing.Size(1134, 420);
+            this.tabFGWT.Size = new System.Drawing.Size(1134, 423);
             this.tabFGWT.TabIndex = 2;
             this.tabFGWT.Text = "FGWT";
-            // 
-            // panel10
-            // 
-            this.panel10.Controls.Add(this.label43);
-            this.panel10.Controls.Add(this.label42);
-            this.panel10.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel10.Location = new System.Drawing.Point(3, 364);
-            this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(1128, 53);
-            this.panel10.TabIndex = 2;
-            // 
-            // label43
-            // 
-            this.label43.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label43.AutoSize = true;
-            this.label43.ForeColor = System.Drawing.Color.Red;
-            this.label43.Location = new System.Drawing.Point(6, 28);
-            this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(497, 17);
-            this.label43.TabIndex = 9;
-            this.label43.Text = "WOVEN： When -3 < (AfterWash - BeforeWash) < +5 Result Pass, other Fail.";
-            // 
-            // label42
-            // 
-            this.label42.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label42.AutoSize = true;
-            this.label42.ForeColor = System.Drawing.Color.Red;
-            this.label42.Location = new System.Drawing.Point(6, 6);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(480, 17);
-            this.label42.TabIndex = 8;
-            this.label42.Text = "KNIT ： When -2 < (AfterWash - BeforeWash) < +3 Result Pass, other Fail.";
             // 
             // panel11
             // 
             this.panel11.Controls.Add(this.gridFGWT);
-            this.panel11.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel11.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel11.Location = new System.Drawing.Point(3, 3);
             this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(1128, 355);
+            this.panel11.Size = new System.Drawing.Size(1128, 417);
             this.panel11.TabIndex = 1;
             // 
             // gridFGWT
@@ -1388,8 +1330,60 @@
             this.gridFGWT.RowTemplate.Height = 24;
             this.gridFGWT.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridFGWT.ShowCellToolTips = false;
-            this.gridFGWT.Size = new System.Drawing.Size(1128, 355);
+            this.gridFGWT.Size = new System.Drawing.Size(1128, 417);
             this.gridFGWT.TabIndex = 1;
+            // 
+            // tabFGPT
+            // 
+            this.tabFGPT.Controls.Add(this.panel10);
+            this.tabFGPT.Location = new System.Drawing.Point(4, 25);
+            this.tabFGPT.Name = "tabFGPT";
+            this.tabFGPT.Padding = new System.Windows.Forms.Padding(3);
+            this.tabFGPT.Size = new System.Drawing.Size(1134, 420);
+            this.tabFGPT.TabIndex = 3;
+            this.tabFGPT.Text = "FGPT";
+            // 
+            // panel10
+            // 
+            this.panel10.Controls.Add(this.gridFGPT);
+            this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel10.Location = new System.Drawing.Point(3, 3);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(1128, 414);
+            this.panel10.TabIndex = 1;
+            // 
+            // gridFGPT
+            // 
+            this.gridFGPT.AllowUserToAddRows = false;
+            this.gridFGPT.AllowUserToDeleteRows = false;
+            this.gridFGPT.AllowUserToResizeRows = false;
+            this.gridFGPT.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridFGPT.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridFGPT.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridFGPT.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridFGPT.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridFGPT.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridFGPT.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridFGPT.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridFGPT.Location = new System.Drawing.Point(0, 0);
+            this.gridFGPT.Name = "gridFGPT";
+            this.gridFGPT.ReadOnly = true;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridFGPT.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.gridFGPT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridFGPT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridFGPT.RowTemplate.Height = 24;
+            this.gridFGPT.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridFGPT.ShowCellToolTips = false;
+            this.gridFGPT.Size = new System.Drawing.Size(1128, 414);
+            this.gridFGPT.TabIndex = 1;
+            this.gridFGPT.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridFGPT_EditingKeyProcessing);
             // 
             // panel1
             // 
@@ -1441,6 +1435,7 @@
             // 
             // radioPanel2
             // 
+            this.radioPanel2.Controls.Add(this.btnToFGPT);
             this.radioPanel2.Controls.Add(this.btnToFGWT);
             this.radioPanel2.Controls.Add(this.btnPDF);
             this.radioPanel2.Controls.Add(this.btnEdit);
@@ -1450,6 +1445,17 @@
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.Size = new System.Drawing.Size(1142, 35);
             this.radioPanel2.TabIndex = 9;
+            // 
+            // btnToFGPT
+            // 
+            this.btnToFGPT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToFGPT.Location = new System.Drawing.Point(677, 0);
+            this.btnToFGPT.Name = "btnToFGPT";
+            this.btnToFGPT.Size = new System.Drawing.Size(97, 30);
+            this.btnToFGPT.TabIndex = 10;
+            this.btnToFGPT.Text = "To FGPT";
+            this.btnToFGPT.UseVisualStyleBackColor = true;
+            this.btnToFGPT.Click += new System.EventHandler(this.BtnToFGPT_Click);
             // 
             // btnToFGWT
             // 
@@ -1539,10 +1545,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.tabFGWT.ResumeLayout(false);
-            this.panel10.ResumeLayout(false);
-            this.panel10.PerformLayout();
             this.panel11.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridFGWT)).EndInit();
+            this.tabFGPT.ResumeLayout(false);
+            this.panel10.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridFGPT)).EndInit();
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
@@ -1649,14 +1656,13 @@
         private Win.UI.Panel panel9;
         private Win.UI.TextBox txtLotoFactory;
         private Win.UI.Label label40;
-        private Win.UI.ComboBox combFGWTMaterial;
-        private Win.UI.Label label41;
         private System.Windows.Forms.TabPage tabFGWT;
-        private Win.UI.Panel panel10;
-        private System.Windows.Forms.Label label43;
-        private System.Windows.Forms.Label label42;
         private Win.UI.Panel panel11;
         private Win.UI.Grid gridFGWT;
         private Win.UI.Button btnToFGWT;
+        private System.Windows.Forms.TabPage tabFGPT;
+        private Win.UI.Panel panel10;
+        private Win.UI.Grid gridFGPT;
+        private Win.UI.Button btnToFGPT;
     }
 }

@@ -11,6 +11,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P11_Print : Win.Tems.PrintForm
     {
         private IList<DataRow> DetailDatas;
@@ -19,6 +20,7 @@ namespace Sci.Production.Shipping
         /// <summary>
         /// P11_Print
         /// </summary>
+        /// <param name="currentMaintain">Main DataRow</param>
         /// <param name="detailDatas">detailDatas</param>
         public P11_Print(DataRow currentMaintain, IList<DataRow> detailDatas)
         {
@@ -27,6 +29,7 @@ namespace Sci.Production.Shipping
             this.CurrentMaintain = currentMaintain;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -36,6 +39,7 @@ namespace Sci.Production.Shipping
             this.txtShipper.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ToExcel()
         {
             if (this.radioBIRSalesInv.Checked)
@@ -352,12 +356,12 @@ where a.id = '{top1id}'
             string top1BIRShipTo = MyUtility.GetValue.Lookup(bIRShipToSql);
             if (!MyUtility.Check.Empty(top1BIRShipTo))
             {
-                string[] BIRShipToarry = top1BIRShipTo.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-                for (int i = 0, j = 0; i < BIRShipToarry.Length; i++)
+                string[] bIRShipToarry = top1BIRShipTo.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                for (int i = 0, j = 0; i < bIRShipToarry.Length; i++)
                 {
-                    if (!MyUtility.Check.Empty(BIRShipToarry[i]))
+                    if (!MyUtility.Check.Empty(bIRShipToarry[i]))
                     {
-                        worksheet.Cells[12 + j, 2] = BIRShipToarry[i];
+                        worksheet.Cells[12 + j, 2] = bIRShipToarry[i];
                         j++;
                     }
                 }

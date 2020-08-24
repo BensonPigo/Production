@@ -461,7 +461,7 @@
             this.radioTransferIn.Text = "Transfer In";
             this.radioTransferIn.UseVisualStyleBackColor = true;
             this.radioTransferIn.Value = "2";
-            this.radioTransferIn.CheckedChanged += new System.EventHandler(this.radioTransferIn_CheckedChanged);
+            this.radioTransferIn.CheckedChanged += new System.EventHandler(this.RadioTransferIn_CheckedChanged);
             // 
             // radio3rdCountry
             // 

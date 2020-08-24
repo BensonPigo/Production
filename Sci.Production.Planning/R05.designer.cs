@@ -49,6 +49,7 @@
             this.comboMDivision = new Sci.Production.Class.ComboMDivision(this.components);
             this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
+            this.chkCMPLockDate = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
@@ -162,7 +163,7 @@
             this.chkExcludeSampleFactory.Checked = true;
             this.chkExcludeSampleFactory.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExcludeSampleFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkExcludeSampleFactory.Location = new System.Drawing.Point(12, 321);
+            this.chkExcludeSampleFactory.Location = new System.Drawing.Point(9, 343);
             this.chkExcludeSampleFactory.Name = "chkExcludeSampleFactory";
             this.chkExcludeSampleFactory.Size = new System.Drawing.Size(178, 21);
             this.chkExcludeSampleFactory.TabIndex = 106;
@@ -308,18 +309,30 @@
             this.chkIncludeCancelOrder.Checked = true;
             this.chkIncludeCancelOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(12, 348);
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(9, 370);
             this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
             this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
             this.chkIncludeCancelOrder.TabIndex = 119;
             this.chkIncludeCancelOrder.Text = "Include Cancel order";
             this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
             // 
+            // chkCMPLockDate
+            // 
+            this.chkCMPLockDate.AutoSize = true;
+            this.chkCMPLockDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkCMPLockDate.Location = new System.Drawing.Point(9, 316);
+            this.chkCMPLockDate.Name = "chkCMPLockDate";
+            this.chkCMPLockDate.Size = new System.Drawing.Size(197, 21);
+            this.chkCMPLockDate.TabIndex = 120;
+            this.chkCMPLockDate.Text = "By CMP Monthly Lock Date";
+            this.chkCMPLockDate.UseVisualStyleBackColor = true;
+            // 
             // R05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(591, 405);
+            this.ClientSize = new System.Drawing.Size(591, 420);
+            this.Controls.Add(this.chkCMPLockDate);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboMDivision);
@@ -369,6 +382,7 @@
             this.Controls.SetChildIndex(this.comboMDivision, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
+            this.Controls.SetChildIndex(this.chkCMPLockDate, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -397,5 +411,6 @@
         private Class.ComboMDivision comboMDivision;
         private Class.ComboFactory comboFactory;
         private Win.UI.CheckBox chkIncludeCancelOrder;
+        private Win.UI.CheckBox chkCMPLockDate;
     }
 }

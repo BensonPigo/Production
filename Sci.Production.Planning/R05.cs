@@ -16,8 +16,13 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Planning
 {
+    /// <inheritdoc/>
     public partial class R05 : Sci.Win.Tems.PrintForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R05"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -104,6 +109,7 @@ namespace Sci.Production.Planning
             sqlcmdSP.Append(this.radioMonthly.Checked ? $" 1," : "0,"); // ChkMonthly
             sqlcmdSP.Append(this.chkIncludeCancelOrder.Checked ? $" 1," : "0,"); // @IncludeCancelOrder
             sqlcmdSP.Append($" 1,"); // IsFtySide 工廠端限制ForeCast單 僅顯示SCI delivery or buyer delivery 小於等於 當月份+4個月的月底+7天
+            sqlcmdSP.Append(this.chkCMPLockDate.Checked ? $" 1," : "0,"); // @IsByCMPLockDate
             #endregion
 
             DualResult result = new DualResult(true);

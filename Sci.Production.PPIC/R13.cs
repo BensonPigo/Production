@@ -21,8 +21,9 @@ namespace Sci.Production.PPIC
         private DataTable[] dts;
 
         /// <summary>
-        /// R13
+        /// Initializes a new instance of the <see cref="R13"/> class.
         /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

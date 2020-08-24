@@ -1894,13 +1894,13 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
         {
             var frm = new P11_copytocutref();
             frm.ShowDialog(this);
-            if (!MyUtility.Check.Empty(frm.copycutref))
+            if (!MyUtility.Check.Empty(frm.Copycutref))
             {
-                string copycutref = frm.copycutref;
+                string copycutref = frm.Copycutref;
                 DataRow selectDr = ((DataRowView)this.gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
                 string cutref = selectDr["Cutref"].ToString();
 
-                if (cutref.Equals(frm.copycutref))
+                if (cutref.Equals(frm.Copycutref))
                 {
                     MyUtility.Msg.WarningBox("<CutRef> can not input selected CutRef itself");
                     return;

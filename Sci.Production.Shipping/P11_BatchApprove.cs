@@ -12,17 +12,18 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class P11_BatchApprove : Win.Subs.Base
     {
-        Action reloadParant;
+        private Action reloadParant;
         private DataTable dt;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         /// <summary>
         /// P11_BatchImport
         /// </summary>
-        public P11_BatchApprove(Action ReloadParant)
+        /// <param name="reloadParant">Action</param>
+        public P11_BatchApprove(Action reloadParant)
         {
             this.InitializeComponent();
-            this.reloadParant = ReloadParant;
+            this.reloadParant = reloadParant;
         }
 
         /// <inheritdoc/>

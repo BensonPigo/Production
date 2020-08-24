@@ -7,10 +7,15 @@ using Ict;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P02_WKETA : Win.Tems.QueryForm
     {
-        DataRow CurrentRow;
+        private DataRow CurrentRow;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P02_WKETA"/> class.
+        /// </summary>
+        /// <param name="currentRow">DataRow</param>
         public P02_WKETA(DataRow currentRow)
         {
             this.InitializeComponent();
@@ -18,6 +23,7 @@ namespace Sci.Production.Cutting
             this.CurrentRow = currentRow;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -27,7 +33,7 @@ namespace Sci.Production.Cutting
                 DataRow dr = this.grid1.GetDataRow(e.RowIndex);
                 if (e.ColumnIndex == 0 && e.RowIndex != -1)
                 {
-                    itemx.WKETA = MyUtility.Convert.GetDate(dr["WKETA"]);
+                    Itemx.WKETA = MyUtility.Convert.GetDate(dr["WKETA"]);
                     this.DialogResult = DialogResult.Yes;
                     this.Close();
                 }
@@ -62,8 +68,7 @@ INNER JOIN Export E ON E.ID = ED.ID
 where ED.poid='{this.CurrentRow["ID"]}' and ED.seq1 ='{this.CurrentRow["seq1"]}' and ED.seq2='{this.CurrentRow["seq2"]}'
 ORDER BY ETA 
 ";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -95,8 +100,14 @@ ORDER BY ETA
         }
     }
 
-    public static class itemx
+    /// <summary>
+    /// Itemx
+    /// </summary>
+    public static class Itemx
     {
-        public static DateTime? WKETA;
+        /// <summary>
+        /// WKETA
+        /// </summary>
+        public static DateTime? WKETA { get; set; }
     }
 }

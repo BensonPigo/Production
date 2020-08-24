@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class P21_ResponsibilityDept : Win.Subs.Input4
     {
         private string ID;
@@ -17,6 +18,16 @@ namespace Sci.Production.PPIC
         private string checkTable;
         private bool canEdit;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P21_ResponsibilityDept"/> class.
+        /// </summary>
+        /// <param name="canedit">Can Edit</param>
+        /// <param name="id">ID</param>
+        /// <param name="keyvalue2">keyvalue2</param>
+        /// <param name="keyvalue3">keyvalue3</param>
+        /// <param name="formType">FormT ype</param>
+        /// <param name="canConfirm">Can Confirm</param>
+        /// <param name="canUnConfirm">Can UnConfirm</param>
         public P21_ResponsibilityDept(bool canedit, string id, string keyvalue2, string keyvalue3, string formType, bool canConfirm, bool canUnConfirm)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
@@ -29,6 +40,7 @@ namespace Sci.Production.PPIC
             this.canEdit = canedit;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -37,6 +49,7 @@ namespace Sci.Production.PPIC
             this.ConfirmStatusCheck();
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings col_Factory = new DataGridViewGeneratorTextColumnSettings();
@@ -413,6 +426,7 @@ namespace Sci.Production.PPIC
             return MyUtility.Check.Seek($"select 1 from {this.checkTable} with (nolock) where ID = '{this.ID}' and VoucherDate is null and VoucherID = ''");
         }
 
+        /// <inheritdoc/>
         protected override void OnDelete()
         {
             base.OnDelete();
@@ -434,9 +448,9 @@ namespace Sci.Production.PPIC
             this.numPercentage.Value = curPercentage;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery()
         {
-            DataRow drMaster;
             string sqlcmd = string.Empty;
             if (this.FormType == "Replacement")
             {
@@ -473,7 +487,7 @@ where ICR.id = '{this.ID}'
  ";
             }
 
-            if (MyUtility.Check.Seek(sqlcmd, out drMaster))
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow drMaster))
             {
                 this.numTotalAmt.Value = MyUtility.Convert.GetDecimal(drMaster["TotalAmt"]);
                 this.numPercentage.Value = MyUtility.Convert.GetDecimal(drMaster["Percentage"]);
@@ -490,6 +504,7 @@ where ICR.id = '{this.ID}'
             return base.OnRequery();
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
@@ -520,6 +535,7 @@ where ICR.id = '{this.ID}'
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSavePre()
         {
             foreach (DataRow dr in this.Datas)

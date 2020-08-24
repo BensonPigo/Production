@@ -7,12 +7,17 @@ namespace Sci.Production.Shipping
     {
         private DataRow row;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P02_PaymentDetail"/> class.
+        /// </summary>
+        /// <param name="master"></param>
         public P02_PaymentDetail(DataRow master)
         {
             this.InitializeComponent();
             this.row = master;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

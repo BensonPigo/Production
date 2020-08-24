@@ -7,18 +7,24 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P01 : Win.Tems.Input1
     {
-        string StyleUkey;
+        private string StyleUkey;
         private string keyWord = Env.User.Keyword;
         private string histype;
 
-        public P01(ToolStripMenuItem menuitem, string Type)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P01"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
+        /// <param name="type">Type</param>
+        public P01(ToolStripMenuItem menuitem, string type)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.histype = Type;
-            if (Type == "1")
+            this.histype = type;
+            if (type == "1")
             {
                 this.Text = "P01. Cutting Master List";
                 this.DefaultFilter = string.Format("MDivisionID = '{0}' AND Finished = 0", this.keyWord);
@@ -31,6 +37,7 @@ namespace Sci.Production.Cutting
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -50,12 +57,12 @@ namespace Sci.Production.Cutting
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             #region from Orders Base
-            DataRow orderdr;
-            if (MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) where id='{0}'", this.CurrentMaintain["ID"]), out orderdr))
+            if (MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) where id='{0}'", this.CurrentMaintain["ID"]), out DataRow orderdr))
             {
                 this.displayStyleNo.Text = orderdr["Styleid"].ToString();
                 this.displaySeason.Text = orderdr["Seasonid"].ToString();
@@ -115,9 +122,11 @@ namespace Sci.Production.Cutting
                     this.displaySwitchtoWorkOrder.Text = string.Empty;
                     break;
             }
+
             #endregion
             #region from Orders 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T欄位值
-            DataTable OrdersData;
+            #endregion
+            #region from Orders 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T欄位值
             string sqlCmd;
             sqlCmd = string.Format(
                 @"
@@ -126,13 +135,13 @@ select
     CuttingList = isnull([dbo].getCuttingComboList(o.ID,o.CuttingSP),'')
 from Orders o WITH (NOLOCK) where ID = '{0}'",
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out OrdersData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable ordersData);
             if (result)
             {
-                if (OrdersData.Rows.Count > 0)
+                if (ordersData.Rows.Count > 0)
                 {
-                    this.editPOCombo.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["PoList"].ToString().Replace(" ", string.Empty));
-                    this.editCuttingCombo.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["CuttingList"].ToString().Replace(" ", string.Empty));
+                    this.editPOCombo.Text = MyUtility.Convert.GetString(ordersData.Rows[0]["PoList"].ToString().Replace(" ", string.Empty));
+                    this.editCuttingCombo.Text = MyUtility.Convert.GetString(ordersData.Rows[0]["CuttingList"].ToString().Replace(" ", string.Empty));
                 }
                 else
                 {
@@ -268,7 +277,7 @@ where CuttingSp = '{0}'",
         }
 
         // Marker List
-        private void btnMarkerList_Click(object sender, EventArgs e)
+        private void BtnMarkerList_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null)
             {
@@ -280,7 +289,7 @@ where CuttingSp = '{0}'",
         }
 
         // Each Cons.
-        private void btnEachCons_Click(object sender, EventArgs e)
+        private void BtnEachCons_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null)
             {
@@ -294,7 +303,7 @@ where CuttingSp = '{0}'",
         }
 
         // Button Bundle Card
-        private void btnBundleCard_Click(object sender, EventArgs e)
+        private void BtnBundleCard_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null)
             {
@@ -306,7 +315,7 @@ where CuttingSp = '{0}'",
         }
 
         // Cutpart Check
-        private void btnCutPartsCheck_Click(object sender, EventArgs e)
+        private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null)
             {
@@ -318,7 +327,7 @@ where CuttingSp = '{0}'",
         }
 
         // Cutpart Check Summary
-        private void btnCutPartsCheckSummary_Click(object sender, EventArgs e)
+        private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null)
             {
@@ -330,7 +339,7 @@ where CuttingSp = '{0}'",
         }
 
         // Quantity breakdown
-        private void btnQuantitybreakdown_Click(object sender, EventArgs e)
+        private void BtnQuantitybreakdown_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null)
             {
@@ -342,7 +351,7 @@ where CuttingSp = '{0}'",
         }
 
         // ColorComb
-        private void btnColorCombo_Click(object sender, EventArgs e)
+        private void BtnColorCombo_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null)
             {
@@ -355,7 +364,7 @@ where CuttingSp = '{0}'",
         }
 
         // ProductionKit
-        private void btnProductionkit_Click(object sender, EventArgs e)
+        private void BtnProductionkit_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null)
             {
@@ -368,7 +377,7 @@ where CuttingSp = '{0}'",
         }
 
         // Garment List
-        private void btnGarmentList_Click(object sender, EventArgs e)
+        private void BtnGarmentList_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null)
             {
@@ -380,12 +389,13 @@ where CuttingSp = '{0}'",
             frm.ShowDialog(this);
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            string ID = this.CurrentMaintain["ID"].ToString();
+            string id = this.CurrentMaintain["ID"].ToString();
             if (this.tabs.SelectedIndex == 1)
             {
-                var frm = new P01_Print_OrderList(ID, this.histype == "1" ? 0 : 1);
+                var frm = new P01_Print_OrderList(id, this.histype == "1" ? 0 : 1);
                 frm.ShowDialog();
             }
 
@@ -394,8 +404,7 @@ where CuttingSp = '{0}'",
 
         private void P01_FormLoaded(object sender, EventArgs e)
         {
-           // base.OnFormLoaded();
-            DataTable queryDT;
+            // base.OnFormLoaded();
             string querySql = string.Format(
                 @"
 select '' FTYGroup
@@ -404,7 +413,7 @@ union
 select distinct FTYGroup 
 from Factory 
 where MDivisionID = '{0}'", Env.User.Keyword);
-            DBProxy.Current.Select(null, querySql, out queryDT);
+            DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
         }

@@ -117,7 +117,7 @@
             this.radioByCutplanId.TabIndex = 1;
             this.radioByCutplanId.Text = "By Cutplan Id";
             this.radioByCutplanId.UseVisualStyleBackColor = true;
-            this.radioByCutplanId.CheckedChanged += new System.EventHandler(this.radioByCutplanId_CheckedChanged);
+            this.radioByCutplanId.CheckedChanged += new System.EventHandler(this.RadioByCutplanId_CheckedChanged);
             // 
             // radioByCutRefNo
             // 

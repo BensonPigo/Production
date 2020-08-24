@@ -10,10 +10,15 @@ using System.Reflection;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class P16 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_balance;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P16"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P16(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -32,7 +37,7 @@ namespace Sci.Production.PPIC
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 dr["selected"] = e.FormattedValue;
                 dr.EndEdit();
-                this.calEstUsageAndBalance();
+                this.CalEstUsageAndBalance();
             };
 
             DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
@@ -253,7 +258,7 @@ group by refno,ColorID
             #endregion
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (this.dt == null)
             {
@@ -271,10 +276,10 @@ group by refno,ColorID
                 dr2["Uqty2"] = !this.checkBox1.Checked ? dr2["Wqty"] : MyUtility.Convert.GetDecimal(dr2["Wqty"]) + MyUtility.Convert.GetDecimal(dr2["bqty"]);
             }
 
-            this.calBalance();
+            this.CalBalance();
         }
 
-        private void btnAutoCal_Click(object sender, EventArgs e)
+        private void BtnAutoCal_Click(object sender, EventArgs e)
         {
             foreach (DataRow dr in this.dt.Rows)
             {
@@ -317,12 +322,12 @@ group by refno,ColorID
                 }
             }
 
-            this.calEstUsageAndBalance();
+            this.CalEstUsageAndBalance();
             this.grid1.ValidateControl();
             this.grid2.ValidateControl();
         }
 
-        private void calEstUsageAndBalance()
+        private void CalEstUsageAndBalance()
         {
             foreach (DataRow dr2 in this.dt2.Rows)
             {
@@ -345,10 +350,10 @@ group by refno,ColorID
                 }
             }
 
-            this.calBalance();
+            this.CalBalance();
         }
 
-        private void calBalance()
+        private void CalBalance()
         {
             foreach (DataRow dr2 in this.dt2.Rows)
             {
@@ -358,7 +363,7 @@ group by refno,ColorID
             this.Change_Color();
         }
 
-        private void grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void Grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             this.Countselectcount();
         }
@@ -369,11 +374,11 @@ group by refno,ColorID
             DataGridViewColumn column = this.grid1.Columns["Selected"];
             if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
-                this.calEstUsageAndBalance();
+                this.CalEstUsageAndBalance();
             }
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.DataSource = null;
             this.listControlBindingSource2.DataSource = null;
@@ -392,7 +397,7 @@ group by refno,ColorID
             }
 
             this.Query();
-            this.calBalance();
+            this.CalBalance();
         }
 
         /// <inheritdoc/>
@@ -404,7 +409,7 @@ group by refno,ColorID
                 {
                     case Keys.Enter:
                         this.Query();
-                        this.calBalance();
+                        this.CalBalance();
                         break;
                 }
             }
@@ -412,13 +417,13 @@ group by refno,ColorID
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void btnNewSearch_Click(object sender, EventArgs e)
+        private void BtnNewSearch_Click(object sender, EventArgs e)
         {
             this.txtSPNo.ResetText();
             this.txtSPNo.Select();
         }
 
-        private void btnAutoCalc_Click(object sender, EventArgs e)
+        private void BtnAutoCalc_Click(object sender, EventArgs e)
         {
             if (this.dt == null)
             {
@@ -471,7 +476,7 @@ group by refno,ColorID
                 }
             }
 
-            this.calEstUsageAndBalance();
+            this.CalEstUsageAndBalance();
             this.grid1.ValidateControl();
             this.grid2.ValidateControl();
         }

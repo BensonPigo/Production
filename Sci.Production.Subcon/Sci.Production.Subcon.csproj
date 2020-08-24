@@ -44,6 +44,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Sci.Production.Subcon.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -438,6 +439,11 @@
     </Compile>
     <Compile Include="P30_Import.Designer.cs">
       <DependentUpon>P30_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="R01.cs">
       <SubType>Form</SubType>
@@ -837,6 +843,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P42_SubProcessStatus.resx">
       <DependentUpon>P42_SubProcessStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>

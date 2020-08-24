@@ -12,14 +12,14 @@ namespace Sci.Production.Shipping
     /// <inheritdoc/>
     public partial class B03_BatchApprove : Win.Forms.Base
     {
-        Action reloadParant;
+        private Action reloadParant;
 
         /// <inheritdoc/>
-        public B03_BatchApprove(Action ReloadParant)
+        public B03_BatchApprove(Action reloadParant)
         {
             this.InitializeComponent();
             this.EditMode = true;
-            this.reloadParant = ReloadParant;
+            this.reloadParant = reloadParant;
         }
 
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
@@ -356,7 +356,7 @@ when matched then update set
             }
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             if (this.master == null || this.master.Rows.Count == 0)
             {

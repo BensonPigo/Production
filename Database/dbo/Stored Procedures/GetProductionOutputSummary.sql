@@ -14,7 +14,8 @@ CREATE PROCEDURE [dbo].[GetProductionOutputSummary]
 	@ExcludeSampleFactory bit = 0,
 	@ChkMonthly bit = 0,
 	@IncludeCancelOrder bit = 0,
-	@IsFtySide bit = 0
+	@IsFtySide bit = 0,
+	@IsByCMPLockDate bit = 0
 	
 AS
 BEGIN
@@ -22,7 +23,7 @@ BEGIN
 
  -- Planning_R05 only!  Today + 5 Month + 6 Day
 declare @SpecialDay date = (select date = DATEADD(DAY,6, DATEADD(m,5, dateadd(m, datediff(m,0,getdate()),0))))
-
+declare @SewLock date = (select top 1 sewLock from dbo.System)
 
 select * 
 into #tmpBaseOrderID
@@ -158,11 +159,9 @@ select
     [OutputDate] = FORMAT(s.OutputDate,'yyyyMM'),
     [OrderCPU] = o.Qty * gcRate.CpuRate * o.CPU,
     [OrderShortageCPU] = iif(o.GMTComplete = 'S' ,(o.Qty - GetPulloutData.Qty)  * gcRate.CpuRate * o.CPU ,0),
-	[SewingOutput] = (isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) / 100) + (isnull(fromTransfer.Qty,0)  
-		- iif(obq.OrderIDFrom != '',	isnull(ToTransfer.Qty,0),0))
+	[SewingOutput] = (isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) / 100) + isnull(fromTransfer.Qty,0)
 		/100,
-    [SewingOutputCPU] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) * gcRate.CpuRate * o.CPU / 100 + ((isnull(fromTransfer.Qty,0) 
-		- iif(obq.OrderIDFrom != '', isnull(ToTransfer.Qty,0),0)) 
+    [SewingOutputCPU] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) * gcRate.CpuRate * o.CPU / 100 + (isnull(fromTransfer.Qty,0) 
 		* gcRate.CpuRate * o.CPU/100),
     o.Junk,
     o.Qty,
@@ -181,8 +180,11 @@ into #tmpBase
 from #tmpBaseStep1 tbs
 inner join Orders o with(nolock) on o.ID = tbs.ID
 inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
-left join SewingOutput_Detail_Detail sdd with (nolock) on o.ID = sdd.OrderId
-left join SewingOutput s with (nolock) on sdd.ID = s.ID
+left join SewingOutput_Detail_Detail sdd with (nolock) on o.ID = sdd.OrderId and 
+														  exists (	select 1 
+																	from SewingOutput so with (nolock) 
+																	where sdd.ID = so.ID and (@IsByCMPLockDate = 0 or so.OutputDate <= @SewLock))
+left join SewingOutput s with (nolock) on sdd.ID = s.ID 
 left join Order_Location ol with (nolock) on ol.OrderId = sdd.OrderId and ol.Location = sdd.ComboType
 left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = sdd.ComboType
 --left join (  Order_BuyBack_Qty obq with (nolock) on obq.OrderIDFrom = o.ID
@@ -207,17 +209,6 @@ outer apply(
 	and b.FromOrderID = o.ID 
 	and o.Junk=1 and o.NeedProduction=1
 ) fromTransfer
-outer apply(
-	select Qty = sum(b.TransferQty * isnull(ol.Rate, sl.Rate)) 
-	from SewingOutputTransfer a
-	inner join SewingOutputTransfer_Detail b on a.id=b.ID
-	left join Order_Location ol with (nolock) on ol.OrderId = b.ToOrderID and ol.Location = b.ToComboType
-	left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = b.ToComboType
-	where a.Status= 'confirmed'
-	and b.ToOrderID = o.ID
-	and o.Junk=1 and o.NeedProduction=1
-	and b.ToOrderID = obq.OrderIDFrom
-) ToTransfer
 
 group by o.ID,
 KeyDate.SCI,
@@ -241,7 +232,7 @@ o.GMTComplete,
 f.FtyZone,
 o.ProgramID,
 tbs.TransFtyZone,
-fromTransfer.Qty,ToTransfer.Qty,
+fromTransfer.Qty,
 obq.OrderIDFrom
 
 select  ID,

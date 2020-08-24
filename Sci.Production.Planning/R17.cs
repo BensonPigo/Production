@@ -825,108 +825,108 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 object[,] objArray = new object[1, intColumns]; // 每列匯入欄位區間
                 #region 將資料放入陣列並寫入Excel範例檔
 
-                Dictionary<string, string> Db_ExcelColumn = new Dictionary<string, string>();
-                Dictionary<string, string> OrderDetail_ExcelColumn = new Dictionary<string, string>();
-                Dictionary<string, string> Db_ExcelColumn2 = new Dictionary<string, string>();
+                Dictionary<string, string> db_ExcelColumn = new Dictionary<string, string>();
+                Dictionary<string, string> orderDetail_ExcelColumn = new Dictionary<string, string>();
+                Dictionary<string, string> db_ExcelColumn2 = new Dictionary<string, string>();
 
-                Db_ExcelColumn.Add("A", "CountryID");
-                Db_ExcelColumn.Add("B", "KPICode");
-                Db_ExcelColumn.Add("C", "FactoryID");
-                Db_ExcelColumn.Add("D", "OrderID");
-                Db_ExcelColumn.Add("E", "StyleID");
-                Db_ExcelColumn.Add("F", "Seq");
-                Db_ExcelColumn.Add("G", "BrandID");
-                Db_ExcelColumn.Add("H", "BuyerDelivery");
-                Db_ExcelColumn.Add("I", "FtyKPI");
-                Db_ExcelColumn.Add("J", "Extension");
-                Db_ExcelColumn.Add("K", "DeliveryByShipmode");
-                Db_ExcelColumn.Add("L", "OrderQty");
-                Db_ExcelColumn.Add("M", "OnTimeQty");
-                Db_ExcelColumn.Add("N", "FailQty");
-                Db_ExcelColumn.Add("O", "pullOutDate");
-                Db_ExcelColumn.Add("P", "Shipmode");
-                Db_ExcelColumn.Add("Q", "P");
-                Db_ExcelColumn.Add("R", "GMTComplete");
-                Db_ExcelColumn.Add("S", "ReasonID");
-                Db_ExcelColumn.Add("T", "ReasonName");
-                Db_ExcelColumn.Add("U", "SewLastDate");
-                Db_ExcelColumn.Add("V", "CTNLastReceiveDate");
-                Db_ExcelColumn.Add("W", "OutsdReason");
-                Db_ExcelColumn.Add("X", "ReasonRemark");
-                Db_ExcelColumn.Add("Y", "MR");
-                Db_ExcelColumn.Add("Z", "SMR");
-                Db_ExcelColumn.Add("AA", "POHandle");
-                Db_ExcelColumn.Add("AB", "POSMR");
-                Db_ExcelColumn.Add("AC", "OrderTypeID");
-                Db_ExcelColumn.Add("AD", "isDevSample");
-                Db_ExcelColumn.Add("AE", "FOC");
-                Db_ExcelColumn.Add("AF", "CFAFinalInspectDate");
-                Db_ExcelColumn.Add("AG", "CFAFinalInspectResult");
-                Db_ExcelColumn.Add("AH", "CFA3rdInspectDate");
-                Db_ExcelColumn.Add("AI", "CFA3rdInspectResult");
+                db_ExcelColumn.Add("A", "CountryID");
+                db_ExcelColumn.Add("B", "KPICode");
+                db_ExcelColumn.Add("C", "FactoryID");
+                db_ExcelColumn.Add("D", "OrderID");
+                db_ExcelColumn.Add("E", "StyleID");
+                db_ExcelColumn.Add("F", "Seq");
+                db_ExcelColumn.Add("G", "BrandID");
+                db_ExcelColumn.Add("H", "BuyerDelivery");
+                db_ExcelColumn.Add("I", "FtyKPI");
+                db_ExcelColumn.Add("J", "Extension");
+                db_ExcelColumn.Add("K", "DeliveryByShipmode");
+                db_ExcelColumn.Add("L", "OrderQty");
+                db_ExcelColumn.Add("M", "OnTimeQty");
+                db_ExcelColumn.Add("N", "FailQty");
+                db_ExcelColumn.Add("O", "pullOutDate");
+                db_ExcelColumn.Add("P", "Shipmode");
+                db_ExcelColumn.Add("Q", "P");
+                db_ExcelColumn.Add("R", "GMTComplete");
+                db_ExcelColumn.Add("S", "ReasonID");
+                db_ExcelColumn.Add("T", "ReasonName");
+                db_ExcelColumn.Add("U", "SewLastDate");
+                db_ExcelColumn.Add("V", "CTNLastReceiveDate");
+                db_ExcelColumn.Add("W", "OutsdReason");
+                db_ExcelColumn.Add("X", "ReasonRemark");
+                db_ExcelColumn.Add("Y", "MR");
+                db_ExcelColumn.Add("Z", "SMR");
+                db_ExcelColumn.Add("AA", "POHandle");
+                db_ExcelColumn.Add("AB", "POSMR");
+                db_ExcelColumn.Add("AC", "OrderTypeID");
+                db_ExcelColumn.Add("AD", "isDevSample");
+                db_ExcelColumn.Add("AE", "FOC");
+                db_ExcelColumn.Add("AF", "CFAFinalInspectDate");
+                db_ExcelColumn.Add("AG", "CFAFinalInspectResult");
+                db_ExcelColumn.Add("AH", "CFA3rdInspectDate");
+                db_ExcelColumn.Add("AI", "CFA3rdInspectResult");
 
-                OrderDetail_ExcelColumn.Add("A", "CountryID");
-                OrderDetail_ExcelColumn.Add("B", "KPICode");
-                OrderDetail_ExcelColumn.Add("C", "FactoryID");
-                OrderDetail_ExcelColumn.Add("D", "OrderID");
-                OrderDetail_ExcelColumn.Add("E", "StyleID");
-                OrderDetail_ExcelColumn.Add("F", "Seq");
-                OrderDetail_ExcelColumn.Add("G", "BrandID");
-                OrderDetail_ExcelColumn.Add("H", "BuyerDelivery");
-                OrderDetail_ExcelColumn.Add("I", "FtyKPI");
-                OrderDetail_ExcelColumn.Add("J", "Extension");
-                OrderDetail_ExcelColumn.Add("K", "DeliveryByShipmode");
-                OrderDetail_ExcelColumn.Add("L", "OrderQty");
-                OrderDetail_ExcelColumn.Add("M", "OnTimeQty");
-                OrderDetail_ExcelColumn.Add("N", "FailQty");
-                OrderDetail_ExcelColumn.Add("O", "pullOutDate");
-                OrderDetail_ExcelColumn.Add("P", "Shipmode");
-                OrderDetail_ExcelColumn.Add("Q", "P");
-                OrderDetail_ExcelColumn.Add("R", "GMTComplete");
-                OrderDetail_ExcelColumn.Add("S", "ReasonID");
-                OrderDetail_ExcelColumn.Add("T", "ReasonName");
-                OrderDetail_ExcelColumn.Add("U", "MR");
-                OrderDetail_ExcelColumn.Add("V", "SMR");
-                OrderDetail_ExcelColumn.Add("W", "POHandle");
-                OrderDetail_ExcelColumn.Add("X", "POSMR");
-                OrderDetail_ExcelColumn.Add("Y", "OrderTypeID");
-                OrderDetail_ExcelColumn.Add("Z", "isDevSample");
-                OrderDetail_ExcelColumn.Add("AA", "SewouptQty");
-                OrderDetail_ExcelColumn.Add("AB", "FOC");
-                OrderDetail_ExcelColumn.Add("AC", "SewLastDate");
-                OrderDetail_ExcelColumn.Add("AD", "CTNLastReceiveDate");
-                OrderDetail_ExcelColumn.Add("AE", "Order_QtyShipCount");
-                OrderDetail_ExcelColumn.Add("AF", "Alias");
-                OrderDetail_ExcelColumn.Add("AG", "CFAFinalInspectDate");
-                OrderDetail_ExcelColumn.Add("AH", "CFAFinalInspectResult");
-                OrderDetail_ExcelColumn.Add("AI", "CFA3rdInspectDate");
-                OrderDetail_ExcelColumn.Add("AJ", "CFA3rdInspectResult");
+                orderDetail_ExcelColumn.Add("A", "CountryID");
+                orderDetail_ExcelColumn.Add("B", "KPICode");
+                orderDetail_ExcelColumn.Add("C", "FactoryID");
+                orderDetail_ExcelColumn.Add("D", "OrderID");
+                orderDetail_ExcelColumn.Add("E", "StyleID");
+                orderDetail_ExcelColumn.Add("F", "Seq");
+                orderDetail_ExcelColumn.Add("G", "BrandID");
+                orderDetail_ExcelColumn.Add("H", "BuyerDelivery");
+                orderDetail_ExcelColumn.Add("I", "FtyKPI");
+                orderDetail_ExcelColumn.Add("J", "Extension");
+                orderDetail_ExcelColumn.Add("K", "DeliveryByShipmode");
+                orderDetail_ExcelColumn.Add("L", "OrderQty");
+                orderDetail_ExcelColumn.Add("M", "OnTimeQty");
+                orderDetail_ExcelColumn.Add("N", "FailQty");
+                orderDetail_ExcelColumn.Add("O", "pullOutDate");
+                orderDetail_ExcelColumn.Add("P", "Shipmode");
+                orderDetail_ExcelColumn.Add("Q", "P");
+                orderDetail_ExcelColumn.Add("R", "GMTComplete");
+                orderDetail_ExcelColumn.Add("S", "ReasonID");
+                orderDetail_ExcelColumn.Add("T", "ReasonName");
+                orderDetail_ExcelColumn.Add("U", "MR");
+                orderDetail_ExcelColumn.Add("V", "SMR");
+                orderDetail_ExcelColumn.Add("W", "POHandle");
+                orderDetail_ExcelColumn.Add("X", "POSMR");
+                orderDetail_ExcelColumn.Add("Y", "OrderTypeID");
+                orderDetail_ExcelColumn.Add("Z", "isDevSample");
+                orderDetail_ExcelColumn.Add("AA", "SewouptQty");
+                orderDetail_ExcelColumn.Add("AB", "FOC");
+                orderDetail_ExcelColumn.Add("AC", "SewLastDate");
+                orderDetail_ExcelColumn.Add("AD", "CTNLastReceiveDate");
+                orderDetail_ExcelColumn.Add("AE", "Order_QtyShipCount");
+                orderDetail_ExcelColumn.Add("AF", "Alias");
+                orderDetail_ExcelColumn.Add("AG", "CFAFinalInspectDate");
+                orderDetail_ExcelColumn.Add("AH", "CFAFinalInspectResult");
+                orderDetail_ExcelColumn.Add("AI", "CFA3rdInspectDate");
+                orderDetail_ExcelColumn.Add("AJ", "CFA3rdInspectResult");
 
-                Db_ExcelColumn2.Add("A", "Alias");
-                Db_ExcelColumn2.Add("B", "KPICode");
-                Db_ExcelColumn2.Add("C", "FactoryID");
-                Db_ExcelColumn2.Add("D", "OrderID");
-                Db_ExcelColumn2.Add("E", "StyleID");
-                Db_ExcelColumn2.Add("F", "Seq");
-                Db_ExcelColumn2.Add("G", "FtyKPI");
-                Db_ExcelColumn2.Add("H", "Extension");
-                Db_ExcelColumn2.Add("I", "DeliveryByShipmode");
-                Db_ExcelColumn2.Add("J", "OrderQty");
-                Db_ExcelColumn2.Add("K", "OnTimeQty");
-                Db_ExcelColumn2.Add("L", "pullOutDate");
-                Db_ExcelColumn2.Add("M", "Shipmode");
-                Db_ExcelColumn2.Add("N", "OrderTypeID");
-                Db_ExcelColumn2.Add("O", "isDevSample");
-                Db_ExcelColumn2.Add("P", "FOC");
-                Db_ExcelColumn2.Add("Q", "SewLastDate");
-                Db_ExcelColumn2.Add("R", "CTNLastReceiveDate");
-                Db_ExcelColumn2.Add("S", "CFAFinalInspectDate");
-                Db_ExcelColumn2.Add("T", "CFAFinalInspectResult");
-                Db_ExcelColumn2.Add("U", "CFA3rdInspectDate");
-                Db_ExcelColumn2.Add("V", "CFA3rdInspectResult");
+                db_ExcelColumn2.Add("A", "Alias");
+                db_ExcelColumn2.Add("B", "KPICode");
+                db_ExcelColumn2.Add("C", "FactoryID");
+                db_ExcelColumn2.Add("D", "OrderID");
+                db_ExcelColumn2.Add("E", "StyleID");
+                db_ExcelColumn2.Add("F", "Seq");
+                db_ExcelColumn2.Add("G", "FtyKPI");
+                db_ExcelColumn2.Add("H", "Extension");
+                db_ExcelColumn2.Add("I", "DeliveryByShipmode");
+                db_ExcelColumn2.Add("J", "OrderQty");
+                db_ExcelColumn2.Add("K", "OnTimeQty");
+                db_ExcelColumn2.Add("L", "pullOutDate");
+                db_ExcelColumn2.Add("M", "Shipmode");
+                db_ExcelColumn2.Add("N", "OrderTypeID");
+                db_ExcelColumn2.Add("O", "isDevSample");
+                db_ExcelColumn2.Add("P", "FOC");
+                db_ExcelColumn2.Add("Q", "SewLastDate");
+                db_ExcelColumn2.Add("R", "CTNLastReceiveDate");
+                db_ExcelColumn2.Add("S", "CFAFinalInspectDate");
+                db_ExcelColumn2.Add("T", "CFAFinalInspectResult");
+                db_ExcelColumn2.Add("U", "CFA3rdInspectDate");
+                db_ExcelColumn2.Add("V", "CFA3rdInspectResult");
 
                 #region 匯出SDP
-                List<string> MSummaryRow = new List<string>();
+                List<string> mSummaryRow = new List<string>();
                 for (int i = 0; i < intRowsCount; i += 1)
                 {
                     DataRow dr = this.gdtSDP.Rows[i];
@@ -962,7 +962,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                         objArray[0, 4] = $"=SUM(E{mdivisionRowsStart}:E{rownum + i})";
 
                         // 綠色列的位置記下來，最後在黃色列的公式寫入
-                        MSummaryRow.Add((rownum + i + 1).ToString());
+                        mSummaryRow.Add((rownum + i + 1).ToString());
 
                         rownum++;
 
@@ -988,9 +988,9 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     worksheet.Range[string.Format("D{0}:D{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("D{0}:D{1}", 2, rownum + intRowsCount - 1) + ")";
                     worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("E{0}:E{1}", 2, rownum + intRowsCount - 1) + ")";
 
-                    worksheet.Range[string.Format("C{0}:C{0}", rownum + intRowsCount)].Formula = "=C" + MSummaryRow.JoinToString("+C");
-                    worksheet.Range[string.Format("D{0}:D{0}", rownum + intRowsCount)].Formula = "=D" + MSummaryRow.JoinToString("+D");
-                    worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=E" + MSummaryRow.JoinToString("+E");
+                    worksheet.Range[string.Format("C{0}:C{0}", rownum + intRowsCount)].Formula = "=C" + mSummaryRow.JoinToString("+C");
+                    worksheet.Range[string.Format("D{0}:D{0}", rownum + intRowsCount)].Formula = "=D" + mSummaryRow.JoinToString("+D");
+                    worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=E" + mSummaryRow.JoinToString("+E");
 
                     // worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + intRowsCount);
                     worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})", rownum + intRowsCount);
@@ -1030,8 +1030,8 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     {
                         for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
                         {
-                            string ExcelColumnName = Db_ExcelColumn[aryAlpha[intIndex_0]];
-                            objArray_1[0, intIndex_0] = this.gdtSP.Rows[intIndex][ExcelColumnName].ToString();
+                            string excelColumnName = db_ExcelColumn[aryAlpha[intIndex_0]];
+                            objArray_1[0, intIndex_0] = this.gdtSP.Rows[intIndex][excelColumnName].ToString();
                         }
 
                         worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
@@ -1073,8 +1073,8 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                         {
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
                             {
-                                string ExcelColumnName = OrderDetail_ExcelColumn[aryAlpha[intIndex_0]];
-                                objArray_1[0, intIndex_0] = this.gdtOrderDetail.Rows[intIndex][ExcelColumnName].ToString();
+                                string excelColumnName = orderDetail_ExcelColumn[aryAlpha[intIndex_0]];
+                                objArray_1[0, intIndex_0] = this.gdtOrderDetail.Rows[intIndex][excelColumnName].ToString();
                             }
 
                             worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
@@ -1118,8 +1118,8 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                         {
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
                             {
-                                string ExcelColumnName = Db_ExcelColumn2[aryAlpha[intIndex_0]];
-                                objArray_1[0, intIndex_0] = this.gdtPullOut.Rows[intIndex][ExcelColumnName].ToString();
+                                string excelColumnName = db_ExcelColumn2[aryAlpha[intIndex_0]];
+                                objArray_1[0, intIndex_0] = this.gdtPullOut.Rows[intIndex][excelColumnName].ToString();
                             }
 
                             worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
@@ -1169,7 +1169,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                                             CFAFinalInspectDate = data.Field<string>("CFAFinalInspectDate"),
                                             CFAFinalInspectResult = data.Field<string>("CFAFinalInspectResult"),
                                             CFA3rdInspectDate = data.Field<string>("CFA3rdInspectDate"),
-                                            CFA3rdInspectResult = data.Field<string>("CFA3rdInspectResult")
+                                            CFA3rdInspectResult = data.Field<string>("CFA3rdInspectResult"),
                                         };
                     if ((gdtFailDetail != null) && (gdtFailDetail.Count() > 0))
                     {

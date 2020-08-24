@@ -4,6 +4,13 @@ namespace Sci.Production.Cutting
 {
     public partial class P08_MailTo : Win.Subs.Input4
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P08_MailTo"/> class.
+        /// </summary>
+        /// <param name="canedit"></param>
+        /// <param name="keyvalue1"></param>
+        /// <param name="keyvalue2"></param>
+        /// <param name="keyvalue3"></param>
         public P08_MailTo(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
@@ -11,6 +18,7 @@ namespace Sci.Production.Cutting
             this.DoForm = new P08_MailTo_Detail();
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.grid)

@@ -129,7 +129,7 @@
             this.btnToExcel.TabIndex = 18;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // comboTypeFilter
             // 
@@ -142,7 +142,7 @@
             this.comboTypeFilter.OldText = "";
             this.comboTypeFilter.Size = new System.Drawing.Size(121, 24);
             this.comboTypeFilter.TabIndex = 17;
-            this.comboTypeFilter.SelectedIndexChanged += new System.EventHandler(this.comboTypeFilter_SelectedIndexChanged);
+            this.comboTypeFilter.SelectedIndexChanged += new System.EventHandler(this.ComboTypeFilter_SelectedIndexChanged);
             // 
             // labelTypeFilter
             // 
@@ -469,7 +469,7 @@
             this.btnCIPF.TabIndex = 19;
             this.btnCIPF.Text = "CIPF";
             this.btnCIPF.UseVisualStyleBackColor = true;
-            this.btnCIPF.Click += new System.EventHandler(this.btnCIPF_Click);
+            this.btnCIPF.Click += new System.EventHandler(this.BtnCIPF_Click);
             // 
             // StdGSDList
             // 

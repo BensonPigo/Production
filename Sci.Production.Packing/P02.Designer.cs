@@ -67,6 +67,10 @@
             this.btnUpdate = new Sci.Win.UI.Button();
             this.txtCartonRef = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.lbCartonEstBooking = new Sci.Win.UI.Label();
+            this.lbCartonEstArrived = new Sci.Win.UI.Label();
+            this.dateBoxCartonEstBooking = new Sci.Win.UI.DateBox();
+            this.dateBoxCartonEstArrived = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -84,6 +88,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.lbCartonEstArrived);
+            this.masterpanel.Controls.Add(this.lbCartonEstBooking);
             this.masterpanel.Controls.Add(this.panel1);
             this.masterpanel.Controls.Add(this.btnSwitchToPLByArticle);
             this.masterpanel.Controls.Add(this.displayFactory);
@@ -96,6 +102,8 @@
             this.masterpanel.Controls.Add(this.labelTotalShipQty);
             this.masterpanel.Controls.Add(this.numTotalCartons);
             this.masterpanel.Controls.Add(this.numStartCtn);
+            this.masterpanel.Controls.Add(this.dateBoxCartonEstArrived);
+            this.masterpanel.Controls.Add(this.dateBoxCartonEstBooking);
             this.masterpanel.Controls.Add(this.comboPackingMethod);
             this.masterpanel.Controls.Add(this.displayPONo);
             this.masterpanel.Controls.Add(this.labelTotalCartons);
@@ -117,7 +125,7 @@
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelSPNo);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Size = new System.Drawing.Size(912, 248);
+            this.masterpanel.Size = new System.Drawing.Size(930, 248);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSPNo, 0);
@@ -140,6 +148,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelTotalCartons, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayPONo, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboPackingMethod, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBoxCartonEstBooking, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBoxCartonEstArrived, 0);
             this.masterpanel.Controls.SetChildIndex(this.numStartCtn, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTotalCartons, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelTotalShipQty, 0);
@@ -152,11 +162,13 @@
             this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnSwitchToPLByArticle, 0);
             this.masterpanel.Controls.SetChildIndex(this.panel1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbCartonEstBooking, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbCartonEstArrived, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 248);
-            this.detailpanel.Size = new System.Drawing.Size(912, 202);
+            this.detailpanel.Size = new System.Drawing.Size(930, 202);
             // 
             // gridicon
             // 
@@ -168,7 +180,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(912, 202);
+            this.detailgridcont.Size = new System.Drawing.Size(930, 202);
             // 
             // detail2
             // 
@@ -184,24 +196,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(912, 488);
+            this.detail.Size = new System.Drawing.Size(930, 488);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(912, 450);
+            this.detailcont.Size = new System.Drawing.Size(930, 450);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 450);
-            this.detailbtm.Size = new System.Drawing.Size(912, 38);
+            this.detailbtm.Size = new System.Drawing.Size(930, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(912, 488);
+            this.browse.Size = new System.Drawing.Size(930, 488);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(920, 517);
+            this.tabs.Size = new System.Drawing.Size(938, 517);
             // 
             // createby
             // 
@@ -466,7 +478,7 @@
             // 
             // labelTotalShipQty
             // 
-            this.labelTotalShipQty.Location = new System.Drawing.Point(561, 93);
+            this.labelTotalShipQty.Location = new System.Drawing.Point(607, 37);
             this.labelTotalShipQty.Name = "labelTotalShipQty";
             this.labelTotalShipQty.Size = new System.Drawing.Size(96, 23);
             this.labelTotalShipQty.TabIndex = 25;
@@ -477,7 +489,7 @@
             this.numTotalShipQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalShipQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalShipQty.IsSupportEditMode = false;
-            this.numTotalShipQty.Location = new System.Drawing.Point(661, 93);
+            this.numTotalShipQty.Location = new System.Drawing.Point(706, 37);
             this.numTotalShipQty.Name = "numTotalShipQty";
             this.numTotalShipQty.NullValue = new decimal(new int[] {
             0,
@@ -496,7 +508,7 @@
             // btnSpecialInstruction
             // 
             this.btnSpecialInstruction.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnSpecialInstruction.Location = new System.Drawing.Point(742, 11);
+            this.btnSpecialInstruction.Location = new System.Drawing.Point(777, 12);
             this.btnSpecialInstruction.Name = "btnSpecialInstruction";
             this.btnSpecialInstruction.Size = new System.Drawing.Size(143, 30);
             this.btnSpecialInstruction.TabIndex = 5;
@@ -507,7 +519,7 @@
             // btnCartonDimension
             // 
             this.btnCartonDimension.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCartonDimension.Location = new System.Drawing.Point(742, 47);
+            this.btnCartonDimension.Location = new System.Drawing.Point(777, 48);
             this.btnCartonDimension.Name = "btnCartonDimension";
             this.btnCartonDimension.Size = new System.Drawing.Size(143, 30);
             this.btnCartonDimension.TabIndex = 6;
@@ -518,7 +530,7 @@
             // btnSwitchToPackingList
             // 
             this.btnSwitchToPackingList.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnSwitchToPackingList.Location = new System.Drawing.Point(726, 141);
+            this.btnSwitchToPackingList.Location = new System.Drawing.Point(760, 147);
             this.btnSwitchToPackingList.Name = "btnSwitchToPackingList";
             this.btnSwitchToPackingList.Size = new System.Drawing.Size(160, 30);
             this.btnSwitchToPackingList.TabIndex = 7;
@@ -562,7 +574,7 @@
             // btnSwitchToPLByArticle
             // 
             this.btnSwitchToPLByArticle.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnSwitchToPLByArticle.Location = new System.Drawing.Point(726, 174);
+            this.btnSwitchToPLByArticle.Location = new System.Drawing.Point(760, 180);
             this.btnSwitchToPLByArticle.Name = "btnSwitchToPLByArticle";
             this.btnSwitchToPLByArticle.Size = new System.Drawing.Size(160, 30);
             this.btnSwitchToPLByArticle.TabIndex = 29;
@@ -583,7 +595,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 210);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(912, 38);
+            this.panel1.Size = new System.Drawing.Size(930, 38);
             this.panel1.TabIndex = 30;
             // 
             // btnUpdateBalance
@@ -646,9 +658,39 @@
             this.label1.TabIndex = 31;
             this.label1.Text = "Carton Ref No.";
             // 
+            // lbCartonEstBooking
+            // 
+            this.lbCartonEstBooking.Location = new System.Drawing.Point(551, 93);
+            this.lbCartonEstBooking.Name = "lbCartonEstBooking";
+            this.lbCartonEstBooking.Size = new System.Drawing.Size(132, 23);
+            this.lbCartonEstBooking.TabIndex = 31;
+            this.lbCartonEstBooking.Text = "Carton Est. Booking";
+            // 
+            // lbCartonEstArrived
+            // 
+            this.lbCartonEstArrived.Location = new System.Drawing.Point(551, 119);
+            this.lbCartonEstArrived.Name = "lbCartonEstArrived";
+            this.lbCartonEstArrived.Size = new System.Drawing.Size(132, 23);
+            this.lbCartonEstArrived.TabIndex = 32;
+            this.lbCartonEstArrived.Text = "Carton Est. Arrived";
+            // 
+            // dateBoxCartonEstBooking
+            // 
+            this.dateBoxCartonEstBooking.Location = new System.Drawing.Point(686, 92);
+            this.dateBoxCartonEstBooking.Name = "dateBoxCartonEstBooking";
+            this.dateBoxCartonEstBooking.Size = new System.Drawing.Size(130, 23);
+            this.dateBoxCartonEstBooking.TabIndex = 33;
+            // 
+            // dateBoxCartonEstArrived
+            // 
+            this.dateBoxCartonEstArrived.Location = new System.Drawing.Point(686, 118);
+            this.dateBoxCartonEstArrived.Name = "dateBoxCartonEstArrived";
+            this.dateBoxCartonEstArrived.Size = new System.Drawing.Size(130, 23);
+            this.dateBoxCartonEstArrived.TabIndex = 34;
+            // 
             // P02
             // 
-            this.ClientSize = new System.Drawing.Size(920, 550);
+            this.ClientSize = new System.Drawing.Size(938, 550);
             this.DefaultControl = "txtSPNo";
             this.DefaultControlForEdit = "txtSPNo";
             this.DefaultOrder = "OrderID";
@@ -726,5 +768,9 @@
         private Win.UI.Button btnUpdateBalance;
         private Win.UI.TextBox txtCartonRefBalance;
         private Win.UI.Label lbUpdateRefNoforBalance;
+        private Win.UI.DateBox dateBoxCartonEstArrived;
+        private Win.UI.DateBox dateBoxCartonEstBooking;
+        private Win.UI.Label lbCartonEstArrived;
+        private Win.UI.Label lbCartonEstBooking;
     }
 }

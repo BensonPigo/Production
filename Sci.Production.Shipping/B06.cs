@@ -9,6 +9,10 @@ namespace Sci.Production.Shipping
 {
     public partial class B06 : Win.Tems.QueryForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B06"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public B06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -20,6 +24,7 @@ namespace Sci.Production.Shipping
             this.Close();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

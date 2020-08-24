@@ -177,7 +177,7 @@
             this.radioByOneDayDetial.TabIndex = 5;
             this.radioByOneDayDetial.Text = "By one day detial";
             this.radioByOneDayDetial.UseVisualStyleBackColor = true;
-            this.radioByOneDayDetial.CheckedChanged += new System.EventHandler(this.radioByOneDayDetial_CheckedChanged);
+            this.radioByOneDayDetial.CheckedChanged += new System.EventHandler(this.RadioByOneDayDetial_CheckedChanged);
             // 
             // radioByDetail
             // 
@@ -203,7 +203,7 @@
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(121, 24);
             this.comboM.TabIndex = 3;
-            this.comboM.TextChanged += new System.EventHandler(this.comboM_TextChanged);
+            this.comboM.TextChanged += new System.EventHandler(this.ComboM_TextChanged);
             // 
             // txtCutCellEnd
             // 
@@ -259,7 +259,7 @@
             this.dateCuttingDate.Name = "dateCuttingDate";
             this.dateCuttingDate.Size = new System.Drawing.Size(280, 23);
             this.dateCuttingDate.TabIndex = 0;
-            this.dateCuttingDate.Leave += new System.EventHandler(this.dateCuttingDate_Leave);
+            this.dateCuttingDate.Leave += new System.EventHandler(this.DateCuttingDate_Leave);
             // 
             // labelType
             // 
@@ -304,7 +304,7 @@
             this.radioGroup1.Size = new System.Drawing.Size(209, 123);
             this.radioGroup1.TabIndex = 117;
             this.radioGroup1.TabStop = false;
-            this.radioGroup1.Paint += new System.Windows.Forms.PaintEventHandler(this.radioGroup1_Paint);
+            this.radioGroup1.Paint += new System.Windows.Forms.PaintEventHandler(this.RadioGroup1_Paint);
             // 
             // radioByCutCell
             // 
@@ -318,7 +318,7 @@
             this.radioByCutCell.TabStop = true;
             this.radioByCutCell.Text = "By Cut Cell";
             this.radioByCutCell.UseVisualStyleBackColor = true;
-            this.radioByCutCell.CheckedChanged += new System.EventHandler(this.radioByCutCell_CheckedChanged);
+            this.radioByCutCell.CheckedChanged += new System.EventHandler(this.RadioByCutCell_CheckedChanged);
             // 
             // radioBySpreadingNo
             // 
@@ -330,7 +330,7 @@
             this.radioBySpreadingNo.TabIndex = 116;
             this.radioBySpreadingNo.Text = "By Spreading No.";
             this.radioBySpreadingNo.UseVisualStyleBackColor = true;
-            this.radioBySpreadingNo.CheckedChanged += new System.EventHandler(this.radioBySpreadingNo_CheckedChanged);
+            this.radioBySpreadingNo.CheckedChanged += new System.EventHandler(this.RadioBySpreadingNo_CheckedChanged);
             // 
             // label4
             // 
@@ -350,7 +350,7 @@
             this.btnSendMail.TabIndex = 3;
             this.btnSendMail.Text = "Send Mail";
             this.btnSendMail.UseVisualStyleBackColor = true;
-            this.btnSendMail.Click += new System.EventHandler(this.btnSendMail_Click);
+            this.btnSendMail.Click += new System.EventHandler(this.BtnSendMail_Click);
             // 
             // R02
             // 

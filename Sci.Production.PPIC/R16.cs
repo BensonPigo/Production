@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class R16 : Win.Tems.PrintForm
     {
         private DataTable printData;
@@ -19,12 +20,17 @@ namespace Sci.Production.PPIC
         private DateTime? BuyerDev_S;
         private DateTime? BuyerDev_E;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R16"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R16(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

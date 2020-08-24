@@ -27,7 +27,7 @@ namespace Sci.Production.Warehouse
         private DataTable master;
         private DataTable detail;
 
-        private msg p30_msg = new msg();
+        private Msg p30_msg = new Msg();
 
         public P30(ToolStripMenuItem menuitem)
             : base(menuitem)

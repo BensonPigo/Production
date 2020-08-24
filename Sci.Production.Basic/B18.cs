@@ -15,10 +15,15 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Basic
 {
-    public partial class B18 : Sci.Win.Tems.Input1
+    /// <inheritdoc/>
+    public partial class B18 : Win.Tems.Input1
     {
         private string oldID = string.Empty;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B18"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public B18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -42,8 +47,7 @@ namespace Sci.Production.Basic
             }
 
             string cmd = "SELECT ID ,Name FROM SciFMS_AccountNo WHERE Junk = 0 ORDER BY ID";
-            DataTable dt;
-            DBProxy.Current.Select(null, cmd, out dt);
+            DBProxy.Current.Select(null, cmd, out DataTable dt);
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "ID,Name", "8,30", this.txtAccountNo.Text);
 
@@ -53,18 +57,17 @@ namespace Sci.Production.Basic
             {
                 return;
             }
+
             List<DataRow> dr = item.GetSelecteds().ToList();
 
             this.CurrentMaintain["ID"] = MyUtility.Convert.GetString(dr[0]["ID"]);
             this.disAccountNoname.Text = MyUtility.Convert.GetString(dr[0]["Name"]);
-
         }
 
         private void TxtAccountNo_Validating(object sender, CancelEventArgs e)
         {
             if (this.oldID != this.txtAccountNo.Text)
             {
-
                 string newID = this.txtAccountNo.Text;
 
                 if (MyUtility.Check.Empty(newID))
@@ -76,7 +79,7 @@ namespace Sci.Production.Basic
                 }
 
                 List<SqlParameter> paras = new List<SqlParameter>() { new SqlParameter("@ID", newID) };
-                bool exists = MyUtility.Check.Seek($@"SELECT 1 FROM SciFMS_AccountNo WHERE Junk=0 AND ID = @ID",paras);
+                bool exists = MyUtility.Check.Seek($@"SELECT 1 FROM SciFMS_AccountNo WHERE Junk=0 AND ID = @ID", paras);
 
                 if (!exists)
                 {
@@ -117,8 +120,7 @@ SELECT b.ID ,b.Name ,[Unselectable]=
 FROM SciFMS_AccountNo b
 WHERE b.Junk=0 
 ";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd,  out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
 
             if (!result)
             {

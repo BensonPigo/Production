@@ -7,6 +7,10 @@ namespace Sci.Production.Cutting
 {
     public partial class B01 : Win.Tems.Input1
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B01"/> class.
+        /// </summary>
+        /// <param name="menuitem"></param>
         public B01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -21,6 +25,7 @@ namespace Sci.Production.Cutting
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.txtID.Text.Trim()) || MyUtility.Check.Empty(this.txtShowSeq.Text.Trim()))

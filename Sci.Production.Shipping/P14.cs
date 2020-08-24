@@ -65,6 +65,7 @@ order by ed.ID
             this.gridExport.DataSource = dtResult;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
@@ -101,6 +102,7 @@ where md.ID = '{masterID}'
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -144,6 +146,7 @@ order by ed.ID
             this.ChangeDetailgridFormat();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePre()
         {
             // 若FtyReceiveDate有更新則EditName,EditDate也一併更新
@@ -161,6 +164,7 @@ order by ed.ID
             return base.ClickSavePre();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -176,6 +180,7 @@ order by ed.ID
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -243,6 +248,7 @@ order by ed.ID
                 .Numeric("ShipQty", header: "Ship Qty", width: Widths.AnsiChars(13), decimal_places: 2, iseditingreadonly: true);
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 檢查表身資料當MtlCertificate_Detail.FtyReceiveDate不為空值時，MtlCertificate_Detail.FtyReceiveName欄位也不得為空值

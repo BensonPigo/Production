@@ -85,7 +85,7 @@
             this.chkUpdateOriLocation.TabIndex = 139;
             this.chkUpdateOriLocation.Text = "Update to original locationID";
             this.chkUpdateOriLocation.UseVisualStyleBackColor = true;
-            this.chkUpdateOriLocation.CheckedChanged += new System.EventHandler(this.chkUpdateOriLocation_CheckedChanged);
+            this.chkUpdateOriLocation.CheckedChanged += new System.EventHandler(this.ChkUpdateOriLocation_CheckedChanged);
             // 
             // txtcloglocationLocationNo
             // 

@@ -26,6 +26,7 @@ namespace Sci.Production.PublicForm
             this.Ukey = ukey;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.grid1)

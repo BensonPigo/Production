@@ -10,6 +10,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class R16 : Win.Tems.PrintForm
     {
         private DataTable printData;
@@ -28,6 +29,10 @@ namespace Sci.Production.Shipping
         private bool FOC;
         private bool GMTCompleteShortage;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R16"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R16(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -35,12 +40,14 @@ namespace Sci.Production.Shipping
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             this.comboCategory.SelectedIndex = 4;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.dateBuyerDelivery1 = this.dateBuyerDelivery.Value1;
@@ -60,6 +67,7 @@ namespace Sci.Production.Shipping
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             string sqlcmd = $@"
@@ -252,6 +260,7 @@ and f.IsProduceFty = 1
             return this.result;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.printData.Rows.Count <= 0)
@@ -287,9 +296,7 @@ and f.IsProduceFty = 1
         private void TxtShipper_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(
-                @" 
-select distinct ShipperID 
-from FtyShipper_Detail", "15", this.txtShipper.Text, headercaptions: "Shipper");
+                @"select distinct ShipperID from FtyShipper_Detail", "15", this.txtShipper.Text, headercaptions: "Shipper");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

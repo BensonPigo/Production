@@ -256,7 +256,7 @@
             this.btnDetail.TabIndex = 1;
             this.btnDetail.Text = "Detail";
             this.btnDetail.UseVisualStyleBackColor = true;
-            this.btnDetail.Click += new System.EventHandler(this.btnDetail_Click);
+            this.btnDetail.Click += new System.EventHandler(this.BtnDetail_Click);
             // 
             // label3
             // 
@@ -781,7 +781,7 @@
             this.btnDownloadIdList.TabIndex = 8;
             this.btnDownloadIdList.Text = "Download ID List";
             this.btnDownloadIdList.UseVisualStyleBackColor = true;
-            this.btnDownloadIdList.Click += new System.EventHandler(this.btnDownloadIdList_Click);
+            this.btnDownloadIdList.Click += new System.EventHandler(this.BtnDownloadIdList_Click);
             // 
             // displayMarkerVersion
             // 
@@ -878,7 +878,7 @@
             this.btnSwitchtoWorkOrder.TabIndex = 12;
             this.btnSwitchtoWorkOrder.Text = "Switch to WorkOrder";
             this.btnSwitchtoWorkOrder.UseVisualStyleBackColor = true;
-            this.btnSwitchtoWorkOrder.Click += new System.EventHandler(this.btnSwitchtoWorkOrder_Click);
+            this.btnSwitchtoWorkOrder.Click += new System.EventHandler(this.BtnSwitchtoWorkOrder_Click);
             // 
             // displayCutWidth
             // 

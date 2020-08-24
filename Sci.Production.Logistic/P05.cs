@@ -312,8 +312,7 @@ DROP TABLE  #tmp_NoRepeat,#MainTable
             objSheets.get_Range(string.Format("A5:V{0}", r + 4)).Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
             objSheets.Cells[2, 2] = Env.User.Keyword;
-            DataRow dr;
-            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Env.User.Factory), out dr, null);
+            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Env.User.Factory), out DataRow dr, null);
 
             if (dr != null)
             {
@@ -354,7 +353,7 @@ DROP TABLE  #tmp_NoRepeat,#MainTable
             this.HideWaitMessage();
         }
 
-        private void btnToDRExcel_Click(object sender, EventArgs e)
+        private void BtnToDRExcel_Click(object sender, EventArgs e)
         {
             this.gridReceiveDate.ValidateControl();
             this.listControlBindingSource1.EndEdit();
@@ -374,10 +373,7 @@ DROP TABLE  #tmp_NoRepeat,#MainTable
                 return;
             }
 
-            DataTable dtPrint;
-            MyUtility.Tool.ProcessWithDatatable(
-                              excelTable, string.Empty,
-                              $@"
+            string sqlCmd = $@"
 select a.orderid,o.CustPONo 
 ,[Qty] = sum(Packing.Qty)
 ,[TtlCtns] = sum(TTlCtns.CTNQty)
@@ -394,7 +390,8 @@ outer apply(
 	where p.OrderID=a.OrderID and p.CTNStartNo=a.CTNStartNo
 )TTlCtns
 where a.Selected = 1
-group by a.orderid,o.CustPONo", out dtPrint);
+group by a.orderid,o.CustPONo";
+            MyUtility.Tool.ProcessWithDatatable(excelTable, string.Empty, sqlCmd, out DataTable dtPrint);
 
             if (dtPrint == null || dtPrint.Rows.Count == 0)
             {

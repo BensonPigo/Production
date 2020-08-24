@@ -9,7 +9,8 @@
 	AfterWash	 Numeric(11, 2) NULL ,
 	Shrinkage	 Numeric(11, 2) NULL ,
 	Scale		 varchar (5) NULL ,
-	CONSTRAINT [PK_SampleGarmentTest_Detail_FGWT] PRIMARY KEY CLUSTERED 
+	[Criteria] NUMERIC(11, 2) NULL, 
+    CONSTRAINT [PK_GarmentTest_Detail_FGWT] PRIMARY KEY CLUSTERED 
 	( ID ASC ,No ASC ,Location ASC ,Type ASC)
 		WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 );

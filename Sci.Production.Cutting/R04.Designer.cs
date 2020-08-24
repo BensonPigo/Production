@@ -119,7 +119,7 @@
             this.radioByDetail.TabIndex = 6;
             this.radioByDetail.Text = "By Detail";
             this.radioByDetail.UseVisualStyleBackColor = true;
-            this.radioByDetail.CheckedChanged += new System.EventHandler(this.radioByDetail_CheckedChanged);
+            this.radioByDetail.CheckedChanged += new System.EventHandler(this.RadioByDetail_CheckedChanged);
             // 
             // radioByFactory
             // 
@@ -131,7 +131,7 @@
             this.radioByFactory.TabIndex = 5;
             this.radioByFactory.Text = "By Factory";
             this.radioByFactory.UseVisualStyleBackColor = true;
-            this.radioByFactory.CheckedChanged += new System.EventHandler(this.radioByFactory_CheckedChanged);
+            this.radioByFactory.CheckedChanged += new System.EventHandler(this.RadioByFactory_CheckedChanged);
             // 
             // radioByCutCell
             // 
@@ -143,7 +143,7 @@
             this.radioByCutCell.TabIndex = 5;
             this.radioByCutCell.Text = "By Cut Cell";
             this.radioByCutCell.UseVisualStyleBackColor = true;
-            this.radioByCutCell.CheckedChanged += new System.EventHandler(this.radioByCutCell_CheckedChanged);
+            this.radioByCutCell.CheckedChanged += new System.EventHandler(this.RadioByCutCell_CheckedChanged);
             // 
             // radioByM
             // 
@@ -157,7 +157,7 @@
             this.radioByM.TabStop = true;
             this.radioByM.Text = "By M";
             this.radioByM.UseVisualStyleBackColor = true;
-            this.radioByM.CheckedChanged += new System.EventHandler(this.radioByM_CheckedChanged);
+            this.radioByM.CheckedChanged += new System.EventHandler(this.RadioByM_CheckedChanged);
             // 
             // comboM
             // 
@@ -169,7 +169,7 @@
             this.comboM.Name = "comboM";
             this.comboM.Size = new System.Drawing.Size(121, 24);
             this.comboM.TabIndex = 0;
-            this.comboM.TextChanged += new System.EventHandler(this.comboM_TextChanged);
+            this.comboM.TextChanged += new System.EventHandler(this.ComboM_TextChanged);
             // 
             // txtCutCellEnd
             // 

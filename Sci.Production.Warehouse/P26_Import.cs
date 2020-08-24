@@ -69,7 +69,7 @@ namespace Sci.Production.Warehouse
                 // 建立可以符合回傳的Cursor
                 strSQLCmd.Append(string.Format(
                     @"
-select  distinct 0 as selected
+select   0 as selected
         , r.exportID
         , a.Poid
         , a.seq1
@@ -89,12 +89,18 @@ select  distinct 0 as selected
         , p1.sizespec
         , Receiving_Detail_ukey = min(rd.Ukey) 		
         , a.StockType
+        , [LastEditDate] = LastEditDate.val
 from dbo.FtyInventory a WITH (NOLOCK) 
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 left join dbo.PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 inner join dbo.Factory f on f.ID=p1.factoryID 
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
 left join dbo.Receiving r WITH (NOLOCK) on r.Id = rd.Id
+outer apply(SELECT top 1 [val] = lt.EditDate
+            FROM LocationTrans lt with (nolock)
+            INNER JOIN LocationTrans_detail ltd with (nolock) ON lt.ID = ltd.ID
+            WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey = a.Ukey 
+            order by lt.EditDate desc ) LastEditDate
 where    f.MDivisionID='{0}' 
 ", Env.User.Keyword));
 
@@ -175,7 +181,7 @@ where    f.MDivisionID='{0}'
                 }
 
                 strSQLCmd.Append(@" 
-group by a.Poid, a.seq1, a.seq2, a.Roll, a.Dyelot, a.InQty , a.OutQty , a.AdjustQty, a.Ukey, p1.refno, p1.colorid, p1.sizespec, a.StockType, r.exportID");
+group by a.Poid, a.seq1, a.seq2, a.Roll, a.Dyelot, a.InQty , a.OutQty , a.AdjustQty, a.Ukey, p1.refno, p1.colorid, p1.sizespec, a.StockType, r.exportID, LastEditDate.val");
             }
 
             // break;
@@ -190,7 +196,8 @@ group by a.Poid, a.seq1, a.seq2, a.Roll, a.Dyelot, a.InQty , a.OutQty , a.Adjust
 
                 strSQLCmd.Append(string.Format(
                     @"
-select*
+select  ul.*,
+        [LastEditDate] = LastEditDate.val
 from(
 select  0 as selected
         , r1.exportID
@@ -349,6 +356,11 @@ where
         and r1.id = '{0}' 
         {1} 
 )ul
+outer apply(SELECT top 1 [val] = lt.EditDate
+            FROM LocationTrans lt with (nolock)
+            INNER JOIN LocationTrans_detail ltd with (nolock) ON lt.ID = ltd.ID
+            WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey = ul.FtyInventoryUkey 
+            order by lt.EditDate desc ) LastEditDate
 ",
                     transid,
                     MyUtility.Check.Empty(StockType) ? string.Empty : $"and a.StockType = {StockType}",
@@ -484,8 +496,15 @@ WHERE   StockType='{0}'
                     string getFtyInventorySql = $@"
 select 
 [Qty] = InQty - OutQty + AdjustQty ,
-[fromlocation] = dbo.Getlocation(ukey) 
+[fromlocation] = dbo.Getlocation(ukey),
+[LastEditDate] = LastEditDate.val,
+[FtyInventoryUkey] = FtyInventory.Ukey
 from FtyInventory
+outer apply(SELECT top 1 [val] = lt.EditDate
+            FROM LocationTrans lt with (nolock)
+            INNER JOIN LocationTrans_detail ltd with (nolock) ON lt.ID = ltd.ID
+            WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey = FtyInventory.Ukey 
+            order by lt.EditDate desc ) LastEditDate
 where
 Poid = '{drSelected["poid"]}' and 
 Seq1 = '{drSelected["Seq1"]}' and 
@@ -499,6 +518,8 @@ stocktype = '{e.FormattedValue}'
                         drSelected["qty"] = dr["Qty"];
                         drSelected["FromLocation"] = dr["fromlocation"];
                         drSelected["stocktype"] = e.FormattedValue;
+                        drSelected["LastEditDate"] = dr["LastEditDate"];
+                        drSelected["FtyInventoryUkey"] = dr["FtyInventoryUkey"];
                         drSelected["ToLocation"] = string.Empty;
                     }
                     else
@@ -529,6 +550,7 @@ stocktype = '{e.FormattedValue}'
                 .ComboBox("stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(8), iseditable: true, settings: stocktypeSet).Get(out cbb_stocktype) // 8
                 .Text("FromLocation", header: "FromLocation", iseditingreadonly: true) // 9
                 .Text("ToLocation", header: "ToLocation", settings: ts2, iseditingreadonly: false) // 10
+                .DateTime("LastEditDate", header: "Last Edit Date", iseditingreadonly: true)
             ;
 
             DataTable stocktypeSrc;

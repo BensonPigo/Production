@@ -78,6 +78,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Sci.Production.ruleset</CodeAnalysisRuleSet>
     <NoWarn>1591</NoWarn>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -772,6 +773,12 @@
     <None Include="XLT\Quality_P03_Wash_Test.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Quality_P10_FGPT.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Quality_P04_FGPT.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Quality_P04_FGWT.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -919,7 +926,10 @@
     <None Include="XLT\Quality_R31.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Quality_R32.xltx">
+    <None Include="XLT\Quality_R32_Detail.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Quality_R32_Summary.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Quality_R40_ByFactory.xltx">

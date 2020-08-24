@@ -43,7 +43,7 @@
             // 
             // save
             // 
-            this.save.Click += new System.EventHandler(this.save_Click);
+            this.save.Click += new System.EventHandler(this.Save_Click);
             // 
             // AuthorityByPosition_History
             // 

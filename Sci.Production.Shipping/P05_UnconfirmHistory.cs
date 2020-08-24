@@ -5,16 +5,22 @@ using System.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P05_UnconfirmHistory : Win.Subs.Base
     {
         private string GMTBookingID;
 
-        public P05_UnconfirmHistory(string _GMTBookingID)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P05_UnconfirmHistory"/> class.
+        /// </summary>
+        /// <param name="gMTBookingID">GMTBookingID</param>
+        public P05_UnconfirmHistory(string gMTBookingID)
         {
             this.InitializeComponent();
-            this.GMTBookingID = _GMTBookingID;
+            this.GMTBookingID = gMTBookingID;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

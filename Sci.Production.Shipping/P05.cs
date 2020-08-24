@@ -1636,7 +1636,9 @@ inner join (
     where b.INVNo = '{1}'
     group by b.INVNo
 )b on a.id = b.INVNo
-where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+where ID = '{1}'",
+Env.User.UserID,
+MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DualResult result1 = DBProxy.Current.Execute(null, updateCmd);
             if (!result1)
             {

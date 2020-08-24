@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-
 using System;
 using System.Data;
 using System.Drawing;
@@ -9,11 +8,16 @@ using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P06 : Win.Tems.Input6
     {
         private string loginID = Env.User.UserID;
         private string keyWord = Env.User.Keyword;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P06"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -21,10 +25,10 @@ namespace Sci.Production.Cutting
             this.DefaultFilter = string.Format("MDivisionID = '{0}' and Status !='New'", this.keyWord);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable queryDT;
             string querySql = string.Format(
                 @"
 select '' FTYGroup
@@ -33,7 +37,7 @@ union
 select distinct FTYGroup 
 from Factory 
 where MDivisionID = '{0}'", Env.User.Keyword);
-            DBProxy.Current.Select(null, querySql, out queryDT);
+            DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
             this.queryfors.SelectedIndexChanged += (s, e) =>
@@ -52,6 +56,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             };
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
@@ -76,6 +81,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -97,6 +103,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             this.detailgrid.Columns["ReleaseDate"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -105,6 +112,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             this.detailgrid.AutoResizeColumns();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.GetValue.Lookup("Status", this.CurrentMaintain["ID"].ToString(), "MarkerReq", "ID") == "New")
@@ -116,6 +124,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
             DataRow[] dray = ((DataTable)this.detailgridbs.DataSource).Select("releaseqty <>0");
@@ -141,13 +150,14 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
             this.OnDetailEntered();
         }
 
-        private void btnBatchUpdate_Click(object sender, EventArgs e)
+        private void BtnBatchUpdate_Click(object sender, EventArgs e)
         {
             this.grid.ValidateControl();
             if (MyUtility.Check.Empty(this.dateReleaseDate.Value))

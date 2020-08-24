@@ -46,6 +46,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Sci.Production.Packing.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\x86\Debug\Sci.Production.Packing.xml</DocumentationFile>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -233,6 +234,12 @@
     </Compile>
     <Compile Include="P03_ExcelImport.Designer.cs">
       <DependentUpon>P03_ExcelImport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P03_CartonBooking.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_CartonBooking.Designer.cs">
+      <DependentUpon>P03_CartonBooking.cs</DependentUpon>
     </Compile>
     <Compile Include="P03_RepackCartons.cs">
       <SubType>Form</SubType>
@@ -562,6 +569,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_ExcelImport.resx">
       <DependentUpon>P03_ExcelImport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03_CartonBooking.resx">
+      <DependentUpon>P03_CartonBooking.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03_RepackCartons.resx">
       <DependentUpon>P03_RepackCartons.cs</DependentUpon>

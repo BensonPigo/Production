@@ -216,18 +216,18 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
                 this.numericBoxTTLGW.Value = 0;
             }
 
-            if (tmp_dt.Select("CYCFS in ('CFS-CFS','CFS-CY')").Count() > 0)
+            if (tmp_dt.Select("CYCFS in ('CFS-CFS','CFS-CY') and ShipModeID not in ('A/C','A/P','E/C','E/P','A/P-C','E/P-C','AIR')").Count() > 0)
             {
-                this.numericBoxCFSCBM.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCBM)", "CYCFS in ('CFS-CFS','CFS-CY')")), 2);
+                this.numericBoxCFSCBM.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCBM)", "CYCFS in ('CFS-CFS','CFS-CY') and ShipModeID not in ('A/C','A/P','E/C','E/P','A/P-C','E/P-C','AIR')")), 2);
             }
             else
             {
                 this.numericBoxCFSCBM.Value = 0;
             }
 
-            if (tmp_dt.Select("ShipModeID in('A/C','A/P','E/C','E/P')").Count() > 0)
+            if (tmp_dt.Select("ShipModeID in('A/C','A/P','E/C','E/P','A/P-C','E/P-C','AIR')").Count() > 0)
             {
-                this.numericBoxAIRGW.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalGW)", "ShipModeID in('A/C','A/P','E/C','E/P')")), 2);
+                this.numericBoxAIRGW.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalGW)", "ShipModeID in('A/C','A/P','E/C','E/P','A/P-C','E/P-C','AIR')")), 2);
             }
             else
             {
@@ -1130,13 +1130,16 @@ GB#:{dr["ID"]},   Shipping Mode:{dr["ShipModeID"]}
             }
 
             bool edit = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToLower().EqualString("new") && this.Perm.Edit;
-            P10_ContainerTruck callNextForm = new P10_ContainerTruck(edit, null, null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.reload);
+            P10_ContainerTruck callNextForm = new P10_ContainerTruck(edit, null, null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.Reload);
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
             this.Refresh();
         }
 
-        public void reload()
+        /// <summary>
+        /// Reload
+        /// </summary>
+        public void Reload()
         {
             this.OnDetailEntered();
             this.Refresh();

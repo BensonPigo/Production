@@ -10,11 +10,11 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public static class P02_PublicFunction
     {
         private static DataTable GetPoSuppDetail(string refno, string poid, Win.Forms.Base srcForm)
         {
-            DataTable dtPoSuppDetail;
             string sqlcmd = $@"
 select SEQ1,SEQ2,ColorID
 from PO_Supp_Detail psd1
@@ -23,7 +23,7 @@ psd1.ID = '{poid}'
 and psd1.Refno = '{refno}'
 and psd1.Junk != 1
 ";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dtPoSuppDetail);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtPoSuppDetail);
 
             if (!result)
             {
@@ -40,6 +40,7 @@ and psd1.Junk != 1
             return dtPoSuppDetail;
         }
 
+        /// <inheritdoc/>
         public static void Seq1CellValidating(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e, Win.Forms.Base srcForm, Grid srcGrid, string poid)
         {
             if (!srcForm.EditMode)
@@ -94,9 +95,9 @@ and psd1.Junk != 1
 
             if (!MyUtility.Convert.GetString(resultDr["Colorid"]).EqualString(dr["Colorid"]) && !MyUtility.Check.Empty(dr["Colorid"].ToString()))
             {
-                DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {resultDr["Colorid"]} now , 
+                DialogResult diaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {resultDr["Colorid"]} now , 
 Do you want to continue? ");
-                if (DiaR == DialogResult.No)
+                if (diaR == DialogResult.No)
                 {
                     dr["SEQ1"] = oldvalue;
                     dr.EndEdit();
@@ -105,11 +106,11 @@ Do you want to continue? ");
             }
 
             dr["Colorid"] = resultDr["Colorid"];
-
             dr["SEQ1"] = newvalue;
             dr.EndEdit();
         }
 
+        /// <inheritdoc/>
         public static void Seq2CellValidating(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e, Win.Forms.Base srcForm, Grid srcGrid, string poid)
         {
             if (!srcForm.EditMode)
@@ -164,9 +165,9 @@ Do you want to continue? ");
 
             if (!MyUtility.Convert.GetString(resultDr["Colorid"]).EqualString(dr["Colorid"]) && !MyUtility.Check.Empty(dr["Colorid"].ToString()))
             {
-                DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {resultDr["Colorid"]} now , 
+                DialogResult diaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {resultDr["Colorid"]} now , 
 Do you want to continue? ");
-                if (DiaR == DialogResult.No)
+                if (diaR == DialogResult.No)
                 {
                     dr["SEQ2"] = oldvalue;
                     dr.EndEdit();
@@ -180,6 +181,7 @@ Do you want to continue? ");
             dr.EndEdit();
         }
 
+        /// <inheritdoc/>
         public static void Seq1EditingMouseDown(object sender, DataGridViewEditingControlMouseEventArgs e, Win.Forms.Base srcForm, Grid srcGrid, string poid)
         {
             if (e.Button == MouseButtons.Right)
@@ -208,9 +210,9 @@ Do you want to continue? ");
 
                 if (!MyUtility.Convert.GetString(sele.GetSelecteds()[0]["Colorid"]).EqualString(dr["Colorid"]) && !MyUtility.Check.Empty(dr["Colorid"].ToString()))
                 {
-                    DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {sele.GetSelecteds()[0]["Colorid"]} now , 
+                    DialogResult diaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {sele.GetSelecteds()[0]["Colorid"]} now , 
 Do you want to continue? ");
-                    if (DiaR == DialogResult.No)
+                    if (diaR == DialogResult.No)
                     {
                         return;
                     }
@@ -222,6 +224,7 @@ Do you want to continue? ");
             }
         }
 
+        /// <inheritdoc/>
         public static void Seq2EditingMouseDown(object sender, DataGridViewEditingControlMouseEventArgs e, Win.Forms.Base srcForm, Grid srcGrid, string poid)
         {
             if (e.Button == MouseButtons.Right)
@@ -250,9 +253,9 @@ Do you want to continue? ");
 
                 if (!MyUtility.Convert.GetString(sele.GetSelecteds()[0]["Colorid"]).EqualString(dr["Colorid"]) && !MyUtility.Check.Empty(dr["Colorid"].ToString()))
                 {
-                    DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {sele.GetSelecteds()[0]["Colorid"]} now , 
+                    DialogResult diaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {sele.GetSelecteds()[0]["Colorid"]} now , 
 Do you want to continue? ");
-                    if (DiaR == DialogResult.No)
+                    if (diaR == DialogResult.No)
                     {
                         return;
                     }

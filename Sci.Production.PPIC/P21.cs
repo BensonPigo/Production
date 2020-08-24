@@ -9,14 +9,20 @@ using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class P21 : Win.Tems.Input6
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P21"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -24,6 +30,7 @@ namespace Sci.Production.PPIC
             this.gridReplacement.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             if (this.CurrentMaintain != null)
@@ -33,7 +40,6 @@ namespace Sci.Production.PPIC
                 this.txtSDPKPICode.Text = MyUtility.GetValue.Lookup($@"select KpiCode from Factory where id = '{this.CurrentMaintain["Department"]}'");
                 this.numTotal.Value = (decimal)this.CurrentMaintain["RMtlAmtUSD"] + (decimal)this.CurrentMaintain["ActFreightUSD"] + (decimal)this.CurrentMaintain["OtherAmtUSD"];
 
-                DataRow drOrder;
                 string sqlcmd = $@"
 select o.Poid,o.StyleID , o.Qty, [OrderID] = o.id, o.BrandID, o.FactoryID, o.ProgramID, o.MRHandle, [OrderSMR] = o.SMR
 ,[PoCombo] = (select isnull([dbo].getPOComboList(o.ID, o.POID),''))
@@ -48,7 +54,7 @@ outer apply(
 )PoQty
 where o.id = '{this.CurrentMaintain["OrderID"]}'
 ";
-                if (MyUtility.Check.Seek(sqlcmd, out drOrder))
+                if (MyUtility.Check.Seek(sqlcmd, out DataRow drOrder))
                 {
                     this.txtBrand.Text = drOrder["BrandID"].ToString();
                     this.txtFactory.Text = drOrder["FactoryID"].ToString();
@@ -83,10 +89,9 @@ And Reason.ReasonTypeID = 'PO_IrregularCost'");
                 this.btnResponsibilitydept.ForeColor = MyUtility.Check.Seek($"select 1 from ICR_ResponsibilityDept where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
 
                 // 取得ICR_ReplacementReport Grid 資料
-                DataTable dt;
                 DualResult result;
                 string sqlcmd_Replace = $@"select ReplacementNo from ICR_ReplacementReport where id ='{this.CurrentMaintain["id"]}'";
-                if (!(result = DBProxy.Current.Select(null, sqlcmd_Replace, out dt)))
+                if (!(result = DBProxy.Current.Select(null, sqlcmd_Replace, out DataTable dt)))
                 {
                     this.ShowErr(result);
                     return;
@@ -117,12 +122,14 @@ And Reason.ReasonTypeID = 'PO_IrregularCost'");
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override void ClickLocate()
         {
             base.ClickLocate();
             this.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -162,6 +169,7 @@ where ICR.ID = '{masterID}';
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();

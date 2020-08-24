@@ -30,6 +30,7 @@ namespace Sci.Production.Shipping
         /// P08_ShareExpense
         /// </summary>
         /// <param name="aPData">aPData</param>
+        /// <param name="apflag">apflag</param>
         public P08_ShareExpense(DataRow aPData, bool apflag)
         {
             this.InitializeComponent();
@@ -964,10 +965,10 @@ and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 or dbo.GetAccountNo
                 {
                     Func<List<CheckResult>, string, string, bool> showResultMsg = (inListCheckResult, msgType, mainMsg) =>
                         {
-                            var isGMTBookingFail = listCheckResult.Where(s => s.resultType == msgType).Any();
+                            var isGMTBookingFail = listCheckResult.Where(s => s.ResultType == msgType).Any();
                             if (isGMTBookingFail)
                             {
-                                string gmtBookingIDs = listCheckResult.Where(s => s.resultType == msgType).Select(s => s.resultValue).Distinct().JoinToString(",");
+                                string gmtBookingIDs = listCheckResult.Where(s => s.ResultType == msgType).Select(s => s.ResultValue).Distinct().JoinToString(",");
                                 MyUtility.Msg.WarningBox(mainMsg + gmtBookingIDs);
                                 return true;
                             }
@@ -1217,9 +1218,9 @@ inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipm
 
         private class CheckResult
         {
-            public string resultType { get; set; }
+            public string ResultType { get; set; }
 
-            public string resultValue { get; set; }
+            public string ResultValue { get; set; }
         }
 
         private DualResult CheckShareExpenseItem(DataRow shareExpenseItem, ref List<CheckResult> listCheckResult)
@@ -1304,8 +1305,8 @@ select [resultType] = 'OK',
                 {
                     listCheckResult.Add(new CheckResult()
                     {
-                        resultType = item["resultType"].ToString(),
-                        resultValue = item["resultValue"].ToString(),
+                        ResultType = item["resultType"].ToString(),
+                        ResultValue = item["resultValue"].ToString(),
                     });
                 }
             }

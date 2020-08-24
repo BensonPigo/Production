@@ -57,6 +57,8 @@
             this.gridBreakDown = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridAutoPickDetail = new Sci.Win.UI.Grid();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayDiffqty = new Sci.Win.UI.DisplayBox();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -75,7 +77,7 @@
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Undo";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnSave
             // 
@@ -87,10 +89,12 @@
             this.btnSave.TabIndex = 0;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.displayDiffqty);
             this.groupBox2.Controls.Add(this.labelTotalIssueQty);
             this.groupBox2.Controls.Add(this.displayTotalIssueQty);
             this.groupBox2.Controls.Add(this.button1);
@@ -131,7 +135,7 @@
             this.button1.TabIndex = 3;
             this.button1.Text = "Next";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // button2
             // 
@@ -143,7 +147,7 @@
             this.button2.TabIndex = 2;
             this.button2.Text = "Prev";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
             // panel1
             // 
@@ -344,6 +348,7 @@
             this.gridBreakDown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBreakDown.RowTemplate.Height = 24;
             this.gridBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBreakDown.ShowCellToolTips = false;
             this.gridBreakDown.Size = new System.Drawing.Size(986, 205);
             this.gridBreakDown.TabIndex = 112;
             this.gridBreakDown.TabStop = false;
@@ -370,9 +375,27 @@
             this.gridAutoPickDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAutoPickDetail.RowTemplate.Height = 24;
             this.gridAutoPickDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridAutoPickDetail.ShowCellToolTips = false;
             this.gridAutoPickDetail.Size = new System.Drawing.Size(442, 284);
             this.gridAutoPickDetail.TabIndex = 0;
             this.gridAutoPickDetail.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(242, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(106, 23);
+            this.label1.TabIndex = 118;
+            this.label1.Text = "Diff with bal. qty";
+            // 
+            // displayDiffqty
+            // 
+            this.displayDiffqty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDiffqty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDiffqty.Location = new System.Drawing.Point(351, 20);
+            this.displayDiffqty.Name = "displayDiffqty";
+            this.displayDiffqty.Size = new System.Drawing.Size(124, 23);
+            this.displayDiffqty.TabIndex = 117;
             // 
             // P11_AutoPick_Detail
             // 
@@ -380,6 +403,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox2);
             this.Name = "P11_AutoPick_Detail";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P11. Auto Pick Detail";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.P11_AutoPick_Detail_FormClosing);
             this.Load += new System.EventHandler(this.P11_AutoPick_Detail_Load);
@@ -425,5 +449,7 @@
         private Win.UI.Button button2;
         private Win.UI.Label labelTotalIssueQty;
         private Win.UI.DisplayBox displayTotalIssueQty;
+        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayDiffqty;
     }
 }

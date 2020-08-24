@@ -70,7 +70,7 @@
             this.btnNewSearch.TabIndex = 20;
             this.btnNewSearch.Text = "New Search";
             this.btnNewSearch.UseVisualStyleBackColor = true;
-            this.btnNewSearch.Click += new System.EventHandler(this.btnNewSearch_Click);
+            this.btnNewSearch.Click += new System.EventHandler(this.BtnNewSearch_Click);
             // 
             // btnQuery
             // 
@@ -80,7 +80,7 @@
             this.btnQuery.TabIndex = 19;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // txtSPNo
             // 
@@ -124,7 +124,7 @@
             this.grid1.Size = new System.Drawing.Size(1008, 287);
             this.grid1.TabIndex = 4;
             this.grid1.TabStop = false;
-            this.grid1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.grid1_ColumnHeaderMouseClick);
+            this.grid1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.Grid1_ColumnHeaderMouseClick);
             // 
             // label1
             // 
@@ -179,7 +179,7 @@
             this.checkBox1.TabIndex = 22;
             this.checkBox1.Text = "usable qty includes on board qty";
             this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
             // 
             // btnAutoCalc
             // 
@@ -189,7 +189,7 @@
             this.btnAutoCalc.TabIndex = 19;
             this.btnAutoCalc.Text = "Auto-Calculate";
             this.btnAutoCalc.UseVisualStyleBackColor = true;
-            this.btnAutoCalc.Click += new System.EventHandler(this.btnAutoCalc_Click);
+            this.btnAutoCalc.Click += new System.EventHandler(this.BtnAutoCalc_Click);
             // 
             // labNotice
             // 

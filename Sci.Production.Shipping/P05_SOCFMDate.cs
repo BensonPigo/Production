@@ -7,17 +7,22 @@ using System.Transactions;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P05_SOCFMDate : Win.Subs.Base
     {
         private DataRow dr;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P05_SOCFMDate"/> class.
+        /// </summary>
+        /// <param name="data">DataRow</param>
         public P05_SOCFMDate(DataRow data)
         {
             this.InitializeComponent();
             this.dr = data;
         }
 
-        private void btnConfirm_Click(object sender, EventArgs e)
+        private void BtnConfirm_Click(object sender, EventArgs e)
         {
             #region Confirm
             if (MyUtility.Check.Empty(this.dateSOCfmDate.Value))
@@ -72,7 +77,7 @@ where INVNo = '{MyUtility.Convert.GetString(this.dr["ID"])}'";
             this.Close();
         }
 
-        private void dateSOCfmDate_Validating(object sender, CancelEventArgs e)
+        private void DateSOCfmDate_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.dateSOCfmDate.Value) ||
                 MyUtility.Check.Empty(this.dr["FCRDate"]))
@@ -87,7 +92,7 @@ where INVNo = '{MyUtility.Convert.GetString(this.dr["ID"])}'";
             }
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }

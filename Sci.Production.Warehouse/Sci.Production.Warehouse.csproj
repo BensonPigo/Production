@@ -46,6 +46,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Sci.Production.Warehouse.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -519,6 +520,12 @@
     </Compile>
     <Compile Include="P62.Designer.cs">
       <DependentUpon>P62.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P62_CutRef.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P62_CutRef.Designer.cs">
+      <DependentUpon>P62_CutRef.cs</DependentUpon>
     </Compile>
     <Compile Include="Report\R02.cs">
       <SubType>Form</SubType>
@@ -1508,6 +1515,9 @@
     <EmbeddedResource Include="P61_Print.rdlc" />
     <EmbeddedResource Include="P62.resx">
       <DependentUpon>P62.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P62_CutRef.resx">
+      <DependentUpon>P62_CutRef.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R02.resx">
       <DependentUpon>R02.cs</DependentUpon>

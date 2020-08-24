@@ -8,6 +8,14 @@ namespace Sci.Production.PublicForm
     {
         private DataRow drOrders;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PFHis"/> class.
+        /// </summary>
+        /// <param name="canedit"></param>
+        /// <param name="keyvalue1"></param>
+        /// <param name="keyvalue2"></param>
+        /// <param name="keyvalue3"></param>
+        /// <param name="drOrders"></param>
         public PFHis(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow drOrders)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {

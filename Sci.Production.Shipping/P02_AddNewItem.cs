@@ -248,6 +248,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnDeleteBefore()
         {
             // 該單Approved / Junk都不允許調整資料

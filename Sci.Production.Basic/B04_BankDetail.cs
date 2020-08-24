@@ -9,44 +9,94 @@ using System.Linq;
 
 namespace Sci.Production.Basic
 {
+    /// <inheritdoc/>
     public partial class B04_BankDetail : Win.Tems.Input6
     {
         private bool _canconfirm;
         private bool _canedit;
         private string LocalSupp_Bank_ID;
 
-        // private ToolStripMenuItem newitem;
-        // private ToolStripMenuItem edit;
+        /// <summary>
+        /// LocalSupp Bank Detail
+        /// </summary>
         public class LocalSupp_Bank_Detail
         {
+            /// <summary>
+            /// Account No
+            /// </summary>
             public string AccountNo { get; set; }
 
+            /// <summary>
+            /// Account Name
+            /// </summary>
             public string AccountName { get; set; }
 
+            /// <summary>
+            /// Bank Name
+            /// </summary>
             public string BankName { get; set; }
 
+            /// <summary>
+            /// Branch Code
+            /// </summary>
             public string BranchCode { get; set; }
 
+            /// <summary>
+            /// Branch Name
+            /// </summary>
             public string BranchName { get; set; }
 
+            /// <summary>
+            /// Country ID
+            /// </summary>
             public string CountryID { get; set; }
 
+            /// <summary>
+            /// Alias
+            /// </summary>
             public string Alias { get; set; }
 
+            /// <summary>
+            /// City
+            /// </summary>
             public string City { get; set; }
 
+            /// <summary>
+            /// SWIFT Code
+            /// </summary>
             public string SWIFTCode { get; set; }
 
+            /// <summary>
+            /// MidSWIFT Code
+            /// </summary>
             public string MidSWIFTCode { get; set; }
 
+            /// <summary>
+            /// Mid Bank Name
+            /// </summary>
             public string MidBankName { get; set; }
 
+            /// <summary>
+            /// Remark
+            /// </summary>
             public string Remark { get; set; }
 
+            /// <summary>
+            /// Is Default
+            /// </summary>
             public bool IsDefault { get; set; }
         }
 
-        public B04_BankDetail(bool canedit, string ID, string keyvalue2, string keyvalue3, bool cancomfirmed, ToolStripMenuItem menuitem)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B04_BankDetail"/> class.
+        /// </summary>
+        /// <param name="canedit">Can Edit</param>
+        /// <param name="id">ID</param>
+        /// <param name="keyvalue2">keyvalue2</param>
+        /// <param name="keyvalue3">keyvalue3</param>
+        /// <param name="cancomfirmed">Can Comfirmed</param>
+        /// <param name="menuitem">ToolStripMenuItem</param>
+        public B04_BankDetail(bool canedit, string id, string keyvalue2, string keyvalue3, bool cancomfirmed, ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -91,8 +141,8 @@ namespace Sci.Production.Basic
 
             this._canconfirm = cancomfirmed;
             this._canedit = canedit;
-            this.DefaultFilter = "ID = '" + ID.Trim() + "'";
-            this.LocalSupp_Bank_ID = ID;
+            this.DefaultFilter = "ID = '" + id.Trim() + "'";
+            this.LocalSupp_Bank_ID = id;
             if (this.CurrentMaintain == null)
             {
                 this.labelStatus.Text = string.Empty;
@@ -176,6 +226,7 @@ namespace Sci.Production.Basic
             }
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -217,6 +268,7 @@ namespace Sci.Production.Basic
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -245,10 +297,11 @@ namespace Sci.Production.Basic
             // this.edit.Enabled = status;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string ID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
-            string PKey = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["PKey"]);
+            string id = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
+            string pKey = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["PKey"]);
             this.DetailSelectCommand = $@"
 SELECT  lbd.IsDefault
 	,lbd.AccountNo
@@ -269,40 +322,41 @@ SELECT  lbd.IsDefault
 FROM LocalSupp_Bank lb WITH (NOLOCK)  
 INNER JOIN LocalSupp_Bank_Detail lbd ON lb.ID=lbd.ID AND  lb.PKey=lbd.PKey 
 LEFT JOIN Country c WITH (NOLOCK)  ON c.ID=lbd.CountryID
-WHERE lb.ID='{ID}' AND lb.PKey='{PKey}'
+WHERE lb.ID='{id}' AND lb.PKey='{pKey}'
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            DataGridViewGeneratorTextColumnSettings CountryID = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings AccountNo = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings SWIFTCode = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings AccountName = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings BankName = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings BranchCode = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings BranchName = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings City = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings MidSWIFTCode = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings MidBankName = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorCheckBoxColumnSettings Default = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings countryID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings accountNo = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings sWIFTCode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings accountName = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings bankName = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings branchCode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings branchName = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings city = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings midSWIFTCode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings midBankName = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings @default = new DataGridViewGeneratorCheckBoxColumnSettings();
 
-            CountryID.MaxLength = 2;
-            AccountNo.MaxLength = 30;
-            SWIFTCode.MaxLength = 11;
-            AccountName.MaxLength = 60;
-            BankName.MaxLength = 70;
-            BranchCode.MaxLength = 30;
-            BranchName.MaxLength = 60;
-            CountryID.MaxLength = 2;
-            City.MaxLength = 20;
-            MidSWIFTCode.MaxLength = 11;
-            MidBankName.MaxLength = 70;
+            countryID.MaxLength = 2;
+            accountNo.MaxLength = 30;
+            sWIFTCode.MaxLength = 11;
+            accountName.MaxLength = 60;
+            bankName.MaxLength = 70;
+            branchCode.MaxLength = 30;
+            branchName.MaxLength = 60;
+            countryID.MaxLength = 2;
+            city.MaxLength = 20;
+            midSWIFTCode.MaxLength = 11;
+            midBankName.MaxLength = 70;
 
-            CountryID.MaxLength = 2;
-            CountryID.CellValidating += (s, e) =>
+            countryID.MaxLength = 2;
+            countryID.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
@@ -321,7 +375,7 @@ WHERE lb.ID='{ID}' AND lb.PKey='{PKey}'
                 }
             };
 
-            CountryID.CellMouseClick += (s, e) =>
+            countryID.CellMouseClick += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -339,9 +393,11 @@ FROM Country
 order by ID
 ";
 
-                    item = new Win.Tools.SelectItem(sqlcmd, "5,10", null);
+                    item = new Win.Tools.SelectItem(sqlcmd, "5,10", null)
+                    {
+                        Size = new System.Drawing.Size(400, 600),
+                    };
 
-                    item.Size = new System.Drawing.Size(400, 600);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -354,7 +410,7 @@ order by ID
                 }
             };
 
-            CountryID.EditingMouseDown += (s, e) =>
+            countryID.EditingMouseDown += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -372,9 +428,11 @@ FROM Country
 order by ID
 ";
 
-                    item = new Win.Tools.SelectItem(sqlcmd, "5,10", null);
+                    item = new Win.Tools.SelectItem(sqlcmd, "5,10", null)
+                    {
+                        Size = new System.Drawing.Size(400, 600),
+                    };
 
-                    item.Size = new System.Drawing.Size(400, 600);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -387,7 +445,7 @@ order by ID
                 }
             };
 
-            Default.CellValidating += (s, e) =>
+            @default.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 dr["IsDefault"] = e.FormattedValue;
@@ -400,22 +458,23 @@ order by ID
             };
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .CheckBox("IsDefault", header: "Default", width: Widths.AnsiChars(5), settings: Default, trueValue: 1, falseValue: 0, iseditable: true)
-                .Text("AccountNo", header: "Account No.", width: Widths.AnsiChars(13), settings: AccountNo)
-                .Text("SWIFTCode", header: "Swift", width: Widths.AnsiChars(13), settings: SWIFTCode)
-                .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(13), settings: AccountName)
-                .Text("BankName", header: "Bank Name", width: Widths.AnsiChars(13), settings: BankName)
-                .Text("BranchCode", header: "Branch Code", width: Widths.AnsiChars(13), settings: BranchCode)
-                .Text("BranchName", header: "Branch Name", width: Widths.AnsiChars(13), settings: BranchName)
-                .Text("CountryID", header: "Country", width: Widths.AnsiChars(13), settings: CountryID)
+                .CheckBox("IsDefault", header: "Default", width: Widths.AnsiChars(5), settings: @default, trueValue: 1, falseValue: 0, iseditable: true)
+                .Text("AccountNo", header: "Account No.", width: Widths.AnsiChars(13), settings: accountNo)
+                .Text("SWIFTCode", header: "Swift", width: Widths.AnsiChars(13), settings: sWIFTCode)
+                .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(13), settings: accountName)
+                .Text("BankName", header: "Bank Name", width: Widths.AnsiChars(13), settings: bankName)
+                .Text("BranchCode", header: "Branch Code", width: Widths.AnsiChars(13), settings: branchCode)
+                .Text("BranchName", header: "Branch Name", width: Widths.AnsiChars(13), settings: branchName)
+                .Text("CountryID", header: "Country", width: Widths.AnsiChars(13), settings: countryID)
                 .Text("Alias", header: "Country Name", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("City", header: "City", width: Widths.AnsiChars(13), settings: City)
-                .Text("MidSWIFTCode", header: "Intermediary Bank", width: Widths.AnsiChars(13), settings: MidSWIFTCode)
-                .Text("MidBankName", header: "Intermediary Bank-SWIFT Code", width: Widths.AnsiChars(13), settings: MidBankName)
+                .Text("City", header: "City", width: Widths.AnsiChars(13), settings: city)
+                .Text("MidSWIFTCode", header: "Intermediary Bank", width: Widths.AnsiChars(13), settings: midSWIFTCode)
+                .Text("MidBankName", header: "Intermediary Bank-SWIFT Code", width: Widths.AnsiChars(13), settings: midBankName)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(13))
                 ;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             if (this.CurrentMaintain != null)
@@ -437,6 +496,7 @@ order by ID
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickNewBefore()
         {
             // 判斷[LocalSupp_Bank].Status若有一筆為NEW, 則不能新增
@@ -452,6 +512,7 @@ order by ID
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -460,6 +521,7 @@ order by ID
             this.CurrentMaintain["Status"] = "New";
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
@@ -548,12 +610,13 @@ order by ID
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
         {
             return base.OnSaveDetail(details, detailtableschema);
         }
 
-        private void chkPaybyCheck_CheckedChanged(object sender, EventArgs e)
+        private void ChkPaybyCheck_CheckedChanged(object sender, EventArgs e)
         {
             // if (this.detailgridbs.DataSource != null)
             // {
@@ -568,6 +631,7 @@ order by ID
             // }
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             int defaultCount = 0;
@@ -597,6 +661,7 @@ order by ID
             base.ClickConfirm();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
@@ -608,13 +673,11 @@ order by ID
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickCopyAfter()
         {
             base.ClickCopyAfter();
-
-            DataTable dt;
-            DataTable dtDetail;
-            DualResult result = DBProxy.Current.Select(null, $"SELECT TOP 1 * FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}' AND Status = 'Confirmed'ORDER BY ApproveDate DESC", out dt);
+            DualResult result = DBProxy.Current.Select(null, $"SELECT TOP 1 * FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}' AND Status = 'Confirmed'ORDER BY ApproveDate DESC", out DataTable dt);
 
             if (result)
             {
@@ -655,7 +718,7 @@ LEFT JOIN Country c WITH (NOLOCK)  ON c.ID=lbd.CountryID
 WHERE lb.ID='{this.LocalSupp_Bank_ID}' AND lb.PKey='{dr["Pkey"]}'
 ";
 
-                DBProxy.Current.Select(null, cmd, out dtDetail);
+                DBProxy.Current.Select(null, cmd, out DataTable dtDetail);
                 this.detailgridbs.DataSource = dtDetail;
             }
         }

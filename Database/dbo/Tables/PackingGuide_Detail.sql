@@ -10,6 +10,7 @@
     [NNW]       NUMERIC (7, 3) CONSTRAINT [DF_PackingGuide_Detail_NNW] DEFAULT ((0)) NULL,
     [GW]        NUMERIC (7, 3) CONSTRAINT [DF_PackingGuide_Detail_GW] DEFAULT ((0)) NULL,
     [RefNoForBalance] VARCHAR(21) NOT NULL DEFAULT (''), 
+    [CombineBalance] BIT CONSTRAINT [DF_PackingGuide_Detail_CombineBalance] DEFAULT ((0)) Not NULL, 
     CONSTRAINT [PK_PackingGuide_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [Article] ASC, [SizeCode] ASC)
 );
 
@@ -69,3 +70,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'PackingGuide_Detail',
     @level2type = N'COLUMN',
     @level2name = N'RefNoForBalance'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'單色單碼裝箱，尾箱數量過少時是否可以合併在同一 SKU 的最後一箱',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingGuide_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CombineBalance'

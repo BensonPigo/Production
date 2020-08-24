@@ -8,8 +8,13 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P12 : Win.Tems.QueryForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P12"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -19,6 +24,7 @@ namespace Sci.Production.Shipping
 
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -294,12 +300,12 @@ from #tmp
             this.Find();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             this.Find();
         }

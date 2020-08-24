@@ -10,8 +10,13 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class R06 : Win.Tems.PrintForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R06"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -30,6 +35,7 @@ namespace Sci.Production.Cutting
         private bool boolexHoliday;
         private DataTable[] dt;
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.dateReady))
@@ -52,7 +58,7 @@ namespace Sci.Production.Cutting
             return true;
         }
 
-        // 非同步讀取資料
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlcmd = string.Empty;
@@ -358,6 +364,7 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -388,14 +395,14 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
 
             worksheet.Range[$"A2:T{this.dt[0].Rows.Count + 1}"].Borders.Weight = 2; // 設定全框線
 
-            List<string> Ms = new List<string>();
+            List<string> ms = new List<string>();
             foreach (DataRow dr in this.dt[1].Rows)
             {
-                Ms.Add(MyUtility.Convert.GetString(dr["MDivisionID"]));
+                ms.Add(MyUtility.Convert.GetString(dr["MDivisionID"]));
             }
 
-            string M = string.Join(" & ", Ms);
-            worksheet.Name = M + " Cutting RD";
+            string m1 = string.Join(" & ", ms);
+            worksheet.Name = m1 + " Cutting RD";
 
             #region sheet2
             worksheet = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表

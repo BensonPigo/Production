@@ -3,20 +3,25 @@ using System;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P20_Detail : Win.Subs.Input8A
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P20_Detail"/> class.
+        /// </summary>
         public P20_Detail()
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.viewText();
+            this.ViewText();
         }
 
-        private void viewText()
+        private void ViewText()
         {
             this.editSPNo.Text = this.CurrentDetailData["OrderID"].ToString();
             this.displayCutRefNo.Text = this.CurrentDetailData["Cutref"].ToString();
@@ -29,18 +34,21 @@ namespace Sci.Production.Cutting
             this.displayFabricPanelCode.Text = this.CurrentDetailData["FabricPanelCode"].ToString();
         }
 
+        /// <inheritdoc/>
         protected override void ToNext()
         {
             base.ToNext();
-            this.viewText();
+            this.ViewText();
         }
 
+        /// <inheritdoc/>
         protected override void ToPrev()
         {
             base.ToPrev();
-            this.viewText();
+            this.ViewText();
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             #region set grid
@@ -54,7 +62,7 @@ namespace Sci.Production.Cutting
 
         private void P20_Detail_Load(object sender, EventArgs e)
         {
-            this.viewText();
+            this.ViewText();
         }
     }
 }

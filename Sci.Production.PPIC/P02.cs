@@ -26,9 +26,8 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable dtFactory;
             DualResult cbResult;
-            if (cbResult = DBProxy.Current.Select(null, string.Format("select ID from Factory WITH (NOLOCK) where MDivisionID = '{0}'", Env.User.Keyword), out dtFactory))
+            if (cbResult = DBProxy.Current.Select(null, string.Format("select ID from Factory WITH (NOLOCK) where MDivisionID = '{0}'", Env.User.Keyword), out DataTable dtFactory))
             {
                 MyUtility.Tool.SetupCombox(this.comboFactory, 1, dtFactory);
             }
@@ -36,13 +35,12 @@ namespace Sci.Production.PPIC
             dtFactory.Rows.Add(new string[] { string.Empty });
             this.comboFactory.SelectedValue = Env.User.Keyword;
 
-            DataRow drOC;
             if (MyUtility.Check.Seek(
                 string.Format(
                 @"select top 1 UpdateDate 
 from OrderComparisonList WITH (NOLOCK) 
 where MDivisionID = '{0}' 
-and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) where MDivisionID = '{0}')", Env.User.Keyword), out drOC))
+and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) where MDivisionID = '{0}')", Env.User.Keyword), out DataRow drOC))
             {
                 this.dateUpdatedDate.Value = Convert.ToDateTime(drOC["UpdateDate"]);
             }
@@ -279,7 +277,7 @@ order by oc.FactoryID,oc.OrderId";
             #endregion
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.QueryDate();
             this.Changcolor();

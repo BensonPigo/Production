@@ -5,14 +5,20 @@ using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class B09 : Win.Tems.Input1
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B09"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public B09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -29,12 +35,14 @@ namespace Sci.Production.PPIC
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             this.CurrentMaintain["DM300"] = DBNull.Value;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             // GetID
@@ -49,6 +57,7 @@ from FinishingProcess");
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickJunk()
         {
             base.ClickJunk();
@@ -60,6 +69,7 @@ from FinishingProcess");
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();

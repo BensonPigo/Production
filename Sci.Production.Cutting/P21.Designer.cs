@@ -62,9 +62,9 @@
             this.gridIcon1.Size = new System.Drawing.Size(100, 32);
             this.gridIcon1.TabIndex = 2;
             this.gridIcon1.Text = "gridIcon1";
-            this.gridIcon1.AppendClick += new System.EventHandler(this.gridIcon1_AppendClick);
-            this.gridIcon1.InsertClick += new System.EventHandler(this.gridIcon1_InsertClick);
-            this.gridIcon1.RemoveClick += new System.EventHandler(this.gridIcon1_RemoveClick);
+            this.gridIcon1.AppendClick += new System.EventHandler(this.GridIcon1_AppendClick);
+            this.gridIcon1.InsertClick += new System.EventHandler(this.GridIcon1_InsertClick);
+            this.gridIcon1.RemoveClick += new System.EventHandler(this.GridIcon1_RemoveClick);
             // 
             // btnSave
             // 
@@ -75,7 +75,7 @@
             this.btnSave.TabIndex = 1;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // btnQuery
             // 
@@ -85,7 +85,7 @@
             this.btnQuery.TabIndex = 0;
             this.btnQuery.Text = "Query/Revised Old Data";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // panelFill
             // 
@@ -127,7 +127,7 @@
             this.gridP21.ShowCellToolTips = false;
             this.gridP21.Size = new System.Drawing.Size(915, 395);
             this.gridP21.TabIndex = 0;
-            this.gridP21.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.gridP21_EditingKeyProcessing);
+            this.gridP21.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridP21_EditingKeyProcessing);
             // 
             // P21
             // 

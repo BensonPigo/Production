@@ -6,16 +6,22 @@ using System.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P15_Containers : Win.Tems.Base
     {
         private string _ExportId;
 
-        public P15_Containers(string ExportId)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P15_Containers"/> class.
+        /// </summary>
+        /// <param name="exportId">ExportId</param>
+        public P15_Containers(string exportId)
         {
             this.InitializeComponent();
-            this._ExportId = ExportId;
+            this._ExportId = exportId;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

@@ -273,7 +273,7 @@
             this.btnSendEMail.TabIndex = 45;
             this.btnSendEMail.Text = "Send Email";
             this.btnSendEMail.UseVisualStyleBackColor = true;
-            this.btnSendEMail.Click += new System.EventHandler(this.btnSendEMail_Click);
+            this.btnSendEMail.Click += new System.EventHandler(this.BtnSendEMail_Click);
             // 
             // txtRemark
             // 

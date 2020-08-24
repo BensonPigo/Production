@@ -283,7 +283,7 @@
             this.btnInsert.TabIndex = 0;
             this.btnInsert.Text = "Save";
             this.btnInsert.UseVisualStyleBackColor = true;
-            this.btnInsert.Click += new System.EventHandler(this.btnInsert_Click);
+            this.btnInsert.Click += new System.EventHandler(this.BtnInsert_Click);
             // 
             // btnClose
             // 
@@ -293,7 +293,7 @@
             this.btnClose.TabIndex = 1;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // label1
             // 

@@ -44,6 +44,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Sci.Production.Quality.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -738,6 +739,7 @@
     <EmbeddedResource Include="P01_PhysicalInspection_PointRecord.resx">
       <DependentUpon>P01_PhysicalInspection_PointRecord.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01_ShadeBond_Print_8.rdlc" />
     <EmbeddedResource Include="P01_ShadeBond_Print.rdlc" />
     <EmbeddedResource Include="P01_Weight.resx">
       <DependentUpon>P01_Weight.cs</DependentUpon>

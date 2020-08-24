@@ -7,6 +7,7 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
+    /// <inheritdoc/>
     public partial class GarmentList : Win.Subs.Base
     {
         private string Styleyukey;
@@ -16,6 +17,13 @@ namespace Sci.Production.PublicForm
         private string _cutref;
         private string sizes;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GarmentList"/> class.
+        /// </summary>
+        /// <param name="ukey">ukey</param>
+        /// <param name="cid">cid</param>
+        /// <param name="cutref">cutref</param>
+        /// <param name="sizeList">sizeList</param>
         public GarmentList(string ukey, string cid, string cutref, List<string> sizeList = null)
         {
             this.InitializeComponent();
@@ -27,12 +35,12 @@ namespace Sci.Production.PublicForm
                 this.sizes = "'" + string.Join("','", sizeList) + "'";
             }
 
-            this.requery();
-            this.gridSetup();
+            this.Requery();
+            this.GridSetup();
             this.gridGarment.AutoResizeColumns();
         }
 
-        private void requery()
+        private void Requery()
         {
             string patidsql;
             #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
@@ -106,7 +114,7 @@ namespace Sci.Production.PublicForm
             this.gridGarment.DataSource = gridtb;
         }
 
-        private void gridSetup()
+        private void GridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.gridGarment)
                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(4), iseditingreadonly: true)
@@ -130,12 +138,12 @@ namespace Sci.Production.PublicForm
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void btnArticleForFCode_Click(object sender, EventArgs e)
+        private void BtnArticleForFCode_Click(object sender, EventArgs e)
         {
             int idx = this.gridGarment.GetSelectedRowIndex();
 

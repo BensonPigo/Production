@@ -47,6 +47,9 @@
             this.txtSP_s = new Sci.Win.UI.TextBox();
             this.txtSP_e = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.radioDetail = new Sci.Win.UI.RadioButton();
+            this.radioSummary = new Sci.Win.UI.RadioButton();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -82,6 +85,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.radioDetail);
+            this.groupBox1.Controls.Add(this.radioSummary);
+            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.labelSCIDelivery);
@@ -100,7 +106,7 @@
             this.groupBox1.Controls.Add(this.txtSP_e);
             this.groupBox1.Location = new System.Drawing.Point(28, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(422, 300);
+            this.groupBox1.Size = new System.Drawing.Size(422, 349);
             this.groupBox1.TabIndex = 109;
             this.groupBox1.TabStop = false;
             // 
@@ -313,11 +319,46 @@
             this.label10.TabIndex = 110;
             this.label10.Text = "Paper Size A4";
             // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label2.Location = new System.Drawing.Point(17, 292);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(99, 23);
+            this.label2.TabIndex = 115;
+            this.label2.Text = "Format";
+            // 
+            // radioDetail
+            // 
+            this.radioDetail.AutoSize = true;
+            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail.Location = new System.Drawing.Point(128, 319);
+            this.radioDetail.Name = "radioDetail";
+            this.radioDetail.Size = new System.Drawing.Size(82, 21);
+            this.radioDetail.TabIndex = 117;
+            this.radioDetail.TabStop = true;
+            this.radioDetail.Text = "By Detail";
+            this.radioDetail.UseVisualStyleBackColor = true;
+            // 
+            // radioSummary
+            // 
+            this.radioSummary.AutoSize = true;
+            this.radioSummary.Checked = true;
+            this.radioSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSummary.Location = new System.Drawing.Point(128, 292);
+            this.radioSummary.Name = "radioSummary";
+            this.radioSummary.Size = new System.Drawing.Size(85, 21);
+            this.radioSummary.TabIndex = 116;
+            this.radioSummary.TabStop = true;
+            this.radioSummary.Text = "Summary";
+            this.radioSummary.UseVisualStyleBackColor = true;
+            this.radioSummary.Value = "By Year";
+            // 
             // R32
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(592, 359);
+            this.ClientSize = new System.Drawing.Size(592, 397);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.groupBox1);
             this.Name = "R32";
@@ -358,5 +399,8 @@
         private Win.UI.Label label1;
         private Win.UI.Label label7;
         private Win.UI.Label labelSCIDelivery;
+        private Win.UI.Label label2;
+        private Win.UI.RadioButton radioDetail;
+        private Win.UI.RadioButton radioSummary;
     }
 }

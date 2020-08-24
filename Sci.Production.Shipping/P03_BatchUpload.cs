@@ -9,16 +9,21 @@ using System.Transactions;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P03_BatchUpload : Win.Subs.Base
     {
         private DataTable dtQuery;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P03_BatchUpload"/> class.
+        /// </summary>
         public P03_BatchUpload()
         {
             this.InitializeComponent();
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -34,7 +39,7 @@ namespace Sci.Production.Shipping
             .Date("DocArrival", header: "Dox Rcv Date", width: Widths.AnsiChars(25), iseditingreadonly: true);
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void PictureBox1_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -58,7 +63,7 @@ namespace Sci.Production.Shipping
             }
         }
 
-        private void pictureBox2_Click(object sender, EventArgs e)
+        private void PictureBox2_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -82,7 +87,7 @@ namespace Sci.Production.Shipping
             }
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.Query();
         }
@@ -128,7 +133,7 @@ where junk = 0 and (PortArrival is null or DocArrival is null)");
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             this.gridUpload.ValidateControl();
             this.listControlBindingSource1.EndEdit();
@@ -220,7 +225,7 @@ where junk = 0 and (PortArrival is null or DocArrival is null)");
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

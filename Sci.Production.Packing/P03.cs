@@ -110,7 +110,6 @@ namespace Sci.Production.Packing
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.ReloadTimeoutSeconds = 900;
-
             #region CTN# 排序
             this.detailgrid.CellClick += (s, e) =>
             {
@@ -154,6 +153,8 @@ namespace Sci.Production.Packing
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            this.btnEdit.Enabled = this.Perm.Edit;
+
             this.ComboBox1_RowSource.Add(string.Empty);
             this.ComboBox1_RowSource.Add("Transfer Clog");
             this.ComboBox1_RowSource.Add("Clog Cfm");
@@ -1088,8 +1089,8 @@ order by os.Seq",
                 });
             foreach (var order in listOrder)
             {
-                string ID = MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "New Packing List" : this.CurrentMaintain["ID"].ToString();
-                DualResult resultCompare = Prgs.CompareOrderQtyPackingQty(order.ID, ID, order.ShipQty);
+                string id = MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "New Packing List" : this.CurrentMaintain["ID"].ToString();
+                DualResult resultCompare = Prgs.CompareOrderQtyPackingQty(order.ID, id, order.ShipQty);
                 if (!resultCompare)
                 {
                     MyUtility.Msg.WarningBox(resultCompare.Description);
@@ -1164,6 +1165,7 @@ WHERE ID =  '{this.CurrentMaintain["ID"]}'";
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -1611,37 +1613,51 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
                             string updateCmd = @"update PackingList set Status = 'New', EditName = @addName, EditDate = GETDATE() where ID = @id";
 
                             #region 準備sql參數資料
-                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                            sp1.ParameterName = "@id";
-                            sp1.Value = this.CurrentMaintain["ID"].ToString();
+                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@id",
+                                Value = this.CurrentMaintain["ID"].ToString(),
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                            sp2.ParameterName = "@hisType";
-                            sp2.Value = "Status";
+                            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@hisType",
+                                Value = "Status",
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                            sp3.ParameterName = "@oldValue";
-                            sp3.Value = "Confirmed";
+                            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@oldValue",
+                                Value = "Confirmed",
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-                            sp4.ParameterName = "@newValue";
-                            sp4.Value = "New";
+                            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@newValue",
+                                Value = "New",
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-                            sp5.ParameterName = "@remark";
-                            sp5.Value = reasonRemark;
+                            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@remark",
+                                Value = reasonRemark,
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-                            sp6.ParameterName = "@addName";
-                            sp6.Value = Env.User.UserID;
+                            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@addName",
+                                Value = Env.User.UserID,
+                            };
 
-                            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                            cmds.Add(sp1);
-                            cmds.Add(sp2);
-                            cmds.Add(sp3);
-                            cmds.Add(sp4);
-                            cmds.Add(sp5);
-                            cmds.Add(sp6);
+                            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                            {
+                                sp1,
+                                sp2,
+                                sp3,
+                                sp4,
+                                sp5,
+                                sp6,
+                            };
                             #endregion
 
                             DualResult result, result2;
@@ -1786,9 +1802,10 @@ where pd.id = '{this.CurrentMaintain["ID"]}'";
                         }
                         else
                         {
-                            var m = new Win.UI.MsgGridForm(custbarcode_result, "Updated as follows barcode", "Update successful", null, MessageBoxButtons.OK);
-
-                            m.Width = 600;
+                            var m = new Win.UI.MsgGridForm(custbarcode_result, "Updated as follows barcode", "Update successful", null, MessageBoxButtons.OK)
+                            {
+                                Width = 600,
+                            };
                             m.grid1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                             m.grid1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                             m.grid1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -1946,8 +1963,10 @@ update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() whe
         {
             try
             {
-                Microsoft.Office.Interop.Excel.Application xlsApp = new Microsoft.Office.Interop.Excel.Application();
-                xlsApp.Visible = false;
+                Microsoft.Office.Interop.Excel.Application xlsApp = new Microsoft.Office.Interop.Excel.Application
+                {
+                    Visible = false,
+                };
                 Microsoft.Office.Interop.Excel.Workbook xlsBook = xlsApp.Workbooks.Open(strPath);
                 Microsoft.Office.Interop.Excel.Worksheet xlsSheet = xlsBook.ActiveSheet;
                 Microsoft.Office.Interop.Excel.Range xlsRangeFirstCell = xlsSheet.get_Range("A1");
@@ -2038,10 +2057,28 @@ update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() whe
             }
         }
 
-        private void btnPackScanHistory_Click(object sender, EventArgs e)
+        private void BtnPackScanHistory_Click(object sender, EventArgs e)
         {
             P03_ScanAndPackDeletedHistory form = new P03_ScanAndPackDeletedHistory(this.CurrentMaintain["ID"].ToString());
             form.ShowDialog(this);
+        }
+
+        private void BtnEdit_Click(object sender, EventArgs e)
+        {
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("This record is < Confirmed >, can't be modified!");
+                return;
+            }
+
+            if (this.CurrentMaintain == null || this.CurrentMaintain["ID"].ToString().Empty())
+            {
+                return;
+            }
+
+            P03_CartonBooking p03_CartonBooking = new P03_CartonBooking(this.CurrentMaintain);
+            p03_CartonBooking.ShowDialog(this);
+            this.RenewData();
         }
     }
 }

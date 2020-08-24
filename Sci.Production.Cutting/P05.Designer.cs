@@ -264,7 +264,7 @@
             this.btnSendMail.TabIndex = 7;
             this.btnSendMail.Text = "Send Mail";
             this.btnSendMail.UseVisualStyleBackColor = true;
-            this.btnSendMail.Click += new System.EventHandler(this.btnSendMail_Click);
+            this.btnSendMail.Click += new System.EventHandler(this.BtnSendMail_Click);
             // 
             // txtCutplan
             // 
@@ -275,8 +275,8 @@
             this.txtCutplan.Name = "txtCutplan";
             this.txtCutplan.Size = new System.Drawing.Size(108, 23);
             this.txtCutplan.TabIndex = 3;
-            this.txtCutplan.Validating += new System.ComponentModel.CancelEventHandler(this.txtCutplan_Validating);
-            this.txtCutplan.Validated += new System.EventHandler(this.txtCutplan_Validated);
+            this.txtCutplan.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCutplan_Validating);
+            this.txtCutplan.Validated += new System.EventHandler(this.TxtCutplan_Validated);
             // 
             // labelLastSendDate
             // 

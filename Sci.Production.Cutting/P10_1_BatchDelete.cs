@@ -7,10 +7,14 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
+    /// <inheritdoc/>
     public partial class P10_1_BatchDelete : Win.Subs.Base
     {
         private DataTable dtQuery;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P10_1_BatchDelete"/> class.
+        /// </summary>
         public P10_1_BatchDelete()
         {
             this.InitializeComponent();
@@ -23,10 +27,10 @@ namespace Sci.Production.Cutting
 
         private void QueryData()
         {
-            DateTime? AddDate1, AddDate2;
-            AddDate1 = this.dateAddDate.Value1;
-            AddDate2 = this.dateAddDate.Value2;
-            if ((MyUtility.Check.Empty(AddDate1) && MyUtility.Check.Empty(AddDate2)) &&
+            DateTime? addDate1, addDate2;
+            addDate1 = this.dateAddDate.Value1;
+            addDate2 = this.dateAddDate.Value2;
+            if ((MyUtility.Check.Empty(addDate1) && MyUtility.Check.Empty(addDate2)) &&
                 MyUtility.Check.Empty(this.txtSPNo.Text) &&
                 MyUtility.Check.Empty(this.txtSPNo1.Text))
             {
@@ -35,9 +39,9 @@ namespace Sci.Production.Cutting
             }
 
             string sqlwhere = string.Empty;
-            if (!MyUtility.Check.Empty(AddDate1))
+            if (!MyUtility.Check.Empty(addDate1))
             {
-                sqlwhere += $@" and convert(date, b.adddate)  between '{Convert.ToDateTime(AddDate1).ToString("d")}' and '{Convert.ToDateTime(AddDate2).ToString("d")}'";
+                sqlwhere += $@" and convert(date, b.adddate)  between '{Convert.ToDateTime(addDate1).ToString("d")}' and '{Convert.ToDateTime(addDate2).ToString("d")}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text) && !MyUtility.Check.Empty(this.txtSPNo1.Text))
@@ -89,6 +93,7 @@ where 1=1
             this.HideWaitMessage();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

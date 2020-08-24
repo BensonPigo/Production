@@ -11,6 +11,9 @@ namespace Sci.Production.Cutting
 {
     public partial class B11_Batch_Create : Win.Tems.QueryForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="B11_Batch_Create"/> class.
+        /// </summary>
         public B11_Batch_Create()
         {
             this.InitializeComponent();
@@ -20,6 +23,7 @@ namespace Sci.Production.Cutting
         private DataTable Dt1;
         private DataTable Dt2;
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

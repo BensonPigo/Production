@@ -38,6 +38,7 @@
             this.labelRemark = new Sci.Win.UI.Label();
             this.labelNotApprove = new Sci.Win.UI.Label();
             this.btnAutoPick = new Sci.Win.UI.Button();
+            this.btnCutRefNo = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -54,6 +55,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCutRefNo);
             this.masterpanel.Controls.Add(this.btnAutoPick);
             this.masterpanel.Controls.Add(this.labelNotApprove);
             this.masterpanel.Controls.Add(this.txtRemark);
@@ -64,7 +66,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 102);
+            this.masterpanel.Size = new System.Drawing.Size(1009, 102);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -76,11 +78,12 @@
             this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNotApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAutoPick, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCutRefNo, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 102);
-            this.detailpanel.Size = new System.Drawing.Size(892, 247);
+            this.detailpanel.Size = new System.Drawing.Size(1009, 341);
             // 
             // gridicon
             // 
@@ -88,7 +91,20 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 247);
+            this.detailgridcont.Size = new System.Drawing.Size(1009, 341);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1009, 481);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1009, 443);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 443);
+            this.detailbtm.Size = new System.Drawing.Size(1009, 38);
             // 
             // browse
             // 
@@ -175,7 +191,7 @@
             this.labelNotApprove.BackColor = System.Drawing.Color.Transparent;
             this.labelNotApprove.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "status", true));
             this.labelNotApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labelNotApprove.Location = new System.Drawing.Point(749, 9);
+            this.labelNotApprove.Location = new System.Drawing.Point(866, 9);
             this.labelNotApprove.Name = "labelNotApprove";
             this.labelNotApprove.Size = new System.Drawing.Size(115, 23);
             this.labelNotApprove.TabIndex = 45;
@@ -186,13 +202,24 @@
             // 
             this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoPick.Location = new System.Drawing.Point(749, 34);
+            this.btnAutoPick.Location = new System.Drawing.Point(866, 34);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
             this.btnAutoPick.TabIndex = 46;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
+            // 
+            // btnCutRefNo
+            // 
+            this.btnCutRefNo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCutRefNo.Location = new System.Drawing.Point(753, 34);
+            this.btnCutRefNo.Name = "btnCutRefNo";
+            this.btnCutRefNo.Size = new System.Drawing.Size(93, 30);
+            this.btnCutRefNo.TabIndex = 47;
+            this.btnCutRefNo.Text = "Cutting Ref";
+            this.btnCutRefNo.UseVisualStyleBackColor = true;
+            this.btnCutRefNo.Click += new System.EventHandler(this.BtnCutRefNo_Click);
             // 
             // P62
             // 
@@ -253,5 +280,6 @@
         private Win.UI.Label labelID;
         private Win.UI.Label labelNotApprove;
         private Win.UI.Button btnAutoPick;
+        private Win.UI.Button btnCutRefNo;
     }
 }

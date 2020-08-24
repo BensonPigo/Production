@@ -228,7 +228,7 @@
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.Size = new System.Drawing.Size(92, 23);
             this.txtMdivision.TabIndex = 6;
-            this.txtMdivision.TextChanged += new System.EventHandler(this.txtMdivision_TextChanged);
+            this.txtMdivision.TextChanged += new System.EventHandler(this.TxtMdivision_TextChanged);
             // 
             // lbM
             // 
