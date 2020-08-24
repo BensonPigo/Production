@@ -174,6 +174,7 @@ order by e.Seq, f.Seq", masterID);
             // Switch to Packing list是否有權限使用
             this.btnSwitchToPackingList.Enabled = !this.EditMode && Prgs.GetAuthority(Env.User.UserID, "P02. Packing Guide", "CanEdit");
             this.btnSwitchToPLByArticle.Enabled = !this.EditMode && Prgs.GetAuthority(Env.User.UserID, "P02. Packing Guide", "CanEdit");
+            this.EnableRow();
         }
 
         /// <summary>
@@ -361,8 +362,12 @@ where o.ID = @orderid";
                 if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_CombineBalance.DataPropertyName)
                 {
                     if (this.comboPackingMethod.SelectedIndex != -1 &&
-                    this.comboPackingMethod.SelectedValue.ToString() != "2" &&
-                    MyUtility.Convert.GetBool(dr["CombineBalance"]))
+                         this.comboPackingMethod.SelectedValue.ToString() == "2")
+                    {
+                        return;
+                    }
+
+                    if (MyUtility.Convert.GetBool(dr["CombineBalance"]))
                     {
                         dr["RefNoForBalance"] = string.Empty;
                         dr["DescriptionforBalance"] = string.Empty;
@@ -372,6 +377,25 @@ where o.ID = @orderid";
                 }
                 #endregion
             };
+        }
+
+        private void EnableRow()
+        {
+            if (this.comboPackingMethod.SelectedIndex != -1 &&
+                this.comboPackingMethod.SelectedValue.ToString() == "2" &&
+                (this.detailgrid.Rows.Count > 0 || !MyUtility.Check.Empty(this.detailgrid)))
+            {
+                for (int index = 0; index < this.detailgrid.Rows.Count; index++)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(index);
+                    if (this.detailgrid.Rows.Count <= index || index < 0)
+                    {
+                        return;
+                    }
+
+                    this.detailgrid.Rows[index].Cells[12].ReadOnly = true;
+                }
+            }
         }
 
         /// <summary>
@@ -1450,7 +1474,9 @@ DECLARE @refno VARCHAR(21),
         @BarCode varchar(30),
 		@RefNoForBalance VARCHAR(21),
 		@APPBookingVW NUMERIC(20,2),
-		@APPEstAmtVW NUMERIC(20,2)
+		@APPEstAmtVW NUMERIC(20,2),
+		@APPBookingVW_Balance NUMERIC(20,2),
+		@APPEstAmtVW_Balance NUMERIC(20,2)
 
 --宣告變數: 記錄程式中的資料
 DECLARE @currentqty INT, --目前數量
@@ -1486,7 +1512,10 @@ BEGIN
 
 	--撈出PackingGuide_Detail資料
 	DECLARE cursor_packingguide CURSOR FOR
-		SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Seq,isnull(cb.BarCode,''), a.RefNoForBalance, l.BookingVW, l.APPEstAmtVW
+		SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Seq,isnull(cb.BarCode,''), a.RefNoForBalance
+			, l.BookingVW, l.APPEstAmtVW
+			, [BookingVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.BookingVW else lb.BookingVW end
+			, [APPEstAmtVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.APPEstAmtVW else lb.APPEstAmtVW end
 		FROM PackingGuide_Detail a WITH (NOLOCK) 
 		LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 		LEFT JOIN Order_SizeCode c WITH (NOLOCK) ON c.Id = b.POID AND a.SizeCode = c.SizeCode
@@ -1500,11 +1529,20 @@ BEGIN
 				) rate
 				where RefNo= a.RefNo
 		)l
+		Outer apply (
+			select [BookingVW] = isnull(round((CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /6000 ,2),0)
+				,[APPEstAmtVW] = isnull(round((CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /5000 ,2),0)
+				from LocalItem
+				outer apply(
+					select value = ( case when CtnUnit='MM' then 0.1 else dbo.getUnitRate(CtnUnit,'CM') end)
+				) rate
+				where RefNo= a.RefNoForBalance
+		)lb
 		WHERE a.Id = @id AND a.Article = @article
 		ORDER BY c.Seq
 
 	OPEN cursor_packingguide
-	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
 	SET @firstsize = @sizecode
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -1533,14 +1571,14 @@ BEGIN
 				END
 			END
 
-		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
 	END
 	CLOSE cursor_packingguide
 	
 	--整理餘箱資料
 	SET @firstsize = ''
 	OPEN cursor_packingguide
-	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @currentqty = @shipqty - (@qtyperctn * @minctn)
@@ -1567,7 +1605,7 @@ BEGIN
 				IF @firstsize = @sizecode
 					BEGIN
 						INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW)
-							VALUES (ISNULL(@RefNoForBalance,@refno), 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ISNULL(@GwBalance,@gw-@nw), (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ISNULL(@GwBalance,@gw-@nw), (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode, @APPBookingVW_Balance, @APPEstAmtVW_Balance)
 					END
 				ELSE
 					BEGIN
@@ -1575,7 +1613,7 @@ BEGIN
 							VALUES (ISNULL(@RefNoForBalance,@refno), 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode, 0, 0)
 					END
 			END
-		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
 	END
 	CLOSE cursor_packingguide
 	DEALLOCATE cursor_packingguide
@@ -1783,7 +1821,9 @@ DECLARE @tempRemainder TABLE (
 
 --將PackingGuide_Detail資料存放至Cursor
 DECLARE cursor_packguide CURSOR FOR
-	SELECT a.RefNo,a.Article,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW ,isnull(cb.BarCode,''), a.RefNoForBalance, a.CombineBalance, l.BookingVW, l.APPEstAmtVW
+	SELECT a.RefNo,a.Article,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW ,isnull(cb.BarCode,''), a.RefNoForBalance, a.CombineBalance
+		, [BookingVW] = case when ISNULL(a.RefNoForBalance,'') = '' then l.BookingVW else lb.BookingVW end
+		, [APPEstAmtVW] = case when ISNULL(a.RefNoForBalance,'') = '' then l.APPEstAmtVW else lb.APPEstAmtVW end
 	FROM PackingGuide_Detail a WITH (NOLOCK) 
 	LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 	LEFT JOIN Order_Article c WITH (NOLOCK) ON c.Id = @orderid AND a.Article = c.Article
@@ -1798,6 +1838,15 @@ DECLARE cursor_packguide CURSOR FOR
 			) rate
 			where RefNo= a.RefNo
 	)l
+	Outer apply (
+		select [BookingVW] = isnull(round((CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /6000 ,2),0)
+			,[APPEstAmtVW] = isnull(round((CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /5000 ,2),0)
+			from LocalItem
+			outer apply(
+				select value = ( case when CtnUnit='MM' then 0.1 else dbo.getUnitRate(CtnUnit,'CM') end)
+			) rate
+			where RefNo= a.RefNoForBalance
+	)lb
 	WHERE a.ID = @id ORDER BY c.Seq,d.Seq
 
 --宣告變數: PackingGuide_Detail相關的參數
@@ -1866,11 +1915,13 @@ BEGIN
 
 						SELECT @seq = REPLICATE('0', 6 - LEN(CONVERT(VARCHAR,@seqcount))) + CONVERT(VARCHAR,@seqcount)
 						SELECT @realctnno = CONVERT(VARCHAR,@ctnno)
-						INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW)
-							VALUES (@refno, @realctnno, 1, @article, @color, @sizecode, @newQtyperCtn, @newQtyperCtn, @nw * @multiple, @gw * @multiple, @nnw * @multiple, (@nw * @multiple) / @newQtyperCtn, @seq,@BarCode,@APPBookingVW,@APPEstAmtVW)
+
+						-- GW => 原GW + 多出的件數 * 每一件 NWPerPcs
+						INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW, GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW)
+							VALUES (@refno, @realctnno, 1, @article, @color, @sizecode, @newQtyperCtn, @newQtyperCtn, @nw * @multiple, @gw + ((@newQtyperCtn - @qtyperctn) * ((@nw * @multiple) / @newQtyperCtn)), @nnw * @multiple, (@nw * @multiple) / @newQtyperCtn, @seq,@BarCode,@APPBookingVW,@APPEstAmtVW)
 						SET @ctnno = @ctnno + 1
 						SET @ttlnw = @ttlnw + (@nw * @multiple)
-						SET @ttlgw = @ttlgw + (@gw * @multiple)
+						SET @ttlgw = @ttlgw + (@gw + ((@newQtyperCtn - @qtyperctn) * ((@nw * @multiple) / @newQtyperCtn)))
 						SET @ttlnnw = @ttlnnw + (@nnw * @multiple)
 						SET @ttlshipqty = @ttlshipqty + @newQtyperCtn
 					END
@@ -2097,7 +2148,9 @@ DECLARE @refno VARCHAR(21),
         @BarCode varchar(30),
 		@RefNoForBalance VARCHAR(21),
 		@APPBookingVW NUMERIC(20,2),
-		@APPEstAmtVW NUMERIC(20,2)
+		@APPEstAmtVW NUMERIC(20,2),
+		@APPBookingVW_Balance NUMERIC(20,2),
+		@APPEstAmtVW_Balance NUMERIC(20,2)
 
 
 --宣告變數: 記錄程式中的資料
@@ -2140,7 +2193,10 @@ BEGIN
 
 	--撈出PackingGuide_Detail資料
 	DECLARE cursor_packingguide CURSOR FOR
-		SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Seq,isnull(cb.BarCode,''), a.RefNoForBalance, l.BookingVW, l.APPEstAmtVW
+		SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Seq,isnull(cb.BarCode,''), a.RefNoForBalance
+            , l.BookingVW, l.APPEstAmtVW
+			, [BookingVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.BookingVW else lb.BookingVW end
+			, [APPEstAmtVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.APPEstAmtVW else lb.APPEstAmtVW end
 		FROM PackingGuide_Detail a WITH (NOLOCK) 
 		LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 		LEFT JOIN Order_SizeCode c WITH (NOLOCK) ON c.Id = b.POID AND a.SizeCode = c.SizeCode
@@ -2154,11 +2210,20 @@ BEGIN
 				) rate
 				where RefNo= a.RefNo
 		)l
+		Outer apply (
+			select [BookingVW] = isnull(round((CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /6000 ,2),0)
+				,[APPEstAmtVW] = isnull(round((CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /5000 ,2),0)
+				from LocalItem
+				outer apply(
+					select value = ( case when CtnUnit='MM' then 0.1 else dbo.getUnitRate(CtnUnit,'CM') end)
+				) rate
+				where RefNo= a.RefNoForBalance
+		)lb
 		WHERE a.Id = @id AND a.Article = @article
 		ORDER BY c.Seq
 
 	OPEN cursor_packingguide
-	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
 	SET @firstsize = @sizecode
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -2187,7 +2252,7 @@ BEGIN
 				END
 			END
 
-		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
 	END
 	CLOSE cursor_packingguide
 	
@@ -2195,7 +2260,7 @@ BEGIN
 	SELECT @ctnno = isnull(MAX(CtnNo),0) FROM @tempPackingList where Article = @article
 	SET @firstsize = ''
 	OPEN cursor_packingguide
-	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @currentqty = @shipqty - (@qtyperctn * @minctn)
@@ -2223,15 +2288,15 @@ BEGIN
 						SET @ctnno = @ctnno + 1
 
 						INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode, APPBookingVW, APPEstAmtVW)
-							VALUES (ISNULL(@RefNoForBalance,@refno), 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ISNULL(@GwBalance,@gw-@nw), (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode, @APPBookingVW, @APPEstAmtVW)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ISNULL(@GwBalance,@gw-@nw), (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode, @APPBookingVW_Balance, @APPEstAmtVW_Balance)
 					END
 				ELSE
 					BEGIN
 						INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode, APPBookingVW, APPEstAmtVW)
-							VALUES (ISNULL(@RefNoForBalance,@refno), 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode, @APPBookingVW, @APPEstAmtVW)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode, 0, 0)
 					END
 			END
-		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
 	END
 	CLOSE cursor_packingguide
 	DEALLOCATE cursor_packingguide
@@ -2476,7 +2541,9 @@ BEGIN
 	--開始run cursor
 	--將PackingGuide_Detail資料存放至Cursor
 	DECLARE cursor_packguide CURSOR FOR
-	    SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW , isnull(cb.BarCode,''), a.RefNoForBalance, a.CombineBalance, l.BookingVW, l.APPEstAmtVW
+	    SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW , isnull(cb.BarCode,''), a.RefNoForBalance, a.CombineBalance
+    		, [BookingVW] = case when ISNULL(a.RefNoForBalance,'') = '' then l.BookingVW else lb.BookingVW end
+		    , [APPEstAmtVW] = case when ISNULL(a.RefNoForBalance,'') = '' then l.APPEstAmtVW else lb.APPEstAmtVW end
 	    FROM PackingGuide_Detail a WITH (NOLOCK) 
 	    LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 	    LEFT JOIN Order_SizeCode d WITH (NOLOCK) ON d.Id = b.POID AND a.SizeCode = d.SizeCode
@@ -2490,6 +2557,15 @@ BEGIN
 				) rate
 				where RefNo= a.RefNo
 		)l
+	    Outer apply (
+		    select [BookingVW] = isnull(round((CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /6000 ,2),0)
+			    ,[APPEstAmtVW] = isnull(round((CtnLength * CtnWidth * CtnHeight * POWER(rate.value,3)) /5000 ,2),0)
+			    from LocalItem
+			    outer apply(
+				    select value = ( case when CtnUnit='MM' then 0.1 else dbo.getUnitRate(CtnUnit,'CM') end)
+			    ) rate
+			    where RefNo= a.RefNoForBalance
+	    )lb
 	    WHERE a.ID = @id and a.Article = @article ORDER BY d.Seq
 
 	OPEN cursor_packguide
@@ -2517,11 +2593,12 @@ BEGIN
 
 						SET @multiple = (@newQtyperCtn * 1.0 / @qtyperctn)
 
+                        -- GW => 原GW + 多出的件數 * 每一件 NWPerPcs
 						INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode, APPBookingVW, APPEstAmtVW)
-							VALUES (@refno, @realctnno, 1, @article, @color, @sizecode, @newQtyperCtn, @newQtyperCtn, @nw * @multiple, @gw * @multiple, @nnw * @multiple, (@nw * @multiple)/@newQtyperCtn, @seq,@Barcode, @APPBookingVW, @APPEstAmtVW)
+							VALUES (@refno, @realctnno, 1, @article, @color, @sizecode, @newQtyperCtn, @newQtyperCtn, @nw * @multiple, @gw + ((@newQtyperCtn - @qtyperctn) * ((@nw * @multiple) / @newQtyperCtn)), @nnw * @multiple, (@nw * @multiple)/@newQtyperCtn, @seq,@Barcode, @APPBookingVW, @APPEstAmtVW)
 						SET @ctnno = @ctnno + 1
 						SET @ttlnw = @ttlnw + (@nw * @multiple)
-						SET @ttlgw = @ttlgw + (@gw * @multiple)
+						SET @ttlgw = @ttlgw + (@gw + ((@newQtyperCtn - @qtyperctn) * ((@nw * @multiple) / @newQtyperCtn)))
 						SET @ttlnnw = @ttlnnw + (@nnw * @multiple)
 						SET @ttlshipqty = @ttlshipqty + @newQtyperCtn
 					END
