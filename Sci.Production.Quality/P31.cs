@@ -37,11 +37,9 @@ namespace Sci.Production.Quality
 EXISTS (
     SELECT 1 
     FROM Orders o WITH (NOLOCK) 
-	INNER JOIN OrderType ot ON o.OrderTypeID = ot.ID AND o.BrandID = ot.BrandID
     WHERE MDivisionID='{Sci.Env.User.Keyword}' 
     AND Finished = {Isfinished} 
 	AND o.ID = Order_QtyShip.ID
-	AND isnull(ot.IsGMTMaster,0) = 0
     AND o.Category IN ('B','S','G')
 )";
             this.DefaultFilter = defaultFilter;

@@ -240,6 +240,7 @@ SELECT
 	,o.BrandID
 	,o.Dest
 	,oq.Seq
+	,c.SewingLineID
 	,[VasShas]=IIF(o.VasShas=1,'Y','N')
 	,c.ClogReceivedPercentage
 	,c.MDivisionid
@@ -264,7 +265,7 @@ SELECT
 	,cd.Action
 INTO #tmp
 FROm CFAInspectionRecord  c
-INNER JOIN CFAInspectionRecord_Detail cd ON c.ID = cd.ID
+Left  JOIN CFAInspectionRecord_Detail cd ON c.ID = cd.ID
 LEFT JOIN GarmentDefectCode g ON g.ID = cd.GarmentDefectCodeID
 LEFT JOIN CfaArea ON CfaArea.ID = cd.CFAAreaID
 INNER JOIN Order_QtyShip oq ON c.OrderID = oq.ID AND c.Seq = oq.Seq
@@ -350,6 +351,7 @@ SELECT  AuditDate
 		,BrandID
 		,Dest
 		,Seq
+      ,SewingLineID
 		,VasShas
 		,ClogReceivedPercentage
 		,MDivisionid
