@@ -126,7 +126,7 @@
             this.btnPrint.TabIndex = 1;
             this.btnPrint.Text = "Print";
             this.btnPrint.UseVisualStyleBackColor = true;
-            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
+            this.btnPrint.Click += new System.EventHandler(this.BtnPrint_Click);
             // 
             // labelTotal
             // 
@@ -209,7 +209,7 @@
             this.btnReCalculate.TabIndex = 0;
             this.btnReCalculate.Text = "Re-Calculate";
             this.btnReCalculate.UseVisualStyleBackColor = true;
-            this.btnReCalculate.Click += new System.EventHandler(this.btnReCalculate_Click);
+            this.btnReCalculate.Click += new System.EventHandler(this.BtnReCalculate_Click);
             // 
             // btnClose
             // 
@@ -221,7 +221,7 @@
             this.btnClose.TabIndex = 2;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // P03_Transaction
             // 

@@ -31,6 +31,13 @@ namespace Sci.Production.Warehouse
             // DoSubForm = new P10_Detail();
         }
 
+        public P62(ToolStripMenuItem menuitem, string transID)
+            : base(menuitem)
+        {
+            this.InitializeComponent();
+            this.DefaultFilter = $"Type='I' and id='{transID}'and MDivisionID = '{Env.User.Keyword}'";
+        }
+
         protected override void OnDetailGridSetup()
         {
             Color backDefaultColor = this.detailgrid.DefaultCellStyle.BackColor;
