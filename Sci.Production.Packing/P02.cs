@@ -3045,7 +3045,7 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
                 // 判斷selected欄位
                 if (MyUtility.Convert.GetBool(item.Cells[0].Value))
                 {
-                    item.Cells[12].Value = this.txtCartonRefBalance.Text; // RefNoForBalance欄位
+                    item.Cells[13].Value = this.txtCartonRefBalance.Text; // RefNoForBalance欄位
                 }
             }
         }
