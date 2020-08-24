@@ -22,7 +22,7 @@ namespace Sci.Production.PublicPrg
         /// </summary>
         /// <param name="packingListID"></param>
         /// <returns>bool</returns>
-        public static bool CreateOrderCTNData(string packingListID)
+        public static DualResult CreateOrderCTNData(string packingListID)
         {
             string sqlCmd;
 
@@ -107,15 +107,11 @@ DEALLOCATE cursor_DeleteData
 IF @@ERROR <> 0
 	ROLLBACK TRANSACTION
 ELSE
-	COMMIT TRANSACTION", packingListID, Env.User.UserID);
+	COMMIT TRANSACTION",
+                packingListID,
+                Env.User.UserID);
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox(result.ToString());
-                return false;
-            }
-
-            return true;
+            return result;
         }
         #endregion
 
@@ -2731,20 +2727,25 @@ order by min(pd.seq)
         #endregion
 
         #region
-        public static bool PackingP02CreateSCICtnNo(string id)
+
+        /// <summary>
+        /// PackingP02CreateSCICtnNo
+        /// </summary>
+        /// <param name="id">PackingList_Detail.ID</param>
+        /// <returns>DualResult</returns>
+        public static DualResult PackingP02CreateSCICtnNo(string id)
         {
             DataTable packinglist_detaildt;
             string sqlpld = $@"select Ukey,SCICtnNo,id,OrderID,OrderShipmodeSeq,CTNStartNo,Article,SizeCode from PackingList_Detail where id = '{id}' order by seq";
             DualResult result = DBProxy.Current.Select(null, sqlpld, out packinglist_detaildt);
             if (!result)
             {
-                MyUtility.Msg.WarningBox(result.ToString());
-                return false;
+                return result;
             }
 
             if (!GetSCICtnNo(packinglist_detaildt, id, "IsDetailInserting"))
             {
-                return false;
+                return new DualResult(false, new Exception("GetSCICtnNo Error"));
             }
 
             string sqlCreateSCICtnNo = $@"
@@ -2755,15 +2756,36 @@ inner join #tmp pd  on pd2.Ukey	= pd.Ukey
 ";
             DataTable dt;
             result = MyUtility.Tool.ProcessWithDatatable(packinglist_detaildt, "SCICtnNo,Ukey", sqlCreateSCICtnNo, out dt);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox(result.ToString());
-                return false;
-            }
-
-            return true;
+            return result;
         }
         #endregion
+
+        /// <summary>
+        /// 更新 PackingList的 EstCTNBooking 與 EstCTNArrive
+        /// </summary>
+        /// <param name="id">PackingList.ID</param>
+        /// <param name="dtBooking">PackingList.EstCTNBooking (yyyy/MM/dd)</param>
+        /// <param name="dtArrive">PackingList.EstCTNArrive (yyyy/MM/dd)</param>
+        /// <returns>bool</returns>
+        public static DualResult UpdPackingListCTNBookingAndArrive(string id, DateTime? dtBooking, DateTime? dtArrive)
+        {
+            DualResult result;
+            if (id.Empty())
+            {
+                return new DualResult(false, "ID is empty");
+            }
+
+            string booking = dtBooking.HasValue ? "'" + dtBooking.Value.ToString("yyyy/MM/dd") + "'" : "NULL";
+            string arrive = dtArrive.HasValue ? "'" + dtArrive.Value.ToString("yyyy/MM/dd") + "'" : "NULL";
+            string sqlCmd = $@"
+update PackingList 
+    set EstCTNBooking = {booking}
+        , EstCTNArrive = {arrive}
+where ID = '{id}'";
+
+            result = DBProxy.Current.Execute(null, sqlCmd);
+            return result;
+        }
 
         #region P03 Save Check
         private static StringBuilder Ctn_no_combine(string sP, string seq, DataTable detailDatas)

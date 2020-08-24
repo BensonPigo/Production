@@ -99,6 +99,7 @@
             this.displayHC = new Sci.Win.UI.DisplayBox();
             this.label4 = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
+            this.btnEdit = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -116,6 +117,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnEdit);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.displayHC);
@@ -253,6 +255,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnEdit, 0);
             // 
             // detailpanel
             // 
@@ -972,7 +975,7 @@
             this.btnPackScanHistory.TabIndex = 34;
             this.btnPackScanHistory.Text = "Scan and Pack Deleted History";
             this.btnPackScanHistory.UseVisualStyleBackColor = true;
-            this.btnPackScanHistory.Click += new System.EventHandler(this.btnPackScanHistory_Click);
+            this.btnPackScanHistory.Click += new System.EventHandler(this.BtnPackScanHistory_Click);
             // 
             // labAppBookingVW
             // 
@@ -1069,6 +1072,16 @@
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
             this.dateBox1.TabIndex = 25;
+            // 
+            // btnEdit
+            // 
+            this.btnEdit.Location = new System.Drawing.Point(843, 213);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(42, 23);
+            this.btnEdit.TabIndex = 79;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // P03
             // 
@@ -1189,5 +1202,6 @@
         private Win.UI.Label label3;
         private Win.UI.DateBox dateBox1;
         private Win.UI.Label label4;
+        private Win.UI.Button btnEdit;
     }
 }
