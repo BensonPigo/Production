@@ -563,6 +563,7 @@ Qty: {r.Quantity}     Item: {r.Item}";
 
                 string excelName = Class.MicrosoftFile.GetName(fileName);
                 excelApp.ActiveWorkbook.SaveAs(excelName);
+                workbook.Close();
                 excelApp.Quit();
                 Marshal.ReleaseComObject(excelApp);
                 File.Delete(excelName);
