@@ -14,6 +14,8 @@
     [AddDate]            DATETIME       NULL,
     [EditName]           VARCHAR (10)   CONSTRAINT [DF_PackingGuide_EditName] DEFAULT ('') NULL,
     [EditDate]           DATETIME       NULL,
+    [EstCTNBooking] DATE NULL, 
+    [EstCTNArrive] DATE NULL, 
     CONSTRAINT [PK_PackingGuide] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -83,3 +85,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingGuide', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'箱子預計下單日',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingGuide',
+    @level2type = N'COLUMN',
+    @level2name = N'EstCTNBooking'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'箱子預計到達日',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingGuide',
+    @level2type = N'COLUMN',
+    @level2name = N'EstCTNArrive'

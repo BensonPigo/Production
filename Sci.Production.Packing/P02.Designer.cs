@@ -676,6 +676,7 @@
             // 
             // dateBoxCartonEstBooking
             // 
+            this.dateBoxCartonEstBooking.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstCTNBooking", true));
             this.dateBoxCartonEstBooking.Location = new System.Drawing.Point(686, 92);
             this.dateBoxCartonEstBooking.Name = "dateBoxCartonEstBooking";
             this.dateBoxCartonEstBooking.Size = new System.Drawing.Size(130, 23);
@@ -683,6 +684,7 @@
             // 
             // dateBoxCartonEstArrived
             // 
+            this.dateBoxCartonEstArrived.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstCTNArrive", true));
             this.dateBoxCartonEstArrived.Location = new System.Drawing.Point(686, 118);
             this.dateBoxCartonEstArrived.Name = "dateBoxCartonEstArrived";
             this.dateBoxCartonEstArrived.Size = new System.Drawing.Size(130, 23);
