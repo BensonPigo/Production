@@ -1,20 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Ict;
-using Excel = Microsoft.Office.Interop.Excel;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Runtime.InteropServices;
+using System.Text;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P03_Transaction : Win.Subs.Base
     {
-        DataRow dr;
-        bool _byroll;   // 從p20呼叫時，會傳入true
+        private readonly DataRow dr;
+        private readonly bool _byroll;   // 從p20呼叫時，會傳入true
 
+        /// <inheritdoc/>
         public P03_Transaction(DataRow data, bool byRoll = false)
         {
             this.InitializeComponent();
@@ -22,6 +24,7 @@ namespace Sci.Production.Warehouse
             this._byroll = byRoll;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -250,6 +253,7 @@ namespace Sci.Production.Warehouse
 			            when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
 			            when 'D' then 'P13. Issue Material by Item'
 			            when 'E' then 'P33. Issue Thread'
+			            when 'I' then 'P62. Issue Fabric for Cutting Tape'
                         end name
 	            ,0 as inqty
                 , sum(Qty) released
@@ -644,8 +648,7 @@ namespace Sci.Production.Warehouse
 
             #endregion
 
-            DataTable selectDataTable1;
-            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
+            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out DataTable selectDataTable1);
             if (selectResult1 == false)
             {
                 this.ShowErr(selectCommand1.ToString(), selectResult1);
@@ -693,15 +696,15 @@ namespace Sci.Production.Warehouse
                         // frm.ShowDialog(this);
                         break;
                     case "P37":
-                    // P37
+                        // P37
                         break;
                     case "P10":
-                    // P10
+                        // P10
                         frm = new P10(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
                     case "P11":
-                    // P11
+                        // P11
                         frm = new P11(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
@@ -745,7 +748,7 @@ namespace Sci.Production.Warehouse
                         break;
 
                     case "P22":
-                            // P22
+                        // P22
                         frm = new P22(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
@@ -793,6 +796,11 @@ namespace Sci.Production.Warehouse
                         frm = new P36(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
+                    case "P62":
+                        // P62
+                        frm = new P62(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
                 }
 
                 // var frm = new Sci.Production.Subcon.P01_FarmInList(dr);
@@ -815,12 +823,12 @@ namespace Sci.Production.Warehouse
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(20));
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void btnReCalculate_Click(object sender, EventArgs e)
+        private void BtnReCalculate_Click(object sender, EventArgs e)
         {
             if (this.dr == null)
             {
@@ -831,28 +839,32 @@ namespace Sci.Production.Warehouse
             #region store procedure parameters
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 
-            System.Data.SqlClient.SqlParameter sp_StocktakingID = new System.Data.SqlClient.SqlParameter();
-            sp_StocktakingID.ParameterName = "@Ukey";
-            sp_StocktakingID.Value = this.dr["ukey"].ToString();
+            System.Data.SqlClient.SqlParameter sp_StocktakingID = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@Ukey",
+                Value = this.dr["ukey"].ToString(),
+            };
             cmds.Add(sp_StocktakingID);
 
-            // System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
-            // sp_mdivision.ParameterName = "@MDivisionid";
-            // sp_mdivision.Value = Sci.Env.User.Keyword;
-            // cmds.Add(sp_mdivision);
-            System.Data.SqlClient.SqlParameter sp_poid = new System.Data.SqlClient.SqlParameter();
-            sp_poid.ParameterName = "@poid";
-            sp_poid.Value = this.dr["id"].ToString();
+            System.Data.SqlClient.SqlParameter sp_poid = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@poid",
+                Value = this.dr["id"].ToString(),
+            };
             cmds.Add(sp_poid);
 
-            System.Data.SqlClient.SqlParameter sp_seq1 = new System.Data.SqlClient.SqlParameter();
-            sp_seq1.ParameterName = "@seq1";
-            sp_seq1.Value = this.dr["seq1"].ToString();
+            System.Data.SqlClient.SqlParameter sp_seq1 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@seq1",
+                Value = this.dr["seq1"].ToString(),
+            };
             cmds.Add(sp_seq1);
 
-            System.Data.SqlClient.SqlParameter sp_seq2 = new System.Data.SqlClient.SqlParameter();
-            sp_seq2.ParameterName = "@seq2";
-            sp_seq2.Value = this.dr["seq2"].ToString();
+            System.Data.SqlClient.SqlParameter sp_seq2 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@seq2",
+                Value = this.dr["seq2"].ToString(),
+            };
             cmds.Add(sp_seq2);
 
             #endregion
@@ -868,7 +880,7 @@ namespace Sci.Production.Warehouse
             this.Dispose();  // 重算完自動關閉視窗
         }
 
-        private void btnPrint_Click(object sender, EventArgs e)
+        private void BtnPrint_Click(object sender, EventArgs e)
         {
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(string.Empty);
 
