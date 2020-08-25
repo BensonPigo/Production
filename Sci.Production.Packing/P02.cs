@@ -2884,15 +2884,12 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
                         throw result.GetException();
                     }
 
-                    if (((Button)sender).Name.Equals("btnSwitchToPackingList"))
+                    DateTime? dtBooking = MyUtility.Convert.GetDate(this.dateBoxCartonEstBooking.Text);
+                    DateTime? dtArrived = MyUtility.Convert.GetDate(this.dateBoxCartonEstArrived.Text);
+                    result = Prgs.UpdPackingListCTNBookingAndArrive(this.CurrentMaintain["ID"].ToString(), dtBooking, dtArrived);
+                    if (!result)
                     {
-                        DateTime? dtBooking = MyUtility.Convert.GetDate(this.dateBoxCartonEstBooking.Text);
-                        DateTime? dtArrived = MyUtility.Convert.GetDate(this.dateBoxCartonEstArrived.Text);
-                        result = Prgs.UpdPackingListCTNBookingAndArrive(this.CurrentMaintain["ID"].ToString(), dtBooking, dtArrived);
-                        if (!result)
-                        {
-                            throw result.GetException();
-                        }
+                        throw result.GetException();
                     }
 
                     transaction.Complete();
