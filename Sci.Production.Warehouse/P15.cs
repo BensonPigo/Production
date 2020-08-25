@@ -855,6 +855,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'",
             string Requestid = row["Requestid"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string appvdate = MyUtility.Check.Empty(this.displayApvDate.Text) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(this.displayApvDate.Text)).ToString("yyyy/MM/dd HH:mm:ss");
+            string confirmDate = MyUtility.Convert.GetDate(this.CurrentMaintain["ApvDate"]).HasValue ? MyUtility.Convert.GetDate(this.CurrentMaintain["ApvDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss") : string.Empty;
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -883,6 +884,7 @@ where id = @MDivision", pars, out dt);
             report.ReportParameters.Add(new ReportParameter("Requestid", Requestid));
             report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
             report.ReportParameters.Add(new ReportParameter("appvdate", appvdate));
+            report.ReportParameters.Add(new ReportParameter("ConfirmDate", confirmDate));
             #endregion
 
             #region  抓表身資料

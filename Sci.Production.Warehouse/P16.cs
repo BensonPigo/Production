@@ -970,6 +970,9 @@ where id = @MDivision", pars, out dt);
             string ApvDate = MyUtility.Check.Empty(dtApv.Rows[0]["ApvDate"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(dtApv.Rows[0]["ApvDate"])).ToString("yyyy/MM/dd HH:mm:ss");
             report.ReportParameters.Add(new ReportParameter("ApvDate", ApvDate));
 
+            string confirmDate = MyUtility.Convert.GetDate(this.CurrentMaintain["ApvDate"]).HasValue ? MyUtility.Convert.GetDate(this.CurrentMaintain["ApvDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss") : string.Empty;
+            report.ReportParameters.Add(new ReportParameter("ConfirmDate", confirmDate));
+
             #endregion
 
             #region -- 撈表身資料 --
