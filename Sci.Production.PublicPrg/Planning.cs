@@ -451,17 +451,17 @@ select	Orderid
 		, PatternPanel
 		, FabricPanelCode
 		, PatternCode
-		, InQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
+		, InQty = FLOOR(sum( Case when PostSewingSubProcess_SL = 1 Then Qty
 							when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then Qty--不判斷InComing,直接計算數量
 					   else iif(I_Judge.v = 1, Qty, 0)
 					   End
-					 ) / IsPair.M
+					 ) / IsPair.M)
 
-		, OutQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
+		, OutQty = FLOOR(sum( Case when PostSewingSubProcess_SL = 1 Then Qty
 							 when NoBundleCardAfterSubprocess=1 and InOutRule = 3 Then Qty--不判斷OutGoing,直接計算數量
 						else iif(O_Judge.v = 1, Qty, 0)
 						End 
-					  ) / IsPair.M
+					  ) / IsPair.M)
 
 		, OriInQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
 							   when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then Qty--不判斷InComing,直接計算數量
@@ -475,7 +475,7 @@ select	Orderid
 						   End 
 					  ) --原始裁片數總和
 
-		, FinishedQty = sum(case when PostSewingSubProcess_SL = 1 Then Qty
+		, FinishedQty = FLOOR(sum(case when PostSewingSubProcess_SL = 1 Then Qty
 								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 1 Then Qty-- 不判斷InComing
 								 when InOutRule = 1 then iif(I_Judge.v = 1,Qty,0)
 								 when InOutRule = 2 then iif(O_Judge.v = 1,Qty,0)
@@ -483,7 +483,7 @@ select	Orderid
 								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 4 Then iif(O_Judge.v = 1,Qty,0)-- 忽略InComing, 只判斷OutGoing
 								 else iif(O_Judge.v = 1 and I_Judge.v = 1 ,Qty,0)
 							end) 
-						/ IsPair.M
+						/ IsPair.M)
 
         , InStartDate,InEndDate,OutStartDate,OutEndDate
 into #BundleInOutQty{subprocessIDtmp}
