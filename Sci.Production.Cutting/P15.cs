@@ -27,6 +27,7 @@ namespace Sci.Production.Cutting
     {
         private readonly string loginID = Env.User.UserID;
         private readonly string keyWord = Env.User.Keyword;
+        private readonly string tone;
         private DataTable CutRefTb;
         private DataTable qtyTb;
         private DataTable ArticleSizeTb;
@@ -45,6 +46,7 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.tone = MyUtility.GetValue.Lookup("select iif(AutoGenerateByTone=1,1,0) from SYSTEM");
         }
 
         /// <inheritdoc/>
@@ -950,7 +952,7 @@ and ord.mDivisionid = '{this.keyWord}'
             // by Article, Size 整理出中上 No of Bundle 的資料表, 並從 1 開始依序給 No 值 (index). 唯一值:Ukey, No
             var result = this.ArticleSizeTb.AsEnumerable()
                 .GroupBy(s => new { Ukey = (long)s["Ukey"], No = (long)s["No"], POID = s["POID"].ToString(), Article = s["Article"].ToString(), SizeCode = s["SizeCode"].ToString() })
-                .Select((g, i) => new { g.Key.Ukey, iden = ++i, g.Key.No, Tone = string.Empty, g.Key.POID, g.Key.Article, g.Key.SizeCode, Qty = g.Sum(s => (decimal?)s["cutoutput"]) })
+                .Select((g, i) => new { g.Key.Ukey, iden = ++i, g.Key.No, Tone = this.tone, g.Key.POID, g.Key.Article, g.Key.SizeCode, Qty = g.Sum(s => (decimal?)s["cutoutput"]) })
                 .OrderBy(o => o.Article)
                 .ThenBy(o => o.SizeCode)
                 .ToList();
@@ -1309,6 +1311,9 @@ order by ArticleGroup";
                 return;
             }
 
+            // 記錄使用者輸入的 Tone
+            DataTable tmpqtyTb = this.qtyTb.Select($"Ukey = {this.gridCutRef.CurrentDataRow["Ukey"]}").CopyToDataTable();
+
             // 對應中上的Key欄位 No 先清除, 右鍵選取時再重新寫入
             this.ArticleSizeTbOri.Select($"Ukey = {this.gridCutRef.CurrentDataRow["Ukey"]}").AsEnumerable().ToList().ForEach(row => row["No"] = 0);
             this.ArticleSizeTb.Select($"Ukey = {this.gridCutRef.CurrentDataRow["Ukey"]}").Delete();
@@ -1322,6 +1327,7 @@ order by ArticleGroup";
                 qty_newRow["No"] = i;
                 qty_newRow["iden"] = ++m;
                 qty_newRow["Ukey"] = this.gridCutRef.CurrentDataRow["Ukey"];
+                qty_newRow["Tone"] = tmpqtyTb.Rows.Count >= i && !MyUtility.Check.Empty(tmpqtyTb.Rows[i - 1]["Tone"]) ? tmpqtyTb.Rows[i - 1]["Tone"] : this.tone;
                 this.qtyTb.Rows.Add(qty_newRow);
                 this.AddPatternAllpart(MyUtility.Convert.GetLong(qty_newRow["ukey"]), MyUtility.Convert.GetLong(qty_newRow["iden"]));
             }
@@ -1878,8 +1884,11 @@ Values('{bundleID}', '{allPart.PatternCode}', '{allPart.PatternDesc}', '{allPart
                 selallPartList.Where(w => seldupList.Select(s => s.Iden).Contains(w.Iden)).ToList().ForEach(r => r.Ran = true);
 
                 // 合併, 只有 bundle, Bundle_Detail_allpart 合併. 其它的資料表有幾組就按實寫入. 排序 Tone 和上方準備 BuundleGroup 排序一樣
+                int beforeTone = 0;
                 foreach (var selitem in seldupList.OrderBy(o => o.Tone))
                 {
+                    int currTone = selitem.Tone;
+
                     // Bundle_Detail_Qty
                     insertSql.Append($@"
 Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.SizeCode}', {selitem.Qty});");
@@ -1887,12 +1896,16 @@ Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.Si
                     // Bundle_Detail, Bundle_Detail_Art, &  P15才有的寫的 Bundle_Detail_Order
                     foreach (var pattern in selpatternList.Where(w => w.Iden == selitem.Iden))
                     {
-                        // Ran 只針對 ALLPARTS 那筆
-                        if (pattern.Ran)
+                        // 若 dup, tone 相同 寫入Bundle_Detail 時 PatternCode = ALLPARTS 合為一筆 Qty 數量加起來. 且標記已準備
+                        var selDTAPList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0 && pattern.PatternCode.Equals("ALLPARTS")).ToList();
+                        var selptternDTAllPartList = selpatternList.Where(w => selDTAPList.Select(s => s.Iden).Contains(w.Iden)).ToList();
+                        if (selptternDTAllPartList.Where(w => !w.Ran).Count() > 1)
                         {
+                            pattern.Ran = true;
                             continue;
                         }
 
+                        pattern.Ran = true;
                         string bundleNo = bundleno_list[bundlenoCount];
                         bundlenoCount++;
 
@@ -1901,11 +1914,7 @@ Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.Si
                         bdr["Bundleno"] = bundleNo;
                         insert_BundleNo.Rows.Add(bdr);
 
-                        // 若 dup, tone 相同 寫入Bundle_Detail 時 PatternCode = ALLPARTS 合為一筆 Qty 數量加起來. 且標記已準備
-                        var selDTList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0 && pattern.PatternCode.Equals("ALLPARTS")).ToList();
-                        selpatternList.Where(w => w.PatternCode.Equals("ALLPARTS") && selDTList.Select(s => s.Iden).Contains(w.Iden)).ToList().ForEach(r => r.Ran = true);
-                        int bdQty = pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0 ? selDTList.Sum(s => s.Qty) : selitem.Qty;
-
+                        int bdQty = pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0 ? selDTAPList.Sum(s => s.Qty) : selitem.Qty;
                         insertSql.Append($@"
 Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, SizeCode, Qty, Parts, Farmin, Farmout, isPair, Location)
 Values
@@ -1938,13 +1947,31 @@ Values('{bundleID}','{bundleNo}','{ann[i]}','{pattern.PatternCode}','{ps}','{nb}
                         }
 
                         // Bundle_Detail_Order
-                        foreach (DataRow idrAS in this.ArticleSizeTb.Select($"iden = {selitem.Iden}"))
+                        if (selptternDTAllPartList.Count() > 1)
                         {
-                            insertSql.Append($@"
-INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty]) Values('{bundleID}','{bundleNo}','{idrAS["OrderID"]}','{idrAS["Cutoutput"]}')
+                            var spSumQtyList = selASList.Where(w => selptternDTAllPartList.Select(s => s.Iden).Distinct().Contains(w.Iden))
+                                .GroupBy(g => g.OrderID)
+                                .Select(s => new { OrderID = s.Key, Cutoutput = s.Sum(su => su.Cutoutput) })
+                                .ToList();
+                            foreach (var idrAS in spSumQtyList)
+                            {
+                                insertSql.Append($@"
+INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty]) Values('{bundleID}','{bundleNo}','{idrAS.OrderID}','{idrAS.Cutoutput}')
 ");
+                            }
+                        }
+                        else
+                        {
+                            foreach (var idrAS in selASList.Where(w => w.Iden == selitem.Iden))
+                            {
+                                insertSql.Append($@"
+INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty]) Values('{bundleID}','{bundleNo}','{idrAS.OrderID}','{idrAS.Cutoutput}')
+");
+                            }
                         }
                     }
+
+                    beforeTone = selitem.Tone;
                 }
             }
 
