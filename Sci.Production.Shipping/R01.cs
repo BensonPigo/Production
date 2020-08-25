@@ -315,6 +315,7 @@ g.ID
 ,isnull(pl.CBM,0) as CBM
 ,g.CustCDID
 ,(g.Dest+' - '+isnull(c.Alias,'')) as Dest,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
+,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
 ,g.AddName+' '+isnull(p.Name,'') as AddName
 ,g.AddDate
 ,g.Remark
@@ -345,7 +346,8 @@ from GMTBooking g WITH (NOLOCK)
 left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
-LEFT JOIN ForwarderWhse_Detail fd ON g.ForwarderWhse_DetailUKey=fd.UKey
+left join ForwarderWhse_Detail fd ON g.ForwarderWhse_DetailUKey=fd.UKey
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
 OUTER APPLY(
 SELECT [PulloutReportConfirmDate]=STUFF ((
 		SELECT CONCAT (',',a.AddDate) FROM (
@@ -563,7 +565,7 @@ and exists (select 1
             else
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 36];
+                object[,] objArray = new object[1, 37];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -592,21 +594,22 @@ and exists (select 1
                     objArray[0, 23] = dr["CBM"];
                     objArray[0, 24] = dr["CustCDID"];
                     objArray[0, 25] = dr["Dest"];
-                    objArray[0, 26] = dr["ConfirmDate"];
-                    objArray[0, 27] = dr["AddName"];
-                    objArray[0, 28] = dr["AddDate"];
-                    objArray[0, 29] = dr["ETD"];
-                    objArray[0, 30] = dr["ETA"];
-                    objArray[0, 31] = dr["BLNo"];
-                    objArray[0, 32] = dr["BL2No"];
-                    objArray[0, 33] = dr["Vessel"];
-                    objArray[0, 34] = dr["Remark"];
-                    worksheet.Range[string.Format("A{0}:AH{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 26] = dr["Forwarder"];
+                    objArray[0, 27] = dr["ConfirmDate"];
+                    objArray[0, 28] = dr["AddName"];
+                    objArray[0, 29] = dr["AddDate"];
+                    objArray[0, 30] = dr["ETD"];
+                    objArray[0, 31] = dr["ETA"];
+                    objArray[0, 32] = dr["BLNo"];
+                    objArray[0, 33] = dr["BL2No"];
+                    objArray[0, 34] = dr["Vessel"];
+                    objArray[0, 35] = dr["Remark"];
+                    worksheet.Range[string.Format("A{0}:AI{0}", intRowsStart)].Value2 = objArray;
                     if (this.hasDelivery &&
                         (MyUtility.Convert.GetDate(dr["BuyerDelivery"]) < this.dateDelivery.Value1 ||
                         MyUtility.Convert.GetDate(dr["BuyerDelivery"]) > this.dateDelivery.Value2))
                     {
-                        worksheet.Range[string.Format("A{0}:AI{0}", intRowsStart)].Font.Color = ColorTranslator.ToOle(Color.Red);
+                        worksheet.Range[string.Format("A{0}:AJ{0}", intRowsStart)].Font.Color = ColorTranslator.ToOle(Color.Red);
                     }
 
                     intRowsStart++;

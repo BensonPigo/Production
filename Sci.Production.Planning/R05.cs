@@ -197,7 +197,7 @@ for xml path('')
 ),1,1,''))
 
 declare @sql nvarchar(max)=N'
-select t2.Date
+select t2.SeqDate,t2.Date
     ,[Loading] = t2.OrderCPU
     ,[Canceled] = t2.CanceledCPU
     ,[Shortage] = t2.OrderShortageCPU
@@ -222,9 +222,19 @@ inner join
 )xxx on t2.Date=xxx.Date
 order by t2.SeqDate
 
-select * from #tmp3
-union all
-select ''Total'' ,sum(Loading), sum(Canceled),sum(Shortage), sum(SubconOut), sum(Balance), sum(BalanceIrregular),'+@col2+' from #tmp3
+select  Date
+        ,Loading
+        ,Canceled
+        ,Shortage
+        ,SubconOut
+        ,Balance
+        ,BalanceIrregular,
+	    '+@col+N' 
+from (
+        select * from #tmp3 
+        union all
+        select 999999999,''Total'' ,sum(Loading), sum(Canceled),sum(Shortage), sum(SubconOut), sum(Balance), sum(BalanceIrregular),'+@col2+' from #tmp3
+) a order by SeqDate
 '
 exec (@sql)
 
