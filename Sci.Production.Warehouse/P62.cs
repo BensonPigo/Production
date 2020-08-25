@@ -36,6 +36,11 @@ namespace Sci.Production.Warehouse
         {
             this.InitializeComponent();
             this.DefaultFilter = $"Type='I' and id='{transID}'and MDivisionID = '{Env.User.Keyword}'";
+            this.IsSupportNew = false;
+            this.IsSupportEdit = false;
+            this.IsSupportDelete = false;
+            this.IsSupportConfirm = false;
+            this.IsSupportUnconfirm = false;
         }
 
         protected override void OnDetailGridSetup()
