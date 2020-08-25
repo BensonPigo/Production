@@ -8,6 +8,7 @@ using Sci.Data;
 using Ict;
 using System.Linq;
 using System.Transactions;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
@@ -708,8 +709,22 @@ WHERE  roll='{Original_Roll}' AND dyelot='{Original_Dyelot}' AND ID='{FirID}'
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            DataTable dt;
+            #region 更新FIR,AIR資料
+
+            List<SqlParameter> Fir_Air_Proce = new List<SqlParameter>();
+            Fir_Air_Proce.Add(new SqlParameter("@ID", this.docno));
+            Fir_Air_Proce.Add(new SqlParameter("@LoginID", Sci.Env.User.UserID));
             DualResult result;
+
+            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", Fir_Air_Proce)))
+            {
+                Exception ex = result.GetException();
+                MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                return;
+            }
+            #endregion
+
+            DataTable dt;
             string selectCommand1 = string.Format(
                 @"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.shipqty
