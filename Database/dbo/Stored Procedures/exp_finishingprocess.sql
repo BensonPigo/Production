@@ -153,6 +153,54 @@ BEGIN
 ) ON [PRIMARY]
 END
 
+IF OBJECT_ID(N'ShippingMark') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[ShippingMark](
+	[ID]			 [bigint] IDENTITY(1,1) NOT NULL,
+	[BrandID]		 [varchar](8) NOT NULL DEFAULT(('')),
+	[CTNRefno]		 [varchar](21) NOT NULL DEFAULT(('')),
+	[Side]			 [varchar](5) NOT NULL DEFAULT(('')),
+	[Seq]			 [int] NOT NULL DEFAULT ((0)),
+	[Category]		 [varchar](4) NOT NULL DEFAULT(('')),
+	[FromRight]		 [int] NOT NULL DEFAULT ((0)),
+	[FromBottom]	 [int] NOT NULL DEFAULT ((0)),
+	[StickerSizeID]	 [bigint] NOT NULL DEFAULT ((0)),
+	[Is2Side]		 [bit] NOT NULL  DEFAULT (0),
+	[FileName]		 [varchar](25) NOT NULL DEFAULT (('')),
+	[CmdTime]		 [dateTime] NOT NULL,
+	[SunriseUpdated] [bit] NOT NULL DEFAULT ((0)),
+	[GenSongUpdated] [bit] NOT NULL DEFAULT ((0)),
+	IsHorizontal	 [bit] NOT NULL DEFAULT ((0)),
+	FilePath		 [varchar](80) NOT NULL DEFAULT (('')),
+	IsSSCC			 [bit] NOT NULL DEFAULT ((0)),
+	ShippingMarkCombinationUkey			 [bit] NOT NULL DEFAULT ((0))
+ CONSTRAINT [PK_ShippingMark] PRIMARY KEY CLUSTERED 
+(
+	[BrandID] ASC,
+	[ShippingMarkCombinationUkey] ASC,	
+	[CTNRefno] ASC,	
+	[Side] ASC,
+	[Seq] ASC,
+	[Category] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+	EXECUTE sp_addextendedproperty N'MS_Description', N'ID', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'ID'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'客戶名稱', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'BrandID'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'紙箱料號', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'CTNRefno'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'貼碼面, 上下左右前後', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Side'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'序號', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Seq'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'類別, 噴碼/貼碼(HTML/PIC)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Category'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'離右邊的位置(mm)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'FromRight'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'離下面的位置(mm)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'FromBottom'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'尺寸貼紙ID', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'StickerSizeID'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'是否轉角貼, (0,1)', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'Is2Side'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'HTML檔名', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'FileName'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI寫入/更新此筆資料時間', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'CmdTime'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'Sunrise是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'SunriseUpdated'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'GenSong是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMark', N'COLUMN', N'GenSongUpdated'
+END
+
 IF OBJECT_ID(N'ShippingMarkPic_Detail') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[ShippingMarkPic_Detail](
@@ -192,6 +240,24 @@ BEGIN
 	EXECUTE sp_addextendedproperty N'MS_Description', N'Sunrise是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'SunriseUpdated'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'GenSong是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'GenSongUpdated'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'圖片二進位制資料', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'Image'
+END
+
+IF OBJECT_ID(N'StickerSize') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[StickerSize](
+		[ID] [bigint] NOT NULL DEFAULT(0),
+		[Size] [varchar](20) NOT NULL DEFAULT(''),
+		[Width] [int] NOT NULL DEFAULT(0),
+		[Length] [int] NOT NULL DEFAULT(0),
+		[AddName] [varchar](10) NOT NULL DEFAULT(''),
+		[AddDate] [datetime] NULL,
+		[EditName] [varchar](10) NOT NULL DEFAULT(''),
+		[EditDate] [datetime] NULL,
+	 CONSTRAINT [PK_StickerSize] PRIMARY KEY CLUSTERED 
+	(
+		[ID] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
 END
 
 IF OBJECT_ID(N'ClogReturn') IS NULL
