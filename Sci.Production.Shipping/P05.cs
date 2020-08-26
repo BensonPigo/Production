@@ -1310,9 +1310,9 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         // S/O Confirm/UnConfirm
         private void BtnCFM_Click(object sender, EventArgs e)
         {
-            this.CheckIDD();
             if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
+                this.CheckIDD();
                 if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
                 {
                     MyUtility.Msg.WarningBox("< S/O # > , < Terminal/Whse# > and < Cut-off Date > can't be empty!!");
@@ -2039,19 +2039,29 @@ where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentM
             }
             #region 檢查傳入的SP 維護的IDD是否都為同一天(沒維護度不判斷)
             List<Order_QtyShipKey> listOrder_QtyShipKey = new List<Order_QtyShipKey>();
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                string[] orderIDs = dr["OrderID"].ToString().Split(',');
-                string[] orderShipmodeSeqs = dr["OrderShipmodeSeq"].ToString().Split(',');
+            string sqlGetOrderSeq = $@"
+alter table #tmp alter column ID varchar(13)
+select  distinct OrderID,OrderShipmodeSeq
+from PackingList_Detail pd with (nolock)
+where exists(select 1 from #tmp t where t.ID = pd.ID)
+";
+            DataTable dtOrderSeq;
 
-                for (int i = 0; i < orderIDs.Length; i++)
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "ID", sqlGetOrderSeq, out dtOrderSeq);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            foreach (DataRow dr in dtOrderSeq.Rows)
+            {
+                listOrder_QtyShipKey.Add(new Order_QtyShipKey
                 {
-                    listOrder_QtyShipKey.Add(new Order_QtyShipKey
-                    {
-                        SP = orderIDs[i],
-                        Seq = orderShipmodeSeqs[i],
-                    });
-                }
+                    SP = dr["OrderID"].ToString(),
+                    Seq = dr["OrderShipmodeSeq"].ToString(),
+                });
             }
 
             Prgs.CheckIDDSame(listOrder_QtyShipKey);

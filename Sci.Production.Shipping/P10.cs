@@ -1163,19 +1163,30 @@ GB#:{dr["ID"]},   Shipping Mode:{dr["ShipModeID"]}
 
             #region 檢查傳入的SP 維護的IDD是否都為同一天(沒維護度不判斷)
             List<Order_QtyShipKey> listOrder_QtyShipKey = new List<Order_QtyShipKey>();
-            foreach (DataRow dr in this.plData.Rows)
-            {
-                string[] orderIDs = dr["OrderID"].ToString().Split(',');
-                string[] orderShipmodeSeqs = dr["OrderShipmodeSeq"].ToString().Split(',');
 
-                for (int i = 0; i < orderIDs.Length; i++)
+            string sqlGetOrderSeq = $@"
+alter table #tmp alter column ID varchar(13)
+select  distinct OrderID,OrderShipmodeSeq
+from PackingList_Detail pd with (nolock)
+where exists(select 1 from #tmp t where t.ID = pd.ID)
+";
+            DataTable dtOrderSeq;
+
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.plData, "ID", sqlGetOrderSeq, out dtOrderSeq);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            foreach (DataRow dr in dtOrderSeq.Rows)
+            {
+                listOrder_QtyShipKey.Add(new Order_QtyShipKey
                 {
-                    listOrder_QtyShipKey.Add(new Order_QtyShipKey
-                    {
-                        SP = orderIDs[i],
-                        Seq = orderShipmodeSeqs[i],
-                    });
-                }
+                    SP = dr["OrderID"].ToString(),
+                    Seq = dr["OrderShipmodeSeq"].ToString(),
+                });
             }
 
             Prgs.CheckIDDSame(listOrder_QtyShipKey);
@@ -1191,20 +1202,31 @@ GB#:{dr["ID"]},   Shipping Mode:{dr["ShipModeID"]}
 
             #region 檢查傳入的SP 維護的IDD與PulloutputDate是否都為同一天(沒維護不判斷)
             List<Order_QtyShipKey> listOrder_QtyShipKey = new List<Order_QtyShipKey>();
-            foreach (DataRow dr in this.plData.Rows)
-            {
-                string[] orderIDs = dr["OrderID"].ToString().Split(',');
-                string[] orderShipmodeSeqs = dr["OrderShipmodeSeq"].ToString().Split(',');
 
-                for (int i = 0; i < orderIDs.Length; i++)
+            string sqlGetOrderSeq = $@"
+alter table #tmp alter column ID varchar(13)
+select  distinct pd.OrderID, pd.OrderShipmodeSeq, t.PulloutDate
+from PackingList_Detail pd with (nolock)
+inner join #tmp t on t.ID = pd.ID
+";
+            DataTable dtOrderSeq;
+
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.plData, "ID,PulloutDate", sqlGetOrderSeq, out dtOrderSeq);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            foreach (DataRow dr in dtOrderSeq.Rows)
+            {
+                listOrder_QtyShipKey.Add(new Order_QtyShipKey
                 {
-                    listOrder_QtyShipKey.Add(new Order_QtyShipKey
-                    {
-                        SP = orderIDs[i],
-                        Seq = orderShipmodeSeqs[i],
-                        PulloutDate = MyUtility.Convert.GetDate(dr["PulloutDate"]),
-                    });
-                }
+                    SP = dr["OrderID"].ToString(),
+                    Seq = dr["OrderShipmodeSeq"].ToString(),
+                    PulloutDate = MyUtility.Convert.GetDate(dr["PulloutDate"]),
+                });
             }
 
             Prgs.CheckIDDSamePulloutDate(listOrder_QtyShipKey);
