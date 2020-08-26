@@ -130,9 +130,7 @@
             this.btnAmend = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
-            this.btnPDF = new Sci.Win.UI.Button();
-            this.btnToFGWT = new Sci.Win.UI.Button();
-            this.btnToFGPT = new Sci.Win.UI.Button();
+            this.btnToReport = new Sci.Win.UI.Button();
             this.tabControl1.SuspendLayout();
             this.tabDetail.SuspendLayout();
             this.tabShrinkage.SuspendLayout();
@@ -1371,7 +1369,6 @@
             this.gridFGPT.Location = new System.Drawing.Point(0, 0);
             this.gridFGPT.Name = "gridFGPT";
             this.gridFGPT.ReadOnly = true;
-            this.gridFGPT.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridFGPT_EditingKeyProcessing);
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -1387,6 +1384,7 @@
             this.gridFGPT.ShowCellToolTips = false;
             this.gridFGPT.Size = new System.Drawing.Size(1045, 474);
             this.gridFGPT.TabIndex = 1;
+            this.gridFGPT.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridFGPT_EditingKeyProcessing);
             // 
             // btnEncode
             // 
@@ -1432,45 +1430,21 @@
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
-            // btnPDF
+            // btnToReport
             // 
-            this.btnPDF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPDF.Location = new System.Drawing.Point(795, 541);
-            this.btnPDF.Name = "btnPDF";
-            this.btnPDF.Size = new System.Drawing.Size(80, 30);
-            this.btnPDF.TabIndex = 5;
-            this.btnPDF.Text = "To PDF";
-            this.btnPDF.UseVisualStyleBackColor = true;
-            this.btnPDF.Click += new System.EventHandler(this.btnPDF_Click);
-            // 
-            // btnToFGWT
-            // 
-            this.btnToFGWT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToFGWT.Location = new System.Drawing.Point(692, 541);
-            this.btnToFGWT.Name = "btnToFGWT";
-            this.btnToFGWT.Size = new System.Drawing.Size(97, 30);
-            this.btnToFGWT.TabIndex = 6;
-            this.btnToFGWT.Text = "To FGWT";
-            this.btnToFGWT.UseVisualStyleBackColor = true;
-            this.btnToFGWT.Click += new System.EventHandler(this.BtnToFGWT_Click);
-            // 
-            // btnToFGPT
-            // 
-            this.btnToFGPT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToFGPT.Location = new System.Drawing.Point(589, 541);
-            this.btnToFGPT.Name = "btnToFGPT";
-            this.btnToFGPT.Size = new System.Drawing.Size(97, 30);
-            this.btnToFGPT.TabIndex = 7;
-            this.btnToFGPT.Text = "To FGPT";
-            this.btnToFGPT.UseVisualStyleBackColor = true;
-            this.btnToFGPT.Click += new System.EventHandler(this.BtnToFGPT_Click);
+            this.btnToReport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToReport.Location = new System.Drawing.Point(778, 541);
+            this.btnToReport.Name = "btnToReport";
+            this.btnToReport.Size = new System.Drawing.Size(97, 30);
+            this.btnToReport.TabIndex = 8;
+            this.btnToReport.Text = "To Report";
+            this.btnToReport.UseVisualStyleBackColor = true;
+            this.btnToReport.Click += new System.EventHandler(this.BtnToReport_Click);
             // 
             // P04_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1059, 572);
-            this.Controls.Add(this.btnToFGPT);
-            this.Controls.Add(this.btnToFGWT);
-            this.Controls.Add(this.btnPDF);
+            this.Controls.Add(this.btnToReport);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnAmend);
@@ -1521,7 +1495,6 @@
         private Win.UI.Button btnAmend;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnEdit;
-        private Win.UI.Button btnPDF;
         private Win.UI.ComboBox comboTemperature;
         private System.Windows.Forms.Label label18;
         private Win.UI.TextBox txtRemark;
@@ -1607,10 +1580,9 @@
         private Win.UI.Label label40;
         private Win.UI.Panel panel6;
         private Win.UI.Grid gridFGWT;
-        private Win.UI.Button btnToFGWT;
         private System.Windows.Forms.TabPage tabFGPT;
         private Win.UI.Panel panel7;
         private Win.UI.Grid gridFGPT;
-        private Win.UI.Button btnToFGPT;
+        private Win.UI.Button btnToReport;
     }
 }
