@@ -1351,18 +1351,31 @@ where POID = @poid group by POID,b.spno";
                 if (!MyUtility.Check.Seek(string.Format("select ID from PO WITH (NOLOCK) where ID = '{0}' and Complete = 1", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]))))
                 {
                     // Category = T的單子不用檢查是否已經Pullout Complete
-                    string category_where = MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "T" ? string.Empty : "or B.InQty <> B.OutQty - B.AdjustQty ";
 
                     sqlCmd = $@"select A.ID
                         from PO_Supp_Detail A WITH (NOLOCK) 
-                        left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
                         inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{this.CurrentMaintain["MDivisionID"]}'
-                        where A.ID = '{this.CurrentMaintain["POID"]}' and ((a.junk = 0 and A.Complete = 0)  {category_where})";
+                        where A.ID = '{this.CurrentMaintain["POID"]}' and  (a.junk = 0 and A.Complete = 0 )";
 
                     if (MyUtility.Check.Seek(sqlCmd))
                     {
-                        MyUtility.Msg.WarningBox("Warehouse still have material, so can't finish shipment.");
+                        MyUtility.Msg.WarningBox("There's Purchase item not junk / not completed , shipment is not finished.");
                         return;
+                    }
+
+                    if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "M")
+                    {
+                        sqlCmd = $@"select A.ID
+                        from PO_Supp_Detail A WITH (NOLOCK) 
+                        inner join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
+                        inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{this.CurrentMaintain["MDivisionID"]}'
+                        where A.ID = '{this.CurrentMaintain["POID"]}' and (B.InQty <> B.OutQty - B.AdjustQty )";
+
+                        if (MyUtility.Check.Seek(sqlCmd))
+                        {
+                            MyUtility.Msg.WarningBox("Warehouse still have material, so can't finish shipment.");
+                            return;
+                        }
                     }
                 }
             }
