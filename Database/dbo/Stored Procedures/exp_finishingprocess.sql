@@ -209,7 +209,7 @@ BEGIN
 	[Side]					[varchar](5) NOT NULL,
 	[GensongUpdateTime]		[varchar](50) NULL,
 	[Seq]					[int] NOT NULL,
-	[FilePath]				[varchar](80) NULL,
+	[FilePath]				[varchar](150) NULL,
 	[FileName]				[varchar](30) NULL,
 	[CmdTime]				[dateTime] NOT NULL,
 	[SunriseUpdated]		[bit] NOT NULL DEFAULT ((0)),
@@ -609,6 +609,7 @@ USING(
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
 	,[PackingCTN] = pd.id + pd.CTNStartNo
 	,[IsMixPacking]= IIF( isnull(MixCount.val, 0) > 1 , 1 ,0)
+	,[PicSetting]= [FPS].[dbo].GetPicSetting(p.ID,pd.RefNo)
 	FROM Production.dbo.PackingList p
 	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
 	left join  Production.dbo.ShipPlan sp on sp.id=p.ShipPlanID
@@ -655,24 +656,25 @@ UPDATE SET
 	t.SunriseUpdated = s.SunriseUpdated,
 	t.GenSongUpdated = s.GenSongUpdated,
 	t.PackingCTN = s.PackingCTN,
-	t.IsMixPacking = s.IsMixPacking
+	t.IsMixPacking = s.IsMixPacking,
+	t.PicSetting = s.PicSetting
 WHEN NOT MATCHED BY TARGET THEN
 INSERT(  ID, SCICtnNo
 , CustCTN
 ,  PulloutDate,  OrderID, OrderShipmodeSeq, Article, SizeCode
 		, ShipQty, Barcode, GW, CtnRefno, CtnLength, CtnWidth, CtnHeight, CtnUnit
-	,Junk	,CmdTime, SunriseUpdated, GenSongUpdated,PackingCTN ,IsMixPacking) 
+	,Junk	,CmdTime, SunriseUpdated, GenSongUpdated,PackingCTN ,IsMixPacking ,PicSetting) 
 VALUES(s.ID, s.SCICtnNo, 
 iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 , s.PulloutDate, s.OrderID, s.OrderShipmodeSeq, s.Article, s.SizeCode
 		, s.ShipQty, s.Barcode, s.GW, s.CtnRefno, s.CtnLength, s.CtnWidth, s.CtnHeight, s.CtnUnit
-	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN ,s.IsMixPacking)
+	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN ,s.IsMixPacking ,s.PicSetting)
 WHEN NOT MATCHED BY SOURCE 
 	AND exists(	select 1 from #tmpPackingList where id = t.id) THEN
 	UPDATE SET
 	t.Junk = 1	;
 		
-----寫入HTMLSetting和PicSetting
+----寫入HTMLSetting
 -- 如果FPS.dbo.PackingList.Junk=1， 則update FPS.dbo.PackingList_Detail
 update t
 set t.Junk= 1
@@ -721,159 +723,6 @@ where s.junk=1
 
 		DROP TABLE #HasSetting_HTMLSetting,#tmpPackingList
 		-------------------------------------------------------------HTMLSetting Update-------------------------------------------------------------
-
-		-------------------------------------------------------------PicSetting Update-------------------------------------------------------------
-		
-		----以PackingList_Detail為出發點
-
-		----PicSetting = 1 有設定對應的Packing B03 且有上傳圖片至Packing P24
-		SELECT DISTINCT 
-				pd.SCICtnNo
-				,pd.OrderID
-				,pd.OrderShipmodeSeq
-				,pd.Article
-				,pd.SizeCode
-				,s.FileName
-		INTO #tmp_HasSetting_File
-		FROM [Production].[dbo].PackingList p 
-		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
-		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND pd.CtnRefno=s.CTNRefno
-		WHERE s.Category='PIC' 
-		AND NOT EXISTS( -- P24 沒有圖片FileName為空的
-			SELECT 1
-			FROM [FPS].[dbo].ShippingMark sm
-			INNER JOIN [FPS].[dbo].ShippingMarkPic_Detail spd ON sm.Side=spd.Side AND sm.Seq = spd.Seq
-			INNER JOIN [FPS].[dbo].[PackingList_Detail] pld ON pld.SCICtnNo=spd.SCICtnNo
-			WHERE pld.SCICtnNo=pd.SCICtnNo AND pld.OrderID=pd.OrderID AND pd.OrderShipmodeSeq=pld.OrderShipmodeSeq AND pd.Article=pld.Article AND pd.SizeCode=pld.SizeCode
-			AND spd.Image IS NULL
-		)
-
-		----找不到 PicSetting = 1 表示沒有設定對應的Packing B03, 不需考慮貼標
-		
-		----(1)FPS的PackingList ID，找出混尺碼的
-		SELECT DISTINCT [PackingListID]=pd.ID ,pd.SCICtnNo
-		INTO #MixCarton
-		FROM [FPS].dbo.PackingList p 
-		INNER JOIN Production.dbo.PackingList_Detail pd ON p.ID=pd.ID
-		INNER JOIN Production.dbo.Orders o ON o.ID = pd.OrderID
-		WHERE  (SELECT COUNT(qq.Ukey) FROM Production.dbo.PackingList_Detail qq 
-				where qq.ID = p.ID 
-				AND qq.OrderID = pd.OrderID 
-				AND qq.CTNStartNo = pd.CTNStartNo
-				AND qq.Article = pd.Article 
-				AND qq.SizeCode <> pd.SizeCode
-				and qq.Ukey != pd.Ukey) > 0
-
-		----(2)FPS的PackingList ID，在PMS的CustCD、ShippingMarkCombination基本檔設定
-		SELECT DISTINCT [StickerCombinationUkey]=ISNULL(c.StickerCombinationUkey_MixPack 
-		,	(
-			SELECT Ukey 
-			FROM Production.dbo.ShippingMarkCombination
-			WHERE BrandID = pl.BrandID AND Category='PIC' AND IsDefault = 1 AND IsMixPack = (IIF( EXISTS (SELECT 1 FROM #MixCarton t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0))   
-			)
-		)
-		,[IsMixPack] = (IIF(EXISTS (SELECT 1 FROM #MixCarton t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0))   
-		,pl.BrandID
-		,pd.RefNo
-		,[PackingListID]=p.ID 
-		,pd.SCICtnNo
-		,pd.OrderShipmodeSeq
-		,pd.OrderID
-		,pd.Article
-		,pd.SizeCode
-		,pl.CustCDID
-		INTO #tmp_BasicSetting
-		FROM [FPS].dbo.PackingList p 
-		INNER JOIN Production.dbo.PackingList pl ON pl.ID = p.ID
-		INNER JOIN Production.dbo.PackingList_Detail pd ON p.ID=pd.ID
-		INNER JOIN Production.dbo.CustCD c ON pl.BrandID = c.BrandID AND pl.CustCDID = c.ID		
-		
-		----(3)找出FPS當中已完成設定的PackingList_Detail
-		SELECT DISTINCT   t.SCICtnNo
-				,t.OrderID
-				,t.OrderShipmodeSeq
-				,t.Article
-				,t.SizeCode
-				,t.RefNo
-		INTO #complete_Setting
-		FROM Production.dbo.ShippingMarkPicture pic
-		INNER JOIN Production.dbo.ShippingMarkPicture_Detail picD ON pic.Ukey = picD.ShippingMarkPictureUkey AND pic.Category='PIC'
-		INNER JOIN #tmp_BasicSetting t ON t.StickerCombinationUkey = pic.ShippingMarkCombinationUkey AND t.RefNo = pic.CTNRefno
-		INNER JOIN [FPS].dbo.PackingList_Detail fpd ON fpd.CtnRefno = t.RefNo  AND fpd.SCICtnNo = t.SCICtnNo
-													AND fpd.OrderID = t.OrderID AND fpd.OrderShipmodeSeq = t.OrderShipmodeSeq 
-													AND fpd.Article = t.Article AND fpd.SizeCode = t.SizeCode
-
-		----(4)判斷是否FPS的箱子是否有缺少Packing B03設定
-		SELECT DISTINCT 
-				pd.SCICtnNo
-				,pd.OrderID
-				,pd.OrderShipmodeSeq
-				,pd.Article
-				,pd.SizeCode
-		INTO #tmp_NoSetting
-		FROM [FPS].[dbo].PackingList_Detail pd
-		INNER JOIN [Production].[dbo].PackingList p ON p.id=pd.ID
-		INNER JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND pd.CtnRefno=s.CTNRefno
-		WHERE s.Category='PIC' AND NOT EXISTS(
-			SELECT 1 FROM #complete_Setting t WHERE t.SCICtnNo=pd.SCICtnNo 
-			AND  t.OrderID=pd.OrderID 
-			AND t.OrderShipmodeSeq=pd.OrderShipmodeSeq 
-			AND t.Article=pd.Article 
-			AND t.SizeCode=pd.SizeCode
-			AND t.RefNo=pd.CtnRefno
-		)
-
-		----PicSetting = 0 表示需貼標 但沒有上傳圖片至Packing P24
-		----2.	至 Packing P24 確認相對應的 ShippingMarkCombination + ShippingMarkType 是否已經上傳圖檔
-		SELECT DISTINCT pd.SCICtnNo
-						,pd.OrderID
-						,pd.OrderShipmodeSeq
-						,pd.Article
-						,pd.SizeCode
-		INTO #tmp_HasSetting_NoFile
-		FROM [Production].[dbo].ShippingMarkPic a
-		INNER JOIN [Production].[dbo].ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
-		INNER JOIN [Production].[dbo].PackingList_Detail pd ON a.PackingListID = pd.ID
-		WHERE EXISTS (
-			----1.	根據 Packing B03 的資料取得各紙箱需要上傳的 ShippingMarkCombination + ShippingMarkType 清單
-			SELECT 1--pict.CTNRefno,pict.ShippingMarkCombinationUkey,pictD.ShippingMarkTypeUkey
-			FROM [Production].[dbo].ShippingMarkPicture pict
-			INNER JOIN [Production].[dbo].ShippingMarkPicture_Detail pictD ON pict.Ukey = pictD.ShippingMarkPictureUkey
-			WHERE pict.CTNRefno = pd.RefNo AND pict.ShippingMarkCombinationUkey = b.ShippingMarkCombinationUkey AND pictD.ShippingMarkTypeUkey = b.ShippingMarkTypeUkey
-			AND pict.Category='PIC'
-		)
-		AND b.Image IS NULL
-
-		UPDATE pd
-		SET pd.PicSetting = 1
-		FROM [FPS].dbo.PackingList_Detail pd
-		INNER JOIN #tmp_HasSetting_File t ON    pd.SCICtnNo =t.SCICtnNo
-							AND pd.OrderID=t.OrderID
-							AND pd.OrderShipmodeSeq=t.OrderShipmodeSeq
-							AND pd.Article=t.Article
-							AND pd.SizeCode=t.SizeCode
-					
-		UPDATE pd
-		SET pd.PicSetting = 1
-		FROM [FPS].dbo.PackingList_Detail pd
-		WHERE NOT EXISTS ( SELECT * FROM #tmp_NoSetting t WHERE pd.SCICtnNo =t.SCICtnNo
-													AND pd.OrderID=t.OrderID
-													AND pd.OrderShipmodeSeq=t.OrderShipmodeSeq
-													AND pd.Article=t.Article
-													AND pd.SizeCode=t.SizeCode) 
-			AND (SELECT COUNT(BrandID) FROM #tmp_BasicSetting WHERE StickerCombinationUkey IS NULL) = 0 ---- 沒有設定預設值則判定基本檔尚未完成設定
-
-		UPDATE pd
-		SET pd.PicSetting = 0
-		FROM [FPS].dbo.PackingList_Detail pd
-		INNER JOIN #tmp_HasSetting_NoFile t ON    pd.SCICtnNo =t.SCICtnNo
-							AND pd.OrderID=t.OrderID
-							AND pd.OrderShipmodeSeq=t.OrderShipmodeSeq
-							AND pd.Article=t.Article
-							AND pd.SizeCode=t.SizeCode
-
-		DROP TABLE #tmp_HasSetting_File,#tmp_NoSetting ,#tmp_HasSetting_NoFile,#MixCarton,#tmp_BasicSetting,#complete_Setting
-		-------------------------------------------------------------PicSetting Update-------------------------------------------------------------
 
 --08. 轉出區間 [Production].[dbo]. [ClogReturn].AddDate=今天
 MERGE ClogReturn AS T
