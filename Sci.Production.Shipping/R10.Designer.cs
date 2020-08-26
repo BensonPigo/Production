@@ -57,21 +57,22 @@
             this.dateVoucherDate = new Sci.Win.UI.DateRange();
             this.lbRateType = new Sci.Win.UI.Label();
             this.comboRateType = new Sci.Win.UI.ComboBox();
+            this.radioAirPrepaidExpenseReport = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(435, 12);
+            this.print.Location = new System.Drawing.Point(436, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(435, 48);
+            this.toexcel.Location = new System.Drawing.Point(436, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(435, 84);
+            this.close.Location = new System.Drawing.Point(436, 84);
             // 
             // labelReportContent
             // 
@@ -280,12 +281,13 @@
             // 
             // radioPanel2
             // 
+            this.radioPanel2.Controls.Add(this.radioAirPrepaidExpenseReport);
             this.radioPanel2.Controls.Add(this.radioDetailListBySPNoByFeeType);
             this.radioPanel2.Controls.Add(this.radioDetailListbySPNo);
             this.radioPanel2.Controls.Add(this.radioExportFeeReport);
             this.radioPanel2.Location = new System.Drawing.Point(118, 348);
             this.radioPanel2.Name = "radioPanel2";
-            this.radioPanel2.Size = new System.Drawing.Size(232, 84);
+            this.radioPanel2.Size = new System.Drawing.Size(232, 115);
             this.radioPanel2.TabIndex = 11;
             // 
             // radioDetailListBySPNoByFeeType
@@ -404,9 +406,21 @@
             this.comboRateType.Size = new System.Drawing.Size(171, 24);
             this.comboRateType.TabIndex = 10;
             // 
+            // radioAirPrepaidExpenseReport
+            // 
+            this.radioAirPrepaidExpenseReport.AutoSize = true;
+            this.radioAirPrepaidExpenseReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioAirPrepaidExpenseReport.Location = new System.Drawing.Point(1, 84);
+            this.radioAirPrepaidExpenseReport.Name = "radioAirPrepaidExpenseReport";
+            this.radioAirPrepaidExpenseReport.Size = new System.Drawing.Size(201, 21);
+            this.radioAirPrepaidExpenseReport.TabIndex = 3;
+            this.radioAirPrepaidExpenseReport.TabStop = true;
+            this.radioAirPrepaidExpenseReport.Text = "Air Prepaid Expense Report";
+            this.radioAirPrepaidExpenseReport.UseVisualStyleBackColor = true;
+            // 
             // R10
             // 
-            this.ClientSize = new System.Drawing.Size(525, 477);
+            this.ClientSize = new System.Drawing.Size(525, 517);
             this.Controls.Add(this.comboRateType);
             this.Controls.Add(this.lbRateType);
             this.Controls.Add(this.dateVoucherDate);
@@ -505,5 +519,6 @@
         private Win.UI.DateRange dateVoucherDate;
         private Win.UI.Label lbRateType;
         private Win.UI.ComboBox comboRateType;
+        private Win.UI.RadioButton radioAirPrepaidExpenseReport;
     }
 }

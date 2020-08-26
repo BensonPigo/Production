@@ -58,6 +58,7 @@ namespace Sci.Production.Shipping
                 this.txtcustcd.Enabled = true;
                 this.radioDetailListbySPNo.Text = "Detail List by SP#";
                 this.radioDetailListBySPNoByFeeType.Text = "Detail List by SP# by Fee Type";
+                this.radioAirPrepaidExpenseReport.Enabled = true;
                 this.dateOnBoardDate.Enabled = true;
             }
         }
@@ -71,6 +72,7 @@ namespace Sci.Production.Shipping
                 this.txtcustcd.Enabled = false;
                 this.radioDetailListbySPNo.Text = "Detail List by WK#";
                 this.radioDetailListBySPNoByFeeType.Text = "Detail List by WK# by Fee Type";
+                this.radioAirPrepaidExpenseReport.Enabled = false;
                 this.dateOnBoardDate.Enabled = false;
             }
         }
@@ -93,7 +95,7 @@ namespace Sci.Production.Shipping
             this.forwarder = this.txtsubconForwarder.TextBox1.Text;
             this.rateType = this.comboRateType.SelectedValue.ToString();
             this.reportContent = this.radioGarment.Checked ? 1 : 2;
-            this.reportType = this.radioExportFeeReport.Checked ? 1 : this.radioDetailListbySPNo.Checked ? 2 : 3;
+            this.reportType = this.radioExportFeeReport.Checked ? 1 : this.radioDetailListbySPNo.Checked ? 2 : this.radioDetailListBySPNoByFeeType.Checked ? 3 : 4;
             return base.ValidateInput();
         }
 
@@ -899,7 +901,7 @@ order by id
 drop table #temp1,#temp2,#temp3,#temp4
 ", allAccno.ToString().Substring(0, 1) == "," ? allAccno.ToString().Substring(1, allAccno.Length - 1) : allAccno.ToString()));
                 }
-                else
+                else if (this.reportType == 3)
                 {
                     // Detail List by SP# by Fee Type
                     #region 組SQL
@@ -1148,6 +1150,130 @@ select * from tmpGB
 union all
 select * from tmpPL
 order by ID,OrderID,PackID");
+                    #endregion
+                }
+                else if (this.reportType == 4)
+                {
+                    // Air Prepaid Expense Report
+                    #region 組SQL
+                    sqlCmd.Append(@"
+select se.ShippingAPID
+	, o.FactoryID
+	, [Responsibility] = Responsibility.val
+	, s.LocalSuppID
+	, l.Abb
+	, r.Name
+	, [InvNo] = g.ID
+	, se.CurrencyID
+	, [OriAmount] = sum(se.AmtFty + se.AmtOther)
+	, s.APPExchageRate
+	, [Amount] = iif(isnull(s.APPExchageRate,0) = 0, 0, sum(se.AmtFty + se.AmtOther) / s.APPExchageRate)
+	, se.AirPPID
+	, o.ID
+	, oqs.Seq
+	, o.BrandID
+	, [Qty] = oqs.Qty
+from ShareExpense_APP se
+left join ShippingAP s on se.ShippingAPID = s.ID
+left join GMTBooking g on se.InvNo = g.id
+left join AirPP a on se.AirPPID = a.ID
+left join PackingList p on se.PackingListID = p.ID
+left join Orders o on a.OrderID = o.ID
+left join Order_QtyShip oqs on a.OrderID = oqs.Id and a.OrderShipmodeSeq = oqs.Seq
+left join LocalSupp l on s.LocalSuppID = l.ID
+left join Reason r on a.ReasonID = r.ID and r.ReasonTypeID = 'Air_Prepaid_Reson'
+outer apply (
+	select [val] = STUFF((
+              iif(a.ResponsibleFty = 1, '/Factory', '')
+			+ iif(a.ResponsibleSubcon = 1, '/Subcon', '')
+			+ iif(a.ResponsibleSCI = 1, '/SCI', '')
+			+ iif(a.ResponsibleSupp = 1, '/Supplier', '')
+			+ iif(a.ResponsibleBuyer = 1, '/Buyer', ''))
+       ,1,1,'')
+)Responsibility
+where se.Junk = 0");
+
+                    if (!MyUtility.Check.Empty(this.date1))
+                    {
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.date2))
+                    {
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.apApvDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.apApvDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.onBoardDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.onBoardDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.brand))
+                    {
+                        sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.custcd))
+                    {
+                        sqlCmd.Append(string.Format(" and g.CustCDID = '{0}'", this.custcd));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.dest))
+                    {
+                        sqlCmd.Append(string.Format(" and g.Dest = '{0}'", this.dest));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.shipmode))
+                    {
+                        sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", this.shipmode));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.forwarder))
+                    {
+                        sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", this.forwarder));
+                    }
+
+                    sqlCmd.Append(@"
+    group by se.ShippingAPID
+	    , o.FactoryID
+	    , Responsibility.val
+	    , s.LocalSuppID
+	    , l.Abb
+	    , r.Name
+	    , g.ID
+	    , se.CurrencyID
+	    , s.APPExchageRate
+	    , se.AirPPID
+	    , o.ID
+	    , oqs.Seq
+	    , o.BrandID
+		, oqs.Qty
+");
                     #endregion
                 }
             }
@@ -1436,7 +1562,7 @@ where s.Type = 'EXPORT'");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Env.Cfg.XltPathDir + (this.reportType == 1 ? "\\Shipping_R10_ShareExpenseExportFeeReport.xltx" : this.reportType == 2 ? "\\Shipping_R10_ShareExpenseExportBySP.xltx" : "\\Shipping_R10_ShareExpenseExportBySPByFee.xltx");
+            string strXltName = Env.Cfg.XltPathDir + (this.reportType == 1 ? "\\Shipping_R10_ShareExpenseExportFeeReport.xltx" : this.reportType == 2 ? "\\Shipping_R10_ShareExpenseExportBySP.xltx" : this.reportType == 3 ? "\\Shipping_R10_ShareExpenseExportBySPByFee.xltx" : "\\Shipping_R10_AirPrepaidExpense.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -1470,41 +1596,44 @@ where s.Type = 'EXPORT'");
             // mantis9831 增加On Board Date，因為只針對Garment keep OnBoardDate欄位之後插入
             else
             {
-                tb_onBoardDate = this.printData.Copy();
-                for (int f = 0; f < tb_onBoardDate.Columns.Count; f++)
+                if (this.reportType != 4)
                 {
-                    if (!tb_onBoardDate.Columns[f].ColumnName.Equals("OnBoardDate"))
+                    tb_onBoardDate = this.printData.Copy();
+                    for (int f = 0; f < tb_onBoardDate.Columns.Count; f++)
                     {
-                        tb_onBoardDate.Columns.RemoveAt(f);
-                        f--;
+                        if (!tb_onBoardDate.Columns[f].ColumnName.Equals("OnBoardDate"))
+                        {
+                            tb_onBoardDate.Columns.RemoveAt(f);
+                            f--;
+                        }
                     }
-                }
 
-                this.printData.Columns.Remove("OnBoardDate");
+                    this.printData.Columns.Remove("OnBoardDate");
 
-                tb_IncludeFoundry = this.printData.Copy();
-                for (int f = 0; f < tb_IncludeFoundry.Columns.Count; f++)
-                {
-                    if (!tb_IncludeFoundry.Columns[f].ColumnName.Equals("Foundry"))
+                    tb_IncludeFoundry = this.printData.Copy();
+                    for (int f = 0; f < tb_IncludeFoundry.Columns.Count; f++)
                     {
-                        tb_IncludeFoundry.Columns.RemoveAt(f);
-                        f--;
+                        if (!tb_IncludeFoundry.Columns[f].ColumnName.Equals("Foundry"))
+                        {
+                            tb_IncludeFoundry.Columns.RemoveAt(f);
+                            f--;
+                        }
                     }
-                }
 
-                this.printData.Columns.Remove("Foundry");
+                    this.printData.Columns.Remove("Foundry");
 
-                tb_SisFtyAP = this.printData.Copy();
-                for (int f = 0; f < tb_SisFtyAP.Columns.Count; f++)
-                {
-                    if (!tb_SisFtyAP.Columns[f].ColumnName.Equals("SisFtyAPID"))
+                    tb_SisFtyAP = this.printData.Copy();
+                    for (int f = 0; f < tb_SisFtyAP.Columns.Count; f++)
                     {
-                        tb_SisFtyAP.Columns.RemoveAt(f);
-                        f--;
+                        if (!tb_SisFtyAP.Columns[f].ColumnName.Equals("SisFtyAPID"))
+                        {
+                            tb_SisFtyAP.Columns.RemoveAt(f);
+                            f--;
+                        }
                     }
-                }
 
-                this.printData.Columns.Remove("SisFtyAPID");
+                    this.printData.Columns.Remove("SisFtyAPID");
+                }
             }
 
             if (this.reportType == 1 || this.reportType == 2)
@@ -1531,7 +1660,7 @@ where s.Type = 'EXPORT'");
                 int counts = 0;
                 string accnoL1 = "5912"; // Z欄 5912-2222 Airfreight
                 string accnoLnow = string.Empty;
-                if (this.reportType != 3)
+                if (this.reportType != 3 )
                 {
                     counts = this.accnoData.Rows.Count;
                     foreach (DataRow dr in this.accnoData.Rows)
@@ -1734,7 +1863,7 @@ where s.Type = 'EXPORT'");
                     intRowsStart++;
                 }
             }
-            else
+            else if (this.reportType == 3)
             {
                 // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
@@ -1829,9 +1958,13 @@ where s.Type = 'EXPORT'");
                     intRowsStart++;
                 }
             }
+            else if (this.reportType == 4)
+            {
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Shipping_R10_AirPrepaidExpense.xltx", 1, false, null, excel, wSheet: excel.Sheets[1]);
+            }
 
             // [On Board Date],[Shipper],[Include Foundry]因為只針對Garment所以在excel產生後插入
-            if (this.reportContent == 1)
+            if (this.reportContent == 1 && this.reportType != 4)
             {
                 Microsoft.Office.Interop.Excel.Range range = worksheet.get_Range("C1", Missing.Value);
                 range.EntireColumn.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
@@ -1883,7 +2016,7 @@ where s.Type = 'EXPORT'");
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName(this.reportType == 1 ? "Shipping_R10_ShareExpenseExportFeeReport" : this.reportType == 2 ? "Shipping_R10_ShareExpenseExportBySP" : "Shipping_R10_ShareExpenseExportBySPByFee");
+            string strExcelName = Class.MicrosoftFile.GetName(this.reportType == 1 ? "Shipping_R10_ShareExpenseExportFeeReport" : this.reportType == 2 ? "Shipping_R10_ShareExpenseExportBySP" : this.reportType == 3 ? "Shipping_R10_ShareExpenseExportBySPByFee" : "Shipping_R10_AirPrepaidExpense");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
