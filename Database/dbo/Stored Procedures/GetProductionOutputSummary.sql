@@ -293,8 +293,8 @@ select
     [OutputDate] = FORMAT(sdd.OutputDate,'yyyyMM'),
     [OrderCPU] = o.Qty * gcRate.CpuRate * o.CPU,
     [OrderShortageCPU] = iif(o.GMTComplete = 'S' ,(o.Qty - GetPulloutData.Qty)  * gcRate.CpuRate * o.CPU ,0),
-	[SewingOutput] = sdd.QAQty,
-    [SewingOutputCPU] = sdd.QAQty * gcRate.CpuRate * o.CPU / 100,
+	[SewingOutput] = isnull(sdd.QAQty, 0),
+    [SewingOutputCPU] = isnull(sdd.QAQty, 0) * gcRate.CpuRate * o.CPU,
     o.Junk,
     o.Qty,
     o.Category,
@@ -308,7 +308,6 @@ select
     o.ProgramID,
     tbs.TransFtyZone,
     [IsCancelNeedProduction] = iif(o.Junk = 1 and o.NeedProduction = 1, 'Y' , 'N')
---into #tmpBase
 from @tmpBaseStep1 tbs
 inner join Orders o with(nolock) on o.ID = tbs.ID
 inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
