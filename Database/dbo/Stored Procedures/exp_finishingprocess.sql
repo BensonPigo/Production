@@ -613,6 +613,7 @@ USING(
 	FROM Production.dbo.PackingList p
 	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
 	left join  Production.dbo.ShipPlan sp on sp.id=p.ShipPlanID
+	LEFT JOIN Production.dbo.ShippingMarkPic pic ON pic.PackingListID = p.ID
 	OUTER APPLY(
 		SELECT fp2.id
 		FROM FPS.dbo.PackingList fp1
@@ -634,7 +635,10 @@ USING(
 		) CheckMix
 	)MixCount
 	where (convert(date,p.AddDate) = @cDate or convert(date,p.EditDate) = @cDate
-	or convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate)
+		or convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate
+		or convert(date,pic.AddDate) = @cDate or convert(date,pic.EditDate) = @cDate
+		or convert(date,pic.EditDate) = @cDate or convert(date,pic.EditDate) = @cDate
+	)
 ) as S
 on T.SCICtnNo = S.SCICtnNo and T.Article = s.Article and T.SizeCode = s.Sizecode
 AND T.OrderID = S.OrderID AND T.OrderShipmodeSeq = S.OrderShipmodeSeq
