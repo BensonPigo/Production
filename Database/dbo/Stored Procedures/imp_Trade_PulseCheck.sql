@@ -686,7 +686,7 @@ select a.CountryID
 	,[Avg Working Hours] =cast(a.[Avg Working Hours] as decimal(18,2))
 	,[PPH] = cast(a.[PPH] as decimal(18,2))
 	,[Efficiency] = cast(a.[Efficiency] as decimal(18,2))
-	,[Direct Manpower] = cast(iif(b.TotalManpower <= att.Manpower, 0, b.TotalManpower / e.[Working Days]) as decimal(18,0))
+	,[Direct Manpower] = cast(iif(b.TotalManpower <= (att.Manpower * 0.75), 0, b.TotalManpower / e.[Working Days]) as decimal(18,0))
 	,[Performed Loading] =iif(isnull(p1.Value,0) = 0, 0 ,cast((c.[Total CPU Included Subcon-In] - isnull(d.[Subcon-Out Total CPU(sister)],0)) /p1.Value as decimal(18,2)))
 	,[Performed Capacity] =iif(isnull(p2.Value,0) = 0, 0 ,cast((c.[Total CPU Included Subcon-In] - isnull(d.[Subcon-Out Total CPU(sister)],0)) /p2.Value as decimal(18,2)))
 	,[CMP Absent] = cm.ManPower
