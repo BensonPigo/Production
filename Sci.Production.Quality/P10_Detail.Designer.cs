@@ -132,9 +132,7 @@
             this.btnEncode = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
-            this.btnToFGPT = new Sci.Win.UI.Button();
-            this.btnToFGWT = new Sci.Win.UI.Button();
-            this.btnPDF = new Sci.Win.UI.Button();
+            this.btnToReport = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -1336,10 +1334,10 @@
             // tabFGPT
             // 
             this.tabFGPT.Controls.Add(this.panel10);
-            this.tabFGPT.Location = new System.Drawing.Point(4, 25);
+            this.tabFGPT.Location = new System.Drawing.Point(4, 22);
             this.tabFGPT.Name = "tabFGPT";
             this.tabFGPT.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFGPT.Size = new System.Drawing.Size(1134, 420);
+            this.tabFGPT.Size = new System.Drawing.Size(1134, 423);
             this.tabFGPT.TabIndex = 3;
             this.tabFGPT.Text = "FGPT";
             // 
@@ -1349,7 +1347,7 @@
             this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel10.Location = new System.Drawing.Point(3, 3);
             this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(1128, 414);
+            this.panel10.Size = new System.Drawing.Size(1128, 417);
             this.panel10.TabIndex = 1;
             // 
             // gridFGPT
@@ -1381,7 +1379,7 @@
             this.gridFGPT.RowTemplate.Height = 24;
             this.gridFGPT.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridFGPT.ShowCellToolTips = false;
-            this.gridFGPT.Size = new System.Drawing.Size(1128, 414);
+            this.gridFGPT.Size = new System.Drawing.Size(1128, 417);
             this.gridFGPT.TabIndex = 1;
             this.gridFGPT.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridFGPT_EditingKeyProcessing);
             // 
@@ -1435,9 +1433,7 @@
             // 
             // radioPanel2
             // 
-            this.radioPanel2.Controls.Add(this.btnToFGPT);
-            this.radioPanel2.Controls.Add(this.btnToFGWT);
-            this.radioPanel2.Controls.Add(this.btnPDF);
+            this.radioPanel2.Controls.Add(this.btnToReport);
             this.radioPanel2.Controls.Add(this.btnEdit);
             this.radioPanel2.Controls.Add(this.btnClose);
             this.radioPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -1446,38 +1442,16 @@
             this.radioPanel2.Size = new System.Drawing.Size(1142, 35);
             this.radioPanel2.TabIndex = 9;
             // 
-            // btnToFGPT
+            // btnToReport
             // 
-            this.btnToFGPT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToFGPT.Location = new System.Drawing.Point(677, 0);
-            this.btnToFGPT.Name = "btnToFGPT";
-            this.btnToFGPT.Size = new System.Drawing.Size(97, 30);
-            this.btnToFGPT.TabIndex = 10;
-            this.btnToFGPT.Text = "To FGPT";
-            this.btnToFGPT.UseVisualStyleBackColor = true;
-            this.btnToFGPT.Click += new System.EventHandler(this.BtnToFGPT_Click);
-            // 
-            // btnToFGWT
-            // 
-            this.btnToFGWT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToFGWT.Location = new System.Drawing.Point(780, 0);
-            this.btnToFGWT.Name = "btnToFGWT";
-            this.btnToFGWT.Size = new System.Drawing.Size(97, 30);
-            this.btnToFGWT.TabIndex = 9;
-            this.btnToFGWT.Text = "To FGWT";
-            this.btnToFGWT.UseVisualStyleBackColor = true;
-            this.btnToFGWT.Click += new System.EventHandler(this.BtnToFGWT_Click);
-            // 
-            // btnPDF
-            // 
-            this.btnPDF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPDF.Location = new System.Drawing.Point(883, 0);
-            this.btnPDF.Name = "btnPDF";
-            this.btnPDF.Size = new System.Drawing.Size(80, 30);
-            this.btnPDF.TabIndex = 8;
-            this.btnPDF.Text = "To PDF";
-            this.btnPDF.UseVisualStyleBackColor = true;
-            this.btnPDF.Click += new System.EventHandler(this.btnPDF_Click);
+            this.btnToReport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToReport.Location = new System.Drawing.Point(866, 0);
+            this.btnToReport.Name = "btnToReport";
+            this.btnToReport.Size = new System.Drawing.Size(97, 30);
+            this.btnToReport.TabIndex = 11;
+            this.btnToReport.Text = "To Report";
+            this.btnToReport.UseVisualStyleBackColor = true;
+            this.btnToReport.Click += new System.EventHandler(this.BtnToReport_Click);
             // 
             // btnEdit
             // 
@@ -1650,7 +1624,6 @@
         private Win.UI.Button btnAmend;
         private Win.UI.Button btnEncode;
         private Win.UI.ComboBox comboResult;
-        private Win.UI.Button btnPDF;
         private Win.UI.Button btnEdit;
         private Win.UI.Button btnClose;
         private Win.UI.Panel panel9;
@@ -1659,10 +1632,9 @@
         private System.Windows.Forms.TabPage tabFGWT;
         private Win.UI.Panel panel11;
         private Win.UI.Grid gridFGWT;
-        private Win.UI.Button btnToFGWT;
         private System.Windows.Forms.TabPage tabFGPT;
         private Win.UI.Panel panel10;
         private Win.UI.Grid gridFGPT;
-        private Win.UI.Button btnToFGPT;
+        private Win.UI.Button btnToReport;
     }
 }
