@@ -6,6 +6,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using System.Linq;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -49,6 +50,7 @@ namespace Sci.Production.Shipping
                 .Text("CustCDID", header: "CustCD", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Date("SDPDate", header: "SDP Date", iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
+                .Text("IDD", header: "Intended Delivery", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Q'ty", iseditingreadonly: true)
                 .Numeric("CTNQty", header: "ttl CTNs", iseditingreadonly: true)
                 .Numeric("NW", header: "N.W.", decimal_places: 3, iseditingreadonly: true)
@@ -59,6 +61,7 @@ namespace Sci.Production.Shipping
         private void BtnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
+            List<SqlParameter> listPar = new List<SqlParameter>();
             #region 組SQL語法
             sqlCmd.Append(string.Format(
                 @"
@@ -184,6 +187,15 @@ with IniBulkPack as (
                 sqlCmd.Append($"AND OrderID <='{this.txtSPEnd.Text}'");
             }
 
+            if (!MyUtility.Check.Empty(this.dateIDD.Value))
+            {
+                sqlCmd.Append($@"AND  exists(select 1 
+                                            from PackingList_Detail pld WITH (NOLOCK) 
+                                            inner join Order_QtyShip oqs with (nolock) on oqs.ID = pld.OrderID and oqs.Seq = pld.OrderShipmodeSeq
+                                            where pld.ID = AllPackData.id and oqs.IDD = @IDD ) ");
+                listPar.Add(new SqlParameter("@IDD", this.dateIDD.Value));
+            }
+
             sqlCmd.Append(@"
 ), PackData as (
     select  Selected
@@ -220,6 +232,12 @@ select  pd.Selected
                                 where pl.ID = pd.ID
                             ) a for xml path('')
                            ), 1, 1, '')
+        , IDD = STUFF ((select distinct CONCAT (',', Format(oqs.IDD, 'yyyy/MM/dd')) 
+                            from PackingList_Detail pld WITH (NOLOCK) 
+                            inner join Order_QtyShip oqs with (nolock) on oqs.ID = pld.OrderID and oqs.Seq = pld.OrderShipmodeSeq
+                            where pld.ID = pd.id and oqs.IDD is not null
+                            for xml path('')
+                          ), 1, 1, '') 
         , pd.CustCDID
         , pd.SDPDate
         , pd.BuyerDelivery
@@ -247,7 +265,7 @@ select  pd.Selected
 from PackData pd");
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listPar, out this.gridData);
             if (result)
             {
                 if (this.gridData.Rows.Count == 0)

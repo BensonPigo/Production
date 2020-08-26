@@ -136,11 +136,14 @@
             this.label2 = new Sci.Win.UI.Label();
             this.numCtnCFA = new Sci.Win.UI.NumericBox();
             this.numCtnTransit = new Sci.Win.UI.NumericBox();
+            this.btnIntendedDeliveryDate = new Sci.Win.UI.Button();
+            this.btnBatchUpdateIDD = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
+            this.browse.SuspendLayout();
             this.tabs.SuspendLayout();
             this.panel7.SuspendLayout();
             this.SuspendLayout();
@@ -151,6 +154,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnIntendedDeliveryDate);
             this.detailcont.Controls.Add(this.panel7);
             this.detailcont.Controls.Add(this.btnAccessoryInspectionList);
             this.detailcont.Controls.Add(this.txtdropdownlistCategory);
@@ -245,7 +249,9 @@
             // 
             // browse
             // 
+            this.browse.Controls.Add(this.btnBatchUpdateIDD);
             this.browse.Size = new System.Drawing.Size(976, 600);
+            this.browse.Controls.SetChildIndex(this.btnBatchUpdateIDD, 0);
             // 
             // tabs
             // 
@@ -1467,6 +1473,26 @@
             0,
             0});
             // 
+            // btnIntendedDeliveryDate
+            // 
+            this.btnIntendedDeliveryDate.Location = new System.Drawing.Point(474, 483);
+            this.btnIntendedDeliveryDate.Name = "btnIntendedDeliveryDate";
+            this.btnIntendedDeliveryDate.Size = new System.Drawing.Size(194, 30);
+            this.btnIntendedDeliveryDate.TabIndex = 100;
+            this.btnIntendedDeliveryDate.Text = "Intended delivery";
+            this.btnIntendedDeliveryDate.UseVisualStyleBackColor = true;
+            this.btnIntendedDeliveryDate.Click += new System.EventHandler(this.BtnIntendedDeliveryDate_Click);
+            // 
+            // btnBatchUpdateIDD
+            // 
+            this.btnBatchUpdateIDD.Location = new System.Drawing.Point(627, 5);
+            this.btnBatchUpdateIDD.Name = "btnBatchUpdateIDD";
+            this.btnBatchUpdateIDD.Size = new System.Drawing.Size(143, 30);
+            this.btnBatchUpdateIDD.TabIndex = 3;
+            this.btnBatchUpdateIDD.Text = "Batch Update IDD";
+            this.btnBatchUpdateIDD.UseVisualStyleBackColor = true;
+            this.btnBatchUpdateIDD.Click += new System.EventHandler(this.BtnBatchUpdateIDD_Click);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(984, 662);
@@ -1488,6 +1514,7 @@
             this.detailcont.PerformLayout();
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
+            this.browse.ResumeLayout(false);
             this.tabs.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
@@ -1606,5 +1633,7 @@
         private Win.UI.NumericBox numCtnTransit;
         private Win.UI.NumericBox numPackErrCTN;
         private Win.UI.Label label4;
+        private Win.UI.Button btnIntendedDeliveryDate;
+        private Win.UI.Button btnBatchUpdateIDD;
     }
 }

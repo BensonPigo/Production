@@ -163,7 +163,7 @@ namespace Sci.Production.Shipping
         {
             sqlCmd.Append(string.Format(
 @"select 	oq.BuyerDelivery
-		,oq.EstPulloutDate
+		,oq.IDD
 		,o.BrandID
 		,b.BuyerID
 		,o.ID
@@ -388,7 +388,7 @@ and o.PulloutComplete=0 and o.Qty > 0"));
 union
 
 select 	oq.BuyerDelivery
-		,oq.EstPulloutDate
+		,oq.IDD
 		,o.BrandID
 		,b.BuyerID
 		,o.ID
@@ -480,7 +480,7 @@ and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
         {
             sqlCmd.Append(string.Format(
 @"select oq.BuyerDelivery
-		,oq.EstPulloutDate
+		,oq.IDD
 		,o.BrandID
 		,b.BuyerID
 		,o.ID
@@ -595,7 +595,7 @@ and o.PulloutComplete=0 and o.Qty > 0"));
 union
 
 select oq.BuyerDelivery
-        , oq.EstPulloutDate
+        , oq.IDD
         , o.BrandID
         , b.BuyerID
         , o.ID

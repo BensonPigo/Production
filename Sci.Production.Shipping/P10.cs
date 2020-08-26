@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Transactions;
 using System.Linq;
 using Sci.Production.PublicPrg;
+using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Shipping
 {
@@ -110,7 +111,12 @@ select p.ID
 				order by sod.OrderId
                 for xml path('')
                 ), 1, 1, '') 
-
+, IDD = STUFF ((select distinct CONCAT (',', Format(oqs.IDD, 'yyyy/MM/dd')) 
+                            from PackingList_Detail pd WITH (NOLOCK) 
+                            inner join Order_QtyShip oqs with (nolock) on oqs.ID = pd.OrderID and oqs.Seq = pd.OrderShipmodeSeq
+                            where pd.ID = p.id and oqs.IDD is not null
+                            for xml path('')
+                          ), 1, 1, '') 
 from PackingList p WITH (NOLOCK) 
 left join Pullout WITH (NOLOCK)  on Pullout.ID = p.PulloutID and Pullout.Status <> 'NEW'
 where {0} 
@@ -287,6 +293,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
+                .Text("IDD", header: "Intended Delivery", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Status", header: "Packing Status", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Text("OrderTtlQty", header: "Order Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("ProdOutputTtlQty", header: "Prod. Output Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -404,6 +411,8 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
             {
                 return false;
             }
+
+            this.CheckIDD();
 
             // GetID
             if (this.IsDetailInserting)
@@ -779,6 +788,9 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
         {
             base.ClickConfirm();
 
+            this.CheckIDD();
+            this.CheckPulloutputIDD();
+
             // Pullout Date有空值就不可以Confirm
             string sqlCmd = string.Format("select ID,InvNo from PackingList WITH (NOLOCK) where ShipPlanID = '{0}' and PulloutDate is null", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DataTable dt;
@@ -1140,6 +1152,64 @@ GB#:{dr["ID"]},   Shipping Mode:{dr["ShipModeID"]}
         {
             this.OnDetailEntered();
             this.Refresh();
+        }
+
+        private void CheckIDD()
+        {
+            if (this.plData.Rows.Count == 0)
+            {
+                return;
+            }
+
+            #region 檢查傳入的SP 維護的IDD是否都為同一天(沒維護度不判斷)
+            List<Order_QtyShipKey> listOrder_QtyShipKey = new List<Order_QtyShipKey>();
+            foreach (DataRow dr in this.plData.Rows)
+            {
+                string[] orderIDs = dr["OrderID"].ToString().Split(',');
+                string[] orderShipmodeSeqs = dr["OrderShipmodeSeq"].ToString().Split(',');
+
+                for (int i = 0; i < orderIDs.Length; i++)
+                {
+                    listOrder_QtyShipKey.Add(new Order_QtyShipKey
+                    {
+                        SP = orderIDs[i],
+                        Seq = orderShipmodeSeqs[i],
+                    });
+                }
+            }
+
+            Prgs.CheckIDDSame(listOrder_QtyShipKey);
+            #endregion
+        }
+
+        private void CheckPulloutputIDD()
+        {
+            if (this.plData.Rows.Count == 0)
+            {
+                return;
+            }
+
+            #region 檢查傳入的SP 維護的IDD與PulloutputDate是否都為同一天(沒維護不判斷)
+            List<Order_QtyShipKey> listOrder_QtyShipKey = new List<Order_QtyShipKey>();
+            foreach (DataRow dr in this.plData.Rows)
+            {
+                string[] orderIDs = dr["OrderID"].ToString().Split(',');
+                string[] orderShipmodeSeqs = dr["OrderShipmodeSeq"].ToString().Split(',');
+
+                for (int i = 0; i < orderIDs.Length; i++)
+                {
+                    listOrder_QtyShipKey.Add(new Order_QtyShipKey
+                    {
+                        SP = orderIDs[i],
+                        Seq = orderShipmodeSeqs[i],
+                        PulloutDate = MyUtility.Convert.GetDate(dr["PulloutDate"]),
+                    });
+                }
+            }
+
+            Prgs.CheckIDDSamePulloutDate(listOrder_QtyShipKey);
+            #endregion
+
         }
     }
 }

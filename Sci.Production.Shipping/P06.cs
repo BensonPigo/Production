@@ -12,6 +12,7 @@ using System.Linq;
 using Sci.Production.PublicPrg;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
+using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Shipping
 {
@@ -328,6 +329,8 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+            this.CheckIDD();
+            this.CheckPulloutputIDD();
             return base.ClickSaveBefore();
         }
 
@@ -394,7 +397,6 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                     }
                 }
             }
-
             return base.ClickSave();
         }
 
@@ -1648,6 +1650,47 @@ where p.id='{dr["PackingListID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Cate
             }
 
             return true;
+        }
+
+        private void CheckIDD()
+        {
+            if (this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+            #region 檢查傳入的SP 維護的IDD是否都為同一天(沒維護度不判斷)
+            List<Order_QtyShipKey> listOrder_QtyShipKey = this.DetailDatas.Select(s => new Order_QtyShipKey
+            {
+                SP = s["OrderID"].ToString(),
+                Seq = s["OrderShipmodeSeq"].ToString(),
+            }).ToList();
+
+            Prgs.CheckIDDSame(listOrder_QtyShipKey);
+            #endregion
+        }
+
+        private void CheckPulloutputIDD()
+        {
+            if (this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            #region 檢查傳入的SP 維護的IDD與PulloutputDate是否都為同一天(沒維護不判斷)
+            List<Order_QtyShipKey> listOrder_QtyShipKey = new List<Order_QtyShipKey>();
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                listOrder_QtyShipKey.Add(new Order_QtyShipKey
+                {
+                    SP = dr["OrderID"].ToString(),
+                    Seq = dr["OrderShipmodeSeq"].ToString(),
+                    PulloutDate = MyUtility.Convert.GetDate(dr["PulloutDate"]),
+                });
+            }
+
+            Prgs.CheckIDDSamePulloutDate(listOrder_QtyShipKey);
+            #endregion
+
         }
     }
 }

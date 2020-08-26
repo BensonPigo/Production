@@ -608,6 +608,7 @@ select  a.*
         ,o.CustCDID
         ,o.Dest
         ,o.OrderTypeID
+        ,oqs.IDD
 from PackingList_Detail a WITH (NOLOCK) 
 left join LocalItem b WITH (NOLOCK) on b.RefNo = a.RefNo
 left join AccuPKQty pd on a.OrderID = pd.OrderID 
@@ -626,6 +627,8 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = a.OrderID
                                                     and oqd.Seq = a.OrderShipmodeSeq 
                                                     and oqd.Article = a.Article 
                                                     and oqd.SizeCode = a.SizeCode
+left join Order_QtyShip oqs with (nolock) on        oqs.ID  = a.OrderID and
+                                                    oqs.Seq = a.OrderShipmodeSeq 
 left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
 where a.id = '{0}'
 order by a.Seq ASC,a.CTNQty DESC", packingListID);

@@ -32,6 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.labCancelOrder = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtSPEnd = new Sci.Win.UI.TextBox();
             this.txtSpStart = new Sci.Win.UI.TextBox();
@@ -49,7 +50,8 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
-            this.labCancelOrder = new System.Windows.Forms.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.dateIDD = new Sci.Win.UI.DateBox();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -75,6 +77,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.dateIDD);
+            this.panel3.Controls.Add(this.label3);
             this.panel3.Controls.Add(this.labCancelOrder);
             this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.txtSPEnd);
@@ -90,8 +94,18 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(929, 97);
+            this.panel3.Size = new System.Drawing.Size(929, 104);
             this.panel3.TabIndex = 3;
+            // 
+            // labCancelOrder
+            // 
+            this.labCancelOrder.AutoSize = true;
+            this.labCancelOrder.ForeColor = System.Drawing.Color.Red;
+            this.labCancelOrder.Location = new System.Drawing.Point(259, 80);
+            this.labCancelOrder.Name = "labCancelOrder";
+            this.labCancelOrder.Size = new System.Drawing.Size(246, 17);
+            this.labCancelOrder.TabIndex = 11;
+            this.labCancelOrder.Text = "Cancel order cannot import in the GB.";
             // 
             // label2
             // 
@@ -193,6 +207,7 @@
             // txtmultifactoryFactory
             // 
             this.txtmultifactoryFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtmultifactoryFactory.CheckProduceFty = false;
             this.txtmultifactoryFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtmultifactoryFactory.IsSupportEditMode = false;
             this.txtmultifactoryFactory.Location = new System.Drawing.Point(75, 13);
@@ -252,9 +267,9 @@
             // 
             this.panel5.Controls.Add(this.gridImport);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(5, 97);
+            this.panel5.Location = new System.Drawing.Point(5, 104);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(929, 319);
+            this.panel5.Size = new System.Drawing.Size(929, 312);
             this.panel5.TabIndex = 5;
             // 
             // gridImport
@@ -279,19 +294,24 @@
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridImport.ShowCellToolTips = false;
-            this.gridImport.Size = new System.Drawing.Size(929, 319);
+            this.gridImport.Size = new System.Drawing.Size(929, 312);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
-            // labCancelOrder
+            // label3
             // 
-            this.labCancelOrder.AutoSize = true;
-            this.labCancelOrder.ForeColor = System.Drawing.Color.Red;
-            this.labCancelOrder.Location = new System.Drawing.Point(7, 72);
-            this.labCancelOrder.Name = "labCancelOrder";
-            this.labCancelOrder.Size = new System.Drawing.Size(246, 17);
-            this.labCancelOrder.TabIndex = 11;
-            this.labCancelOrder.Text = "Cancel order cannot import in the GB.";
+            this.label3.Location = new System.Drawing.Point(4, 74);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(116, 23);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Intended Delivery";
+            // 
+            // dateIDD
+            // 
+            this.dateIDD.Location = new System.Drawing.Point(123, 75);
+            this.dateIDD.Name = "dateIDD";
+            this.dateIDD.Size = new System.Drawing.Size(130, 23);
+            this.dateIDD.TabIndex = 13;
             // 
             // P05_ImportFromPackingList
             // 
@@ -343,5 +363,7 @@
         private Win.UI.TextBox txtSpStart;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label labCancelOrder;
+        private Win.UI.DateBox dateIDD;
+        private Win.UI.Label label3;
     }
 }

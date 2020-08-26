@@ -4,6 +4,8 @@ using System.Text;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -64,7 +66,8 @@ namespace Sci.Production.Shipping
             this.Helper.Controls.Grid.Generator(this.grid2)
                 .Text("ID", header: "Packing No.", width: Widths.AnsiChars(13))
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13))
-                .Date("BuyerDelivery", header: "Delivery");
+                .Date("BuyerDelivery", header: "Delivery")
+                .Text("IDD", header: "Intended Delivery", width: Widths.AnsiChars(15), iseditingreadonly: true);
         }
 
         // Query
@@ -72,6 +75,8 @@ namespace Sci.Production.Shipping
         {
             #region 組SQL
             StringBuilder sqlCmd = new StringBuilder();
+            List<SqlParameter> listPar = new List<SqlParameter>();
+
             sqlCmd.Append(@"
 SELECT DISTINCT [Selected] = 1, 
                 g.id, 
@@ -162,9 +167,15 @@ WHERE  g.shipplanid = ''
             {
                 sqlCmd.Append(string.Format(" and g.CYCFS = '{0}'", this.comboContainerType.Text));
             }
+
+            if (!MyUtility.Check.Empty(this.dateIDD.Value))
+            {
+                sqlCmd.Append($@"AND  oq.IDD = @IDD ");
+                listPar.Add(new SqlParameter("@IDD", this.dateIDD.Value));
+            }
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gbData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listPar, out this.gbData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query GB error:" + result.ToString());
@@ -182,7 +193,7 @@ WHERE  g.shipplanid = ''
             {
                 sqlCmd.Append(string.Format(
                     @"
-select distinct pd.ID, pd.OrderID,oq.BuyerDelivery,p.INVNo
+select distinct pd.ID, pd.OrderID,oq.BuyerDelivery,p.INVNo, oq.IDD
 from PackingList p WITH (NOLOCK) 
 INNER JOIN PackingList_Detail pd WITH (NOLOCK) ON p.id = pd.ID
 INNER JOIN Order_QtyShip oq WITH (NOLOCK) ON  pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq

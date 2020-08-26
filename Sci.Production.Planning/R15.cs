@@ -661,6 +661,7 @@ select t.MDivisionID
        , t.SciDelivery
        , t.SewInLine
        , t.SewOffLine
+       , IDD.val
        , t.BrandID
        , t.OrderID
 	   , [Cancelled] = IIF(t.Junk=1 ,'Y' ,'')  ------------------
@@ -807,6 +808,8 @@ outer apply (
           and t.KPIChangeReason != '' 
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
+outer apply (SELECT val =  Stuff((select concat( ',',Format(oqs.IDD, 'yyyy/MM/dd'))   from Order_QtyShip oqs with (nolock) where oqs.ID = t.OrderID and oqs.IDD is not null FOR XML PATH('')),1,1,'') 
+  ) IDD
 left join #Sorting on #Sorting.OrderID = t.OrderID
 left join #SewingLine on #SewingLine.OrderID = t.OrderID
 left join #Loading on #Loading.OrderID = t.OrderID
@@ -1254,6 +1257,7 @@ select t.MDivisionID
        , t.SciDelivery
        , SewingSchedule2.Inline
        , SewingSchedule2.Offline
+       , IDD.val
        , t.BrandID
        , t.OrderID
 	   , [Cancelled] = IIF(t.Junk=1 ,'Y' ,'')  ------------------
@@ -1397,6 +1401,8 @@ outer apply (
           and t.KPIChangeReason != '' 
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
+outer apply (SELECT val =  Stuff((select concat( ',',Format(oqs.IDD, 'yyyy/MM/dd'))   from Order_QtyShip oqs with (nolock) where oqs.ID = t.OrderID and oqs.IDD is not null FOR XML PATH('')),1,1,'') 
+  ) IDD
 left join #QtyBySetPerSubprocessSorting Sorting on Sorting.OrderID = t.OrderID and Sorting.Article = t.Article and Sorting.Sizecode = t.SizeCode
 left join #QtyBySetPerSubprocessSewingLine SewingLine on SewingLine.OrderID = t.OrderID and SewingLine.Article = t.Article and SewingLine.Sizecode = t.SizeCode
 left join #QtyBySetPerSubprocessLoading Loading on Loading.OrderID = t.OrderID and Loading.Article = t.Article and Loading.Sizecode = t.SizeCode
