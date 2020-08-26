@@ -1332,6 +1332,7 @@ where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
             this.gridAppearance.ReadOnly = !this.EditMode;
             this.gridFGWT.ReadOnly = !this.EditMode;
             this.gridFGPT.ReadOnly = !this.EditMode;
+            this.btnToReport.Enabled = !this.EditMode;
             this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
         }
 

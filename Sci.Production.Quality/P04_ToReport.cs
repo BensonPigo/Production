@@ -47,7 +47,6 @@ namespace Sci.Production.Quality
             this.ToPDF(reportType);
         }
 
-
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
             string reportType = this.GetReportType();
@@ -121,7 +120,7 @@ namespace Sci.Production.Quality
             objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
 
-            if (!MyUtility.Check.Empty(this.data.dateSubmit.Value))
+            if (this.data.dateSubmit.HasValue)
             {
                 worksheet.Cells[4, 4] = MyUtility.Convert.GetDate(this.data.dateSubmit.Value).Value.Year + "/" + MyUtility.Convert.GetDate(this.data.dateSubmit.Value).Value.Month + "/" + MyUtility.Convert.GetDate(this.data.dateSubmit.Value).Value.Day;
             }
@@ -211,7 +210,7 @@ namespace Sci.Production.Quality
 
                 if (to == "ToExcel")
                 {
-                    worksheet.Cells[71, 7] = string.Empty;
+                    worksheet.Cells[70, 8] = string.Empty;
                 }
                 #endregion
 
@@ -1179,7 +1178,7 @@ namespace Sci.Production.Quality
 
                 if (to == "ToExcel")
                 {
-                    worksheet.Cells[71, 7] = string.Empty;
+                    worksheet.Cells[70, 8] = string.Empty;
                 }
                 #endregion
 

@@ -1404,6 +1404,7 @@ order by LocationText DESC
             this.gridAppearance.ReadOnly = !this.EditMode;
             this.gridFGWT.ReadOnly = !this.EditMode;
             this.gridFGPT.ReadOnly = !this.EditMode;
+            this.btnToReport.Enabled = !this.EditMode;
             this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
         }
 
