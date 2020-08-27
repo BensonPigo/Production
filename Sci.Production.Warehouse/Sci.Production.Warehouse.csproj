@@ -527,6 +527,12 @@
     <Compile Include="P62_CutRef.Designer.cs">
       <DependentUpon>P62_CutRef.cs</DependentUpon>
     </Compile>
+    <Compile Include="P62_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P62_Print.Designer.cs">
+      <DependentUpon>P62_Print.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1519,6 +1525,9 @@
     <EmbeddedResource Include="P62_CutRef.resx">
       <DependentUpon>P62_CutRef.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P62_Print.resx">
+      <DependentUpon>P62_Print.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Report\R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
@@ -1995,6 +2004,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P45_Print.rdlc" />
+    <EmbeddedResource Include="P62_Print.rdlc" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
     <None Include="Properties\DataSources\P10_RelaxationSticker_Data.datasource" />

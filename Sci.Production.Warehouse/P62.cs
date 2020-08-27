@@ -13,15 +13,18 @@ using System.Linq;
 using System.Transactions;
 using Sci.Production.PublicPrg;
 using System.Data.SqlClient;
-using Sci.Win;
-using System.Reflection;
 using Sci.Production.Automation;
 using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P62 : Win.Tems.Input8
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P62"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P62(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -31,6 +34,11 @@ namespace Sci.Production.Warehouse
             // DoSubForm = new P10_Detail();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P62"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
+        /// <param name="transID">Trans ID</param>
         public P62(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -43,6 +51,7 @@ namespace Sci.Production.Warehouse
             this.IsSupportUnconfirm = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             Color backDefaultColor = this.detailgrid.DefaultCellStyle.BackColor;
@@ -146,6 +155,7 @@ namespace Sci.Production.Warehouse
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -350,6 +360,7 @@ outer apply(
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -360,6 +371,7 @@ outer apply(
             this.CurrentMaintain["issuedate"] = DateTime.Now;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -371,6 +383,7 @@ outer apply(
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -382,6 +395,7 @@ outer apply(
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 表頭必輸檢查
@@ -488,14 +502,15 @@ outer apply(
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
         {
-            sum_subDetail(e.Detail, e.SubDetails);
+            Sum_subDetail(e.Detail, e.SubDetails);
 
             return base.ConvertSubDetailDatasFromDoSubForm(e);
         }
 
-        static void sum_subDetail(DataRow target, DataTable source)
+        private static void Sum_subDetail(DataRow target, DataTable source)
         {
             target["aiqqty"] = (decimal)target["aiqqty"] - (decimal)target["qty"];
             target["qty"] = (source.Rows.Count == 0) ? 0m : source.AsEnumerable().Where(r => r.RowState != DataRowState.Deleted)
@@ -504,7 +519,7 @@ outer apply(
             target["avqty"] = (decimal)target["arqty"] - (decimal)target["aiqqty"];
         }
 
-        private void btnAutoPick_Click(object sender, EventArgs e)
+        private void BtnAutoPick_Click(object sender, EventArgs e)
         {
             DataTable subDT;
             foreach (DataRow dr in this.DetailDatas)
@@ -529,7 +544,7 @@ outer apply(
                         subDT.ImportRow(dr2);
                     }
 
-                    sum_subDetail(dr, subDT);
+                    Sum_subDetail(dr, subDT);
                 }
             }
 
@@ -538,11 +553,13 @@ outer apply(
             this.detailgrid.SelectRowToPrev();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -718,6 +735,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             _transactionscope = null;
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -898,6 +916,16 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             _transactionscope = null;
         }
 
+        /// <inheritdoc/>
+        protected override bool ClickPrint()
+        {
+            P62_Print callForm;
+            callForm = new P62_Print(this.CurrentMaintain);
+            callForm.ShowDialog(this);
+
+            return true;
+        }
+
         private void SentToGensong_AutoWHFabric()
         {
             if (true) return;// 暫未開放
@@ -954,8 +982,10 @@ and i.id = '{CurrentMaintain["ID"]}'
 
         private void BtnCutRefNo_Click(object sender, EventArgs e)
         {
-            var frm = new P62_CuttingRef(this.CurrentMaintain);
-            frm.P62 = this;
+            var frm = new P62_CuttingRef(this.CurrentMaintain)
+            {
+                P62 = this,
+            };
             frm.ShowDialog(this);
         }
     }
