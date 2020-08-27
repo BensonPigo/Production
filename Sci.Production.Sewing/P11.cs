@@ -892,7 +892,7 @@ FROM #tmpFromG t
 INNER JOIN SewingOutput_Detail_Detail sodd with(nolock) on -- 找要轉出的資料(必定有)
 	sodd.OrderId = t.FromOrderID and sodd.ComboType = t.FromComboType
 	and sodd.Article = t.Article and sodd.SizeCode = t.SizeCode
-inner join SewingOutput so with(nolock) on so.id = sodd.ID
+inner join SewingOutput so with(nolock) on so.id = sodd.ID and so.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 outer apply(
 	select QAQty=sum(soddg.QAQty) -- 找G單(虛數量) 有可能多筆
 	from SewingOutput_Detail_Detail_Garment soddg with(nolock) 
