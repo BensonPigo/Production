@@ -962,7 +962,7 @@ OPTION (RECOMPILE)"
                 Brand = row1["brand"].ToString(),
                 Item = row1["item"].ToString(),
                 EXCESS1 = MyUtility.Convert.GetBool(row1["IsEXCESS"]) ? "EXCESS" : string.Empty,
-                NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(row1["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)",
+                NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(row1["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "X",
                 Replacement1 = string.Empty,
                 ShipCode = MyUtility.Convert.GetString(row1["ShipCode"]),
                 FabricPanelCode = MyUtility.Convert.GetString(row1["FabricPanelCode"]),

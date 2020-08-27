@@ -81,7 +81,7 @@ from (
         ,brand.ShipCode
         ,b.item
         ,b.IsEXCESS
-        ,NoBundleCardAfterSubprocess=(select top 1 N'(X)' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
+        ,NoBundleCardAfterSubprocess=(select top 1 N'X' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
         ,b.FabricPanelCode
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
@@ -125,7 +125,7 @@ from (
         ,brand.ShipCode
         ,b.item
         ,b.IsEXCESS
-        ,NoBundleCardAfterSubprocess=(select top 1 N'(X)' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
+        ,NoBundleCardAfterSubprocess=(select top 1 N'X' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
         ,b.FabricPanelCode
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
@@ -186,7 +186,7 @@ from (
         ,brand.ShipCode
         ,b.item
         ,b.IsEXCESS
-        ,NoBundleCardAfterSubprocess=(select top 1 N'(X)' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
+        ,NoBundleCardAfterSubprocess=(select top 1 N'X' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
         ,b.FabricPanelCode
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
@@ -224,7 +224,7 @@ from (
         ,brand.ShipCode
             ,b.item
             ,b.IsEXCESS
-        ,NoBundleCardAfterSubprocess=(select top 1 N'(X)' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
+        ,NoBundleCardAfterSubprocess=(select top 1 N'X' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
         ,b.FabricPanelCode
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
