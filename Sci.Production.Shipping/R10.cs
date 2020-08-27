@@ -30,6 +30,7 @@ namespace Sci.Production.Shipping
         private int reportContent;
         private int reportType;
         private DataTable printData;
+        private DataTable[] printDataS;
         private DataTable accnoData;
 
         /// <inheritdoc/>
@@ -74,6 +75,11 @@ namespace Sci.Production.Shipping
                 this.radioDetailListBySPNoByFeeType.Text = "Detail List by WK# by Fee Type";
                 this.radioAirPrepaidExpenseReport.Enabled = false;
                 this.dateOnBoardDate.Enabled = false;
+
+                if (this.radioAirPrepaidExpenseReport.Checked)
+                {
+                    this.radioExportFeeReport.Checked = true;
+                }
             }
         }
 
@@ -1159,20 +1165,30 @@ order by ID,OrderID,PackID");
                     sqlCmd.Append(@"
 select se.ShippingAPID
 	, o.FactoryID
-	, [Responsibility] = Responsibility.val
+	, a.ResponsibleFty
+	, a.ResponsibleSubcon
+	, a.ResponsibleSCI
+	, a.ResponsibleSupp
+	, a.ResponsibleBuyer
+	, a.RatioFty
+	, a.RatioSubcon
+	, a.RatioSCI
+	, a.RatioSupp
+	, a.RatioBuyer
 	, s.LocalSuppID
 	, l.Abb
 	, r.Name
 	, [InvNo] = g.ID
 	, se.CurrencyID
-	, [OriAmount] = sum(se.AmtFty + se.AmtOther)
+	, se.AmtFty
+	, se.AmtOther
 	, s.APPExchageRate
-	, [Amount] = iif(isnull(s.APPExchageRate,0) = 0, 0, sum(se.AmtFty + se.AmtOther) / s.APPExchageRate)
 	, se.AirPPID
 	, o.ID
 	, oqs.Seq
 	, o.BrandID
 	, [Qty] = oqs.Qty
+into #tmp
 from ShareExpense_APP se
 left join ShippingAP s on se.ShippingAPID = s.ID
 left join GMTBooking g on se.InvNo = g.id
@@ -1182,15 +1198,6 @@ left join Orders o on a.OrderID = o.ID
 left join Order_QtyShip oqs on a.OrderID = oqs.Id and a.OrderShipmodeSeq = oqs.Seq
 left join LocalSupp l on s.LocalSuppID = l.ID
 left join Reason r on a.ReasonID = r.ID and r.ReasonTypeID = 'Air_Prepaid_Reson'
-outer apply (
-	select [val] = STUFF((
-              iif(a.ResponsibleFty = 1, '/Factory', '')
-			+ iif(a.ResponsibleSubcon = 1, '/Subcon', '')
-			+ iif(a.ResponsibleSCI = 1, '/SCI', '')
-			+ iif(a.ResponsibleSupp = 1, '/Supplier', '')
-			+ iif(a.ResponsibleBuyer = 1, '/Buyer', ''))
-       ,1,1,'')
-)Responsibility
 where se.Junk = 0");
 
                     if (!MyUtility.Check.Empty(this.date1))
@@ -1259,20 +1266,143 @@ where se.Junk = 0");
                     }
 
                     sqlCmd.Append(@"
-    group by se.ShippingAPID
-	    , o.FactoryID
-	    , Responsibility.val
-	    , s.LocalSuppID
-	    , l.Abb
-	    , r.Name
-	    , g.ID
-	    , se.CurrencyID
-	    , s.APPExchageRate
-	    , se.AirPPID
-	    , o.ID
-	    , oqs.Seq
-	    , o.BrandID
-		, oqs.Qty
+select  *
+into #tmp_unpivot
+from #tmp t
+UNPIVOT ( A FOR [Responsibility] IN (ResponsibleFty, ResponsibleSubcon, ResponsibleSCI, ResponsibleSupp, ResponsibleBuyer )) UNA
+UNPIVOT ( [Responsibility%] FOR B IN (RatioFty, RatioSubcon, RatioSCI, RatioSupp, RatioBuyer )) UNB
+where [A] > 0
+and REPLACE([Responsibility], 'Responsible', '') = REPLACE(B, 'Ratio', '')
+
+
+select t.ShippingAPID
+	, t.FactoryID
+	, [Responsibility] = case REPLACE(t.Responsibility, 'Responsible', '') 
+							when 'Fty' then 'Factory'
+							when 'Supp' then 'Supplier' 
+							else REPLACE(t.Responsibility, 'Responsible', '') 
+						end
+	, t.[Responsibility%]
+	, t.LocalSuppID
+	, t.Abb
+	, t.Name
+	, t.InvNo
+	, t.CurrencyID
+	, [OriAmount] = sum(t.AmtFty + t.AmtOther)
+	, [OriAmtOther] = iif(t.APPExchageRate = 0, 0, sum(t.AmtOther) / t.APPExchageRate)
+	, t.APPExchageRate
+	, [Amount] = iif(isnull(t.APPExchageRate,0) = 0, 0, sum(t.AmtFty + t.AmtOther) / t.APPExchageRate)
+	, t.AirPPID
+	, t.ID
+	, t.Seq
+	, [AppAmtByRes] = iif(t.APPExchageRate = 0, 0, case when REPLACE(t.Responsibility, 'Responsible', '') = 'Factory' 
+				then sum(t.AmtFty) / t.APPExchageRate 
+				else (sum(t.AmtFty + t.AmtOther) * (t.[Responsibility%] / 100)) / t.APPExchageRate 
+				end)
+	, t.BrandID
+	, t.Qty
+	, r_id = ROW_NUMBER() Over(partition by t.ShippingAPID 
+							order by case REPLACE(t.Responsibility, 'Responsible', '')
+								when 'Fty' then 5
+								when 'Subcon' then 1
+								when 'SCI' then 2
+								when 'Supp' then 3
+								when 'Buyer' then 4
+							end)
+into #tmp_Detail
+from #tmp_unpivot t
+group by t.ShippingAPID
+	, t.FactoryID
+	, t.Responsibility
+	, t.[Responsibility%]
+	, t.LocalSuppID
+	, t.Abb
+	, t.Name
+	, t.InvNo
+	, t.CurrencyID
+	, t.APPExchageRate
+	, t.AirPPID
+	, t.ID
+	, t.Seq
+	, t.BrandID
+	, t.Qty
+
+
+-- Summary
+select t.ShippingAPID
+	, t.FactoryID
+	, [Responsibility] = Responsibility.val
+	, t.LocalSuppID
+	, t.Abb
+	, t.Name
+	, t.InvNo
+	, t.CurrencyID
+	, [OriAmount] = sum(t.AmtFty + t.AmtOther)
+	, t.APPExchageRate
+	, [Amount] = iif(isnull(t.APPExchageRate,0) = 0, 0, sum(t.AmtFty + t.AmtOther) / t.APPExchageRate)
+	, t.AirPPID
+	, t.ID
+	, t.Seq
+	, t.BrandID
+	, [Qty] = t.Qty
+from #tmp t
+outer apply (
+	select [val] = STUFF((
+              iif(t.ResponsibleFty = 1, '/Factory', '')
+			+ iif(t.ResponsibleSubcon = 1, '/Subcon', '')
+			+ iif(t.ResponsibleSCI = 1, '/SCI', '')
+			+ iif(t.ResponsibleSupp = 1, '/Supplier', '')
+			+ iif(t.ResponsibleBuyer = 1, '/Buyer', ''))
+       ,1,1,'')
+)Responsibility	 
+group by t.ShippingAPID
+   , t.FactoryID
+   , Responsibility.val
+   , t.LocalSuppID
+   , t.Abb
+   , t.Name
+   , t.InvNo
+   , t.CurrencyID
+   , t.APPExchageRate
+   , t.AirPPID
+   , t.ID
+   , t.Seq
+   , t.BrandID
+   , t.Qty
+
+
+-- Detail
+-- 將多出的扣除到第一筆中
+select t.ShippingAPID
+	,t.FactoryID
+	,t.Responsibility
+	,t.[Responsibility%]
+	,t.LocalSuppID
+	,t.Abb
+	,t.Name
+	,t.InvNo
+	,t.CurrencyID
+	,t.OriAmount
+	,t.APPExchageRate
+	,t.Amount
+	,t.AirPPID
+	,t.ID
+	,t.Seq
+	,[AppAmtByRes] = case when t1.diff > 0 and r_id = 1 and t.Responsibility <> 'Factory' then t.AppAmtByRes - t1.diff else t.AppAmtByRes end
+	,t.BrandID
+	,t.Qty
+from #tmp_Detail t
+left join (
+	select t1.ShippingAPID, t1.AirPPID, [diff] = t1.AppAmtByRes - t1.OriAmtOther
+	from (
+		select t.ShippingAPID, t.AirPPID, t.OriAmtOther, [AppAmtByRes] = sum(t.AppAmtByRes)
+		from #tmp_Detail t
+        where t.Responsibility <> 'Factory'
+		group by t.ShippingAPID, t.AirPPID, t.OriAmtOther
+	)t1
+)t1 on t.ShippingAPID = t1.ShippingAPID and t.AirPPID = t1.AirPPID
+
+drop table #tmp, #tmp_unpivot, #tmp_Detail
 ");
                     #endregion
                 }
@@ -1539,7 +1669,16 @@ where s.Type = 'EXPORT'");
                 }
             }
 
-            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+            if (this.reportType == 4)
+            {
+                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printDataS);
+                this.printData = this.printDataS[0];
+            }
+            else
+            {
+                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+            }
+
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -1960,7 +2099,8 @@ where s.Type = 'EXPORT'");
             }
             else if (this.reportType == 4)
             {
-                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Shipping_R10_AirPrepaidExpense.xltx", 1, false, null, excel, wSheet: excel.Sheets[1]);
+                MyUtility.Excel.CopyToXls(this.printDataS[0], string.Empty, "Shipping_R10_AirPrepaidExpense.xltx", 1, false, null, excel, wSheet: excel.Sheets[1]);
+                MyUtility.Excel.CopyToXls(this.printDataS[1], string.Empty, "Shipping_R10_AirPrepaidExpense.xltx", 1, false, null, excel, wSheet: excel.Sheets[2]);
             }
 
             // [On Board Date],[Shipper],[Include Foundry]因為只針對Garment所以在excel產生後插入
