@@ -38,6 +38,7 @@
             this.txtRemark = new Sci.Win.UI.TextBox();
             this.disFactoryID = new Sci.Win.UI.DisplayBox();
             this.btnImport = new Sci.Win.UI.Button();
+            this.btnTransferInOutInformation = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -64,7 +65,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(900, 88);
+            this.masterpanel.Size = new System.Drawing.Size(892, 88);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -80,7 +81,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 88);
-            this.detailpanel.Size = new System.Drawing.Size(900, 262);
+            this.detailpanel.Size = new System.Drawing.Size(892, 261);
             // 
             // gridicon
             // 
@@ -89,7 +90,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(900, 262);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 261);
             // 
             // detail2
             // 
@@ -103,22 +104,9 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(900, 388);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(900, 350);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 350);
-            this.detailbtm.Size = new System.Drawing.Size(900, 38);
-            // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(794, 388);
+            this.browse.Size = new System.Drawing.Size(900, 388);
             // 
             // tabs
             // 
@@ -218,7 +206,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImport.Location = new System.Drawing.Point(792, 12);
+            this.btnImport.Location = new System.Drawing.Point(784, 12);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(100, 30);
             this.btnImport.TabIndex = 37;
@@ -226,12 +214,23 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
+            // btnTransferInOutInformation
+            // 
+            this.btnTransferInOutInformation.Location = new System.Drawing.Point(678, 3);
+            this.btnTransferInOutInformation.Name = "btnTransferInOutInformation";
+            this.btnTransferInOutInformation.Size = new System.Drawing.Size(226, 30);
+            this.btnTransferInOutInformation.TabIndex = 36;
+            this.btnTransferInOutInformation.Text = "Transfer In/Out Information";
+            this.btnTransferInOutInformation.UseVisualStyleBackColor = true;
+            this.btnTransferInOutInformation.Click += new System.EventHandler(this.BtnTransferInOutInformation_Click);
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(908, 450);
+            this.Controls.Add(this.btnTransferInOutInformation);
             this.GridAlias = "SewingOutputTransfer_Detail";
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
@@ -243,6 +242,7 @@
             this.Text = "P11. Sewing Output Transfer";
             this.WorkAlias = "SewingOutputTransfer";
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnTransferInOutInformation, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -274,5 +274,6 @@
         private Win.UI.DateBox dateCreateDate;
         private Win.UI.DisplayBox disFactoryID;
         private Win.UI.Button btnImport;
+        private Win.UI.Button btnTransferInOutInformation;
     }
 }
