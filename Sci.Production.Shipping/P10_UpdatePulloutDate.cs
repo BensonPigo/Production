@@ -216,7 +216,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
                 }
             }
 
-            updateCmds.Add($"UPDATE ShipPlan Set EditDate=GETDATE(),EditName='{Env.User.UserID}'");
+            updateCmds.Add($"UPDATE ShipPlan Set EditDate=GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.masterDate["ID"]}'");
 
             DualResult result;
             if (updateCmds.Count != 0)
