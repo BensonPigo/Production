@@ -609,7 +609,7 @@ USING(
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
 	,[PackingCTN] = pd.id + pd.CTNStartNo
 	,[IsMixPacking]= IIF( isnull(MixCount.val, 0) > 1 , 1 ,0)
-	,[PicSetting]= [FPS].[dbo].GetPicSetting(p.ID,pd.SCICtnNo,pd.RefNO,p.CustCDID,p.BrandID)
+	,[PicSetting]= [FPS].[dbo].CheckShippingMarkPicSetting(p.ID,pd.SCICtnNo,pd.RefNO, IIF( isnull(MixCount.val, 0) > 1 , 1 ,0),p.CustCDID,p.BrandID)
 	FROM Production.dbo.PackingList p
 	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
 	left join  Production.dbo.ShipPlan sp on sp.id=p.ShipPlanID
