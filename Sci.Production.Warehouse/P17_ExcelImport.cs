@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -72,6 +73,7 @@ namespace Sci.Production.Warehouse
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false)
                 .Numeric("qty", header: "Return Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                .Text("Location", header: "Bulk Location", iseditingreadonly: false)
                 .EditText("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100), iseditingreadonly: true);
 
             for (int i = 0; i < this.gridPoid.ColumnCount; i++)
@@ -216,6 +218,8 @@ namespace Sci.Production.Warehouse
                 int intRowsStart = 3;
                 int intRowsRead = intRowsStart - 1;
 
+                bool isLocationExists = false;
+
                 while (intRowsRead < intRowsCount)
                 {
                     intRowsRead++;
@@ -226,7 +230,20 @@ namespace Sci.Production.Warehouse
                     DataRow newRow = this.grid2Data.NewRow();
                     string seq1 = (objCellArray[1, ItemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]].ToString().Trim(), "C").ToString();
                     string seq2 = (objCellArray[1, ItemPosition[2]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]].ToString().Trim(), "C").ToString();
-                    string location = (objCellArray[1, ItemPosition[5]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]].ToString().Trim(), "C").ToString();
+
+                    // Location處理
+                    string oriLocation = (objCellArray[1, ItemPosition[6]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]].ToString().Trim(), "C").ToString();
+                    string locations = oriLocation.Split(',').ToList().Where(o => !MyUtility.Check.Empty(o)).Distinct().JoinToString(",");
+                    string notLocationExistsList = locations.Split(',').ToList().Where(o => !Prgs.CheckLocationExists("B", o)).JoinToString(",");
+
+                    if (MyUtility.Check.Empty(notLocationExistsList))
+                    {
+                        isLocationExists = true;
+                    }
+                    else
+                    {
+                        isLocationExists = false;
+                    }
 
                     newRow["poid"] = (objCellArray[1, ItemPosition[0]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[0]].ToString().Trim(), "C");
                     newRow["seq"] = seq1 + " " + seq2;
@@ -234,8 +251,8 @@ namespace Sci.Production.Warehouse
                     newRow["seq2"] = seq2;
                     newRow["Roll"] = (objCellArray[1, ItemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]].ToString().Trim(), "C");
                     newRow["Dyelot"] = (objCellArray[1, ItemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]].ToString().Trim(), "C").ToString();
-                    newRow["Location"] = location;
                     newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "N");
+                    newRow["Location"] = locations;
                     newRow["CanWriteIn"] = true;
                     #region check Columns length
                     List<string> listColumnLengthErrMsg = new List<string>();
@@ -324,7 +341,7 @@ and fi.Roll = @Roll
 and fi.Dyelot = @Dyelot
 and f.MDivisionID = @MDivisionID ";
                     bool result = MyUtility.Check.Seek(sql, sqlpar, out dr2);
-                    if (result)
+                    if (result && isLocationExists)
                     {
                         newRow["Description"] = dr2["Description"];
                         newRow["StockUnit"] = dr2["StockUnit"];
