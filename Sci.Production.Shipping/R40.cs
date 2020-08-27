@@ -1851,7 +1851,7 @@ from (
 		and a.Status = 'Confirmed'		
 	)WH43
 	outer apply(
-		select [Qty]= isnull(sum(b.QtyAfter-b.QtyBefore) ,0)
+		select [Qty]= - isnull(sum(b.QtyAfter-b.QtyBefore) ,0)
 		from Adjust a
 		inner join Adjust_Detail b on a.ID=b.ID
 		where b.FtyInventoryUkey = ft.Ukey
@@ -1951,7 +1951,7 @@ from (
 		and a.Type in ('C')
 	)WH44
 	outer apply(
-		select [Qty] = isnull(sum(b.QtyAfter) - sum(b.QtyBefore),0)
+		select [Qty] = - isnull(sum(b.QtyAfter) - sum(b.QtyBefore),0)
 		from AdjustLocal a
 		inner join AdjustLocal_Detail b on a.ID=b.ID
 		where b.PoId = l.OrderID and b.Refno = l.Refno and b.Color = l.ThreadColorID 
