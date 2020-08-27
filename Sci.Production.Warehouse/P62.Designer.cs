@@ -208,7 +208,7 @@
             this.btnAutoPick.TabIndex = 46;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
-            this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
+            this.btnAutoPick.Click += new System.EventHandler(this.BtnAutoPick_Click);
             // 
             // btnCutRefNo
             // 
@@ -234,7 +234,6 @@
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.KeyField2 = "id";
