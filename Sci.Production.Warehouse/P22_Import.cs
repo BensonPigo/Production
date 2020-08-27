@@ -11,15 +11,21 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P22_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        DataSet dsTmp;
-        protected DataTable dtBorrow;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        DataRelation relation;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private DataSet dsTmp;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
+        private DataRelation relation;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P22_Import"/> class.
+        /// </summary>
+        /// <param name="master">Master DataRow</param>
+        /// <param name="detail">Detail Table</param>
         public P22_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -28,7 +34,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtSPNo.Text.TrimEnd();
@@ -179,12 +185,12 @@ drop table #tmp", Env.User.Keyword, this.dr_master["id"], where));
 
                 TaipeiInput.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
                 TaipeiInput.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - sum(child.qty)");
-                this.myFilter();
-
+                this.MyFilter();
                 this.HideWaitMessage();
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -211,7 +217,6 @@ drop table #tmp", Env.User.Keyword, this.dr_master["id"], where));
             this.grid_ftyDetail.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.grid_ftyDetail.DataSource = this.FtyDetailBS;
 
-            Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
 
             #region -- transfer qty valid --
@@ -221,7 +226,7 @@ drop table #tmp", Env.User.Keyword, this.dr_master["id"], where));
             {
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    DataRow currentrow = this.grid_ftyDetail.GetDataRow(this.grid_ftyDetail.GetSelectedRowIndex());
+                    DataRow currentrow = this.grid_ftyDetail.GetDataRow(this.grid_ftyDetail.GetSelectedRowIndex());                    
                     currentrow["qty"] = e.FormattedValue;
                     currentrow["selected"] = true;
                 }
@@ -347,26 +352,26 @@ WHERE   StockType='{dr["tostocktype"]}'
                 .Numeric("outqty", header: "Stock" + Environment.NewLine + "Out", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) // 7
                 .Numeric("adjustqty", header: "Stock" + Environment.NewLine + "Adjust", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) // 8
                 .Numeric("balanceqty", header: "Stock" + Environment.NewLine + "Balance", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) // 9
-                .Numeric("qty", header: "Transfer" + Environment.NewLine + "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, settings: ns).Get(out col_Qty) // 10
+                .Numeric("qty", header: "Transfer" + Environment.NewLine + "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, settings: ns).Get(out this.col_Qty) // 10
                 .Text("location", header: "From Location", iseditingreadonly: true) // 11
                 .Text("tolocation", header: "To Location", iseditingreadonly: false, settings: ts2).Get(out col_tolocation) // 12
                ;
-            col_Qty.DefaultCellStyle.BackColor = Color.Pink;
+            this.col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
         }
 
         // Cancel
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void checkReturn_Click(object sender, EventArgs e)
+        private void CheckReturn_Click(object sender, EventArgs e)
         {
-            this.myFilter();
+            this.MyFilter();
         }
 
-        private void myFilter()
+        private void MyFilter()
         {
             if (this.checkReturn.CheckState == CheckState.Checked)
             {
@@ -382,7 +387,7 @@ WHERE   StockType='{dr["tostocktype"]}'
             }
         }
 
-        private void btnUpdateAllLocation_Click(object sender, EventArgs e)
+        private void BtnUpdateAllLocation_Click(object sender, EventArgs e)
         {
             this.FtyDetailBS.EndEdit();
             DataRow dr = this.grid_TaipeiInput.GetDataRow(this.grid_TaipeiInput.GetSelectedRowIndex());
@@ -402,7 +407,7 @@ WHERE   StockType='{dr["tostocktype"]}'
             }
         }
 
-        private void txtLocation_MouseDown(object sender, MouseEventArgs e)
+        private void TxtLocation_MouseDown(object sender, MouseEventArgs e)
         {
             Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("I", string.Empty);
             DialogResult result = item.ShowDialog();
@@ -414,7 +419,7 @@ WHERE   StockType='{dr["tostocktype"]}'
             this.txtLocation.Text = item.GetSelectedString();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             StringBuilder warningmsg = new StringBuilder();
 
@@ -508,6 +513,19 @@ WHERE   StockType='{dr["tostocktype"]}'
             }
 
             this.Close();
+        }
+
+        private void Grid_ftyDetail_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            DataRow dr = this.grid_ftyDetail.GetDataRow<DataRow>(e.RowIndex);
+            if (this.grid_ftyDetail.Columns[e.ColumnIndex].Name == "qty")
+            {
+                this.col_Qty.DecimalPlaces = 2;
+                if (MyUtility.Convert.GetString(dr["stockunit"]).EqualString("PCS"))
+                {
+                    this.col_Qty.DecimalPlaces = 0;
+                }
+            }
         }
     }
 }

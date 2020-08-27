@@ -12,19 +12,24 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P23_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        DataSet dsTmp;
-        protected DataTable dtBorrow;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private DataSet dsTmp;
         private DataTable dtSort;
         private bool sortFinal;
         private int scrollnb;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
-        DataRelation relation;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
+        private DataRelation relation;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P23_Import"/> class.
+        /// </summary>
+        /// <param name="master">Master DataRow</param>
+        /// <param name="detail">Detail Table</param>
         public P23_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -37,7 +42,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtIssueSP.Text.TrimEnd();
@@ -218,12 +223,13 @@ drop table #tmp", Env.User.Keyword, this.dr_master["id"]));
 
                 TaipeiInput.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
                 TaipeiInput.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - sum(child.qty)");
-                this.myFilter();
+                this.MyFilter();
                 this.dtSort.Clear();
                 this.HideWaitMessage();
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -392,7 +398,7 @@ WHERE   StockType='{dr["toStocktype"]}'
                 }
 
                 dr.EndEdit();
-                this.sortdirect();
+                this.Sortdirect();
                 this.grid_ftyDetail.FirstDisplayedScrollingRowIndex = this.scrollnb;
             };
 
@@ -418,17 +424,17 @@ WHERE   StockType='{dr["toStocktype"]}'
         }
 
         // Cancel
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void checkReturn_Click(object sender, EventArgs e)
+        private void CheckReturn_Click(object sender, EventArgs e)
         {
-            this.myFilter();
+            this.MyFilter();
         }
 
-        private void myFilter()
+        private void MyFilter()
         {
             if (this.checkReturn.CheckState == CheckState.Checked)
             {
@@ -443,7 +449,7 @@ WHERE   StockType='{dr["toStocktype"]}'
             }
         }
 
-        private void btnUpdateAllLocation_Click(object sender, EventArgs e)
+        private void BtnUpdateAllLocation_Click(object sender, EventArgs e)
         {
             this.FtyDetailBS.EndEdit();
             DataRow dr = this.grid_TaipeiInput.GetDataRow(this.grid_TaipeiInput.GetSelectedRowIndex());
@@ -461,7 +467,7 @@ WHERE   StockType='{dr["toStocktype"]}'
             }
         }
 
-        private void txtLocation_MouseDown(object sender, MouseEventArgs e)
+        private void TxtLocation_MouseDown(object sender, MouseEventArgs e)
         {
             Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("B", string.Empty);
             DialogResult result = item.ShowDialog();
@@ -473,7 +479,7 @@ WHERE   StockType='{dr["toStocktype"]}'
             this.txtLocation.Text = item.GetSelectedString();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             StringBuilder warningmsg = new StringBuilder();
 
@@ -569,7 +575,7 @@ WHERE   StockType='{dr["toStocktype"]}'
         }
 
         // 將記憶的排序放到Grid裡
-        private void sortdirect()
+        private void Sortdirect()
         {
             this.sortFinal = true;
             ListSortDirection dir;
@@ -584,7 +590,7 @@ WHERE   StockType='{dr["toStocktype"]}'
         }
 
         // 將所有排序的欄位記憶起來
-        private void grid_ftyDetail_Sorted(object sender, EventArgs e)
+        private void Grid_ftyDetail_Sorted(object sender, EventArgs e)
         {
             if (this.sortFinal)
             {
@@ -596,6 +602,22 @@ WHERE   StockType='{dr["toStocktype"]}'
             dr["Name"] = this.grid_ftyDetail.SortedColumn.Name;
             dr["Sort"] = (this.grid_ftyDetail.SortOrder == SortOrder.Ascending) ? "ASC" : "DESC";
             this.dtSort.Rows.Add(dr);
+        }
+
+        private void Grid_ftyDetail_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e != null && e.RowIndex > 0)
+            {
+                DataRow dr = this.grid_ftyDetail.GetDataRow<DataRow>(e.RowIndex);
+                if (this.grid_ftyDetail.Columns[e.ColumnIndex].Name == "qty")
+                {
+                    this.col_Qty.DecimalPlaces = 2;
+                    if (MyUtility.Convert.GetString(dr["stockunit"]).EqualString("PCS"))
+                    {
+                        this.col_Qty.DecimalPlaces = 0;
+                    }
+                }
+            }
         }
     }
 }

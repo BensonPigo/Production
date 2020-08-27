@@ -19,13 +19,19 @@ using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P28 : Win.Tems.QueryForm
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
-        DataTable master;
-        DataTable detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
+        private DataTable master;
+        private DataTable detail;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P28"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P28(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -90,7 +96,6 @@ namespace Sci.Production.Warehouse
                 this.gridComplete.ValidateControl();
             };
 
-            Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
             #region -- transfer qty valid --
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
@@ -255,17 +260,17 @@ WHERE   StockType='{dr["toStocktype"]}'
                 .Text("fromroll", header: "Roll#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("balanceQty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, settings: ns).Get(out col_Qty)
+                .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, settings: ns).Get(out this.col_Qty)
                 .Text("fromlocation", header: "From Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("tolocation", header: "To Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: false, settings: ts2).Get(out col_tolocation)
                   ;
-            col_Qty.DefaultCellStyle.BackColor = Color.Pink;
+            this.col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
-            this.chp();
+            this.Chp();
             #endregion
         }
 
-        private void chp()
+        private void Chp()
         {
             #region selected
             this.col_chk2.CellClick += (s, e) =>
@@ -318,40 +323,40 @@ WHERE   StockType='{dr["toStocktype"]}'
             #endregion
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             string selectindex = this.Category.SelectedValue.ToString();
             int selectindex2 = this.comboFabricType.SelectedIndex;
-            string ATA_b, ATA_e, InputDate_b, InputDate_e, SP, factory;
-            ATA_b = null;
-            ATA_e = null;
-            InputDate_b = null;
-            InputDate_e = null;
-            SP = this.txtIssueSP.Text;
+            string aTA_b, aTA_e, inputDate_b, inputDate_e, sP, factory;
+            aTA_b = null;
+            aTA_e = null;
+            inputDate_b = null;
+            inputDate_e = null;
+            sP = this.txtIssueSP.Text;
             factory = this.txtfactory.Text;
             if (this.dateMaterialATA.Value1 != null)
             {
-                ATA_b = this.dateMaterialATA.Text1;
+                aTA_b = this.dateMaterialATA.Text1;
             }
 
             if (this.dateMaterialATA.Value2 != null)
             {
-                ATA_e = this.dateMaterialATA.Text2;
+                aTA_e = this.dateMaterialATA.Text2;
             }
 
             if (this.dateInputDate.Value1 != null)
             {
-                InputDate_b = this.dateInputDate.Text1;
+                inputDate_b = this.dateInputDate.Text1;
             }
 
             if (this.dateInputDate.Value2 != null)
             {
-                InputDate_e = this.dateInputDate.Text2;
+                inputDate_e = this.dateInputDate.Text2;
             }
 
-            if ((ATA_b == null && ATA_e == null) &&
-                MyUtility.Check.Empty(SP) &&
-                (InputDate_b == null && InputDate_e == null))
+            if ((aTA_b == null && aTA_e == null) &&
+                MyUtility.Check.Empty(sP) &&
+                (inputDate_b == null && inputDate_e == null))
             {
                 MyUtility.Msg.WarningBox(" < Cutting Inline > or < Order Confirm Date > or < Issue SP# > can't be empty!!");
                 this.txtIssueSP.Focus();
@@ -385,7 +390,7 @@ WHERE   StockType='{dr["toStocktype"]}'
     inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
     inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
     inner join dbo.Factory checkProduceFty With (NoLock) on o.FactoryID = checkProduceFty.ID "));
-            if (!string.IsNullOrWhiteSpace(InputDate_b))
+            if (!string.IsNullOrWhiteSpace(inputDate_b))
             {
                 sqlcmd.Append(string.Format(
                     @" 
@@ -397,12 +402,14 @@ WHERE   StockType='{dr["toStocktype"]}'
                 and poid = pd.id 
                 and seq1 = pd.seq1 
                 and seq2 = pd.seq2
-    ) z ", InputDate_b, InputDate_e));
+    ) z ",
+                    inputDate_b,
+                    inputDate_e));
             }
 
-            bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+            bool mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
             string where = string.Empty;
-            if (!MtlAutoLock)
+            if (!mtlAutoLock)
             {
                 where = " AND fi.lock = 0 ";
             }
@@ -466,11 +473,11 @@ WHERE   StockType='{dr["toStocktype"]}'
                     break;
             }
 
-            if (!MyUtility.Check.Empty(SP))
+            if (!MyUtility.Check.Empty(sP))
             {
                 sqlcmd.Append(string.Format(
                     @" 
-            and pd.id = '{0}'", SP));
+            and pd.id = '{0}'", sP));
             }
 
             if (!MyUtility.Check.Empty(factory))
@@ -480,11 +487,13 @@ WHERE   StockType='{dr["toStocktype"]}'
             and o.FtyGroup = '{0}'", factory));
             }
 
-            if (!string.IsNullOrWhiteSpace(ATA_b))
+            if (!string.IsNullOrWhiteSpace(aTA_b))
             {
                 sqlcmd.Append(string.Format(
                     @" 
-            and pd.FinalETA between '{0}' and '{1}'", ATA_b, ATA_e));
+            and pd.FinalETA between '{0}' and '{1}'",
+                    aTA_b,
+                    aTA_e));
             }
 
             #endregion
@@ -531,6 +540,7 @@ select  convert(bit,0) as selected
                                for xml path('')
                              ), 1, 1, '') 
         , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by t.poid,t.seq1,t.SEQ2,t.FactoryID,t.StockPOID,t.StockSeq1,t.StockSeq2,fi.Dyelot)
+        , t.StockUnit
 from #tmp t 
 inner join FtyInventory fi WITH (NOLOCK) on  fi.POID = t.POID 
                                              and fi.seq1 = t.Seq1 
@@ -591,7 +601,7 @@ drop table #tmp");
             this.HideWaitMessage();
         }
 
-        private void btnAutoPick_Click(object sender, EventArgs e)
+        private void BtnAutoPick_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.master))
             {
@@ -630,10 +640,18 @@ drop table #tmp");
                     {
                         DataRow[] findrow = this.detail.Select(string.Format(
                             @"fromFtyInventoryUkey = {0} and topoid = '{1}' and toseq1 = '{2}' and toseq2 = '{3}'",
-                            dr2["ftyinventoryukey"], dr["poid"], dr["seq1"], dr["seq2"]));
+                            dr2["ftyinventoryukey"],
+                            dr["poid"],
+                            dr["seq1"],
+                            dr["seq2"]));
                         if (findrow.Length > 0)
                         {
                             findrow[0]["qty"] = dr2["qty"];
+                            if (findrow[0]["stockunit"].EqualString("PCS"))
+                            {
+                                findrow[0]["qty"] = Math.Ceiling(MyUtility.Convert.GetDecimal(dr2["qty"]));
+                            }
+
                             findrow[0]["selected"] = true;
                         }
                     }
@@ -646,7 +664,7 @@ drop table #tmp");
             }
         }
 
-        private void btnCreate_Click(object sender, EventArgs e)
+        private void BtnCreate_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detail))
             {
@@ -771,53 +789,55 @@ from #tmp";
             }
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             DualResult result;
-            using (_transactionscope)
+            using (transactionscope)
             {
                 try
                 {
                     DataTable dtResult;
                     if ((result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, insertMaster, out dtResult)) == false)
                     {
-                        _transactionscope.Dispose();
-                        MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
-                        return;
+                        throw result.GetException();
                     }
 
                     if ((result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, insertDetail, out dtResult)) == false)
                     {
-                        _transactionscope.Dispose();
-                        MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
-                        return;
+                        throw result.GetException();
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
 
                     // MyUtility.Msg.InfoBox("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!", "Complete!");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
+                    transactionscope.Dispose();
+                    result = new DualResult(false, "Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope = null;
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            transactionscope = null;
             if (!this.master.Columns.Contains("TransID"))
             {
                 this.master.Columns.Add("TransID", typeof(string));
             }
 
-            foreach (DataRow Alldetailrows in this.detail.Rows)
+            foreach (DataRow alldetailrows in this.detail.Rows)
             {
-                if (Alldetailrows["selected"].ToString().ToUpper() == "TRUE")
+                if (alldetailrows["selected"].ToString().ToUpper() == "TRUE")
                 {
-                    DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(Alldetailrows["frompoid"])).ToArray();
-                    Alldetailrows.GetParentRow("rel1")["selected"] = true;
-                    Alldetailrows.GetParentRow("rel1")["TransID"] = drGetID[0]["ID"];
+                    DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(alldetailrows["frompoid"])).ToArray();
+                    alldetailrows.GetParentRow("rel1")["selected"] = true;
+                    alldetailrows.GetParentRow("rel1")["TransID"] = drGetID[0]["ID"];
                 }
             }
 
@@ -848,7 +868,7 @@ from #tmp";
 
         private Msg p13_msg = new Msg();
 
-        private void checkOnly_CheckedChanged(object sender, EventArgs e)
+        private void CheckOnly_CheckedChanged(object sender, EventArgs e)
         {
             if (this.checkOnly.Checked)
             {
@@ -860,7 +880,7 @@ from #tmp";
             }
         }
 
-        private void btnExcel_Click(object sender, EventArgs e)
+        private void BtnExcel_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.master))
             {
@@ -875,8 +895,8 @@ from #tmp";
             }
 
             this.master.DefaultView.RowFilter = "TransID<>''";
-            DataTable Exceldt = this.master.DefaultView.ToTable();
-            if (Exceldt.Rows.Count == 0)
+            DataTable exceldt = this.master.DefaultView.ToTable();
+            if (exceldt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Did not finish Bulk To Inventory");
                 return;
@@ -887,7 +907,7 @@ from #tmp";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
 
             // excelApp.DisplayAlerts = false;
-            MyUtility.Excel.CopyToXls(Exceldt, string.Empty, $"{excelName}.xltx", 2, false, null, excelApp, wSheet: excelApp.Sheets[1], DisplayAlerts_ForSaveFile: false);
+            MyUtility.Excel.CopyToXls(exceldt, string.Empty, $"{excelName}.xltx", 2, false, null, excelApp, wSheet: excelApp.Sheets[1], DisplayAlerts_ForSaveFile: false);
 
             excelApp.Sheets[1].Columns.AutoFit();
 
@@ -901,14 +921,27 @@ from #tmp";
             #endregion
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void gridComplete_RowEnter(object sender, DataGridViewCellEventArgs e)
+        private void GridComplete_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             this.gridRel.ValidateControl();
+        }
+
+        private void GridRel_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            DataRow dr = this.gridRel.GetDataRow<DataRow>(e.RowIndex);
+            if (this.gridRel.Columns[e.ColumnIndex].Name == "qty")
+            {
+                this.col_Qty.DecimalPlaces = 2;
+                if (MyUtility.Convert.GetString(dr["stockunit"]).EqualString("PCS"))
+                {
+                    this.col_Qty.DecimalPlaces = 0;
+                }
+            }
         }
     }
 }
