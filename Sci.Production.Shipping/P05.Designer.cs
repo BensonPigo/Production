@@ -884,10 +884,10 @@
             // btnExpenseData
             // 
             this.btnExpenseData.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnExpenseData.Location = new System.Drawing.Point(904, 69);
+            this.btnExpenseData.Location = new System.Drawing.Point(904, 105);
             this.btnExpenseData.Name = "btnExpenseData";
             this.btnExpenseData.Size = new System.Drawing.Size(146, 30);
-            this.btnExpenseData.TabIndex = 21;
+            this.btnExpenseData.TabIndex = 22;
             this.btnExpenseData.Text = "Expense Data";
             this.btnExpenseData.UseVisualStyleBackColor = true;
             this.btnExpenseData.Click += new System.EventHandler(this.BtnExpenseData_Click);
@@ -919,10 +919,10 @@
             // 
             this.btnImportfrompackinglist.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportfrompackinglist.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnImportfrompackinglist.Location = new System.Drawing.Point(904, 139);
+            this.btnImportfrompackinglist.Location = new System.Drawing.Point(813, 354);
             this.btnImportfrompackinglist.Name = "btnImportfrompackinglist";
-            this.btnImportfrompackinglist.Size = new System.Drawing.Size(146, 30);
-            this.btnImportfrompackinglist.TabIndex = 23;
+            this.btnImportfrompackinglist.Size = new System.Drawing.Size(147, 30);
+            this.btnImportfrompackinglist.TabIndex = 28;
             this.btnImportfrompackinglist.Text = "Import from packing list";
             this.btnImportfrompackinglist.UseVisualStyleBackColor = true;
             this.btnImportfrompackinglist.Click += new System.EventHandler(this.BtnImportfrompackinglist_Click);
@@ -1002,10 +1002,10 @@
             // btnAirPPStatus
             // 
             this.btnAirPPStatus.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnAirPPStatus.Location = new System.Drawing.Point(904, 103);
+            this.btnAirPPStatus.Location = new System.Drawing.Point(904, 141);
             this.btnAirPPStatus.Name = "btnAirPPStatus";
             this.btnAirPPStatus.Size = new System.Drawing.Size(146, 30);
-            this.btnAirPPStatus.TabIndex = 22;
+            this.btnAirPPStatus.TabIndex = 23;
             this.btnAirPPStatus.Text = "Air-Prepaid Status";
             this.btnAirPPStatus.UseVisualStyleBackColor = true;
             this.btnAirPPStatus.Click += new System.EventHandler(this.BtnAirPPStatus_Click);
@@ -1016,10 +1016,10 @@
             this.chkNoExportCharge.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoExportCharges", true));
             this.chkNoExportCharge.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkNoExportCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkNoExportCharge.Location = new System.Drawing.Point(857, 275);
+            this.chkNoExportCharge.Location = new System.Drawing.Point(813, 277);
             this.chkNoExportCharge.Name = "chkNoExportCharge";
             this.chkNoExportCharge.Size = new System.Drawing.Size(133, 20);
-            this.chkNoExportCharge.TabIndex = 26;
+            this.chkNoExportCharge.TabIndex = 25;
             this.chkNoExportCharge.Text = "No Export Charge";
             this.chkNoExportCharge.UseVisualStyleBackColor = true;
             // 
@@ -1190,10 +1190,10 @@
             // btnUnCfmHis
             // 
             this.btnUnCfmHis.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUnCfmHis.Location = new System.Drawing.Point(904, 175);
+            this.btnUnCfmHis.Location = new System.Drawing.Point(904, 69);
             this.btnUnCfmHis.Name = "btnUnCfmHis";
             this.btnUnCfmHis.Size = new System.Drawing.Size(146, 30);
-            this.btnUnCfmHis.TabIndex = 24;
+            this.btnUnCfmHis.TabIndex = 21;
             this.btnUnCfmHis.Text = "Unconfirm History";
             this.btnUnCfmHis.UseVisualStyleBackColor = true;
             this.btnUnCfmHis.Click += new System.EventHandler(this.BtnUnCfmHis_Click);
@@ -1268,10 +1268,10 @@
             this.chkNonDeclare.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NonDeclare", true));
             this.chkNonDeclare.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkNonDeclare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkNonDeclare.Location = new System.Drawing.Point(857, 302);
+            this.chkNonDeclare.Location = new System.Drawing.Point(813, 304);
             this.chkNonDeclare.Name = "chkNonDeclare";
             this.chkNonDeclare.Size = new System.Drawing.Size(103, 20);
-            this.chkNonDeclare.TabIndex = 27;
+            this.chkNonDeclare.TabIndex = 26;
             this.chkNonDeclare.Text = "Non Declare";
             this.chkNonDeclare.UseVisualStyleBackColor = true;
             // 
@@ -1318,7 +1318,7 @@
             this.chkFoundry.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkFoundry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkFoundry.IsSupportEditMode = false;
-            this.chkFoundry.Location = new System.Drawing.Point(857, 327);
+            this.chkFoundry.Location = new System.Drawing.Point(813, 329);
             this.chkFoundry.Name = "chkFoundry";
             this.chkFoundry.ReadOnly = true;
             this.chkFoundry.Size = new System.Drawing.Size(122, 20);
@@ -1330,10 +1330,10 @@
             // 
             this.btnFoundryList.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnFoundryList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnFoundryList.Location = new System.Drawing.Point(977, 322);
+            this.btnFoundryList.Location = new System.Drawing.Point(933, 324);
             this.btnFoundryList.Name = "btnFoundryList";
             this.btnFoundryList.Size = new System.Drawing.Size(30, 25);
-            this.btnFoundryList.TabIndex = 28;
+            this.btnFoundryList.TabIndex = 27;
             this.btnFoundryList.Text = "...";
             this.btnFoundryList.UseVisualStyleBackColor = true;
             this.btnFoundryList.Click += new System.EventHandler(this.BtnFoundryList_Click);
@@ -1341,10 +1341,10 @@
             // btnRemark
             // 
             this.btnRemark.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnRemark.Location = new System.Drawing.Point(904, 211);
+            this.btnRemark.Location = new System.Drawing.Point(904, 177);
             this.btnRemark.Name = "btnRemark";
             this.btnRemark.Size = new System.Drawing.Size(146, 30);
-            this.btnRemark.TabIndex = 25;
+            this.btnRemark.TabIndex = 24;
             this.btnRemark.Text = "Remark";
             this.btnRemark.UseVisualStyleBackColor = true;
             this.btnRemark.Click += new System.EventHandler(this.BtnRemark_Click);
