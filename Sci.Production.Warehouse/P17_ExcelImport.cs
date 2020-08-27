@@ -176,7 +176,7 @@ namespace Sci.Production.Warehouse
                 // 檢查Excel格式
                 Excel.Range range = worksheet.Range[string.Format("A{0}:AE{0}", 2)];
                 object[,] objCellArray = range.Value;
-                string[] ItemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty" };
+                string[] ItemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Bulk Location", "Return Qty" };
                 int[] ItemPosition = new int[ItemCheck.Length];
                 string[] ExcelItem = new string[intColumnsCount + 1];
 
@@ -226,6 +226,7 @@ namespace Sci.Production.Warehouse
                     DataRow newRow = this.grid2Data.NewRow();
                     string seq1 = (objCellArray[1, ItemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]].ToString().Trim(), "C").ToString();
                     string seq2 = (objCellArray[1, ItemPosition[2]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]].ToString().Trim(), "C").ToString();
+                    string location = (objCellArray[1, ItemPosition[5]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]].ToString().Trim(), "C").ToString();
 
                     newRow["poid"] = (objCellArray[1, ItemPosition[0]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[0]].ToString().Trim(), "C");
                     newRow["seq"] = seq1 + " " + seq2;
@@ -233,6 +234,7 @@ namespace Sci.Production.Warehouse
                     newRow["seq2"] = seq2;
                     newRow["Roll"] = (objCellArray[1, ItemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]].ToString().Trim(), "C");
                     newRow["Dyelot"] = (objCellArray[1, ItemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]].ToString().Trim(), "C").ToString();
+                    newRow["Location"] = location;
                     newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "N");
                     newRow["CanWriteIn"] = true;
                     #region check Columns length
@@ -268,6 +270,12 @@ namespace Sci.Production.Warehouse
                         listColumnLengthErrMsg.Add("<Dyelot> length can't be more than 8 Characters.");
                     }
 
+                    // Bulk Location varchar(8)
+                    if (Encoding.Default.GetBytes(newRow["Location"].ToString()).Length > 200)
+                    {
+                        listColumnLengthErrMsg.Add("<Bulk Location> length can't be more than 200 Characters.");
+                    }
+
                     // Qty  numeric (11, 2)
                     if (MyUtility.Convert.GetInt(newRow["qty"].ToString()) <= 0)
                     {
@@ -297,13 +305,14 @@ namespace Sci.Production.Warehouse
                     sqlpar.Add(new SqlParameter("@Seq2", newRow["seq2"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@Roll", newRow["roll"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@Dyelot", newRow["dyelot"].ToString().Trim()));
+                    sqlpar.Add(new SqlParameter("@Location", newRow["Location"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@MDivisionID", Env.User.Keyword));
                     DataRow dr2;
                     string sql = @"
 select fi.*
 	,[Description] = dbo.getmtldesc(fi.POID,fi.seq1, fi.seq2, 2, 0)
 	,[StockUnit] = dbo.GetStockUnitBySPSeq(fi.POID, fi.seq1, fi.seq2)
-	,[Location] = dbo.Getlocation(fi.ukey)
+	,[Location] = @Location
 from ftyinventory fi
 inner join Orders o on fi.POID = o.id
 inner join Factory f on o.FtyGroup = f.id
@@ -321,6 +330,7 @@ and f.MDivisionID = @MDivisionID ";
                         newRow["StockUnit"] = dr2["StockUnit"];
                         newRow["Location"] = dr2["Location"];
                         newRow["ftyinventoryukey"] = dr2["Ukey"];
+                        newRow["Location"] = dr2["Location"];
                     }
                     else
                     {
@@ -331,7 +341,8 @@ and f.MDivisionID = @MDivisionID ";
                             newRow["seq1"],
                             newRow["seq2"],
                             newRow["roll"],
-                            newRow["dyelot"]), false);
+                            newRow["dyelot"],
+                            newRow["Location"]), false);
                     }
 
                     #endregion
