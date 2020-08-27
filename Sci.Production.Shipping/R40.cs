@@ -785,7 +785,7 @@ from (
 		and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期到 A, B 倉有收發紀錄的訂單
 		and a.Status='Confirmed'
-		and a.Type in ('A','B','C','D','I')
+		and a.Type in ('A','B','C','D','E','I')
 	)WH_Issue
 	outer apply(
 		select Qty = isnull(sum(b.Qty),0) 
@@ -898,7 +898,7 @@ from (
 			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期到 A, B 倉有收發紀錄的訂單
 			and a.Status='Confirmed'
-			and a.Type in ('A','B','C','D','I')
+			and a.Type in ('A','B','C','D','E','I')
 			union all
 			select 1 from Issuelack a
 			inner join Issuelack_Detail b on a.Id=b.Id
@@ -1186,7 +1186,7 @@ from (
 		where b.PoId = mdp.POID and b.Seq1=mdp.seq1 and b.Seq2=mdp.Seq2
 		and a.IssueDate <= @GenerateDate
 		and a.Status='Confirmed'
-		and a.Type in ('A','B','C','D','I')
+		and a.Type in ('A','B','C','D','E','I')
 	)WH_Issue
 	outer apply(
 		select Qty = isnull(sum(b.Qty),0) 
@@ -1212,7 +1212,7 @@ from (
 		where b.POID = psd.ID and b.Seq1 = psd.SEQ1 and b.Seq2 = psd.SEQ2
 		and IssueDate <= @GenerateDate
 		and a.status = 'Confirmed'
-		and a.Type in ('A','B','C','D','I')
+		and a.Type in ('A','B','C','D','E','I')
 		union all
 		select 1 from Issuelack a
 		inner join Issuelack_Detail b on a.Id = b.Id
