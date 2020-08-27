@@ -2020,6 +2020,18 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                 return;
             }
 
+            #region 判斷 Pattern 非 Allparts 為0筆, Allparts 項次的 Parts 不可0
+            foreach (int iden in this.ArticleSizeTb.Select($"Sel = 1").AsEnumerable().Select(s => (int)s["iden"]))
+            {
+                if (!this.patternTb.Select($"iden = {iden} and PatternCode<>'ALLPARTS'").Any() &&
+                    this.patternTb.Select($"iden = {iden} and PatternCode='ALLPARTS' and Parts = 0").Any())
+                {
+                    MyUtility.Msg.WarningBox("All Part Detail can't empty, Please check with Pattern Team.");
+                    return;
+                }
+            }
+            #endregion
+
             #region 判斷Pattern(Cutpart_grid)的Artwork  不可為空
             DataRow[] findr = this.patternTb.Select("PatternCode<>'ALLPARTS' and (art='' or art is null)", string.Empty);
             var tmpArticleSizeTb = this.ArticleSizeTb.AsEnumerable();
