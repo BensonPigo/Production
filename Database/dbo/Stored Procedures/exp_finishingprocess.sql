@@ -504,8 +504,8 @@ USING(
 	s1.SCICtnNo--*PK
 	,s1.Side
 	,s1.Seq
-	,[FilePath] = (select ShippingMarkPath from Production.dbo.System)
-	,s1.FileName	
+	,[FilePath] = ''-- (select ShippingMarkPath from Production.dbo.System)
+	,[FileName]=''--s1.FileName	
 	,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0
 	,[GenSongUpdated] = 0
@@ -609,7 +609,7 @@ USING(
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
 	,[PackingCTN] = pd.id + pd.CTNStartNo
 	,[IsMixPacking]= IIF( isnull(MixCount.val, 0) > 1 , 1 ,0)
-	,[PicSetting]= [FPS].[dbo].GetPicSetting(p.ID,pd.SCICtnNo)
+	,[PicSetting]= [FPS].[dbo].GetPicSetting(p.ID,pd.SCICtnNo,pd.RefNO,p.CustCDID,p.BrandID)
 	FROM Production.dbo.PackingList p
 	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
 	left join  Production.dbo.ShipPlan sp on sp.id=p.ShipPlanID
@@ -637,7 +637,6 @@ USING(
 	where (convert(date,p.AddDate) = @cDate or convert(date,p.EditDate) = @cDate
 		or convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate
 		or convert(date,pic.AddDate) = @cDate or convert(date,pic.EditDate) = @cDate
-		or convert(date,pic.EditDate) = @cDate or convert(date,pic.EditDate) = @cDate
 	)
 ) as S
 on T.SCICtnNo = S.SCICtnNo and T.Article = s.Article and T.SizeCode = s.Sizecode

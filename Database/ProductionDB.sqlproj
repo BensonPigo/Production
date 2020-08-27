@@ -2528,6 +2528,7 @@
     <Build Include="dbo\Views\View_SewingInfoSP.sql" />
     <Build Include="dbo\Views\View_SewingInfoArticleSize.sql" />
     <Build Include="dbo\Views\View_SewingInfoLocation.sql" />
+    <Build Include="dbo\Functions\CheckShippingMarkPicSetting.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
