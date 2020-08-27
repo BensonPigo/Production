@@ -1659,7 +1659,9 @@ where p.id='{dr["PackingListID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Cate
                 return;
             }
             #region 檢查傳入的SP 維護的IDD是否都為同一天(沒維護度不判斷)
-            List<Order_QtyShipKey> listOrder_QtyShipKey = this.DetailDatas.Select(s => new Order_QtyShipKey
+            List<Order_QtyShipKey> listOrder_QtyShipKey = this.DetailDatas
+                .Where(s => !MyUtility.Check.Empty(s["ShipQty"]))
+                .Select(s => new Order_QtyShipKey
             {
                 SP = s["OrderID"].ToString(),
                 Seq = s["OrderShipmodeSeq"].ToString(),
@@ -1677,16 +1679,14 @@ where p.id='{dr["PackingListID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Cate
             }
 
             #region 檢查傳入的SP 維護的IDD與PulloutputDate是否都為同一天(沒維護不判斷)
-            List<Order_QtyShipKey> listOrder_QtyShipKey = new List<Order_QtyShipKey>();
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                listOrder_QtyShipKey.Add(new Order_QtyShipKey
+            List<Order_QtyShipKey> listOrder_QtyShipKey = this.DetailDatas
+                .Where(s => !MyUtility.Check.Empty(s["ShipQty"]))
+                .Select(s => new Order_QtyShipKey
                 {
-                    SP = dr["OrderID"].ToString(),
-                    Seq = dr["OrderShipmodeSeq"].ToString(),
-                    PulloutDate = MyUtility.Convert.GetDate(dr["PulloutDate"]),
-                });
-            }
+                    SP = s["OrderID"].ToString(),
+                    Seq = s["OrderShipmodeSeq"].ToString(),
+                    PulloutDate = MyUtility.Convert.GetDate(s["PulloutDate"]),
+                }).ToList();
 
             Prgs.CheckIDDSamePulloutDate(listOrder_QtyShipKey);
             #endregion

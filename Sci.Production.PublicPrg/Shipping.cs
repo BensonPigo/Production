@@ -1282,7 +1282,7 @@ from    (   select  distinct IDD
 
             if (cntIDD > 1)
             {
-                MyUtility.Msg.InfoBox("GB# contains multi. IDD");
+                MyUtility.Msg.InfoBox("Contains multi. IDD");
             }
         }
 

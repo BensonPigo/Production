@@ -736,6 +736,8 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
                         MyUtility.Msg.WarningBox(string.Format("Pullout date of Packing No.:{0} is not empty, can't delete!", MyUtility.Convert.GetString(pldr["ID"])));
                         return;
                     }
+
+                    this.plData.Rows.Remove(pldr);
                 }
 
                 if (this.DetailDatas.Count - 1 <= 0)
