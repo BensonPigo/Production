@@ -54,9 +54,11 @@ namespace Sci.Production.Shipping
         private void Find()
         {
             #region 必輸入條件
-            if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
+            if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) &&
+                MyUtility.Check.Empty(this.txtSP1.Text) &&
+                MyUtility.Check.Empty(this.txtSP2.Text))
             {
-                MyUtility.Msg.WarningBox("Please input <Buyer Delivery>!");
+                MyUtility.Msg.WarningBox("Please input <SP#> or <Buyer Delivery> !");
                 return;
             }
             #endregion
@@ -110,8 +112,12 @@ select
     SewingOutputQty = SewingOutPut.Qty ,
 	FinishedFOCStockinQty = ISNULL(FocStockQty.Value ,0)    -- Function 取得 FOC 庫存
 	,o.OrderTypeID
+    ,[FinFOCQty] = isnull(ox.FOCQty, 0)
 from orders o with(nolock)
 inner join Factory f with(nolock) on f.id = o.FactoryID and f.IsProduceFty = 1
+outer apply(
+	select FOCQty=sum(ox.FOCQty) from Order_Finish ox where ox.id = o.ID
+)ox
 outer apply(
 	select 	oq.ID,
 	[Qty] = sum(isnull(C_Pullout.ShipQty,0) + isnull(TPE_Adjust.DiffQty,0))
@@ -191,11 +197,7 @@ where   o.MDivisionID = '{Env.User.Keyword}'
         AND o.FOCQty > 0  --訂單有 FOC 數量
         AND FocStockQty.Value > 0  -- FOC 還有未出貨的數量
 	    AND ISNULL(ChargeablePullout.Qty,0) = (o.Qty - o.FOCQty)  --Chargeable 必須『全數』出貨
-        and not exists(
-            select 1 
-            from Order_Finish ox 
-            where ox.id = o.ID
-        )  --訂單尚未執行 FOC 入庫
+        AND isnull(ox.FOCQty,0) < isnull(FocStockQty.Value,0)  --[系統紀錄 P12 完成入庫的庫存]小於[當下應有的庫存]
         AND (	
 		        PackingList_Chk_HasFoc.Result='false' 
 		        OR 
@@ -229,13 +231,12 @@ order by o.ID
             }
 
             DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(dr => MyUtility.Convert.GetBool(dr["selected"])).CopyToDataTable();
-            DataTable dt2 = dt.Copy();
             DataTable odt;
             DualResult result;
 
             #region SewingOutput總產出不可少於訂單總數量
             string msgError = string.Empty;
-            DataRow[] drlist = dt2.Select("SewingOutputQty < Qty");
+            DataRow[] drlist = dt.Select("SewingOutputQty < Qty");
             if (drlist.Length > 0)
             {
                 msgError = "Sewing output q'ty less than order q'ty, those SP# cannot do FOC stock-in. ";
@@ -271,25 +272,23 @@ inner join Order_Finish ox with(nolock) on ox.id = t.OrderID
                 string msg = $@"SP# already extsis Finished FOC
 SP# : {string.Join(",", idList)}";
                 MyUtility.Msg.WarningBox(msg);
-                if (dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).Count() > 0)
-                {
-                    dt2 = dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).CopyToDataTable();
-                }
-
-                if (dt.AsEnumerable().Where(w => !idList.Contains(MyUtility.Convert.GetString(w["OrderId"]))).Count() == 0)
-                {
-                    dt2.Clear();
-                }
             }
 
-            if (dt2.Rows.Count > 0)
+            if (dt.Rows.Count > 0)
             {
                 string insertOrderFinished = $@"
+update o
+	set o.FOCQty = t.FinishedFOCStockinQty, o.AddDate = getdate(), o.AddName = '{Env.User.UserID}'
+from #tmp t
+inner join Order_Finish o on t.OrderID = o.ID
+where t.FinishedFOCStockinQty > t.FinFOCQty
+
 insert Order_Finish(ID,FOCQty,AddName,AddDate)
-select OrderID,FinishedFOCStockinQty ,'{Env.User.UserID}',getdate()
-from #tmp
+select t.OrderID, t.FinishedFOCStockinQty, [AddName] = '{Env.User.UserID}', [AddDate] = getdate()
+from #tmp t
+where not exists(select 1 from Order_Finish where ID = t.OrderID)
 ";
-                result = MyUtility.Tool.ProcessWithDatatable(dt2, string.Empty, insertOrderFinished, out odt);
+                result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, insertOrderFinished, out odt);
                 if (!result)
                 {
                     this.ShowErr(result);

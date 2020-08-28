@@ -3,6 +3,7 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Data;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
@@ -49,9 +50,11 @@ namespace Sci.Production.Shipping
         private void Find()
         {
             #region 必輸入條件
-            if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
+            if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) &&
+                MyUtility.Check.Empty(this.txtSP1.Text) &&
+                MyUtility.Check.Empty(this.txtSP2.Text))
             {
-                MyUtility.Msg.WarningBox("Please input <Buyer Delivery>!");
+                MyUtility.Msg.WarningBox("Please input <SP#> or <Buyer Delivery> !");
                 return;
             }
             #endregion
@@ -120,12 +123,25 @@ and exists(select 1 from Order_Finish ox where ox.id = o.ID)
 {where}
 order by o.ID
 ";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
                 return;
+            }
+
+            // 『系統紀錄 P12 完成入庫的庫存』小於『當下應有的庫存』
+            if (this.chkOnlyShow.Checked)
+            {
+                var query = dt.AsEnumerable().Where(x => x.Field<int>("FinishedFOCStockinQty") < x.Field<int>("CurrentFOCStock"));
+                if (query.Any())
+                {
+                    dt = query.CopyToDataTable();
+                }
+                else
+                {
+                    dt = dt.Clone();
+                }
             }
 
             if (dt.Rows.Count == 0)
