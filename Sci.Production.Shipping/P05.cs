@@ -217,6 +217,9 @@ where {0}", this.masterID);
             this.txtTerminalWhse.Text = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(this.CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
             this.displayBoxDeclarationID.Text = MyUtility.GetValue.Lookup("ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
             this.displayBoxCustomsNo.Text = MyUtility.GetValue.Lookup("DeclareNo", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
+            this.btnRemark.Enabled = this.CurrentMaintain != null;
+            this.btnRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["Remark"]) ? Color.Blue : Color.Black;
+
             #region AirPP List按鈕變色
             if (!this.EditMode)
             {
@@ -457,7 +460,6 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                     break;
                 case "CONFIRMED":
                     // Confirm後, 仍可以按[Edit] 編輯[No Export Charge]欄位
-                    this.txtRemark.ReadOnly = true;
                     this.txtpaytermarPaymentTerm.TextBox1.ReadOnly = true;
                     this.txtShiptermShipmentTerm.ReadOnly = true;
 
@@ -474,6 +476,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                     this.detailgrid.Columns[4].DefaultCellStyle.ForeColor = Color.Black;
                     this.btnImportfrompackinglist.Enabled = false;
                     this.gridicon.Remove.Enabled = false;
+                    this.btnRemark.Enabled = false;
                     this.txtCutoffDate.ReadOnly = true;
                     this.txtTerminalWhse.ReadOnly = true;
                     break;
@@ -609,6 +612,14 @@ where   pl.INVNo = '{0}'
                 this.txtCountryDestination.TextBox1.Focus();
                 MyUtility.Msg.WarningBox("Destination can't empty!!");
                 return false;
+            }
+            else
+            {
+                if (MyUtility.Convert.GetString(this.CurrentMaintain["Dest"]) == "ZZ")
+                {
+                    MyUtility.Msg.WarningBox("Destination cannot be 「Other」!!");
+                    return false;
+                }
             }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["PayTermARID"]))
@@ -1092,7 +1103,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 Win.Tools.SelectItem item;
                 if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
                 {
-                    item = new Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' order by ID", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])), "17,3,17", this.txtCustCD.Text);
+                    item = new Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' and junk = 0 order by ID", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])), "17,3,17", this.txtCustCD.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -1103,7 +1114,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 }
                 else
                 {
-                    item = new Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' and CountryID = '{1}' order by ID", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Dest"])), "17,3,17", this.txtCustCD.Text);
+                    item = new Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' and CountryID = '{1}' and junk = 0 order by ID", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Dest"])), "17,3,17", this.txtCustCD.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -2018,6 +2029,16 @@ where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentM
         {
             P05_FoundryList dialog = new P05_FoundryList(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString());
             dialog.ShowDialog(this);
+        }
+
+        private void BtnRemark_Click(object sender, EventArgs e)
+        {
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Remark"]), "Remark", this.EditMode, null);
+
+            if (callNextForm.ShowDialog() == DialogResult.OK)
+            {
+                this.CurrentMaintain["Remark"] = callNextForm.Memo;
+            }
         }
     }
 }
