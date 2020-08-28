@@ -184,7 +184,7 @@ INTO  MachinePO_Detail
 FROM Pms_To_Trade.dbo.MachinePO, Production.dbo.SciMachine_MachinePO_Detail  pod
 OUTER APPLY(
 	SELECT [Qty]=COUNT(ins.Iden)
-	FROM MachineIn_Detail_Inspect ins
+	FROM Production.dbo.SciMachine_MachineIn_Detail_Inspect ins
 	WHERE  ins.MachinePOID = pod.ID AND ins.Seq1  = pod.Seq1 AND ins.Seq2 = pod.Seq2 AND ins.Result='P'
 )InspectionQty 
 WHERE MachinePO.id= pod.id  
