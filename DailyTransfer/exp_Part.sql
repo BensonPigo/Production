@@ -151,7 +151,11 @@ SELECT *
 INTO  MachinePO
 FROM Production.dbo.SciMachine_MachinePO 
 WHERE Approve IS NOT NULL
-AND (cdate>=DATEADD(DAY,-7,GETDATE())  OR EditDate >= DATEADD(DAY,-7,GETDATE()))
+AND ( 
+		(cdate>=DATEADD(DAY,-7,GETDATE())  OR EditDate >= DATEADD(DAY,-7,GETDATE())) 
+			OR
+		(InspectTime>=DATEADD(DAY,-7,GETDATE())  OR InspectTime >= DATEADD(DAY,-7,GETDATE()))
+	)
 And Status = 'Approved'
 AND PurchaseFrom = 'T'
 ------------------------------------------------
@@ -174,9 +178,15 @@ FROM Pms_To_Trade.dbo.RepairPO, Production.dbo.SciMachine_RepairPO_Detail  rpod
 WHERE RepairPO.id= rpod.id  
 ORDER BY RepairPO.id 
 
-SELECT pod.ID,pod.seq1, pod.SEQ2 , pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid
+SELECT pod.ID,pod.seq1, pod.SEQ2 , pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid 
+	,[InspectionQty]=InspectionQty.Qty
 INTO  MachinePO_Detail
 FROM Pms_To_Trade.dbo.MachinePO, Production.dbo.SciMachine_MachinePO_Detail  pod
+OUTER APPLY(
+	SELECT [Qty]=COUNT(ins.Iden)
+	FROM Production.dbo.SciMachine_MachineIn_Detail_Inspect ins
+	WHERE  ins.MachinePOID = pod.ID AND ins.Seq1  = pod.Seq1 AND ins.Seq2 = pod.Seq2 AND ins.Result='P'
+)InspectionQty 
 WHERE MachinePO.id= pod.id  
 ORDER BY MachinePO.id 
 
