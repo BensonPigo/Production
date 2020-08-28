@@ -217,7 +217,7 @@ where {0}", this.masterID);
             this.txtTerminalWhse.Text = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(this.CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
             this.displayBoxDeclarationID.Text = MyUtility.GetValue.Lookup("ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
             this.displayBoxCustomsNo.Text = MyUtility.GetValue.Lookup("DeclareNo", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "VNExportDeclaration", "INVNo");
-            this.btnRemark.Enabled = this.EditMode && this.CurrentMaintain != null;
+            this.btnRemark.Enabled = this.CurrentMaintain != null;
             this.btnRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["Remark"]) ? Color.Blue : Color.Black;
 
             #region AirPP List按鈕變色
@@ -2033,7 +2033,7 @@ where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentM
 
         private void BtnRemark_Click(object sender, EventArgs e)
         {
-            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Remark"]), "Remark", true, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Remark"]), "Remark", this.EditMode, null);
 
             if (callNextForm.ShowDialog() == DialogResult.OK)
             {

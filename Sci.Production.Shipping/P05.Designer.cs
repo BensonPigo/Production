@@ -1068,7 +1068,7 @@
             this.labForwardDate.Name = "labForwardDate";
             this.labForwardDate.Size = new System.Drawing.Size(126, 23);
             this.labForwardDate.TabIndex = 77;
-            this.labForwardDate.Text = "Forward Booking Date";
+            this.labForwardDate.Text = "FWD booking date";
             // 
             // dateForward
             // 
@@ -1340,7 +1340,6 @@
             // 
             // btnRemark
             // 
-            this.btnRemark.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnRemark.Location = new System.Drawing.Point(904, 177);
             this.btnRemark.Name = "btnRemark";
             this.btnRemark.Size = new System.Drawing.Size(146, 30);
