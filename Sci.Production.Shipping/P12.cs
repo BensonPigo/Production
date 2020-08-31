@@ -225,6 +225,11 @@ order by o.ID
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
+            if (this.listControlBindingSource1.DataSource == null)
+            {
+                return;
+            }
+
             var query = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(dr => MyUtility.Convert.GetBool(dr["selected"]));
             if (query.ToList().Count == 0)
             {
