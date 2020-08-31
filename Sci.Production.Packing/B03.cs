@@ -1,28 +1,25 @@
-﻿using Ict;
-using Sci.Data;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Windows.Forms;
+using Ict.Win;
+using Ict;
+using Sci.Data;
+using System.Data.SqlClient;
+using Sci.Win.Tools;
+using System.Linq;
+using System.Collections;
+using System;
 
 namespace Sci.Production.Packing
 {
-    /// <summary>
-    /// B03
-    /// </summary>
-    public partial class B03 : Win.Tems.Input1
+    public partial class B03 : Sci.Win.Tems.Input6
     {
         private Hashtable ht = new Hashtable();
         private DataTable sizes;
         private DataTable sizesAll;
+        private string oldStickerComb = string.Empty;
+        private string oldBrandID = string.Empty;
 
-        /// <summary>
-        /// B03
-        /// </summary>
-        /// <param name="menuitem">menuitem</param>
         public B03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -38,9 +35,9 @@ namespace Sci.Production.Packing
             #region ComboBox
             DualResult result;
             string cmd = $@"
-SELECT [ID]='' ,[SIze]='' 
-UNION
-SELECT ID, SIze 
+--SELECT [StickerSizeID]='' ,[SIze]='' 
+--UNION
+SELECT [StickerSizeID]=ID, SIze 
 FROM StickerSize WITH (NOLOCK) 
 where junk <> 1";
             result = DBProxy.Current.Select(null, cmd, out this.sizes);
@@ -50,9 +47,9 @@ where junk <> 1";
             }
 
             cmd = $@"
-SELECT [ID]='' ,[SIze]='' 
+SELECT [StickerSizeID]='' ,[SIze]='' 
 UNION
-SELECT ID, SIze 
+SELECT [StickerSizeID]=ID, SIze 
 FROM StickerSize WITH (NOLOCK) 
 ";
             result = DBProxy.Current.Select(null, cmd, out this.sizesAll);
@@ -60,68 +57,150 @@ FROM StickerSize WITH (NOLOCK)
             {
                 this.ShowErr(result);
             }
+
+            // comboCategory
+            cmd = $@"
+SELECT [Text]=Name,[Value]=ID
+
+FROM DropDownList
+WHERE Type ='PMS_ShipMarkCategory' 
+";
+            DataTable categoryData;
+            result = DBProxy.Current.Select(null, cmd, out categoryData);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
+            this.comboCategory.DataSource = new BindingSource(categoryData, null);
+            this.comboCategory.ValueMember = "Value";
+            this.comboCategory.DisplayMember = "Text";
             #endregion
         }
 
-        /// <inheritdoc/>
-        protected override void OnEditModeChanged()
+        protected override void OnDetailEntered()
         {
-            base.OnEditModeChanged();
-            this.ComboPressing2DataSource();
+            base.OnDetailEntered();
+
+            this.txtStickerComb.Text = MyUtility.GetValue.Lookup($@"
+SELECT ID
+FROM ShippingMarkCombination WITH(NOLOCK)
+WHERE Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
+");
+
+            this.oldStickerComb = this.txtStickerComb.Text;
+            this.oldBrandID = MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]);
+
+            this.chkIsMixPack.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"
+SELECT IsMixPack
+FROM ShippingMarkCombination WITH(NOLOCK)
+WHERE Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
+
+"));
         }
 
-        private void ComboPressing2DataSource()
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            if (this.comboStickerSize != null && this.CurrentMaintain != null)
+            string masterUkey = (e.Master == null) ? string.Empty : e.Master["Ukey"].ToString();
+            this.DetailSelectCommand = $@"
+SELECT [ShippingMarkTypeID]=c.ID 
+        , b.*
+FROM ShippingMarkPicture a
+INNER JOIN ShippingMarkPicture_Detail b ON a.Ukey = b.ShippingMarkPictureUkey
+INNER JOIN ShippingMarkType c ON b.ShippingMarkTypeUkey = c.Ukey
+WHERE a.Ukey = '{masterUkey}'
+ORDER BY b.Seq
+";
+            return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        protected override bool OnGridSetup()
+        {
+            DataGridViewGeneratorComboBoxColumnSettings sideComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings stickerSizeCell = new DataGridViewGeneratorComboBoxColumnSettings();
+
+            // sideComboCell
+            Dictionary<string, string> side = new Dictionary<string, string>();
+            side.Add("A", "A");
+            side.Add("B", "B");
+            side.Add("C", "C");
+            side.Add("D", "D");
+            sideComboCell.DataSource = new BindingSource(side, null);
+            sideComboCell.ValueMember = "Key";
+            sideComboCell.DisplayMember = "Value";
+
+            // sideComboCell
+            Dictionary<long, string> size = new Dictionary<long, string>();
+
+            // 顯示不分有無Junk
+            foreach (DataRow dr in this.sizesAll.Rows)
             {
-                if (this.EditMode && this.sizes != null)
-                {
-                    MyUtility.Tool.SetupCombox(this.comboStickerSize, 1, this.sizes);
-                    this.comboStickerSize.DisplayMember = "Size";
-                }
-
-                if (!this.EditMode && this.sizesAll != null)
-                {
-                    MyUtility.Tool.SetupCombox(this.comboStickerSize, 1, this.sizesAll);
-                    this.comboStickerSize.DisplayMember = "Size";
-                }
-
-                this.comboStickerSize.SelectedValue = this.CurrentMaintain["StickerSizeID"];
+                size.Add(MyUtility.Convert.GetLong(dr["StickerSizeID"]), MyUtility.Convert.GetString(dr["SIze"]));
             }
-        }
 
-        private void TxtCTNRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select RefNo  from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' ", null, this.txtCTNRefno.Text);
+            stickerSizeCell.DataSource = new BindingSource(size, null);
+            stickerSizeCell.ValueMember = "Key";
+            stickerSizeCell.DisplayMember = "Value";
 
-            DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel)
+            // 避免選了Junk
+            stickerSizeCell.CellValidating += (s, e) =>
             {
-                return;
-            }
+                if (this.EditMode)
+                {
+                    DataRow currentRow = this.detailgrid.GetDataRow(e.RowIndex);
+                    int currentStickerSizeID = MyUtility.Convert.GetInt(e.FormattedValue);
+                    DataRow dr;
+                    string cmd = $@"
+SELECT Size
+FROM StickerSize WITH (NOLOCK) 
+WHERE ID = '{currentStickerSizeID}'
+AND Junk = 1
+";
+                    if (MyUtility.Check.Seek(cmd, out dr))
+                    {
+                        MyUtility.Msg.InfoBox($"Sticker Size {dr["Size"]} has junked !!");
+                        currentRow["StickerSizeID"] = 0;
+                        e.FormattedValue = 0;
+                    }
+                    else
+                    {
+                        currentRow["StickerSizeID"] = currentStickerSizeID;
+                    }
 
-            this.txtCTNRefno.Text = item.GetSelectedString();
+                    currentRow.EndEdit();
+                }
+            };
+
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("ShippingMarkTypeID", header: "Sticker Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Numeric("Seq", header: "Seq", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: true)
+                .CheckBox("IsSSCC", header: "SSCC", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+                .ComboBox("Side", header: "Side", width: Widths.AnsiChars(10), settings: sideComboCell)
+                .Numeric("FromRight", header: "From Right (mm)", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: false)
+                .Numeric("FromBottom", header: "From Bottom  (mm)", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: false)
+                .ComboBox("StickerSizeID", header: "Sticker Size", width: Widths.AnsiChars(20), settings: stickerSizeCell)
+                .CheckBox("Is2Side", header: "Is 2 Side", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                .CheckBox("IsHorizontal", header: "Is Horizontal", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+            ;
+            return base.OnGridSetup();
         }
 
-        /// <inheritdoc/>
+        protected override bool ClickEditBefore()
+        {
+            if (MyUtility.Convert.GetBool(this.CurrentMaintain["Junk"]))
+            {
+                MyUtility.Msg.InfoBox("This record has junked, can't modify.");
+                return false;
+            }
+
+            return base.ClickEditBefore();
+        }
+
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["Seq"] = 1;
-        }
 
-        private void TxtCTNRefno_Validating(object sender, CancelEventArgs e)
-        {
-            string textValue = this.txtCTNRefno.Text;
-            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtCTNRefno.OldValue)
-            {
-                if (!MyUtility.Check.Seek($"Select 1 from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' and RefNo = '{textValue}'"))
-                {
-                    this.txtCTNRefno.Text = string.Empty;
-                    MyUtility.Msg.WarningBox(string.Format("< RefNo : {0} > not found!!!", textValue));
-                    return;
-                }
-            }
+            this.CurrentMaintain["Category"] = "PIC";
         }
 
         protected override bool ClickSaveBefore()
@@ -138,25 +217,38 @@ FROM StickerSize WITH (NOLOCK)
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Side"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ShippingMarkCombinationUkey"]) || this.DetailDatas.Count() == 0 || this.DetailDatas.Where(o => MyUtility.Check.Empty(o["ShippingMarkTypeUkey"])).Any())
             {
-                MyUtility.Msg.WarningBox("Side can not empty!");
+                MyUtility.Msg.WarningBox("Sticker Conbiantion and Sticker Type cannot be empty.");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Seq"]))
+            string cmd = $@"
+select 1
+from ShippingMarkPicture WITH(NOLOCK)
+where BrandID = '{this.CurrentMaintain["BrandID"]}'
+AND Category='{this.CurrentMaintain["Category"]}'
+AND ShippingMarkCombinationUkey='{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
+AND CTNRefno='{this.CurrentMaintain["CTNRefno"]}'
+AND Ukey <> {this.CurrentMaintain["Ukey"]}
+";
+
+            if (MyUtility.Check.Seek(cmd))
             {
-                MyUtility.Msg.WarningBox("Seq can not empty!");
+                MyUtility.Msg.WarningBox($"Brand {this.CurrentMaintain["BrandID"]}, Category {this.comboCategory.Text}, Combination {this.txtStickerComb.Text}, CTN Refon {this.CurrentMaintain["CTNRefno"]} already exists.");
                 return false;
+            }
+
+            foreach (DataRow row in this.DetailDatas)
+            {
+                if (MyUtility.Check.Empty(row["StickerSizeID"]))
+                {
+                    MyUtility.Msg.WarningBox("Sticker Size cannot be empty.");
+                    return false;
+                }
             }
 
             return base.ClickSaveBefore();
-        }
-
-        protected override void OnDetailEntered()
-        {
-            base.OnDetailEntered();
-            this.ComboPressing2DataSource();
         }
 
         protected override void EnsureToolbarExt()
@@ -178,11 +270,8 @@ FROM StickerSize WITH (NOLOCK)
         protected override void ClickJunk()
         {
             base.ClickJunk();
-            string sqlcmd = $@"update ShippingMarkPicture set junk = 1 
-where BrandID = '{this.CurrentMaintain["BrandID"]}'
-and CTNRefno = '{this.CurrentMaintain["CTNRefno"]}'
-and Side = '{this.CurrentMaintain["Side"]}'
-and Seq = '{this.CurrentMaintain["Seq"]}'
+            string sqlcmd = $@"update ShippingMarkPicture set junk = 1 ,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+where Ukey = '{this.CurrentMaintain["Ukey"]}'
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlcmd);
             if (!result)
@@ -194,11 +283,8 @@ and Seq = '{this.CurrentMaintain["Seq"]}'
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();
-            string sqlcmd = $@"update ShippingMarkPicture set junk = 0
-where BrandID = '{this.CurrentMaintain["BrandID"]}'
-and CTNRefno = '{this.CurrentMaintain["CTNRefno"]}'
-and Side = '{this.CurrentMaintain["Side"]}'
-and Seq = '{this.CurrentMaintain["Seq"]}'
+            string sqlcmd = $@"update ShippingMarkPicture set junk = 0,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+where Ukey = '{this.CurrentMaintain["Ukey"]}'
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlcmd);
             if (!result)
@@ -207,39 +293,201 @@ and Seq = '{this.CurrentMaintain["Seq"]}'
             }
         }
 
-        private void ComboStickerSize_SelectedValueChanged(object sender, EventArgs e)
+        private void TxtStickerComb_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            if (this.comboStickerSize.SelectedIndex == -1)
+
+            string cmd = $@"
+SELECT  [Shipping Mark Combination ID]=ID
+FROM ShippingMarkCombination
+WHERE BrandID='{this.CurrentMaintain["BrandID"]}'
+AND Category='{this.CurrentMaintain["Category"]}'
+AND Junk=0";
+            DataTable dt;
+            DBProxy.Current.Select(null, cmd, out dt);
+            SelectItem item = new SelectItem(cmd, "Shipping Mark Combination ID", "10", string.Empty, "Shipping Mark Combination ID");
+            DialogResult returnResult = item.ShowDialog();
+
+            if (returnResult == DialogResult.Cancel)
             {
                 return;
             }
 
-            DataTable dt;
-            DualResult result;
-            Int64 id = Convert.ToInt64(this.comboStickerSize.SelectedValue);
-            string cmd = "SELECT  Size ,Width,Length FROM StickerSize WITH(NOLOCK) WHERE ID=@ID";
-            List<SqlParameter> paras = new List<SqlParameter>();
+            cmd = $@"
+SELECT  Ukey ,IsMixPack
+FROM ShippingMarkCombination
+WHERE BrandID='{this.CurrentMaintain["BrandID"]}'
+AND Category='PIC'
+AND Junk=0
+AND ID = '{item.GetSelectedString()}'
+";
 
-            paras.Add(new SqlParameter("@ID", id));
+            DataRow dr;
+            MyUtility.Check.Seek(cmd, out dr);
+            IList<DataRow> selectedData = item.GetSelecteds();
+            this.txtStickerComb.Text = item.GetSelectedString();
+            this.CurrentMaintain["ShippingMarkCombinationUkey"] = MyUtility.Convert.GetInt(dr["Ukey"]);
+            this.chkIsMixPack.Checked = MyUtility.Convert.GetBool(dr["IsMixPack"]);
 
-            result = DBProxy.Current.Select(null, cmd, paras, out dt);
-            if (result)
+        }
+
+        private void TxtStickerComb_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string newStickerComb = this.txtStickerComb.Text;
+
+            if (this.oldStickerComb != newStickerComb)
             {
-                if (dt.Rows != null && dt.Rows.Count > 0)
+                if (MyUtility.Check.Empty(newStickerComb))
                 {
-                    // ISP20200158 移除[Production].[dbo].[ShippingMarkPicture].[PicLength] 及 [PicWidth]
-                    // this.CurrentMaintain["PicLength"] = Convert.ToInt32(dt.Rows[0]["Length"]);
-                    // this.CurrentMaintain["PicWidth"] = Convert.ToInt32(dt.Rows[0]["Width"]);
+                    this.CurrentMaintain["ShippingMarkCombinationUkey"] = DBNull.Value;
+                    this.txtStickerComb.Text = string.Empty;
+
+                    // 刪除表身
+                    foreach (DataRow del in this.DetailDatas)
+                    {
+                        del.Delete();
+                    }
+
+                    return;
                 }
+
+                string cmd = $@"
+SELECT  [Shipping Mark Combination ID]=ID ,Ukey ,IsMixPack
+FROM ShippingMarkCombination
+WHERE BrandID='{this.CurrentMaintain["BrandID"]}'
+AND ID = @ID
+AND Category='{this.CurrentMaintain["Category"]}'
+AND Junk=0";
+                List<SqlParameter> paras = new List<SqlParameter>();
+                paras.Add(new SqlParameter("@ID", newStickerComb));
+
+                DataTable dt;
+                DualResult r = DBProxy.Current.Select(null, cmd, paras, out dt);
+
+                if (!r)
+                {
+                    this.ShowErr(r);
+                    return;
+                }
+
+                if (dt.Rows.Count == 0)
+                {
+                    this.CurrentMaintain["ShippingMarkCombinationUkey"] = DBNull.Value;
+                    this.txtStickerComb.Text = string.Empty;
+
+                    // 刪除表身
+                    foreach (DataRow del in this.DetailDatas)
+                    {
+                        del.Delete();
+                    }
+
+                    MyUtility.Msg.WarningBox("Data not found !!");
+                }
+                else
+                {
+                    this.CurrentMaintain["ShippingMarkCombinationUkey"] = MyUtility.Convert.GetInt(dt.Rows[0]["Ukey"]);
+                    this.txtStickerComb.Text = newStickerComb;
+                    this.chkIsMixPack.Checked = MyUtility.Convert.GetBool(dt.Rows[0]["IsMixPack"]);
+                    this.AutoInsertDetail();
+                }
+            }
+        }
+
+        private void TxtCTNRefno_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string textValue = this.txtCTNRefno.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtCTNRefno.OldValue)
+            {
+                if (!MyUtility.Check.Seek($"Select 1 from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' and RefNo = '{textValue}'"))
+                {
+                    this.txtCTNRefno.Text = string.Empty;
+                    MyUtility.Msg.WarningBox(string.Format("< RefNo : {0} > not found!!!", textValue));
+                    return;
+                }
+            }
+        }
+
+        private void AutoInsertDetail()
+        {
+            // 刪除表身
+            foreach (DataRow del in this.DetailDatas)
+            {
+                del.Delete();
+            }
+
+            string cmd = $@"
+SELECT c.ID,b.Seq,c.IsSSCC ,a.IsMixPack ,c.Ukey
+FROM ShippingMarkCombination a
+INNER JOIN ShippingMarkCombination_Detail b ON a.Ukey = b.ShippingMarkCombinationUkey
+INNER JOIN ShippingMarkType c ON b.ShippingMarkTypeUkey = c.Ukey
+WHERE a.Ukey = '{ this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
+";
+
+            DataTable dt;
+            DualResult r = DBProxy.Current.Select(null, cmd, out dt);
+
+            if (!r)
+            {
+                this.ShowErr(r);
+                return;
+            }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
+                if (detailDt != null)
+                {
+                    DataRow ndr = detailDt.NewRow();
+
+                    ndr["ShippingMarkTypeUkey"] = dr["Ukey"];
+                    ndr["ShippingMarkTypeID"] = dr["ID"];
+                    ndr["Seq"] = dr["Seq"];
+                    ndr["IsSSCC"] = dr["IsSSCC"];
+                    ndr["Side"] = "A";
+                    detailDt.Rows.Add(ndr);
+                }
+            }
+
+            // 表示B06表身是空的
+            if (dt.Rows.Count == 0)
+            {
+                this.chkIsMixPack.Checked = false;
             }
             else
             {
-                this.ShowErr(result);
+                this.chkIsMixPack.Checked = MyUtility.Convert.GetBool(dt.Rows[0]["IsMixPack"]);
+            }
+        }
+
+        private void TxtCTNRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select RefNo  from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' ", null, this.txtCTNRefno.Text);
+
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
             }
 
-            if (this.CurrentMaintain != null && this.EditMode)
+            this.txtCTNRefno.Text = item.GetSelectedString();
+        }
+
+        private void Txtbrand1_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+            string newBrandID = this.txtbrand1.Text;
+
+            if (this.oldBrandID != newBrandID)
             {
-                this.CurrentMaintain["StickerSizeID"] = id;
+                this.CurrentMaintain["ShippingMarkCombinationUkey"] = DBNull.Value;
+                this.txtStickerComb.Text = string.Empty;
+
+                // 刪除表身
+                foreach (DataRow del in this.DetailDatas)
+                {
+                    del.Delete();
+                }
+
+                this.CurrentMaintain["BrandID"] = newBrandID;
             }
         }
     }

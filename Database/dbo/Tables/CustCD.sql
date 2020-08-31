@@ -36,6 +36,8 @@
     [BIRShipTo]         VARCHAR (300)  NULL,
 	[DiamondCustCD]		VARCHAR (10)  NULL,
 	[DiamondCity]		VARCHAR (100)  NULL,
+    [StickerCombinationUkey] BIGINT NULL, 
+    [StickerCombinationUkey_MixPack] BIGINT NULL, 
     CONSTRAINT [PK_CustCD] PRIMARY KEY CLUSTERED ([BrandID] ASC, [ID] ASC)
 );
 
@@ -176,4 +178,17 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Payment Ter
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Payment Term for Sample', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'PayTermARIDSample';
+GO
 
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單尺碼裝箱貼紙組合'
+, @level0type = N'SCHEMA', @level0name = N'dbo'
+, @level1type = N'TABLE', @level1name = N'CustCD'
+, @level2type = N'COLUMN', @level2name = N'StickerCombinationUkey'
+GO
+;
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'混尺碼裝箱貼紙組合'
+, @level0type = N'SCHEMA', @level0name = N'dbo'
+, @level1type = N'TABLE', @level1name = N'CustCD'
+, @level2type = N'COLUMN', @level2name = N'StickerCombinationUkey_MixPack'
+GO
+;
