@@ -225,6 +225,7 @@ drop table #tmp", Env.User.Keyword, this.dr_master["id"]));
                 TaipeiInput.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - sum(child.qty)");
                 this.MyFilter();
                 this.dtSort.Clear();
+                this.Grid_ftyDetail_CellFormatting(null, null);
                 this.HideWaitMessage();
             }
         }
@@ -445,7 +446,8 @@ WHERE   StockType='{dr["toStocktype"]}'
             {
                 this.TaipeiInputBS.Filter = "taipei_qty > accu_qty";
 
-                // FtyDetailBS.Filter = "outqty >0";
+                // 為了觸發 Grid_ftyDetail_CellFormatting 事件
+                this.FtyDetailBS.Filter = this.FtyDetailBS.Filter;
             }
         }
 
