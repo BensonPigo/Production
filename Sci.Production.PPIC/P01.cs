@@ -1696,5 +1696,11 @@ and p.Type in ('L', 'B')
             P01_ComboType frm = new P01_ComboType(this.CurrentMaintain["ID"].ToString());
             frm.ShowDialog();
         }
+
+        private void BtnIntendedDeliveryDate_Click(object sender, EventArgs e)
+        {
+            IntendedDeliveryDate intendedDeliveryDate = new IntendedDeliveryDate(this.CurrentMaintain["ID"].ToString(), false);
+            intendedDeliveryDate.ShowDialog();
+        }
     }
 }

@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.dateKpiMNotice = new Sci.Win.UI.DateBox();
+            this.labelKpiMNotice = new Sci.Win.UI.Label();
+            this.dateKpiEachConsCheck = new Sci.Win.UI.DateBox();
+            this.labelKpiEachConsCheck = new Sci.Win.UI.Label();
             this.dateBoxChangeMemo = new Sci.Win.UI.DateBox();
             this.labChangeMemoDate = new Sci.Win.UI.Label();
             this.dateLastProductionDate = new Sci.Win.UI.DateBox();
@@ -153,10 +157,10 @@
             this.lineShape7 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape6 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.PcHandleText = new Sci.Production.Class.Txttpeuser();
-            this.txttpeuser3 = new Sci.Production.Class.Txttpeuser();
-            this.txttpeuser4 = new Sci.Production.Class.Txttpeuser();
             this.txttpeuser5 = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuser3 = new Sci.Production.Class.Txttpeuser();
+            this.PcHandleText = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuser4 = new Sci.Production.Class.Txttpeuser();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelBuyer = new Sci.Win.UI.Label();
@@ -305,10 +309,7 @@
             this.BtnBuyBack = new Sci.Win.UI.Button();
             this.btnComboType = new Sci.Win.UI.Button();
             this.displayBuyBackReason = new Sci.Win.UI.DisplayBox();
-            this.labelKpiEachConsCheck = new Sci.Win.UI.Label();
-            this.dateKpiEachConsCheck = new Sci.Win.UI.DateBox();
-            this.labelKpiMNotice = new Sci.Win.UI.Label();
-            this.dateKpiMNotice = new Sci.Win.UI.DateBox();
+            this.btnIntendedDeliveryDate = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -317,11 +318,6 @@
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Location = new System.Drawing.Point(4, 24);
-            this.detail.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailcont
             // 
@@ -464,12 +460,12 @@
             this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
-            this.detailcont.Size = new System.Drawing.Size(1000, 661);
+            this.detailcont.Size = new System.Drawing.Size(897, 395);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 661);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 395);
+            this.detailbtm.Size = new System.Drawing.Size(897, 0);
             // 
             // browse
             // 
@@ -506,6 +502,7 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.btnIntendedDeliveryDate);
             this.tabPage1.Controls.Add(this.dateKpiMNotice);
             this.tabPage1.Controls.Add(this.labelKpiMNotice);
             this.tabPage1.Controls.Add(this.dateKpiEachConsCheck);
@@ -629,16 +626,52 @@
             this.tabPage1.Controls.Add(this.labelDetailsStyleNo);
             this.tabPage1.Controls.Add(this.labelDetailsSPNo);
             this.tabPage1.Controls.Add(this.shapeContainer2);
-            this.tabPage1.Controls.Add(this.txttpeuser5);
-            this.tabPage1.Controls.Add(this.txttpeuser3);
-            this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
+            this.tabPage1.Controls.Add(this.txttpeuser3);
+            this.tabPage1.Controls.Add(this.txttpeuser5);
+            this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(1000, 661);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // dateKpiMNotice
+            // 
+            this.dateKpiMNotice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiMNotice", true));
+            this.dateKpiMNotice.IsSupportEditMode = false;
+            this.dateKpiMNotice.Location = new System.Drawing.Point(163, 143);
+            this.dateKpiMNotice.Name = "dateKpiMNotice";
+            this.dateKpiMNotice.ReadOnly = true;
+            this.dateKpiMNotice.Size = new System.Drawing.Size(100, 21);
+            this.dateKpiMNotice.TabIndex = 18;
+            // 
+            // labelKpiMNotice
+            // 
+            this.labelKpiMNotice.Location = new System.Drawing.Point(5, 143);
+            this.labelKpiMNotice.Name = "labelKpiMNotice";
+            this.labelKpiMNotice.Size = new System.Drawing.Size(149, 21);
+            this.labelKpiMNotice.TabIndex = 200;
+            this.labelKpiMNotice.Text = "Est M/Notice Apv.";
+            // 
+            // dateKpiEachConsCheck
+            // 
+            this.dateKpiEachConsCheck.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiEachConsCheck", true));
+            this.dateKpiEachConsCheck.IsSupportEditMode = false;
+            this.dateKpiEachConsCheck.Location = new System.Drawing.Point(163, 116);
+            this.dateKpiEachConsCheck.Name = "dateKpiEachConsCheck";
+            this.dateKpiEachConsCheck.ReadOnly = true;
+            this.dateKpiEachConsCheck.Size = new System.Drawing.Size(100, 21);
+            this.dateKpiEachConsCheck.TabIndex = 199;
+            // 
+            // labelKpiEachConsCheck
+            // 
+            this.labelKpiEachConsCheck.Location = new System.Drawing.Point(5, 116);
+            this.labelKpiEachConsCheck.Name = "labelKpiEachConsCheck";
+            this.labelKpiEachConsCheck.Size = new System.Drawing.Size(149, 21);
+            this.labelKpiEachConsCheck.TabIndex = 198;
+            this.labelKpiEachConsCheck.Text = "Est Each Con Apv.";
             // 
             // dateBoxChangeMemo
             // 
@@ -1844,14 +1877,15 @@
             this.lineShape5.Y1 = 53;
             this.lineShape5.Y2 = 53;
             // 
-            // PcHandleText
+            // txttpeuser5
             // 
-            this.PcHandleText.DisplayBox1Binding = "";
-            this.PcHandleText.DisplayBox2Binding = "";
-            this.PcHandleText.Location = new System.Drawing.Point(669, 31);
-            this.PcHandleText.Name = "PcHandleText";
-            this.PcHandleText.Size = new System.Drawing.Size(302, 23);
-            this.PcHandleText.TabIndex = 191;
+            this.txttpeuser5.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "OutstandingInCharge", true));
+            this.txttpeuser5.DisplayBox1Binding = "";
+            this.txttpeuser5.DisplayBox2Binding = "";
+            this.txttpeuser5.Location = new System.Drawing.Point(179, 339);
+            this.txttpeuser5.Name = "txttpeuser5";
+            this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser5.TabIndex = 70;
             // 
             // txttpeuser3
             // 
@@ -1862,6 +1896,15 @@
             this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser3.TabIndex = 6;
             // 
+            // PcHandleText
+            // 
+            this.PcHandleText.DisplayBox1Binding = "";
+            this.PcHandleText.DisplayBox2Binding = "";
+            this.PcHandleText.Location = new System.Drawing.Point(669, 31);
+            this.PcHandleText.Name = "PcHandleText";
+            this.PcHandleText.Size = new System.Drawing.Size(302, 23);
+            this.PcHandleText.TabIndex = 191;
+            // 
             // txttpeuser4
             // 
             this.txttpeuser4.DisplayBox1Binding = "";
@@ -1870,16 +1913,6 @@
             this.txttpeuser4.Name = "txttpeuser4";
             this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser4.TabIndex = 7;
-            // 
-            // txttpeuser5
-            // 
-            this.txttpeuser5.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "OutstandingInCharge", true));
-            this.txttpeuser5.DisplayBox1Binding = "";
-            this.txttpeuser5.DisplayBox2Binding = "";
-            this.txttpeuser5.Location = new System.Drawing.Point(179, 339);
-            this.txttpeuser5.Name = "txttpeuser5";
-            this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser5.TabIndex = 70;
             // 
             // lineShape10
             // 
@@ -2252,7 +2285,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape3});
-            this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
+            this.shapeContainer1.Size = new System.Drawing.Size(992, 655);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -3419,41 +3452,15 @@
             this.displayBuyBackReason.Size = new System.Drawing.Size(88, 21);
             this.displayBuyBackReason.TabIndex = 239;
             // 
-            // labelKpiEachConsCheck
+            // btnIntendedDeliveryDate
             // 
-            this.labelKpiEachConsCheck.Location = new System.Drawing.Point(5, 116);
-            this.labelKpiEachConsCheck.Name = "labelKpiEachConsCheck";
-            this.labelKpiEachConsCheck.Size = new System.Drawing.Size(149, 21);
-            this.labelKpiEachConsCheck.TabIndex = 198;
-            this.labelKpiEachConsCheck.Text = "Est Each Con Apv.";
-            // 
-            // dateKpiEachConsCheck
-            // 
-            this.dateKpiEachConsCheck.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiEachConsCheck", true));
-            this.dateKpiEachConsCheck.IsSupportEditMode = false;
-            this.dateKpiEachConsCheck.Location = new System.Drawing.Point(163, 116);
-            this.dateKpiEachConsCheck.Name = "dateKpiEachConsCheck";
-            this.dateKpiEachConsCheck.ReadOnly = true;
-            this.dateKpiEachConsCheck.Size = new System.Drawing.Size(100, 21);
-            this.dateKpiEachConsCheck.TabIndex = 199;
-            // 
-            // labelKpiMNotice
-            // 
-            this.labelKpiMNotice.Location = new System.Drawing.Point(5, 143);
-            this.labelKpiMNotice.Name = "labelKpiMNotice";
-            this.labelKpiMNotice.Size = new System.Drawing.Size(149, 21);
-            this.labelKpiMNotice.TabIndex = 200;
-            this.labelKpiMNotice.Text = "Est M/Notice Apv.";
-            // 
-            // dateKpiMNotice
-            // 
-            this.dateKpiMNotice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiMNotice", true));
-            this.dateKpiMNotice.IsSupportEditMode = false;
-            this.dateKpiMNotice.Location = new System.Drawing.Point(163, 143);
-            this.dateKpiMNotice.Name = "dateKpiMNotice";
-            this.dateKpiMNotice.ReadOnly = true;
-            this.dateKpiMNotice.Size = new System.Drawing.Size(100, 21);
-            this.dateKpiMNotice.TabIndex = 18;
+            this.btnIntendedDeliveryDate.Location = new System.Drawing.Point(600, 535);
+            this.btnIntendedDeliveryDate.Name = "btnIntendedDeliveryDate";
+            this.btnIntendedDeliveryDate.Size = new System.Drawing.Size(194, 27);
+            this.btnIntendedDeliveryDate.TabIndex = 201;
+            this.btnIntendedDeliveryDate.Text = "Intended delivery";
+            this.btnIntendedDeliveryDate.UseVisualStyleBackColor = true;
+            this.btnIntendedDeliveryDate.Click += new System.EventHandler(this.BtnIntendedDeliveryDate_Click);
             // 
             // P01
             // 
@@ -3767,5 +3774,6 @@
         private Win.UI.Label labelKpiEachConsCheck;
         private Win.UI.DateBox dateKpiMNotice;
         private Win.UI.Label labelKpiMNotice;
+        private Win.UI.Button btnIntendedDeliveryDate;
     }
 }

@@ -168,6 +168,12 @@
     <Compile Include="P01.Designer.cs">
       <DependentUpon>P01.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_BatchUpdateIDD.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_BatchUpdateIDD.Designer.cs">
+      <DependentUpon>P01_BatchUpdateIDD.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_CFAAndRFTList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -326,6 +332,9 @@
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01_BatchUpdateIDD.resx">
+      <DependentUpon>P01_BatchUpdateIDD.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01_CFAAndRFTList.resx">
       <DependentUpon>P01_CFAAndRFTList.cs</DependentUpon>
     </EmbeddedResource>
@@ -413,6 +422,10 @@
     <ProjectReference Include="..\Sci.Production.PPIC\Sci.Production.PPIC.csproj">
       <Project>{b35ffbd5-b004-4929-bf1d-75e2ee403793}</Project>
       <Name>Sci.Production.PPIC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PublicForm\Sci.Production.PublicForm.csproj">
+      <Project>{A0AFAC1D-7488-4271-83F0-9C14BAF212FE}</Project>
+      <Name>Sci.Production.PublicForm</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>

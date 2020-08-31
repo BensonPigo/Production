@@ -12,6 +12,7 @@ using System.Transactions;
 using System.Runtime.InteropServices;
 using System.Linq;
 using Sci.Production.PublicPrg;
+using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Shipping
 {
@@ -98,6 +99,12 @@ select  p.GMTBookingLock
                                      ) a 
                                      for xml path('')
                                    ), 1, 1, '') 
+        , IDD = STUFF ((select distinct CONCAT (',', Format(oqs.IDD, 'yyyy/MM/dd')) 
+                            from PackingList_Detail pd WITH (NOLOCK) 
+                            inner join Order_QtyShip oqs with (nolock) on oqs.ID = pd.OrderID and oqs.Seq = pd.OrderShipmodeSeq
+                            where pd.ID = p.id and oqs.IDD is not null
+                            for xml path('')
+                          ), 1, 1, '') 
 		,[PONo]=STUFF ((select CONCAT (',',a.CustPONo) 
                             from (
                                 select distinct o.CustPONo
@@ -311,6 +318,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 .Text("PONo", header: "PO No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("AirPPID", header: "APP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
+                .Text("IDD", header: "Intended Delivery", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("OrderQty", header: "Order Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SewingOutputQty", header: "Prod. Output Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("PulloutID", header: "Pullout ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -716,6 +724,8 @@ order by fwd.WhseNo",
             {
                 return false;
             }
+
+            this.CheckIDD();
 
             #region 檢查Act FCR Date 不可晚於今日or早於一個月前
             if (!MyUtility.Check.Empty(this.CurrentMaintain["FBDate"]))
@@ -1313,6 +1323,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
+                this.CheckIDD();
                 if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
                 {
                     MyUtility.Msg.WarningBox("< S/O # > , < Terminal/Whse# > and < Cut-off Date > can't be empty!!");
@@ -1484,6 +1495,8 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
             {
                 return;
             }
+
+            this.CheckIDD();
 
             if (MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "A/P" ||
                 MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "S-A/P" ||
@@ -2039,6 +2052,43 @@ where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentM
             {
                 this.CurrentMaintain["Remark"] = callNextForm.Memo;
             }
+        }
+
+        private void CheckIDD()
+        {
+            if (this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+            #region 檢查傳入的SP 維護的IDD是否都為同一天(沒維護度不判斷)
+            List<Order_QtyShipKey> listOrder_QtyShipKey = new List<Order_QtyShipKey>();
+            string sqlGetOrderSeq = $@"
+alter table #tmp alter column ID varchar(13)
+select  distinct OrderID,OrderShipmodeSeq
+from PackingList_Detail pd with (nolock)
+where exists(select 1 from #tmp t where t.ID = pd.ID)
+";
+            DataTable dtOrderSeq;
+
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "ID", sqlGetOrderSeq, out dtOrderSeq);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            foreach (DataRow dr in dtOrderSeq.Rows)
+            {
+                listOrder_QtyShipKey.Add(new Order_QtyShipKey
+                {
+                    SP = dr["OrderID"].ToString(),
+                    Seq = dr["OrderShipmodeSeq"].ToString(),
+                });
+            }
+
+            Prgs.CheckIDDSame(listOrder_QtyShipKey);
+            #endregion
         }
     }
 }

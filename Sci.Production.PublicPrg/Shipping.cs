@@ -1218,5 +1218,122 @@ and exists (select 1 from orders where id = pd.OrderID and Junk = 1)
             return errmsg;
         }
         #endregion
+
+        /// <summary>
+        /// Order_QtyShip
+        /// </summary>
+        public class Order_QtyShipKey
+        {
+            /// <summary>
+            /// SP
+            /// </summary>
+            public string SP { get; set; }
+
+            /// <summary>
+            /// Seq
+            /// </summary>
+            public string Seq { get; set; }
+
+            /// <summary>
+            /// PulloutDate
+            /// </summary>
+            public DateTime? PulloutDate { get; set; }
+        }
+
+        /// <summary>
+        /// 檢查傳入的SP 維護的IDD是否都為同一天(沒維護度不判斷)
+        /// </summary>
+        /// <param name="listSP">listSP</param>
+        public static void CheckIDDSame(List<Order_QtyShipKey> listSP)
+        {
+
+            DataTable dtSP = new DataTable();
+            dtSP.Columns.Add("SP", typeof(string));
+            dtSP.Columns.Add("Seq", typeof(string));
+
+            foreach (Order_QtyShipKey sp in listSP)
+            {
+                DataRow drSP = dtSP.NewRow();
+                drSP["SP"] = sp.SP;
+                drSP["Seq"] = sp.Seq;
+                dtSP.Rows.Add(drSP);
+            }
+
+            string sqlCheck = $@"
+alter table #tmp alter column SP varchar(13)
+alter table #tmp alter column Seq varchar(2)
+
+select [IDD_Cnt] = count(*)
+from    (   select  distinct IDD
+            from Order_QtyShip oqs with (nolock)
+            where exists (select 1 from #tmp t where t.SP = oqs.ID and t.Seq = oqs.Seq) and
+                  oqs.IDD is not null
+        ) a
+";
+            DataTable dtResult;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtSP, "SP,Seq", sqlCheck, out dtResult);
+
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+            }
+
+            int cntIDD = MyUtility.Convert.GetInt(dtResult.Rows[0]["IDD_Cnt"]);
+
+            if (cntIDD > 1)
+            {
+                MyUtility.Msg.InfoBox("Contains multi. IDD");
+            }
+        }
+
+        /// <summary>
+        /// 檢查IDD跟pullOutDate是否相同
+        /// </summary>
+        /// <param name="listSP">listSP</param>
+        public static void CheckIDDSamePulloutDate(List<Order_QtyShipKey> listSP)
+        {
+
+            DataTable dtSP = new DataTable();
+            dtSP.Columns.Add("SP", typeof(string));
+            dtSP.Columns.Add("Seq", typeof(string));
+            dtSP.Columns.Add("PulloutDate", typeof(DateTime));
+
+            foreach (Order_QtyShipKey sp in listSP)
+            {
+                DataRow drSP = dtSP.NewRow();
+                drSP["SP"] = sp.SP;
+                drSP["Seq"] = sp.Seq;
+                if (sp.PulloutDate != null)
+                {
+                    drSP["PulloutDate"] = sp.PulloutDate;
+                }
+
+                dtSP.Rows.Add(drSP);
+            }
+
+            string sqlCheck = $@"
+alter table #tmp alter column SP varchar(13)
+alter table #tmp alter column Seq varchar(2)
+
+select  [IDD_Cnt] = count(*)
+from Order_QtyShip oqs with (nolock)
+where exists (select 1 from #tmp t where t.SP = oqs.ID and t.Seq = oqs.Seq and  t.PulloutDate <> oqs.IDD) 
+";
+
+            DataTable dtResult;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtSP, "SP,Seq,PulloutDate", sqlCheck, out dtResult);
+
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+            }
+
+            int cntIDD = MyUtility.Convert.GetInt(dtResult.Rows[0]["IDD_Cnt"]);
+
+            if (cntIDD > 0)
+            {
+                MyUtility.Msg.InfoBox("IDD is different from Pullout Date");
+            }
+        }
     }
 }
