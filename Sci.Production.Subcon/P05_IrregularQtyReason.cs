@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Class;
+using Sci.Win.UI;
 using System;
 using System.Data;
 using System.Drawing;
@@ -19,18 +20,21 @@ namespace Sci.Production.Subcon
         DataTable dtLoad;
         string _ArtWorkReq_ID = string.Empty;
         Ict.Win.UI.DataGridViewTextBoxColumn txt_SubReason;
-
-        public P05_IrregularQtyReason(string ArtWorkReq_ID, DataRow masterData, DataTable detailDatas)
+        private P05 p05;
+        Func<string, string> sqlGetBuyBackDeduction;
+        public P05_IrregularQtyReason(string ArtWorkReq_ID, DataRow masterData, DataTable detailDatas, Func<string, string> SqlGetBuyBackDeduction)
         {
             this.InitializeComponent();
             this.EditMode = false;
             this._masterData = masterData;
             this._ArtWorkReq_ID = ArtWorkReq_ID;
             this._detailDatas = detailDatas;
+            this.sqlGetBuyBackDeduction = SqlGetBuyBackDeduction;
         }
 
         protected override void OnFormLoaded()
         {
+            this.p05 = (P05)this.ParentIForm;
             TxtSubconReason.CellSubconReason txtSubReason = (TxtSubconReason.CellSubconReason)TxtSubconReason.CellSubconReason.GetGridtxtCell("SQ");
 
             // comboSubReason.EditingControlShowing += (s, e) =>
@@ -53,6 +57,20 @@ namespace Sci.Production.Subcon
             this.gridIrregularQty.DataSource = this.listControlBindingSource1;
 
             #region Grid欄位設定
+            DataGridViewGeneratorNumericColumnSettings tsStdQty = new DataGridViewGeneratorNumericColumnSettings();
+
+            tsStdQty.CellMouseDoubleClick += (s, e) =>
+            {
+                DataTable dtMsg = ((DataTable)this.listControlBindingSource1.DataSource).Clone();
+                dtMsg.ImportRow(this.gridIrregularQty.GetDataRow(e.RowIndex));
+                MsgGridForm msgGridForm = new MsgGridForm(dtMsg, "Buy Back Qty", "Buy Back Qty", "orderID,StandardQty,BuyBackArtworkReq");
+                msgGridForm.grid1.Columns[0].HeaderText = "SP";
+                msgGridForm.grid1.Columns[1].HeaderText = "Order\r\nQty";
+                msgGridForm.grid1.Columns[2].HeaderText = "Buy Back\r\nQty";
+                msgGridForm.grid1.AutoResizeColumns();
+                msgGridForm.grid1.Columns[0].Width = 120;
+                msgGridForm.ShowDialog();
+            };
 
             this.Helper.Controls.Grid.Generator(this.gridIrregularQty)
                 .Text("FactoryID", header: "Factory", iseditingreadonly: true, width: Widths.AnsiChars(10))
@@ -60,11 +78,10 @@ namespace Sci.Production.Subcon
                 .Text("OrderID", header: "SP", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Text("StyleID", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Text("BrandID", header: "Brand", iseditingreadonly: true, width: Widths.AnsiChars(10))
-                .Numeric("StandardQty", header: "Std. Qty", decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Numeric("StandardQty", header: "Std. Qty", decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(10), settings: tsStdQty)
                 .Numeric("ReqQty", header: "Req. Qty", decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("SubconReasonID", header: "Reason# ", width: Widths.AnsiChars(15), iseditable: false, settings: txtSubReason).Get(out this.txt_SubReason)
                 .Text("ReasonDesc", header: "Reason Desc.", iseditingreadonly: true, width: Widths.AnsiChars(15))
-
                 .DateTime("CreateDate", header: "Create" + Environment.NewLine + "Date", iseditingreadonly: true, width: Widths.AnsiChars(16))
                 .Text("CreateBy", header: "Create" + Environment.NewLine + "By", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .DateTime("EditBy", header: "Edit" + Environment.NewLine + "Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
@@ -208,6 +225,26 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
             DualResult result;
             sqlcmd = $@"
 
+select  t.OrderID,
+        [Article] = '',
+        [SizeCode] = '',
+        t.ArtworkID,
+        t.PatternCode,
+        t.PatternDesc,
+        [LocalSuppID] = '',
+        [OrderQty] = o.Qty,
+        [ReqQty] = sum(ReqQty)
+into #FinalArtworkReq
+from #tmp t
+inner join orders o with (nolock) on o.ID = t.OrderID
+group by    t.OrderID,
+            t.PatternCode,
+            t.PatternDesc,
+            t.ArtworkID,
+            o.Qty
+
+{this.sqlGetBuyBackDeduction(this._masterData["artworktypeid"].ToString())}
+
 -- exists DB
 select distinct
 o.FactoryID
@@ -226,11 +263,12 @@ o.FactoryID
 ,ArtworkID=''
 ,PatternCode=''
 ,PatternDesc=''
+,[BuyBackArtworkReq] = 0
 into #tmpDB
 from ArtworkReq_IrregularQty ai
 inner join Orders o on o.ID = ai.OrderID
-inner join #tmp s on s.OrderID = ai.OrderID 
-where ai.ArtworkTypeID like '{this._masterData["ArtworkTypeID"]}%'
+where   ai.ArtworkTypeID like '{this._masterData["ArtworkTypeID"]}%' and
+        exists(select 1 from #FinalArtworkReq s where s.OrderID = ai.OrderID )
 
 -- not exists DB
 select 
@@ -240,18 +278,28 @@ o.FactoryID
 ,o.StyleID
 ,o.BrandID
 ,[StandardQty] = sum(oq.Qty)
-,[ReqQty] = ReqQty.value + PoQty.value + s.ReqQty
+,[ReqQty] = ReqQty.value + PoQty.value + s.ReqQty + tbbd.BuyBackArtworkReq
 ,[SubconReasonID] = ''
 ,[ReasonDesc] = ''
 ,[CreateBy] = ''
 ,[CreateDate] = null
 ,[EditBy] = ''
 ,[EditDate] = null
-,s.ArtworkID,s.PatternCode,s.PatternDesc
+,s.ArtworkID
+,s.PatternCode
+,s.PatternDesc
+,tbbd.BuyBackArtworkReq
 into #tmpCurrent
 from  orders o WITH (NOLOCK) 
 inner join order_qty oq WITH (NOLOCK) on oq.id = o.ID
-inner join #tmp s  on s.OrderID = o.ID 
+inner join #FinalArtworkReq s  on s.OrderID = o.ID 
+left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = s.OrderID       and
+                                        tbbd.Article = s.Article       and
+                                        tbbd.SizeCode = s.SizeCode     and
+                                        tbbd.PatternCode = s.PatternCode   and
+                                        tbbd.PatternDesc = s.PatternDesc   and
+                                        tbbd.ArtworkID = s.ArtworkID and
+										tbbd.LocalSuppID = ''
 outer apply(
 	select value = ISNULL(sum(PoQty),0)
     from ArtworkPO_Detail ad, ArtworkPO a
@@ -279,8 +327,8 @@ where not exists(
 	where orderID = o.ID and ArtworkTypeID like '{this._masterData["ArtworkTypeID"]}%'
 )
 group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
-,s.ArtworkID,s.PatternCode,s.PatternDesc
-having ReqQty.value + PoQty.value + s.ReqQty > sum(oq.Qty) 
+,s.ArtworkID,s.PatternCode,s.PatternDesc,tbbd.BuyBackArtworkReq
+having ReqQty.value + PoQty.value + s.ReqQty + tbbd.BuyBackArtworkReq > sum(oq.Qty) 
 
 select * 
 ,row = ROW_NUMBER() over(partition by orderid,ArtworkTypeID order by  ReqQty desc)

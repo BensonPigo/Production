@@ -15,8 +15,8 @@ namespace Sci.Production.Subcon
         private bool boolDeptApv;
         private bool canConfrim;
         private bool canCheck;
-
-        public P05_BatchApprove(Action reload)
+        Func<string, string> sqlGetBuyBackDeduction;
+        public P05_BatchApprove(Action reload, Func<string, string> SqlGetBuyBackDeduction)
         {
             this.InitializeComponent();
             this.EditMode = true;
@@ -28,6 +28,7 @@ namespace Sci.Production.Subcon
 
             this.boolDeptApv = true;
             this.Authority();
+            this.sqlGetBuyBackDeduction = SqlGetBuyBackDeduction;
         }
 
         protected override void OnFormLoaded()
@@ -184,7 +185,7 @@ where 1=1
                 {
                     // 判斷irregular Reason沒寫不能存檔
                     DataTable dtDetail = dt2.AsEnumerable().Where(x => x["ID"].EqualString(dr["id"].ToString())).CopyToDataTable();
-                    var IrregularQtyReason = new P05_IrregularQtyReason(dr["ID"].ToString(), dr, dtDetail);
+                    var IrregularQtyReason = new P05_IrregularQtyReason(dr["ID"].ToString(), dr, dtDetail, this.sqlGetBuyBackDeduction);
 
                     DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
                     if (dtIrregular != null)

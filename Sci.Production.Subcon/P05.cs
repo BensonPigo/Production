@@ -465,7 +465,7 @@ group by ReqQty.value,PoQty.value";
             }
 
             // 判斷irregular Reason沒寫不能存檔
-            var irregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var irregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.SqlGetBuyBackDeduction);
 
             DataTable dtIrregular = irregularQtyReason.Check_Irregular_Qty();
             this.UpdateExceedStatus(dtIrregular);
@@ -513,7 +513,7 @@ group by ReqQty.value,PoQty.value";
             }
 
             // 判斷irregular Reason沒寫不能存檔
-            var irregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var irregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.SqlGetBuyBackDeduction);
 
             DataTable dtIrregular = irregularQtyReason.Check_Irregular_Qty();
             if (dtIrregular != null)
@@ -742,6 +742,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             }
 
             var frm = new Sci.Production.Subcon.P05_Import(dr, (DataTable)this.detailgridbs.DataSource);
+            frm.ParentIForm = this;
             frm.ShowDialog(this);
 
             DataTable dg = (DataTable)this.detailgridbs.DataSource;
@@ -798,6 +799,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             }
 
             var frm = new Sci.Production.Subcon.P05_BatchCreate();
+            frm.ParentIForm = this;
             frm.ShowDialog(this);
             this.ReloadDatas();
         }
@@ -844,7 +846,7 @@ where id = '{this.CurrentMaintain["id"]}'";
                 }
             }
 
-            var frm = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
+            var frm = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas, this.SqlGetBuyBackDeduction);
             frm.ShowDialog(this);
 
             // 畫面關掉後，再檢查一次有無價格異常
@@ -858,7 +860,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             {
                 if (this.batchapprove == null || this.batchapprove.IsDisposed)
                 {
-                    this.batchapprove = new Sci.Production.Subcon.P05_BatchApprove(this.Reload);
+                    this.batchapprove = new Sci.Production.Subcon.P05_BatchApprove(this.Reload, this.SqlGetBuyBackDeduction);
                     this.batchapprove.Show();
                 }
                 else
@@ -943,7 +945,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             }
 
             this.btnIrrQtyReason.ForeColor = Color.Black;
-            var irregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
+            var irregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas, this.SqlGetBuyBackDeduction);
 
             DataTable dtIrregular = irregularQtyReason.Check_Irregular_Qty();
             this.HideWaitMessage();
@@ -1026,6 +1028,174 @@ where id = '{this.CurrentMaintain["id"]}'";
             {
                 this.CurrentMaintain["Exceed"] = 0;
             }
+        }
+
+        /// <summary>
+        /// 抓出需扣除的BuyBack訂單數量資料
+        /// </summary>
+        /// <param name="artworkTypeID">artworkTypeID</param>
+        /// <returns>string</returns>
+        public string SqlGetBuyBackDeduction(string artworkTypeID)
+        {
+            string sql = $@"
+--抓出此次申請有BuyBack的訂單資料
+select  fr.orderID,
+        fr.Article,
+        fr.SizeCode,
+        fr.ArtworkID,
+        fr.PatternCode,
+        fr.PatternDesc,
+        fr.OrderQty,
+		fr.LocalSuppID,
+        obq.OrderIDFrom,
+        [ArticleFrom] = iif(fr.Article = '', '', obq.ArticleFrom),
+        [SizeCodeFrom] = iif(fr.SizeCode = '', '', obq.SizeCodeFrom),
+        [BuyBackQty] = sum(obq.Qty)
+into    #tmpBuyBackReqBase
+from #FinalArtworkReq fr 
+inner join Order_BuyBack_Qty obq with (nolock) on obq.ID = fr.OrderID and 
+                                                  (
+                                                    (fr.Article = '' and fr.SizeCode = obq.SizeCode) or
+                                                    (fr.Article = obq.SizeCode and fr.SizeCode = '') or
+                                                    (fr.Article = '' and fr.SizeCode = '')
+                                                  )
+where   exists( select 1
+                from ArtworkReq_Detail AD with (nolock)
+                inner join ArtworkReq a with (nolock) on ad.ID = a.ID
+                where a.ArtworkTypeID = '{artworkTypeID}'
+		        and ad.OrderID = obq.OrderIDFrom
+                and ad.PatternCode = fr.PatternCode
+                and ad.PatternDesc = fr.PatternDesc
+                and ad.ArtworkID = fr.ArtworkID
+                and a.id != '{artworkTypeID}'
+                and a.status != 'Closed') 
+Group by    fr.orderID,
+            fr.Article,
+            fr.SizeCode,
+            fr.ArtworkID,
+            fr.PatternCode,
+            fr.PatternDesc,
+            fr.OrderQty,
+			fr.LocalSuppID,
+            obq.OrderIDFrom,
+            iif(fr.Article = '', '', obq.ArticleFrom),
+			iif(fr.SizeCode = '', '', obq.SizeCodeFrom)
+
+--將有BuyBack訂單資料進一步抓出有賣給別張訂單的資料           
+select  tbbr.OrderIDFrom,
+        tbbr.ArticleFrom,
+        tbbr.SizeCodeFrom,
+        [OrderID] = obq.ID,
+        [Article] = iif(tbbr.ArticleFrom = '', '', obq.Article),
+        [SizeCode] = iif(tbbr.SizeCodeFrom = '', '', obq.SizeCode),
+        tbbr.ArtworkID,
+        tbbr.PatternCode,
+        tbbr.PatternDesc,
+		tbbr.LocalSuppID,
+        [BuyBackQty] = sum(obq.Qty)
+into #tmpBuyBackFrom
+from #tmpBuyBackReqBase tbbr
+inner join Order_BuyBack_Qty obq on obq.OrderIDFrom = tbbr.OrderIDFrom and
+                                    (
+                                        (tbbr.ArticleFrom = '' and tbbr.SizeCodeFrom = obq.SizeCodeFrom) or
+                                        (tbbr.ArticleFrom = obq.ArticleFrom and tbbr.SizeCodeFrom = '') or
+                                        (tbbr.ArticleFrom = '' and tbbr.SizeCodeFrom = '')
+                                    )   and
+                                    obq.ID <> tbbr.OrderID
+group by    tbbr.OrderIDFrom,
+            tbbr.ArticleFrom,
+            tbbr.SizeCodeFrom,
+            obq.ID,
+            iif(tbbr.ArticleFrom = '', '', obq.Article),
+            iif(tbbr.SizeCodeFrom = '', '', obq.SizeCode),
+            tbbr.ArtworkID,
+            tbbr.PatternCode,
+            tbbr.PatternDesc,
+		    tbbr.LocalSuppID
+
+--推算出BuyBack的訂單可扣除的數量
+select  tbbf.OrderIDFrom,
+        tbbf.ArticleFrom,
+        tbbf.SizeCodeFrom,
+        tbbf.ArtworkID,
+        tbbf.PatternCode,
+        tbbf.PatternDesc,
+		tbbf.LocalSuppID,
+        [BuyBackReqedQty] = Sum(case when ArtworkReq.val = 0 then 0
+                                     when    (OrderQty.val - ArtworkReq.val) > tbbf.BuyBackQty then tbbf.BuyBackQty
+                                     when    (OrderQty.val - ArtworkReq.val) < 0 then    0 
+                                     else    (OrderQty.val - ArtworkReq.val) end
+                                )
+into #tmpBuyBackFromResult
+from    #tmpBuyBackFrom tbbf
+cross apply (   select  val = isnull(sum(Qty),0)
+                from    Order_Qty oq  with (nolock)
+                where   oq.ID = tbbf.orderID and
+                        (
+                            (tbbf.Article = '' and tbbf.SizeCode = oq.SizeCode) or
+                            (tbbf.Article = oq.Article and tbbf.SizeCode = '') or
+                            (tbbf.Article = '' and tbbf.SizeCode = '')
+                        )
+            )   OrderQty
+cross apply (   select val = isnull(sum(AD.ReqQty), 0)
+                from ArtworkReq_Detail AD with (nolock)
+                inner join ArtworkReq a with (nolock) on ad.ID = a.ID
+                where a.ArtworkTypeID = '{artworkTypeID}'
+                and ad.OrderID = tbbf.orderID
+                and ad.Article = tbbf.Article
+                and ad.SizeCode = tbbf.SizeCode
+                and ad.PatternCode = tbbf.PatternCode
+                and ad.PatternDesc = tbbf.PatternDesc
+                and ad.ArtworkID = tbbf.ArtworkID
+                and a.id != '{artworkTypeID}'
+                and a.status != 'Closed'
+            )   ArtworkReq
+group by    tbbf.OrderIDFrom,
+            tbbf.ArticleFrom,
+            tbbf.SizeCodeFrom,
+            tbbf.ArtworkID,
+            tbbf.PatternCode,
+            tbbf.PatternDesc,
+		    tbbf.LocalSuppID
+
+--算出此次申請的訂單應該被扣掉多少數量
+select  tbbr.orderID,
+        tbbr.Article,
+        tbbr.SizeCode,
+        tbbr.ArtworkID,
+        tbbr.PatternCode,
+        tbbr.PatternDesc,
+        tbbr.OrderQty,
+        tbbr.OrderIDFrom,
+        tbbr.BuyBackQty,
+		tbbr.LocalSuppID,
+        [BuyBackArtworkReq] =   case when (isnull(BuyBackArtworkReq.val, 0) - isnull(tbbfr.BuyBackReqedQty,0)) > tbbr.BuyBackQty then tbbr.BuyBackQty
+                                when    (isnull(BuyBackArtworkReq.val, 0) - isnull(tbbfr.BuyBackReqedQty,0)) < 0 then 0
+                                else    (isnull(BuyBackArtworkReq.val, 0) - isnull(tbbfr.BuyBackReqedQty,0)) end
+into    #tmpBuyBackDeduction
+from    #tmpBuyBackReqBase tbbr 
+left join   #tmpBuyBackFromResult tbbfr on  tbbfr.OrderIDFrom = tbbr.OrderIDFrom         and
+                                            tbbfr.ArticleFrom = tbbr.ArticleFrom         and
+                                            tbbfr.SizeCodeFrom = tbbr.SizeCodeFrom       and
+                                            tbbfr.PatternCode = tbbr.PatternCode     and
+                                            tbbfr.PatternDesc = tbbr.PatternDesc     and
+                                            tbbfr.ArtworkID = tbbr.ArtworkID and
+											tbbfr.LocalSuppID = tbbr.LocalSuppID
+outer apply (   select val = isnull(sum(AD.ReqQty), 0)
+                from ArtworkReq_Detail AD with (nolock)
+                inner join ArtworkReq a with (nolock) on ad.ID = a.ID
+                where a.ArtworkTypeID = '{artworkTypeID}'
+		        and ad.OrderID = tbbr.OrderIDFrom
+                and ad.Article = tbbr.ArticleFrom
+                and ad.SizeCode = tbbr.SizeCodeFrom
+                and ad.PatternCode = tbbr.PatternCode
+                and ad.PatternDesc = tbbr.PatternDesc
+                and ad.ArtworkID = tbbr.ArtworkID
+                and a.id != '{artworkTypeID}'
+                and a.status != 'Closed') BuyBackArtworkReq
+";
+
+            return sql;
         }
     }
 }
