@@ -509,6 +509,34 @@ drop table #TmpSource
 ";
                     #endregion
                     break;
+                case 27:
+                    #region 更新Location (與26的差異: 只新增不刪除)
+                    sqlcmd += @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column roll varchar(15)
+
+select tolocation,[ukey] = f.ukey
+into #tmp_L_K 
+from #TmpSource s
+left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
+                                           and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
+
+--delete t from FtyInventory_Detail t
+--where  t.ukey = (select distinct ukey from #tmp_L_K where t.Ukey = Ukey)                                          
+
+merge dbo.ftyinventory_detail as t
+using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.tolocation,'')
+when not matched AND s.Ukey IS NOT NULL then
+    insert ([ukey],[mtllocationid]) 
+       values (s.ukey,isnull(s.tolocation,''));
+
+drop table #tmp_L_K
+drop table #TmpSource
+";
+                    #endregion
+                    break;
                 case 70:
                     #region 更新Barcode
                     sqlcmd = @"

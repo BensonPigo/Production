@@ -738,7 +738,60 @@ where isnull(f.OutQty,0) < d.Qty and d.Id = '{0}'", this.CurrentMaintain["id"]);
                              dyelot = m.Field<string>("dyelot"),
                          }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
-            #endregion 更新庫存數量  ftyinventory
+
+            #endregion
+
+            #region 更新庫存位置  ftyinventory_detail.MtlLocationID
+
+            DataTable locationTable;
+            sqlcmd = $@"
+Select d.poid ,d.seq1 ,d.seq2 ,d.Roll ,d.Dyelot ,d.StockType ,[ToLocation]=d.Location
+from dbo.IssueReturn_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) 
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+where f.lock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
+            DBProxy.Current.Select(null, sqlcmd, out locationTable);
+
+            DataTable newDt = locationTable.Clone();
+
+            foreach (DataRow item in locationTable.Rows)
+            {
+                string[] dtrLocation = item["ToLocation"].ToString().Split(',');
+                dtrLocation = dtrLocation.Distinct().ToArray();
+
+                if (dtrLocation.Length == 1)
+                {
+                    DataRow newDr = newDt.NewRow();
+                    newDr.ItemArray = item.ItemArray;
+                    newDt.Rows.Add(newDr);
+                }
+                else
+                {
+                    foreach (string location in dtrLocation)
+                    {
+                        DataRow newDr = newDt.NewRow();
+                        newDr.ItemArray = item.ItemArray;
+                        newDr["ToLocation"] = location;
+                        newDt.Rows.Add(newDr);
+                    }
+                }
+            }
+
+            var data_Fty_26F = (from b in newDt.AsEnumerable()
+                                select new
+                                {
+                                    poid = b.Field<string>("poid"),
+                                    seq1 = b.Field<string>("seq1"),
+                                    seq2 = b.Field<string>("seq2"),
+                                    stocktype = b.Field<string>("stocktype"),
+                                    toLocation = b.Field<string>("ToLocation"),
+                                    roll = b.Field<string>("roll"),
+                                    dyelot = b.Field<string>("dyelot"),
+                                }).ToList();
+
+            string upd_Fty_26F = Prgs.UpdateFtyInventory_IO(27, null, false);
+
+            #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -755,6 +808,44 @@ where isnull(f.OutQty,0) < d.Qty and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_26F, string.Empty, upd_Fty_26F, out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    #region -- 更新庫存數量 MDivisionPoDetail --
+                    var data_MD_0T = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "B")
+                                      group b by new
+                                      {
+                                          poid = b.Field<string>("poid").Trim(),
+                                          seq1 = b.Field<string>("seq1").Trim(),
+                                          seq2 = b.Field<string>("seq2").Trim(),
+                                          stocktype = b.Field<string>("stocktype").Trim(),
+                                      }
+                                        into m
+                                      select new Prgs_POSuppDetailData
+                                      {
+                                          poid = m.First().Field<string>("poid"),
+                                          seq1 = m.First().Field<string>("seq1"),
+                                          seq2 = m.First().Field<string>("seq2"),
+                                          stocktype = m.First().Field<string>("stocktype"),
+                                          qty = m.Sum(w => w.Field<decimal>("qty")),
+                                          location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
+                                      }).ToList();
+
+                    string upd_MD_0T = Prgs.UpdateMPoDetail(0, data_MD_0T, true);
+
+                    #endregion
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_0T, string.Empty, upd_MD_0T, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         this.ShowErr(result);
@@ -912,6 +1003,58 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
 
+            #region 更新庫存位置  ftyinventory_detail.MtlLocationID
+
+            DataTable locationTable;
+            sqlcmd = $@"
+Select d.poid ,d.seq1 ,d.seq2 ,d.Roll ,d.Dyelot ,d.StockType ,[ToLocation]=d.Location
+from dbo.IssueReturn_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) 
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+where f.lock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
+            DBProxy.Current.Select(null, sqlcmd, out locationTable);
+
+            DataTable newDt = locationTable.Clone();
+
+            foreach (DataRow item in locationTable.Rows)
+            {
+                string[] dtrLocation = item["ToLocation"].ToString().Split(',');
+                dtrLocation = dtrLocation.Distinct().ToArray();
+
+                if (dtrLocation.Length == 1)
+                {
+                    DataRow newDr = newDt.NewRow();
+                    newDr.ItemArray = item.ItemArray;
+                    newDt.Rows.Add(newDr);
+                }
+                else
+                {
+                    foreach (string location in dtrLocation)
+                    {
+                        DataRow newDr = newDt.NewRow();
+                        newDr.ItemArray = item.ItemArray;
+                        newDr["ToLocation"] = location;
+                        newDt.Rows.Add(newDr);
+                    }
+                }
+            }
+
+            var data_Fty_26F = (from b in newDt.AsEnumerable()
+                                select new
+                                {
+                                    poid = b.Field<string>("poid"),
+                                    seq1 = b.Field<string>("seq1"),
+                                    seq2 = b.Field<string>("seq2"),
+                                    stocktype = b.Field<string>("stocktype"),
+                                    toLocation = b.Field<string>("ToLocation"),
+                                    roll = b.Field<string>("roll"),
+                                    dyelot = b.Field<string>("dyelot"),
+                                }).ToList();
+
+            string upd_Fty_26F = Prgs.UpdateFtyInventory_IO(26, null, false);
+
+            #endregion
+
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
@@ -932,6 +1075,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                         this.ShowErr(result);
                         return;
                     }
+
+                    //if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_26F, string.Empty, upd_Fty_26F, out resulttb, "#TmpSource")))
+                    //{
+                    //    _transactionscope.Dispose();
+                    //    this.ShowErr(result);
+                    //    return;
+                    //}
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
