@@ -407,6 +407,29 @@ on a.id = b.id
 where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 --------TRADE的EditDate > PMS EditDate 就UPDATE All 如果false 就不UPDATE EditDate & EditName 其他一樣UPDATE
+
+------------------------------------------------------------------------------------------------------
+--***資料交換的條件限制***
+--1. 優先取得Production.dbo.DateInfo
+declare @DateInfoName varchar(30) ='imp_MtlType';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
+
+--2.取得預設值
+if @DateStart is Null
+	set @DateStart= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
+if @DateEnd is Null
+	set @DateEnd = CONVERT(DATE, GETDATE())	
+
+--3.更新Pms_To_Trade.dbo.dateInfo
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateEnd, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@DateStart,@DateEnd,@Remark);
+------------------------------------------------------------------------------------------------------
+
 UPDATE a
 SET  
       --a.ID	      =b.ID		
@@ -426,7 +449,7 @@ SET
 	  ,a.IsThread        = b.IsThread
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
-where b.EditDate between dateadd(d,-7,getdate()) and getdate()
+where b.EditDate between @DateStart and @DateEnd
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.MtlType(
 ID

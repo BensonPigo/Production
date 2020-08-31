@@ -20,8 +20,28 @@ BEGIN
 	end
 	
 	--傳送Order資訊給Sunrise
-	declare @startDate date = getdate() - 7;
-	declare @endDate date = getdate() + 1;
+------------------------------------------------------------------------------------------------------
+--***資料交換的條件限制***
+--1. 優先取得Production.dbo.DateInfo
+	declare @DateInfoName varchar(30) ='imp_Order_Automation';
+	declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+	declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+	declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
+
+--2.取得預設值
+	if @DateStart is Null
+		set @DateStart= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
+	if @DateEnd is Null
+		set @DateEnd = CONVERT(DATE,DATEADD(day,1,GETDATE()))
+
+--3.更新Pms_To_Trade.dbo.dateInfo
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateEnd, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@DateStart,@DateEnd,@Remark);
+------------------------------------------------------------------------------------------------------
+
 	declare @orderList nvarchar(max);
 
 	select @Url = [dbo].[GetWebApiURL]('3A0134', 'FinishingProcesses') 
@@ -36,9 +56,9 @@ BEGIN
 		from (select [OrderID] = a.ID
 				from orders a with (nolock)
 				inner join  Factory f on a.FactoryID = f.ID
-				where	((a.AddDate >= @startDate and a.AddDate < @endDate) or
-						(a.EditDate >= @startDate and a.EditDate < @endDate) or
-						(a.PulloutCmplDate >= @startDate and a.PulloutCmplDate < @endDate)) 
+				where	((a.AddDate >= @DateStart and a.AddDate < @DateEnd) or
+						(a.EditDate >= @DateStart and a.EditDate < @DateEnd) or
+						(a.PulloutCmplDate >= @DateStart and a.PulloutCmplDate < @DateEnd)) 
 						and
 						(a.Category = 'M' or
 						(a.junk = 1 and a.NeedProduction = 0) or
@@ -46,7 +66,7 @@ BEGIN
 				union
 				select distinct ocl.OrderID 
 				from OrderComparisonList ocl with (nolock)
-				where ocl.UpdateDate >= @startDate and
+				where ocl.UpdateDate >= @DateStart and
 					  ocl.DeleteOrder = 1 and
 					  not exists(
 						select 1
@@ -55,9 +75,9 @@ BEGIN
 
 		SELECT @orderList =  Stuff((select concat( ',',ID) 
 								from Production.dbo.Orders with (nolock)
-								where	((AddDate >= @startDate and AddDate < @endDate) or
-										(EditDate >= @startDate and EditDate < @endDate) or
-										(PulloutCmplDate >= @startDate and PulloutCmplDate < @endDate)) 
+								where	((AddDate >= @DateStart and AddDate < @DateEnd) or
+										(EditDate >= @DateStart and EditDate < @DateEnd) or
+										(PulloutCmplDate >= @DateStart and PulloutCmplDate < @DateEnd)) 
 										and 
 										not exists (select 1 from #tmpDeleteOrder t where t.OrderID = Orders.ID)
 								FOR XML PATH('')),1,1,'') 

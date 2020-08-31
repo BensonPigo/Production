@@ -104,9 +104,8 @@
     <Reference Include="Sci.Machine.Class">
       <HintPath>..\_Dll\Sci.Machine.Class.dll</HintPath>
     </Reference>
-    <Reference Include="Sci.Proj, Version=1.0.17.918, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\System2017\PublicClass\Sci.Proj\bin\Debug\Sci.Proj.dll</HintPath>
+    <Reference Include="Sci.Proj">
+      <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

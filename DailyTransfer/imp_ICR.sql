@@ -11,18 +11,27 @@ BEGIN
 轉入 ICR,ICR_Detail,ICR_ReplacementReport
 */
 
--- 設定區間資料
-declare @DateStart date
-declare @DateEnd date
+------------------------------------------------------------------------------------------------------
+--***資料交換的條件限制***
+--1. 優先取得Production.dbo.DateInfo
+declare @DateInfoName varchar(30) ='ICR';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
-IF EXISTS (Select 1 From Trade_To_Pms.dbo.DateInfo Where Name = 'ICR')
-BEGIN
-	Select
-	 @DateStart = DateStart
-	,@DateEnd   = DateEnd 
-	From Trade_To_Pms.dbo.DateInfo 
-	Where Name = 'ICR'
-END
+--2.取得預設值
+if @DateStart is Null
+	set @DateStart= (Select DateStart From Trade_To_Pms.dbo.DateInfo Where Name = @DateInfoName)
+if @DateEnd is Null
+	set @DateEnd = (Select DateEnd From Trade_To_Pms.dbo.DateInfo Where Name = @DateInfoName)
+
+--3.更新Pms_To_Trade.dbo.dateInfo
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateEnd, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@DateStart,@DateEnd,@Remark);
+------------------------------------------------------------------------------------------------------
 
 -- #tmp Trade_To_PMS ICR
 	SELECT *

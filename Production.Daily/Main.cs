@@ -69,7 +69,7 @@ namespace Production.Daily
 
             OnRequery();
 
-            transferPMS.fromSystem = "Production";
+            transferPMS.FromSystem = "Production";
 
             if (isAuto)
             {
@@ -827,7 +827,7 @@ Where TransRegion.Is_Export = 0";
             #endregion
 
             #region 掛載LockDate 
-            Dictionary<string, KeyValuePair<DateTime?, DualResult>> resDic1 = Deploy_LockDate(region.DirName, prefix: "update_", connectionName: transferPMS.fromSystem);
+            Dictionary<string, KeyValuePair<DateTime?, DualResult>> resDic1 = Deploy_LockDate(region.DirName, prefix: "update_", connectionName: transferPMS.FromSystem);
             foreach (var item in resDic1)
             {
                 region.Logs.Add(item.Value);
@@ -852,11 +852,11 @@ Where TransRegion.Is_Export = 0";
             if (!transferPMS.Import_Trade_To_Pms(ftpIP, ftpID, ftpPwd))
             {
                 return new DualResult(false, "Update failed!");
-                String subject = "PMS transfer data (New) ERROR";
-                String desc = "Wrong the Update failed!!,Pls contact with Taipei.";
-                SendMail(subject, desc);
-                this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
-                return Ict.Result.F("Wrong the Update failed!!,Pls contact with Taipei.");
+                // String subject = "PMS transfer data (New) ERROR";
+                // String desc = "Wrong the Update failed!!,Pls contact with Taipei.";
+                // SendMail(subject, desc);
+                // this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
+                // return Ict.Result.F("Wrong the Update failed!!,Pls contact with Taipei.");
             }
             return Ict.Result.True;
         }
