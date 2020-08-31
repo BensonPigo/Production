@@ -100,6 +100,8 @@
             this.label4 = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.btnEdit = new Sci.Win.UI.Button();
+            this.btnClrearCustCtn = new Sci.Win.UI.Button();
+            this.panel1 = new Sci.Win.UI.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -113,11 +115,13 @@
             this.detailbtm.SuspendLayout();
             this.browse.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.btnEdit);
+            this.masterpanel.Controls.Add(this.panel1);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.displayHC);
@@ -126,21 +130,15 @@
             this.masterpanel.Controls.Add(this.labAppEstAmtVW);
             this.masterpanel.Controls.Add(this.numAppBookingVW);
             this.masterpanel.Controls.Add(this.labAppBookingVW);
-            this.masterpanel.Controls.Add(this.btnPackScanHistory);
-            this.masterpanel.Controls.Add(this.btnRepackCartons);
             this.masterpanel.Controls.Add(this.disClogCFMStatus);
             this.masterpanel.Controls.Add(this.lbClogCFMStatus);
             this.masterpanel.Controls.Add(this.checkCancelledOrder);
-            this.masterpanel.Controls.Add(this.btnUPCSticker);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.btnUpdateBarcode);
             this.masterpanel.Controls.Add(this.datesciDelivery);
             this.masterpanel.Controls.Add(this.datekpileta);
             this.masterpanel.Controls.Add(this.numTtlGW);
             this.masterpanel.Controls.Add(this.labelTtlGW);
-            this.masterpanel.Controls.Add(this.btnImportFromExcel);
-            this.masterpanel.Controls.Add(this.btnDownload);
             this.masterpanel.Controls.Add(this.labelCofirmed);
             this.masterpanel.Controls.Add(this.txtcountry);
             this.masterpanel.Controls.Add(this.txtcustcd);
@@ -151,9 +149,6 @@
             this.masterpanel.Controls.Add(this.btnFindNow);
             this.masterpanel.Controls.Add(this.txtLocateforTransferClog);
             this.masterpanel.Controls.Add(this.labelLocateforTransferClog);
-            this.masterpanel.Controls.Add(this.btnUnConfirmHistory);
-            this.masterpanel.Controls.Add(this.btnRecalculateWeight);
-            this.masterpanel.Controls.Add(this.btnCartonSummary);
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.displayShipPlanNo);
             this.masterpanel.Controls.Add(this.displayBoxPullOutNo);
@@ -185,7 +180,7 @@
             this.masterpanel.Controls.Add(this.dateCartonEstArrived);
             this.masterpanel.Controls.Add(this.dateLocateforTransferClog);
             this.masterpanel.Controls.Add(this.datePullOutDate);
-            this.masterpanel.Size = new System.Drawing.Size(1107, 318);
+            this.masterpanel.Size = new System.Drawing.Size(1136, 318);
             this.masterpanel.TabIndex = 25;
             this.masterpanel.Controls.SetChildIndex(this.datePullOutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateLocateforTransferClog, 0);
@@ -218,9 +213,6 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBoxPullOutNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayShipPlanNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnCartonSummary, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnRecalculateWeight, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnUnConfirmHistory, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLocateforTransferClog, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocateforTransferClog, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFindNow, 0);
@@ -231,21 +223,15 @@
             this.masterpanel.Controls.SetChildIndex(this.txtcustcd, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtcountry, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCofirmed, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnDownload, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnImportFromExcel, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelTtlGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTtlGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.datekpileta, 0);
             this.masterpanel.Controls.SetChildIndex(this.datesciDelivery, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnUpdateBarcode, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnUPCSticker, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkCancelledOrder, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbClogCFMStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.disClogCFMStatus, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnRepackCartons, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnPackScanHistory, 0);
             this.masterpanel.Controls.SetChildIndex(this.labAppBookingVW, 0);
             this.masterpanel.Controls.SetChildIndex(this.numAppBookingVW, 0);
             this.masterpanel.Controls.SetChildIndex(this.labAppEstAmtVW, 0);
@@ -256,15 +242,16 @@
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnEdit, 0);
+            this.masterpanel.Controls.SetChildIndex(this.panel1, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 318);
-            this.detailpanel.Size = new System.Drawing.Size(1107, 373);
+            this.detailpanel.Size = new System.Drawing.Size(1136, 373);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(998, 281);
+            this.gridicon.Location = new System.Drawing.Point(1025, 281);
             this.gridicon.TabIndex = 35;
             // 
             // refresh
@@ -273,7 +260,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1107, 373);
+            this.detailgridcont.Size = new System.Drawing.Size(1136, 373);
             // 
             // detail2
             // 
@@ -289,16 +276,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1107, 729);
+            this.detail.Size = new System.Drawing.Size(1136, 729);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1107, 691);
+            this.detailcont.Size = new System.Drawing.Size(1136, 691);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 691);
-            this.detailbtm.Size = new System.Drawing.Size(1107, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1136, 38);
             // 
             // browse
             // 
@@ -310,7 +297,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1115, 758);
+            this.tabs.Size = new System.Drawing.Size(1144, 758);
             // 
             // createby
             // 
@@ -606,7 +593,7 @@
             // btnCartonSummary
             // 
             this.btnCartonSummary.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCartonSummary.Location = new System.Drawing.Point(919, 28);
+            this.btnCartonSummary.Location = new System.Drawing.Point(3, 3);
             this.btnCartonSummary.Name = "btnCartonSummary";
             this.btnCartonSummary.Size = new System.Drawing.Size(178, 25);
             this.btnCartonSummary.TabIndex = 26;
@@ -617,7 +604,7 @@
             // btnRecalculateWeight
             // 
             this.btnRecalculateWeight.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnRecalculateWeight.Location = new System.Drawing.Point(919, 55);
+            this.btnRecalculateWeight.Location = new System.Drawing.Point(3, 30);
             this.btnRecalculateWeight.Name = "btnRecalculateWeight";
             this.btnRecalculateWeight.Size = new System.Drawing.Size(178, 25);
             this.btnRecalculateWeight.TabIndex = 27;
@@ -628,7 +615,7 @@
             // btnUnConfirmHistory
             // 
             this.btnUnConfirmHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUnConfirmHistory.Location = new System.Drawing.Point(919, 83);
+            this.btnUnConfirmHistory.Location = new System.Drawing.Point(3, 58);
             this.btnUnConfirmHistory.Name = "btnUnConfirmHistory";
             this.btnUnConfirmHistory.Size = new System.Drawing.Size(178, 25);
             this.btnUnConfirmHistory.TabIndex = 28;
@@ -700,7 +687,7 @@
             // 
             this.labelCofirmed.BackColor = System.Drawing.Color.Transparent;
             this.labelCofirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.labelCofirmed.Location = new System.Drawing.Point(943, 0);
+            this.labelCofirmed.Location = new System.Drawing.Point(965, 2);
             this.labelCofirmed.Name = "labelCofirmed";
             this.labelCofirmed.Size = new System.Drawing.Size(161, 26);
             this.labelCofirmed.TabIndex = 58;
@@ -713,7 +700,7 @@
             // btnDownload
             // 
             this.btnDownload.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnDownload.Location = new System.Drawing.Point(919, 165);
+            this.btnDownload.Location = new System.Drawing.Point(3, 140);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(178, 25);
             this.btnDownload.TabIndex = 31;
@@ -724,7 +711,7 @@
             // btnImportFromExcel
             // 
             this.btnImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnImportFromExcel.Location = new System.Drawing.Point(919, 193);
+            this.btnImportFromExcel.Location = new System.Drawing.Point(3, 168);
             this.btnImportFromExcel.Name = "btnImportFromExcel";
             this.btnImportFromExcel.Size = new System.Drawing.Size(178, 25);
             this.btnImportFromExcel.TabIndex = 32;
@@ -832,7 +819,7 @@
             // btnUpdateBarcode
             // 
             this.btnUpdateBarcode.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUpdateBarcode.Location = new System.Drawing.Point(919, 110);
+            this.btnUpdateBarcode.Location = new System.Drawing.Point(3, 85);
             this.btnUpdateBarcode.Name = "btnUpdateBarcode";
             this.btnUpdateBarcode.Size = new System.Drawing.Size(178, 25);
             this.btnUpdateBarcode.TabIndex = 29;
@@ -877,7 +864,7 @@
             // btnUPCSticker
             // 
             this.btnUPCSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUPCSticker.Location = new System.Drawing.Point(919, 137);
+            this.btnUPCSticker.Location = new System.Drawing.Point(3, 112);
             this.btnUPCSticker.Name = "btnUPCSticker";
             this.btnUPCSticker.Size = new System.Drawing.Size(178, 25);
             this.btnUPCSticker.TabIndex = 30;
@@ -921,7 +908,7 @@
             // btnBatchConf
             // 
             this.btnBatchConf.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBatchConf.Location = new System.Drawing.Point(981, 12);
+            this.btnBatchConf.Location = new System.Drawing.Point(1010, 12);
             this.btnBatchConf.Name = "btnBatchConf";
             this.btnBatchConf.Size = new System.Drawing.Size(122, 30);
             this.btnBatchConf.TabIndex = 4;
@@ -957,7 +944,7 @@
             // btnRepackCartons
             // 
             this.btnRepackCartons.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnRepackCartons.Location = new System.Drawing.Point(919, 222);
+            this.btnRepackCartons.Location = new System.Drawing.Point(3, 223);
             this.btnRepackCartons.Name = "btnRepackCartons";
             this.btnRepackCartons.Size = new System.Drawing.Size(178, 25);
             this.btnRepackCartons.TabIndex = 33;
@@ -969,7 +956,7 @@
             // 
             this.btnPackScanHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnPackScanHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnPackScanHistory.Location = new System.Drawing.Point(919, 251);
+            this.btnPackScanHistory.Location = new System.Drawing.Point(3, 252);
             this.btnPackScanHistory.Name = "btnPackScanHistory";
             this.btnPackScanHistory.Size = new System.Drawing.Size(178, 25);
             this.btnPackScanHistory.TabIndex = 34;
@@ -1082,11 +1069,39 @@
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
+            // btnClrearCustCtn
+            // 
+            this.btnClrearCustCtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnClrearCustCtn.Location = new System.Drawing.Point(3, 196);
+            this.btnClrearCustCtn.Name = "btnClrearCustCtn";
+            this.btnClrearCustCtn.Size = new System.Drawing.Size(178, 25);
+            this.btnClrearCustCtn.TabIndex = 79;
+            this.btnClrearCustCtn.Text = "Clear Cust CTN#";
+            this.btnClrearCustCtn.UseVisualStyleBackColor = true;
+            this.btnClrearCustCtn.Click += new System.EventHandler(this.BtnClrearCustCtn_Click);
+            // 
+            // panel1
+            // 
+            this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.btnCartonSummary);
+            this.panel1.Controls.Add(this.btnRecalculateWeight);
+            this.panel1.Controls.Add(this.btnClrearCustCtn);
+            this.panel1.Controls.Add(this.btnUnConfirmHistory);
+            this.panel1.Controls.Add(this.btnDownload);
+            this.panel1.Controls.Add(this.btnImportFromExcel);
+            this.panel1.Controls.Add(this.btnUpdateBarcode);
+            this.panel1.Controls.Add(this.btnUPCSticker);
+            this.panel1.Controls.Add(this.btnRepackCartons);
+            this.panel1.Controls.Add(this.btnPackScanHistory);
+            this.panel1.Location = new System.Drawing.Point(921, 26);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(205, 254);
+            this.panel1.TabIndex = 81;
             // 
             // P03
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1115, 791);
+            this.ClientSize = new System.Drawing.Size(1144, 791);
             this.Controls.Add(this.btnBatchConf);
             this.DefaultControl = "txtbrand";
             this.DefaultControlForEdit = "txtbrand";
@@ -1124,6 +1139,7 @@
             this.browse.ResumeLayout(false);
             this.browse.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1203,5 +1219,7 @@
         private Win.UI.DateBox dateBox1;
         private Win.UI.Label label4;
         private Win.UI.Button btnEdit;
+        private Win.UI.Button btnClrearCustCtn;
+        private Win.UI.Panel panel1;
     }
 }

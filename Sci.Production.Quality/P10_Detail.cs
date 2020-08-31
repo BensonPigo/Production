@@ -1400,12 +1400,11 @@ order by LocationText DESC
             this.rdbtnLine.Enabled = this.EditMode;
             this.rdbtnTumble.Enabled = this.EditMode;
             this.rdbtnHand.Enabled = this.EditMode;
-            this.btnPDF.Enabled = !this.EditMode;
-            this.btnToFGWT.Enabled = !this.EditMode;
             this.gridShrinkage.ReadOnly = !this.EditMode;
             this.gridAppearance.ReadOnly = !this.EditMode;
             this.gridFGWT.ReadOnly = !this.EditMode;
             this.gridFGPT.ReadOnly = !this.EditMode;
+            this.btnToReport.Enabled = !this.EditMode;
             this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
         }
 
@@ -3420,6 +3419,42 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                     this.gridFGPT.CurrentCell = this.gridFGPT.Rows[nextRowIndex].Cells[1];
                 }
             }
+        }
+
+        private void BtnToReport_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Quality.P10Data p10Data = new Sci.Production.Quality.P10Data();
+            p10Data.txtReportDate = this.txtReportDate.Value;
+
+            //p04Data.numArriveQty = this.numArriveQty.Value;
+            p10Data.txtSize = this.txtSize.Text;
+            p10Data.rdbtnLine = this.rdbtnLine.Checked;
+            p10Data.rdbtnTumble = this.rdbtnTumble.Checked;
+            p10Data.rdbtnHand = this.rdbtnHand.Checked;
+            p10Data.comboTemperature = this.comboTemperature.Text;
+            p10Data.comboMachineModel = this.comboMachineModel.Text;
+            p10Data.txtFibreComposition = this.txtFibreComposition.Text;
+            p10Data.comboNeck = this.comboNeck.Text;
+            p10Data.numTwisTingBottom = this.numTwisTingBottom.Text;
+            p10Data.numBottomS1 = this.numTwisTingBottom.Value;
+            p10Data.numBottomL = this.numTwisTingBottom.Value;
+            p10Data.numTwisTingOuter = this.numTwisTingOuter.Text;
+            p10Data.numOuterS1 = this.numOuterS1.Value;
+            p10Data.numOuterS2 = this.numOuterS2.Value;
+            p10Data.numOuterL = this.numOuterL.Value;
+            p10Data.numTwisTingInner = this.numTwisTingInner.Text;
+            p10Data.numInnerS1 = this.numInnerS1.Value;
+            p10Data.numInnerS2 = this.numInnerS2.Value;
+            p10Data.numInnerL = this.numTwisTingBottom.Value;
+            p10Data.numTwisTingTop = this.numTwisTingTop.Text;
+            p10Data.numTopS1 = this.numTopS1.Value;
+            p10Data.numTopS2 = this.numTopS2.Value;
+            p10Data.numTopL = this.numTopL.Value;
+            p10Data.txtLotoFactory = this.txtLotoFactory.Text;
+
+            P10_ToReport form = new P10_ToReport(this.MasterRow, this.Deatilrow, this.IsNewData, this.dtApperance, this.dtShrinkage, this.dtFGWT, this.dtFGPT, p10Data);
+            form.ShowDialog(this);
+            form.Dispose();
         }
     }
 }

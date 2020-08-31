@@ -19,14 +19,20 @@ using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P29 : Win.Tems.QueryForm
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
-        DataTable master;
-        DataTable detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
+        private DataTable master;
+        private DataTable detail;
         private Msg p29_msg = new Msg();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P29"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P29(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -87,7 +93,6 @@ namespace Sci.Production.Warehouse
 
                 this.gridComplete.ValidateControl();
             };
-            Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
             #region -- transfer qty valid --
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
@@ -233,17 +238,17 @@ WHERE   StockType='{dr["tostocktype"]}'
                  .Text("fromroll", header: "Roll#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Numeric("balanceQty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, settings: ns).Get(out col_Qty)
-                  .Text("fromlocation", header: "From Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: true)
-                  .Text("tolocation", header: "To Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: false, settings: ts2).Get(out col_tolocation)
+                 .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, settings: ns).Get(out this.col_Qty)
+                 .Text("fromlocation", header: "From Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                 .Text("tolocation", header: "To Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: false, settings: ts2).Get(out col_tolocation)
                   ;
-            col_Qty.DefaultCellStyle.BackColor = Color.Pink;
+            this.col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
             #endregion
-            this.chp();
+            this.Chp();
         }
 
-        private void chp()
+        private void Chp()
         {
             #region selected
             this.col_chk2.CellClick += (s, e) =>
@@ -299,9 +304,9 @@ WHERE   StockType='{dr["tostocktype"]}'
             #endregion
         }
 
-        DataSet dataSet;
+        private DataSet dataSet;
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.dataSet = null;
             this.listControlBindingSource1.DataSource = null;
@@ -309,48 +314,48 @@ WHERE   StockType='{dr["tostocktype"]}'
 
             int selectindex = this.comboCategory.SelectedIndex;
             int selectindex2 = this.comboFabricType.SelectedIndex;
-            string CuttingInline_b, CuttingInline_e, OrderCfmDate_b, OrderCfmDate_e, InvCfmDate_s, InvCfmDate_e, SP1, SP2, StockSP1, StockSP2, ProjectID, factory;
-            CuttingInline_b = null;
-            CuttingInline_e = null;
-            OrderCfmDate_b = null;
-            OrderCfmDate_e = null;
-            InvCfmDate_s = null;
-            InvCfmDate_e = null;
-            SP1 = this.txtIssueSP1.Text;
-            SP2 = this.txtIssueSP2.Text;
-            StockSP1 = this.txtStockSP1.Text;
-            StockSP2 = this.txtStockSP2.Text;
-            ProjectID = this.txtProjectID.Text;
+            string cuttingInline_b, cuttingInline_e, orderCfmDate_b, orderCfmDate_e, invCfmDate_s, invCfmDate_e, sP1, sP2, stockSP1, stockSP2, projectID, factory;
+            cuttingInline_b = null;
+            cuttingInline_e = null;
+            orderCfmDate_b = null;
+            orderCfmDate_e = null;
+            invCfmDate_s = null;
+            invCfmDate_e = null;
+            sP1 = this.txtIssueSP1.Text;
+            sP2 = this.txtIssueSP2.Text;
+            stockSP1 = this.txtStockSP1.Text;
+            stockSP2 = this.txtStockSP2.Text;
+            projectID = this.txtProjectID.Text;
             factory = this.txtmfactory.Text;
 
             if (this.dateCuttingInline.Value1 != null)
             {
-                CuttingInline_b = this.dateCuttingInline.Text1;
+                cuttingInline_b = this.dateCuttingInline.Text1;
             }
 
             if (this.dateCuttingInline.Value2 != null)
             {
-                CuttingInline_e = this.dateCuttingInline.Text2;
+                cuttingInline_e = this.dateCuttingInline.Text2;
             }
 
             if (this.dateOrderCfmDate.Value1 != null)
             {
-                OrderCfmDate_b = this.dateOrderCfmDate.Text1;
+                orderCfmDate_b = this.dateOrderCfmDate.Text1;
             }
 
             if (this.dateOrderCfmDate.Value2 != null)
             {
-                OrderCfmDate_e = this.dateOrderCfmDate.Text2;
+                orderCfmDate_e = this.dateOrderCfmDate.Text2;
             }
 
             if (this.dateInventoryCfm.Value1 != null)
             {
-                InvCfmDate_s = this.dateInventoryCfm.Value1.Value.ToAppDateTimeFormatString();
+                invCfmDate_s = this.dateInventoryCfm.Value1.Value.ToAppDateTimeFormatString();
             }
 
             if (this.dateInventoryCfm.Value2 != null)
             {
-                InvCfmDate_e = this.dateInventoryCfm.Value2.Value.AddDays(1).AddSeconds(-1).ToAppDateTimeFormatString();
+                invCfmDate_e = this.dateInventoryCfm.Value2.Value.AddDays(1).AddSeconds(-1).ToAppDateTimeFormatString();
             }
 
             #region ConfirmDate條件才會使用的SQL
@@ -370,51 +375,51 @@ FROM dbo.Invtrans i WITH (NOLOCK)
 WHERE 1=1
 ";
 
-            string InvCfmDate_Where = string.Empty;
+            string invCfmDate_Where = string.Empty;
             string sqlcmdInMainSQL = $@"
             AND pd.ID IN (SELECT POID FROM #tmpInvtrans)
 			AND pd.StockPOID IN (SELECT InventoryPOID FROM #tmpInvtrans)";
 
-            if (!string.IsNullOrEmpty(InvCfmDate_s))
+            if (!string.IsNullOrEmpty(invCfmDate_s))
             {
-                InvCfmDate_Where += $"      AND i.ConfirmDate >= '{InvCfmDate_s}'" + Environment.NewLine;
+                invCfmDate_Where += $"      AND i.ConfirmDate >= '{invCfmDate_s}'" + Environment.NewLine;
             }
 
-            if (!string.IsNullOrEmpty(InvCfmDate_e))
+            if (!string.IsNullOrEmpty(invCfmDate_e))
             {
-                InvCfmDate_Where += $"      AND i.ConfirmDate <= '{InvCfmDate_e}'" + Environment.NewLine;
+                invCfmDate_Where += $"      AND i.ConfirmDate <= '{invCfmDate_e}'" + Environment.NewLine;
             }
 
-            if (!MyUtility.Check.Empty(SP1))
+            if (!MyUtility.Check.Empty(sP1))
             {
-                if (!MyUtility.Check.Empty(SP2))
+                if (!MyUtility.Check.Empty(sP2))
                 {
-                    InvCfmDate_Where += $"      AND POID BETWEEN '{SP1}' and '{SP2}'" + Environment.NewLine;
+                    invCfmDate_Where += $"      AND POID BETWEEN '{sP1}' and '{sP2}'" + Environment.NewLine;
                 }
                 else
                 {
-                    InvCfmDate_Where += $"      AND POID = '{SP1}' " + Environment.NewLine;
+                    invCfmDate_Where += $"      AND POID = '{sP1}' " + Environment.NewLine;
                 }
             }
 
-            if (!MyUtility.Check.Empty(StockSP1))
+            if (!MyUtility.Check.Empty(stockSP1))
             {
-                if (!MyUtility.Check.Empty(StockSP2))
+                if (!MyUtility.Check.Empty(stockSP2))
                 {
-                    InvCfmDate_Where += $"      AND InventoryPOID BETWEEN '{StockSP1}' and '{StockSP2}'" + Environment.NewLine;
+                    invCfmDate_Where += $"      AND InventoryPOID BETWEEN '{stockSP1}' and '{stockSP2}'" + Environment.NewLine;
                 }
                 else
                 {
-                    InvCfmDate_Where += $"      AND InventoryPOID = '{StockSP1}'" + Environment.NewLine;
+                    invCfmDate_Where += $"      AND InventoryPOID = '{stockSP1}'" + Environment.NewLine;
                 }
             }
 
             #endregion
 
-            if ((CuttingInline_b == null && CuttingInline_e == null) &&
-                 MyUtility.Check.Empty(SP1) && MyUtility.Check.Empty(StockSP1) && MyUtility.Check.Empty(ProjectID) &&
-                (OrderCfmDate_b == null && OrderCfmDate_e == null) &&
-                (InvCfmDate_s == null && InvCfmDate_e == null))
+            if ((cuttingInline_b == null && cuttingInline_e == null) &&
+                 MyUtility.Check.Empty(sP1) && MyUtility.Check.Empty(stockSP1) && MyUtility.Check.Empty(projectID) &&
+                (orderCfmDate_b == null && orderCfmDate_e == null) &&
+                (invCfmDate_s == null && invCfmDate_e == null))
             {
                 MyUtility.Msg.WarningBox("< Project ID >\r\n< Cutting Inline >\r\n< Order Confirm Date >\r\n< Issue SP# >\r\n< Stock SP# >\r\ncan't be empty!!");
                 this.txtIssueSP1.Focus();
@@ -424,7 +429,7 @@ WHERE 1=1
             StringBuilder sqlcmd = new StringBuilder();
             #region -- sql command --
             sqlcmd.Append($@"
-{(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(InvCfmDate_e) ? sqlcmdInv + InvCfmDate_Where : string.Empty)}
+{(!string.IsNullOrEmpty(invCfmDate_s) && !string.IsNullOrEmpty(invCfmDate_e) ? sqlcmdInv + invCfmDate_Where : string.Empty)}
 
 ;with cte as (
     select  convert(bit,0) as selected
@@ -464,7 +469,7 @@ WHERE 1=1
     ) y--Detail有MD為null數量,沒有則為0,沒資料也為0
     cross apply (
         select  sum(iif(i.type='2',i.qty,0-i.qty)) taipei_qty 
-        from {(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(InvCfmDate_e) ? "#tmpInvtrans" : "dbo.Invtrans")}
+        from {(!string.IsNullOrEmpty(invCfmDate_s) && !string.IsNullOrEmpty(invCfmDate_e) ? "#tmpInvtrans" : "dbo.Invtrans")}
                 i WITH (NOLOCK) 
         where   i.InventoryPOID = pd.StockPOID 
                 and i.InventorySeq1 = pd.StockSeq1 
@@ -497,7 +502,7 @@ WHERE 1=1
           and pd.seq1 like '7%' 
           and f.MDivisionID = '{Env.User.Keyword}'
           and checkProduceFty.IsProduceFty = '1'            
-			{(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(InvCfmDate_e) ? sqlcmdInMainSQL : string.Empty)}
+			{(!string.IsNullOrEmpty(invCfmDate_s) && !string.IsNullOrEmpty(invCfmDate_e) ? sqlcmdInMainSQL : string.Empty)}
             ");
 
             #region -- 條件 --
@@ -535,27 +540,27 @@ WHERE 1=1
                     break;
             }
 
-            if (!MyUtility.Check.Empty(SP1))
+            if (!MyUtility.Check.Empty(sP1))
             {
-                if (!MyUtility.Check.Empty(SP2))
+                if (!MyUtility.Check.Empty(sP2))
                 {
-                    sqlcmd.Append(string.Format(@"and pd.id between '{0}' and '{1}'", SP1, SP2));
+                    sqlcmd.Append(string.Format(@"and pd.id between '{0}' and '{1}'", sP1, sP2));
                 }
                 else
                 {
-                    sqlcmd.Append(string.Format(@"and pd.id = '{0}'", SP1));
+                    sqlcmd.Append(string.Format(@"and pd.id = '{0}'", sP1));
                 }
             }
 
-            if (!MyUtility.Check.Empty(StockSP1))
+            if (!MyUtility.Check.Empty(stockSP1))
             {
-                if (!MyUtility.Check.Empty(StockSP2))
+                if (!MyUtility.Check.Empty(stockSP2))
                 {
-                    sqlcmd.Append(string.Format(@"and pd.StockPOID between '{0}' and '{1}'", StockSP1, StockSP2));
+                    sqlcmd.Append(string.Format(@"and pd.StockPOID between '{0}' and '{1}'", stockSP1, stockSP2));
                 }
                 else
                 {
-                    sqlcmd.Append(string.Format(@"and pd.StockPOID = '{0}'", StockSP1));
+                    sqlcmd.Append(string.Format(@"and pd.StockPOID = '{0}'", stockSP1));
                 }
             }
 
@@ -566,25 +571,29 @@ WHERE 1=1
             and o.FtyGroup = '{0}'", factory));
             }
 
-            if (!string.IsNullOrWhiteSpace(ProjectID))
+            if (!string.IsNullOrWhiteSpace(projectID))
             {
                 sqlcmd.Append(string.Format(
                     @" 
-            and o.ProjectID = '{0}'", ProjectID));
+            and o.ProjectID = '{0}'", projectID));
             }
 
-            if (!string.IsNullOrWhiteSpace(CuttingInline_b))
+            if (!string.IsNullOrWhiteSpace(cuttingInline_b))
             {
                 sqlcmd.Append(string.Format(
                     @" 
-            and not(o.CutInLine > '{1}' or  o.CutInLine < '{0}')", CuttingInline_b, CuttingInline_e));
+            and not(o.CutInLine > '{1}' or  o.CutInLine < '{0}')",
+                    cuttingInline_b,
+                    cuttingInline_e));
             }
 
-            if (!string.IsNullOrWhiteSpace(OrderCfmDate_b))
+            if (!string.IsNullOrWhiteSpace(orderCfmDate_b))
             {
                 sqlcmd.Append(string.Format(
                     @" 
-            and o.CFMDate between '{0}' and '{1}'", OrderCfmDate_b, OrderCfmDate_e));
+            and o.CFMDate between '{0}' and '{1}'",
+                    orderCfmDate_b,
+                    orderCfmDate_e));
             }
             #endregion
             sqlcmd.Append($@"
@@ -620,6 +629,7 @@ select  convert(bit,0) as selected
         , dbo.Getlocation(fi.ukey) fromlocation
         , '' tolocation
         , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by t.poid,t.seq1,t.SEQ2,t.FactoryID,t.StockPOID,t.StockSeq1,t.StockSeq2,fi.Dyelot)
+        , t.StockUnit
 from #tmp t 
 inner join FtyInventory fi WITH (NOLOCK) on  fi.POID = t.StockPOID 
                                              and fi.seq1 = t.StockSeq1 
@@ -630,7 +640,7 @@ where   fi.StockType = 'I'
         and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
 order by topoid, toseq1, toseq2, GroupQty DESC, fi.Dyelot, BalanceQty DESC
 
-drop table #tmp  {(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(InvCfmDate_e) ? ",#tmpInvtrans" : string.Empty)}
+drop table #tmp  {(!string.IsNullOrEmpty(invCfmDate_s) && !string.IsNullOrEmpty(invCfmDate_e) ? ",#tmpInvtrans" : string.Empty)}
 ");
 
             this.ShowWaitMessage("Data Loading....");
@@ -675,7 +685,7 @@ drop table #tmp  {(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(
             this.HideWaitMessage();
         }
 
-        private void btnAutoPick_Click(object sender, EventArgs e)
+        private void BtnAutoPick_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.master))
             {
@@ -713,12 +723,19 @@ drop table #tmp  {(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(
                     foreach (DataRow dr2 in issued)
                     {
                         DataRow[] findrow = this.detail.Select(string.Format(
-                            @"FromftyInventoryUkey = {0} and topoid = '{1}'
-                                                                          and toseq1 = '{2}' and toseq2 = '{3}'",
-                            dr2["ftyinventoryukey"], dr["poid"], dr["seq1"], dr["seq2"]));
+                            @"FromftyInventoryUkey = {0} and topoid = '{1}' and toseq1 = '{2}' and toseq2 = '{3}'",
+                            dr2["ftyinventoryukey"],
+                            dr["poid"],
+                            dr["seq1"],
+                            dr["seq2"]));
                         if (findrow.Length > 0)
                         {
                             findrow[0]["qty"] = dr2["qty"];
+                            if (findrow[0]["stockunit"].EqualString("PCS"))
+                            {
+                                findrow[0]["qty"] = Math.Ceiling(MyUtility.Convert.GetDecimal(dr2["qty"]));
+                            }
+
                             findrow[0]["selected"] = true;
                             if (MyUtility.Check.Seek($@"
 SELECT  id
@@ -747,7 +764,7 @@ WHERE   StockType='{findrow[0]["tostocktype"]}'
             }
         }
 
-        private void btnCreate_Click(object sender, EventArgs e)
+        private void BtnCreate_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detail))
             {
@@ -872,39 +889,40 @@ from #tmp";
             }
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             DualResult result;
-            using (_transactionscope)
+            using (transactionscope)
             {
                 try
                 {
-                    DataTable dtResult;
-                    if ((result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, insertMaster, out dtResult)) == false)
+                    if ((result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, insertMaster, out DataTable dtResult)) == false)
                     {
-                        _transactionscope.Dispose();
-                        MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
-                        return;
+                        throw result.GetException();
                     }
 
                     if ((result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, insertDetail, out dtResult)) == false)
                     {
-                        _transactionscope.Dispose();
-                        MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
-                        return;
+                        throw result.GetException();
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
+                    transactionscope.Dispose();
+                    result = new DualResult(false, "Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope = null;
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            transactionscope = null;
 
             #region confirm save成功的P23單子
             List<string> success_list = new List<string>();
@@ -932,13 +950,13 @@ from #tmp";
                 this.master.Columns.Add("TransID", typeof(string));
             }
 
-            foreach (DataRow Alldetailrows in this.detail.Rows)
+            foreach (DataRow alldetailrows in this.detail.Rows)
             {
-                if (Alldetailrows["selected"].ToString().ToUpper() == "TRUE")
+                if (alldetailrows["selected"].ToString().ToUpper() == "TRUE")
                 {
-                    DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(Alldetailrows["ToPOID"])).ToArray();
-                    Alldetailrows.GetParentRow("rel1")["selected"] = true;
-                    Alldetailrows.GetParentRow("rel1")["TransID"] = drGetID[0]["ID"];
+                    DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(alldetailrows["ToPOID"])).ToArray();
+                    alldetailrows.GetParentRow("rel1")["selected"] = true;
+                    alldetailrows.GetParentRow("rel1")["TransID"] = drGetID[0]["ID"];
                 }
             }
 
@@ -949,13 +967,13 @@ from #tmp";
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
-            //Create後Btn失效，需重新Qurey才能再使用。
-            btnCreate.Enabled = false;
+            // Create後Btn失效，需重新Qurey才能再使用。
+            this.btnCreate.Enabled = false;
             this.gridRel.ValidateControl();
             this.gridComplete.ValidateControl();
         }
 
-        private void checkOnly_CheckedChanged(object sender, EventArgs e)
+        private void CheckOnly_CheckedChanged(object sender, EventArgs e)
         {
             if (this.checkOnly.Checked)
             {
@@ -967,7 +985,7 @@ from #tmp";
             }
         }
 
-        private void btnExcel_Click(object sender, EventArgs e)
+        private void BtnExcel_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.master))
             {
@@ -982,8 +1000,8 @@ from #tmp";
             }
 
             this.master.DefaultView.RowFilter = "TransID<>''";
-            DataTable Exceldt = this.master.DefaultView.ToTable();
-            if (Exceldt.Rows.Count == 0)
+            DataTable exceldt = this.master.DefaultView.ToTable();
+            if (exceldt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Did not finish Inventory To Bulk");
                 return;
@@ -993,7 +1011,7 @@ from #tmp";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
 
             // excelApp.DisplayAlerts = false;
-            MyUtility.Excel.CopyToXls(Exceldt, string.Empty, $"{excelName}.xltx", 2, false, null, excelApp, wSheet: excelApp.Sheets[1], DisplayAlerts_ForSaveFile: false);
+            MyUtility.Excel.CopyToXls(exceldt, string.Empty, $"{excelName}.xltx", 2, false, null, excelApp, wSheet: excelApp.Sheets[1], DisplayAlerts_ForSaveFile: false);
 
             excelApp.Sheets[1].Columns.AutoFit();
 
@@ -1007,14 +1025,27 @@ from #tmp";
             #endregion
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void gridComplete_RowEnter(object sender, DataGridViewCellEventArgs e)
+        private void GridComplete_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             this.gridRel.ValidateControl();
+        }
+
+        private void GridRel_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            DataRow dr = this.gridRel.GetDataRow<DataRow>(e.RowIndex);
+            if (this.gridRel.Columns[e.ColumnIndex].Name == "qty")
+            {
+                this.col_Qty.DecimalPlaces = 2;
+                if (MyUtility.Convert.GetString(dr["stockunit"]).EqualString("PCS"))
+                {
+                    this.col_Qty.DecimalPlaces = 0;
+                }
+            }
         }
     }
 }

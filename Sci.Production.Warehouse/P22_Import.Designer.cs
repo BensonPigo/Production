@@ -64,7 +64,7 @@
             this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnImport
             // 
@@ -76,7 +76,7 @@
             this.btnImport.TabIndex = 2;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // btnFindNow
             // 
@@ -88,7 +88,7 @@
             this.btnFindNow.TabIndex = 1;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
             // 
             // txtSPNo
             // 
@@ -133,7 +133,7 @@
             this.btnUpdateAllLocation.TabIndex = 7;
             this.btnUpdateAllLocation.Text = "Update All Location";
             this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateAllLocation.Click += new System.EventHandler(this.btnUpdateAllLocation_Click);
+            this.btnUpdateAllLocation.Click += new System.EventHandler(this.BtnUpdateAllLocation_Click);
             // 
             // txtLocation
             // 
@@ -146,7 +146,7 @@
             this.txtLocation.ReadOnly = true;
             this.txtLocation.Size = new System.Drawing.Size(222, 23);
             this.txtLocation.TabIndex = 6;
-            this.txtLocation.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtLocation_MouseDown);
+            this.txtLocation.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtLocation_MouseDown);
             // 
             // labelLocation
             // 
@@ -169,7 +169,7 @@
             this.checkReturn.TabIndex = 5;
             this.checkReturn.Text = "Return Transfer Qty Back";
             this.checkReturn.UseVisualStyleBackColor = true;
-            this.checkReturn.Click += new System.EventHandler(this.checkReturn_Click);
+            this.checkReturn.Click += new System.EventHandler(this.CheckReturn_Click);
             // 
             // groupBox1
             // 
@@ -203,6 +203,7 @@
             this.grid_TaipeiInput.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_TaipeiInput.RowTemplate.Height = 24;
             this.grid_TaipeiInput.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid_TaipeiInput.ShowCellToolTips = false;
             this.grid_TaipeiInput.Size = new System.Drawing.Size(1122, 217);
             this.grid_TaipeiInput.TabIndex = 4;
             this.grid_TaipeiInput.TabStop = false;
@@ -236,9 +237,11 @@
             this.grid_ftyDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_ftyDetail.RowTemplate.Height = 24;
             this.grid_ftyDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid_ftyDetail.ShowCellToolTips = false;
             this.grid_ftyDetail.Size = new System.Drawing.Size(1130, 261);
             this.grid_ftyDetail.TabIndex = 0;
             this.grid_ftyDetail.TabStop = false;
+            this.grid_ftyDetail.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Grid_ftyDetail_CellFormatting);
             // 
             // P22_Import
             // 
@@ -247,6 +250,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Name = "P22_Import";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P22. Import Detail";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();

@@ -113,17 +113,17 @@ BEGIN
 END
 
 ------------------------------------------------------------------------------------------------------
---***¸ê®Æ¥æ´«ªº±ø¥ó­­¨î***
---1. Àu¥ý¨ú±oProduction.dbo.DateInfo
+--***ï¿½ï¿½Æ¥æ´«ï¿½ï¿½ï¿½ï¿½ï¿½ó­­¨ï¿½***
+--1. ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½oProduction.dbo.DateInfo
 declare @DateInfoName varchar(30) ='SciMachine_Part';
 declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
 declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
---2.¨ú±o¹w³]­È
+--2.ï¿½ï¿½ï¿½oï¿½wï¿½]ï¿½ï¿½
 if @DateStart is Null
 	set @DateStart= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
 
---3.§ó·sPms_To_Trade.dbo.dateInfo
+--3.ï¿½ï¿½sPms_To_Trade.dbo.dateInfo
 if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
 	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateStart, Remark=@Remark where Name = @DateInfoName 
 else
@@ -162,7 +162,11 @@ SELECT *
 INTO  MachinePO
 FROM Production.dbo.SciMachine_MachinePO 
 WHERE Approve IS NOT NULL
-AND (cdate>=@DateStart  OR EditDate >= @DateStart)
+AND ( 
+		(cdate>=@DateStart  OR EditDate >= @DateStart) 
+			OR
+		(InspectTime>=@DateStart  OR InspectTime >= @DateStart)
+	)
 And Status = 'Approved'
 AND PurchaseFrom = 'T'
 ------------------------------------------------
@@ -185,9 +189,15 @@ FROM Pms_To_Trade.dbo.RepairPO, Production.dbo.SciMachine_RepairPO_Detail  rpod
 WHERE RepairPO.id= rpod.id  
 ORDER BY RepairPO.id 
 
-SELECT pod.ID,pod.seq1, pod.SEQ2 , pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid
+SELECT pod.ID,pod.seq1, pod.SEQ2 , pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid 
+	,[InspectionQty]=InspectionQty.Qty
 INTO  MachinePO_Detail
 FROM Pms_To_Trade.dbo.MachinePO, Production.dbo.SciMachine_MachinePO_Detail  pod
+OUTER APPLY(
+	SELECT [Qty]=COUNT(ins.Iden)
+	FROM Production.dbo.SciMachine_MachineIn_Detail_Inspect ins
+	WHERE  ins.MachinePOID = pod.ID AND ins.Seq1  = pod.Seq1 AND ins.Seq2 = pod.Seq2 AND ins.Result='P'
+)InspectionQty 
 WHERE MachinePO.id= pod.id  
 ORDER BY MachinePO.id 
 
@@ -277,20 +287,20 @@ drop table #TPI_MachIn1
 drop table #TPI_PartPO1
 
 ------------------------------------------------------------------------------------------------------
---***¸ê®Æ¥æ´«ªº±ø¥ó­­¨î***
---1. Àu¥ý¨ú±oProduction.dbo.DateInfo
+--***ï¿½ï¿½Æ¥æ´«ï¿½ï¿½ï¿½ï¿½ï¿½ó­­¨ï¿½***
+--1. ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½oProduction.dbo.DateInfo
 Set @DateInfoName  ='MachinePending';
 Set @DateStart = (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
 declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
 SET @Remark = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
---2.¨ú±o¹w³]­È
+--2.ï¿½ï¿½ï¿½oï¿½wï¿½]ï¿½ï¿½
 if @DateStart is Null
 	set @DateStart= CONVERT(DATE,DATEADD(day,-30,GETDATE()))
 if @DateEnd is Null
 	set @DateEnd = CONVERT(DATE,DATEADD(day,30,GETDATE()))	
 
---3.§ó·sPms_To_Trade.dbo.dateInfo
+--3.ï¿½ï¿½sPms_To_Trade.dbo.dateInfo
 if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
 	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateEnd, Remark=@Remark where Name = @DateInfoName 
 else
@@ -340,8 +350,8 @@ select
 into MachinePending_Detail
 from Production.dbo.SciMachine_MachinePending_Detail
 inner join (
-	---- °£¤F¥Ó½Ð Machine to Dispose µ¥«Ý¥x¥_ Approvedªº¸ê®Æ¥H¥~
-	---- ¦A±N30¤Ñ¤º±q¥x¥_ approve «á, ±q¤u¼tºÝÂà DisposeªºMachinePending detail¸ê®Æ¶Ç¦^¥x¥_§ó·s Result , MachineDisposeID
+	---- ï¿½ï¿½ï¿½Fï¿½Ó½ï¿½ Machine to Dispose ï¿½ï¿½ï¿½Ý¥xï¿½_ Approvedï¿½ï¿½ï¿½ï¿½Æ¥Hï¿½~
+	---- ï¿½Aï¿½N30ï¿½Ñ¤ï¿½ï¿½qï¿½xï¿½_ approve ï¿½ï¿½, ï¿½qï¿½uï¿½tï¿½ï¿½ï¿½ï¿½ Disposeï¿½ï¿½MachinePending detailï¿½ï¿½Æ¶Ç¦^ï¿½xï¿½_ï¿½ï¿½s Result , MachineDisposeID
 	select id, Cdate from MachinePending
 	union
 	select m.id , m.Cdate

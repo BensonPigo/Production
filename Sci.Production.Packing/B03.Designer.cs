@@ -28,25 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
+            this.txtStickerComb = new Sci.Win.UI.TextBox();
             this.label4 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
+            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.label2 = new Sci.Win.UI.Label();
             this.txtCTNRefno = new Sci.Win.UI.TextBox();
-            this.numFromRight = new Sci.Win.UI.NumericBox();
-            this.numFromBottom = new Sci.Win.UI.NumericBox();
-            this.cmbSide = new Sci.Win.UI.ComboBox();
-            this.lblSeq = new Sci.Win.UI.Label();
-            this.numSeq = new Sci.Win.UI.NumericBox();
-            this.chkIs2Side = new Sci.Win.UI.CheckBox();
-            this.chkIsHorizontal = new Sci.Win.UI.CheckBox();
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
             this.label10 = new Sci.Win.UI.Label();
-            this.checkIsSSCC = new Sci.Win.UI.CheckBox();
-            this.label11 = new Sci.Win.UI.Label();
-            this.comboStickerSize = new Sci.Win.UI.ComboBox();
-            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
+            this.chkIsMixPack = new Sci.Win.UI.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
+            this.masterpanel.SuspendLayout();
+            this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
+            this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -56,313 +54,224 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
+            // masterpanel
+            // 
+            this.masterpanel.Controls.Add(this.chkIsMixPack);
+            this.masterpanel.Controls.Add(this.pictureBox1);
+            this.masterpanel.Controls.Add(this.label10);
+            this.masterpanel.Controls.Add(this.txtStickerComb);
+            this.masterpanel.Controls.Add(this.label4);
+            this.masterpanel.Controls.Add(this.comboCategory);
+            this.masterpanel.Controls.Add(this.label2);
+            this.masterpanel.Controls.Add(this.txtCTNRefno);
+            this.masterpanel.Controls.Add(this.txtbrand1);
+            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Size = new System.Drawing.Size(947, 164);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtbrand1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtCTNRefno, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboCategory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtStickerComb, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
+            this.masterpanel.Controls.SetChildIndex(this.pictureBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkIsMixPack, 0);
+            // 
+            // detailpanel
+            // 
+            this.detailpanel.Location = new System.Drawing.Point(0, 164);
+            this.detailpanel.Size = new System.Drawing.Size(947, 302);
+            // 
+            // gridicon
+            // 
+            this.gridicon.Location = new System.Drawing.Point(830, 129);
+            // 
+            // detailgridcont
+            // 
+            this.detailgridcont.Size = new System.Drawing.Size(947, 302);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(770, 374);
+            this.detail.Size = new System.Drawing.Size(947, 504);
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.label11);
-            this.detailcont.Controls.Add(this.comboStickerSize);
-            this.detailcont.Controls.Add(this.checkIsSSCC);
-            this.detailcont.Controls.Add(this.pictureBox1);
-            this.detailcont.Controls.Add(this.label10);
-            this.detailcont.Controls.Add(this.chkIsHorizontal);
-            this.detailcont.Controls.Add(this.chkIs2Side);
-            this.detailcont.Controls.Add(this.numSeq);
-            this.detailcont.Controls.Add(this.lblSeq);
-            this.detailcont.Controls.Add(this.cmbSide);
-            this.detailcont.Controls.Add(this.numFromBottom);
-            this.detailcont.Controls.Add(this.numFromRight);
-            this.detailcont.Controls.Add(this.txtCTNRefno);
-            this.detailcont.Controls.Add(this.txtbrand1);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(770, 336);
+            this.detailcont.Size = new System.Drawing.Size(947, 466);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 336);
-            this.detailbtm.Size = new System.Drawing.Size(770, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 466);
+            this.detailbtm.Size = new System.Drawing.Size(947, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(770, 374);
+            this.browse.Size = new System.Drawing.Size(947, 504);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(778, 403);
+            this.tabs.Size = new System.Drawing.Size(955, 533);
             // 
-            // label1
+            // txtStickerComb
             // 
-            this.label1.Location = new System.Drawing.Point(33, 33);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(102, 23);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "Brand";
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(33, 73);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(102, 23);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "CTN Refno";
+            this.txtStickerComb.BackColor = System.Drawing.Color.White;
+            this.txtStickerComb.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStickerComb.Location = new System.Drawing.Point(204, 77);
+            this.txtStickerComb.Name = "txtStickerComb";
+            this.txtStickerComb.Size = new System.Drawing.Size(125, 23);
+            this.txtStickerComb.TabIndex = 3;
+            this.txtStickerComb.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStickerComb_PopUp);
+            this.txtStickerComb.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStickerComb_Validating);
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(33, 114);
+            this.label4.Location = new System.Drawing.Point(20, 77);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(102, 23);
-            this.label4.TabIndex = 13;
-            this.label4.Text = "Side";
+            this.label4.Size = new System.Drawing.Size(181, 23);
+            this.label4.TabIndex = 38;
+            this.label4.Text = "Shipping Mark Combination";
             // 
-            // label6
+            // comboCategory
             // 
-            this.label6.Location = new System.Drawing.Point(381, 63);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(123, 23);
-            this.label6.TabIndex = 15;
-            this.label6.Text = "From Right (mm)";
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Category", true));
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(204, 44);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
+            this.comboCategory.Size = new System.Drawing.Size(125, 24);
+            this.comboCategory.TabIndex = 2;
             // 
-            // label7
+            // label2
             // 
-            this.label7.Location = new System.Drawing.Point(381, 95);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(123, 23);
-            this.label7.TabIndex = 16;
-            this.label7.Text = "From Bottom (mm)";
+            this.label2.Location = new System.Drawing.Point(20, 45);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(181, 23);
+            this.label2.TabIndex = 36;
+            this.label2.Text = "Category";
             // 
             // txtCTNRefno
             // 
             this.txtCTNRefno.BackColor = System.Drawing.Color.White;
             this.txtCTNRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CTNRefno", true));
             this.txtCTNRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCTNRefno.Location = new System.Drawing.Point(138, 73);
+            this.txtCTNRefno.Location = new System.Drawing.Point(204, 108);
             this.txtCTNRefno.Name = "txtCTNRefno";
             this.txtCTNRefno.Size = new System.Drawing.Size(125, 23);
-            this.txtCTNRefno.TabIndex = 3;
+            this.txtCTNRefno.TabIndex = 4;
             this.txtCTNRefno.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCTNRefno_PopUp);
             this.txtCTNRefno.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCTNRefno_Validating);
-            // 
-            // numFromRight
-            // 
-            this.numFromRight.BackColor = System.Drawing.Color.White;
-            this.numFromRight.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromRight", true));
-            this.numFromRight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numFromRight.Location = new System.Drawing.Point(507, 63);
-            this.numFromRight.Maximum = new decimal(new int[] {
-            99999999,
-            0,
-            0,
-            131072});
-            this.numFromRight.Name = "numFromRight";
-            this.numFromRight.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numFromRight.Size = new System.Drawing.Size(100, 23);
-            this.numFromRight.TabIndex = 6;
-            this.numFromRight.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numFromBottom
-            // 
-            this.numFromBottom.BackColor = System.Drawing.Color.White;
-            this.numFromBottom.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromBottom", true));
-            this.numFromBottom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numFromBottom.Location = new System.Drawing.Point(507, 95);
-            this.numFromBottom.Maximum = new decimal(new int[] {
-            99999999,
-            0,
-            0,
-            131072});
-            this.numFromBottom.Name = "numFromBottom";
-            this.numFromBottom.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numFromBottom.Size = new System.Drawing.Size(100, 23);
-            this.numFromBottom.TabIndex = 7;
-            this.numFromBottom.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // cmbSide
-            // 
-            this.cmbSide.BackColor = System.Drawing.Color.White;
-            this.cmbSide.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Side", true));
-            this.cmbSide.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmbSide.FormattingEnabled = true;
-            this.cmbSide.IsSupportUnselect = true;
-            this.cmbSide.Items.AddRange(new object[] {
-            "A",
-            "B",
-            "C",
-            "D"});
-            this.cmbSide.Location = new System.Drawing.Point(138, 114);
-            this.cmbSide.Name = "cmbSide";
-            this.cmbSide.OldText = "";
-            this.cmbSide.Size = new System.Drawing.Size(125, 24);
-            this.cmbSide.TabIndex = 4;
-            // 
-            // lblSeq
-            // 
-            this.lblSeq.Location = new System.Drawing.Point(381, 33);
-            this.lblSeq.Name = "lblSeq";
-            this.lblSeq.Size = new System.Drawing.Size(123, 23);
-            this.lblSeq.TabIndex = 14;
-            this.lblSeq.Text = "Seq";
-            // 
-            // numSeq
-            // 
-            this.numSeq.BackColor = System.Drawing.Color.White;
-            this.numSeq.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Seq", true));
-            this.numSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numSeq.Location = new System.Drawing.Point(507, 33);
-            this.numSeq.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numSeq.Name = "numSeq";
-            this.numSeq.NullValue = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numSeq.Size = new System.Drawing.Size(100, 23);
-            this.numSeq.TabIndex = 5;
-            this.numSeq.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // chkIs2Side
-            // 
-            this.chkIs2Side.AutoSize = true;
-            this.chkIs2Side.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Is2Side", true));
-            this.chkIs2Side.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.chkIs2Side.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIs2Side.Location = new System.Drawing.Point(381, 165);
-            this.chkIs2Side.Name = "chkIs2Side";
-            this.chkIs2Side.Size = new System.Drawing.Size(90, 24);
-            this.chkIs2Side.TabIndex = 11;
-            this.chkIs2Side.Text = "Is 2 Side";
-            this.chkIs2Side.UseVisualStyleBackColor = true;
-            // 
-            // chkIsHorizontal
-            // 
-            this.chkIsHorizontal.AutoSize = true;
-            this.chkIsHorizontal.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsHorizontal", true));
-            this.chkIsHorizontal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.chkIsHorizontal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIsHorizontal.Location = new System.Drawing.Point(381, 195);
-            this.chkIsHorizontal.Name = "chkIsHorizontal";
-            this.chkIsHorizontal.Size = new System.Drawing.Size(117, 24);
-            this.chkIsHorizontal.TabIndex = 12;
-            this.chkIsHorizontal.Text = "Is Horizontal";
-            this.chkIsHorizontal.UseVisualStyleBackColor = true;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = null;
-            this.pictureBox1.Location = new System.Drawing.Point(138, 155);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(215, 124);
-            this.pictureBox1.TabIndex = 24;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.WaitOnLoad = true;
-            // 
-            // label10
-            // 
-            this.label10.Location = new System.Drawing.Point(33, 155);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(102, 23);
-            this.label10.TabIndex = 23;
-            this.label10.Text = "Example ";
-            // 
-            // checkIsSSCC
-            // 
-            this.checkIsSSCC.AutoSize = true;
-            this.checkIsSSCC.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSSCC", true));
-            this.checkIsSSCC.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.checkIsSSCC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkIsSSCC.Location = new System.Drawing.Point(381, 225);
-            this.checkIsSSCC.Name = "checkIsSSCC";
-            this.checkIsSSCC.Size = new System.Drawing.Size(89, 24);
-            this.checkIsSSCC.TabIndex = 13;
-            this.checkIsSSCC.Text = "Is SSCC";
-            this.checkIsSSCC.UseVisualStyleBackColor = true;
-            // 
-            // label11
-            // 
-            this.label11.Location = new System.Drawing.Point(381, 129);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(121, 23);
-            this.label11.TabIndex = 26;
-            this.label11.Text = "Sticker Size";
-            // 
-            // comboStickerSize
-            // 
-            this.comboStickerSize.BackColor = System.Drawing.Color.White;
-            this.comboStickerSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboStickerSize.FormattingEnabled = true;
-            this.comboStickerSize.IsSupportUnselect = true;
-            this.comboStickerSize.Items.AddRange(new object[] {
-            "A",
-            "B",
-            "C",
-            "D"});
-            this.comboStickerSize.Location = new System.Drawing.Point(507, 129);
-            this.comboStickerSize.Name = "comboStickerSize";
-            this.comboStickerSize.OldText = "";
-            this.comboStickerSize.Size = new System.Drawing.Size(192, 24);
-            this.comboStickerSize.TabIndex = 10;
-            this.comboStickerSize.SelectedValueChanged += new System.EventHandler(this.ComboStickerSize_SelectedValueChanged);
             // 
             // txtbrand1
             // 
             this.txtbrand1.BackColor = System.Drawing.Color.White;
             this.txtbrand1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
             this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(138, 33);
+            this.txtbrand1.Location = new System.Drawing.Point(204, 15);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(125, 23);
             this.txtbrand1.TabIndex = 1;
+            this.txtbrand1.Validating += new System.ComponentModel.CancelEventHandler(this.Txtbrand1_Validating);
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(20, 108);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(181, 23);
+            this.label3.TabIndex = 34;
+            this.label3.Text = "CTN Refno";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(20, 15);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(181, 23);
+            this.label1.TabIndex = 33;
+            this.label1.Text = "Brand";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = null;
+            this.pictureBox1.Location = new System.Drawing.Point(455, 15);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(215, 124);
+            this.pictureBox1.TabIndex = 40;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.WaitOnLoad = true;
+            // 
+            // label10
+            // 
+            this.label10.Location = new System.Drawing.Point(342, 15);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(110, 23);
+            this.label10.TabIndex = 39;
+            this.label10.Text = "Example ";
+            // 
+            // chkIsMixPack
+            // 
+            this.chkIsMixPack.AutoSize = true;
+            this.chkIsMixPack.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.chkIsMixPack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsMixPack.IsSupportEditMode = false;
+            this.chkIsMixPack.Location = new System.Drawing.Point(345, 77);
+            this.chkIsMixPack.Name = "chkIsMixPack";
+            this.chkIsMixPack.ReadOnly = true;
+            this.chkIsMixPack.Size = new System.Drawing.Size(107, 24);
+            this.chkIsMixPack.TabIndex = 41;
+            this.chkIsMixPack.Text = "Is Mix Pack";
+            this.chkIsMixPack.UseVisualStyleBackColor = true;
             // 
             // B03
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(778, 436);
-            this.EnableGridJunkColor = true;
+            this.ClientSize = new System.Drawing.Size(955, 566);
+            this.GridAlias = "ShippingMarkPicture_Detail";
+            this.GridNew = 0;
+            this.GridUniqueKey = "ShippingMarkPictureUkey,ShippingMarkTypeUkey";
+            this.IsDeleteOnBrowse = false;
+            this.IsGridIconVisible = false;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportJunk = true;
             this.IsSupportPrint = false;
             this.IsSupportUnJunk = true;
+            this.KeyField1 = "Ukey";
+            this.KeyField2 = "ShippingMarkPictureUkey";
             this.Name = "B03";
-            this.OnLineHelpID = "Sci.Win.Tems.Input1";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "B03. Shipping Mark Pic Setting (for GenSong)";
             this.WorkAlias = "ShippingMarkPicture";
+            this.Controls.SetChildIndex(this.tabs, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
+            this.masterpanel.ResumeLayout(false);
+            this.masterpanel.PerformLayout();
+            this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
+            this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
-            this.detailcont.PerformLayout();
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
@@ -374,24 +283,16 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
+        private Win.UI.TextBox txtStickerComb;
         private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.NumericBox numFromBottom;
-        private Win.UI.NumericBox numFromRight;
+        private Win.UI.ComboBox comboCategory;
+        private Win.UI.Label label2;
         private Win.UI.TextBox txtCTNRefno;
         private Class.Txtbrand txtbrand1;
-        private Win.UI.ComboBox cmbSide;
-        private Win.UI.NumericBox numSeq;
-        private Win.UI.Label lblSeq;
-        private Win.UI.CheckBox chkIs2Side;
-        private Win.UI.CheckBox chkIsHorizontal;
+        private Win.UI.Label label3;
+        private Win.UI.Label label1;
         private Win.UI.PictureBox pictureBox1;
         private Win.UI.Label label10;
-        private Win.UI.CheckBox checkIsSSCC;
-        private Win.UI.Label label11;
-        private Win.UI.ComboBox comboStickerSize;
+        private Win.UI.CheckBox chkIsMixPack;
     }
 }

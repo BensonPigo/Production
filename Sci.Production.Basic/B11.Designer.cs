@@ -65,6 +65,10 @@
             this.label3 = new Sci.Win.UI.Label();
             this.txt = new Sci.Win.UI.TextBox();
             this.txtDiamondCity = new Sci.Win.UI.TextBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.txtStickerComb = new Sci.Win.UI.TextBox();
+            this.txtStickerCombMix = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -79,6 +83,10 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtStickerCombMix);
+            this.detailcont.Controls.Add(this.txtStickerComb);
+            this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.txtDiamondCity);
             this.detailcont.Controls.Add(this.txt);
             this.detailcont.Controls.Add(this.label3);
@@ -126,7 +134,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(851, 745);
+            this.browse.Size = new System.Drawing.Size(1092, 625);
             // 
             // tabs
             // 
@@ -501,6 +509,48 @@
             this.txtDiamondCity.Size = new System.Drawing.Size(336, 23);
             this.txtDiamondCity.TabIndex = 14;
             // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(567, 518);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(254, 23);
+            this.label4.TabIndex = 22;
+            this.label4.Text = "Shipping Sticker Combination";
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(567, 550);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(254, 23);
+            this.label5.TabIndex = 23;
+            this.label5.Text = "Shipping Sticker Combination – MixPack";
+            // 
+            // txtStickerComb
+            // 
+            this.txtStickerComb.BackColor = System.Drawing.Color.White;
+            this.txtStickerComb.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtStickerComb.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStickerComb.Location = new System.Drawing.Point(824, 518);
+            this.txtStickerComb.MaxLength = 30;
+            this.txtStickerComb.Name = "txtStickerComb";
+            this.txtStickerComb.Size = new System.Drawing.Size(177, 23);
+            this.txtStickerComb.TabIndex = 21;
+            this.txtStickerComb.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStickerComb_PopUp);
+            this.txtStickerComb.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStickerComb_Validating);
+            // 
+            // txtStickerCombMix
+            // 
+            this.txtStickerCombMix.BackColor = System.Drawing.Color.White;
+            this.txtStickerCombMix.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtStickerCombMix.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStickerCombMix.Location = new System.Drawing.Point(824, 550);
+            this.txtStickerCombMix.MaxLength = 30;
+            this.txtStickerCombMix.Name = "txtStickerCombMix";
+            this.txtStickerCombMix.Size = new System.Drawing.Size(177, 23);
+            this.txtStickerCombMix.TabIndex = 22;
+            this.txtStickerCombMix.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStickerCombMix_PopUp);
+            this.txtStickerCombMix.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStickerCombMix_Validating);
+            // 
             // B11
             // 
             this.ClientSize = new System.Drawing.Size(1100, 687);
@@ -568,5 +618,9 @@
         private Win.UI.Label label2;
         private Win.UI.TextBox txtDiamondCity;
         private Win.UI.TextBox txt;
+        private Win.UI.TextBox txtStickerCombMix;
+        private Win.UI.TextBox txtStickerComb;
+        private Win.UI.Label label5;
+        private Win.UI.Label label4;
     }
 }

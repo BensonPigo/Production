@@ -321,7 +321,7 @@
             this.btnAutoPick.TabIndex = 13;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
-            this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
+            this.btnAutoPick.Click += new System.EventHandler(this.BtnAutoPick_Click);
             // 
             // btnQuery
             // 
@@ -331,7 +331,7 @@
             this.btnQuery.TabIndex = 12;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // labelFactory
             // 
@@ -395,7 +395,7 @@
             this.checkOnly.TabIndex = 14;
             this.checkOnly.Text = "Only show data of complete inventory location";
             this.checkOnly.UseVisualStyleBackColor = true;
-            this.checkOnly.CheckedChanged += new System.EventHandler(this.checkOnly_CheckedChanged);
+            this.checkOnly.CheckedChanged += new System.EventHandler(this.CheckOnly_CheckedChanged);
             // 
             // btnClose
             // 
@@ -407,7 +407,7 @@
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Visible = false;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnCreate
             // 
@@ -418,7 +418,7 @@
             this.btnCreate.TabIndex = 16;
             this.btnCreate.Text = "Create && Confirm";
             this.btnCreate.UseVisualStyleBackColor = true;
-            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
+            this.btnCreate.Click += new System.EventHandler(this.BtnCreate_Click);
             // 
             // btnExcel
             // 
@@ -429,7 +429,7 @@
             this.btnExcel.TabIndex = 15;
             this.btnExcel.Text = "Excel";
             this.btnExcel.UseVisualStyleBackColor = true;
-            this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
+            this.btnExcel.Click += new System.EventHandler(this.BtnExcel_Click);
             // 
             // splitContainer1
             // 
@@ -471,7 +471,7 @@
             this.gridComplete.Size = new System.Drawing.Size(610, 441);
             this.gridComplete.TabIndex = 0;
             this.gridComplete.TabStop = false;
-            this.gridComplete.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridComplete_RowEnter);
+            this.gridComplete.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.GridComplete_RowEnter);
             // 
             // gridRel
             // 
@@ -496,6 +496,7 @@
             this.gridRel.Size = new System.Drawing.Size(464, 441);
             this.gridRel.TabIndex = 0;
             this.gridRel.TabStop = false;
+            this.gridRel.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.GridRel_CellFormatting);
             // 
             // P29
             // 

@@ -1053,9 +1053,6 @@
     <None Include="packages.config" />
     <None Include="Resources\Carton.bmp" />
     <None Include="Sci.Production.PPIC.ruleset" />
-    <None Include="stylecop.json" />
-    <None Include="stylecop1.json" />
-    <None Include="stylecop2.json" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">

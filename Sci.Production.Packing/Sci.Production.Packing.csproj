@@ -205,6 +205,18 @@
     <Compile Include="B04.Designer.cs">
       <DependentUpon>B04.cs</DependentUpon>
     </Compile>
+    <Compile Include="B05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B05.Designer.cs">
+      <DependentUpon>B05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B06.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B06.Designer.cs">
+      <DependentUpon>B06.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -553,6 +565,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B04.resx">
       <DependentUpon>B04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B05.resx">
+      <DependentUpon>B05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B06.resx">
+      <DependentUpon>B06.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="BarcodePrint.rdlc" />
     <EmbeddedResource Include="P01.resx">

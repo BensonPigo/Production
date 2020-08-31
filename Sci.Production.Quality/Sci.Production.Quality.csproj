@@ -300,6 +300,18 @@
     <Compile Include="P04_Detail.Designer.cs">
       <DependentUpon>P04_Detail.cs</DependentUpon>
     </Compile>
+    <Compile Include="P10_ToReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_ToReport.Designer.cs">
+      <DependentUpon>P10_ToReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04_ToReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_ToReport.Designer.cs">
+      <DependentUpon>P04_ToReport.cs</DependentUpon>
+    </Compile>
     <Compile Include="P05.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -776,6 +788,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P04_Detail.resx">
       <DependentUpon>P04_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10_ToReport.resx">
+      <DependentUpon>P10_ToReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_ToReport.resx">
+      <DependentUpon>P04_ToReport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P05.resx">
       <DependentUpon>P05.cs</DependentUpon>

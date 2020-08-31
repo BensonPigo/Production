@@ -1491,11 +1491,7 @@ select  ot.ID
         , isnull(ot.Qty,0) Qty 
         , ot.TMS
         , isnull(ot.Price,0) Price
-        , Supp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', (select Abb 
-                                                                              from LocalSupp WITH (NOLOCK) 
-                                                                              where ID = LocalSuppID)
-                                                                           , ot.LocalSuppID)
-                                                  , '')
+        , Supp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', ap.Abb, ot.LocalSuppID) , '')
         , AUnitRno = a.rno 
         , PUnitRno = a1.rno
         , NRno = a2.rno
@@ -1511,6 +1507,16 @@ left join ArtworkData a3 on a3.FakeID = 'T'+ot.Seq+'U1'
 left join ArtworkData a4 on a4.FakeID = 'T'+ot.Seq+'U2'
 left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq 
 outer apply(select  PUnit=iif('{this.checkByCPU.Checked}'='true' and at.ProductionUnit = 'TMS','CPU',at.ProductionUnit))p
+outer apply(
+	select Abb = Stuff((
+			select distinct concat( ',', l.Abb)   
+			from ArtworkPO ap
+			inner join ArtworkPO_Detail apd on ap.ID = apd.ID
+			left join LocalSupp l on ap.LocalSuppID = l.ID
+			where ap.ArtworkTypeID = 'PRINTING'
+			and apd.OrderID = ot.ID
+		FOR XML PATH('')),1,1,'') 
+)ap
 where exists (select id from OrderID where ot.ID = OrderID.ID )");
                         MyUtility.Tool.ProcessWithDatatable(
                             this.subprocessColumnName,
@@ -1823,6 +1829,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
 
                             if (subConCol != 9999)
                             {
+                                objArray[intRowsStart, subConCol - 1] = string.Empty;
                                 if (!MyUtility.Check.Empty(sdr["Supp"]))
                                 {
                                     objArray[intRowsStart, subConCol - 1] = sdr["Supp"];
