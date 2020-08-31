@@ -225,12 +225,13 @@ order by o.ID
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            if (((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Any(dr => dr["selected"].EqualDecimal(1)))
+            var query = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(dr => MyUtility.Convert.GetBool(dr["selected"]));
+            if (query.ToList().Count == 0)
             {
                 return;
             }
 
-            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(dr => MyUtility.Convert.GetBool(dr["selected"])).CopyToDataTable();
+            DataTable dt = query.CopyToDataTable();
             DataTable odt;
             DualResult result;
 
@@ -264,14 +265,6 @@ inner join Order_Finish ox with(nolock) on ox.id = t.OrderID
             {
                 this.ShowErr(result);
                 return;
-            }
-
-            if (odt.Rows.Count > 0)
-            {
-                var idList = odt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["OrderID"])).ToList();
-                string msg = $@"SP# already extsis Finished FOC
-SP# : {string.Join(",", idList)}";
-                MyUtility.Msg.WarningBox(msg);
             }
 
             if (dt.Rows.Count > 0)
