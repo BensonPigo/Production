@@ -159,6 +159,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IE_B05_ThreadRatio.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IE_B05_ThreadRatio.Designer.cs">
+      <DependentUpon>IE_B05_ThreadRatio.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IE_B05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IE_B05.Designer.cs">
+      <DependentUpon>IE_B05.cs</DependentUpon>
+    </Compile>
     <Compile Include="QA_B12.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -370,6 +382,13 @@
       <DependentUpon>WH_B01.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="IE_B05_ThreadRatio.resx">
+      <DependentUpon>IE_B05_ThreadRatio.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IE_B05.resx">
+      <DependentUpon>IE_B05.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="QA_B12.resx">
       <DependentUpon>QA_B12.cs</DependentUpon>
     </EmbeddedResource>
