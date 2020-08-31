@@ -218,14 +218,13 @@ drop table #tmp", Env.User.Keyword, this.dr_master["id"]));
                 this.dsTmp.Relations.Add(this.relation);
                 this.TaipeiInputBS.DataSource = this.dsTmp;
                 this.TaipeiInputBS.DataMember = "TaipeiInput";
-                this.FtyDetailBS.DataSource = this.dsTmp;
-                this.FtyDetailBS.DataMember = "FtyDetail";
+                this.FtyDetailBS.DataSource = this.TaipeiInputBS;
+                this.FtyDetailBS.DataMember = "rel1";
 
                 TaipeiInput.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
                 TaipeiInput.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - sum(child.qty)");
                 this.MyFilter();
                 this.dtSort.Clear();
-                this.Grid_ftyDetail_CellFormatting(null, null);
                 this.HideWaitMessage();
             }
         }
@@ -252,17 +251,6 @@ drop table #tmp", Env.User.Keyword, this.dr_master["id"]));
                 .Numeric("total_qty", header: "Total" + Environment.NewLine + "Transfer", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) // 7
                 .Numeric("balanceqty", header: "Balance", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) // 8
                ;
-
-            this.grid_TaipeiInput.RowSelecting += (s, e) =>
-            {
-                if (e.RowIndex < 0 || !this.TaipeiInputBS.Current.GetType().FullName.Equals("System.Data.DataRowView"))
-                {
-                    return;
-                }
-
-                DataRow dr = this.grid_TaipeiInput.GetDataRow(e.RowIndex);
-                this.FtyDetailBS.Filter = $" toPoid = '{dr["Poid"]}' and toSeq1 = '{dr["Seq1"]}' and toSeq2 = '{dr["Seq2"]}' ";
-            };
 
             this.grid_ftyDetail.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.grid_ftyDetail.DataSource = this.FtyDetailBS;
@@ -404,7 +392,6 @@ WHERE   StockType='{dr["toStocktype"]}'
             };
 
             DataGridViewGeneratorCheckBoxColumnSettings sel = new DataGridViewGeneratorCheckBoxColumnSettings();
-
             this.Helper.Controls.Grid.Generator(this.grid_ftyDetail)
                 .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1,  falseValue: 0, settings: sel).Get(out this.col_chk) // 0
                 .Text("Frompoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 0
@@ -440,14 +427,10 @@ WHERE   StockType='{dr["toStocktype"]}'
             if (this.checkReturn.CheckState == CheckState.Checked)
             {
                 this.TaipeiInputBS.Filter = "taipei_qty <= accu_qty";
-                this.FtyDetailBS.Filter = string.Empty;
             }
             else
             {
                 this.TaipeiInputBS.Filter = "taipei_qty > accu_qty";
-
-                // 為了觸發 Grid_ftyDetail_CellFormatting 事件
-                this.FtyDetailBS.Filter = this.FtyDetailBS.Filter;
             }
         }
 
@@ -608,16 +591,13 @@ WHERE   StockType='{dr["toStocktype"]}'
 
         private void Grid_ftyDetail_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e != null && e.RowIndex > 0)
+            DataRow dr = this.grid_ftyDetail.GetDataRow<DataRow>(e.RowIndex);
+            if (this.grid_ftyDetail.Columns[e.ColumnIndex].Name == "qty")
             {
-                DataRow dr = this.grid_ftyDetail.GetDataRow<DataRow>(e.RowIndex);
-                if (this.grid_ftyDetail.Columns[e.ColumnIndex].Name == "qty")
+                this.col_Qty.DecimalPlaces = 2;
+                if (MyUtility.Convert.GetString(dr["stockunit"]).EqualString("PCS"))
                 {
-                    this.col_Qty.DecimalPlaces = 2;
-                    if (MyUtility.Convert.GetString(dr["stockunit"]).EqualString("PCS"))
-                    {
-                        this.col_Qty.DecimalPlaces = 0;
-                    }
+                    this.col_Qty.DecimalPlaces = 0;
                 }
             }
         }
