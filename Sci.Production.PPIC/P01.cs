@@ -1696,5 +1696,19 @@ and p.Type in ('L', 'B')
             P01_ComboType frm = new P01_ComboType(this.CurrentMaintain["ID"].ToString());
             frm.ShowDialog();
         }
+
+        private void TxtPONo_Validating(object sender, CancelEventArgs e)
+        {
+            // 判斷只能輸入英文+數字, 不可輸入特殊符號
+            foreach (char c in this.txtPONo.Text)
+            {
+                if (!char.IsDigit(c) && !char.IsLetter(c))
+                {
+                    MyUtility.Msg.WarningBox(@"Cannot type \ ""  /  : * ?  < > + - @  ! # $ . _ | } [ )");
+                    e.Cancel = true;
+                    return;
+                }
+            }
+        }
     }
 }

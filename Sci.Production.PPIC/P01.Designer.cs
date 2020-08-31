@@ -1984,6 +1984,7 @@
             this.txtPONo.Name = "txtPONo";
             this.txtPONo.Size = new System.Drawing.Size(200, 21);
             this.txtPONo.TabIndex = 1;
+            this.txtPONo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtPONo_Validating);
             // 
             // txtStyle
             // 
