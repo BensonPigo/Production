@@ -1,18 +1,8 @@
 
--- =============================================
--- Author:		<Leo 01921>
--- Create date: <2016/08/17>
--- Description:	<Description,,>
--- =============================================
 CREATE PROCEDURE [dbo].[exp_adicomp] 
-	-- Add the parameters for the stored procedure here
-	--<@Param1, sysname, @p1> <Datatype_For_Param1, , int> = <Default_Value_For_Param1, , 0>, 
-	--<@Param2, sysname, @p2> <Datatype_For_Param2, , int> = <Default_Value_For_Param2, , 0>
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
+SET NOCOUNT ON;
 IF OBJECT_ID(N'dbo.ADIDASComplain') IS NOT NULL
 BEGIN
   DROP TABLE ADIDASComplain
@@ -23,7 +13,24 @@ BEGIN
   DROP TABLE ADIDASComplain_Detail
 END
 
-declare @FtyApvDate  date = getdate() - 7
+------------------------------------------------------------------------------------------------------
+--***資料交換的條件限制***
+--1. 優先取得Production.dbo.DateInfo
+declare @DateInfoName varchar(30) ='ADIDASComplain';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
+
+--2.取得預設值
+if @DateStart is Null
+	set @DateStart= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
+	
+--3.更新Pms_To_Trade.dbo.dateInfo
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo set DateStart = @DateStart,DateEnd = @DateStart, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@DateStart,@DateStart,@Remark);
+------------------------------------------------------------------------------------------------------
 
 SELECT
 	ID
@@ -32,7 +39,7 @@ SELECT
 	,FtyApvDate
 	into ADIDASComplain
 FROM Production.dbo.ADIDASComplain with (nolock)
-where FtyApvDate >= @FtyApvDate
+where FtyApvDate >= @DateStart
 
 SELECT
 	b.UKey,
@@ -43,7 +50,7 @@ SELECT
 	into ADIDASComplain_Detail
 FROM Production.dbo.ADIDASComplain a with (nolock)
 inner join Production.dbo.ADIDASComplain_Detail b with (nolock) on a.ID = b.ID
-where a.FtyApvDate >= @FtyApvDate
+where a.FtyApvDate >= @DateStart
 
 END
 

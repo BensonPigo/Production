@@ -1,16 +1,8 @@
 
-
--- =============================================
--- Author:		<Leo 01921>
--- Create date: <2016/08/17>
--- Description:	<Description,,>
--- =============================================
 Create PROCEDURE [dbo].[exp_Part]
 	
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 IF OBJECT_ID(N'dbo.PartPO') IS NOT NULL
 BEGIN
@@ -120,30 +112,49 @@ BEGIN
   DROP TABLE MachinePending_Detail
 END
 
+------------------------------------------------------------------------------------------------------
+--***ï¿½ï¿½Æ¥æ´«ï¿½ï¿½ï¿½ï¿½ï¿½ó­­¨ï¿½***
+--1. ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½oProduction.dbo.DateInfo
+declare @DateInfoName varchar(30) ='SciMachine_Part';
+declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
+
+--2.ï¿½ï¿½ï¿½oï¿½wï¿½]ï¿½ï¿½
+if @DateStart is Null
+	set @DateStart= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
+
+--3.ï¿½ï¿½sPms_To_Trade.dbo.dateInfo
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateStart, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@DateStart,@DateStart,@Remark);
+------------------------------------------------------------------------------------------------------
+
 SELECT * 
 INTO  PartPO
 FROM Production.dbo.SciMachine_PartPO 
 WHERE Approve IS NOT NULL
-AND (cdate>=DATEADD(DAY,-7,GETDATE()) OR TranstoTPE IS NULL OR EditDate >= DATEADD(DAY,-7,GETDATE()))
+AND (cdate>=@DateStart OR TranstoTPE IS NULL OR EditDate >= @DateStart)
 And Status = 'Approved'
 AND PurchaseFrom = 'T'
 
 SELECT ID ,Minstock ,Consumable
 INTO  Part
 FROM Production.dbo.SciMachine_Part
-WHERE (EditDate >= DATEADD(DAY,-7,GETDATE()))
+WHERE EditDate >= @DateStart
 
 SELECT * 
 INTO  RepairPO
 FROM Production.dbo.SciMachine_RepairPO 
-WHERE (cdate>=DATEADD(DAY,-7,GETDATE()) OR TranstoTPE IS NULL OR EditDate >= DATEADD(DAY,-7,GETDATE()))
+WHERE (cdate>=@DateStart OR TranstoTPE IS NULL OR EditDate >= @DateStart)
 And Status = 'Confirmed'
 
 SELECT * 
 INTO  MiscPO
 FROM Production.dbo.SciMachine_MiscPO 
 WHERE Approve IS NOT NULL
-AND (cdate>=DATEADD(DAY,-7,GETDATE()) OR TranstoTPE IS NULL OR EditDate >= DATEADD(DAY,-7,GETDATE()))
+AND (cdate>=@DateStart OR TranstoTPE IS NULL OR EditDate >= @DateStart)
 And Status = 'Approved'
 AND PurchaseFrom = 'T'
 
@@ -152,9 +163,9 @@ INTO  MachinePO
 FROM Production.dbo.SciMachine_MachinePO 
 WHERE Approve IS NOT NULL
 AND ( 
-		(cdate>=DATEADD(DAY,-7,GETDATE())  OR EditDate >= DATEADD(DAY,-7,GETDATE())) 
+		(cdate>=@DateStart  OR EditDate >= @DateStart) 
 			OR
-		(InspectTime>=DATEADD(DAY,-7,GETDATE())  OR InspectTime >= DATEADD(DAY,-7,GETDATE()))
+		(InspectTime>=@DateStart  OR InspectTime >= @DateStart)
 	)
 And Status = 'Approved'
 AND PurchaseFrom = 'T'
@@ -202,7 +213,7 @@ SELECT *
 INTO  PartReturnReceive
 FROM Production.dbo.SciMachine_PartReturnReceive 
 Where Status = 'Confirmed'
-AND (cdate>=DATEADD(DAY,-7,GETDATE()) or EditDate>=DATEADD(DAY,-7,GETDATE()))
+AND (cdate>=@DateStart or EditDate>=@DateStart)
 
 SELECT Partrcvre2.* 
 INTO   PartReturnReceive_Detail
@@ -214,7 +225,7 @@ SELECT  *
 INTO  NewPart
 FROM Production.dbo.SciMachine_NewPart
 WHERE Status = 'Confirmed'
-AND (cdate>=DATEADD(DAY,-7,GETDATE()) or EditDate>=DATEADD(DAY,-7,GETDATE()))
+AND (cdate>=@DateStart or EditDate>=@DateStart)
 
 SELECT Partapp2.* 
 INTO  NewPart_Detail
@@ -232,7 +243,7 @@ Into MachineReturn
 FROM Production.dbo.SciMachine_MachineReturn mr
 Left join Production.dbo.SciMachine_MachinePO mp on mr.ID = mp.ID
 Where mr.Status = 'Confirmed'
-AND (mr.cdate>=DATEADD(DAY,-7,GETDATE()) OR mr.TranstoTPE is null)
+AND (mr.cdate>=@DateStart OR mr.TranstoTPE is null)
 AND mp.PurchaseFrom = 'T'
 
 SELECT Machreturn2.* 
@@ -256,7 +267,7 @@ SELECT MachIn1.*
 INTO MachineIn
 FROM Production.dbo.SciMachine_MachineIn AS MachIn1, #TPI_MachIn1 WHERE MachIn1.ID = #TPI_MachIn1.ID 
 AND MachIn1. Status = 'Received'
-AND MachIn1. EditInspDate >=DATEADD(DAY,-7,GETDATE())
+AND MachIn1. EditInspDate >=@DateStart
 
 SELECT MachIn2.* 
 INTO MachineIn_Detail
@@ -274,7 +285,28 @@ group by LocationM, MachineGroupID
 
 drop table #TPI_MachIn1
 drop table #TPI_PartPO1
----------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------
+--***ï¿½ï¿½Æ¥æ´«ï¿½ï¿½ï¿½ï¿½ï¿½ó­­¨ï¿½***
+--1. ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½oProduction.dbo.DateInfo
+Set @DateInfoName  ='MachinePending';
+Set @DateStart = (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
+SET @Remark = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
+
+--2.ï¿½ï¿½ï¿½oï¿½wï¿½]ï¿½ï¿½
+if @DateStart is Null
+	set @DateStart= CONVERT(DATE,DATEADD(day,-30,GETDATE()))
+if @DateEnd is Null
+	set @DateEnd = CONVERT(DATE,DATEADD(day,30,GETDATE()))	
+
+--3.ï¿½ï¿½sPms_To_Trade.dbo.dateInfo
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateEnd, Remark=@Remark where Name = @DateInfoName 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName,@DateStart,@DateEnd,@Remark);
+------------------------------------------------------------------------------------------------------
 
 ----MachinePending----
 select [ID]
@@ -295,7 +327,7 @@ select [ID]
 into MachinePending
 from Production.dbo.SciMachine_MachinePending
 where SciMachine_MachinePending.Status='Confirmed'
-and SciMachine_MachinePending.CyApvDate between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate())
+and SciMachine_MachinePending.CyApvDate between @DateStart and @DateEnd
 and SciMachine_MachinePending.SendToTPE is null
 and SciMachine_MachinePending.TPEComplete=0
 
@@ -318,16 +350,16 @@ select
 into MachinePending_Detail
 from Production.dbo.SciMachine_MachinePending_Detail
 inner join (
-	---- °£¤F¥Ó½Ð Machine to Dispose µ¥«Ý¥x¥_ Approvedªº¸ê®Æ¥H¥~
-	---- ¦A±N30¤Ñ¤º±q¥x¥_ approve «á, ±q¤u¼tºÝÂà DisposeªºMachinePending detail¸ê®Æ¶Ç¦^¥x¥_§ó·s Result , MachineDisposeID
+	---- ï¿½ï¿½ï¿½Fï¿½Ó½ï¿½ Machine to Dispose ï¿½ï¿½ï¿½Ý¥xï¿½_ Approvedï¿½ï¿½ï¿½ï¿½Æ¥Hï¿½~
+	---- ï¿½Aï¿½N30ï¿½Ñ¤ï¿½ï¿½qï¿½xï¿½_ approve ï¿½ï¿½, ï¿½qï¿½uï¿½tï¿½ï¿½ï¿½ï¿½ Disposeï¿½ï¿½MachinePending detailï¿½ï¿½Æ¶Ç¦^ï¿½xï¿½_ï¿½ï¿½s Result , MachineDisposeID
 	select id, Cdate from MachinePending
 	union
 	select m.id , m.Cdate
 	from Production.dbo.SciMachine_MachinePending m
 	INNER JOIN Production.dbo.SciMachine_MachinePending_Detail md ON m.ID = md.ID
 	INNER JOIN Production.dbo.SciMachine_MachineDispose d ON  md.MachineDisposeID = d.ID
-	where (d.AddDate  between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate())   OR
-		  d.EditDate  between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate()) ) 
+	where (d.AddDate  between @DateStart and @DateEnd   OR
+		  d.EditDate  between @DateStart and @DateEnd ) 
 	
 )MP on MP.ID = SciMachine_MachinePending_Detail.ID
 left join Production.dbo.SciMachine_Machine with (nolock) on SciMachine_Machine.ID = SciMachine_MachinePending_Detail.MachineID
