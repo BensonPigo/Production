@@ -1197,7 +1197,7 @@ left join PackingList p on se.PackingListID = p.ID
 left join Orders o on a.OrderID = o.ID
 left join Order_QtyShip oqs on a.OrderID = oqs.Id and a.OrderShipmodeSeq = oqs.Seq
 left join LocalSupp l on s.LocalSuppID = l.ID
-left join Reason r on a.ReasonID = r.ID and r.ReasonTypeID = 'Air_Prepaid_Reson'
+left join Reason r on a.ReasonID = r.ID and r.ReasonTypeID = 'Air_Prepaid_Reason'
 where se.Junk = 0");
 
                     if (!MyUtility.Check.Empty(this.date1))
