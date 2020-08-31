@@ -1,26 +1,19 @@
-﻿CREATE TABLE [dbo].[ShippingMarkPic] (
-    [PackingListID] VARCHAR (13) NOT NULL,
-    [Seq]           INT          CONSTRAINT [DF_ShippingMarkPic_Seq] DEFAULT ((1)) NOT NULL,
-    [Side]          VARCHAR (5)  NOT NULL,
-    [Ukey]          BIGINT       IDENTITY (1, 1) NOT NULL,
-    [AddDate]       DATETIME     NULL,
-    [AddName]       VARCHAR (10) CONSTRAINT [DF_ShippingMarkPic_AddName] DEFAULT ('') NOT NULL,
-    [EditDate]      DATETIME     NULL,
-    [EditName]      VARCHAR (10) CONSTRAINT [DF_ShippingMarkPic_EditName] DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_ShippingMarkPic] PRIMARY KEY CLUSTERED ([PackingListID] ASC, [Seq] ASC, [Side] ASC)
-);
-
-
-
-
+﻿CREATE TABLE [dbo].[ShippingMarkPic](
+	[PackingListID] [varchar](13) NOT NULL,
+	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
+	[AddDate] [datetime] NULL,
+	[AddName] [varchar](10) NOT NULL,
+	[EditDate] [datetime] NULL,
+	[EditName] [varchar](10) NOT NULL,
+ CONSTRAINT [PK_ShippingMarkPic] PRIMARY KEY CLUSTERED 
+(
+	[PackingListID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'上下左右前後', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPic', @level2type = N'COLUMN', @level2name = N'Side';
 
-
+ALTER TABLE [dbo].[ShippingMarkPic] ADD  CONSTRAINT [DF_ShippingMarkPic_AddName]  DEFAULT ('') FOR [AddName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'因一面可能貼到兩張,需Seq', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPic', @level2type = N'COLUMN', @level2name = N'Seq';
 
-
+ALTER TABLE [dbo].[ShippingMarkPic] ADD  CONSTRAINT [DF_ShippingMarkPic_EditName]  DEFAULT ('') FOR [EditName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'貼碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPic';
-
