@@ -96,7 +96,12 @@ namespace Sci.Production.Prg
             return dic;
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// 比對Datarow 新舊值是否一致
+        /// </summary>
+        /// <param name="dr">dr</param>
+        /// <param name="compareColumns">欄位名稱，比較多個欄位以逗號分隔(AA,BB)</param>
+        /// <returns>bool</returns>
         public static bool CompareDataRowVersionValue(this DataRow dr, string compareColumns)
         {
             if (MyUtility.Check.Empty(compareColumns))

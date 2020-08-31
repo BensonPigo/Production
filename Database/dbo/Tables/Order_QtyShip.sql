@@ -27,6 +27,9 @@
 	[CFAFinalInspectDate]   date NULL,
 	[CFAUpdateDate]			date  NULL,
 	[CFARemark]				nvarchar(500)  CONSTRAINT [DF_CFARemark]  DEFAULT ('') NULL,
+	[IDD]				Date   NULL,
+	[IDDEditName]             VARCHAR (10)   CONSTRAINT [DF_Order_QtyShip_IDDEditName] DEFAULT ('') NULL,
+    [IDDEditDate]             DATETIME       NULL,
     CONSTRAINT [PK_Order_QtyShip] PRIMARY KEY CLUSTERED ([Id] ASC, [Seq] ASC)
 );
 
@@ -120,3 +123,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Order_QtyShip',
     @level2type = N'COLUMN',
     @level2name = N'OriQty'
+go
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Intended Delivery Date – 工廠預計出貨日，後續基本上會依照此日期安排出貨',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Order_QtyShip',
+    @level2type = N'COLUMN',
+    @level2name = N'IDD'

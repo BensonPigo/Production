@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sci.Production.PublicForm;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
@@ -21,6 +22,13 @@ namespace Sci.Production.Logistic
             this.InitializeComponent();
             this.Text = type == "1" ? "P01. Clog Master List" : "P011. Clog Master List (History)";
             this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 0", Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 1", Env.User.Keyword);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.btnBatchUpdateIDD.Enabled = this.Perm.Edit;
         }
 
         /// <summary>
@@ -193,6 +201,19 @@ SELECT isnull(sum(b.CTNQty),0)
             // 等QA -> P02開發完成後呼叫
             // Sci.Production.QA.P02 callNextForm = new Sci.Production.QA.P02(this.CurrentMaintain["POID"].ToString());
             // callNextForm.ShowDialog(this);
+        }
+
+        private void BtnIntendedDeliveryDate_Click(object sender, EventArgs e)
+        {
+            bool canEdit = this.Perm.Edit;
+            IntendedDeliveryDate intendedDeliveryDate = new IntendedDeliveryDate(this.CurrentMaintain["ID"].ToString(), canEdit);
+            intendedDeliveryDate.ShowDialog();
+        }
+
+        private void BtnBatchUpdateIDD_Click(object sender, EventArgs e)
+        {
+            P01_BatchUpdateIDD p01_BatchUpdateIDD = new P01_BatchUpdateIDD();
+            p01_BatchUpdateIDD.ShowDialog();
         }
     }
 }

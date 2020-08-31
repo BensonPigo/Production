@@ -786,6 +786,7 @@ order by os.Seq",
                 .Text("Cancel", header: "Cancel Order", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: false, settings: this.seq).Get(out this.col_seq)
+                .Date("IDD", header: "Intended Delivery", iseditingreadonly: true)
                 .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CustPONo", header: "P.O. No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6)).Get(out this.col_ctnno)

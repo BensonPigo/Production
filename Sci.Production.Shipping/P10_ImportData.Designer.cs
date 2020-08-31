@@ -32,6 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.labCancelOrder = new System.Windows.Forms.Label();
             this.comboContainerType = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
@@ -63,7 +64,8 @@
             this.panel8 = new Sci.Win.UI.Panel();
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnImportData = new Sci.Win.UI.Button();
-            this.labCancelOrder = new System.Windows.Forms.Label();
+            this.dateIDD = new Sci.Win.UI.DateBox();
+            this.label3 = new Sci.Win.UI.Label();
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -94,6 +96,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.dateIDD);
+            this.panel3.Controls.Add(this.label3);
             this.panel3.Controls.Add(this.labCancelOrder);
             this.panel3.Controls.Add(this.comboContainerType);
             this.panel3.Controls.Add(this.label1);
@@ -117,8 +121,18 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(779, 119);
+            this.panel3.Size = new System.Drawing.Size(779, 124);
             this.panel3.TabIndex = 2;
+            // 
+            // labCancelOrder
+            // 
+            this.labCancelOrder.AutoSize = true;
+            this.labCancelOrder.ForeColor = System.Drawing.Color.Red;
+            this.labCancelOrder.Location = new System.Drawing.Point(278, 99);
+            this.labCancelOrder.Name = "labCancelOrder";
+            this.labCancelOrder.Size = new System.Drawing.Size(286, 17);
+            this.labCancelOrder.TabIndex = 18;
+            this.labCancelOrder.Text = "Cancel order cannot import in the Ship Plan.";
             // 
             // comboContainerType
             // 
@@ -174,7 +188,7 @@
             this.txtSubconForwarder.IsMisc = false;
             this.txtSubconForwarder.IsShipping = false;
             this.txtSubconForwarder.IsSubcon = false;
-            this.txtSubconForwarder.Location = new System.Drawing.Point(81, 67);
+            this.txtSubconForwarder.Location = new System.Drawing.Point(83, 67);
             this.txtSubconForwarder.Name = "txtSubconForwarder";
             this.txtSubconForwarder.Size = new System.Drawing.Size(170, 23);
             this.txtSubconForwarder.TabIndex = 13;
@@ -288,7 +302,7 @@
             // 
             // labelForwarder
             // 
-            this.labelForwarder.Location = new System.Drawing.Point(3, 67);
+            this.labelForwarder.Location = new System.Drawing.Point(4, 67);
             this.labelForwarder.Name = "labelForwarder";
             this.labelForwarder.Size = new System.Drawing.Size(75, 23);
             this.labelForwarder.TabIndex = 2;
@@ -323,9 +337,9 @@
             this.panel5.Controls.Add(this.panel7);
             this.panel5.Controls.Add(this.panel6);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(5, 119);
+            this.panel5.Location = new System.Drawing.Point(5, 124);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(779, 488);
+            this.panel5.Size = new System.Drawing.Size(779, 483);
             this.panel5.TabIndex = 4;
             // 
             // panel7
@@ -334,7 +348,7 @@
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(0, 307);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(779, 181);
+            this.panel7.Size = new System.Drawing.Size(779, 176);
             this.panel7.TabIndex = 1;
             // 
             // grid2
@@ -359,7 +373,7 @@
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(779, 181);
+            this.grid2.Size = new System.Drawing.Size(779, 176);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
             // 
@@ -439,15 +453,20 @@
             this.btnImportData.UseVisualStyleBackColor = true;
             this.btnImportData.Click += new System.EventHandler(this.BtnImportData_Click);
             // 
-            // labCancelOrder
+            // dateIDD
             // 
-            this.labCancelOrder.AutoSize = true;
-            this.labCancelOrder.ForeColor = System.Drawing.Color.Red;
-            this.labCancelOrder.Location = new System.Drawing.Point(5, 95);
-            this.labCancelOrder.Name = "labCancelOrder";
-            this.labCancelOrder.Size = new System.Drawing.Size(286, 17);
-            this.labCancelOrder.TabIndex = 18;
-            this.labCancelOrder.Text = "Cancel order cannot import in the Ship Plan.";
+            this.dateIDD.Location = new System.Drawing.Point(123, 94);
+            this.dateIDD.Name = "dateIDD";
+            this.dateIDD.Size = new System.Drawing.Size(130, 23);
+            this.dateIDD.TabIndex = 20;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(4, 93);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(116, 23);
+            this.label3.TabIndex = 19;
+            this.label3.Text = "Intended Delivery";
             // 
             // P10_ImportData
             // 
@@ -514,5 +533,7 @@
         private Win.UI.Label label1;
         private Win.UI.ComboBox comboContainerType;
         private System.Windows.Forms.Label labCancelOrder;
+        private Win.UI.DateBox dateIDD;
+        private Win.UI.Label label3;
     }
 }

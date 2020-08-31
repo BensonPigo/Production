@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Linq;
 using System.Text;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.PublicPrg;
+using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Shipping
 {
@@ -33,9 +36,25 @@ namespace Sci.Production.Shipping
         {
             base.OnFormLoaded();
             string sqlCmd = string.Format(
-                @"select 0 as Selected,p.INVNo as GMTBookingID,p.ID as PackingListID,iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
+                @"select 
+0 as Selected,
+p.INVNo as GMTBookingID,
+p.ID as PackingListID,
+iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
 iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip WITH (NOLOCK) where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
-p.PulloutDate,p.Status,p.CTNQty,p.InspDate,p.InspStatus,(select isnull(sum(CTNQty),0) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogQty,p.MDivisionID
+p.PulloutDate,
+p.Status,
+p.CTNQty,
+p.InspDate,
+p.InspStatus,
+(select isnull(sum(CTNQty),0) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogQty,
+p.MDivisionID,
+[IDD] = STUFF ((select distinct CONCAT (',', Format(oqs.IDD, 'yyyy/MM/dd')) 
+                            from PackingList_Detail pd WITH (NOLOCK) 
+                            inner join Order_QtyShip oqs with (nolock) on oqs.ID = pd.OrderID and oqs.Seq = pd.OrderShipmodeSeq
+                            where pd.ID = p.id and oqs.IDD is not null
+                            for xml path('')
+                          ), 1, 1, '') 
 from PackingList p WITH (NOLOCK) 
 where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]));
             DataTable gridData;
@@ -56,6 +75,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("PulloutDate", header: "Pullout Date").Get(out this.col_pulldate)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
+                .Text("IDD", header: "Intended Delivery", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Status", header: "Packing Status", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Numeric("CTNQty", header: "CTN Qty")
                 .Numeric("ClogQty", header: "CTN Qty at C-Log")
@@ -181,6 +201,9 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
             this.gridUpdatePulloutDate.ValidateControl();
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+
+            this.CheckPulloutputIDD(dt);
+
             foreach (DataRow dr in dt.Rows)
             {
                 if (MyUtility.Check.Empty(dr["PulloutDate"]))
@@ -193,7 +216,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
                 }
             }
 
-            updateCmds.Add($"UPDATE ShipPlan Set EditDate=GETDATE(),EditName='{Env.User.UserID}'");
+            updateCmds.Add($"UPDATE ShipPlan Set EditDate=GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.masterDate["ID"]}'");
 
             DualResult result;
             if (updateCmds.Count != 0)
@@ -207,6 +230,43 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
             }
 
             this.DialogResult = System.Windows.Forms.DialogResult.OK;
+        }
+
+        private void CheckPulloutputIDD(DataTable dtCheck)
+        {
+            if (dtCheck.Rows.Count == 0)
+            {
+                return;
+            }
+
+            string sqlGetSPAndSeq = $@"
+alter table #tmp alter column PackingListID varchar(13)
+
+select  distinct pd.OrderID, pd.OrderShipmodeSeq, t.PulloutDate
+from PackingList_Detail pd with (nolock)
+inner join #tmp t on t.PackingListID = pd.ID
+";
+            DataTable dtResult;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtCheck, "PackingListID,PulloutDate", sqlGetSPAndSeq, out dtResult);
+
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+            }
+
+            if (dtResult.Rows.Count > 0)
+            {
+                #region 檢查傳入的SP 維護的IDD與PulloutputDate是否都為同一天(沒維護不判斷)
+                List<Order_QtyShipKey> listOrder_QtyShipKey = dtResult.AsEnumerable().Select(s => new Order_QtyShipKey
+                {
+                    SP = s["OrderID"].ToString(),
+                    Seq = s["OrderShipmodeSeq"].ToString(),
+                    PulloutDate = MyUtility.Convert.GetDate(s["PulloutDate"]),
+                }).ToList();
+
+                Prgs.CheckIDDSamePulloutDate(listOrder_QtyShipKey);
+                #endregion
+            }
         }
     }
 }
