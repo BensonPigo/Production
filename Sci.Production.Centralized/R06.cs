@@ -126,7 +126,7 @@ o.MDivisionID
 ,o.StyleID
 ,OL.Location
 ,o.CPU
-,ol.Rate
+,Rate = isnull(ol.Rate,0)/100
 ,QAQty = SUM(sd.QAQty)
 ,o.CustPONO
 into #tmpBase1
@@ -147,7 +147,7 @@ o.MDivisionID
 ,o.StyleID
 ,OL.Location
 ,o.CPU
-,ol.Rate
+,Rate = isnull(ol.Rate,0)/100
 ,QAQty = SUM(sd.QAQty)
 ,o.CustPONO
 into #tmpBase2
@@ -288,23 +288,25 @@ declare @NameZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull(['
 declare @Artwork nvarchar(max) = 
 ( 
 	select concat(
-		',[',ArtworkType_Unit,']=sum(isnull(Rate*[',ArtworkType_Unit,'],0)) over(partition by t.MDivisionID,t.FactoryID,t.OrderId,t.StyleID)'
+		',[',ArtworkType_Unit,']=isnull(Rate*[',ArtworkType_Unit,'],0)'
 		,iif(ArtworkType_CPU = '', ''
-		, concat(',[',ArtworkType_CPU,']=sum(isnull(Rate*[',ArtworkType_CPU,'],0)) over(partition by t.MDivisionID,t.FactoryID,t.OrderId,t.StyleID)'))	
+		, concat(',[',ArtworkType_CPU,']=isnull(Rate*[',ArtworkType_CPU,'],0)'))	
 	)
 	from #atall for xml path('')
 )
 
+
 declare @TTL_Artwork nvarchar(max) = 
 (
 	select concat(
-		',[TTL_',ArtworkType_Unit,']=Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by t.MDivisionID,t.FactoryID,t.OrderId,t.StyleID),'
+		',[TTL_',ArtworkType_Unit,']=Round(o.QAQty*Rate*[',ArtworkType_Unit,'],'
 		,iif(Unit='QTY','4','3'),')'
 		,iif(ArtworkType_CPU = '', ''
-		, concat(',[TTL_',ArtworkType_CPU,']=Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.MDivisionID,t.FactoryID,t.OrderId,t.StyleID),'
+		, concat(',[TTL_',ArtworkType_CPU,']=Round(o.QAQty*Rate*[',ArtworkType_CPU,'],'
 		,iif(Unit='QTY','4','3'),')'))
 	)from #atall for xml path('')
 )
+
 
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
@@ -370,11 +372,12 @@ from
 		,t.QAQty
 		,TotalCPU = t.CPU * t.Rate * t.QAQty
 		'+@TTL_Artwork+N'
-from #idat t 
-left join #oid_at o on o.orderid = t.OrderId and 
+from #oid_at o 
+left join #idat t on o.orderid = t.OrderId and 
                            o.FactoryID = t.FactoryID
 )a
-order by MDivisionID,FactoryID,OrderId'
+order by MDivisionID,FactoryID,OrderId
+'
 
 +N'
 select * 
@@ -393,15 +396,11 @@ from
 		,t.QAQty
 		,TotalCPU = t.CPU * t.Rate * t.QAQty		
 		'+@TTL_Artwork+N'
-from #idat2 t 
-left join #oid_at2 o on o.orderid = t.OrderId and 
+from #oid_at2 o 
+left join #idat2 t on o.orderid = t.OrderId and 
                            o.FactoryID = t.FactoryID
 )a
 order by MDivisionID,FactoryID,OrderId
-
---select Final1_id = CustPoNo,* from #tmpFinal1
---select Final2_id = OrderID,* from #tmpFinal2
-
 
 select * from (
 select id = OrderID,* from #tmpFinal1
@@ -411,7 +410,6 @@ select id = OrderID ,* from #tmpFinal2
 
 
 drop table #oid_at, #oid_at2,#oid_atFinal,#tmpFinal1,#tmpFinal2
-
 '
 
 EXEC sp_executesql @lastSql
