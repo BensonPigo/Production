@@ -25,6 +25,7 @@
     [SampleMR]       VARCHAR (10)  NOT NULL DEFAULT (''),
     [IsEM] BIT CONSTRAINT [DF_ADIDASComplain_Detail_IsEM] DEFAULT (0) NOT NULL, 
     [Responsibility] VARCHAR(2) NOT NULL DEFAULT (''), 
+    [IsLocalSupp] BIT NOT NULL DEFAULT 0, 
     CONSTRAINT [PK_ADIDASComplain_Detail] PRIMARY KEY CLUSTERED ([UKEY] ASC)
 );
 
@@ -105,4 +106,15 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1type = N'TABLE',
     @level1name = N'ADIDASComplain_Detail',
     @level2type = N'COLUMN',
-    @level2name = N'Responsibility'
+    @level2name = N'Responsibility';
+	
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否為當地供應商(1:Y, 0:N)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ADIDASComplain_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'IsLocalSupp';
+GO

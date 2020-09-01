@@ -169,10 +169,15 @@ ad.*,
 asdSub.MtlTypeID,
 asdSub.FabricType,
 o.StyleID
+,[SuppName]=ISNULL(Supp.NameEN,LocalSupp.Name)
+,[IsLocalSuppText] = IIF(ad.IsLocalSupp = 0 ,'N','Y')
 from ADIDASComplain_Detail ad with (nolock)
 left join ADIDASComplainDefect asdMain with (nolock) on ad.DefectMainID = asdMain.ID
 left join ADIDASComplainDefect_Detail asdSub with (nolock) on  asdMain.ID = asdSub.ID and ad.DefectSubID = asdSub.SubID
 left join orders o on o.ID=ad.OrderID
+left join Supp ON ad.SuppID = Supp.ID
+left join LocalSupp ON ad.SuppID = LocalSupp.ID
+left join ArtworkPO ap ON ap.LocalSuppID = ad.SuppID AND ap.Status IN ('Closed','Approced') 
 where ad.ID = '{0}'
 order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-' + asdSub.SubName,ad.OrderID
 ", masterID);
@@ -205,6 +210,10 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 string suppID = e.FormattedValue.ToString();
                 if (MyUtility.Check.Empty(suppID))
                 {
+                    dr["SuppID"] = string.Empty;
+                    dr["SuppName"] = string.Empty;
+                    dr["IsLocalSupp"] = false;
+                    dr["IsLocalSuppText"] = "N";
                     return;
                 }
 
@@ -215,7 +224,10 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
 
                 if (suppID == "N/A")
                 {
-                    dr["SuppID"] = suppID;
+                    dr["SuppID"] = "N/A";
+                    dr["SuppName"] = string.Empty;
+                    dr["IsLocalSupp"] = false;
+                    dr["IsLocalSuppText"] = "N";
                 }
                 else
                 {
@@ -229,6 +241,18 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                     }
 
                     dr["SuppID"] = suppID;
+                    string suppName = MyUtility.GetValue.Lookup($"select NameEN from Supp where id='{suppID}'");
+                    bool isLocal = false;
+
+                    if (MyUtility.Check.Empty(suppName))
+                    {
+                        isLocal = true;
+                        suppName = MyUtility.GetValue.Lookup($"select Name from LocalSupp where id='{suppID}'");
+                    }
+
+                    dr["SuppName"] = suppName;
+                    dr["IsLocalSupp"] = isLocal;
+                    dr["IsLocalSuppText"] = isLocal ? "Y" : "N";
                 }
 
                 dr.EndEdit();
@@ -243,7 +267,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
 
                 string sqlGetSupplier = this.GetSupplierSql(string.Empty, true);
                 SelectItem selectItem = new SelectItem(sqlGetSupplier, string.Empty, string.Empty);
-
+                selectItem.Width = 600;
                 DialogResult dialogResult = selectItem.ShowDialog();
                 if (dialogResult != DialogResult.OK)
                 {
@@ -251,6 +275,17 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 }
 
                 this.CurrentDetailData["SuppID"] = selectItem.GetSelectedString();
+                string suppName = MyUtility.GetValue.Lookup($"select NameEN from Supp where id='{selectItem.GetSelectedString()}'");
+                bool isLocal = false;
+
+                if (MyUtility.Check.Empty(suppName))
+                {
+                    isLocal = true;
+                }
+
+                this.CurrentDetailData["SuppName"] = suppName;
+                this.CurrentDetailData["IsLocalSupp"] = isLocal;
+                this.CurrentDetailData["IsLocalSuppText"] = isLocal ? "Y" : "N";
             };
 
             textRefno.CellValidating = (s, e) =>
@@ -413,6 +448,8 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 .Text("SubDefect", header: "Sub Defect", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SuppID", header: "Supplier", width: Widths.AnsiChars(6), settings: textSuppID, iseditingreadonly: this.isShowHistory)
+                .Text("SuppName", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
+                .Text("IsLocalSuppText", header: "Is Local Supp", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), settings: textRefno, iseditingreadonly: this.isShowHistory)
                 .Text("Responsibility", header: "Responsibility", width: Widths.AnsiChars(20), settings: responsibility, iseditingreadonly: this.isShowHistory)
 
@@ -444,11 +481,16 @@ WHERE o.ID='{this.CurrentDetailData["OrderID"]}' {whereRefno}
         private string GetSupplierSql(string suppID, bool IsRightClick = false)
         {
             string whereSuppID = IsRightClick ? string.Empty : $"  AND p.SuppID='{suppID}' ";
+            string whereSuppID_subcon = IsRightClick ? string.Empty : $"  AND a.LocalSuppID='{suppID}' ";
             string sqlGetSupplier = $@"
 SELECT DISTINCT p.SuppID
 FROM PO_Supp p
 LEFT JOIN Orders o ON o.POID=p.ID
 WHERE o.ID='{this.CurrentDetailData["OrderID"]}' {whereSuppID}
+UNION 
+SELECT DISTINCT [SuppID]= a.LocalSuppID
+FROM ArtworkPO a
+WHERE a.Status IN ('Closed','Approced') {whereSuppID_subcon}
 ";
 
             return sqlGetSupplier;
