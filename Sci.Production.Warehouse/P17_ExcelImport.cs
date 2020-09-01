@@ -351,15 +351,36 @@ and f.MDivisionID = @MDivisionID ";
                     }
                     else
                     {
-                        listNewRowErrMsg.Add(
-                            string.Format(
-                            "SP#:{0}-Seq1:{1}-Seq2:{2}-Roll:{3}-Dyelot:{4} is not found!!",
-                            newRow["poid"],
-                            newRow["seq1"],
-                            newRow["seq2"],
-                            newRow["roll"],
-                            newRow["dyelot"],
-                            newRow["Location"]), false);
+                        if (!result && isLocationExists)
+                        {
+                            listNewRowErrMsg.Add(
+                                string.Format(
+                                "SP#:{0}-Seq1:{1}-Seq2:{2}-Roll:{3}-Dyelot:{4}-Location:{5} is not found!!",
+                                newRow["poid"],
+                                newRow["seq1"],
+                                newRow["seq2"],
+                                newRow["roll"],
+                                newRow["dyelot"],
+                                newRow["Location"]), false);
+                        } 
+                        else if (isLocationExists)
+                        {
+                            listNewRowErrMsg.Add(
+                                string.Format(
+                                "SP#:{0}-Seq1:{1}-Seq2:{2}-Roll:{3}-Dyelot:{4} is not found!!",
+                                newRow["poid"],
+                                newRow["seq1"],
+                                newRow["seq2"],
+                                newRow["roll"],
+                                newRow["dyelot"]), false);
+                        }
+                        else
+                        {
+                            listNewRowErrMsg.Add(
+                                string.Format(
+                                "Location:{0} is not found!!",
+                                newRow["Location"]), false);
+                        }
                     }
 
                     #endregion
@@ -385,7 +406,8 @@ and f.MDivisionID = @MDivisionID ";
                     this.grid2Data.Rows.Add(newRow);
                 }
 
-                dr["Status"] = (intRowsCount - 1 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
+                // -2 是要扣掉標題的Row數
+                dr["Status"] = (intRowsCount - 2 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
                 dr["Count"] = count;
 
                 Marshal.ReleaseComObject(worksheet);

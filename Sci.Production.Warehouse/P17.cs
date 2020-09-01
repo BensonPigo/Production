@@ -564,13 +564,14 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
 
                     if (e.Button == MouseButtons.Right && e.RowIndex != -1)
                     {
-                        SelectItem2 selectItem2 = Prgs.SelectLocation("B");
+                        SelectItem2 selectItem2 = Prgs.SelectLocation("B", MyUtility.Convert.GetString(dr["Location"]));
 
                         selectItem2.ShowDialog();
                         if (selectItem2.DialogResult == DialogResult.OK)
                         {
                             dr["Location"] = selectItem2.GetSelecteds().Select(o => MyUtility.Convert.GetString(o["ID"])).JoinToString(",");
                         }
+                        dr.EndEdit();
                     }
                 }
             };
