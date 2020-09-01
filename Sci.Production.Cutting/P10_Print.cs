@@ -30,6 +30,8 @@ namespace Sci.Production.Cutting
             this.InitializeComponent();
             this.CurrentDataRow = row;
             this.toexcel.Enabled = false;
+
+            this.comboBoxSetting.DataSource = Enum.GetValues(typeof(Prg.BundleRFCard.BundleType));
         }
 
         private string Bundle_Card;
@@ -792,6 +794,31 @@ order by x.[Bundle]");
             else if (this.radioBundleCardRF.Checked)
             {
                 this.toexcel.Enabled = false;
+            }
+        }
+
+        private void BtnSetting_Click(object sender, EventArgs e)
+        {
+            if (this.dt == null || this.dt.Rows.Count == 0)
+            {
+                DataRow row = this.CurrentDataRow;
+                string id = row["ID"].ToString();
+                List<SqlParameter> pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", id),
+                };
+                string scmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, string.Empty);
+                this.result = DBProxy.Current.Select(string.Empty, scmd, pars, out this.dt);
+                if (!this.result)
+                {
+                    MyUtility.Msg.ErrorBox(this.result.Description.ToString());
+                }
+            }
+
+            this.result = Prg.BundleRFCard.BundelTest(this.dt, (Prg.BundleRFCard.BundleType)Enum.Parse(typeof(Prg.BundleRFCard.BundleType), this.comboBoxSetting.SelectedValue.ToString()));
+            if (!this.result)
+            {
+                MyUtility.Msg.ErrorBox(this.result.Description.ToString());
             }
         }
     }

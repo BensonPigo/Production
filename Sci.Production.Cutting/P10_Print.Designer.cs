@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.btnSetting = new Sci.Win.UI.Button();
+            this.comboBoxSetting = new Sci.Win.UI.ComboBox();
             this.radioBundleCardRF = new System.Windows.Forms.RadioButton();
             this.checkExtendAllParts = new System.Windows.Forms.CheckBox();
             this.radioBundleChecklist = new System.Windows.Forms.RadioButton();
@@ -53,6 +55,7 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.comboBoxSetting);
             this.radioPanel1.Controls.Add(this.radioBundleCardRF);
             this.radioPanel1.Controls.Add(this.checkExtendAllParts);
             this.radioPanel1.Controls.Add(this.radioBundleChecklist);
@@ -62,6 +65,30 @@
             this.radioPanel1.Size = new System.Drawing.Size(350, 113);
             this.radioPanel1.TabIndex = 0;
             this.radioPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.RadioPanel1_Paint);
+            // 
+            // btnSetting
+            // 
+            this.btnSetting.Location = new System.Drawing.Point(349, 60);
+            this.btnSetting.Name = "btnSetting";
+            this.btnSetting.Size = new System.Drawing.Size(80, 30);
+            this.btnSetting.TabIndex = 8;
+            this.btnSetting.Text = "Setting";
+            this.btnSetting.UseVisualStyleBackColor = true;
+            this.btnSetting.Visible = false;
+            this.btnSetting.Click += new System.EventHandler(this.BtnSetting_Click);
+            // 
+            // comboBoxSetting
+            // 
+            this.comboBoxSetting.BackColor = System.Drawing.Color.White;
+            this.comboBoxSetting.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBoxSetting.FormattingEnabled = true;
+            this.comboBoxSetting.IsSupportUnselect = true;
+            this.comboBoxSetting.Location = new System.Drawing.Point(210, 53);
+            this.comboBoxSetting.Name = "comboBoxSetting";
+            this.comboBoxSetting.OldText = "";
+            this.comboBoxSetting.Size = new System.Drawing.Size(121, 24);
+            this.comboBoxSetting.TabIndex = 7;
+            this.comboBoxSetting.Visible = false;
             // 
             // radioBundleCardRF
             // 
@@ -108,7 +135,8 @@
             // 
             // P10_Print
             // 
-            this.ClientSize = new System.Drawing.Size(527, 155);
+            this.ClientSize = new System.Drawing.Size(527, 153);
+            this.Controls.Add(this.btnSetting);
             this.Controls.Add(this.radioPanel1);
             this.DefaultControl = "radioBundleCard";
             this.Name = "P10_Print";
@@ -121,6 +149,7 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.btnSetting, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -135,5 +164,7 @@
         private System.Windows.Forms.RadioButton radioBundleChecklist;
         private System.Windows.Forms.RadioButton radioBundleCard;
         private System.Windows.Forms.RadioButton radioBundleCardRF;
+        private Win.UI.Button btnSetting;
+        private Win.UI.ComboBox comboBoxSetting;
     }
 }

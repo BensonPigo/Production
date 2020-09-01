@@ -4,6 +4,8 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.IO;
+using System.Text;
+using System.Collections.Generic;
 
 namespace Sci.Production.Prg
 {
@@ -64,6 +66,21 @@ namespace Sci.Production.Prg
             /// port close
             /// </summary>
             Close = 9,
+
+            /// <summary>
+            /// Card Erase
+            /// </summary>
+            P21 = 10,
+
+            /// <summary>
+            /// Setting the Text data to the Sram.(position free)
+            /// </summary>
+            P35 = 11,
+
+            /// <summary>
+            /// Sram Reset
+            /// </summary>
+            P42 = 12,
         }
 
         /// <summary>
@@ -305,18 +322,46 @@ from
                 {
                     foreach (DataRow dr in dt.Rows)
                     {
-                        // C16 Card Position Check
-                        // result = CardPositionCheck();
-                        // if (!result)
-                        // {
-                        //     throw new Exception(string.Join("Card Position Check :", Environment.NewLine, "Please remove the card in the machine and rerun again."));
-                        // }
-
                         // C31
                         result = CardFromStacker();
                         if (!result)
                         {
                             throw new Exception(string.Join("Card Get From Stacker Error :", Environment.NewLine, result.ToString()));
+                        }
+
+                        // P21 All of the Card Erase. (For SNP company)
+                        result = CardErase();
+                        if (!result)
+                        {
+                            throw new Exception(string.Join("Card Erase Error :", Environment.NewLine, result.ToString()));
+                        }
+
+                        // P42 Sram Reset
+                        result = CardSramReset();
+                        if (!result)
+                        {
+                            throw new Exception(string.Join("Card Sram Reset Error :", Environment.NewLine, result.ToString()));
+                        }
+
+                        // P35
+                        List<string> settings = new List<string>();
+                        result = GetSettingText(dr, out settings);
+                        if (!result)
+                        {
+                            throw new Exception(string.Join("Get SettingText Error :", Environment.NewLine, result.ToString()));
+                        }
+
+                        result = CardSettingTextTOSram(settings);
+                        if (!result)
+                        {
+                            throw new Exception(string.Join("Card SettingText TO Sram Error :", Environment.NewLine, result.ToString()));
+                        }
+
+                        // P41
+                        result = CardPrint();
+                        if (!result)
+                        {
+                            throw new Exception(string.Join("Card Print Error :", Environment.NewLine, result.ToString()));
                         }
 
                         // F30
@@ -331,31 +376,12 @@ from
                             throw new Exception(string.Join("Card Get RF UID Error :", Environment.NewLine, result.ToString()));
                         }
 
-                        // 產生檔案
-                        string path = Directory.GetCurrentDirectory() + @"\data";
-                        string fileName = dr["BundleNo"].ToString() + ".png";
-                        result = CardConvertHtmlToImage(dr, path, fileName);
-                        if (!result)
-                        {
-                            throw new Exception(string.Join("Convert Image Error :", Environment.NewLine, result.ToString()));
-                        }
-
-                        // P49
-                        result = CardSetAndPrint(path, fileName);
-                        if (!result)
-                        {
-                            throw new Exception(string.Join("Print Error :", Environment.NewLine, result.ToString()));
-                        }
-
                         // write DB
                         result = UpdateBundleDetailRFUID(dr["BundleID"].ToString(), dr["BundleNo"].ToString(), cardUID);
                         if (!result)
                         {
                             throw new Exception(string.Join("Write To DB Error :", Environment.NewLine, result.ToString()));
                         }
-
-                        // 移除檔案
-                        FileDelete(path, fileName);
 
                         // C34
                         result = CardCapture();
@@ -453,6 +479,32 @@ from
                         MyUtility.Msg.InfoBox("BundleID" + dr["BundleID"].ToString() + ",BundleNo" + dr["BundleNo"].ToString() + ",RFUiD" + result.Description);
 
                         result = UpdateBundleDetailRFUID(dr["BundleID"].ToString(), dr["BundleNo"].ToString(), result.Description);
+                        break;
+                    case BundleType.P21:
+                        result = CardErase();
+                        break;
+                    case BundleType.P35:
+                        List<string> settings = new List<string>();
+                        result = GetSettingText(dr, out settings);
+                        if (!result)
+                        {
+                            throw new Exception(string.Join("Get SettingText Error :", Environment.NewLine, result.ToString()));
+                        }
+
+                        result = CardSettingTextTOSram(settings);
+                        if (!result)
+                        {
+                            throw new Exception(string.Join("Card SettingText TO Sram Error :", Environment.NewLine, result.ToString()));
+                        }
+
+                        break;
+                    case BundleType.P42:
+                        result = CardSramReset();
+                        if (!result)
+                        {
+                            throw new Exception(string.Join("Card Sram Reset Error :", Environment.NewLine, result.ToString()));
+                        }
+
                         break;
                     default:
                         result = new DualResult(false, "Not Fund Type");
@@ -612,21 +664,21 @@ from
 <body style='background-color:#ffffff; font-family: Arial; font-size:37px; margin:0px;'>
 <div>
     <li style='display: inline;'><span style='background-color: #000000; color: #ffffff; font-weight:bolder;'>Gp:{dr["BundleGroup"].ToString()}</span>(<span style='font-weight: bolder;'>{dr["BundleGroupSerial"].ToString()}</span>/{dr["BundleGroupCount"].ToString()})</li>
-    <li style='display: inline; margin-left: 70px;'>Ln#{dr["Sewinglineid"]} SNP</li>
+    <li style='display: inline; margin-left: 70px; font-weight: bolder;'>Ln#{dr["Sewinglineid"]} SNP</li>
 </div>
-<div>STL#:<span style='color: #7F7F7F;'>{styleIDFirst}</span>{styleIDLast}</div>
-<div><span style='font-weight: bolder;'>SP#</span>:<span style='color: #7F7F7F;'>{spFirst}</span><span style='font-weight: bolder;'>{spMiddle}<u>{spLast}</u></span></div>
+<div><span style='font-weight: bolder;'>STL#:{dr["StyleID"].ToString()}</span></div>
+<div><span style='font-weight: bolder;'>SP#</span>:<span style='font-weight: bolder;'>{spFirst}</span><span style='font-weight: bolder;'>{spMiddle}<u>{spLast}</u></span></div>
 <div><span style='font-weight: bolder;'>Color:{dr["Color"].ToString()}<br />Size:{dr["SizeCode"].ToString()}</span></div>
 <div style='width: 500px;height: 42px;'>
     <li style='display: inline;'><span style='font-weight: bolder;'>Qty:{dr["Qty"].ToString()}</span></li>
-    <li style='display: inline; margin-left: 70px;'><span style='color: #D9D9D9;'>Item:{dr["Item"].ToString()}</span></li>
+    <li style='display: inline; margin-left: 70px;'><span style='font-weight: bolder;'>Item:{dr["Item"].ToString()}</span></li>
 </div>
-<div><span style='color: #D9D9D9;'>Sea.{dr["Sea"].ToString()}</span></div>
-<div><span style='color: #7F7F7F;'>Buyer:{dr["BuyerID"].ToString()}</span></div>
-<div><span style='color: #D9D9D9;'>MK#:{dr["MK"].ToString()}</span></div>
+<div><span style='font-weight: bolder;'>Sea.{dr["Sea"].ToString()}</span></div>
+<div><span style='font-weight: bolder;'>Buyer:{dr["BuyerID"].ToString()}</span></div>
+<div><span style='font-weight: bolder;'>MK#:{dr["MK"].ToString()}</span></div>
 <div><span style='font-weight: bolder;'>Body/Cut#:{dr["BodyCut"].ToString()}</span></div>
-<div>Sub:{subFirst}<br />{subLast}</div>
-<div>Desc:{descFirst}<br />{descLast}</div>
+<div><span style='font-weight: bolder;'>Sub:{subFirst}<br />{subLast}</span></div>
+<div><span style='font-weight: bolder;'>Desc:{descFirst}<br />{descLast}</span></div>
 </body></html>
 ";
 
@@ -816,6 +868,176 @@ from
         }
 
         /// <summary>
+        /// [P21] All of the Card Erase. (For SNP company)
+        /// </summary>
+        /// <returns>DualResult</returns>
+        private static DualResult CardErase()
+        {
+            DualResult result = new DualResult(false);
+            byte[] gbacmd = new byte[3];
+            byte[] tDat = new byte[1000], rDat = new byte[1000];
+            ushort tLen = 0, res = 0;
+            ushort[] rLen = new ushort[2];
+            string errcode;
+            string result_data = string.Empty;
+
+            // F30
+            gbacmd[0] = 0x50;
+            gbacmd[1] = 0x32;
+            gbacmd[2] = 0x31;
+
+            res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+            errcode = string.Format("0x{0:x4}", res);
+            if (rDat[0] == 0x00)
+            {
+                result = new DualResult(true);
+            }
+            else
+            {
+                result = new DualResult(false, errcode);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// [P35] Setting the Text data to the Sram.(position free)
+        /// </summary>
+        /// <returns>DualResult</returns>
+        private static DualResult CardSettingTextTOSram(List<string> settings)
+        {
+            DualResult result = new DualResult(true);
+            byte[] gbacmd = new byte[3];
+            byte[] tDat = new byte[1000], rDat = new byte[1000];
+            ushort tLen = 0, res = 0;
+            ushort[] rLen = new ushort[2];
+            string errcode;
+            byte[] chr = new byte[4];
+            int len;
+            byte[] chrTdat = new byte[100];
+
+            if (settings.Count == 0)
+            {
+                return new DualResult(false, "No Data");
+            }
+
+            int x = 10;
+            int y = 225;
+            foreach (string str in settings)
+            {
+                if (str.Empty())
+                {
+                    continue;
+                }
+
+                // P35
+                gbacmd[0] = 0x50;
+                gbacmd[1] = 0x33;
+                gbacmd[2] = 0x35;
+
+                #region x setting
+                len = x.ToString().Length;
+                chr = Encoding.ASCII.GetBytes(x.ToString());
+                if (len >= 3)
+                {
+                    len = ((chr[0] & 0xF) * 100) + ((chr[1] & 0xF) * 10) + (chr[2] & 0xF);
+                }
+                else if (len == 2)
+                {
+                    len = ((chr[0] & 0xF) * 10) + (chr[1] & 0xF);
+                }
+                else if (len == 1)
+                {
+                    len = chr[0] & 0xF;
+                }
+
+                tDat[0] = (byte)(len >> 8);
+                tDat[1] = (byte)len; // y Point
+                #endregion
+                #region y setting
+                len = y.ToString().Length;
+                chr = Encoding.ASCII.GetBytes(y.ToString());
+                if (len >= 3)
+                {
+                    len = ((chr[0] & 0xF) * 100) + ((chr[1] & 0xF) * 10) + (chr[2] & 0xF);
+                }
+                else if (len == 2)
+                {
+                    len = ((chr[0] & 0xF) * 10) + (chr[1] & 0xF);
+                }
+                else if (len == 1)
+                {
+                    len = chr[0] & 0xF;
+                }
+
+                tDat[2] = (byte)(len >> 8);
+                tDat[3] = (byte)len; // y Point
+                #endregion
+
+                tDat[4] = (byte)1; // Font Select
+                tDat[5] = (byte)3; // Rotate
+
+                // Text Data
+                chrTdat = Encoding.ASCII.GetBytes(str);
+                for (int i = 0; i < str.Length; i++)
+                {
+                    tDat[i + 6] = chrTdat[i];
+                }
+
+                tLen = Convert.ToUInt16(6 + str.Length);
+
+                res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+                errcode = string.Format("0x{0:x4}", res);
+                if (res != 0x0000)
+                {
+                    result = new DualResult(false, errcode);
+                }
+
+                if (!result)
+                {
+                    return result;
+                }
+
+                y = y + 40;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// [P42] Sram Reset
+        /// </summary>
+        /// <returns>DualResult</returns>
+        private static DualResult CardSramReset()
+        {
+            DualResult result = new DualResult(false);
+            byte[] gbacmd = new byte[3];
+            byte[] tDat = new byte[1000], rDat = new byte[1000];
+            ushort tLen = 0, res = 0;
+            ushort[] rLen = new ushort[2];
+            string errcode;
+            string result_data = string.Empty;
+
+            // P42
+            gbacmd[0] = 0x50;
+            gbacmd[1] = 0x34;
+            gbacmd[2] = 0x32;
+
+            res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+            errcode = string.Format("0x{0:x4}", res);
+            if (rDat[0] == 0x00)
+            {
+                result = new DualResult(true);
+            }
+            else
+            {
+                result = new DualResult(false, errcode);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// 判斷資料夾與檔案是否存在
         /// 資料夾不存在則建立
         /// 檔案存在則刪除
@@ -863,6 +1085,58 @@ from
             {
                 file.Delete();
             }
+        }
+
+        /// <summary>
+        /// Convert Html To Image
+        /// </summary>
+        /// <param name="dr">DataRow</param>
+        private static DualResult GetSettingText(DataRow dr, out List<string> settings)
+        {
+            DualResult result = new DualResult(false);
+            Bitmap m_Bitmap = new Bitmap(500, 556);
+            PointF point = new PointF(0, 0);
+            SizeF maxSize = new SizeF(500, 556);
+
+            string styleIDLast = dr["StyleID"].ToString().Right(5);
+            string styleIDFirst = styleIDLast.Empty() ? string.Empty : dr["StyleID"].ToString().Replace(styleIDLast, string.Empty);
+            string spLast = dr["ID"].ToString().Right(3);
+            string spMiddle = spLast.Empty() ? string.Empty : dr["ID"].ToString().Replace(spLast, string.Empty).Right(6);
+            string spFirst = spLast.Empty() || spMiddle.Empty() ? string.Empty : dr["ID"].ToString().Replace(spLast, string.Empty).Replace(spMiddle, string.Empty);
+
+            string subFirst = dr["Artwork"].ToString().Left(19);
+            string subLast = subFirst.Empty() ? string.Empty : dr["Artwork"].ToString().Replace(subFirst, string.Empty).Left(23);
+
+            string descFirst = dr["PatternDesc"].ToString().Left(18);
+            string descLast = descFirst.Empty() ? string.Empty : dr["PatternDesc"].ToString().Replace(descFirst, string.Empty).Left(23);
+
+            settings = new List<string>()
+            {
+                $"Gp:{dr["BundleGroup"].ToString()}({dr["BundleGroupSerial"].ToString()}/{dr["BundleGroupCount"].ToString()})                Ln#{dr["Sewinglineid"]} SNP",
+                $"STL#:{dr["StyleID"].ToString()}",
+                $"SP# {dr["ID"].ToString()}",
+                $"Color:{dr["Color"].ToString()}   Size:{dr["SizeCode"].ToString()}",
+                $"Qty:{dr["Qty"].ToString()}                    Item:{dr["Item"].ToString()}",
+                $"Sea.{dr["Sea"].ToString()}",
+                $"Buyer:{dr["BuyerID"].ToString()}",
+                $"MK#:{dr["MK"].ToString()}",
+                $"Body/Cut#:{dr["BodyCut"].ToString()}",
+                $"Sub:{subFirst}",
+                $"{subLast}",
+                $"Desc:{descFirst}",
+                $"{descLast}",
+            };
+
+            try
+            {
+                result = new DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                result = new DualResult(false, ex.ToString());
+            }
+
+            return result;
         }
     }
 }
