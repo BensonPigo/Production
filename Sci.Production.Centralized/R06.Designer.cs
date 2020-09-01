@@ -32,26 +32,27 @@
             this.comboM = new Sci.Production.Class.ComboCentralizedM(this.components);
             this.labelM = new Sci.Win.UI.Label();
             this.dateOutPutDate = new Sci.Win.UI.DateRange();
-            this.labelOoutputDate = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Production.Class.ComboCentralizedFactory(this.components);
             this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
+            this.labelOoutputDate = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(422, 14);
+            this.print.Location = new System.Drawing.Point(422, 129);
             this.print.TabIndex = 4;
+            this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(422, 50);
+            this.toexcel.Location = new System.Drawing.Point(422, 16);
             this.toexcel.TabIndex = 5;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(422, 86);
+            this.close.Location = new System.Drawing.Point(422, 52);
             this.close.TabIndex = 6;
             // 
             // buttonCustomized
@@ -108,15 +109,6 @@
             this.dateOutPutDate.Size = new System.Drawing.Size(280, 23);
             this.dateOutPutDate.TabIndex = 0;
             // 
-            // labelOoutputDate
-            // 
-            this.labelOoutputDate.BackColor = System.Drawing.Color.RoyalBlue;
-            this.labelOoutputDate.Location = new System.Drawing.Point(25, 16);
-            this.labelOoutputDate.Name = "labelOoutputDate";
-            this.labelOoutputDate.Size = new System.Drawing.Size(88, 23);
-            this.labelOoutputDate.TabIndex = 7;
-            this.labelOoutputDate.Text = "Output Date";
-            // 
             // comboFactory
             // 
             this.comboFactory.BackColor = System.Drawing.Color.White;
@@ -154,15 +146,29 @@
             this.labelFactory.TabIndex = 9;
             this.labelFactory.Text = "Factory";
             // 
+            // labelOoutputDate
+            // 
+            this.labelOoutputDate.Location = new System.Drawing.Point(25, 16);
+            this.labelOoutputDate.Name = "labelOoutputDate";
+            this.labelOoutputDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelOoutputDate.RectStyle.BorderWidth = 1F;
+            this.labelOoutputDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelOoutputDate.RectStyle.ExtBorderWidth = 1F;
+            this.labelOoutputDate.Size = new System.Drawing.Size(88, 23);
+            this.labelOoutputDate.TabIndex = 104;
+            this.labelOoutputDate.Text = "Output Date";
+            this.labelOoutputDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelOoutputDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R06
             // 
             this.ClientSize = new System.Drawing.Size(514, 184);
+            this.Controls.Add(this.labelOoutputDate);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.dateOutPutDate);
-            this.Controls.Add(this.labelOoutputDate);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.labelM);
             this.Name = "R06";
@@ -176,12 +182,12 @@
             this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
-            this.Controls.SetChildIndex(this.labelOoutputDate, 0);
             this.Controls.SetChildIndex(this.dateOutPutDate, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.labelOoutputDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -192,10 +198,10 @@
         private Class.ComboCentralizedM comboM;
         private Win.UI.Label labelM;
         private Win.UI.DateRange dateOutPutDate;
-        private Win.UI.Label labelOoutputDate;
         private Class.ComboCentralizedFactory comboFactory;
         private Class.Txtbrand txtbrand;
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelFactory;
+        private Win.UI.Label labelOoutputDate;
     }
 }

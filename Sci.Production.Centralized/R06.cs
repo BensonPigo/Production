@@ -6,10 +6,12 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Ict;
+using Microsoft.Office.Interop.Excel;
 using Sci.Data;
 using Sci.Production.Prg;
 using Sci.Win;
@@ -17,9 +19,12 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Centralized
 {
+    /// <summary>
+    /// R06
+    /// </summary>
     public partial class R06 : Sci.Win.Tems.PrintForm
     {
-        private DataTable[] printData;
+        private System.Data.DataTable[] printData;
         private DataSet dsAllData;
         private DateTime? date1;
         private DateTime? date2;
@@ -27,6 +32,10 @@ namespace Sci.Production.Centralized
         private string factory;
         private string brand;
 
+        /// <summary>
+        /// R06
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -34,6 +43,9 @@ namespace Sci.Production.Centralized
             this.comboM.Text = Env.User.Keyword;
         }
 
+        /// <summary>
+        /// OnFormLoaded
+        /// </summary>
         protected override void OnFormLoaded()
         {
             #region load combobox Location M 預設顯示登入的M
@@ -48,6 +60,10 @@ namespace Sci.Production.Centralized
             base.OnFormLoaded();
         }
 
+        /// <summary>
+        /// ValidateInput
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
             this.date1 = this.dateOutPutDate.Value1;
@@ -64,6 +80,11 @@ namespace Sci.Production.Centralized
             return base.ValidateInput();
         }
 
+        /// <summary>
+        /// OnAsyncDataLoad
+        /// </summary>
+        /// <param name="e">ReportEventArgs</param>
+        /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
@@ -413,7 +434,7 @@ drop table #tmpBase1,#tmpBase2,#TPEtmp,#AT
 
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
-            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
+            XDocument docx = XDocument.Load(System.Windows.Forms.Application.ExecutablePath + ".config");
             string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
             List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
             foreach (string ss in strSevers)
@@ -462,10 +483,16 @@ drop table #tmpBase1,#tmpBase2,#TPEtmp,#AT
                 }
             }
 
-            DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
+            // timeout時間改回5分鐘
+            DBProxy.Current.DefaultTimeout = 300;
             return Ict.Result.True;
         }
 
+        /// <summary>
+        /// On To Excel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dsAllData == null || this.dsAllData.Tables.Count <= 0)
@@ -485,7 +512,7 @@ drop table #tmpBase1,#tmpBase2,#TPEtmp,#AT
                 objSheets = objApp.ActiveWorkbook.Worksheets[s];
                 objApp.ActiveWorkbook.Sheets.Add(After: objSheets);
                 objSheets.Select();
-                DataTable dt = this.dsAllData.Tables[s - 1];
+                System.Data.DataTable dt = this.dsAllData.Tables[s - 1];
                 objSheets.Name = dt.Rows[0]["ID"].ToString();
 
                 int start_columns = 1;
@@ -563,6 +590,19 @@ drop table #tmpBase1,#tmpBase2,#TPEtmp,#AT
                     }
                 }
             }
+
+            #region Save & Show Excel
+
+            string strExcelName = Class.MicrosoftFile.GetName("Centralized_R06");
+            Workbook workbook = objApp.Workbooks[1];
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion
 
             this.HideWaitMessage();
             return true;
