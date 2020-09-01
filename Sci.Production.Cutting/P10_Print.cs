@@ -788,7 +788,7 @@ Qty: {r.Quantity}     Item: {r.Item}";
         public static string GetNo(string poid, string fabricPanelCode, string article, string size, string bundleNo)
         {
             string sqlcmd = $@"
-SELECT bd.id, bd.BundleGroup, bd.BundleNo,bd.Patterncode, bd.Qty, maxQty=MAX(bd.Qty) over(partition by b.id, BundleGroup)
+SELECT bd.id, bd.BundleGroup, bd.BundleNo,bd.Patterncode, bd.Qty, IsPair, maxQty=MAX(bd.Qty) over(partition by b.id, BundleGroup)
 into #tmp
 FROM BUNDLE_DETAIL bd with(nolock)
 INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
@@ -796,11 +796,17 @@ WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article 
 ORDER BY BundleGroup,bd.BundleNo
 
 --同Patterncode下有數量不同
+--IsPair 兩個為一組
+select t.*,	
+	IsPairRn = IIF(IsPair = 0, 0, row_number() over(partition by ID,BundleGroup,Patterncode Order by BundleNo) % 2 + 1)	
+into #tmpx0
+from #tmp t
 
 select t.*,
-	tmpLastNo = IIF(Qty < maxQty, sum(qty) over(partition by ID,BundleGroup,Patterncode Order by BundleNo), Qty)
+	tmpLastNo = IIF(Qty < maxQty, sum(qty) over(partition by ID,BundleGroup,Patterncode,IsPairRn Order by BundleNo), Qty)
 into #tmpx1
-from #tmp t
+from #tmpx0 t
+order by bundleno
 
 select distinct Id,BundleGroup,maxQty into #tmp2 from #tmp
 select *, lastNo = SUM(maxQty) over(Order by Id,BundleGroup) into #tmp3 from #tmp2
@@ -808,7 +814,7 @@ select *, before = LAG(lastNo,1,0) over(Order by Id,BundleGroup) into #tmp4 from
 
 select
 	x1.*,
-	minPatterncodeNo = min(tmpLastNo)  over(partition by x1.ID,x1.BundleGroup,x1.Patterncode Order by x1.BundleNo),
+	minPatterncodeNo = min(tmpLastNo)  over(partition by x1.ID,x1.BundleGroup,x1.Patterncode,x1.IsPairRn Order by x1.BundleNo),
 	tmpbefore = t4.before + 1,
 	lastno = t4.before + x1.tmpLastNo
 into #tmp5
@@ -817,7 +823,7 @@ inner join #tmpx1 x1 on x1.Id = t4.Id and x1.BundleGroup = t4.BundleGroup
 
 select t5.*,
 	startNo = case when Qty = maxQty or tmpLastNo = minPatterncodeNo then tmpbefore
-					else LAG(lastNo,1,0) over(partition by ID,BundleGroup,Patterncode Order by BundleNo) + 1
+					else LAG(lastNo,1,0) over(partition by ID,BundleGroup,Patterncode,IsPairRn Order by BundleNo) + 1
 					end
 into #tmp6
 from #tmp5 t5
