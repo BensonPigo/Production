@@ -1818,7 +1818,7 @@ where b.POID = '{poid}'
                 string sewingLine = firstAS.Sewingline.Empty() ? string.Empty : firstAS.Sewingline.Length > 2 ? firstAS.Sewingline.Substring(0, 2) : firstAS.Sewingline;
                 bool isEXCESS = selASList.Where(w => w.Iden == first.Iden && w.IsEXCESS == "Y").Any();
                 bool byToneGenerate = selList.Where(w => w.Dup == dup && w.Tone == first.Tone).Count() > 1;
-                int bundleQty = seldupList.Where(w => w.Tone == 0).Count() + seldupList.Where(w => w.Tone > 0).Select(s => s.Tone).Distinct().Count(); // BundleGroup 數
+                int bundleQty = selList.Where(w => w.Dup == dup).Count(); // 合併建單筆數, 寫入 P10 表頭 No of Bundle
                 #endregion
 
                 // bundle
