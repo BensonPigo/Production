@@ -181,11 +181,11 @@ where Ltrim(Misc.ID)  = @Refno";
         }
 
         #region P02 檢查狀態是否為Approved/Junk
-        public static bool checkP02Status(string HCNo)
+        public static bool checkP02Status(string hCNo)
         { // 該單Approved / Junk都不允許調整資料
-            if (MyUtility.Check.Seek($@"select 1 from Express where id='{HCNo}' and status in ('Junk','Approved')"))
+            if (MyUtility.Check.Seek($@"select 1 from Express where id='{hCNo}' and status in ('Junk','Approved')"))
             {
-                MyUtility.Msg.WarningBox($@"HC# {HCNo} already Approved or Junked, 
+                MyUtility.Msg.WarningBox($@"HC# {hCNo} already Approved or Junked, 
 please check again.");
                 return false;
             }
@@ -1187,7 +1187,7 @@ drop table #tmpthreadStyle");
         {
             DualResult result;
             string errmsg = string.Empty;
-            string SP = string.Empty;
+            string sP = string.Empty;
             DataTable dtCancel;
 
             string sqlcmd = $@"

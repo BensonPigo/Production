@@ -1692,6 +1692,7 @@ and t.id = '{this.CurrentMaintain["id"]}'
                 {
                     this.ShowErr(drResult);
                 }
+
                 Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }

@@ -215,6 +215,7 @@ DROP TABLE #MixCTNStartNo ,#Mix_MAX_ReceiveDate
             {
                 this.ShowErr(res);
             }
+
             this.listControlBindingSource.DataSource = dt;
 
             this.grid.IsEditingReadOnly = true;

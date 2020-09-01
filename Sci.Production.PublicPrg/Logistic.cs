@@ -5,6 +5,9 @@ using Ict;
 
 namespace Sci.Production.PublicPrg
 {
+    /// <summary>
+    /// Prgs
+    /// </summary>
     public static partial class Prgs
     {
         #region UpdateOrdersCTN
@@ -12,7 +15,7 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// UpdateOrdersCTN(string)
         /// </summary>
-        /// <param name="orderID"></param>
+        /// <param name="orderID">orderID</param>
         /// <returns>bool</returns>
         public static DualResult UpdateOrdersCTN(string orderID)
         {
@@ -60,12 +63,12 @@ where ID = '{0}'",
         /// <summary>
         /// UpdateOrdersCTN(DataTable)
         /// </summary>
-        /// <param name="orderID"></param>
+        /// <param name="orderData">Order Data</param>
         /// <returns>DualResult</returns>
-        public static DualResult UpdateOrdersCTN(DataTable OrderData)
+        public static DualResult UpdateOrdersCTN(DataTable orderData)
         {
             IList<string> updateCmds = new List<string>();
-            foreach (DataRow dr in OrderData.Rows)
+            foreach (DataRow dr in orderData.Rows)
             {
                 updateCmds.Add(string.Format(
                     @"

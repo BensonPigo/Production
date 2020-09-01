@@ -2197,6 +2197,7 @@ and r.id = '{this.CurrentMaintain["id"]}'
                 {
                     this.ShowErr(drResult);
                 }
+
                 Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
@@ -2399,6 +2400,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                     this.CurrentMaintain["third"] = 1;
                     this.dateETA.Enabled = true;
                 }
+
                 this.Change_record();
             }
         }
@@ -2723,6 +2725,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 DialogResult Dr = MyUtility.Msg.WarningBox(listMsg.JoinToString(string.Empty).TrimStart());
                 return false;
             }
+
             return true;
         }
 

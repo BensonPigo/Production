@@ -396,6 +396,7 @@ WHERE a.ID ='{masterID}'
                 MyUtility.Msg.WarningBox("The record status is confimed, you can not modify.");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
@@ -416,6 +417,7 @@ IF NOT EXISTS(
                 {
                     updateCmd += $@"		CFAFinalInspectResult='Pass' OR CFAFinalInspectResult='Fail but release'  ";
                 }
+
                 if (this.CurrentMaintain["Stage"].ToString() == "3rd party")
                 {
                     updateCmd += $@"		CFA3rdInspectResult='Pass' OR CFA3rdInspectResult='Fail but release'  ";
@@ -433,6 +435,7 @@ BEGIN
     , CFAFinalInspectDate = '{MyUtility.Convert.GetDate(this.CurrentMaintain["AuditDate"]).Value.ToString("yyyy/MM/dd")}'
 ";
                 }
+
                 if (this.CurrentMaintain["Stage"].ToString() == "3rd party")
                 {
                     updateCmd += $@"
@@ -515,6 +518,7 @@ BEGIN
         , CFAFinalInspectDate =  IIF((SELECT EditDate FROM #LastFail)='',NULL,(SELECT EditDate FROM #LastFail))
 ";
                 }
+
                 if (this.CurrentMaintain["Stage"].ToString() == "3rd party")
                 {
                     updateCmd += $@"
@@ -541,6 +545,7 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
 ";
 
             }
+
             DualResult r;
             r = DBProxy.Current.Execute(null, updateCmd);
             if (!r)
@@ -573,6 +578,7 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
                 MyUtility.Msg.WarningBox("Line、Shift can't be empty!!");
                 return false;
             }
+
             // Defect Code、Area Code、No. of Defects不得為空，並跳出警告視窗
             bool anyEmpty = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).Where(o => MyUtility.Check.Empty(o["GarmentDefectCodeID"]) || MyUtility.Check.Empty(o["CFAAreaID"]) || MyUtility.Check.Empty(o["Qty"])).Any();
 
@@ -624,6 +630,7 @@ AND StaggeredCFAInspectionRecordID <> ''
                 return false;
 
             }
+
             //
             if ((this.CurrentMaintain["Stage"].ToString().ToLower() == "final" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party") && (this.CurrentMaintain["Result"].ToString().ToLower() == "pass" || this.CurrentMaintain["Result"].ToString().ToLower() == "fail but release"))
             {
@@ -642,6 +649,7 @@ AND (Result='Pass' OR Result='Fail but release')
                     return false;
                 }
             }
+
             //
             if (this.CurrentMaintain["Stage"].ToString() == "3rd party")
             {
@@ -658,6 +666,7 @@ AND CFAIs3rdInspect = 1
                     return false;
                 }
             }
+
             //Clog received %(By piece) 計算
             this.CurrentMaintain["ClogReceivedPercentage"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"
 SELECT  CAST(ROUND( SUM(IIF( CFAReceiveDate IS NOT NULL OR ReceiveDate IS NOT NULL
@@ -677,6 +686,7 @@ where OrderID = '{this.CurrentMaintain["OrderID"]}' AND OrderShipmodeSeq = '{thi
                 MyUtility.Msg.InfoBox("MDivisionID is different!!");
                 return false;
             }
+
             return base.ClickSaveBefore();
         }
 
@@ -789,6 +799,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
                 this.CurrentMaintain["Result"] = string.Empty;
                 this._oldStage = this.CurrentMaintain["Stage"].ToString();
             }
+
             this.CalInsepectionCtn(this.IsDetailInserting);
         }
 
@@ -815,6 +826,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
                 // 開始計算檢驗次數
                 this.CalInsepectionCtn(this.IsDetailInserting);
             }
+
             bool IsSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["OrderID"].ToString()}' "));
 
             if (IsSample && this.comboStage.Items.Contains("Staggered"))
@@ -899,6 +911,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
                     }
 
                 }
+
                 if (errorLines.Count > 0)
                 {
                     MyUtility.Msg.WarningBox($"Sewing Line NOT Found : " + errorLines.JoinToString(","));
@@ -1276,6 +1289,7 @@ SELECT STUFF(
                 this.disInsCtn.Value = 0;
                 return;
             }
+
                 cmd = $@"
 SELECT COUNT(1) + 1
 FROM CFAInspectionRecord

@@ -58,6 +58,7 @@ WHERE OrderID= '{this._OrderID}'  and SEQ='{this._OrderShipmodeSeq}'
             {
                 this.ShowErr(res);
             }
+
             this.listControlBindingSource.DataSource = dt;
 
             this.grid.IsEditingReadOnly = true;

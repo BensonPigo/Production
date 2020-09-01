@@ -549,6 +549,7 @@ namespace Sci.Production.Quality
                     {
                         return;
                     }
+
                     string sql = "select ID from Scale  WHERE Junk=0";
 
                     string defaultSelected = MyUtility.Convert.GetString(dr["Scale"]);

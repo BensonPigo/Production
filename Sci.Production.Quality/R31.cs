@@ -248,12 +248,14 @@ WHERE 1=1
                 sqlCmd.Append($"AND o.MDivisionID=@MDivisionID " + Environment.NewLine);
                 paramList.Add(new SqlParameter("@MDivisionID", MDivisionID));
             }
+
             if (!MyUtility.Check.Empty(FactoryID))
             {
                 sqlCmd.Append($"AND o.FtyGroup=@FactoryID " + Environment.NewLine);
                 paramList.Add(new SqlParameter("@FactoryID", FactoryID));
 
             }
+
             if (!MyUtility.Check.Empty(Brand))
             {
                 sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
@@ -265,6 +267,7 @@ WHERE 1=1
             {
                 sqlCmd.Append($"AND f.IsProduceFty = 1" + Environment.NewLine);
             }
+
             if (categoryList.Count > 0)
             {
                 sqlCmd.Append($"AND o.Category IN ('{categoryList.JoinToString("','")}') " + Environment.NewLine);

@@ -735,6 +735,7 @@ and ik.id = '{CurrentMaintain["ID"]}'
                 {
                     ShowErr(drResult);
                 }
+
                 Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }

@@ -46,7 +46,7 @@ namespace Sci.Production.PublicPrg
         public static string UpdateMPoDetail(int type, List<Prgs_POSuppDetailData> datas, bool encoded, bool attachLocation = true, SqlConnection sqlConn = null)
         {
             #region 以原本的datas的5keys 去ftyinventory撈location和原本loction重組以逗號分開,塞回原本資料
-            DataTable TBattachlocation;
+            DataTable tBattachlocation;
             if (datas != null)
             {
                 if (attachLocation)
@@ -82,10 +82,10 @@ OUTER APPLY(
 	)
 )L
 ;drop Table #Tmp;";
-                    MyUtility.Tool.ProcessWithObject(datas, string.Empty, sqlcmdforlocation, out TBattachlocation, "#Tmp", sqlConn);
-                    if (TBattachlocation != null)
+                    MyUtility.Tool.ProcessWithObject(datas, string.Empty, sqlcmdforlocation, out tBattachlocation, "#Tmp", sqlConn);
+                    if (tBattachlocation != null)
                     {
-                        var newDatas = TBattachlocation.AsEnumerable().Select(w =>
+                        var newDatas = tBattachlocation.AsEnumerable().Select(w =>
                                 new Prgs_POSuppDetailData
                                 {
                                     poid = w.Field<string>("poid"),
@@ -305,7 +305,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
         /// <param name="location"></param>
         /// <returns>String Sqlcmd</returns>
         // (整批)
-        public static string UpdateFtyInventory_IO(int type, IList<DataRow> datas, bool encoded, int MtlAutoLock = 0)
+        public static string UpdateFtyInventory_IO(int type, IList<DataRow> datas, bool encoded, int mtlAutoLock = 0)
         {
             string sqlcmd = string.Empty;
             switch (type)
@@ -335,17 +335,17 @@ using #tmpS11 as s
 when matched then
     update
     set inqty = isnull(inqty,0.00) + s.qty,
-         Lock = iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{MtlAutoLock},0),
-         LockName = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,'{Env.User.UserID}',''),
-         LockDate = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,getdate(),null)
+         Lock = iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{mtlAutoLock},0),
+         LockName = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {mtlAutoLock}=1 ,'{Env.User.UserID}',''),
+         LockDate = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {mtlAutoLock}=1 ,getdate(),null)
 when not matched then
     insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty], [Lock],[LockName],[LockDate])
     values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
 			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
 			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty,
-              iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{MtlAutoLock},0),
-              iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,'{Env.User.UserID}',''),
-              iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,getdate(),null)
+              iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{mtlAutoLock},0),
+              iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {mtlAutoLock}=1 ,'{Env.User.UserID}',''),
+              iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {mtlAutoLock}=1 ,getdate(),null)
             );
 ";
                     if (encoded)
@@ -607,14 +607,14 @@ where p.id ='{0}'
         public static Win.Tools.SelectItem SelePoItem(string poid, string defaultseq, string filters = null, bool junk = true)
         {
             DataTable dt;
-            string PoItemSql = selePoItemSqlCmd(junk);
-            if (!MyUtility.Check.Empty(PoItemSql))
+            string poItemSql = selePoItemSqlCmd(junk);
+            if (!MyUtility.Check.Empty(poItemSql))
             {
-                PoItemSql += string.Format(" And {0}", filters);
+                poItemSql += string.Format(" And {0}", filters);
             }
 
-            string sqlcmd = string.Format(PoItemSql, poid, Env.User.Keyword);
-            PoItemSql = string.Empty;
+            string sqlcmd = string.Format(poItemSql, poid, Env.User.Keyword);
+            poItemSql = string.Empty;
 
             DBProxy.Current.Select(null, sqlcmd, out dt);
 
@@ -1271,7 +1271,7 @@ drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"])
         /// </summary>
         /// <param name="materials">P33表身</param>
         /// <returns>準備寫入P33第三層的DataRow (資料結構: Issue_Detail)</returns>
-        public static List<DataRow> Thread_AutoPick(DataRow material, decimal AccuIssued)
+        public static List<DataRow> Thread_AutoPick(DataRow material, decimal accuIssued)
         {
             List<DataRow> items = new List<DataRow>();
 
@@ -1284,10 +1284,10 @@ drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"])
             // decimal accu_issue = 0m;
 
             // decimal AccuIssued = MyUtility.Check.Empty(material["AccuIssued"]) ? 0 : decimal.Parse(material["AccuIssued"].ToString());
-            decimal UseQtyByStockUnit = MyUtility.Check.Empty(material["Use Qty By Stock Unit"]) ? 0 : decimal.Parse(material["Use Qty By Stock Unit"].ToString());
+            decimal useQtyByStockUnit = MyUtility.Check.Empty(material["Use Qty By Stock Unit"]) ? 0 : decimal.Parse(material["Use Qty By Stock Unit"].ToString());
 
             // 需求量 - 已發累計量 = 待發的量
-            request = UseQtyByStockUnit; // - AccuIssued;
+            request = useQtyByStockUnit; // - AccuIssued;
 
             // 取得所有項次號(欄位名稱跟Issue_Detail一樣)
             sqlcmd = $@"
@@ -1337,18 +1337,18 @@ where    psd.ID = '{material["poid"]}'
                 // 先確認是否有數量剛好足夠的 Seq1 + Seq2， 若有則該項直接帶出
                 if (dt.AsEnumerable().Any(o => (decimal)o["BulkQty"] == request))
                 {
-                    DataRow ImortRow = dt.AsEnumerable().Where(o => ((decimal)o["BulkQty"]).EqualDecimal(request)).FirstOrDefault();
-                    ImortRow["Qty"] = request;
-                    items.Add(ImortRow);
+                    DataRow imortRow = dt.AsEnumerable().Where(o => ((decimal)o["BulkQty"]).EqualDecimal(request)).FirstOrDefault();
+                    imortRow["Qty"] = request;
+                    items.Add(imortRow);
                 }
                 else
                 {
                     // 沒有的話，則從Qty > 需求量的,找第一筆
                     if (dt.AsEnumerable().Any(o => (decimal)o["BulkQty"] > request))
                     {
-                        DataRow ImortRow = dt.AsEnumerable().Where(o => (decimal)o["BulkQty"] > request).FirstOrDefault();
-                        ImortRow["Qty"] = request;
-                        items.Add(ImortRow);
+                        DataRow imortRow = dt.AsEnumerable().Where(o => (decimal)o["BulkQty"] > request).FirstOrDefault();
+                        imortRow["Qty"] = request;
+                        items.Add(imortRow);
                     }
                     else
                     {
@@ -1385,14 +1385,14 @@ where    psd.ID = '{material["poid"]}'
         /// <summary>
         /// 檢查實際到倉日不可早於到港日
         /// </summary>
-        /// <param name="ArrivedPortDate"></param>
-        /// <param name="ArrivedWhseDate"></param>
+        /// <param name="arrivedPortDate"></param>
+        /// <param name="arrivedWhseDate"></param>
         /// <param name="msg"></param>
         /// <returns>bool</returns>
-        public static bool CheckArrivedWhseDateWithArrivedPortDate(DateTime ArrivedPortDate, DateTime ArrivedWhseDate, out string msg)
+        public static bool CheckArrivedWhseDateWithArrivedPortDate(DateTime arrivedPortDate, DateTime arrivedWhseDate, out string msg)
         {
             msg = string.Empty;
-            if (ArrivedPortDate > ArrivedWhseDate)
+            if (arrivedPortDate > arrivedWhseDate)
             {
                 msg = "Arrive Warehouse date can't be earlier than arrive port date!!";
                 return false;
@@ -1404,23 +1404,23 @@ where    psd.ID = '{material["poid"]}'
         /// <summary>
         /// 檢查實際到倉日若早於ETA 3天或晚於 15天都回傳訊息。
         /// </summary>
-        /// <param name="Eta"></param>
-        /// <param name="ArrivedWhseDate"></param>
+        /// <param name="eta"></param>
+        /// <param name="arrivedWhseDate"></param>
         /// <param name="msg"></param>
         /// <returns>bool</returns>
-        public static bool CheckArrivedWhseDateWithEta(DateTime Eta, DateTime ArrivedWhseDate, out string msg)
+        public static bool CheckArrivedWhseDateWithEta(DateTime eta, DateTime arrivedWhseDate, out string msg)
         {
             msg = string.Empty;
 
             // 到倉日如果早於ETA 3天，則提示窗請USER再確認是否存檔。
-            if (DateTime.Compare(Eta, ArrivedWhseDate.AddDays(3)) > 0)
+            if (DateTime.Compare(eta, arrivedWhseDate.AddDays(3)) > 0)
             {
                 msg = "Arrive Warehouse date is earlier than ETA 3 days, do you save it?";
                 return false;
             }
 
             // 到倉日如果晚於ETA 15天，則提示窗請USER再確認是否存檔。
-            if (DateTime.Compare(Eta.AddDays(15), ArrivedWhseDate) < 0)
+            if (DateTime.Compare(eta.AddDays(15), arrivedWhseDate) < 0)
             {
                 msg = "Arrive Warehouse date is later than ETA 15 days, do you save it?";
                 return false;
@@ -1443,8 +1443,8 @@ where    psd.ID = '{material["poid"]}'
 
             #region -- 檢查庫存項lock --
 
-            bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
-            if (!MtlAutoLock)
+            bool mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+            if (!mtlAutoLock)
             {
                 sqlcmd = string.Format(
                     @"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
@@ -1718,7 +1718,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             return true;
         }
 
-        public static DualResult P23confirm(string SubTransfer_ID)
+        public static DualResult P23confirm(string subTransfer_ID)
         {
             string upd_MD_4T = string.Empty;
             string upd_MD_8T = string.Empty;
@@ -1749,7 +1749,7 @@ inner join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID
                                         and d.FromSeq2 = f.Seq2
                                         and d.fromDyelot = f.Dyelot
 where   f.lock=1 
-    and d.Id = '{0}'", SubTransfer_ID);
+    and d.Id = '{0}'", subTransfer_ID);
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 return result;
@@ -1799,7 +1799,7 @@ left join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID
                                           and d.FromSeq2 = f.Seq2 
                                           and D.FromStockType = F.StockType
                                           and d.FromDyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) < d.Qty) ", SubTransfer_ID);
+where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) < d.Qty) ", subTransfer_ID);
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 return result;
@@ -1847,7 +1847,7 @@ left join FtyInventory f WITH (NOLOCK) on   d.toPoId = f.PoId
                                             and d.toStocktype = f.StockType 
                                             and d.toRoll = f.Roll
                                             and d.toDyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) ", SubTransfer_ID);
+where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) ", subTransfer_ID);
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 return result;
@@ -1876,7 +1876,7 @@ update SubTransfer
 set status = 'Confirmed'
     , editname = '{0}' 
     , editdate = GETDATE()
-where id = '{1}'", Env.User.UserID, SubTransfer_ID);
+where id = '{1}'", Env.User.UserID, subTransfer_ID);
             #endregion 更新表頭狀態資料
 
             DataTable dtSubTransfer_Detail;
@@ -1914,7 +1914,7 @@ left join FtyInventory FI on a.FromPoid = fi.poid
                              and a.fromRoll = fi.roll 
                              and a.fromStocktype = fi.stocktype
                              and a.fromDyelot = fi.Dyelot
-Where a.id = '{SubTransfer_ID}'";
+Where a.id = '{subTransfer_ID}'";
             result = DBProxy.Current.Select(null, sqlSubTransfer_Detail, out dtSubTransfer_Detail);
             if (!result)
             {
@@ -2144,7 +2144,7 @@ when matched then
             return result;
         }
 
-        public static DualResult P24confirm(string SubTransfer_ID)
+        public static DualResult P24confirm(string subTransfer_ID)
         {
             string upd_MD_16T = string.Empty;
             string upd_MD_8T = string.Empty;
@@ -2159,8 +2159,8 @@ when matched then
             DataTable datacheck;
 
             #region -- 檢查庫存項lock --
-            bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
-            if (!MtlAutoLock)
+            bool mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+            if (!mtlAutoLock)
             {
                 sqlcmd = string.Format(
                     @"
@@ -2175,7 +2175,7 @@ from dbo.SubTransfer_Detail d WITH (NOLOCK)
 inner join FtyInventory f WITH (NOLOCK) 
     on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
        and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.FromDyelot = f.Dyelot
-where f.lock=1 and d.Id = '{0}'", SubTransfer_ID);
+where f.lock=1 and d.Id = '{0}'", subTransfer_ID);
                 if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                 {
                     return result2;
@@ -2212,7 +2212,7 @@ from dbo.SubTransfer_Detail d WITH (NOLOCK)
 left join FtyInventory f WITH (NOLOCK) 
 	on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
 	   and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.FromDyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", SubTransfer_ID);
+where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", subTransfer_ID);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 return result2;
@@ -2238,7 +2238,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             sqlupd3 = string.Format(
                 @"update SubTransfer set status='Confirmed', editname = '{0}' , editdate = GETDATE()
-                                where id = '{1}'", Env.User.UserID, SubTransfer_ID);
+                                where id = '{1}'", Env.User.UserID, subTransfer_ID);
 
             #endregion 更新表頭狀態資料
 
@@ -2271,7 +2271,7 @@ select
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 left join FtyInventory f WITH (NOLOCK) on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
-Where a.id = '{SubTransfer_ID}'";
+Where a.id = '{subTransfer_ID}'";
 
             result = DBProxy.Current.Select(null, sqlSubTransfer_Detail, out dtSubTransfer_Detail);
             if (!result)
@@ -2413,53 +2413,53 @@ Where a.id = '{SubTransfer_ID}'";
 
             foreach (var updItem in listDistinctPoIdSeq)
             {
-                string POID = updItem.FromPOID;
+                string pOID = updItem.FromPOID;
                 string Seq1 = updItem.FromSeq1;
                 string Seq2 = updItem.FromSeq2;
 
-                List<string> New_CLocationList = listMDivisionPODetailCLocation
-                            .Where(o => o.FromPOID == POID &&
+                List<string> new_CLocationList = listMDivisionPODetailCLocation
+                            .Where(o => o.FromPOID == pOID &&
                                          o.FromSeq1 == Seq1 &&
                                          o.FromSeq2 == Seq2)
                             .Select(o => o.ToLocation)
                             .Distinct().ToList();
 
                 // 從MDivisionPoDetail出現有的Location
-                DataTable DT_MDivisionPoDetail;
+                DataTable dT_MDivisionPoDetail;
                 DBProxy.Current.Select(null, $@"
 SELECt CLocation
 FROM MDivisionPoDetail
-WHERE POID='{POID}'
+WHERE POID='{pOID}'
 AND Seq1='{Seq1}' AND Seq2='{Seq2}'
-", out DT_MDivisionPoDetail);
+", out dT_MDivisionPoDetail);
 
-                List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != string.Empty).ToList();
+                List<string> dB_CLocations = dT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != string.Empty).ToList();
 
-                List<string> Fincal = new List<string>();
+                List<string> fincal = new List<string>();
 
-                foreach (var New_CLocation in New_CLocationList)
+                foreach (var new_CLocation in new_CLocationList)
                 {
-                    if (DB_CLocations.Count == 0 || !DB_CLocations.Contains(New_CLocation))
+                    if (dB_CLocations.Count == 0 || !dB_CLocations.Contains(new_CLocation))
                     {
-                        DB_CLocations.Add(New_CLocation);
+                        dB_CLocations.Add(new_CLocation);
                     }
                 }
 
-                foreach (var CLocation in DB_CLocations.Distinct().ToList())
+                foreach (var cLocation in dB_CLocations.Distinct().ToList())
                 {
-                    foreach (var a in CLocation.Split(',').Where(o => o != string.Empty).Distinct().ToList())
+                    foreach (var a in cLocation.Split(',').Where(o => o != string.Empty).Distinct().ToList())
                     {
-                        if (!Fincal.Contains(a))
+                        if (!fincal.Contains(a))
                         {
-                            Fincal.Add(a);
+                            fincal.Add(a);
                         }
                     }
                 }
 
                 string cmd = $@"
 UPDATE MDivisionPoDetail
-SET CLocation='{Fincal.Distinct().ToList().JoinToString(",")}'
-WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+SET CLocation='{fincal.Distinct().ToList().JoinToString(",")}'
+WHERE POID='{pOID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
 
 ";
                 updateMDivisionPODetailCLocation += cmd;
@@ -2594,11 +2594,11 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
 
         public static List<string> GetBatchID(string keyWord, string tableName, DateTime refDate = default(DateTime), int format = 2, string checkColumn = "ID", string connectionName = null, int sequenceMode = 1, int sequenceLength = 0, int batchNumber = 1, int ignoreSeq = 0, string orderByCol = "")
         {
-            List<string> IDList = new List<string>();
+            List<string> iDList = new List<string>();
 
             if (string.IsNullOrWhiteSpace(tableName))
             {
-                return IDList;
+                return iDList;
             }
 
             if (refDate == DateTime.MinValue)
@@ -2606,7 +2606,7 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                 refDate = DateTime.Today;
             }
 
-            string TaiwanYear;
+            string taiwanYear;
             switch (format)
             {
                 case 1: // A yy xxxx
@@ -2622,8 +2622,8 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                     keyWord = keyWord.ToUpper().Trim() + refDate.ToString("yyyyMM");
                     break;
                 case 5: // 民國年 A yyyMM xxxx
-                    TaiwanYear = (refDate.Year - 1911).ToString().PadLeft(3, '0');
-                    keyWord = keyWord.ToUpper().Trim() + TaiwanYear + refDate.ToString("MM");
+                    taiwanYear = (refDate.Year - 1911).ToString().PadLeft(3, '0');
+                    keyWord = keyWord.ToUpper().Trim() + taiwanYear + refDate.ToString("MM");
                     break;
                 case 6: // A xxxx
                     keyWord = keyWord.ToUpper().Trim();
@@ -2632,11 +2632,11 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                     keyWord = keyWord.ToUpper().Trim() + refDate.ToString("yyyy");
                     break;
                 case 8: // 民國年 A yyyMMdd xxxx
-                    TaiwanYear = (refDate.Year - 1911).ToString().PadLeft(3, '0');
-                    keyWord = keyWord.ToUpper().Trim() + TaiwanYear + refDate.ToString("MM") + refDate.ToString("dd");
+                    taiwanYear = (refDate.Year - 1911).ToString().PadLeft(3, '0');
+                    keyWord = keyWord.ToUpper().Trim() + taiwanYear + refDate.ToString("MM") + refDate.ToString("dd");
                     break;
                 default:
-                    return IDList;
+                    return iDList;
             }
 
             // 判斷schema欄位的結構長度
@@ -2657,12 +2657,12 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
 
                 if (columnTypeLength == 0)
                 {
-                    return IDList;
+                    return iDList;
                 }
             }
             else
             {
-                return IDList;
+                return iDList;
             }
 
             string orderBy = MyUtility.Check.Empty(orderByCol) ? $"SUBSTRING({checkColumn},{ignoreSeq + 1},{columnTypeLength})" : orderByCol;
@@ -2677,7 +2677,7 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                     while (batchNumber > 0)
                     {
                         lastID = keyWord + GetNextValue(lastID.Substring(keyWord.Length), sequenceMode);
-                        IDList.Add(lastID);
+                        iDList.Add(lastID);
                         batchNumber = batchNumber - 1;
                     }
                 }
@@ -2690,7 +2690,7 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                             string nextValue = GetNextValue("0".PadLeft(sequenceLength, '0'), sequenceMode);
                             while (batchNumber > 0)
                             {
-                                IDList.Add(keyWord + nextValue);
+                                iDList.Add(keyWord + nextValue);
                                 nextValue = GetNextValue(nextValue.PadLeft(sequenceLength, '0'), sequenceMode);
                                 batchNumber = batchNumber - 1;
                             }
@@ -2701,7 +2701,7 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                         string nextValue = GetNextValue("0".PadLeft(columnTypeLength - keyWord.Length, '0'), sequenceMode);
                         while (batchNumber > 0)
                         {
-                            IDList.Add(keyWord + nextValue);
+                            iDList.Add(keyWord + nextValue);
                             nextValue = GetNextValue(nextValue.PadLeft(columnTypeLength - keyWord.Length, '0'), sequenceMode);
                             batchNumber = batchNumber - 1;
                         }
@@ -2709,7 +2709,7 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                 }
             }
 
-            return IDList;
+            return iDList;
         }
 
         public static string GetNextValue(string strValue, int sequenceMode)
@@ -2813,7 +2813,7 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
             return returnValue;
         }
 
-        public static DataTable RollTranscation(string PoID, string Seq1, string Seq2)
+        public static DataTable RollTranscation(string poID, string seq1, string seq2)
         {
             DataTable dt = new DataTable();
             DualResult result;
@@ -2993,9 +2993,9 @@ group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,a.type,b.roll,b.stocktype,b
 ) tmp where stocktype <> 'O'
 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot
 ",
-                PoID,
-                Seq1,
-                Seq2,
+                poID,
+                seq1,
+                seq2,
                 Env.User.Keyword);
 
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out dt)))
@@ -3067,17 +3067,17 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 
         }
 
-        public static List<string> GetBarcodeNo(string TableName, string keyWord, int batchNumber = 1 ,int DateType = 3, string checkColumn = "Barcode", String connectionName = null, int sequenceMode = 1, int sequenceLength = 0)
+        public static List<string> GetBarcodeNo(string tableName, string keyWord, int batchNumber = 1 ,int dateType = 3, string checkColumn = "Barcode", String connectionName = null, int sequenceMode = 1, int sequenceLength = 0)
         {
-            List<string> IDList = new List<string>();
-            if (MyUtility.Check.Empty(TableName))
+            List<string> iDList = new List<string>();
+            if (MyUtility.Check.Empty(tableName))
             {
                 throw new Exception("Parameter - tableName is not specified..");
             }
 
             DateTime today = DateTime.Today;
-            string TaiwanYear;
-            switch (DateType)
+            string taiwanYear;
+            switch (dateType)
             {
                 case 1:     // A yy xxxx
                     keyWord = keyWord.ToUpper().Trim() + today.ToString("yy");
@@ -3092,8 +3092,8 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                     keyWord = keyWord.ToUpper().Trim() + today.ToString("yyyyMM");
                     break;
                 case 5:     // 民國年 A yyyMM xxxx
-                    TaiwanYear = ((today.Year - 1911).ToString()).PadLeft(3, '0');
-                    keyWord = keyWord.ToUpper().Trim() + TaiwanYear + today.ToString("MM");
+                    taiwanYear = ((today.Year - 1911).ToString()).PadLeft(3, '0');
+                    keyWord = keyWord.ToUpper().Trim() + taiwanYear + today.ToString("MM");
                     break;
                 case 6:     // A xxxx
                     keyWord = keyWord.ToUpper().Trim();
@@ -3102,23 +3102,23 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                     keyWord = keyWord.ToUpper().Trim() + today.ToString("yyyy");
                     break;
                 case 8:    // 民國年 A yyyMMdd xxxx
-                    TaiwanYear = ((today.Year - 1911).ToString()).PadLeft(3, '0');
-                    keyWord = keyWord.ToUpper().Trim() + TaiwanYear + today.ToString("MM") + today.ToString("dd");
+                    taiwanYear = ((today.Year - 1911).ToString()).PadLeft(3, '0');
+                    keyWord = keyWord.ToUpper().Trim() + taiwanYear + today.ToString("MM") + today.ToString("dd");
                     break;
                 default:
-                    return IDList;
+                    return iDList;
             }
 
             //判斷schema欄位的結構長度
             string returnID = "";
-            string sqlCmd = string.Format("SELECT TOP 1 {0} FROM {1} WHERE {2} LIKE '{3}%' ORDER BY {4} DESC", checkColumn, TableName, checkColumn, keyWord.Trim(), checkColumn);
+            string sqlCmd = string.Format("SELECT TOP 1 {0} FROM {1} WHERE {2} LIKE '{3}%' ORDER BY {4} DESC", checkColumn, tableName, checkColumn, keyWord.Trim(), checkColumn);
 
             DualResult result = null;
             DataTable dtID = null;
             int columnTypeLength = 0;
             ITableSchema tableSchema = null;
 
-            if (result = DBProxy.Current.GetTableSchema(connectionName, TableName, out tableSchema))
+            if (result = DBProxy.Current.GetTableSchema(connectionName, tableName, out tableSchema))
             {
                 foreach (IColumnSchema cs in tableSchema.Columns)
                 {
@@ -3127,6 +3127,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                         columnTypeLength = cs.MaxLength;
                     }
                 }
+
                 if (columnTypeLength == 0)
                 {
                     throw new Exception("Parameter - checkColumn is not found!");
@@ -3145,7 +3146,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                     while (batchNumber > 0)
                     {
                         lastID = keyWord + GetNextValue(lastID.Substring(keyWord.Length), sequenceMode);
-                        IDList.Add(lastID);
+                        iDList.Add(lastID);
                         batchNumber = batchNumber - 1;
                     }
                 }
@@ -3158,7 +3159,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                             string nextValue = GetNextValue("0".PadLeft(sequenceLength, '0'), sequenceMode);
                             while (batchNumber > 0)
                             {
-                                IDList.Add(keyWord + nextValue);
+                                iDList.Add(keyWord + nextValue);
                                 nextValue = GetNextValue(nextValue.PadLeft(sequenceLength, '0'), sequenceMode);
                                 batchNumber = batchNumber - 1;
                             }
@@ -3169,7 +3170,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                         string nextValue = GetNextValue("0".PadLeft(columnTypeLength - keyWord.Length, '0'), sequenceMode);
                         while (batchNumber > 0)
                         {
-                            IDList.Add(keyWord + nextValue);
+                            iDList.Add(keyWord + nextValue);
                             nextValue = GetNextValue(nextValue.PadLeft(columnTypeLength - keyWord.Length, '0'), sequenceMode);
                             batchNumber = batchNumber - 1;
                         }
@@ -3181,7 +3182,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                 throw new Exception(result.ToString());
             }
 
-            return IDList;
+            return iDList;
         }
 
         private class NowDetail
@@ -3198,7 +3199,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
         public static DualResult UpdateFtyInventoryMDivisionPoDetail(IList<DataRow> detailDatas)
         {
             StringBuilder sqlupd2 = new StringBuilder();
-            List<NowDetail> NowDetails = new List<NowDetail>();
+            List<NowDetail> nowDetails = new List<NowDetail>();
             DualResult result; // , result2;
             string upd_MD_2T = string.Empty;
             string upd_Fty_26F = string.Empty;
@@ -3206,30 +3207,30 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             // 先把表身POID Seq1 2原本的MDivisionPoDetail CLocation記下來  ISP20191578
             foreach (DataRow item in detailDatas.Where(o => o["StockType"].ToString() == "O" && o["ToLocation"].ToString() != string.Empty).ToList())
             {
-                string POID = item["POID"].ToString();
+                string pOID = item["POID"].ToString();
                 string Seq1 = item["Seq"].ToString().Split(' ')[0];
                 string Seq2 = item["Seq"].ToString().Split(' ')[1];
 
-                DataTable DT_MDivisionPoDetail;
+                DataTable dT_MDivisionPoDetail;
 
                 // 從MDivisionPoDetail出現有的Location
                 DBProxy.Current.Select(null, $@"
 SELECt CLocation
 FROM MDivisionPoDetail
-WHERE POID='{POID}'
+WHERE POID='{pOID}'
 AND Seq1='{Seq1}' AND Seq2='{Seq2}'
-", out DT_MDivisionPoDetail);
+", out dT_MDivisionPoDetail);
 
-                List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != string.Empty).ToList();
+                List<string> dB_CLocations = dT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != string.Empty).ToList();
 
                 NowDetail nData = new NowDetail()
                 {
-                    POID = POID,
+                    POID = pOID,
                     Seq1 = Seq1,
                     Seq2 = Seq2,
-                    DB_CLocations = DB_CLocations,
+                    DB_CLocations = dB_CLocations,
                 };
-                NowDetails.Add(nData);
+                nowDetails.Add(nData);
             }
 
             #region 更新庫存數量 ftyinventory
@@ -3301,42 +3302,42 @@ AND Seq1='{Seq1}' AND Seq2='{Seq2}'
             {
                 foreach (DataRow item in detailDatas.Where(o => o["StockType"].ToString() == "O" && o["ToLocation"].ToString() != string.Empty))
                 {
-                    string POID = item["POID"].ToString();
+                    string pOID = item["POID"].ToString();
                     string Seq1 = item["Seq"].ToString().Split(' ')[0];
                     string Seq2 = item["Seq"].ToString().Split(' ')[1];
 
-                    List<string> New_CLocationList = detailDatas.Where(o => o["POID"].ToString() == POID && o["Seq"].ToString() == (Seq1 + " " + Seq2) && o["ToLocation"].ToString() != string.Empty)
+                    List<string> new_CLocationList = detailDatas.Where(o => o["POID"].ToString() == pOID && o["Seq"].ToString() == (Seq1 + " " + Seq2) && o["ToLocation"].ToString() != string.Empty)
                         .Select(o => o["ToLocation"].ToString())
                         .Distinct().ToList();
 
                     // List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
-                    List<string> DB_CLocations = NowDetails.Where(o => o.POID == POID && o.Seq1 == Seq1 && o.Seq2 == Seq2).FirstOrDefault().DB_CLocations;
+                    List<string> dB_CLocations = nowDetails.Where(o => o.POID == pOID && o.Seq1 == Seq1 && o.Seq2 == Seq2).FirstOrDefault().DB_CLocations;
 
-                    List<string> Fincal = new List<string>();
+                    List<string> fincal = new List<string>();
 
-                    foreach (var New_CLocation in New_CLocationList)
+                    foreach (var new_CLocation in new_CLocationList)
                     {
-                        if (DB_CLocations.Count == 0 || !DB_CLocations.Contains(New_CLocation))
+                        if (dB_CLocations.Count == 0 || !dB_CLocations.Contains(new_CLocation))
                         {
-                            DB_CLocations.Add(New_CLocation);
+                            dB_CLocations.Add(new_CLocation);
                         }
                     }
 
-                    foreach (var CLocation in DB_CLocations.Distinct().ToList())
+                    foreach (var cLocation in dB_CLocations.Distinct().ToList())
                     {
-                        foreach (var a in CLocation.Split(',').Where(o => o != string.Empty).Distinct().ToList())
+                        foreach (var a in cLocation.Split(',').Where(o => o != string.Empty).Distinct().ToList())
                         {
-                            if (!Fincal.Contains(a))
+                            if (!fincal.Contains(a))
                             {
-                                Fincal.Add(a);
+                                fincal.Add(a);
                             }
                         }
                     }
 
                     string cmd = $@"
 UPDATE MDivisionPoDetail
-SET CLocation='{Fincal.Distinct().ToList().JoinToString(",")}'
-WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+SET CLocation='{fincal.Distinct().ToList().JoinToString(",")}'
+WHERE POID='{pOID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
 
 ";
                     updateMDivisionPODetailCLocation += cmd;

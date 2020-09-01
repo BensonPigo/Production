@@ -1550,7 +1550,7 @@ Packing List : {pid}";
                 return;
             }
 
-            if (!Prgs.CheckExistsOrder_QtyShip_Detail(INVNo: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(iNVNo: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
             {
                 return;
             }

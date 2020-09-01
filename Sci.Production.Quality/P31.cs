@@ -419,6 +419,7 @@ DROP TABLE #tmp
 
                 source_QtyBreakdown.Rows.Add(newRow);
             }
+
             source_QtyBreakdown.AcceptChanges();
             #endregion
 
@@ -612,6 +613,7 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
                 this.ShowErr(r);
                 return;
             }
+
             var CartonSummary = dtCtnSummary.AsEnumerable().ToList();
 
             List<string> Articles_c = new List<string>();
@@ -707,6 +709,7 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
 
                 source_CartonSummary.Rows.Add(newRow);
             }
+
             source_CartonSummary.AcceptChanges();
             #endregion
 

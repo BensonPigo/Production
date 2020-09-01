@@ -10,7 +10,7 @@ namespace Sci.Production.PublicPrg
     public static partial class Prgs
     {
         #region Thread Issue Confirm Update Sql
-        public static DualResult ThreadIssueConfirm(IList<DataRow> DetailDatas, string mainSql, bool checkLocationStock = true)
+        public static DualResult ThreadIssueConfirm(IList<DataRow> detailDatas, string mainSql, bool checkLocationStock = true)
         {
             string updatesql = mainSql;
 
@@ -18,7 +18,7 @@ namespace Sci.Production.PublicPrg
             DataRow thdr;
             string msg1 = "New cone stock is not enough, \nplease see below <Refno>,<Color>,<Location>\n", msg2 = "Used cone stock is not enough, \nplease see below <Refno>,<Color>,<Location>\n";
             bool lmsg1 = false, lmsg2 = false;
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in detailDatas)
             {
                 if (checkLocationStock)
                 {
@@ -89,11 +89,11 @@ namespace Sci.Production.PublicPrg
 
         #endregion
         #region Thread Issue UnConfirm Update Sql
-        public static DualResult ThreadIssueUnConfirm(IList<DataRow> DetailDatas, string mainSql)
+        public static DualResult ThreadIssueUnConfirm(IList<DataRow> detailDatas, string mainSql)
         {
             string updateThread = mainSql;
             string insertsql = string.Empty;
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in detailDatas)
             {
                 if (MyUtility.Check.Seek(string.Format("Select * from ThreadStock WITH (NOLOCK) where refno ='{0}' and ThreadColorid = '{1}' and threadLocationid = '{2}'", dr["refno"].ToString(), dr["threadColorid"].ToString(), dr["threadlocationid"].ToString())))
                 {

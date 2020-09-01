@@ -94,12 +94,12 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             else
             {
                 // Sci.Env.User.PositionID
-                string PositionID = "1";
+                string positionID = "1";
                 string sql = string.Format("select FKPass0 from Pass1 WITH (NOLOCK) where ID='{0}'", Env.User.UserID);
-                PositionID = MyUtility.GetValue.Lookup(sql);
+                positionID = MyUtility.GetValue.Lookup(sql);
 
                 DataTable dt;
-                DualResult result = DBProxy.Current.Select(null, string.Format("select {0} as Result from Pass2 WITH (NOLOCK) where FKPass0 = {1} and UPPER(BarPrompt) = N'{2}'", pass2colname, PositionID, formcaption.ToUpper()), out dt);
+                DualResult result = DBProxy.Current.Select(null, string.Format("select {0} as Result from Pass2 WITH (NOLOCK) where FKPass0 = {1} and UPPER(BarPrompt) = N'{2}'", pass2colname, positionID, formcaption.ToUpper()), out dt);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());
@@ -200,16 +200,16 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
         /// </summary>
         /// <param name="string styleukey"></param>
         /// <param name="Out DataTable(GarmentList Table)"></param>
-        public static void GetGarmentListTable(string cutref, string OrderID, string sizeGroup, out DataTable OutTb)
+        public static void GetGarmentListTable(string cutref, string orderID, string sizeGroup, out DataTable outTb)
         {
             DataTable garmentListTb;
-            string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", OrderID, "Orders", "ID");
+            string styleyukey = MyUtility.GetValue.Lookup("Styleukey", orderID, "Orders", "ID");
 
             #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
-            OutTb = null;
+            outTb = null;
             string patidsql;
 
-            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{OrderID}','{cutref}','',{Styleyukey},'{sizeGroup}')s";
+            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{orderID}','{cutref}','',{styleyukey},'{sizeGroup}')s";
 
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             #endregion
@@ -224,7 +224,7 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             }
             #endregion
             #region 建立Table
-            string tablecreatesql = string.Format("Select '{0}' as orderid,a.*,'' as F_CODE", OrderID);
+            string tablecreatesql = string.Format("Select '{0}' as orderid,a.*,'' as F_CODE", orderID);
             foreach (DataRow dr in headertb.Rows)
             {
                 tablecreatesql = tablecreatesql + string.Format(" ,'' as {0}", dr["ArticleGroup"]);
@@ -265,7 +265,7 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
                 }
             }
             #endregion
-            OutTb = garmentListTb;
+            outTb = garmentListTb;
         }
 
         // 測試mail是否真實存在

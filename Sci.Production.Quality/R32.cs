@@ -149,18 +149,21 @@ WHERE 1=1
                     sqlCmd.Append($"AND c.MDivisionID=@MDivisionID " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@MDivisionID", this.MDivisionID));
                 }
+
                 if (!MyUtility.Check.Empty(this.FactoryID))
                 {
                     sqlCmd.Append($"AND c.FactoryID =@FactoryID " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
 
                 }
+
                 if (!MyUtility.Check.Empty(this.Brand))
                 {
                     sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@Brand", this.Brand));
 
                 }
+
                 if (!MyUtility.Check.Empty(this.Stage))
                 {
                     sqlCmd.Append($"AND c.Stage=@Stage " + Environment.NewLine);
@@ -314,18 +317,21 @@ WHERE 1=1
                     sqlCmd.Append($"AND c.MDivisionID=@MDivisionID " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@MDivisionID", this.MDivisionID));
                 }
+
                 if (!MyUtility.Check.Empty(this.FactoryID))
                 {
                     sqlCmd.Append($"AND c.FactoryID =@FactoryID " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
 
                 }
+
                 if (!MyUtility.Check.Empty(this.Brand))
                 {
                     sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@Brand", this.Brand));
 
                 }
+
                 if (!MyUtility.Check.Empty(this.Stage))
                 {
                     sqlCmd.Append($"AND c.Stage=@Stage " + Environment.NewLine);

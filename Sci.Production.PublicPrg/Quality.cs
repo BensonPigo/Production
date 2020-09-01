@@ -64,7 +64,7 @@ namespace Sci.Production.PublicPrg
                 sciDelv = Convert.ToDateTime(del);
             }
 
-            DateTime? TargetSciDel;
+            DateTime? targetSciDel;
             double mtlLeadT = Convert.ToDouble(MyUtility.GetValue.Lookup("Select MtlLeadTime from System WITH (NOLOCK) ", null));
             if (sciDelv == null)
             {
@@ -73,20 +73,20 @@ namespace Sci.Production.PublicPrg
 
             if (MyUtility.Check.Empty(mtlLeadT))
             {
-                TargetSciDel = sciDelv;
+                targetSciDel = sciDelv;
             }
             else
             {
-                TargetSciDel = ((DateTime)sciDelv).AddDays(Convert.ToDouble(mtlLeadT));
+                targetSciDel = ((DateTime)sciDelv).AddDays(Convert.ToDouble(mtlLeadT));
             }
 
-            if (cutinline < TargetSciDel)
+            if (cutinline < targetSciDel)
             {
                 return cutinline;
             }
             else
             {
-                return TargetSciDel;
+                return targetSciDel;
             }
         }
         #endregion;
@@ -179,8 +179,8 @@ namespace Sci.Production.PublicPrg
         {
             public static DataGridViewGeneratorTextColumnSettings GetGridCell()
             {
-                cellResult Result = new cellResult();
-                Result.CellMouseDoubleClick += (s, e) =>
+                cellResult result = new cellResult();
+                result.CellMouseDoubleClick += (s, e) =>
                 {
                     if (e.RowIndex == -1)
                     {
@@ -203,7 +203,7 @@ namespace Sci.Production.PublicPrg
                         dr["Result"] = "Pass";
                     }
                 };
-                return Result;
+                return result;
             }
         }
 
