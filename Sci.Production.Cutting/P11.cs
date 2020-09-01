@@ -1235,7 +1235,7 @@ order by ArticleGroup", patternukey);
                 else
                 {
                     // 取得哪些 annotation 是次要
-                    List<string> notMainList = this.GetNotMain(dr, garmentar);
+                    List<string> notMainList = this.GetNotMain(dr, this.GarmentTb.Select());
                     string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
 
                     // Annotation
