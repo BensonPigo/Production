@@ -9,10 +9,17 @@ using EXCEL = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Prg
 {
+    /// <summary>
+    /// PrivUtils
+    /// </summary>
     public static class PrivUtils
     {
-        const string CELLs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        private const string CELLs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+        /// <summary>
+        /// F_ReportNoData
+        /// </summary>
+        /// <returns>DualResult</returns>
         public static DualResult F_ReportNoData()
         {
             return new DualResult(false, "Data not found.");
@@ -25,8 +32,19 @@ namespace Sci.Production.Prg
         private const string ZoneIdentifierStreamName = "Zone.Identifier";
         private static string strMsg = string.Empty;
 
+        /// <summary>
+        /// Conds
+        /// </summary>
         public static class Conds
         {
+            /// <summary>
+            /// Between function
+            /// </summary>
+            /// <param name="colname">string</param>
+            /// <param name="value1">string</param>
+            /// <param name="value2">string</param>
+            /// <param name="conds">string</param>
+            /// <param name="paras">string</param>
             public static void Between(string colname, string value1, string value2, IList<string> conds, IList<SqlParameter> paras)
             {
                 if (value1 != null && value1.Length > 0 && value2 != null && value2.Length > 0)
@@ -73,6 +91,14 @@ namespace Sci.Production.Prg
                 }
             }
 
+            /// <summary>
+            /// Eq
+            /// </summary>
+            /// <param name="colname"colname></param>
+            /// <param name="value">value</param>
+            /// <param name="conds">conds</param>
+            /// <param name="paras">paras</param>
+            /// <param name="ignoreNullAndEmpty">ignoreNullAndEmpty</param>
             public static void Eq(string colname, string value, IList<string> conds, IList<SqlParameter> paras, bool ignoreNullAndEmpty = true)
             {
                 if (ignoreNullAndEmpty)
@@ -89,10 +115,24 @@ namespace Sci.Production.Prg
             }
         }
 
+        /// <summary>
+        /// Excels
+        /// </summary>
         public static class Excels
         {
+            /// <summary>
+            /// CellFormatter
+            /// </summary>
+            /// <param name="data">DataRow</param>
+            /// <returns>object</returns>
             public delegate object CellFormatter(DataRow data);
 
+            /// <summary>
+            /// Create Excel
+            /// </summary>
+            /// <param name="templatefile">templatefile</param>
+            /// <param name="excel">out app excel </param>
+            /// <returns>DualResult</returns>
             public static DualResult CreateExcel(string templatefile, out Application excel)
             {
                 excel = null;
@@ -152,6 +192,10 @@ namespace Sci.Production.Prg
                 return Ict.Result.True;
             }
 
+            /// <summary>
+            /// Unblock
+            /// </summary>
+            /// <param name="file">string</param>
             public static void Unblock(string file)
             {
                 strMsg = string.Empty;
@@ -187,7 +231,13 @@ namespace Sci.Production.Prg
                 */
             }
 
-            // Excel存檔畫面
+            /// <summary>
+            /// Excel存檔畫面
+            /// </summary>
+            /// <param name="templatefile">templatefile</param>
+            /// <param name="excel">excel</param>
+            /// <param name="mode">mode = N</param>
+            /// <returns>DualResult</returns>
             public static DualResult SaveExcel(string templatefile, Application excel, string mode = "N")
             {
                 string file_name = string.Empty;
@@ -258,6 +308,13 @@ namespace Sci.Production.Prg
                 return Ict.Result.True;
             }
 
+            /// <summary>
+            /// Write Datas
+            /// </summary>
+            /// <param name="sheet">sheet</param>
+            /// <param name="datas">datas</param>
+            /// <param name="cols_or_formatters">cols_or_formatters</param>
+            /// <param name="rowix_begin">rowix_begin</param>
             public static void WriteDatas(Worksheet sheet, System.Data.DataTable datas, object[] cols_or_formatters, int rowix_begin)
             {
                 int ix = rowix_begin;
@@ -288,11 +345,22 @@ namespace Sci.Production.Prg
                 setPosition_Focus(sheet, ix);
             }
 
+            /// <summary>
+            /// Write Value
+            /// </summary>
+            /// <param name="sheet">sheet</param>
+            /// <param name="cell">cell</param>
+            /// <param name="value">value</param>
             public static void WriteValue(Worksheet sheet, string cell, object value)
             {
                 sheet.Range[cell].Value = ParseValue(value);
             }
 
+            /// <summary>
+            /// set Position_Focus
+            /// </summary>
+            /// <param name="sheet">sheet</param>
+            /// <param name="rowix_begin">rowix_begin</param>
             public static void setPosition_Focus(Worksheet sheet, int rowix_begin)
             {
                 // Excel欄位Focus
@@ -301,6 +369,13 @@ namespace Sci.Production.Prg
                 formatRange.Select();
             }
 
+            /// <summary>
+            /// set Format
+            /// </summary>
+            /// <param name="sheet">sheet</param>
+            /// <param name="rowix_begin">rowix_begin</param>
+            /// <param name="type">type</param>
+            /// <param name="intRowsCount">intRowsCount</param>
             public static void setFormat(Worksheet sheet, int rowix_begin, string type = "", int intRowsCount = 65536)
             {
                 sheet.Select();
@@ -417,7 +492,7 @@ namespace Sci.Production.Prg
                 return Ict.Result.True;
             }
 
-            const string CELLs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            private const string CELLs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
             private static string ParseCell(int num)
             {

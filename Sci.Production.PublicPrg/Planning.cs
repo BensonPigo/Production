@@ -4,6 +4,9 @@ using Sci.Data;
 
 namespace Sci.Production.PublicPrg
 {
+    /// <summary>
+    /// Prgs
+    /// </summary>
     public static partial class Prgs
     {
         #region GetWorkDate
@@ -11,10 +14,10 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// GetWorkDate()
         /// </summary>
-        /// <param name="String factoryid"></param>
-        /// <param name="int days"></param>
-        /// <param name="DateTime basicdate"></param>
-        /// <returns>datetime workdate</returns>
+        /// <param name="factoryid">factoryid</param>
+        /// <param name="days">days</param>
+        /// <param name="basicdate">basicdate</param>
+        /// <returns>DateTime</returns>
         public static DateTime GetWorkDate(string factoryid, int days, DateTime basicdate)
         {
             string sqlcmd = string.Format(

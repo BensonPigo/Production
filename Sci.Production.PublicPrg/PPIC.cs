@@ -7,17 +7,35 @@ using Sci.Production.Prg;
 
 namespace Sci.Production.PublicPrg
 {
+    /// <summary>
+    /// OrderChangeModel
+    /// </summary>
     public class OrderChangeModel
     {
+        /// <summary>
+        /// ID
+        /// </summary>
         public string ID { get; set; }
 
+        /// <summary>
+        /// Status
+        /// </summary>
         public string Status { get; set; }
 
+        /// <summary>
+        /// EditName
+        /// </summary>
         public string EditName { get; set; }
 
+        /// <summary>
+        /// FTYComments
+        /// </summary>
         public string FTYComments { get; set; }
     }
 
+    /// <summary>
+    /// Prgs
+    /// </summary>
     public static partial class Prgs
     {
         #region GetExcelEnglishColumnName
@@ -25,7 +43,7 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// GetExcelEnglishColumnName(int)
         /// </summary>
-        /// <param name="column"></param>
+        /// <param name="column">column</param>
         /// <returns>string</returns>
         public static string GetExcelEnglishColumnName(int column)
         {
@@ -57,6 +75,11 @@ namespace Sci.Production.PublicPrg
         }
         #endregion;
 
+        /// <summary>
+        /// Post Replacement Report To Trade
+        /// </summary>
+        /// <param name="replacementID">replacementID</param>
+        /// <returns>DualResult</returns>
         public static DualResult PostReplacementReportToTrade(string replacementID)
         {
             string sqlReplacementReport = $@"
@@ -148,6 +171,13 @@ from ReplacementReport_Detail where ID = '{replacementID}'
             return result;
         }
 
+        /// <summary>
+        /// Post Order Change
+        /// </summary>
+        /// <param name="_ID">_ID</param>
+        /// <param name="_status">_status</param>
+        /// <param name="ftyComments">ftyComments</param>
+        /// <returns>DualResult</returns>
         public static DualResult PostOrderChange(string _ID, string _status, string ftyComments)
         {
             OrderChangeModel orderChangeModel = new OrderChangeModel()
@@ -166,6 +196,12 @@ from ReplacementReport_Detail where ID = '{replacementID}'
             return result;
         }
 
+        /// <summary>
+        /// Check Order Change Confirmed
+        /// </summary>
+        /// <param name="orderid">orderid</param>
+        /// <param name="seq">seq</param>
+        /// <returns>bool</returns>
         public static bool CheckOrderChangeConfirmed(string orderid, string seq)
         {
             string sqlcmd = $@"

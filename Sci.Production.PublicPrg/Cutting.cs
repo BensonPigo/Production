@@ -331,7 +331,7 @@ AND FactoryID IN ('{ftyFroup.JoinToString("','")}')
         /// 取得 by APSNo & 每日 的標準數
         /// </summary>
         /// <param name="orderIDs">List<string> OrderID</param>
-        /// <returns>List<DailyStdQty></returns>
+        /// <returns>List DailyStdQty</returns>
         public static List<DailyStdQty> GetStdQty(List<string> orderIDs)
         {
             string sqlcmd = $@"
@@ -360,6 +360,12 @@ and x.APSNo is not null
         }
 
         #region
+
+        /// <summary>
+        /// Get Cutting TapeData
+        /// </summary>
+        /// <param name="cuttingID">cuttingID</param>
+        /// <returns>DataTable</returns>
         public static DataTable GetCuttingTapeData(string cuttingID)
         {
             DataTable[] dt;
@@ -1106,7 +1112,9 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
                         DateTime pdate = aPSday; // 紀錄推算後的日期
                         #region 原始日 - LeadTime 之間有多少天 Holiday  PS:時間軸 Days 傳入時範圍是剛好的
-                        if (!days.Where(w => w.Date == aPSday && w.IsHoliday).Any()) // 假日不推算
+
+                        // 假日不推算
+                        if (!days.Where(w => w.Date == aPSday && w.IsHoliday).Any())
                         {
                             int holidayCount = days.Where(w => w.Date >= aPSday.AddDays(-leadTime) && w.Date <= aPSday && w.IsHoliday).Count();
                             if (holidayCount > 0)
@@ -2025,6 +2033,12 @@ and s.FactoryID = '{factoryID}'
             return leadTimeList;
         }
 
+        /// <summary>
+        /// Get StdQty By Date
+        /// </summary>
+        /// <param name="orderID">orderID</param>
+        /// <param name="sewingDate">sewingDate</param>
+        /// <returns>int</returns>
         public static int GetStdQtyByDate(string orderID, DateTime sewingDate)
         {
             string sqlcmd = $@"
