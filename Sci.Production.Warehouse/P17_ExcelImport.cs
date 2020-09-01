@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -72,6 +73,7 @@ namespace Sci.Production.Warehouse
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false)
                 .Numeric("qty", header: "Return Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                .Text("Location", header: "Bulk Location", iseditingreadonly: false)
                 .EditText("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100), iseditingreadonly: true);
 
             for (int i = 0; i < this.gridPoid.ColumnCount; i++)
@@ -176,7 +178,7 @@ namespace Sci.Production.Warehouse
                 // 檢查Excel格式
                 Excel.Range range = worksheet.Range[string.Format("A{0}:AE{0}", 2)];
                 object[,] objCellArray = range.Value;
-                string[] ItemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty" };
+                string[] ItemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty", "Bulk Location" };
                 int[] ItemPosition = new int[ItemCheck.Length];
                 string[] ExcelItem = new string[intColumnsCount + 1];
 
@@ -216,6 +218,8 @@ namespace Sci.Production.Warehouse
                 int intRowsStart = 3;
                 int intRowsRead = intRowsStart - 1;
 
+                bool isLocationExists = false;
+
                 while (intRowsRead < intRowsCount)
                 {
                     intRowsRead++;
@@ -227,6 +231,20 @@ namespace Sci.Production.Warehouse
                     string seq1 = (objCellArray[1, ItemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]].ToString().Trim(), "C").ToString();
                     string seq2 = (objCellArray[1, ItemPosition[2]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]].ToString().Trim(), "C").ToString();
 
+                    // Location處理
+                    string oriLocation = (objCellArray[1, ItemPosition[6]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]].ToString().Trim(), "C").ToString();
+                    string locations = oriLocation.Split(',').ToList().Where(o => !MyUtility.Check.Empty(o)).Distinct().JoinToString(",");
+                    string notLocationExistsList = locations.Split(',').ToList().Where(o => !Prgs.CheckLocationExists("B", o)).JoinToString(",");
+
+                    if (MyUtility.Check.Empty(notLocationExistsList))
+                    {
+                        isLocationExists = true;
+                    }
+                    else
+                    {
+                        isLocationExists = false;
+                    }
+
                     newRow["poid"] = (objCellArray[1, ItemPosition[0]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[0]].ToString().Trim(), "C");
                     newRow["seq"] = seq1 + " " + seq2;
                     newRow["seq1"] = seq1;
@@ -234,6 +252,7 @@ namespace Sci.Production.Warehouse
                     newRow["Roll"] = (objCellArray[1, ItemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]].ToString().Trim(), "C");
                     newRow["Dyelot"] = (objCellArray[1, ItemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]].ToString().Trim(), "C").ToString();
                     newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "N");
+                    newRow["Location"] = locations;
                     newRow["CanWriteIn"] = true;
                     #region check Columns length
                     List<string> listColumnLengthErrMsg = new List<string>();
@@ -268,6 +287,12 @@ namespace Sci.Production.Warehouse
                         listColumnLengthErrMsg.Add("<Dyelot> length can't be more than 8 Characters.");
                     }
 
+                    // Bulk Location varchar(8)
+                    if (Encoding.Default.GetBytes(newRow["Location"].ToString()).Length > 200)
+                    {
+                        listColumnLengthErrMsg.Add("<Bulk Location> length can't be more than 200 Characters.");
+                    }
+
                     // Qty  numeric (11, 2)
                     if (MyUtility.Convert.GetInt(newRow["qty"].ToString()) <= 0)
                     {
@@ -297,13 +322,14 @@ namespace Sci.Production.Warehouse
                     sqlpar.Add(new SqlParameter("@Seq2", newRow["seq2"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@Roll", newRow["roll"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@Dyelot", newRow["dyelot"].ToString().Trim()));
+                    sqlpar.Add(new SqlParameter("@Location", newRow["Location"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@MDivisionID", Env.User.Keyword));
                     DataRow dr2;
                     string sql = @"
 select fi.*
 	,[Description] = dbo.getmtldesc(fi.POID,fi.seq1, fi.seq2, 2, 0)
 	,[StockUnit] = dbo.GetStockUnitBySPSeq(fi.POID, fi.seq1, fi.seq2)
-	,[Location] = dbo.Getlocation(fi.ukey)
+	,[Location] = @Location
 from ftyinventory fi
 inner join Orders o on fi.POID = o.id
 inner join Factory f on o.FtyGroup = f.id
@@ -315,23 +341,46 @@ and fi.Roll = @Roll
 and fi.Dyelot = @Dyelot
 and f.MDivisionID = @MDivisionID ";
                     bool result = MyUtility.Check.Seek(sql, sqlpar, out dr2);
-                    if (result)
+                    if (result && isLocationExists)
                     {
                         newRow["Description"] = dr2["Description"];
                         newRow["StockUnit"] = dr2["StockUnit"];
                         newRow["Location"] = dr2["Location"];
                         newRow["ftyinventoryukey"] = dr2["Ukey"];
+                        newRow["Location"] = dr2["Location"];
                     }
                     else
                     {
-                        listNewRowErrMsg.Add(
-                            string.Format(
-                            "SP#:{0}-Seq1:{1}-Seq2:{2}-Roll:{3}-Dyelot:{4} is not found!!",
-                            newRow["poid"],
-                            newRow["seq1"],
-                            newRow["seq2"],
-                            newRow["roll"],
-                            newRow["dyelot"]), false);
+                        if (!result && isLocationExists)
+                        {
+                            listNewRowErrMsg.Add(
+                                string.Format(
+                                "SP#:{0}-Seq1:{1}-Seq2:{2}-Roll:{3}-Dyelot:{4}-Location:{5} is not found!!",
+                                newRow["poid"],
+                                newRow["seq1"],
+                                newRow["seq2"],
+                                newRow["roll"],
+                                newRow["dyelot"],
+                                newRow["Location"]), false);
+                        } 
+                        else if (isLocationExists)
+                        {
+                            listNewRowErrMsg.Add(
+                                string.Format(
+                                "SP#:{0}-Seq1:{1}-Seq2:{2}-Roll:{3}-Dyelot:{4} is not found!!",
+                                newRow["poid"],
+                                newRow["seq1"],
+                                newRow["seq2"],
+                                newRow["roll"],
+                                newRow["dyelot"]), false);
+                        }
+                        else
+                        {
+                            listNewRowErrMsg.Add(
+                                string.Format(
+                                "Location:{0} is not found!!",
+                                newRow["Location"]), false);
+                        }
                     }
 
                     #endregion
@@ -357,7 +406,8 @@ and f.MDivisionID = @MDivisionID ";
                     this.grid2Data.Rows.Add(newRow);
                 }
 
-                dr["Status"] = (intRowsCount - 1 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
+                // -2 是要扣掉標題的Row數
+                dr["Status"] = (intRowsCount - 2 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
                 dr["Count"] = count;
 
                 Marshal.ReleaseComObject(worksheet);
@@ -433,10 +483,20 @@ and f.MDivisionID = @MDivisionID ";
                     DataRow[] checkRow = this.detailData.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["poid"].EqualString(dr2["poid"])
                                                                                 && row["seq1"].EqualString(dr2["seq1"]) && row["seq2"].EqualString(dr2["seq2"])
                                                                                 && row["roll"].EqualString(dr2["roll"]) && row["Dyelot"].EqualString(dr2["Dyelot"])).ToArray();
+
+                    // 若沒有相同則寫入，有相同則更新
                     if (checkRow.Length == 0)
                     {
                         dr2["id"] = this.master["id"];
                         this.detailData.ImportRow(dr2);
+                    }
+                    else
+                    {
+                        foreach (var item in checkRow)
+                        {
+                            item["Qty"] = dr2["Qty"];
+                            item["Location"] = dr2["Location"];
+                        }
                     }
                 }
             }
