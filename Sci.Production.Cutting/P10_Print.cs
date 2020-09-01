@@ -30,6 +30,8 @@ namespace Sci.Production.Cutting
             this.InitializeComponent();
             this.CurrentDataRow = row;
             this.toexcel.Enabled = false;
+
+            this.comboBoxSetting.DataSource = Enum.GetValues(typeof(Prg.BundleRFCard.BundleType));
         }
 
         private string Bundle_Card;
@@ -45,7 +47,6 @@ namespace Sci.Production.Cutting
             return base.ValidateInput();
         }
 
-        private DataTable dtt;
         private DataTable dt;
 
         /// <inheritdoc/>
@@ -267,7 +268,7 @@ order by x.[Barcode]");
                 }
                 #endregion
             }
-            else
+            else if (this.radioBundleChecklist.Checked)
             {
                 #region excel
                 DataRow row = this.CurrentDataRow;
@@ -437,12 +438,27 @@ order by x.[Bundle]");
                     #endregion
                 }
 
-                this.result = DBProxy.Current.Select(string.Empty, sqlcmd, lis, out this.dtt);
+                this.result = DBProxy.Current.Select(string.Empty, sqlcmd, lis, out this.dt);
                 if (!this.result)
                 {
                     return this.result;
                 }
                 #endregion
+            }
+            else if (this.radioBundleCardRF.Checked)
+            {
+                DataRow row = this.CurrentDataRow;
+                string id = row["ID"].ToString();
+                List<SqlParameter> pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", id),
+                };
+                string scmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, string.Empty);
+                this.result = DBProxy.Current.Select(string.Empty, scmd, pars, out this.dt);
+                if (!this.result)
+                {
+                    return this.result;
+                }
             }
 
             return this.result;
@@ -451,14 +467,14 @@ order by x.[Bundle]");
         /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
-            if (this.dtt == null || this.dtt.Rows.Count == 0)
+            if (this.dt == null || this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
 
             // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(this.dtt.Rows.Count);
+            this.SetCount(this.dt.Rows.Count);
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", this.CurrentDataRow["ID"].ToString().Substring(0, 3)));
@@ -475,13 +491,13 @@ order by x.[Bundle]");
             objSheets.Cells[4, 7] = "Cutting#: " + this.CurrentDataRow["cutno"].ToString();
             objSheets.Cells[4, 9] = "MasterSP#: " + this.CurrentDataRow["POID"].ToString();
             objSheets.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
-            MyUtility.Excel.CopyToXls(this.dtt, string.Empty, "Cutting_P10.xltx", 5, false, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Cutting_P10.xltx", 5, false, null, objApp);      // 將datatable copy to excel
             objSheets.get_Range("D1:D1").ColumnWidth = 11;
             objSheets.get_Range("E1:E1").Columns.AutoFit();
             objSheets.get_Range("G1:H1").ColumnWidth = 9;
             objSheets.get_Range("I1:L1").ColumnWidth = 15;
 
-            objSheets.Range[string.Format("A6:L{0}", this.dtt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
+            objSheets.Range[string.Format("A6:L{0}", this.dt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
 
             #region Save & Shwo Excel
             string strExcelName = Class.MicrosoftFile.GetName("Cutting_P10");
@@ -645,22 +661,22 @@ order by x.[Bundle]");
                 frm.ShowDialog();
                 #endregion
             }
-            else
+            else if (this.radioBundleChecklist.Checked)
             {
                 #region Bundle Check List
-                if (this.dtt == null || this.dtt.Rows.Count == 0)
+                if (this.dt == null || this.dt.Rows.Count == 0)
                 {
                     MyUtility.Msg.ErrorBox("Data not found");
                     return false;
                 }
 
                 // 顯示筆數於PrintForm上Count欄位
-                this.SetCount(this.dtt.Rows.Count);
+                this.SetCount(this.dt.Rows.Count);
 
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
                 this.pathName = Env.Cfg.ReportTempDir + "Cutting_BundleChecklist" + DateTime.Now.ToFileTime() + ".xls";
                 string tmpName = Env.Cfg.ReportTempDir + "tmp.xls";
-                if (MyUtility.Excel.CopyToXls(this.dtt, string.Empty, "Cutting_P10.xltx", 5, false, null, objApp, false))
+                if (MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Cutting_P10.xltx", 5, false, null, objApp, false))
                 {
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                     Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
@@ -683,7 +699,7 @@ order by x.[Bundle]");
                     objSheets.get_Range("G1:H1").ColumnWidth = 9;
                     objSheets.get_Range("I1:L1").ColumnWidth = 15;
 
-                    objSheets.Range[string.Format("A6:L{0}", this.dtt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
+                    objSheets.Range[string.Format("A6:L{0}", this.dt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
 
                     // Random Excle名稱
                     Random random = new Random();
@@ -724,6 +740,32 @@ order by x.[Bundle]");
                 // 刪除存檔
                 #endregion
             }
+            else if (this.radioBundleCardRF.Checked)
+            {
+                // 是否有資料
+                if (this.dt == null || this.dt.Rows.Count == 0)
+                {
+                    MyUtility.Msg.ErrorBox("Data not found");
+                    return false;
+                }
+
+                try
+                {
+                    DualResult result = Prg.BundleRFCard.BundleRFCardPrint(this.dt);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox(result.ToString());
+                        return false;
+                    }
+
+                    MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
+                }
+                catch (Exception ex)
+                {
+                    MyUtility.Msg.ErrorBox(ex.ToString());
+                    return false;
+                }
+            }
 
             return true;
         }
@@ -743,15 +785,40 @@ order by x.[Bundle]");
         // }
         private void RadioPanel1_Paint(object sender, PaintEventArgs e)
         {
+            this.toexcel.Enabled = true;
+            this.print.Enabled = true;
             if (this.radioBundleCard.Checked == true)
             {
-                this.print.Enabled = true;
                 this.toexcel.Enabled = false;
             }
-            else if (this.radioBundleChecklist.Checked == true)
+            else if (this.radioBundleCardRF.Checked)
             {
-                this.toexcel.Enabled = true;
-                this.print.Enabled = true;
+                this.toexcel.Enabled = false;
+            }
+        }
+
+        private void BtnSetting_Click(object sender, EventArgs e)
+        {
+            if (this.dt == null || this.dt.Rows.Count == 0)
+            {
+                DataRow row = this.CurrentDataRow;
+                string id = row["ID"].ToString();
+                List<SqlParameter> pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", id),
+                };
+                string scmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, string.Empty);
+                this.result = DBProxy.Current.Select(string.Empty, scmd, pars, out this.dt);
+                if (!this.result)
+                {
+                    MyUtility.Msg.ErrorBox(this.result.Description.ToString());
+                }
+            }
+
+            this.result = Prg.BundleRFCard.BundelTest(this.dt, (Prg.BundleRFCard.BundleType)Enum.Parse(typeof(Prg.BundleRFCard.BundleType), this.comboBoxSetting.SelectedValue.ToString()));
+            if (!this.result)
+            {
+                MyUtility.Msg.ErrorBox(this.result.Description.ToString());
             }
         }
     }

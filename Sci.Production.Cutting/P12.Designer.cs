@@ -72,6 +72,7 @@
             this.btnToExcel = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.btnBundleCardRF = new Sci.Win.UI.Button();
             this.checkChangepagebyCut = new System.Windows.Forms.CheckBox();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
@@ -447,7 +448,7 @@
             // btnBundleCard
             // 
             this.btnBundleCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBundleCard.Location = new System.Drawing.Point(576, 6);
+            this.btnBundleCard.Location = new System.Drawing.Point(462, 6);
             this.btnBundleCard.Name = "btnBundleCard";
             this.btnBundleCard.Size = new System.Drawing.Size(123, 33);
             this.btnBundleCard.TabIndex = 1;
@@ -458,7 +459,7 @@
             // btnToExcel
             // 
             this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToExcel.Location = new System.Drawing.Point(705, 6);
+            this.btnToExcel.Location = new System.Drawing.Point(718, 7);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(136, 33);
             this.btnToExcel.TabIndex = 2;
@@ -469,7 +470,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(847, 6);
+            this.btnClose.Location = new System.Drawing.Point(860, 7);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(136, 33);
             this.btnClose.TabIndex = 3;
@@ -479,6 +480,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.btnBundleCardRF);
             this.panel3.Controls.Add(this.checkChangepagebyCut);
             this.panel3.Controls.Add(this.labelSortBy);
             this.panel3.Controls.Add(this.comboSortBy);
@@ -491,10 +493,21 @@
             this.panel3.Size = new System.Drawing.Size(1008, 52);
             this.panel3.TabIndex = 1;
             // 
+            // btnBundleCardRF
+            // 
+            this.btnBundleCardRF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBundleCardRF.Location = new System.Drawing.Point(591, 7);
+            this.btnBundleCardRF.Name = "btnBundleCardRF";
+            this.btnBundleCardRF.Size = new System.Drawing.Size(123, 33);
+            this.btnBundleCardRF.TabIndex = 5;
+            this.btnBundleCardRF.Text = "Bundle Card(RF)";
+            this.btnBundleCardRF.UseVisualStyleBackColor = true;
+            this.btnBundleCardRF.Click += new System.EventHandler(this.BtnBundleCardRF_Click);
+            // 
             // checkChangepagebyCut
             // 
             this.checkChangepagebyCut.AutoSize = true;
-            this.checkChangepagebyCut.Location = new System.Drawing.Point(354, 14);
+            this.checkChangepagebyCut.Location = new System.Drawing.Point(240, 14);
             this.checkChangepagebyCut.Name = "checkChangepagebyCut";
             this.checkChangepagebyCut.Size = new System.Drawing.Size(216, 21);
             this.checkChangepagebyCut.TabIndex = 4;
@@ -614,5 +627,6 @@
         private System.Windows.Forms.CheckBox checkChangepagebyCut;
         private Win.UI.Label label2;
         private Class.TxtSpreadingNo txtSpreadingNo1;
+        private Win.UI.Button btnBundleCardRF;
     }
 }

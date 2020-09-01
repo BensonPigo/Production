@@ -12,6 +12,7 @@
     [PrintDate]   DATETIME       NULL,
     [IsPair]      BIT            NULL,
     [Location]    VARCHAR (1)    DEFAULT ('') NOT NULL,
+    [RFUID] VARCHAR(20) NOT NULL CONSTRAINT [DF_Bundle_Detail_RFUID] DEFAULT (''), 
     CONSTRAINT [PK_Bundle_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC),
     CONSTRAINT [UK_BundleNo_Bundle_Detail] UNIQUE NONCLUSTERED ([BundleNo] ASC)
 );
@@ -77,6 +78,18 @@ GO
 CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[Bundle_Detail]([Id] ASC);
 
-go
+GO
 CREATE NONCLUSTERED INDEX [IDX_Bundle_Detail_QtyBySetPerSubprocess]
     ON [dbo].[Bundle_Detail]([Patterncode],[SizeCode] ASC);
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'for SNP RF Card UID, printer(CHP_1800)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Bundle_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'RFUID'
+
+GO

@@ -10,6 +10,8 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
+using Sci.Andy.ExtensionMethods;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Cutting
 {
@@ -235,8 +237,7 @@ namespace Sci.Production.Cutting
 
             if (this.checkExtendAllParts.Checked)
             {
-                // 有勾[Extend All Parts]
-                #region SQL
+                #region 有勾[Extend All Parts]
 
                 DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
                 sqlcmd = $@"
@@ -291,6 +292,7 @@ select
     , WorkOrder.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
+	, [BundleID] = b.ID
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -373,6 +375,7 @@ select
     , WorkOrder.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
+	, [BundleID] = b.ID
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
@@ -446,8 +449,7 @@ OPTION (RECOMPILE)"
             }
             else
             {
-                // 沒勾[Extend All Parts]
-                #region SQL
+                #region 沒勾[Extend All Parts]
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Env.User.Keyword}'
 declare @Cut_Ref varchar(6) = '{this.Cut_Ref}'
@@ -500,6 +502,7 @@ select
     , WorkOrder.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
+	, [BundleID] = b.ID
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -582,6 +585,7 @@ select
     , WorkOrder.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
+	, [BundleID] = b.ID
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
@@ -674,6 +678,7 @@ OPTION (RECOMPILE)"
             bool checkone = false;
             for (int i = 0; i < this.grid1.Rows.Count; i++)
             {
+                // 判斷是否為空值 是否有打勾與
                 if (!MyUtility.Check.Empty(this.grid1[0, i].Value)
                     && (bool)this.grid1[0, i].Value == true)
                 {
@@ -916,6 +921,66 @@ where bd.BundleNo = '{0}'",
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void BtnBundleCardRF_Click(object sender, EventArgs e)
+        {
+            var bundleIDs = this.dtt.AsEnumerable()
+                .Where(x => x["selected"].ToBool())
+                .GroupBy(x => new
+                {
+                    BundleID = x["BundleID"],
+                    BundleNO = x["Bundle"],
+                })
+                .Select(x => new
+                {
+                    x.Key.BundleID,
+                    x.Key.BundleNO,
+                })
+                .ToList();
+
+            if (bundleIDs.Count == 0)
+            {
+                this.grid1.Focus();
+                MyUtility.Msg.ErrorBox("Grid must be chose one");
+                return;
+            }
+
+            string sqlWhere = "and bd.BundleNO = @bundleNO";
+            string sqlCmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, sqlWhere);
+            foreach (var item in bundleIDs)
+            {
+                List<SqlParameter> pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", item.BundleID),
+                    new SqlParameter("@bundleNO", item.BundleNO),
+                };
+
+                DataTable dt = new DataTable();
+                DualResult result = DBProxy.Current.Select(string.Empty, sqlCmd, pars, out dt);
+                if (!this.result)
+                {
+                    MyUtility.Msg.ErrorBox(this.result.ToString());
+                    return;
+                }
+
+                try
+                {
+                    result = Prg.BundleRFCard.BundleRFCardPrint(dt);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox(result.ToString());
+                        return;
+                    }
+
+                    MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
+                }
+                catch (Exception ex)
+                {
+                    MyUtility.Msg.ErrorBox(ex.ToString());
+                    return;
+                }
+            }
         }
     }
 }
