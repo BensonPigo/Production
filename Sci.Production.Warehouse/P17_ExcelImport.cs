@@ -483,10 +483,20 @@ and f.MDivisionID = @MDivisionID ";
                     DataRow[] checkRow = this.detailData.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["poid"].EqualString(dr2["poid"])
                                                                                 && row["seq1"].EqualString(dr2["seq1"]) && row["seq2"].EqualString(dr2["seq2"])
                                                                                 && row["roll"].EqualString(dr2["roll"]) && row["Dyelot"].EqualString(dr2["Dyelot"])).ToArray();
+
+                    // 若沒有相同則寫入，有相同則更新
                     if (checkRow.Length == 0)
                     {
                         dr2["id"] = this.master["id"];
                         this.detailData.ImportRow(dr2);
+                    }
+                    else
+                    {
+                        foreach (var item in checkRow)
+                        {
+                            item["Qty"] = dr2["Qty"];
+                            item["Location"] = dr2["Location"];
+                        }
                     }
                 }
             }
