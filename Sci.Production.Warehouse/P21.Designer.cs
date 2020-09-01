@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.lblReceivingID = new Sci.Win.UI.Label();
             this.lblWK = new Sci.Win.UI.Label();
             this.lblArriveWHDate = new Sci.Win.UI.Label();
@@ -41,8 +41,6 @@
             this.gridReceiving = new Sci.Win.UI.Grid();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnUpdate = new Sci.Win.UI.Button();
-            this.cmbMaterialType = new Sci.Win.UI.ComboBox();
-            this.labelMaterialType = new Sci.Win.UI.Label();
             this.txtSeq = new Sci.Production.Class.TxtSeq();
             this.labelRef = new Sci.Win.UI.Label();
             this.txtRef = new Sci.Win.UI.TextBox();
@@ -57,6 +55,9 @@
             this.numSelectCnt = new Sci.Win.UI.NumericBox();
             this.labLocation = new Sci.Win.UI.Label();
             this.txtMtlLocation = new Sci.Production.Class.TxtMtlLocation(this.components);
+            this.btnUpdateTime = new Sci.Win.UI.Button();
+            this.dateTimePicker = new System.Windows.Forms.DateTimePicker();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
             this.SuspendLayout();
             // 
@@ -122,7 +123,7 @@
             // btnQuery
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery.Location = new System.Drawing.Point(877, 69);
+            this.btnQuery.Location = new System.Drawing.Point(877, 7);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(119, 30);
             this.btnQuery.TabIndex = 11;
@@ -147,14 +148,14 @@
             this.gridReceiving.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReceiving.Location = new System.Drawing.Point(9, 102);
             this.gridReceiving.Name = "gridReceiving";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReceiving.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReceiving.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridReceiving.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReceiving.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReceiving.RowTemplate.Height = 24;
@@ -187,26 +188,6 @@
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = true;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
-            // 
-            // cmbMaterialType
-            // 
-            this.cmbMaterialType.BackColor = System.Drawing.Color.White;
-            this.cmbMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmbMaterialType.FormattingEnabled = true;
-            this.cmbMaterialType.IsSupportUnselect = true;
-            this.cmbMaterialType.Location = new System.Drawing.Point(737, 7);
-            this.cmbMaterialType.Name = "cmbMaterialType";
-            this.cmbMaterialType.OldText = "";
-            this.cmbMaterialType.Size = new System.Drawing.Size(91, 24);
-            this.cmbMaterialType.TabIndex = 2;
-            // 
-            // labelMaterialType
-            // 
-            this.labelMaterialType.Location = new System.Drawing.Point(646, 7);
-            this.labelMaterialType.Name = "labelMaterialType";
-            this.labelMaterialType.Size = new System.Drawing.Size(88, 23);
-            this.labelMaterialType.TabIndex = 14;
-            this.labelMaterialType.Text = "Material Type";
             // 
             // txtSeq
             // 
@@ -343,7 +324,7 @@
             // 
             // labLocation
             // 
-            this.labLocation.Location = new System.Drawing.Point(833, 8);
+            this.labLocation.Location = new System.Drawing.Point(613, 7);
             this.labLocation.Name = "labLocation";
             this.labLocation.Size = new System.Drawing.Size(65, 23);
             this.labLocation.TabIndex = 15;
@@ -353,17 +334,51 @@
             // 
             this.txtMtlLocation.BackColor = System.Drawing.Color.White;
             this.txtMtlLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMtlLocation.Location = new System.Drawing.Point(901, 8);
+            this.txtMtlLocation.Location = new System.Drawing.Point(681, 7);
             this.txtMtlLocation.Name = "txtMtlLocation";
             this.txtMtlLocation.Size = new System.Drawing.Size(95, 23);
             this.txtMtlLocation.StockTypeFilte = "";
             this.txtMtlLocation.TabIndex = 3;
+            // 
+            // btnUpdateTime
+            // 
+            this.btnUpdateTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnUpdateTime.Location = new System.Drawing.Point(220, 423);
+            this.btnUpdateTime.Name = "btnUpdateTime";
+            this.btnUpdateTime.Size = new System.Drawing.Size(222, 30);
+            this.btnUpdateTime.TabIndex = 42;
+            this.btnUpdateTime.Text = "Update Cut Shadeband Time";
+            this.btnUpdateTime.UseVisualStyleBackColor = true;
+            this.btnUpdateTime.Click += new System.EventHandler(this.BtnUpdateTime_Click);
+            // 
+            // dateTimePicker
+            // 
+            this.dateTimePicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.dateTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker.Location = new System.Drawing.Point(9, 425);
+            this.dateTimePicker.Name = "dateTimePicker";
+            this.dateTimePicker.Size = new System.Drawing.Size(200, 23);
+            this.dateTimePicker.TabIndex = 43;
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.Red;
+            this.label1.Location = new System.Drawing.Point(643, 431);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(163, 17);
+            this.label1.TabIndex = 44;
+            this.label1.Text = "Display Fabric data only.";
             // 
             // P21
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 462);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dateTimePicker);
+            this.Controls.Add(this.btnUpdateTime);
             this.Controls.Add(this.txtMtlLocation);
             this.Controls.Add(this.labLocation);
             this.Controls.Add(this.numSelectCnt);
@@ -378,8 +393,6 @@
             this.Controls.Add(this.labelRef);
             this.Controls.Add(this.txtRef);
             this.Controls.Add(this.txtSeq);
-            this.Controls.Add(this.cmbMaterialType);
-            this.Controls.Add(this.labelMaterialType);
             this.Controls.Add(this.btnUpdate);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.gridReceiving);
@@ -405,8 +418,6 @@
             this.Controls.SetChildIndex(this.gridReceiving, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.btnUpdate, 0);
-            this.Controls.SetChildIndex(this.labelMaterialType, 0);
-            this.Controls.SetChildIndex(this.cmbMaterialType, 0);
             this.Controls.SetChildIndex(this.txtSeq, 0);
             this.Controls.SetChildIndex(this.txtRef, 0);
             this.Controls.SetChildIndex(this.labelRef, 0);
@@ -421,6 +432,9 @@
             this.Controls.SetChildIndex(this.numSelectCnt, 0);
             this.Controls.SetChildIndex(this.labLocation, 0);
             this.Controls.SetChildIndex(this.txtMtlLocation, 0);
+            this.Controls.SetChildIndex(this.btnUpdateTime, 0);
+            this.Controls.SetChildIndex(this.dateTimePicker, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -440,8 +454,6 @@
         private Win.UI.Grid gridReceiving;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnUpdate;
-        private Win.UI.ComboBox cmbMaterialType;
-        private Win.UI.Label labelMaterialType;
         private Class.TxtSeq txtSeq;
         private Win.UI.Label labelRef;
         private Win.UI.TextBox txtRef;
@@ -456,5 +468,8 @@
         private Win.UI.NumericBox numSelectCnt;
         private Win.UI.Label labLocation;
         private Class.TxtMtlLocation txtMtlLocation;
+        private Win.UI.Button btnUpdateTime;
+        private System.Windows.Forms.DateTimePicker dateTimePicker;
+        private System.Windows.Forms.Label label1;
     }
 }
