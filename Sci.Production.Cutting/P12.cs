@@ -993,37 +993,38 @@ OPTION (RECOMPILE)"
                          DenseRank = s.Rank,
                      }).ToList();
 
-                int page = x.Max(m => m.DenseRank);
-
-                for (int i = 0; i < page; i++)
+                int page = x.GroupBy(g => g.DenseRank).Select(s => ((s.Count() - 1) / 9) + 1).Sum();
+                for (int i = 1; i < page; i++)
                 {
-                    if (i > 0)
-                    {
-                        Excel.Worksheet worksheet1 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
-                        Excel.Worksheet worksheetn = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[i + 1];
-                        worksheet1.Copy(worksheetn);
-                        Marshal.ReleaseComObject(worksheet1);
-                        Marshal.ReleaseComObject(worksheetn);
-                    }
+                    Excel.Worksheet worksheet1 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
+                    Excel.Worksheet worksheetn = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[i + 1];
+                    worksheet1.Copy(worksheetn);
+                    Marshal.ReleaseComObject(worksheet1);
+                    Marshal.ReleaseComObject(worksheetn);
                 }
 
-                for (int i = 1; i <= page; i++)
+                int pp = 1;
+                x.Select(s => s.DenseRank).Distinct().OrderBy(o => o).ToList().ForEach(denseRank =>
                 {
                     data.Clear();
-                    x.Where(w => w.DenseRank == i).ToList().ForEach(r =>
+                    x.Where(w => w.DenseRank == denseRank).ToList().ForEach(r =>
                     {
                         r.Item.GroupCombCut = r.DenseRank;
                         data.Add(r.Item);
                     });
 
-                    Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[i];
-                    this.ProcessPrint(data, worksheet, layout);
-                }
+                    for (int s = 1; s <= ((data.Count - 1) / 9) + 1; s++)
+                    {
+                        var writedata = data.Skip((s - 1) * 9).ToList();
+                        Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pp];
+                        P10_Print.ProcessPrint(writedata, worksheet, layout);
+                        pp++;
+                    }
+                });
             }
             else
             {
-                Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
-                this.ProcessPrint(data, worksheet, layout);
+                P10_Print.RunPagePrint(data, excelApp, layout);
             }
 
             // 有按才更新列印日期printdate。
@@ -1058,80 +1059,6 @@ where bd.BundleNo = '{item.Barcode}'");
             }
 
             Marshal.ReleaseComObject(excelApp);
-        }
-
-        private void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, int layout)
-        {
-            // 範本預設 A4 紙, 分割 9 格貼紙格式, 因印表機邊界, 9 格格式有點不同
-            if (data.Count > 9)
-            {
-                int p = (data.Count - 1) / 9;
-                for (int pi = 1; pi <= p; pi++)
-                {
-                    Excel.Range r1 = worksheet.get_Range("A1", "A14").EntireRow;
-                    Excel.Range r2 = worksheet.get_Range($"A{1 + (pi * 14)}");
-                    r2.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r1.Copy());
-                }
-            }
-
-            int i = 0;
-            int col_ref = 0;
-            int row_ref = 0;
-            data.ForEach(r =>
-            {
-                string no = P10_Print.GetNo(r.POID, r.FabricPanelCode, r.Article, r.Size, r.Barcode);
-                string contian;
-                if (layout == 1)
-                {
-                    contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
-SP#:{r.SP}
-Style#: {r.Style}
-Sea: {r.Season}     Brand: {r.ShipCode}
-Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}
-Color: {r.Color}
-Size: {r.Size}     Part: {r.Parts}
-Dese: {r.Desc}
-Sub Process: {r.Artwork}
-Qty: {r.Quantity}     No: {no}";
-                }
-                else
-                {
-                    contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
-SP#:{r.SP}
-Style#: {r.Style}
-Sea: {r.Season}     Brand: {r.ShipCode}
-Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}
-Color: {r.Color}
-Size: {r.Size}     Part: {r.Parts}
-Dese: {r.Desc}
-Sub Process: {r.Artwork}
-Qty: {r.Quantity}     Item: {r.Item}";
-                }
-
-                row_ref = i / 3;
-                row_ref = (row_ref * 5) - (row_ref / 3);
-                col_ref = (i % 3) * 4;
-                int cutindex = contian.IndexOf("Cut/L");
-                worksheet.Cells[1 + row_ref, 1 + col_ref] = contian;
-                worksheet.Cells[1 + row_ref, 1 + col_ref].Characters(1, 8).Font.Bold = true; // 部分粗體
-                worksheet.Cells[1 + row_ref, 1 + col_ref].Characters(cutindex, 6).Font.Bold = true; // 部分粗體
-                worksheet.Cells[2 + row_ref, 1 + col_ref] = r.EXCESS1;
-                worksheet.Cells[2 + row_ref, 2 + col_ref] = r.NoBundleCardAfterSubprocess1;
-                worksheet.Cells[3 + row_ref, 1 + col_ref] = "*" + r.Barcode + "*";
-
-                // 邊框 」貼紙裁線
-                if (i % 3 != 2 && (i / 3) % 3 != 2)
-                {
-                    string colN = MyUtility.Excel.ConvertNumericToExcelColumn(3 + col_ref);
-                    Excel.Range excelRange = worksheet.get_Range($"{colN}{4 + row_ref}");
-                    excelRange.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
-                    excelRange.Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = 1;
-                }
-
-                i++;
-            });
         }
 
         private void P12_FormClosed(object sender, FormClosedEventArgs e)
