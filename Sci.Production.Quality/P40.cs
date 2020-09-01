@@ -171,13 +171,29 @@ asdSub.FabricType,
 o.StyleID
 ,[SuppName]=ISNULL(Supp.NameEN,LocalSupp.Name)
 ,[IsLocalSuppText] = IIF(ad.IsLocalSupp = 0 ,'N','Y')
+,[FabricTypeText]=  CASE WHEN detail_RefNo.FabricType = 'F' THEN 'Fabric'
+					 WHEN detail_RefNo.FabricType = 'A' THEN 'Accessory' ELSE '' 
+				END
+,[Description] = detail_RefNo.Description
 from ADIDASComplain_Detail ad with (nolock)
 left join ADIDASComplainDefect asdMain with (nolock) on ad.DefectMainID = asdMain.ID
 left join ADIDASComplainDefect_Detail asdSub with (nolock) on  asdMain.ID = asdSub.ID and ad.DefectSubID = asdSub.SubID
 left join orders o on o.ID=ad.OrderID
 left join Supp ON ad.SuppID = Supp.ID
 left join LocalSupp ON ad.SuppID = LocalSupp.ID
-left join ArtworkPO ap ON ap.LocalSuppID = ad.SuppID AND ap.Status IN ('Closed','Approced') 
+OUTER APPLY(
+	SELECT DISTINCT p.FabricType ,f.Description
+	FROM PO_Supp_Detail p
+	LEFT JOIN Orders o ON o.POID=p.ID
+	LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
+	WHERE o.ID = ad.OrderID AND p.Refno = ad.Refno
+	UNION
+	SELECT DISTINCT p.FabricType ,f.Description
+	FROM PO_Supp_Detail p
+	LEFT JOIN Order_Qty_Garment o ON o.OrderIDFrom=p.ID
+	LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
+	WHERE o.ID = ad.OrderID AND p.Refno = ad.Refno
+)detail_RefNo
 where ad.ID = '{0}'
 order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-' + asdSub.SubName,ad.OrderID
 ", masterID);
@@ -451,6 +467,8 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 .Text("SuppName", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("IsLocalSuppText", header: "Is Local Supp", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), settings: textRefno, iseditingreadonly: this.isShowHistory)
+                .Text("FabricTypeText", header: "Fabric Type", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("Responsibility", header: "Responsibility", width: Widths.AnsiChars(20), settings: responsibility, iseditingreadonly: this.isShowHistory)
 
                 .CheckBox("IsEM", header: "IsEM");
@@ -472,6 +490,11 @@ SELECT DISTINCT p.Refno
 FROM PO_Supp_Detail p
 LEFT JOIN Orders o ON o.POID=p.ID
 WHERE o.ID='{this.CurrentDetailData["OrderID"]}' {whereRefno}
+UNION
+SELECT DISTINCT p.Refno 
+FROM PO_Supp_Detail p
+LEFT JOIN Order_Qty_Garment o ON o.OrderIDFrom=p.ID
+WHERE o.ID = '{this.CurrentDetailData["OrderID"]}' {whereRefno}
 
 ";
 
