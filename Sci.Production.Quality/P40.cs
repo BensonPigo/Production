@@ -297,6 +297,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 if (MyUtility.Check.Empty(suppName))
                 {
                     isLocal = true;
+                    suppName = MyUtility.GetValue.Lookup($"select Name from LocalSupp where id='{selectItem.GetSelectedString()}'");
                 }
 
                 this.CurrentDetailData["SuppName"] = suppName;
@@ -315,6 +316,9 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 string refno = e.FormattedValue.ToString();
                 if (MyUtility.Check.Empty(refno))
                 {
+                    dr["Refno"] = string.Empty;
+                    dr["FabricTypeText"] = string.Empty;
+                    dr["Description"] = string.Empty;
                     return;
                 }
 
@@ -325,6 +329,8 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
 
                 if (refno == "N/A")
                 {
+                    dr["FabricTypeText"] = string.Empty;
+                    dr["Description"] = string.Empty;
                     dr["Refno"] = refno;
                 }
                 else
@@ -338,7 +344,40 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                         return;
                     }
 
+                    string cmd = $@"
+SELECT DISTINCT 
+[FabricTypeText]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
+					 WHEN p.FabricType = 'A' THEN 'Accessory' ELSE '' 
+				END 
+,f.Description
+FROM PO_Supp_Detail p
+LEFT JOIN Orders o ON o.POID=p.ID
+LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
+WHERE o.ID = '{dr["OrderID"]}' AND p.Refno = '{refno}' 
+UNION
+SELECT DISTINCT 
+[FabricTypeText]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
+					 WHEN p.FabricType = 'A' THEN 'Accessory' ELSE '' 
+				END 
+,f.Description
+FROM PO_Supp_Detail p
+LEFT JOIN Order_Qty_Garment o ON o.OrderIDFrom=p.ID
+LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
+WHERE o.ID = '{dr["OrderID"]}' AND p.Refno = '{refno}' 
+";
+
+                    DataTable dt;
+                    DualResult r = DBProxy.Current.Select(null, cmd, out dt);
+
+                    if (!r)
+                    {
+                        this.ShowErr(r);
+                        return;
+                    }
+
                     dr["Refno"] = refno;
+                    dr["FabricTypeText"] = dt.Rows[0]["FabricTypeText"];
+                    dr["Description"] = dt.Rows[0]["Description"];
                 }
 
                 dr.EndEdit();
@@ -361,6 +400,40 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 }
 
                 this.CurrentDetailData["Refno"] = selectItem.GetSelectedString();
+
+                string cmd = $@"
+SELECT DISTINCT 
+[FabricTypeText]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
+					 WHEN p.FabricType = 'A' THEN 'Accessory' ELSE '' 
+				END 
+,f.Description
+FROM PO_Supp_Detail p
+LEFT JOIN Orders o ON o.POID=p.ID
+LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
+WHERE o.ID = '{this.CurrentDetailData["OrderID"]}' AND p.Refno = '{selectItem.GetSelectedString()}' 
+UNION
+SELECT DISTINCT 
+[FabricTypeText]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
+					 WHEN p.FabricType = 'A' THEN 'Accessory' ELSE '' 
+				END 
+,f.Description
+FROM PO_Supp_Detail p
+LEFT JOIN Order_Qty_Garment o ON o.OrderIDFrom=p.ID
+LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
+WHERE o.ID = '{this.CurrentDetailData["OrderID"]}' AND p.Refno = '{selectItem.GetSelectedString()}' 
+";
+
+                DataTable dt;
+                DualResult r = DBProxy.Current.Select(null, cmd, out dt);
+
+                if (!r)
+                {
+                    this.ShowErr(r);
+                    return;
+                }
+
+                this.CurrentDetailData["FabricTypeText"] = dt.Rows[0]["FabricTypeText"];
+                this.CurrentDetailData["Description"] = dt.Rows[0]["Description"];
             };
 
             textSuppID.CellMouseDoubleClick = (s, e) =>
@@ -378,6 +451,9 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 if (e.Button == MouseButtons.Left)
                 {
                     this.CurrentDetailData["SuppID"] = @"N/A";
+                    this.CurrentDetailData["SuppName"] = string.Empty;
+                    this.CurrentDetailData["IsLocalSupp"] = false;
+                    this.CurrentDetailData["IsLocalSuppText"] = "N";
                     this.CurrentDetailData.EndEdit();
                 }
             };
@@ -396,6 +472,8 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 if (e.Button == MouseButtons.Left)
                 {
                     this.CurrentDetailData["Refno"] = @"N/A";
+                    this.CurrentDetailData["FabricTypeText"] = string.Empty;
+                    this.CurrentDetailData["Description"] = string.Empty;
                     this.CurrentDetailData.EndEdit();
                 }
             };
