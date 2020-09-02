@@ -335,9 +335,9 @@ using #tmpS11 as s
 when matched then
     update
     set inqty = isnull(inqty,0.00) + s.qty,
-         Lock = iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{MtlAutoLock},0),
-         LockName = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,'{Env.User.UserID}',''),
-         LockDate = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,getdate(),null)
+         Lock = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,1,Lock),
+         LockName = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,'{Env.User.UserID}',LockName),
+         LockDate = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,getdate(),LockDate)
 when not matched then
     insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty], [Lock],[LockName],[LockDate])
     values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
