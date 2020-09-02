@@ -165,6 +165,8 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
         {
             StringBuilder sqlCmd = new StringBuilder();
             string seperCmd = string.Empty, seperCmdkpi = string.Empty, seperCmdkpi2 = string.Empty;
+            string order_QtyShip_Source_InspDate = string.Empty , order_QtyShip_Source_InspResult = string.Empty, order_QtyShip_Source_InspHandle = string.Empty, order_QtyShip_OuterApply = string.Empty;
+
             #region 組SQL
             if (this.seperate && p_type.Equals("ALL"))
             {
@@ -177,6 +179,37 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
 
             seperCmdkpi = this.seperate ? "oq.FtyKPI" : "o.FtyKPI";
             seperCmdkpi2 = this.seperate ? @" left join Order_QtyShip oq WITH (NOLOCK) on o.id=oq.Id" : string.Empty;
+            order_QtyShip_Source_InspDate = this.seperate ? "oq.CFAFinalInspectDate " : "QtyShip_InspectDate.Val";
+            order_QtyShip_Source_InspResult = this.seperate ? "oq.CFAFinalInspectResult" : "QtyShip_Result.Val";
+            order_QtyShip_Source_InspHandle = this.seperate ? "oq.CFAFinalInspectHandle" : "QtyShip_Handle.Val";
+            order_QtyShip_OuterApply = this.seperate ? string.Empty : $@"
+	OUTER APPLY(
+		SELECT [Val]=STUFF((
+		    SELECT  DISTINCT ','+ Cast(CFAFinalInspectDate as varchar)
+		    from Order_QtyShip oq
+		    WHERE ID = o.id
+		    FOR XML PATH('')
+		),1,1,'')
+	)QtyShip_InspectDate
+	OUTER APPLY(
+		SELECT [Val]=STUFF((
+		    SELECT  DISTINCT ','+ CFAFinalInspectResult
+		    from Order_QtyShip oq
+		    WHERE ID = o.id AND CFAFinalInspectResult <> '' AND CFAFinalInspectResult IS NOT NULL
+		    FOR XML PATH('')
+		),1,1,'')
+	)QtyShip_Result
+	OUTER APPLY(
+		SELECT [Val]=STUFF((
+		SELECT  DISTINCT ','+ CFAFinalInspectHandle +'-'+ p.Name
+		    from Order_QtyShip oq
+			LEFT JOIN Pass1 p WITH (NOLOCK) ON oq.CFAFinalInspectHandle = p.ID 
+		    WHERE oq.ID = o.id AND CFAFinalInspectHandle <> '' AND CFAFinalInspectHandle IS NOT NULL
+		    FOR XML PATH('')
+		),1,1,'')
+	)QtyShip_Handle
+";
+
             string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
 
             // 注意!! 新增欄位也要一併新增在poCombo (搜尋KeyWork: union)
@@ -253,9 +286,9 @@ with tmpOrders as (
             , o.OrderTypeID
             , o.SpecialMark
             , o.SampleReason
-            , o.InspDate
-            , InspResult = IIF(o.InspResult='P','Pass',IIF(o.InspResult='F','Fail',''))
-            , InspHandle = (o.InspHandle +'-'+ I.Name)
+            , InspDate = {order_QtyShip_Source_InspDate}
+            , InspResult = {order_QtyShip_Source_InspResult}
+            , InspHandle = {order_QtyShip_Source_InspHandle}
             , o.MnorderApv2
             , o.MnorderApv
             , o.PulloutComplete
@@ -296,6 +329,7 @@ with tmpOrders as (
         FROM Pass1 WITH (NOLOCK) 
         WHERE Pass1.ID = O.InspHandle
     )I
+{order_QtyShip_OuterApply}    
 	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id) a
     where  1=1 {whereIncludeCancelOrder}
     and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))
@@ -511,7 +545,7 @@ tmpFilterZone as (
                     seperCmd = @" ,[IDD] = (SELECT  Stuff((select distinct concat( ',',Format(oqs.IDD, 'yyyy/MM/dd'))   from Order_QtyShip oqs with (nolock) where oqs.ID = o.ID FOR XML PATH('')),1,1,'') )";
                 }
 
-                sqlCmd.Append(@"
+                sqlCmd.Append($@"
 ), tmpListPoCombo as (
     select * 
     from tmpFilterSubProcess
@@ -588,9 +622,9 @@ tmpFilterZone as (
             , o.OrderTypeID
             , o.SpecialMark
             , o.SampleReason
-            , o.InspDate
-            , InspResult = IIF(o.InspResult='P','Pass',IIF(o.InspResult='F','Fail',''))
-            , InspHandle = (o.InspHandle +'-'+ I.Name)
+            , InspDate = {order_QtyShip_Source_InspDate}
+            , InspResult = {order_QtyShip_Source_InspResult}
+            , InspHandle = {order_QtyShip_Source_InspHandle}
             , o.MnorderApv2
             , o.MnorderApv
             , o.PulloutComplete
@@ -626,12 +660,13 @@ tmpFilterZone as (
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
     left join style s WITH (NOLOCK) on o.styleukey = s.ukey
-   " + seperCmdkpi2 + @"
+   " + seperCmdkpi2 + $@"
     OUTER APPLY (
         SELECT Name 
         FROM Pass1 WITH (NOLOCK) 
         WHERE Pass1.ID=O.InspHandle
     )I
+{order_QtyShip_OuterApply}  
     where o.POID IN (select distinct POID from tmpFilterSubProcess) 
     and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))
 )");
