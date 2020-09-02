@@ -51,7 +51,7 @@ select id from Invtrans where InventoryPOID = '{0}' and type = '3'   and Factory
             return new DualResult(true);
         }
 
-        public static DualResult CheckDetailSeq(string seq, string fromFtyID, DataRow CurrentDetailData)
+        public static DualResult CheckDetailSeq(string seq, string fromFtyID, DataRow currentDetailData)
         {
             // check Seq Length
             string[] seqSplit = seq.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -63,7 +63,7 @@ select id from Invtrans where InventoryPOID = '{0}' and type = '3'   and Factory
             string seq1 = seqSplit[0];
             string seq2 = seqSplit[1];
             DataRow dr;
-            if (CurrentDetailData["DataFrom"].Equals("Po_Supp_Detail"))
+            if (currentDetailData["DataFrom"].Equals("Po_Supp_Detail"))
             {
                 #region check Po_Supp_Detail seq 1 2
                 bool isExistsPoSuppDetail = MyUtility.Check.Seek(
@@ -81,13 +81,13 @@ select  pounit
 from po_supp_detail WITH (NOLOCK) 
 where   id = '{0}' 
         and seq1 ='{1}'
-        and seq2 = '{2}'", CurrentDetailData["poid"], seq1, seq2), out dr, null);
+        and seq2 = '{2}'", currentDetailData["poid"], seq1, seq2), out dr, null);
                 if (isExistsPoSuppDetail)
                 {
-                    CurrentDetailData["stockunit"] = dr["stockunit"];
-                    CurrentDetailData["Description"] = dr["description"];
-                    CurrentDetailData["fabrictype"] = dr["fabrictype"];
-                    CurrentDetailData["Fabric"] = dr["Fabric"];
+                    currentDetailData["stockunit"] = dr["stockunit"];
+                    currentDetailData["Description"] = dr["description"];
+                    currentDetailData["fabrictype"] = dr["fabrictype"];
+                    currentDetailData["Fabric"] = dr["Fabric"];
                 }
                 else
                 {
@@ -105,7 +105,7 @@ from dbo.Inventory p WITH (NOLOCK)
 where   poid = '{0}' 
         and seq1 = '{1}'
         and seq2 = '{2}' 
-        and factoryid = '{3}'", CurrentDetailData["poid"],
+        and factoryid = '{3}'", currentDetailData["poid"],
                         seq1,
                         seq2,
                         fromFtyID), out dr, null))
@@ -114,10 +114,10 @@ where   poid = '{0}'
                     }
                     else
                     {
-                        CurrentDetailData["stockunit"] = string.Empty;
-                        CurrentDetailData["Description"] = dr["description"];
-                        CurrentDetailData["fabrictype"] = dr["fabrictype"];
-                        CurrentDetailData["Fabric"] = string.Empty;
+                        currentDetailData["stockunit"] = string.Empty;
+                        currentDetailData["Description"] = dr["description"];
+                        currentDetailData["fabrictype"] = dr["fabrictype"];
+                        currentDetailData["Fabric"] = string.Empty;
                     }
                 }
                 #endregion
@@ -132,24 +132,24 @@ select    fabrictype
 from Invtrans WITH (NOLOCK) 
 where   InventoryPOID = '{0}' 
         and InventorySeq1 ='{1}'
-        and InventorySeq2 = '{2}' and type = '3' and FactoryID = '{3}'", CurrentDetailData["poid"], seq1, seq2, fromFtyID), out dr, null))
+        and InventorySeq2 = '{2}' and type = '3' and FactoryID = '{3}'", currentDetailData["poid"], seq1, seq2, fromFtyID), out dr, null))
                 {
                     return new DualResult(false, "Seq Data not found!");
                 }
                 else
                 {
-                    CurrentDetailData["stockunit"] = string.Empty;
-                    CurrentDetailData["Description"] = string.Empty;
-                    CurrentDetailData["fabrictype"] = dr["fabrictype"];
+                    currentDetailData["stockunit"] = string.Empty;
+                    currentDetailData["Description"] = string.Empty;
+                    currentDetailData["fabrictype"] = dr["fabrictype"];
                 }
 
                 #endregion
             }
 
-            CurrentDetailData["seq"] = seq;
-            CurrentDetailData["seq1"] = seq1;
-            CurrentDetailData["seq2"] = seq2;
-            if (CurrentDetailData["fabrictype"].ToString().ToUpper() != "F")
+            currentDetailData["seq"] = seq;
+            currentDetailData["seq1"] = seq1;
+            currentDetailData["seq2"] = seq2;
+            if (currentDetailData["fabrictype"].ToString().ToUpper() != "F")
             {
                 // CurrentDetailData["Roll"] = "";
                 // CurrentDetailData["Dyelot"] = "";
@@ -200,7 +200,7 @@ WHERE   StockType='{0}'
             return new DualResult(true);
         }
 
-        public static DualResult CheckRollExists(string TransferInID, DataRow checkRow)
+        public static DualResult CheckRollExists(string transferInID, DataRow checkRow)
         {
             DataRow dr;
 
@@ -219,7 +219,7 @@ select  1
             and Dyelot = '{4}' 
             and TI.ID != '{5}' 
             and Status = 'Confirmed'
-", checkRow["poid"], checkRow["seq1"], checkRow["seq2"], checkRow["roll"], checkRow["dyelot"], TransferInID);
+", checkRow["poid"], checkRow["seq1"], checkRow["seq2"], checkRow["roll"], checkRow["dyelot"], transferInID);
 
                 if (MyUtility.Check.Seek(checkSql, out dr, null))
                 {

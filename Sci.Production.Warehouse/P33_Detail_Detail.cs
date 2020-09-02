@@ -18,13 +18,13 @@ namespace Sci.Production.Warehouse
         public decimal _RequestQty = 0;
         protected DataTable dtFtyinventory;
 
-        public P33_Detail_Detail(DataRow master, DataTable detail, string AccuIssued, string RequestQty)
+        public P33_Detail_Detail(DataRow master, DataTable detail, string accuIssued, string requestQty)
         {
             this.InitializeComponent();
             this.dr_master = master;
             this.dt_detail = detail;
-            this._AccuIssued = MyUtility.Check.Empty(AccuIssued) ? 0 : Convert.ToDecimal(AccuIssued);
-            this._RequestQty = MyUtility.Check.Empty(RequestQty) ? 0 : Convert.ToDecimal(RequestQty);
+            this._AccuIssued = MyUtility.Check.Empty(accuIssued) ? 0 : Convert.ToDecimal(accuIssued);
+            this._RequestQty = MyUtility.Check.Empty(requestQty) ? 0 : Convert.ToDecimal(requestQty);
         }
 
         private void Sum_checkedqty()

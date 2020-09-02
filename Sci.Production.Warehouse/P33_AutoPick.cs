@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
 
-        public P33_AutoPick(string _issueid, string _poid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo, List<IssueQtyBreakdown> IssueQtyBreakdownList)
+        public P33_AutoPick(string _issueid, string _poid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo, List<IssueQtyBreakdown> issueQtyBreakdownList)
         {
             this.InitializeComponent();
             this.poid = _poid;
@@ -39,7 +39,7 @@ namespace Sci.Production.Warehouse
             this.dtIssueBreakDown = _dtIssueBreakDown;
             this.sbSizecode = _sbSizecode;
             this.combo = _combo;
-            this._IssueQtyBreakdownList = IssueQtyBreakdownList;
+            this._IssueQtyBreakdownList = issueQtyBreakdownList;
             this.Text += string.Format(" ({0})", this.poid);
         }
 
@@ -557,21 +557,21 @@ GROUP BY Article
             }
         }
 
-        public DataTable GetAutoDetailDataTable(int RowIndex)
+        public DataTable GetAutoDetailDataTable(int rowIndex)
         {
-            DataTable tmpDt = this.dictionaryDatas[this.gridAutoPick.GetDataRow(RowIndex)];
+            DataTable tmpDt = this.dictionaryDatas[this.gridAutoPick.GetDataRow(rowIndex)];
             return tmpDt;
         }
 
-        public DataRow GetAutoDetailDataRow(int RowIndex)
+        public DataRow GetAutoDetailDataRow(int rowIndex)
         {
-            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(RowIndex);
+            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(rowIndex);
             return tmpDt;
         }
 
-        public DataRow GetNeedChangeDataRow(int RowIndex)
+        public DataRow GetNeedChangeDataRow(int rowIndex)
         {
-            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(RowIndex);
+            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(rowIndex);
             return tmpDt;
         }
 

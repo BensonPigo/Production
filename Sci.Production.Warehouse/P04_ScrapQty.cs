@@ -14,12 +14,12 @@ namespace Sci.Production.Warehouse
         private string Refno;
         private string Color;
 
-        public P04_ScrapQty(string Poid, string Refno, string Color)
+        public P04_ScrapQty(string poid, string refno, string color)
         {
             this.InitializeComponent();
-            this.Poid = Poid;
-            this.Refno = Refno;
-            this.Color = Color;
+            this.Poid = poid;
+            this.Refno = refno;
+            this.Color = color;
         }
 
         protected override void OnFormLoaded()

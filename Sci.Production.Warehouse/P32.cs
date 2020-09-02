@@ -1073,13 +1073,13 @@ else
             transactionscope = null;
         }
 
-        private void SentToGensong_AutoWHFabric(bool IsConfirmed)
+        private void SentToGensong_AutoWHFabric(bool isConfirmed)
         {
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
                 DataTable dtDetail = (DataTable)detailgridbs.DataSource;
-                Task.Run(() => new Gensong_AutoWHFabric().SentBorrowBackToGensongAutoWHFabric(dtDetail, IsConfirmed))
+                Task.Run(() => new Gensong_AutoWHFabric().SentBorrowBackToGensongAutoWHFabric(dtDetail, isConfirmed))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

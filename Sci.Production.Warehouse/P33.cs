@@ -2793,7 +2793,7 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
         #endregion
 
         #region 自訂事件
-        private void Get_Issue_Breakdown_Grid(string POID)
+        private void Get_Issue_Breakdown_Grid(string pOID)
         {
         }
 

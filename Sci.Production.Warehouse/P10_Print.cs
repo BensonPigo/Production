@@ -21,12 +21,12 @@ namespace Sci.Production.Warehouse
         private DataTable dtExcel;
         private DataRow DataRow;
 
-        public P10_Print(DataRow dr, string CutNo, DataRow dataRow)
+        public P10_Print(DataRow dr, string cutNo, DataRow dataRow)
         {
             this.InitializeComponent();
             this.Text = "P10 " + dr["ID"].ToString();
             this.drPrint = dr;
-            this.strCutNo = CutNo;
+            this.strCutNo = cutNo;
             this.DataRow = dataRow;
 
             #region 依狀態顯示Print按鈕功能

@@ -45,7 +45,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Form to Form W/H.P01
-        public P03(string P01SPNo, ToolStripMenuItem menuitem)
+        public P03(string p01SPNo, ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -67,13 +67,13 @@ namespace Sci.Production.Warehouse
                 this.userCountry = dt.Rows[0]["CountryID"].ToString();
             }
             #endregion
-            this.SpNo = P01SPNo;
+            this.SpNo = p01SPNo;
             this.txtSPNo.Text = this.SpNo.Trim();
             this.ButtonOpen = true;
         }
 
         // Form to Form W/H.P05
-        public static void P05Filter(string P01SPNo, string Refno, string MaterialType, string Color, Form MdiParent)
+        public static void P05Filter(string p01SPNo, string refno, string materialType, string color, Form mdiParent)
         {
             foreach (Form form in Application.OpenForms)
             {
@@ -81,7 +81,7 @@ namespace Sci.Production.Warehouse
                 {
                     form.Activate();
                     P03 activateForm = (P03)form;
-                    activateForm.SetTxtSPNo(P01SPNo);
+                    activateForm.SetTxtSPNo(p01SPNo);
                     activateForm.Query();
                     return;
                 }
@@ -106,23 +106,23 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            P03 call = new P03(P01SPNo, p03MenuItem);
+            P03 call = new P03(p01SPNo, p03MenuItem);
 
-            call.MdiParent = MdiParent;
+            call.MdiParent = mdiParent;
             call.Show();
 
             // 改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
-            call.P03Data(P01SPNo);
+            call.P03Data(p01SPNo);
             call.Activate();
-            _Refno = Refno;
-            _MaterialType = (MaterialType == "F") ? "Fabric" : (MaterialType == "A") ? "Accessory" : (MaterialType == "O") ? "Orher" : string.Empty;
-            _Color = Color;
+            _Refno = refno;
+            _MaterialType = (materialType == "F") ? "Fabric" : (materialType == "A") ? "Accessory" : (materialType == "O") ? "Orher" : string.Empty;
+            _Color = color;
             call.Grid_Filter();
             call.ChangeDetailColor();
         }
 
         // PPIC_P01 Called
-        public static void Call(string PPIC_SPNo, Form MdiParent)
+        public static void Call(string pPIC_SPNo, Form mdiParent)
         {
             foreach (Form form in Application.OpenForms)
             {
@@ -130,7 +130,7 @@ namespace Sci.Production.Warehouse
                 {
                     form.Activate();
                     P03 activateForm = (P03)form;
-                    activateForm.SetTxtSPNo(PPIC_SPNo);
+                    activateForm.SetTxtSPNo(pPIC_SPNo);
                     activateForm.Query();
                     return;
                 }
@@ -155,22 +155,22 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            P03 call = new P03(PPIC_SPNo, p03MenuItem);
+            P03 call = new P03(pPIC_SPNo, p03MenuItem);
 
-            call.MdiParent = MdiParent;
+            call.MdiParent = mdiParent;
             call.Show();
 
             // 改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
-            call.P03Data(PPIC_SPNo);
+            call.P03Data(pPIC_SPNo);
             call.Activate();
             call.ChangeDetailColor();
         }
 
         // 隨著 P01上下筆SP#切換資料
-        public void P03Data(string P01SPNo)
+        public void P03Data(string p01SPNo)
         {
             this.EditMode = true;
-            this.SpNo = P01SPNo;
+            this.SpNo = p01SPNo;
             this.txtSPNo.Text = this.SpNo.Trim();
             this.ButtonOpen = true;
             this.Query();

@@ -24,18 +24,18 @@ namespace Sci.Production.Warehouse
         }
 
         // Form to Form W/H.P01
-        public P04(string P01SPNo, ToolStripMenuItem menuitem)
+        public P04(string p01SPNo, ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.EditMode = true;
-            this.SPNo = P01SPNo;
+            this.SPNo = p01SPNo;
             this.txtSPNo.Text = this.SPNo.Trim();
             this.Event_Query();
         }
 
         // PPIC_P01 Called
-        public static void Call(string PPIC_SPNo)
+        public static void Call(string pPIC_SPNo)
         {
             foreach (Form form in Application.OpenForms)
             {
@@ -43,7 +43,7 @@ namespace Sci.Production.Warehouse
                 {
                     form.Activate();
                     P04 activateForm = (P04)form;
-                    activateForm.SetTxtSPNo(PPIC_SPNo);
+                    activateForm.SetTxtSPNo(pPIC_SPNo);
                     activateForm.Event_Query();
                     return;
                 }
@@ -68,15 +68,15 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            P04 callform = new P04(PPIC_SPNo, p04MenuItem);
+            P04 callform = new P04(pPIC_SPNo, p04MenuItem);
             callform.Show();
         }
 
         // 隨著 P01上下筆SP#切換資料
-        public void P04Data(string P01SPNo)
+        public void P04Data(string p01SPNo)
         {
             this.EditMode = true;
-            this.SPNo = P01SPNo;
+            this.SPNo = p01SPNo;
             this.txtSPNo.Text = this.SPNo.Trim();
             this.Event_Query();
         }

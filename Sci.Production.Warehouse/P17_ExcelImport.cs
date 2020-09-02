@@ -19,10 +19,10 @@ namespace Sci.Production.Warehouse
         private DataTable detailData;
         private DataRow master;
 
-        public P17_ExcelImport(DataRow _master, DataTable DetailData)
+        public P17_ExcelImport(DataRow _master, DataTable detailData)
         {
             this.InitializeComponent();
-            this.detailData = DetailData;
+            this.detailData = detailData;
             this.master = _master;
         }
 

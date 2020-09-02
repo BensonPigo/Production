@@ -66,7 +66,7 @@ namespace Sci.Production.Warehouse
         }
 
         // PPIC_P15 Called
-        public static void Call(string PPIC_id, Form MdiParent)
+        public static void Call(string pPIC_id, Form mdiParent)
         {
             foreach (Form form in Application.OpenForms)
             {
@@ -106,8 +106,8 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            P16 call = new P16(p16MenuItem, PPIC_id, "PPIC.P16");
-            call.MdiParent = MdiParent;
+            P16 call = new P16(p16MenuItem, pPIC_id, "PPIC.P16");
+            call.MdiParent = mdiParent;
             call.Show();
         }
 

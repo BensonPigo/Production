@@ -12,11 +12,11 @@ namespace Sci.Production.Warehouse
         public static string TypeAccessory = "A";
         protected string FabricType;
 
-        public P15_Unfinish(string FabricType, string title)
+        public P15_Unfinish(string fabricType, string title)
         {
             this.Text = title.ToString();
             this.InitializeComponent();
-            this.FabricType = FabricType;
+            this.FabricType = fabricType;
 
             // 請勿刪除 Hide & Timer ！！！
             // this.timer();

@@ -41,7 +41,7 @@ namespace Sci.Production.Warehouse
             this.QueryData(false);
         }
 
-        public void QueryData(bool AutoQuery)
+        public void QueryData(bool autoQuery)
         {
             DateTime? pulloutdate1, pulloutdate2, buyerDelivery1, buyerDelivery2;
             StringBuilder strSQLCmd = new StringBuilder();
@@ -56,7 +56,7 @@ namespace Sci.Production.Warehouse
             string brand = this.txtbrand.Text;
             string factory = this.txtmfactory.Text;
 
-            if (!AutoQuery &&
+            if (!autoQuery &&
                 MyUtility.Check.Empty(this.datePullOutDate.Value1) &&
                 MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) &&
                 (MyUtility.Check.Empty(this.txtSPNoStart.Text) || MyUtility.Check.Empty(this.txtSPNoEnd.Text)))
