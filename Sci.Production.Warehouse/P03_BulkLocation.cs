@@ -8,8 +8,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_BulkLocation : Win.Subs.Base
     {
-        DataRow dr;
-        string stocktype;
+        private DataRow dr;
+        private string stocktype;
 
         public P03_BulkLocation(DataRow data, string _stocktype)
         {
@@ -91,7 +91,7 @@ order by EditName,ID",
                  .DateTime("editdate", header: "Edit Date", width: Widths.AnsiChars(20));
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

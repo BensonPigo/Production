@@ -12,10 +12,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P20 : Win.Tems.QueryForm
     {
-        DataSet data = new DataSet();
-        DataTable dtTpeIventory;
-        DataTable dtInvtrans;
-        DataTable dtFtyInventory;
+        private DataSet data = new DataSet();
+        private DataTable dtTpeIventory;
+        private DataTable dtInvtrans;
+        private DataTable dtFtyInventory;
 
         public P20(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -24,9 +24,9 @@ namespace Sci.Production.Warehouse
             this.ActiveControl = this.txtSPNo;
 
             string sqlCmd = @"select '' ID union Select Distinct ID from Factory where junk = 0";
-            DataTable Factory;
-            DBProxy.Current.Select(null, sqlCmd, out Factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, Factory);
+            DataTable factory;
+            DBProxy.Current.Select(null, sqlCmd, out factory);
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.Text = string.Empty;
         }
 
@@ -106,14 +106,14 @@ namespace Sci.Production.Warehouse
         }
 
         // Close
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             // this.Dispose();
             this.Close();
         }
 
         // Query
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             // 搜尋前先清空資料
             this.bindingSource1.DataSource = null;
@@ -131,10 +131,10 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            string Refno;
-            Refno = this.txtRefNo.Text;
-            string ColorID;
-            ColorID = this.txtColorID.Text;
+            string refno;
+            refno = this.txtRefNo.Text;
+            string colorID;
+            colorID = this.txtColorID.Text;
             string factory;
             factory = this.comboFactory.Text;
 
@@ -190,12 +190,12 @@ from
                 sqlcmd.Append(" and i.seq2 = @seq2");
             }
 
-            if (!MyUtility.Check.Empty(Refno))
+            if (!MyUtility.Check.Empty(refno))
             {
                 sqlcmd.Append(" and i.Refno = @Refno");
             }
 
-            if (!MyUtility.Check.Empty(ColorID))
+            if (!MyUtility.Check.Empty(colorID))
             {
                 sqlcmd.Append(" and IIF(Fabric.MtlTypeID LIKE '%Thread%' ,b.SuppColor , b.ColorID) = @ColorID");
             }
@@ -288,12 +288,12 @@ from (
         and i.seq2 = @seq2 ");
             }
 
-            if (!MyUtility.Check.Empty(Refno))
+            if (!MyUtility.Check.Empty(refno))
             {
                 sqlcmd.Append(" and i.Refno = @Refno");
             }
 
-            if (!MyUtility.Check.Empty(ColorID))
+            if (!MyUtility.Check.Empty(colorID))
             {
                 sqlcmd.Append(" and IIF(Fabric.MtlTypeID LIKE '%Thread%' ,b.SuppColor , b.ColorID) = @ColorID");
             }
@@ -349,12 +349,12 @@ from (
         and i.seq2 = @seq2 ");
             }
 
-            if (!MyUtility.Check.Empty(Refno))
+            if (!MyUtility.Check.Empty(refno))
             {
                 sqlcmd.Append(" and i.Refno = @Refno");
             }
 
-            if (!MyUtility.Check.Empty(ColorID))
+            if (!MyUtility.Check.Empty(colorID))
             {
                 sqlcmd.Append(" and IIF(Fabric.MtlTypeID LIKE '%Thread%' ,b.SuppColor , b.ColorID) = @ColorID");
             }
@@ -416,11 +416,11 @@ where   stocktype='I'");
 
             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
             sp4.ParameterName = "@Refno";
-            sp4.Value = Refno;
+            sp4.Value = refno;
 
             System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
             sp5.ParameterName = "@ColorID";
-            sp5.Value = ColorID;
+            sp5.Value = colorID;
 
             System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
             sp6.ParameterName = "@factory";
@@ -501,7 +501,7 @@ where   stocktype='I'");
             this.Grid3Refresh();
         }
 
-        private void checkQty_CheckedChanged(object sender, EventArgs e)
+        private void CheckQty_CheckedChanged(object sender, EventArgs e)
         {
             if (this.checkQty.Checked)
             {
@@ -515,7 +515,7 @@ where   stocktype='I'");
             this.Grid3Refresh();
         }
 
-        private void bindingSource1_PositionChanged(object sender, EventArgs e)
+        private void BindingSource1_PositionChanged(object sender, EventArgs e)
         {
             this.Grid3Refresh();
         }

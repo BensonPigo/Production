@@ -11,29 +11,29 @@ namespace Sci.Production.Warehouse
     public partial class R10 : Win.Tems.PrintForm
     {
         // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
-        string mdivision;
+        private string mdivision;
 
         // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
-        string factory;
+        private string factory;
 
         // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
-        string spno1;
+        private string spno1;
 
         // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
-        string spno2;
+        private string spno2;
 
         // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
-        string refno1;
+        private string refno1;
 
         // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
-        string refno2;
-        DateTime? deadline1;
-        DateTime? deadline2;
-        DateTime? buyerDelivery1;
-        DateTime? buyerDelivery2;
-        DateTime? eta1;
-        DateTime? eta2;
-        DataTable printData;
+        private string refno2;
+        private DateTime? deadline1;
+        private DateTime? deadline2;
+        private DateTime? buyerDelivery1;
+        private DateTime? buyerDelivery2;
+        private DateTime? eta1;
+        private DateTime? eta2;
+        private DataTable printData;
 
         public R10(ToolStripMenuItem menuitem)
             : base(menuitem)

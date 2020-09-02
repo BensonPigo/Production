@@ -61,7 +61,7 @@ group by a.PoId,a.seq1,a.seq2", this.dr["id"].ToString()));
                  ;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

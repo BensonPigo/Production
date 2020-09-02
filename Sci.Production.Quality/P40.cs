@@ -18,7 +18,7 @@ namespace Sci.Production.Quality
         protected Color yellow = Color.FromArgb(255, 198, 10);
         protected Color displayDefaultBack = Color.FromArgb(183, 227, 255);
 
-        private string[] compareColumns =
+        private readonly string[] compareColumns =
         {
             "SalesID", "SalesName", "Article", "ArticleName",
             "ProductionDate", "DefectMainID", "DefectSubID", "OrderID", "SuppID", "Refno",

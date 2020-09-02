@@ -77,7 +77,7 @@ namespace Sci.Production.Warehouse
 
             if (this.IsDetailInserting)
             {
-                if (!this.checkCode())
+                if (!this.CheckCode())
                 {
                     return false;
                 }
@@ -111,7 +111,7 @@ namespace Sci.Production.Warehouse
             }
         }
 
-        private bool checkCode()
+        private bool CheckCode()
         {
             bool check = true;
             string strSQL = @"  select * 
@@ -138,7 +138,7 @@ namespace Sci.Production.Warehouse
             return check;
         }
 
-        private void btnBatchCreate_Click(object sender, EventArgs e)
+        private void BtnBatchCreate_Click(object sender, EventArgs e)
         {
             B02_BatchCreate form = new B02_BatchCreate();
             form.ShowDialog();

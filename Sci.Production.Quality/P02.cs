@@ -13,9 +13,9 @@ namespace Sci.Production.Quality
     {
         // 宣告Context Menu Item
         ToolStripMenuItem edit;
-        private string loginID = Env.User.UserID;
-        private string keyWord = Env.User.Keyword;
-        private bool boolFromP02;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string keyWord = Env.User.Keyword;
+        private readonly bool boolFromP02;
         string find = string.Empty;
         int index;
         DataRow[] find_dr;
@@ -210,7 +210,7 @@ Where a.poid='{0}' order by seq1,seq2
 
         protected override void OnDetailEntered()
         {
-            this.contextMenuStrip();
+            this.ContextMenuStrip();
             base.OnDetailEntered();
             this.detailgrid.AutoResizeColumns();
 
@@ -368,7 +368,7 @@ Where a.poid='{0}' order by seq1,seq2
             return Ict.Result.True;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             DataTable detDtb = (DataTable)this.detailgridbs.DataSource;
 
@@ -476,10 +476,10 @@ Where a.poid='{0}' order by seq1,seq2
             }
 
             this.detailgrid.SelectRowTo(rowindex);
-            this.contextMenuStrip();
+            this.ContextMenuStrip();
         }
 
-        private void contextMenuStrip()
+        private void ContextMenuStrip()
         {
             var dr = this.CurrentDetailData;
             this.edit.Enabled = true;
@@ -493,11 +493,11 @@ Where a.poid='{0}' order by seq1,seq2
 
         protected override void OnDetailGridRowChanged()
         {
-            this.contextMenuStrip();
+            this.ContextMenuStrip();
             base.OnDetailGridRowChanged();
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             DataTable detDtb = (DataTable)this.detailgridbs.DataSource;
 
@@ -574,7 +574,7 @@ Where a.poid='{0}' order by seq1,seq2
             this.detailgridbs.Position = this.DetailDatas.IndexOf(this.find_dr[this.index]);
         }
 
-        private void btnBatchEncode_Click(object sender, EventArgs e)
+        private void BtnBatchEncode_Click(object sender, EventArgs e)
         {
             P02_BatchEncode p02_BatchEncode = new P02_BatchEncode(this.CurrentMaintain["ID"].ToString());
             p02_BatchEncode.ShowDialog();

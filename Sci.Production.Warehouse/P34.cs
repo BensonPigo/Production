@@ -405,8 +405,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
             upd_Fty_8T.Append(Prgs.UpdateFtyInventory_IO(8, null, true));
             #endregion 更新庫存數量  ftyinventory
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -414,7 +414,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T32T, string.Empty, upd_MD_8T.ToString(), out resulttb,
                         "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -422,7 +422,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T32T, string.Empty, upd_MD_32T.ToString(), out resulttb,
                         "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -430,32 +430,32 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(
                         data_Fty_8T, string.Empty, upd_Fty_8T.ToString(), out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         // Unconfirm
@@ -597,8 +597,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
 
             #endregion 更新庫存數量  ftyinventory
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -606,7 +606,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F32F, string.Empty, upd_MD_8F.ToString(), out resulttb,
                         "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -614,7 +614,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F32F, string.Empty, upd_MD_32F.ToString(), out resulttb,
                         "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -622,32 +622,32 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(
                         data_Fty_8F, string.Empty, upd_Fty_8F.ToString(), out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         // 寫明細撈出的sql command
@@ -681,7 +681,7 @@ Where a.id = '{0}' ", masterID);
         }
 
         // delete all
-        private void button9_Click(object sender, EventArgs e)
+        private void Button9_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
 
@@ -690,14 +690,14 @@ Where a.id = '{0}' ", masterID);
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             var frm = new P34_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {

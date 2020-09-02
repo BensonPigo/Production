@@ -120,7 +120,7 @@
             this.btnToExcel.TabIndex = 95;
             this.btnToExcel.Text = "ToExcel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // editDescription
             // 
@@ -190,7 +190,7 @@
             this.btnEncode.TabIndex = 212;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
+            this.btnEncode.Click += new System.EventHandler(this.BtnEncode_Click);
             // 
             // txtResult
             // 
@@ -415,7 +415,7 @@
             this.radioPanel1.ReadOnly = true;
             this.radioPanel1.Size = new System.Drawing.Size(96, 57);
             this.radioPanel1.TabIndex = 219;
-            this.radioPanel1.ValueChanged += new System.EventHandler(this.radioPanel1_ValueChanged);
+            this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioPanel1_ValueChanged);
             // 
             // radioOption1
             // 

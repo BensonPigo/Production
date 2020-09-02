@@ -13,39 +13,39 @@ namespace Sci.Production.Warehouse
     public partial class R11 : Win.Tems.PrintForm
     {
         // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
-        string season;
+        private string season;
 
         // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
-        string factory;
+        private string factory;
 
         // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
-        string brand;
+        private string brand;
 
         // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
-        string mdivision;
+        private string mdivision;
 
         // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
-        string spno1;
+        private string spno1;
 
         // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
-        string spno2;
+        private string spno2;
 
         // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
-        string fabrictype;
+        private string fabrictype;
 
         // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
-        string stocktype;
+        private string stocktype;
 
         // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
-        string refno1;
+        private string refno1;
 
         // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
-        string refno2;
-        DateTime? issueDate1;
-        DateTime? issueDate2;
-        DateTime? buyerDelivery1;
-        DateTime? buyerDelivery2;
-        DataTable printData;
+        private string refno2;
+        private DateTime? issueDate1;
+        private DateTime? issueDate2;
+        private DateTime? buyerDelivery1;
+        private DateTime? buyerDelivery2;
+        private DataTable printData;
 
         public R11(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -419,30 +419,30 @@ from cte t"));
             //    MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R11_Summary.xltx", 3);
             // else
             //    MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R11_List.xltx", 3);
-            string ExcelXltx = string.Empty;
-            int DescIndex = 0;
+            string excelXltx = string.Empty;
+            int descIndex = 0;
 
             if (this.radioSummary.Checked)
             {
-                ExcelXltx = "Warehouse_R11_Summary.xltx";
-                DescIndex = 5;
+                excelXltx = "Warehouse_R11_Summary.xltx";
+                descIndex = 5;
             }
             else
             {
-                ExcelXltx = "Warehouse_R11_List.xltx";
-                DescIndex = 6;
+                excelXltx = "Warehouse_R11_List.xltx";
+                descIndex = 6;
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + ExcelXltx); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, ExcelXltx, 2, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + excelXltx); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, excelXltx, 2, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             this.ShowWaitMessage("Excel Processing...");
             for (int i = 1; i <= this.printData.Rows.Count; i++)
             {
-                string str = objSheets.Cells[i + 3, DescIndex].Value();
+                string str = objSheets.Cells[i + 3, descIndex].Value();
                 str = MyUtility.Check.Empty(str) ? string.Empty : str;
-                objSheets.Cells[i + 3, DescIndex] = str.Trim();
+                objSheets.Cells[i + 3, descIndex] = str.Trim();
             }
 
             #region Save & Show Excel

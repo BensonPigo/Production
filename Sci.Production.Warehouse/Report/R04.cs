@@ -13,28 +13,28 @@ namespace Sci.Production.Warehouse
     {
         // string reason, factory, brand, mdivisionid, operation;
         // int ordertypeindex;
-        string factory;
+        private string factory;
 
         // string reason, factory, brand, mdivisionid, operation;
         // int ordertypeindex;
-        string brand;
+        private string brand;
 
         // string reason, factory, brand, mdivisionid, operation;
         // int ordertypeindex;
-        string mdivisionid;
+        private string mdivisionid;
 
         // string reason, factory, brand, mdivisionid, operation;
         // int ordertypeindex;
-        string operation;
+        private string operation;
 
         // string reason, factory, brand, mdivisionid, operation;
         // int ordertypeindex;
-        string fabricType;
+        private string fabricType;
 
-        DateTime? cfmdate1;
-        DateTime? cfmdate2;
-        DataTable printData;
-        StringBuilder condition = new StringBuilder();
+        private DateTime? cfmdate1;
+        private DateTime? cfmdate2;
+        private DataTable printData;
+        private StringBuilder condition = new StringBuilder();
 
         public R04(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -304,7 +304,7 @@ where 1=1 "));
             return true;
         }
 
-        private void txtMdivision_Validated(object sender, EventArgs e)
+        private void TxtMdivision_Validated(object sender, EventArgs e)
         {
             if (!this.txtMdivision.Text.EqualString(this.txtMdivision.OldValue))
             {

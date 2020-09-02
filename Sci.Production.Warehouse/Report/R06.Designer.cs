@@ -159,7 +159,7 @@
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision.TabIndex = 2;
-            this.txtMdivision.Validated += new System.EventHandler(this.txtMdivision_Validated);
+            this.txtMdivision.Validated += new System.EventHandler(this.TxtMdivision_Validated);
             // 
             // txtfactory
             // 

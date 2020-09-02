@@ -118,7 +118,7 @@
             this.btnWriteIn.TabIndex = 0;
             this.btnWriteIn.Text = "Write In";
             this.btnWriteIn.UseVisualStyleBackColor = true;
-            this.btnWriteIn.Click += new System.EventHandler(this.btnWriteIn_Click);
+            this.btnWriteIn.Click += new System.EventHandler(this.BtnWriteIn_Click);
             // 
             // panel5
             // 
@@ -244,7 +244,7 @@
             this.btnCheckImport.TabIndex = 2;
             this.btnCheckImport.Text = "Check && Import";
             this.btnCheckImport.UseVisualStyleBackColor = true;
-            this.btnCheckImport.Click += new System.EventHandler(this.btnCheckImport_Click);
+            this.btnCheckImport.Click += new System.EventHandler(this.BtnCheckImport_Click);
             // 
             // btnRemoveExcel
             // 
@@ -254,7 +254,7 @@
             this.btnRemoveExcel.TabIndex = 1;
             this.btnRemoveExcel.Text = "Remove Excel";
             this.btnRemoveExcel.UseVisualStyleBackColor = true;
-            this.btnRemoveExcel.Click += new System.EventHandler(this.btnRemoveExcel_Click);
+            this.btnRemoveExcel.Click += new System.EventHandler(this.BtnRemoveExcel_Click);
             // 
             // btnAddExcel
             // 
@@ -264,7 +264,7 @@
             this.btnAddExcel.TabIndex = 0;
             this.btnAddExcel.Text = "Add Excel";
             this.btnAddExcel.UseVisualStyleBackColor = true;
-            this.btnAddExcel.Click += new System.EventHandler(this.btnAddExcel_Click);
+            this.btnAddExcel.Click += new System.EventHandler(this.BtnAddExcel_Click);
             // 
             // panel8
             // 

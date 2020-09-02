@@ -24,9 +24,9 @@ namespace Sci.Production.Quality
         string refno2;
         DateTime? InspectionDate1;
         DateTime? InspectionDate2;
-        private Color green = Color.FromArgb(153, 204, 0);
-        private Color blue = Color.FromArgb(101, 215, 255);
-        private Color zero = Color.FromArgb(250, 191, 143);
+        private readonly Color green = Color.FromArgb(153, 204, 0);
+        private readonly Color blue = Color.FromArgb(101, 215, 255);
+        private readonly Color zero = Color.FromArgb(250, 191, 143);
 
         public R08(ToolStripMenuItem menuitem)
             : base(menuitem)

@@ -100,7 +100,7 @@
             this.btnToExcel.TabIndex = 95;
             this.btnToExcel.Text = "ToExcel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // editDescription
             // 
@@ -170,7 +170,7 @@
             this.btnEncode.TabIndex = 182;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
+            this.btnEncode.Click += new System.EventHandler(this.BtnEncode_Click);
             // 
             // txtResult
             // 

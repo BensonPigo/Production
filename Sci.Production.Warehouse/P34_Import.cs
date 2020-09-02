@@ -13,9 +13,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P34_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtInventory;
 
         public P34_Import(DataRow master, DataTable detail)
@@ -26,7 +26,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtSPNo.Text.TrimEnd();
@@ -269,13 +269,13 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         // Close
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
@@ -329,7 +329,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         // SP# Valid
-        private void txtSPNo_Validating(object sender, CancelEventArgs e)
+        private void TxtSPNo_Validating(object sender, CancelEventArgs e)
         {
 // string sp = textBox1.Text.TrimEnd();
 
@@ -357,7 +357,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         // Update All
-        private void btnUpdateAll_Click(object sender, EventArgs e)
+        private void BtnUpdateAll_Click(object sender, EventArgs e)
         {
             string reasonid = this.comboReason.SelectedValue.ToString();
             this.gridImport.ValidateControl();
@@ -376,7 +376,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             }
         }
 
-        private void txtLocation_Validating(object sender, CancelEventArgs e)
+        private void TxtLocation_Validating(object sender, CancelEventArgs e)
         {
             if (this.txtLocation.Text.ToString() == string.Empty)
             {
@@ -401,7 +401,7 @@ where exists(
         }
 
         // Location  右鍵
-        private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode)
             {

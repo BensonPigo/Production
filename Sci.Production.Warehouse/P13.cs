@@ -125,8 +125,8 @@ WHERE Issue_DetailUkey IN ({ukeys})
 
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
-            string Remark = row["Remark"].ToString();
-            string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string remark = row["Remark"].ToString();
+            string cDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
@@ -148,21 +148,21 @@ where id = @MDivision", pars, out dt);
                 return false;
             }
 
-            string FtyGroup = string.Empty;
+            string ftyGroup = string.Empty;
             foreach (DataRow item in ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(true, "FtyGroup").Rows)
             {
-                FtyGroup += MyUtility.Convert.GetString(item["FtyGroup"]) + ",";
+                ftyGroup += MyUtility.Convert.GetString(item["FtyGroup"]) + ",";
             }
 
-            FtyGroup = FtyGroup.Substring(0, FtyGroup.Length - 1 >= 0 ? FtyGroup.Length - 1 : 0);
+            ftyGroup = ftyGroup.Substring(0, ftyGroup.Length - 1 >= 0 ? ftyGroup.Length - 1 : 0);
 
-            string RptTitle = dt.Rows[0]["NameEN"].ToString();
+            string rptTitle = dt.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new ReportParameter("ID", id));
-            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new ReportParameter("CDate", CDate));
-            report.ReportParameters.Add(new ReportParameter("FtyGroup", FtyGroup));
+            report.ReportParameters.Add(new ReportParameter("Remark", remark));
+            report.ReportParameters.Add(new ReportParameter("CDate", cDate));
+            report.ReportParameters.Add(new ReportParameter("FtyGroup", ftyGroup));
 
             #endregion
             #region -- 撈表身資料 --
@@ -224,12 +224,12 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
 
             // 指定是哪個 RDLC
             // DualResult result;
-            Type ReportResourceNamespace = typeof(P13_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P13_Print.rdlc";
+            Type reportResourceNamespace = typeof(P13_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P13_Print.rdlc";
 
             IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 // this.ShowException(result);
                 return false;
@@ -528,8 +528,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -537,40 +537,40 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb,
                         "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         // Unconfirm
@@ -714,8 +714,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -723,40 +723,40 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb,
                         "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         private void SentToGensong_AutoWHFabric()
@@ -863,7 +863,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // delete all
-        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
+        private void BtnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
 
@@ -874,7 +874,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["WhseReasonID"]))
             {
@@ -887,14 +887,14 @@ Where a.id = '{0}'", masterID);
             this.RenewData();
         }
 
-        private void btnAccumulatedQty_Click(object sender, EventArgs e)
+        private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new P13_AccumulatedQty(this.CurrentMaintain);
             frm.P13 = this;
             frm.ShowDialog(this);
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -912,30 +912,30 @@ Where a.id = '{0}'", masterID);
             }
         }
 
-        private void btCutRef_Click(object sender, EventArgs e)
+        private void BtCutRef_Click(object sender, EventArgs e)
         {
             var frm = new P10_CutRef(this.CurrentMaintain);
             frm.ShowDialog(this);
         }
 
-        private void btnPrintFabricSticker_Click(object sender, EventArgs e)
+        private void BtnPrintFabricSticker_Click(object sender, EventArgs e)
         {
             new P13_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
         }
 
-        private void txtwhseReason_Validated(object sender, EventArgs e)
+        private void TxtwhseReason_Validated(object sender, EventArgs e)
         {
             this.DetailGridColVisibleByReason();
         }
 
-        string oldVal = string.Empty;
+        private string oldVal = string.Empty;
 
-        private void txtwhseReason_Enter(object sender, EventArgs e)
+        private void TxtwhseReason_Enter(object sender, EventArgs e)
         {
             this.oldVal = this.txtwhseReason.TextBox1.Text;
         }
 
-        private void txtwhseReason_Leave(object sender, EventArgs e)
+        private void TxtwhseReason_Leave(object sender, EventArgs e)
         {
             this.DetailGridColVisibleByReason();
         }

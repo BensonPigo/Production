@@ -174,16 +174,16 @@ from ReplacementReport_Detail where ID = '{replacementID}'
         /// <summary>
         /// Post Order Change
         /// </summary>
-        /// <param name="_ID">_ID</param>
-        /// <param name="_status">_status</param>
+        /// <param name="iD">_ID</param>
+        /// <param name="status">_status</param>
         /// <param name="ftyComments">ftyComments</param>
         /// <returns>DualResult</returns>
-        public static DualResult PostOrderChange(string _ID, string _status, string ftyComments)
+        public static DualResult PostOrderChange(string iD, string status, string ftyComments)
         {
             OrderChangeModel orderChangeModel = new OrderChangeModel()
             {
-                ID = _ID,
-                Status = _status,
+                ID = iD,
+                Status = status,
                 EditName = Env.User.UserID,
                 FTYComments = ftyComments,
             };

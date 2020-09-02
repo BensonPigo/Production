@@ -13,10 +13,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P19_Import : Win.Subs.Base
     {
-        DataRow dr_master;  // 抓主頁的表頭資料用
-        DataTable dt_detail;    // 將匯入資料寫入主頁的明細用
+        private DataRow dr_master;  // 抓主頁的表頭資料用
+        private DataTable dt_detail;    // 將匯入資料寫入主頁的明細用
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtImportData;
 
         public P19_Import(DataRow master, DataTable detail)
@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             if (this.comboStockType.SelectedIndex < 0)
             {
@@ -162,7 +162,7 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
             this.HideWaitMessage();
         }
 
-        private void sum_checkedqty()
+        private void Sum_checkedqty()
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -186,7 +186,7 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
                 {
                     this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
                     this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["selected"] = true;
-                    this.sum_checkedqty();
+                    this.Sum_checkedqty();
 
                     DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
                     dr["Balance"] = (decimal)dr["stockqty"] - (decimal)e.FormattedValue;
@@ -213,7 +213,7 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
 
                     dr.EndEdit();
 
-                    this.sum_checkedqty();
+                    this.Sum_checkedqty();
                 }
             };
             this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
@@ -249,13 +249,13 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
             cbb_stocktype.DisplayMember = "Value";
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             // listControlBindingSource1.EndEdit();
             this.gridImport.ValidateControl();

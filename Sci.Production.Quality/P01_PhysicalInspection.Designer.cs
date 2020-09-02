@@ -338,7 +338,7 @@
             this.btnApprove.TabIndex = 127;
             this.btnApprove.Text = "Approve";
             this.btnApprove.UseVisualStyleBackColor = true;
-            this.btnApprove.Click += new System.EventHandler(this.btnApprove_Click);
+            this.btnApprove.Click += new System.EventHandler(this.BtnApprove_Click);
             // 
             // btnEncode
             // 
@@ -348,7 +348,7 @@
             this.btnEncode.TabIndex = 128;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
+            this.btnEncode.Click += new System.EventHandler(this.BtnEncode_Click);
             // 
             // labelApprover
             // 
@@ -377,7 +377,7 @@
             this.btnToExcel.TabIndex = 132;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // txtuserApprover
             // 
@@ -452,7 +452,7 @@
             this.btnToExcel_defect.TabIndex = 133;
             this.btnToExcel_defect.Text = "To Excel (Act. defect Yds)";
             this.btnToExcel_defect.UseVisualStyleBackColor = true;
-            this.btnToExcel_defect.Click += new System.EventHandler(this.btnToExcel_defect_Click);
+            this.btnToExcel_defect.Click += new System.EventHandler(this.BtnToExcel_defect_Click);
             // 
             // btnSendMail
             // 
@@ -462,7 +462,7 @@
             this.btnSendMail.TabIndex = 141;
             this.btnSendMail.Text = "Send Mail";
             this.btnSendMail.UseVisualStyleBackColor = true;
-            this.btnSendMail.Click += new System.EventHandler(this.btnSendMail_Click);
+            this.btnSendMail.Click += new System.EventHandler(this.BtnSendMail_Click);
             // 
             // txtPhysicalInspector
             // 

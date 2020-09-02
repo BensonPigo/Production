@@ -195,14 +195,14 @@ drop table #tmp", Env.User.Keyword, this.dr_master["id"]));
                     return;
                 }
 
-                DataTable TaipeiInput = this.dsTmp.Tables[0];
+                DataTable taipeiInput = this.dsTmp.Tables[0];
                 this.dsTmp.Tables[0].TableName = "TaipeiInput";
-                DataTable FtyDetail = this.dsTmp.Tables[1];
+                DataTable ftyDetail = this.dsTmp.Tables[1];
                 this.dsTmp.Tables[1].TableName = "FtyDetail";
-                foreach (DataRow dr in FtyDetail.Rows)
+                foreach (DataRow dr in ftyDetail.Rows)
                 {
-                    string ToLocation = dr["ToLocation"].ToString();
-                    string sqlcheckToLocation = string.Format(@"SELECT id FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='B' and junk != '1' and id = '{0}'", ToLocation);
+                    string toLocation = dr["ToLocation"].ToString();
+                    string sqlcheckToLocation = string.Format(@"SELECT id FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='B' and junk != '1' and id = '{0}'", toLocation);
                     string checkToLocation = string.Empty;
                     checkToLocation = MyUtility.GetValue.Lookup(sqlcheckToLocation);
                     if (checkToLocation == string.Empty)
@@ -213,16 +213,16 @@ drop table #tmp", Env.User.Keyword, this.dr_master["id"]));
 
                 this.relation = new DataRelation(
                     "rel1",
-                    new DataColumn[] { TaipeiInput.Columns["Poid"], TaipeiInput.Columns["seq1"], TaipeiInput.Columns["seq2"] },
-                    new DataColumn[] { FtyDetail.Columns["toPoid"], FtyDetail.Columns["toseq1"], FtyDetail.Columns["toseq2"] });
+                    new DataColumn[] { taipeiInput.Columns["Poid"], taipeiInput.Columns["seq1"], taipeiInput.Columns["seq2"] },
+                    new DataColumn[] { ftyDetail.Columns["toPoid"], ftyDetail.Columns["toseq1"], ftyDetail.Columns["toseq2"] });
                 this.dsTmp.Relations.Add(this.relation);
                 this.TaipeiInputBS.DataSource = this.dsTmp;
                 this.TaipeiInputBS.DataMember = "TaipeiInput";
                 this.FtyDetailBS.DataSource = this.TaipeiInputBS;
                 this.FtyDetailBS.DataMember = "rel1";
 
-                TaipeiInput.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
-                TaipeiInput.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - sum(child.qty)");
+                taipeiInput.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
+                taipeiInput.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - sum(child.qty)");
                 this.MyFilter();
                 this.dtSort.Clear();
                 this.HideWaitMessage();

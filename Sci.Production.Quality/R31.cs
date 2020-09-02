@@ -19,8 +19,11 @@ namespace Sci.Production.Quality
 
         DateTime? Buyerdelivery1, Buyerdelivery2;
         string sp1, sp2, MDivisionID, FactoryID, Brand;
-        bool exSis,bulk,sample,garment;
-        List<string> categoryList = new List<string>();
+        private bool exSis;
+        private readonly bool bulk;
+        private readonly bool sample;
+        private readonly bool garment;
+        readonly List<string> categoryList = new List<string>();
 
         public R31(ToolStripMenuItem menuitem)
             : base(menuitem)

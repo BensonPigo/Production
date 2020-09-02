@@ -1127,7 +1127,7 @@
             this.btnProductionOutput.TabIndex = 105;
             this.btnProductionOutput.Text = "Production output";
             this.btnProductionOutput.UseVisualStyleBackColor = true;
-            this.btnProductionOutput.Click += new System.EventHandler(this.btnProductionOutput_Click);
+            this.btnProductionOutput.Click += new System.EventHandler(this.BtnProductionOutput_Click);
             // 
             // btnOrderRemark
             // 
@@ -1138,7 +1138,7 @@
             this.btnOrderRemark.TabIndex = 106;
             this.btnOrderRemark.Text = "Order remark";
             this.btnOrderRemark.UseVisualStyleBackColor = true;
-            this.btnOrderRemark.Click += new System.EventHandler(this.btnOrderRemark_Click);
+            this.btnOrderRemark.Click += new System.EventHandler(this.BtnOrderRemark_Click);
             // 
             // btnLabelHangtag
             // 
@@ -1149,7 +1149,7 @@
             this.btnLabelHangtag.TabIndex = 110;
             this.btnLabelHangtag.Text = "Label && Hangtag";
             this.btnLabelHangtag.UseVisualStyleBackColor = true;
-            this.btnLabelHangtag.Click += new System.EventHandler(this.btnLabelHangtag_Click);
+            this.btnLabelHangtag.Click += new System.EventHandler(this.BtnLabelHangtag_Click);
             // 
             // btnQuantityBreakdown
             // 
@@ -1159,7 +1159,7 @@
             this.btnQuantityBreakdown.TabIndex = 108;
             this.btnQuantityBreakdown.Text = "Quantity breakdown";
             this.btnQuantityBreakdown.UseVisualStyleBackColor = true;
-            this.btnQuantityBreakdown.Click += new System.EventHandler(this.btnQuantityBreakdown_Click);
+            this.btnQuantityBreakdown.Click += new System.EventHandler(this.BtnQuantityBreakdown_Click);
             // 
             // btnArtwork
             // 
@@ -1170,7 +1170,7 @@
             this.btnArtwork.TabIndex = 117;
             this.btnArtwork.Text = "Artwork";
             this.btnArtwork.UseVisualStyleBackColor = true;
-            this.btnArtwork.Click += new System.EventHandler(this.btnArtwork_Click);
+            this.btnArtwork.Click += new System.EventHandler(this.BtnArtwork_Click);
             // 
             // labelSpecialMark
             // 
@@ -1256,7 +1256,7 @@
             this.btnMaterialImport.TabIndex = 134;
             this.btnMaterialImport.Text = "Material Import";
             this.btnMaterialImport.UseVisualStyleBackColor = true;
-            this.btnMaterialImport.Click += new System.EventHandler(this.btnMaterialImport_Click);
+            this.btnMaterialImport.Click += new System.EventHandler(this.BtnMaterialImport_Click);
             // 
             // btnProductionKits
             // 
@@ -1267,7 +1267,7 @@
             this.btnProductionKits.TabIndex = 135;
             this.btnProductionKits.Text = "Production Kits";
             this.btnProductionKits.UseVisualStyleBackColor = true;
-            this.btnProductionKits.Click += new System.EventHandler(this.btnProductionKits_Click);
+            this.btnProductionKits.Click += new System.EventHandler(this.BtnProductionKits_Click);
             // 
             // btnPackingMethod
             // 
@@ -1278,7 +1278,7 @@
             this.btnPackingMethod.TabIndex = 136;
             this.btnPackingMethod.Text = "Packing Method";
             this.btnPackingMethod.UseVisualStyleBackColor = true;
-            this.btnPackingMethod.Click += new System.EventHandler(this.btnPackingMethod_Click);
+            this.btnPackingMethod.Click += new System.EventHandler(this.BtnPackingMethod_Click);
             // 
             // btnEachConsumption
             // 
@@ -1288,7 +1288,7 @@
             this.btnEachConsumption.TabIndex = 137;
             this.btnEachConsumption.Text = "Each Consumption";
             this.btnEachConsumption.UseVisualStyleBackColor = true;
-            this.btnEachConsumption.Click += new System.EventHandler(this.btnEachConsumption_Click);
+            this.btnEachConsumption.Click += new System.EventHandler(this.BtnEachConsumption_Click);
             // 
             // datePkgMTLETASP
             // 
@@ -1656,7 +1656,7 @@
             this.btnTrimCard.TabIndex = 184;
             this.btnTrimCard.Text = "Trim Card Print";
             this.btnTrimCard.UseVisualStyleBackColor = true;
-            this.btnTrimCard.Click += new System.EventHandler(this.btnTrimCard_Click);
+            this.btnTrimCard.Click += new System.EventHandler(this.BtnTrimCard_Click);
             // 
             // btnCloseMTL
             // 
@@ -1667,7 +1667,7 @@
             this.btnCloseMTL.TabIndex = 185;
             this.btnCloseMTL.Text = "Close R/MTL";
             this.btnCloseMTL.UseVisualStyleBackColor = true;
-            this.btnCloseMTL.Click += new System.EventHandler(this.btnCloseMTL_Click);
+            this.btnCloseMTL.Click += new System.EventHandler(this.BtnCloseMTL_Click);
             // 
             // btnMeterialStatus
             // 
@@ -1678,7 +1678,7 @@
             this.btnMeterialStatus.TabIndex = 186;
             this.btnMeterialStatus.Text = "Material Status";
             this.btnMeterialStatus.UseVisualStyleBackColor = true;
-            this.btnMeterialStatus.Click += new System.EventHandler(this.btnMeterialStatus_Click);
+            this.btnMeterialStatus.Click += new System.EventHandler(this.BtnMeterialStatus_Click);
             // 
             // btnMeterialStatus_Local
             // 
@@ -1689,7 +1689,7 @@
             this.btnMeterialStatus_Local.TabIndex = 187;
             this.btnMeterialStatus_Local.Text = "Material Status (Local)";
             this.btnMeterialStatus_Local.UseVisualStyleBackColor = true;
-            this.btnMeterialStatus_Local.Click += new System.EventHandler(this.btnMeterialStatus_Local_Click);
+            this.btnMeterialStatus_Local.Click += new System.EventHandler(this.BtnMeterialStatus_Local_Click);
             // 
             // btnReCalculate
             // 
@@ -1700,7 +1700,7 @@
             this.btnReCalculate.TabIndex = 188;
             this.btnReCalculate.Text = "Material Re-Calculate";
             this.btnReCalculate.UseVisualStyleBackColor = true;
-            this.btnReCalculate.Click += new System.EventHandler(this.btnReCalculate_Click);
+            this.btnReCalculate.Click += new System.EventHandler(this.BtnReCalculate_Click);
             // 
             // btnExpectionFormRemark
             // 
@@ -1710,7 +1710,7 @@
             this.btnExpectionFormRemark.TabIndex = 189;
             this.btnExpectionFormRemark.Text = "R";
             this.btnExpectionFormRemark.UseVisualStyleBackColor = true;
-            this.btnExpectionFormRemark.Click += new System.EventHandler(this.btnExpectionFormRemark_Click);
+            this.btnExpectionFormRemark.Click += new System.EventHandler(this.BtnExpectionFormRemark_Click);
             // 
             // btnPFHistory
             // 
@@ -1720,7 +1720,7 @@
             this.btnPFHistory.TabIndex = 194;
             this.btnPFHistory.Text = "PF";
             this.btnPFHistory.UseVisualStyleBackColor = true;
-            this.btnPFHistory.Click += new System.EventHandler(this.btnPFHistory_Click);
+            this.btnPFHistory.Click += new System.EventHandler(this.BtnPFHistory_Click);
             // 
             // displayIsMixMarker
             // 

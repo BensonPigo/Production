@@ -65,7 +65,7 @@ namespace Sci.Production.Quality
              return base.ClickSaveBefore();
          }
 
-        private void txtDefectcode_Validating(object sender, CancelEventArgs e)
+        private void TxtDefectcode_Validating(object sender, CancelEventArgs e)
          {
             string firstword;
             if (MyUtility.Check.Empty(this.txtDefectcode.Text))
@@ -106,7 +106,7 @@ namespace Sci.Production.Quality
              }
          }
 
-        private void txtDefectcode_Validated(object sender, EventArgs e)
+        private void TxtDefectcode_Validated(object sender, EventArgs e)
          {
              if (!MyUtility.Check.Empty(this.txtDefectcode.Text))
              {
@@ -115,7 +115,7 @@ namespace Sci.Production.Quality
          }
 
          #region 解決EditBox BindSouce後,會清空txtDefectType
-        private void editDescription_Leave(object sender, EventArgs e)
+        private void EditDescription_Leave(object sender, EventArgs e)
          {
              if (!MyUtility.Check.Empty(this.txtDefectcode.Text))
              {
@@ -123,7 +123,7 @@ namespace Sci.Production.Quality
              }
          }
 
-        private void detailcont_MouseDown(object sender, MouseEventArgs e)
+        private void Detailcont_MouseDown(object sender, MouseEventArgs e)
          {
              if (!MyUtility.Check.Empty(this.txtDefectcode.Text))
              {

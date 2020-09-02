@@ -13,49 +13,49 @@ namespace Sci.Production.Warehouse
     public partial class R01 : Win.Tems.PrintForm
     {
         // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
-        string season;
+        private string season;
 
         // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
-        string mdivision;
+        private string mdivision;
 
         // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
-        string factory;
+        private string factory;
 
         // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
-        string orderby;
+        private string orderby;
 
         // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
-        string spno1;
+        private string spno1;
 
         // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
-        string spno2;
+        private string spno2;
 
         // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
-        string fabrictype;
+        private string fabrictype;
 
         // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
-        string refno1;
+        private string refno1;
 
         // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
-        string refno2;
+        private string refno2;
 
         // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
-        string style;
+        private string style;
 
         // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
-        string country;
+        private string country;
 
         // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
-        string supp;
-        DateTime? sciDelivery1;
-        DateTime? sciDelivery2;
-        DateTime? suppDelivery1;
-        DateTime? suppDelivery2;
-        DateTime? eta1;
-        DateTime? eta2;
-        DateTime? ata1;
-        DateTime? ata2;
-        DataTable printData;
+        private string supp;
+        private DateTime? sciDelivery1;
+        private DateTime? sciDelivery2;
+        private DateTime? suppDelivery1;
+        private DateTime? suppDelivery2;
+        private DateTime? eta1;
+        private DateTime? eta2;
+        private DateTime? ata1;
+        private DateTime? ata2;
+        private DataTable printData;
 
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)

@@ -169,8 +169,8 @@
             this.txtArticle.Name = "txtArticle";
             this.txtArticle.Size = new System.Drawing.Size(122, 23);
             this.txtArticle.TabIndex = 3;
-            this.txtArticle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtArticle_MouseDown);
-            this.txtArticle.Validating += new System.ComponentModel.CancelEventHandler(this.txtArticle_Validating);
+            this.txtArticle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtArticle_MouseDown);
+            this.txtArticle.Validating += new System.ComponentModel.CancelEventHandler(this.TxtArticle_Validating);
             // 
             // comboResult
             // 
@@ -203,7 +203,7 @@
             this.btnEncode.TabIndex = 7;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
+            this.btnEncode.Click += new System.EventHandler(this.BtnEncode_Click);
             // 
             // btnToExcel
             // 
@@ -214,7 +214,7 @@
             this.btnToExcel.TabIndex = 0;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // dateTestDate
             // 
@@ -233,7 +233,7 @@
             this.btnToPDF.TabIndex = 93;
             this.btnToPDF.Text = "To PDF";
             this.btnToPDF.UseVisualStyleBackColor = true;
-            this.btnToPDF.Click += new System.EventHandler(this.btnToPDF_Click);
+            this.btnToPDF.Click += new System.EventHandler(this.BtnToPDF_Click);
             // 
             // label1
             // 
@@ -297,7 +297,7 @@
             this.txtuserInspector.Size = new System.Drawing.Size(296, 23);
             this.txtuserInspector.TabIndex = 5;
             this.txtuserInspector.TextBox1Binding = "";
-            this.txtuserInspector.Validating += new System.ComponentModel.CancelEventHandler(this.txtuserInspector_Validating);
+            this.txtuserInspector.Validating += new System.ComponentModel.CancelEventHandler(this.TxtuserInspector_Validating);
             // 
             // P05_Detail
             // 

@@ -566,7 +566,7 @@ and ai.Status='Confirmed'
             return true;
         }
 
-        private void comboMaterialType_SelectedValueChanged(object sender, EventArgs e)
+        private void ComboMaterialType_SelectedValueChanged(object sender, EventArgs e)
         {
             this.MaterialType = this.comboMaterialType.SelectedValue.ToString();
         }

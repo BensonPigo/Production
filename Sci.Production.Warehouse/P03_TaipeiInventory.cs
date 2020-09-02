@@ -9,8 +9,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_TaipeiInventory : Win.Subs.Base
     {
-        DataRow dr;
-        DataTable selectDataTable1;
+        private DataRow dr;
+        private DataTable selectDataTable1;
 
         public P03_TaipeiInventory(DataRow data)
         {
@@ -185,16 +185,16 @@ GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, 
             ;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void grid1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void Grid1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
         }
 
-        private void comboSortBy_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboSortBy_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (this.comboSortBy.SelectedIndex)
             {

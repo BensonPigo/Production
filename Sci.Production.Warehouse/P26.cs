@@ -308,15 +308,15 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
 ",
                 Env.User.UserID, this.CurrentMaintain["id"]);
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     DualResult result = DBProxy.Current.Execute(null, sqlComfirmUpdate);
                     if (!result)
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -324,16 +324,16 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                     result = Prgs.UpdateFtyInventoryMDivisionPoDetail(this.DetailDatas);
                     if (!result)
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
-                    _transactionscope.Complete();
+                    transactionscope.Complete();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr(ex);
                     return;
                 }
@@ -380,7 +380,7 @@ Where a.id = '{0}' ", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             var frm = new P26_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);

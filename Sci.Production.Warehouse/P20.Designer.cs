@@ -89,11 +89,11 @@
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // bindingSource1
             // 
-            this.bindingSource1.PositionChanged += new System.EventHandler(this.bindingSource1_PositionChanged);
+            this.bindingSource1.PositionChanged += new System.EventHandler(this.BindingSource1_PositionChanged);
             // 
             // panel3
             // 
@@ -199,7 +199,7 @@
             this.checkQty.TabIndex = 5;
             this.checkQty.Text = "Qty > 0";
             this.checkQty.UseVisualStyleBackColor = true;
-            this.checkQty.CheckedChanged += new System.EventHandler(this.checkQty_CheckedChanged);
+            this.checkQty.CheckedChanged += new System.EventHandler(this.CheckQty_CheckedChanged);
             // 
             // labelSeq
             // 
@@ -238,7 +238,7 @@
             this.btnQuery.TabIndex = 4;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // splitContainer1
             // 

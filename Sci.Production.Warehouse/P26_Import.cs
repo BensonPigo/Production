@@ -13,11 +13,11 @@ namespace Sci.Production.Warehouse
 {
     public partial class P26_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtArtwork;
-        Dictionary<string, string> selectedLocation = new Dictionary<string, string>();
+        private Dictionary<string, string> selectedLocation = new Dictionary<string, string>();
 
         public P26_Import(DataRow master, DataTable detail)
         {
@@ -40,7 +40,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Button Query
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtSPNo.Text.TrimEnd();
@@ -51,8 +51,8 @@ namespace Sci.Production.Warehouse
             string transid = this.txtTransactionID.Text.TrimEnd();
             string wk = this.txtWk.Text.TrimEnd();
             string locationid = this.txtLocation.Text.TrimEnd();
-            string MaterialType = this.cmbMaterialType.SelectedValue.ToString();
-            string StockType = this.comboStockType.SelectedValue.ToString();
+            string materialType = this.cmbMaterialType.SelectedValue.ToString();
+            string stockType = this.comboStockType.SelectedValue.ToString();
 
             // SP#, Transaction ID, Ref#,Location#,WK#不可同時為空
             bool sql1 = false;
@@ -145,18 +145,18 @@ where    f.MDivisionID='{0}'
         and a.dyelot like '%{0}%' ", dyelot));
                 }
 
-                if (!MyUtility.Check.Empty(MaterialType))
+                if (!MyUtility.Check.Empty(materialType))
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and p1.FabricType='{0}' ", MaterialType));
+        and p1.FabricType='{0}' ", materialType));
                 }
 
-                if (!MyUtility.Check.Empty(StockType))
+                if (!MyUtility.Check.Empty(stockType))
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and a.StockType = {0} ", StockType));
+        and a.StockType = {0} ", stockType));
                 }
 
                 if (!MyUtility.Check.Empty(wk))
@@ -363,7 +363,7 @@ outer apply(SELECT top 1 [val] = lt.EditDate
             order by lt.EditDate desc ) LastEditDate
 ",
                     transid,
-                    MyUtility.Check.Empty(StockType) ? string.Empty : $"and a.StockType = {StockType}",
+                    MyUtility.Check.Empty(stockType) ? string.Empty : $"and a.StockType = {stockType}",
                     Env.User.Keyword));
             }
 
@@ -564,12 +564,12 @@ stocktype = '{e.FormattedValue}'
             this.gridImport.Columns["stocktype"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             this.gridImport.ValidateControl();
@@ -581,9 +581,9 @@ stocktype = '{e.FormattedValue}'
 
             // 若無勾選，表示Qty <=0 的資料都被隱藏了，在這邊過濾掉
             // Qty > 0 一定都會在
-            bool Check_BalanceQty = this.BalanceQty.Checked;
+            bool check_BalanceQty = this.BalanceQty.Checked;
 
-            DataRow[] dr2 = Check_BalanceQty ? dtGridBS1.Select("Selected = 1 AND Qty>0") : dtGridBS1.Select("Selected = 1");
+            DataRow[] dr2 = check_BalanceQty ? dtGridBS1.Select("Selected = 1 AND Qty>0") : dtGridBS1.Select("Selected = 1");
 
             if (dr2.Length == 0)
             {
@@ -618,7 +618,7 @@ stocktype = '{e.FormattedValue}'
             this.Close();
         }
 
-        private void txtLocation2_MouseDown(object sender, MouseEventArgs e)
+        private void TxtLocation2_MouseDown(object sender, MouseEventArgs e)
         {
             Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(string.Empty, string.Empty);
             DialogResult result = item.ShowDialog();
@@ -674,7 +674,7 @@ stocktype = '{e.FormattedValue}'
         //            break;
         //    }
         // }
-        private void btnUpdateAllLocation_Click(object sender, EventArgs e)
+        private void BtnUpdateAllLocation_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -721,10 +721,10 @@ stocktype = '{e.FormattedValue}'
         // 動態顯示列表資料
         private void BalanceQty_CheckedChanged(object sender, EventArgs e)
         {
-            this.grid_Filter();
+            this.Grid_Filter();
         }
 
-        private void grid_Filter()
+        private void Grid_Filter()
         {
             string filter = string.Empty;
             if (this.gridImport.RowCount > 0)

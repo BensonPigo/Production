@@ -13,9 +13,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P43_Import : Win.Forms.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtInventory;
 
         public P43_Import(DataRow master, DataTable detail)
@@ -26,7 +26,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtSPNo.Text.TrimEnd();
@@ -34,7 +34,7 @@ namespace Sci.Production.Warehouse
             string seq2 = this.txtSeq2.Text.TrimEnd();
             string refno = this.txtRef.Text.TrimEnd();
             string location = this.txtLocation.Text.TrimEnd();
-            string FabricType = this.cmbFabric.SelectedValue.ToString().Trim();
+            string fabricType = this.cmbFabric.SelectedValue.ToString().Trim();
             if (string.IsNullOrWhiteSpace(sp))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!");
@@ -109,14 +109,14 @@ where 1=1 and FTI.StockType='O' ");
         and lo.Data='{0}'  ", location));
                 }
 
-                if (!MyUtility.Check.Empty(FabricType))
+                if (!MyUtility.Check.Empty(fabricType))
                 {
                     // FabricType=ALL 則不需要判斷
-                    if (FabricType != "ALL")
+                    if (fabricType != "ALL")
                     {
                         strSQLCmd.Append(string.Format(
                             @" 
-        and PO3.FabricType='{0}'  ", FabricType));
+        and PO3.FabricType='{0}'  ", fabricType));
                     }
                 }
 
@@ -166,10 +166,10 @@ where 1=1 and FTI.StockType='O' ");
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
-                decimal CurrentQty = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                decimal currentQty = MyUtility.Convert.GetDecimal(e.FormattedValue);
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    if (CurrentQty < 0)
+                    if (currentQty < 0)
                     {
                         MyUtility.Msg.WarningBox("Current Qty cannot less 0 !");
                         e.Cancel = true;
@@ -277,7 +277,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         // Localtion Popup
-        private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -301,7 +301,7 @@ where   StockType='O'
         }
 
         // Localtion Validating
-        private void txtLocation_Validating(object sender, CancelEventArgs e)
+        private void TxtLocation_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtLocation.Text.ToString()))
             {
@@ -326,13 +326,13 @@ where exists(
         }
 
         // Cancel
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
@@ -383,7 +383,7 @@ where exists(
         }
 
         // Update Reason All
-        private void btnUpdateAll_Click(object sender, EventArgs e)
+        private void BtnUpdateAll_Click(object sender, EventArgs e)
         {
             string reasonid = this.comboReason.SelectedValue.ToString();
             this.gridImport.ValidateControl();

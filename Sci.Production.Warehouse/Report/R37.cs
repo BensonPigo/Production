@@ -13,15 +13,15 @@ namespace Sci.Production.Warehouse
 {
     public partial class R37 : Win.Tems.PrintForm
     {
-        string factory;
-        string spno1;
-        string spno2;
-        string Stocktype;
-        string Reason;
-        string mdivision;
-        DateTime? issueDelivery1;
-        DateTime? issueDelivery2;
-        DataTable printData;
+        private string factory;
+        private string spno1;
+        private string spno2;
+        private string Stocktype;
+        private string Reason;
+        private string mdivision;
+        private DateTime? issueDelivery1;
+        private DateTime? issueDelivery2;
+        private DataTable printData;
 
         public R37(ToolStripMenuItem menuitem)
             : base(menuitem)

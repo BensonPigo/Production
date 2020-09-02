@@ -232,7 +232,7 @@
             this.btnFind.TabIndex = 63;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // displayMTLCmlpt
             // 
@@ -462,21 +462,21 @@
             this.modifyCroclingtestToolStripMenuItem.Name = "modifyCroclingtestToolStripMenuItem";
             this.modifyCroclingtestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.modifyCroclingtestToolStripMenuItem.Text = "Modify Crocking Test";
-            this.modifyCroclingtestToolStripMenuItem.Click += new System.EventHandler(this.modifyToolStripMenuItem_Click);
+            this.modifyCroclingtestToolStripMenuItem.Click += new System.EventHandler(this.ModifyToolStripMenuItem_Click);
             // 
             // modifyHeatTestToolStripMenuItem
             // 
             this.modifyHeatTestToolStripMenuItem.Name = "modifyHeatTestToolStripMenuItem";
             this.modifyHeatTestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.modifyHeatTestToolStripMenuItem.Text = "Modify Heat Test";
-            this.modifyHeatTestToolStripMenuItem.Click += new System.EventHandler(this.modifyHeatTestToolStripMenuItem_Click);
+            this.modifyHeatTestToolStripMenuItem.Click += new System.EventHandler(this.ModifyHeatTestToolStripMenuItem_Click);
             // 
             // modifyWashTestToolStripMenuItem
             // 
             this.modifyWashTestToolStripMenuItem.Name = "modifyWashTestToolStripMenuItem";
             this.modifyWashTestToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.modifyWashTestToolStripMenuItem.Text = "Modify WashTest";
-            this.modifyWashTestToolStripMenuItem.Click += new System.EventHandler(this.modifyWashTestToolStripMenuItem_Click);
+            this.modifyWashTestToolStripMenuItem.Click += new System.EventHandler(this.ModifyWashTestToolStripMenuItem_Click);
             // 
             // dateEarliestEstCutDate
             // 

@@ -13,9 +13,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P32_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtBorrow;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private int grid2SelectIndex = 0;
@@ -106,7 +106,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        this.checkBorrowReturnQty(e.RowIndex, Convert.ToDecimal(e.FormattedValue));
+                        this.CheckBorrowReturnQty(e.RowIndex, Convert.ToDecimal(e.FormattedValue));
                     }
                 };
 
@@ -117,11 +117,11 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                     DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
-                        this.checkBorrowReturnQty(e.RowIndex, Convert.ToDecimal(dr["balance"]));
+                        this.CheckBorrowReturnQty(e.RowIndex, Convert.ToDecimal(dr["balance"]));
                     }
                     else if (Convert.ToBoolean(dr["selected"]) == false)
                     {
-                        this.checkBorrowReturnQty(e.RowIndex, Convert.ToDecimal(0));
+                        this.CheckBorrowReturnQty(e.RowIndex, Convert.ToDecimal(0));
                     }
 
                     dr.EndEdit();
@@ -254,13 +254,13 @@ drop table #tmp,#tmp2
         }
 
         // Close
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             StringBuilder warningmsg = new StringBuilder();
             this.dtBorrow = this.gridImport.GetTable();
@@ -371,7 +371,7 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, nu
             }
         }
 
-        private void grid2_RowSelecting(object sender, Ict.Win.UI.DataGridViewRowSelectingEventArgs e)
+        private void Grid2_RowSelecting(object sender, Ict.Win.UI.DataGridViewRowSelectingEventArgs e)
         {
             this.grid2SelectIndex = e.RowIndex;
             DataRow dr = this.gridFromPoId.GetDataRow(this.grid2SelectIndex);
@@ -380,12 +380,12 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, nu
             this.listControlBindingSource1.Filter = string.Format("ToPoid = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}'", dr["FromPoid"].ToString(), dr["FromSeq1"].ToString(), dr["FromSeq2"].ToString());
         }
 
-        private void grid1_RowLeave(object sender, DataGridViewCellEventArgs e)
+        private void Grid1_RowLeave(object sender, DataGridViewCellEventArgs e)
         {
             this.gridImport.ValidateControl();
         }
 
-        private void checkBorrowReturnQty(int rowIndex, decimal qty)
+        private void CheckBorrowReturnQty(int rowIndex, decimal qty)
         {
             // check 判斷總數在 Stock or Return 超過
             bool checkGrid2Return = false, checkReturnQty = false;

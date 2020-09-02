@@ -100,8 +100,8 @@
             this.txtRefno.Name = "txtRefno";
             this.txtRefno.Size = new System.Drawing.Size(168, 23);
             this.txtRefno.TabIndex = 0;
-            this.txtRefno.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtRefno_PopUp);
-            this.txtRefno.Validating += new System.ComponentModel.CancelEventHandler(this.txtRefno_Validating);
+            this.txtRefno.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtRefno_PopUp);
+            this.txtRefno.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRefno_Validating);
             // 
             // labelCode
             // 

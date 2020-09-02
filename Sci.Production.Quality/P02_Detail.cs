@@ -20,11 +20,11 @@ namespace Sci.Production.Quality
          *注意! P02_Detail WorkAlias沒有特別作用,所有的繫結資料(mtbs - )來源都是上一層的CurrentDetailData(detail GridView)
          */
         #endregion
-        private string loginID = Env.User.UserID;
-        private bool canedit;
+        private readonly string loginID = Env.User.UserID;
+        private readonly bool canedit;
         private string id;
         private string receivingID;
-        private string poid;
+        private readonly string poid;
         private string seq1;
         private string seq2;
 
@@ -33,8 +33,8 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
             this.id = airID;
             this.canedit = CanEdit;
-            this.btn_status(this.id);
-            this.button_enable(this.canedit);
+            this.Btn_status(this.id);
+            this.Button_enable(this.canedit);
 
             string air_cmd = string.Format("select * from air WITH (NOLOCK) where id='{0}'", this.id);
             DataRow dr;
@@ -68,10 +68,10 @@ namespace Sci.Production.Quality
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.button_enable(this.canedit);
+            this.Button_enable(this.canedit);
         }
 
-        private void btnAmend_Click(object sender, EventArgs e)
+        private void BtnAmend_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
             string updatesql1 = string.Empty;
@@ -107,7 +107,7 @@ namespace Sci.Production.Quality
 
                             _transactionscope1.Complete();
                             _transactionscope1.Dispose();
-                            this.btn_status(this.id);
+                            this.Btn_status(this.id);
                             this.btnEdit.Text = "Edit";
                             this.btnAmend.Text = "Encode";
                             this.btnEdit.Enabled = true;
@@ -243,7 +243,7 @@ WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
                         this.btnEdit.Text = "Edit";
                         this.btnEdit.Enabled = false;
 
-                        this.btn_status(this.id);
+                        this.Btn_status(this.id);
                     }
                     catch (Exception ex)
                     {
@@ -290,7 +290,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
         }
 
         // Save and Edit
-        private void btnEdit_Click(object sender, EventArgs e)
+        private void BtnEdit_Click(object sender, EventArgs e)
         {
             string strSqlcmd = string.Empty;
             this.btnAmend.Enabled = false;
@@ -445,7 +445,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             }
         }
 
-        private void editDefect_MouseDown(object sender, MouseEventArgs e)
+        private void EditDefect_MouseDown(object sender, MouseEventArgs e)
         {
             if (this.btnEdit.Text != "Save")
             {
@@ -466,7 +466,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             }
         }
 
-        private void button_enable(bool canedit)
+        private void Button_enable(bool canedit)
         {
             // Visable
             this.btnEdit.Visible = (bool)canedit;
@@ -476,7 +476,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             this.btnEdit.Enabled = this.btnAmend.Text.ToString() == "Encode" ? true : false;
         }
 
-        private void btn_status(object id)
+        private void Btn_status(object id)
         {
             string air_cmd = string.Format("select * from air WITH (NOLOCK) where id='{0}'", id);
             DataTable dt;
@@ -494,7 +494,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             if (this.btnClose.Text.ToString().ToUpper() == "UNDO")
             {
@@ -569,15 +569,15 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                 this.seq2 = string.Empty;
             }
 
-            this.button_enable(this.canedit);
+            this.Button_enable(this.canedit);
         }
 
-        private void right_Click(object sender, EventArgs e)
+        private void Right_Click(object sender, EventArgs e)
         {
             this.ChangeData();
         }
 
-        private void left_Click(object sender, EventArgs e)
+        private void Left_Click(object sender, EventArgs e)
         {
             this.ChangeData();
         }

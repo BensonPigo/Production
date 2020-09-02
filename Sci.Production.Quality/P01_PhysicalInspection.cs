@@ -16,9 +16,9 @@ namespace Sci.Production.Quality
 {
     public partial class P01_PhysicalInspection : Win.Subs.Input4
     {
-        private DataRow maindr;
-        private string loginID = Env.User.UserID;
-        private string keyWord = Env.User.Keyword;
+        private readonly DataRow maindr;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string keyWord = Env.User.Keyword;
         string excelFile = string.Empty;
         DataTable Fir_physical_Defect;
 
@@ -39,7 +39,7 @@ namespace Sci.Production.Quality
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
-            this.button_enable();
+            this.Button_enable();
         }
 
         protected override DualResult OnRequery()
@@ -51,7 +51,7 @@ namespace Sci.Production.Quality
         private void QueryHeader()
         {
             #region Encode/Approve Enable
-            this.button_enable();
+            this.Button_enable();
             this.btnEncode.Text = MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"]) ? "Amend" : "Encode";
             this.btnApprove.Text = this.maindr["Status"].ToString() == "Approved" ? "Unapprove" : "Approve";
             #endregion
@@ -174,7 +174,7 @@ namespace Sci.Production.Quality
         /// By Ukey
         /// </summary>
         /// <param name="strNewKey">需要刪除第三層所對應的 NewUkey</param>
-        private void cleanDefect(string strNewKey)
+        private void CleanDefect(string strNewKey)
         {
             for (int i = this.Fir_physical_Defect.Rows.Count - 1; i >= 0; i--)
             {
@@ -185,10 +185,10 @@ namespace Sci.Production.Quality
                 }
             }
 
-            this.get_total_point();
+            this.Get_total_point();
         }
 
-        protected void get_total_point()
+        protected void Get_total_point()
         {
             double double_ActualYds = MyUtility.Convert.GetDouble(this.CurrentData["ActualYds"]);
             double ActualYdsT = Math.Floor(MyUtility.Convert.GetDouble(this.CurrentData["ActualYds"]) - 0.01);
@@ -321,7 +321,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings Ydscell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings TotalPointcell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResulCell = PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResulCell = PublicPrg.Prgs.CellResult.GetGridCell();
             #region TotalPoint Double Click
             TotalPointcell.EditingMouseDoubleClick += (s, e) =>
             {
@@ -331,7 +331,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
                 frm.ShowDialog(this);
                 if (this.EditMode)
                 {
-                    this.get_total_point();
+                    this.Get_total_point();
                 }
             };
             #endregion
@@ -388,7 +388,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
                     dr["Result"] = "Pass";
                     dr["Grade"] = "A";
                     dr["totalpoint"] = 0.00;
-                    this.cleanDefect(strNewKey);
+                    this.CleanDefect(strNewKey);
                     dr.EndEdit();
                 }
             };
@@ -428,7 +428,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
                     dr["Grade"] = string.Empty;
                     dr["moisture"] = 0;
                     dr["Remark"] = string.Empty;
-                    this.cleanDefect(strNewKey);
+                    this.CleanDefect(strNewKey);
                     dr.EndEdit();
                     return;
                 }
@@ -461,7 +461,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
                     dr["Result"] = "Pass";
                     dr["Grade"] = "A";
                     dr["totalpoint"] = 0.00;
-                    this.cleanDefect(strNewKey);
+                    this.CleanDefect(strNewKey);
                     dr.EndEdit();
                 }
                 else
@@ -478,7 +478,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
                     dr["moisture"] = 0;
                     dr["Remark"] = string.Empty;
                     dr.EndEdit();
-                    this.cleanDefect(strNewKey);
+                    this.CleanDefect(strNewKey);
                     dr["Result"] = string.Empty;
                     dr["Grade"] = string.Empty;
                     e.Cancel = true;
@@ -530,12 +530,12 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
                 // 若新的 Act.Yds\nInspected = 0，則第三層必須清空
                 if (newvalue.EqualDecimal(0))
                 {
-                    this.cleanDefect(dr["NewKey"].ToString());
+                    this.CleanDefect(dr["NewKey"].ToString());
                 }
 
                 dr["Actualyds"] = e.FormattedValue;
                 dr.EndEdit();
-                this.get_total_point();
+                this.Get_total_point();
             };
             #endregion
 
@@ -785,7 +785,7 @@ Where DetailUkey = {15};",
             return upResult;
         }
 
-        private void btnEncode_Click(object sender, EventArgs e)
+        private void BtnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
             if (MyUtility.Check.Empty(this.CurrentData) && this.btnEncode.Text == "Encode")
@@ -920,7 +920,7 @@ and not exists
             this.OnRequery();
         }
 
-        private void btnApprove_Click(object sender, EventArgs e)
+        private void BtnApprove_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
 
@@ -976,7 +976,7 @@ and not exists
             this.OnRequery();
         }
 
-        private void button_enable()
+        private void Button_enable()
         {
             if (this.maindr == null)
             {
@@ -1007,12 +1007,12 @@ and not exists
             }
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             this.ToExcel(false, "Regular");
         }
 
-        private void btnToExcel_defect_Click(object sender, EventArgs e)
+        private void BtnToExcel_defect_Click(object sender, EventArgs e)
         {
             this.ToExcel(false, "DefectYds");
         }
@@ -1438,7 +1438,7 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", this.textID.Text, dtGrid.Row
             return true;
         }
 
-        private void btnSendMail_Click(object sender, EventArgs e)
+        private void BtnSendMail_Click(object sender, EventArgs e)
         {
             if (MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"]) && this.maindr["Status"].ToString() != "Approved")
             {

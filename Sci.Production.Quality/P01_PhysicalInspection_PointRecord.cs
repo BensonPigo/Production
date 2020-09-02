@@ -8,10 +8,10 @@ namespace Sci.Production.Quality
 {
     public partial class P01_PhysicalInspection_PointRecord : Win.Subs.Base
     {
-        private DataTable defRecord;
-        private string def_num;
-        private DataRow def_dr;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_Points;
+        private readonly DataTable defRecord;
+        private readonly string def_num;
+        private readonly DataRow def_dr;
+        readonly Ict.Win.UI.DataGridViewNumericBoxColumn col_Points;
 
         public P01_PhysicalInspection_PointRecord(DataRow data_dr, string n_column, bool edit)
         {
@@ -59,7 +59,7 @@ namespace Sci.Production.Quality
             this.col_Points.IsEditingReadOnly = !isEditing;
         }
 
-        private void btnOK_Click(object sender, EventArgs e) // OK
+        private void BtnOK_Click(object sender, EventArgs e) // OK
         {
             this.gridPhysicalInspection.ValidateControl();
             int totalPoint = MyUtility.Convert.GetInt(this.defRecord.Compute("Sum(Points)", string.Empty));

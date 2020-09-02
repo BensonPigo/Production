@@ -118,10 +118,10 @@
             this.gridIssueBreakDown.Size = new System.Drawing.Size(784, 267);
             this.gridIssueBreakDown.TabIndex = 0;
             this.gridIssueBreakDown.TabStop = false;
-            this.gridIssueBreakDown.CellValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridIssueBreakDown_CellValidated);
+            this.gridIssueBreakDown.CellValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.GridIssueBreakDown_CellValidated);
             this.gridIssueBreakDown.ColumnHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridIssueBreakDown_ColumnHeaderMouseDoubleClick);
-            this.gridIssueBreakDown.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.gridIssueBreakDown_DataError);
-            this.gridIssueBreakDown.Sorted += new System.EventHandler(this.gridIssueBreakDown_Sorted);
+            this.gridIssueBreakDown.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.GridIssueBreakDown_DataError);
+            this.gridIssueBreakDown.Sorted += new System.EventHandler(this.GridIssueBreakDown_Sorted);
             // 
             // panel1
             // 
@@ -144,7 +144,7 @@
             this.btnCopyQTY.TabIndex = 2;
             this.btnCopyQTY.Text = "Copy QTY";
             this.btnCopyQTY.UseVisualStyleBackColor = true;
-            this.btnCopyQTY.Click += new System.EventHandler(this.btnSet_Click);
+            this.btnCopyQTY.Click += new System.EventHandler(this.BtnSet_Click);
             // 
             // btnCancel
             // 
@@ -155,7 +155,7 @@
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnSave
             // 
@@ -166,7 +166,7 @@
             this.btnSave.TabIndex = 0;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // labe
             // 

@@ -8,9 +8,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_Supplier : Win.Subs.Base
     {
-        DataRow dr;
-        DataTable selectDataTable1;
-        DualResult selectResult1;
+        private DataRow dr;
+        private DataTable selectDataTable1;
+        private DualResult selectResult1;
 
         public P03_Supplier(DataRow data)
         {
@@ -59,7 +59,7 @@ namespace Sci.Production.Warehouse
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

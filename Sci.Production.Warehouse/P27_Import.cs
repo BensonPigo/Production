@@ -13,9 +13,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P27_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtInventory;
 
         public P27_Import(DataRow master, DataTable detail)
@@ -26,14 +26,14 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtSP.Text.TrimEnd();
             string refno = this.txtRef.Text.TrimEnd();
             string color = this.txtColor.Text.TrimEnd();
             string location = this.txtLocation.Text.TrimEnd();
-            string StockType = MyUtility.Convert.GetString(this.dr_master["StockType"]);
+            string stockType = MyUtility.Convert.GetString(this.dr_master["StockType"]);
 
             #region 判斷畫面條件, 至少其中一個有填
             if (string.IsNullOrWhiteSpace(sp) && string.IsNullOrWhiteSpace(refno) && string.IsNullOrWhiteSpace(color) && string.IsNullOrWhiteSpace(location))
@@ -63,7 +63,7 @@ select selected = 0
 from LocalInventory LI WITH (NOLOCK)
 left join LocalItem L WITH (NOLOCK) on L.RefNo = LI.Refno
 where (case when '{0}' = 'B'then LI.InQty-LI.OutQty+LI.AdjustQty 
-		    when '{0}' = 'O'then LI.LobQty	End)>0", StockType));
+		    when '{0}' = 'O'then LI.LobQty	End)>0", stockType));
             #endregion
 
             #region sql搜尋條件
@@ -170,7 +170,7 @@ where  StockType='O' and junk != '1'");
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
@@ -210,7 +210,7 @@ where  StockType='O' and junk != '1'");
             this.Close();
         }
 
-        private void txtLocation_Validating(object sender, CancelEventArgs e)
+        private void TxtLocation_Validating(object sender, CancelEventArgs e)
         {
             if (this.txtLocation.Text.ToString() == string.Empty)
             {
@@ -235,7 +235,7 @@ where exists(
         }
 
         // Location  右鍵
-        private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -258,7 +258,7 @@ where   StockType='B'
             this.txtLocation.Text = item.GetSelectedString();
         }
 
-        private void txtToLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtToLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -292,9 +292,9 @@ where  StockType='B' and junk != '1'");
             selectSubcons.Empty();
         }
 
-        private void btnUpdateAll_Click(object sender, EventArgs e)
+        private void BtnUpdateAll_Click(object sender, EventArgs e)
         {
-            string ToLocation = this.txtToLocation.Text;
+            string toLocation = this.txtToLocation.Text;
 
             if (this.dtInventory == null || this.dtInventory.Rows.Count == 0)
             {
@@ -305,12 +305,12 @@ where  StockType='B' and junk != '1'");
 
             foreach (var item in drfound)
             {
-                item["ToLocation"] = ToLocation;
+                item["ToLocation"] = toLocation;
             }
         }
 
         // Close
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }

@@ -233,8 +233,8 @@
             this.txtScale.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
             this.txtScale.Size = new System.Drawing.Size(103, 23);
             this.txtScale.TabIndex = 111;
-            this.txtScale.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtScale_PopUp);
-            this.txtScale.Validating += new System.ComponentModel.CancelEventHandler(this.txtScale_Validating);
+            this.txtScale.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtScale_PopUp);
+            this.txtScale.Validating += new System.ComponentModel.CancelEventHandler(this.TxtScale_Validating);
             // 
             // labelScale
             // 
@@ -255,7 +255,7 @@
             this.btnEncode.TabIndex = 139;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
+            this.btnEncode.Click += new System.EventHandler(this.BtnEncode_Click);
             // 
             // displayColor
             // 
@@ -417,7 +417,7 @@
             this.btnClose.TabIndex = 124;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnEdit
             // 
@@ -428,7 +428,7 @@
             this.btnEdit.TabIndex = 125;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
-            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // P07_Wash
             // 

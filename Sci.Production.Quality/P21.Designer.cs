@@ -379,7 +379,7 @@
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(141, 23);
             this.txtSP.TabIndex = 1;
-            this.txtSP.Validated += new System.EventHandler(this.txtSP_Validated);
+            this.txtSP.Validated += new System.EventHandler(this.TxtSP_Validated);
             // 
             // txtStyle
             // 
@@ -448,7 +448,7 @@
             this.comboInspectionStage.OldText = "";
             this.comboInspectionStage.Size = new System.Drawing.Size(121, 24);
             this.comboInspectionStage.TabIndex = 7;
-            this.comboInspectionStage.SelectedIndexChanged += new System.EventHandler(this.comboInspectionStage_SelectedIndexChanged);
+            this.comboInspectionStage.SelectedIndexChanged += new System.EventHandler(this.ComboInspectionStage_SelectedIndexChanged);
             // 
             // comboResult
             // 
@@ -527,7 +527,7 @@
             0,
             0,
             0});
-            this.numGarmentOutput.TextChanged += new System.EventHandler(this.numGarmentOutput_TextChanged);
+            this.numGarmentOutput.TextChanged += new System.EventHandler(this.NumGarmentOutput_TextChanged);
             // 
             // numInspectQty
             // 

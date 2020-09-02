@@ -14,14 +14,14 @@ namespace Sci.Production.Warehouse
 {
     public partial class P07_Print : Win.Tems.PrintForm
     {
-        DataTable dt;
-        string id;
-        string Date1;
-        string Date2;
-        string ETA;
-        string Invoice;
-        string Wk;
-        string FTYID;
+        private DataTable dt;
+        private string id;
+        private string Date1;
+        private string Date2;
+        private string ETA;
+        private string Invoice;
+        private string Wk;
+        private string FTYID;
 
         public P07_Print(List<string> polist)
         {
@@ -30,7 +30,7 @@ namespace Sci.Production.Warehouse
             this.poidList = polist;
         }
 
-        List<string> poidList;
+        private List<string> poidList;
 
         protected override bool ValidateInput()
         {
@@ -74,8 +74,8 @@ namespace Sci.Production.Warehouse
                 this.ShowErr(titleResult);
             }
 
-            string RptTitle = dtTitle.Rows[0]["nameEN"].ToString();
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            string rptTitle = dtTitle.Rows[0]["nameEN"].ToString();
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
 
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ETA", this.ETA));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", this.Invoice));
@@ -155,7 +155,7 @@ where R.id = @ID";
                                     BrandID = row1["BrandID"].ToString(),
                                     Desc = row1["Desc"].ToString().TrimEnd(new char[] { '\n', '\r' }),
                                     ShipQty = row1["ShipQty"].ToString(),
-                                    pounit = row1["pounit"].ToString(),
+                                    Pounit = row1["pounit"].ToString(),
                                     StockQty = row1["StockQty"].ToString(),
                                     StockUnit = row1["StockUnit"].ToString(),
                                     SubStockQty = row1["SubStockQty"].ToString(),
@@ -177,7 +177,7 @@ where R.id = @ID";
                                    Roll = row1["Roll"].ToString(),
                                    Desc = row1["Desc"].ToString().TrimEnd(new char[] { '\n', '\r' }),
                                    ShipQty = row1["ShipQty"].ToString(),
-                                   pounit = row1["pounit"].ToString(),
+                                   Pounit = row1["pounit"].ToString(),
                                    GW = row1["Weight"].ToString(),
                                    AW = row1["ActualWeight"].ToString(),
                                    Vaniance = row1["Vaniance"].ToString(),
@@ -195,14 +195,14 @@ where R.id = @ID";
 
         public DataRow CurrentDataRow { get; set; }
 
-        private void radioGroup1_ValueChanged(object sender, EventArgs e)
+        private void RadioGroup1_ValueChanged(object sender, EventArgs e)
         {
             this.ReportResourceNamespace = typeof(P07_PrintData);
             this.ReportResourceAssembly = this.ReportResourceNamespace.Assembly;
             this.ReportResourceName = this.radioPanel1.Value == this.radioPLRcvReport.Value ? "P07_Report1.rdlc" : "P07_Report2.rdlc";
         }
 
-        private void radioPLRcvReport_CheckedChanged(object sender, EventArgs e)
+        private void RadioPLRcvReport_CheckedChanged(object sender, EventArgs e)
         {
             this.CheckControlEnable();
         }

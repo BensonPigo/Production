@@ -15,9 +15,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P38 : Win.Tems.QueryForm
     {
-        const byte UnLock = 0;
-        const byte Lock = 1;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private const byte UnLock = 0;
+        private const byte Lock = 1;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         public P38(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -115,12 +115,12 @@ namespace Sci.Production.Warehouse
             #endregion
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp1 = this.txtSP.Text.TrimEnd() + '%';
@@ -447,14 +447,14 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
             this.HideWaitMessage();
         }
 
-        private void btnLock_Click(object sender, EventArgs e)
+        private void BtnLock_Click(object sender, EventArgs e)
         {
             if (this.listControlBindingSource1.DataSource == null)
             {
                 return;
             }
 
-            if (this.checkStatus(Lock))
+            if (this.CheckStatus(Lock))
             {
                 this.LockUnlock(Lock);
             }
@@ -464,14 +464,14 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
             }
         }
 
-        private void btnUnlock_Click(object sender, EventArgs e)
+        private void BtnUnlock_Click(object sender, EventArgs e)
         {
             if (this.listControlBindingSource1.DataSource == null)
             {
                 return;
             }
 
-            if (this.checkStatus(UnLock))
+            if (this.CheckStatus(UnLock))
             {
                 this.LockUnlock(UnLock);
             }
@@ -481,7 +481,7 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
             }
         }
 
-        private bool checkStatus(byte flag)
+        private bool CheckStatus(byte flag)
         {
             bool check = true;
             string strCheckStatus = string.Empty;
@@ -564,10 +564,10 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
                 MyUtility.Msg.InfoBox(string.Format("{0} successful!!", keyword));
             }
 
-            this.btnQuery_Click(null, null);
+            this.BtnQuery_Click(null, null);
         }
 
-        private void btnExcel_Click(object sender, EventArgs e)
+        private void BtnExcel_Click(object sender, EventArgs e)
         {
             if (this.listControlBindingSource1.DataSource == null)
             {

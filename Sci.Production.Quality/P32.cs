@@ -16,8 +16,8 @@ namespace Sci.Production.Quality
     /// <inheritdoc/>
     public partial class P32 : Sci.Win.Tems.Input6
     {
-        private string _Type = string.Empty;
-        private P32Header _sourceHeader = new P32Header();
+        private readonly string _Type = string.Empty;
+        private readonly P32Header _sourceHeader = new P32Header();
         private string _oldStage = string.Empty;
         private bool _canConfirm = false;
 
@@ -846,13 +846,13 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
 
         }
 
-        private void numInspectQty_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        private void NumInspectQty_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.CurrentMaintain["InspectQty"] = this.numInspectQty.Value;
             this.CauculateSQR();
         }
 
-        private void comboTeam_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboTeam_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.CurrentMaintain != null)
             {
@@ -860,7 +860,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
             }
         }
 
-        private void comboResult_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboResult_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.CurrentMaintain != null)
             {
@@ -869,7 +869,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
 
         }
 
-        private void txtSewingLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtSewingLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (this.EditMode)
             {
@@ -884,7 +884,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
             }
         }
 
-        private void txtSewingLine_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        private void TxtSewingLine_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (this.EditMode && this.txtSewingLine.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Any())
             {
@@ -931,7 +931,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
             }
         }
 
-        private void txtInspectedCarton_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtInspectedCarton_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (this.EditMode)
             {

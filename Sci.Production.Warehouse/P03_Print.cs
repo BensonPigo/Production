@@ -11,10 +11,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_Print : Win.Tems.PrintForm
     {
-        DataTable dt;
-        DataRow CurrentDataRow;
-        string order_by = string.Empty;
-        string junk_where = string.Empty;
+        private DataTable dt;
+        private DataRow CurrentDataRow;
+        private string order_by = string.Empty;
+        private string junk_where = string.Empty;
 
         public P03_Print(DataRow row, int sort_by, bool chk_includeJunk)
         {

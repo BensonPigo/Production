@@ -8,7 +8,7 @@ namespace Sci.Production.Quality
 {
     public partial class B07 : Win.Tems.Input1
     {
-        Hashtable ht = new Hashtable();
+        readonly Hashtable ht = new Hashtable();
 
         public B07(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -100,7 +100,7 @@ namespace Sci.Production.Quality
             return base.ClickEditBefore();
         }
 
-        private void radioOption1_CheckedChanged(object sender, EventArgs e)
+        private void RadioOption1_CheckedChanged(object sender, EventArgs e)
         {
             if (this.radioOption1.Checked)
             {

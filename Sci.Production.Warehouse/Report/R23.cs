@@ -32,7 +32,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
-        DataTable dt;
+        private DataTable dt;
 
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {

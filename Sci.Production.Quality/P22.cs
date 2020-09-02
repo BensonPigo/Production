@@ -182,14 +182,14 @@ order by p2.ID,p2.Seq";
             }
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Data Loading...");
             this.Find();
             this.HideWaitMessage();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             DualResult resule;
             DataTable dt = (DataTable)this.listControlBindingSource.DataSource;
@@ -299,12 +299,12 @@ where CFANeedInsp = 1 ", out dtToExcel);
             #endregion
         }
 
-        private void btnColse_Click(object sender, EventArgs e)
+        private void BtnColse_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void checkCartonsInClog_CheckedChanged(object sender, EventArgs e)
+        private void CheckCartonsInClog_CheckedChanged(object sender, EventArgs e)
         {
             this.Grid_Filter();
         }

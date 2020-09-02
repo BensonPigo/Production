@@ -81,7 +81,7 @@
             this.chk_includeJunk.TabIndex = 19;
             this.chk_includeJunk.Text = "Include Junk Material";
             this.chk_includeJunk.UseVisualStyleBackColor = true;
-            this.chk_includeJunk.CheckedChanged += new System.EventHandler(this.chk_includeJunk_CheckedChanged);
+            this.chk_includeJunk.CheckedChanged += new System.EventHandler(this.Chk_includeJunk_CheckedChanged);
             // 
             // btnNewSearch
             // 
@@ -91,7 +91,7 @@
             this.btnNewSearch.TabIndex = 5;
             this.btnNewSearch.Text = "New Search";
             this.btnNewSearch.UseVisualStyleBackColor = true;
-            this.btnNewSearch.Click += new System.EventHandler(this.btnNewSearch_Click);
+            this.btnNewSearch.Click += new System.EventHandler(this.BtnNewSearch_Click);
             // 
             // txtSPNo
             // 
@@ -118,7 +118,7 @@
             this.btnQuery.TabIndex = 1;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // panel3
             // 
@@ -251,7 +251,7 @@
             this.comboSortBy.OldText = "";
             this.comboSortBy.Size = new System.Drawing.Size(121, 24);
             this.comboSortBy.TabIndex = 0;
-            this.comboSortBy.SelectedIndexChanged += new System.EventHandler(this.comboSortBy_SelectedIndexChanged);
+            this.comboSortBy.SelectedIndexChanged += new System.EventHandler(this.ComboSortBy_SelectedIndexChanged);
             // 
             // btnToExcel
             // 
@@ -263,7 +263,7 @@
             this.btnToExcel.TabIndex = 1;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // btnClose
             // 
@@ -274,7 +274,7 @@
             this.btnClose.TabIndex = 2;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // panel2
             // 
@@ -311,8 +311,8 @@
             this.gridMaterialStatus.Size = new System.Drawing.Size(1002, 504);
             this.gridMaterialStatus.TabIndex = 0;
             this.gridMaterialStatus.TabStop = false;
-            this.gridMaterialStatus.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.gridMaterialStatus_DataError);
-            this.gridMaterialStatus.Sorted += new System.EventHandler(this.gridMaterialStatus_Sorted);
+            this.gridMaterialStatus.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.GridMaterialStatus_DataError);
+            this.gridMaterialStatus.Sorted += new System.EventHandler(this.GridMaterialStatus_Sorted);
             // 
             // P03
             // 

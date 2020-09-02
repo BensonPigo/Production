@@ -13,9 +13,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P24_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtScrap = new DataTable();
 
         public P24_Import(DataRow master, DataTable detail)
@@ -26,7 +26,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtSPNo.Text.TrimEnd();
@@ -47,9 +47,9 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
                 #region -- Sql Command --
-                bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+                bool mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
                 string where = string.Empty;
-                if (!MtlAutoLock)
+                if (!mtlAutoLock)
                 {
                     where = " AND c.lock = 0 ";
                 }
@@ -175,7 +175,7 @@ Where   1=1
                     {
                         this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
                         this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["selected"] = true;
-                        this.sum_checkedqty();
+                        this.Sum_checkedqty();
                     }
                 };
             #endregion
@@ -218,7 +218,7 @@ WHERE   StockType='{dr["toStocktype"]}'
                     }
 
                     dr.EndEdit();
-                    this.sum_checkedqty();
+                    this.Sum_checkedqty();
                 }
             };
             #region -- Location 右鍵開窗 --
@@ -306,13 +306,13 @@ WHERE   StockType='{0}'
         }
 
         // Close
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
@@ -360,7 +360,7 @@ WHERE   StockType='{0}'
             this.Close();
         }
 
-        private void btnUpdateAllLocation_Click(object sender, EventArgs e)
+        private void BtnUpdateAllLocation_Click(object sender, EventArgs e)
         {
             foreach (DataRow dr2 in ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1"))
             {
@@ -371,7 +371,7 @@ WHERE   StockType='{0}'
             }
         }
 
-        private void txtLocation_MouseDown(object sender, MouseEventArgs e)
+        private void TxtLocation_MouseDown(object sender, MouseEventArgs e)
         {
             Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("O", string.Empty);
             DialogResult result = item.ShowDialog();
@@ -383,7 +383,7 @@ WHERE   StockType='{0}'
             this.txtLocation.Text = item.GetSelectedString();
         }
 
-        private void sum_checkedqty()
+        private void Sum_checkedqty()
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;

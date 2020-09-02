@@ -20,7 +20,7 @@ namespace Sci.Production.Warehouse
 
         private bool sele;
 
-        public bool selected
+        public bool Selected
         {
             get
             {

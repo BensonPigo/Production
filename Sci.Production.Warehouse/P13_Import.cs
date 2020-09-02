@@ -11,10 +11,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P13_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        bool IsReason06 = false;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private bool IsReason06 = false;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
        // bool flag;
        // string poType;
@@ -33,7 +33,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtSPNo.Text.TrimEnd();
@@ -137,7 +137,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 AND Ord
             }
         }
 
-        private void sum_checkedqty()
+        private void Sum_checkedqty()
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -156,7 +156,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 AND Ord
                     {
                         this.grid1.GetDataRow(this.grid1.GetSelectedRowIndex())["qty"] = e.FormattedValue;
                         this.grid1.GetDataRow(this.grid1.GetSelectedRowIndex())["selected"] = true;
-                        this.sum_checkedqty();
+                        this.Sum_checkedqty();
                     }
                 };
 
@@ -197,7 +197,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 AND Ord
                     }
 
                     dr.EndEdit();
-                    this.sum_checkedqty();
+                    this.Sum_checkedqty();
                 }
             };
 
@@ -234,12 +234,12 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 AND Ord
             }
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             // listControlBindingSource1.EndEdit();
             this.grid1.ValidateControl();

@@ -20,9 +20,9 @@ namespace Sci.Production.Quality
 
         // 宣告Context Menu Item
         ToolStripMenuItem delete;
-        private string loginID = Env.User.UserID;
-        private string Factory = Env.User.Keyword;
-        private new bool IsSupportEdit = true;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string Factory = Env.User.Keyword;
+        private new readonly bool IsSupportEdit = true;
 
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -127,7 +127,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
             // }
 
             // 判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
-            this.contextMenuStrip();
+            this.ContextMenuStrip();
 
             base.OnDetailEntered();
         }
@@ -258,7 +258,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
             var frm = new P05_Detail(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
             frm.ShowDialog(this);
             frm.Dispose();
-            this.contextMenuStrip();
+            this.ContextMenuStrip();
             this.RenewData();
             this.OnDetailEntered();
 
@@ -302,11 +302,11 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
                 }
             }
 
-            this.contextMenuStrip();
+            this.ContextMenuStrip();
             this.RenewData();
         }
 
-        private void contextMenuStrip()
+        private void ContextMenuStrip()
         {
             var dr = this.CurrentDetailData;
             DataTable dtCheck;
@@ -385,7 +385,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
 
         protected override void OnDetailGridRowChanged()
         {
-            this.contextMenuStrip();
+            this.ContextMenuStrip();
             base.OnDetailGridRowChanged();
         }
 

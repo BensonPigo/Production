@@ -18,10 +18,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P30 : Win.Tems.QueryForm
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
 
         private DataSet dataSet;
         private DataTable master;
@@ -197,10 +197,10 @@ WHERE   StockType='{dr["tostocktype"]}'
             this.col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             this.col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
             #endregion
-            this.chp();
+            this.Chp();
         }
 
-        private void chp()
+        private void Chp()
         {
             if (MyUtility.Check.Empty(this.listControlBindingSource2.DataSource))
             {
@@ -258,7 +258,7 @@ WHERE   StockType='{dr["tostocktype"]}'
             #endregion
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.dataSet = null;
             this.listControlBindingSource1.DataSource = null;
@@ -515,7 +515,7 @@ drop table #tmp
             this.HideWaitMessage();
         }
 
-        private void checkOnly_CheckedChanged(object sender, EventArgs e)
+        private void CheckOnly_CheckedChanged(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
@@ -532,17 +532,17 @@ drop table #tmp
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
              this.Close();
         }
 
-        private void gridComplete_RowEnter(object sender, DataGridViewCellEventArgs e)
+        private void GridComplete_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
              this.gridRel.ValidateControl();
         }
 
-        private void btnAutoPick_Click(object sender, EventArgs e)
+        private void BtnAutoPick_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.master))
             {
@@ -597,7 +597,7 @@ drop table #tmp
             }
         }
 
-        private void btnCreate_Click(object sender, EventArgs e)
+        private void BtnCreate_Click(object sender, EventArgs e)
         {
              if (MyUtility.Check.Empty(this.detail))
             {
@@ -725,39 +725,39 @@ from #tmp
             }
             #endregion
 
-             TransactionScope _transactionscope = new TransactionScope();
+             TransactionScope transactionscope = new TransactionScope();
              DualResult result;
-             using (_transactionscope)
+             using (transactionscope)
             {
                 try
                 {
                     DataTable dtResult;
                     if ((result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, insertMaster, out dtResult)) == false)
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
                         return;
                     }
 
                     if ((result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, insertDetail, out dtResult)) == false)
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-             _transactionscope = null;
+             transactionscope = null;
 
             #region confirm save成功的P24單子
              List<string> success_list = new List<string>();
@@ -785,13 +785,13 @@ from #tmp
                 this.master.Columns.Add("TransID", typeof(string));
             }
 
-             foreach (DataRow Alldetailrows in this.detail.Rows)
+             foreach (DataRow alldetailrows in this.detail.Rows)
             {
-                if (Alldetailrows["selected"].ToString().ToUpper() == "TRUE")
+                if (alldetailrows["selected"].ToString().ToUpper() == "TRUE")
                 {
-                    DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(Alldetailrows["ToPOID"])).ToArray();
-                    Alldetailrows.GetParentRow("rel1")["selected"] = true;
-                    Alldetailrows.GetParentRow("rel1")["TransID"] = drGetID[0]["ID"];
+                    DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(alldetailrows["ToPOID"])).ToArray();
+                    alldetailrows.GetParentRow("rel1")["selected"] = true;
+                    alldetailrows.GetParentRow("rel1")["TransID"] = drGetID[0]["ID"];
                 }
             }
 
@@ -801,7 +801,7 @@ from #tmp
              this.gridComplete.ValidateControl();
         }
 
-        private void btnExcel_Click(object sender, EventArgs e)
+        private void BtnExcel_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.master))
             {
@@ -821,25 +821,25 @@ from #tmp
                 return;
             }
 
-            DataTable Exceldt = this.master.DefaultView.ToTable();
-            if (Exceldt.Rows.Count == 0)
+            DataTable exceldt = this.master.DefaultView.ToTable();
+            if (exceldt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Did not finish Inventory To Scarp");
                 return;
             }
 
             // 篩選報表所顯示的欄位
-            Exceldt.Columns.Remove("selected");
-            Exceldt.Columns.Remove("CutInLine");
-            Exceldt.Columns.Remove("ProjectID");
-            Exceldt.Columns.Remove("FactoryID");
-            Exceldt.Columns.Remove("stockpoid");
-            Exceldt.Columns.Remove("stockseq1");
-            Exceldt.Columns.Remove("stockseq2");
-            Exceldt.Columns.Remove("qty");
+            exceldt.Columns.Remove("selected");
+            exceldt.Columns.Remove("CutInLine");
+            exceldt.Columns.Remove("ProjectID");
+            exceldt.Columns.Remove("FactoryID");
+            exceldt.Columns.Remove("stockpoid");
+            exceldt.Columns.Remove("stockseq1");
+            exceldt.Columns.Remove("stockseq2");
+            exceldt.Columns.Remove("qty");
 
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P30.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(Exceldt, string.Empty, "Warehouse_P30.xltx", 2, showExcel: true, showSaveMsg: true, excelApp: excelApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(exceldt, string.Empty, "Warehouse_P30.xltx", 2, showExcel: true, showSaveMsg: true, excelApp: excelApp);      // 將datatable copy to excel
             Marshal.ReleaseComObject(excelApp);
         }
     }

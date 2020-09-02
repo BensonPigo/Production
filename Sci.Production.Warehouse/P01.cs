@@ -95,14 +95,14 @@ namespace Sci.Production.Warehouse
                 btnBatchClose.Size = new Size(180, 30); // 預設是(80,30)
             }
 
-            btnBatchClose.Click += new EventHandler(this.btnBatchClose_Click);
+            btnBatchClose.Click += new EventHandler(this.BtnBatchClose_Click);
             this.browsetop.Controls.Add(btnBatchClose);
 
             #endregion
 
         }
 
-        private void btnBatchClose_Click(object sender, EventArgs e)
+        private void BtnBatchClose_Click(object sender, EventArgs e)
         {
             if (this.dataType == "Y")
             {
@@ -136,15 +136,15 @@ namespace Sci.Production.Warehouse
             this.displayMTLCmpltSP.Value = MyUtility.Convert.GetString(this.CurrentMaintain["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
 
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
-            DataRow StyleData;
+            DataRow styleData;
             string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate,ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = {0}", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
-            if (MyUtility.Check.Seek(sqlCmd, out StyleData))
+            if (MyUtility.Check.Seek(sqlCmd, out styleData))
             {
-                this.displayDescription.Value = MyUtility.Convert.GetString(StyleData["Description"]);
-                this.checkExceptionForm.Value = MyUtility.Convert.GetString(StyleData["ExpectionForm"]);
-                this.editFtyRemark.Text = MyUtility.Convert.GetString(StyleData["FTYRemark"]);
+                this.displayDescription.Value = MyUtility.Convert.GetString(styleData["Description"]);
+                this.checkExceptionForm.Value = MyUtility.Convert.GetString(styleData["ExpectionForm"]);
+                this.editFtyRemark.Text = MyUtility.Convert.GetString(styleData["FTYRemark"]);
 
-                if (MyUtility.Check.Empty(StyleData["ExpectionFormRemark"]))
+                if (MyUtility.Check.Empty(styleData["ExpectionFormRemark"]))
                 {
                     this.btnExpectionFormRemark.Enabled = false;
                 }
@@ -179,12 +179,12 @@ namespace Sci.Production.Warehouse
             }
             #endregion
             #region 填PO SMR, PO Handle欄位值
-            DataRow POData;
+            DataRow pOData;
             sqlCmd = string.Format("select POSMR,POHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
-            if (MyUtility.Check.Seek(sqlCmd, out POData))
+            if (MyUtility.Check.Seek(sqlCmd, out pOData))
             {
-                this.txttpeuserPOSMR.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
-                this.txttpeuserPOHandle.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
+                this.txttpeuserPOSMR.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POSMR"]);
+                this.txttpeuserPOHandle.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POHandle"]);
             }
             else
             {
@@ -193,21 +193,21 @@ namespace Sci.Production.Warehouse
             }
             #endregion
             #region 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T欄位值
-            DataTable OrdersData;
+            DataTable ordersData;
             sqlCmd = string.Format(
                 @"select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList,
 isnull([dbo].getCuttingComboList(o.ID,o.CuttingSP),'') as CuttingList,
 isnull([dbo].getMTLExport(o.POID,o.MTLExport),'') as MTLExport,
 isnull([dbo].getPulloutComplete(o.ID,o.PulloutComplete),'') as PulloutComplete,
 isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out OrdersData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ordersData);
             if (result)
             {
-                if (OrdersData.Rows.Count > 0)
+                if (ordersData.Rows.Count > 0)
                 {
-                    this.editPOCombo.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["PoList"]);
-                    this.displayRMTLETAMasterSP.Value = MyUtility.Convert.GetString(OrdersData.Rows[0]["MTLExport"]);
-                    this.displayActPullout.Value = MyUtility.Convert.GetString(OrdersData.Rows[0]["PulloutComplete"]);
+                    this.editPOCombo.Text = MyUtility.Convert.GetString(ordersData.Rows[0]["PoList"]);
+                    this.displayRMTLETAMasterSP.Value = MyUtility.Convert.GetString(ordersData.Rows[0]["MTLExport"]);
+                    this.displayActPullout.Value = MyUtility.Convert.GetString(ordersData.Rows[0]["PulloutComplete"]);
                 }
                 else
                 {
@@ -291,56 +291,56 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
         }
 
         // Production output
-        private void btnProductionOutput_Click(object sender, EventArgs e)
+        private void BtnProductionOutput_Click(object sender, EventArgs e)
         {
             PPIC.P01_ProductionOutput callNextForm = new PPIC.P01_ProductionOutput(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Order remark
-        private void btnOrderRemark_Click(object sender, EventArgs e)
+        private void BtnOrderRemark_Click(object sender, EventArgs e)
         {
             Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["OrderRemark"]), "Order Remark", false, null);
             callNextForm.ShowDialog(this);
         }
 
         // Factory CMT
-        private void button5_Click(object sender, EventArgs e)
+        private void Button5_Click(object sender, EventArgs e)
         {
             PPIC.P01_FactoryCMT callNextForm = new PPIC.P01_FactoryCMT(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Label & Hangtag
-        private void btnLabelHangtag_Click(object sender, EventArgs e)
+        private void BtnLabelHangtag_Click(object sender, EventArgs e)
         {
             Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Label"]), "Label & Hangtag", false, null);
             callNextForm.ShowDialog(this);
         }
 
         // Shipping mark
-        private void button9_Click(object sender, EventArgs e)
+        private void Button9_Click(object sender, EventArgs e)
         {
             PPIC.P01_ShippingMark callNextForm = new PPIC.P01_ShippingMark(false, this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // TMS & Cost
-        private void button10_Click(object sender, EventArgs e)
+        private void Button10_Click(object sender, EventArgs e)
         {
             PPIC.P01_TMSAndCost callNextForm = new PPIC.P01_TMSAndCost(false, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null);
             callNextForm.ShowDialog(this);
         }
 
         // Std.GSD List
-        private void button11_Click(object sender, EventArgs e)
+        private void Button11_Click(object sender, EventArgs e)
         {
             StdGSDList callNextForm = new StdGSDList(MyUtility.Convert.GetLong(this.CurrentMaintain["StyleUKey"]));
             callNextForm.ShowDialog(this);
         }
 
         // Artwork
-        private void btnArtwork_Click(object sender, EventArgs e)
+        private void BtnArtwork_Click(object sender, EventArgs e)
         {
             // Sci.Production.PPIC.P01_Artwork callNextForm = new Sci.Production.PPIC.P01_Artwork(false, MyUtility.Convert.GetString(CurrentMaintain["ID"]), null, null, MyUtility.Convert.GetString(CurrentMaintain["StyleID"]), MyUtility.Convert.GetString(CurrentMaintain["SeasonID"]));
             // callNextForm.ShowDialog(this);
@@ -349,56 +349,56 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
         }
 
         // Garment export
-        private void button15_Click(object sender, EventArgs e)
+        private void Button15_Click(object sender, EventArgs e)
         {
             PPIC.P01_GMTExport callNextForm = new PPIC.P01_GMTExport(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Cutting Combo
-        private void button17_Click(object sender, EventArgs e)
+        private void Button17_Click(object sender, EventArgs e)
         {
             PPIC.P01_CuttingCombo callNextForm = new PPIC.P01_CuttingCombo(MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Material Import
-        private void button19_Click(object sender, EventArgs e)
+        private void Button19_Click(object sender, EventArgs e)
         {
             PPIC.P01_MTLImport callNextForm = new PPIC.P01_MTLImport(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Artwork Transaction List
-        private void button24_Click(object sender, EventArgs e)
+        private void Button24_Click(object sender, EventArgs e)
         {
             PPIC.P01_ArtworkTrans callNextForm = new PPIC.P01_ArtworkTrans(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Production Kits
-        private void button25_Click(object sender, EventArgs e)
+        private void Button25_Click(object sender, EventArgs e)
         {
             PPIC.P01_ProductionKit callNextForm = new PPIC.P01_ProductionKit(this.dataType == "Y" ? true : false, MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Q'ty b'down by schedule
-        private void button27_Click(object sender, EventArgs e)
+        private void Button27_Click(object sender, EventArgs e)
         {
             PPIC.P01_QtySewingSchedule callNextForm = new PPIC.P01_QtySewingSchedule(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]));
             callNextForm.ShowDialog(this);
         }
 
         // Carton Status
-        private void button28_Click(object sender, EventArgs e)
+        private void Button28_Click(object sender, EventArgs e)
         {
             PPIC.P01_CTNStatus callNextForm = new PPIC.P01_CTNStatus(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), false);
             callNextForm.ShowDialog(this);
         }
 
         // Pull forward remark
-        private void button30_Click(object sender, EventArgs e)
+        private void Button30_Click(object sender, EventArgs e)
         {
             MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Remark from Order_PFHis WITH (NOLOCK) where Id = '{0}' order by AddDate desc", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))), "Pull Forward Remark");
         }
@@ -478,27 +478,27 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
         // }
 
         // Packing Method
-        private void btnPackingMethod_Click(object sender, EventArgs e)
+        private void BtnPackingMethod_Click(object sender, EventArgs e)
         {
             Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Packing"]), "Packing Method", false, null);
             callNextForm.ShowDialog(this);
         }
 
         // [Trim Card Print]
-        private void btnTrimCard_Click(object sender, EventArgs e)
+        private void BtnTrimCard_Click(object sender, EventArgs e)
         {
             // ID , StyleID , SeasonID , FactoryID
-            P01_TrimCardPrint TrimCardPrint = new P01_TrimCardPrint(
+            P01_TrimCardPrint trimCardPrint = new P01_TrimCardPrint(
                 this.CurrentMaintain["ID"].ToString().Trim(),
                 this.CurrentMaintain["StyleID"].ToString().Trim(),
                 this.CurrentMaintain["SeasonID"].ToString().Trim(),
                 this.CurrentMaintain["FactoryID"].ToString().Trim(),
                 this.CurrentMaintain["BrandID"].ToString().Trim(),
                 this.CurrentMaintain["POID"].ToString().Trim());
-            TrimCardPrint.ShowDialog(this);
+            trimCardPrint.ShowDialog(this);
         }
 
-        private void btnCloseMTL_Click(object sender, EventArgs e)
+        private void BtnCloseMTL_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -593,13 +593,13 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
         }
 
         // Quantity breakdown
-        private void btnQuantityBreakdown_Click(object sender, EventArgs e)
+        private void BtnQuantityBreakdown_Click(object sender, EventArgs e)
         {
             PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(this.CurrentMaintain["id"].ToString(), this.CurrentMaintain["poid"].ToString(), this.editPOCombo.Text);
             callNextForm.ShowDialog(this);
         }
 
-        private void btnEachConsumption_Click(object sender, EventArgs e)
+        private void BtnEachConsumption_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -611,20 +611,20 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
             frm.ShowDialog(this);
         }
 
-        private void btnProductionKits_Click(object sender, EventArgs e)
+        private void BtnProductionKits_Click(object sender, EventArgs e)
         {
             PPIC.P01_ProductionKit callNextForm =
                 new PPIC.P01_ProductionKit(false, this.CurrentMaintain["StyleUkey"].ToString(), null, null, null);
             callNextForm.ShowDialog(this);
         }
 
-        private void btnMaterialImport_Click(object sender, EventArgs e)
+        private void BtnMaterialImport_Click(object sender, EventArgs e)
         {
             PPIC.P01_MTLImport callNextForm = new PPIC.P01_MTLImport(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
-        private void btnMeterialStatus_Click(object sender, EventArgs e)
+        private void BtnMeterialStatus_Click(object sender, EventArgs e)
         {
             if (this.callP03 != null && this.callP03.Visible == true)
             {
@@ -637,7 +637,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
             }
         }
 
-        private void btnMeterialStatus_Local_Click(object sender, EventArgs e)
+        private void BtnMeterialStatus_Local_Click(object sender, EventArgs e)
         {
             if (this.callP04 != null && this.callP04.Visible == true)
             {
@@ -649,7 +649,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
             }
         }
 
-        P03 callP03 = null;
+        private P03 callP03 = null;
 
         private void P03FormOpen()
         {
@@ -659,13 +659,13 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 {
                     form.Activate();
                     P03 activateForm = (P03)form;
-                    activateForm.setTxtSPNo(this.CurrentMaintain["ID"].ToString());
+                    activateForm.SetTxtSPNo(this.CurrentMaintain["ID"].ToString());
                     activateForm.Query();
                     return;
                 }
             }
 
-            ToolStripMenuItem P03MenuItem = null;
+            ToolStripMenuItem p03MenuItem = null;
             foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
@@ -676,7 +676,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
                             {
-                                P03MenuItem = (ToolStripMenuItem)subMenuItem;
+                                p03MenuItem = (ToolStripMenuItem)subMenuItem;
                                 break;
                             }
                         }
@@ -684,7 +684,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 }
             }
 
-            this.callP03 = new P03(this.CurrentMaintain["ID"].ToString(), P03MenuItem);
+            this.callP03 = new P03(this.CurrentMaintain["ID"].ToString(), p03MenuItem);
             this.callP03.MdiParent = this.MdiParent;
             this.callP03.Show();
 
@@ -700,7 +700,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
             #endregion
         }
 
-        P04 callP04 = null;
+        private P04 callP04 = null;
 
         private void P04FormOpen()
         {
@@ -710,13 +710,13 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 {
                     form.Activate();
                     P04 activateForm = (P04)form;
-                    activateForm.setTxtSPNo(this.CurrentMaintain["ID"].ToString());
-                    activateForm.event_Query();
+                    activateForm.SetTxtSPNo(this.CurrentMaintain["ID"].ToString());
+                    activateForm.Event_Query();
                     return;
                 }
             }
 
-            ToolStripMenuItem P04MenuItem = null;
+            ToolStripMenuItem p04MenuItem = null;
             foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
@@ -727,7 +727,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P04. Material Status (Local)"))
                             {
-                                P04MenuItem = (ToolStripMenuItem)subMenuItem;
+                                p04MenuItem = (ToolStripMenuItem)subMenuItem;
                                 break;
                             }
                         }
@@ -735,12 +735,12 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 }
             }
 
-            this.callP04 = new P04(this.CurrentMaintain["ID"].ToString(), P04MenuItem);
+            this.callP04 = new P04(this.CurrentMaintain["ID"].ToString(), p04MenuItem);
             this.callP04.MdiParent = this.MdiParent;
             this.callP04.Show();
         }
 
-        private void btnReCalculate_Click(object sender, EventArgs e)
+        private void BtnReCalculate_Click(object sender, EventArgs e)
         {
             // 母單批次Re-Cal
             DualResult result;
@@ -790,7 +790,7 @@ and po3.junk=0
             MyUtility.Msg.InfoBox("Finished!!");
         }
 
-        private void btnExpectionFormRemark_Click(object sender, EventArgs e)
+        private void BtnExpectionFormRemark_Click(object sender, EventArgs e)
         {
             DataRow styleData;
             string sqlCmd = string.Format("select ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
@@ -801,7 +801,7 @@ and po3.junk=0
             }
         }
 
-        private void btnPFHistory_Click(object sender, EventArgs e)
+        private void BtnPFHistory_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)

@@ -11,9 +11,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P61_Import : Win.Subs.Base
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        DataRow P61;
-        DataTable P61_Detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow P61;
+        private DataTable P61_Detail;
 
         public P61_Import(DataRow master, DataTable detail)
         {
@@ -69,7 +69,7 @@ namespace Sci.Production.Warehouse
             #endregion
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             #region SqlCommand & SqlParameter
             string strSql = @"
@@ -120,7 +120,7 @@ order by s.Refno, s.ThreadColorID, s.StockQty, s.[Desc]
             #endregion
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -151,12 +151,12 @@ order by s.Refno, s.ThreadColorID, s.StockQty, s.[Desc]
             this.Close();
         }
 
-        private void btnCanel_Click(object sender, EventArgs e)
+        private void BtnCanel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void checkBalance_Click(object sender, EventArgs e)
+        private void CheckBalance_Click(object sender, EventArgs e)
         {
             if (this.checkBalance.Checked)
             {

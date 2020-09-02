@@ -35,7 +35,7 @@ namespace Sci.Production.Quality
             this.listControlBindingSource1.DataSource = dt;
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             string update = string.Empty;
             foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState == DataRowState

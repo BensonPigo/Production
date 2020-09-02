@@ -316,7 +316,7 @@
             this.btnEncode.TabIndex = 124;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
+            this.btnEncode.Click += new System.EventHandler(this.BtnEncode_Click);
             // 
             // checkNA
             // 
@@ -341,7 +341,7 @@
             this.btnToExcel.TabIndex = 95;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // dateArriveWHDate
             // 
@@ -400,7 +400,7 @@
             this.btntoPDF.TabIndex = 96;
             this.btntoPDF.Text = "To PDF";
             this.btntoPDF.UseVisualStyleBackColor = true;
-            this.btntoPDF.Click += new System.EventHandler(this.btntoPDF_Click);
+            this.btntoPDF.Click += new System.EventHandler(this.BtntoPDF_Click);
             // 
             // txtCrockingInspector
             // 

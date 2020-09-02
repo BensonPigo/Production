@@ -204,7 +204,7 @@
             this.btngenerate.TabIndex = 3;
             this.btngenerate.Text = "generate";
             this.btngenerate.UseVisualStyleBackColor = true;
-            this.btngenerate.Click += new System.EventHandler(this.btngenerate_Click);
+            this.btngenerate.Click += new System.EventHandler(this.Btngenerate_Click);
             // 
             // labelRemark
             // 
@@ -262,7 +262,7 @@
             this.comboStockType.Name = "comboStockType";
             this.comboStockType.Size = new System.Drawing.Size(121, 24);
             this.comboStockType.TabIndex = 1;
-            this.comboStockType.Validating += new System.ComponentModel.CancelEventHandler(this.comboStockType_Validating);
+            this.comboStockType.Validating += new System.ComponentModel.CancelEventHandler(this.ComboStockType_Validating);
             // 
             // P50
             // 

@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P60_PrintData
+    internal class P60_PrintData
     {
         public string LocalPOID { get; set; }
 

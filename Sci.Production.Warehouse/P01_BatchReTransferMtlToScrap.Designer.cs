@@ -71,7 +71,7 @@
             this.btnCancel.TabIndex = 5;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnBatchCloseRMTL
             // 
@@ -83,7 +83,7 @@
             this.btnBatchCloseRMTL.TabIndex = 4;
             this.btnBatchCloseRMTL.Text = "Re-Transfer to Scrap";
             this.btnBatchCloseRMTL.UseVisualStyleBackColor = true;
-            this.btnBatchCloseRMTL.Click += new System.EventHandler(this.btnBatchCloseRMTL_Click);
+            this.btnBatchCloseRMTL.Click += new System.EventHandler(this.BtnBatchCloseRMTL_Click);
             // 
             // btnFindNow
             // 
@@ -95,7 +95,7 @@
             this.btnFindNow.TabIndex = 8;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
             // 
             // txtSPNoStart
             // 
@@ -360,7 +360,7 @@
             this.gridBatchCloseRowMaterial.Size = new System.Drawing.Size(1008, 342);
             this.gridBatchCloseRowMaterial.TabIndex = 0;
             this.gridBatchCloseRowMaterial.TabStop = false;
-            this.gridBatchCloseRowMaterial.Sorted += new System.EventHandler(this.gridBatchCloseRowMaterial_Sorted);
+            this.gridBatchCloseRowMaterial.Sorted += new System.EventHandler(this.GridBatchCloseRowMaterial_Sorted);
             // 
             // P01_BatchReTransferMtlToScrap
             // 

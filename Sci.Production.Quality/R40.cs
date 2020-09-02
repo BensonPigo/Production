@@ -31,7 +31,7 @@ namespace Sci.Production.Quality
         System.Data.DataTable alltemp;
         System.Data.DataTable alltemp_All;
         System.Data.DataTable[] alltemps;
-        string userfactory = Env.User.Factory;
+        readonly string userfactory = Env.User.Factory;
 
         protected override bool ValidateInput()
         {
@@ -520,7 +520,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
             return this.result;
         }
 
-        Dictionary<string, System.Data.DataTable> dicFTY = new Dictionary<string, System.Data.DataTable>();
+        readonly Dictionary<string, System.Data.DataTable> dicFTY = new Dictionary<string, System.Data.DataTable>();
         string stringyear2;
         string stringyear3;
         string stringyear4;

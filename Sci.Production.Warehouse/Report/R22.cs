@@ -12,17 +12,17 @@ namespace Sci.Production.Warehouse
 {
     public partial class R22 : Win.Tems.PrintForm
     {
-        string strSP1;
-        string strM;
-        string strFactory;
-        string strSP2;
-        string strRefno1;
-        string strRefno2;
-        string strColor1;
-        string strColor2;
-        string strSupp;
+        private string strSP1;
+        private string strM;
+        private string strFactory;
+        private string strSP2;
+        private string strRefno1;
+        private string strRefno2;
+        private string strColor1;
+        private string strColor2;
+        private string strSupp;
 
-        private void chkQtyless0_CheckedChanged(object sender, EventArgs e)
+        private void ChkQtyless0_CheckedChanged(object sender, EventArgs e)
         {
             if (this.chkQtyOver0.Checked)
             {
@@ -30,7 +30,7 @@ namespace Sci.Production.Warehouse
             }
         }
 
-        private void chkQtyOver0_CheckedChanged(object sender, EventArgs e)
+        private void ChkQtyOver0_CheckedChanged(object sender, EventArgs e)
         {
             if (this.chkQtyless0.Checked)
             {
@@ -38,7 +38,7 @@ namespace Sci.Production.Warehouse
             }
         }
 
-        DataTable dataTable;
+        private DataTable dataTable;
 
         public R22(ToolStripMenuItem menuitem)
             : base(menuitem)

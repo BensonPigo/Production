@@ -1395,7 +1395,7 @@
             this.btnEncode.TabIndex = 1;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
+            this.btnEncode.Click += new System.EventHandler(this.BtnEncode_Click);
             // 
             // btnAmend
             // 
@@ -1406,7 +1406,7 @@
             this.btnAmend.TabIndex = 2;
             this.btnAmend.Text = "Amend";
             this.btnAmend.UseVisualStyleBackColor = true;
-            this.btnAmend.Click += new System.EventHandler(this.btnAmend_Click);
+            this.btnAmend.Click += new System.EventHandler(this.BtnAmend_Click);
             // 
             // btnClose
             // 
@@ -1417,7 +1417,7 @@
             this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnEdit
             // 
@@ -1428,7 +1428,7 @@
             this.btnEdit.TabIndex = 4;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
-            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // btnToReport
             // 

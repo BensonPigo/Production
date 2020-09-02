@@ -12,6 +12,9 @@ using System.Transactions;
 
 namespace Sci.Production.PublicPrg
 {
+    /// <summary>
+    /// Prgs
+    /// </summary>
     public static partial class Prgs
     {
         #region -- UpdatePO_Supp_Detail --
@@ -549,6 +552,12 @@ drop table #TmpSource;";
 
         #endregion
         #region -- SelePoItem --
+
+        /// <summary>
+        /// selePoItemSqlCmd
+        /// </summary>
+        /// <param name="junk">junk</param>
+        /// <returns>string</returns>
         public static string selePoItemSqlCmd(bool junk = true)
         {
             return @"
@@ -3064,7 +3073,6 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             {
                 return true;
             }
-
         }
 
         public static List<string> GetBarcodeNo(string tableName, string keyWord, int batchNumber = 1 ,int dateType = 3, string checkColumn = "Barcode", String connectionName = null, int sequenceMode = 1, int sequenceLength = 0)

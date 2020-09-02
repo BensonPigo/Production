@@ -13,7 +13,7 @@ namespace Sci.Production.Quality
 {
     public partial class P02_BatchEncode : Win.Tems.QueryForm
     {
-        private string masterID;
+        private readonly string masterID;
 
         public P02_BatchEncode(string MasterID)
         {
@@ -120,12 +120,12 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.
             this.grid.DataSource = encodeData;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(this.numInspectRate.Value))
@@ -200,7 +200,7 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.
             this.QueryData();
         }
 
-        private void btnEncode_Click(object sender, EventArgs e)
+        private void BtnEncode_Click(object sender, EventArgs e)
         {
             this.grid.ValidateControl();
             DataTable gridDt = (DataTable)this.grid.DataSource;
@@ -362,7 +362,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             this.QueryData();
         }
 
-        private void numInspectRate_ValueChanged(object sender, EventArgs e)
+        private void NumInspectRate_ValueChanged(object sender, EventArgs e)
         {
             this.numInspectRate.Text = this.numInspectRate.Value.ToString() + "%";
         }

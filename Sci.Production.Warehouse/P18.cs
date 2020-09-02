@@ -1203,11 +1203,11 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                 DataTable dtCnt = (DataTable)this.detailgridbs.DataSource;
 
                 // distinct CombineBarcode,並排除CombineBarcode = null
-                DataRow[] DistCnt1 = dtCnt.DefaultView.ToTable(true, "CombineBarcode", "FabricType").Select("FabricType = 'F' and CombineBarcode is not null");
-                DataRow[] Count2 = dtCnt.Select("FabricType = 'F' and CombineBarcode is null");
-                if (DistCnt1.Length + Count2.Length > 0)
+                DataRow[] distCnt1 = dtCnt.DefaultView.ToTable(true, "CombineBarcode", "FabricType").Select("FabricType = 'F' and CombineBarcode is not null");
+                DataRow[] count2 = dtCnt.Select("FabricType = 'F' and CombineBarcode is null");
+                if (distCnt1.Length + count2.Length > 0)
                 {
-                    barcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", DistCnt1.Length + Count2.Length);
+                    barcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", distCnt1.Length + count2.Length);
                     int cnt = 0;
 
                     // 排序CombineBarcode, 將所有未展開主料置頂
@@ -1297,12 +1297,12 @@ when matched then
             #endregion
 
             #region -- Transaction --
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
             try
             {
-                using (_transactionscope)
+                using (transactionscope)
                 using (sqlConn)
                 {
                     /*
@@ -1314,7 +1314,7 @@ when matched then
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -1324,7 +1324,7 @@ when matched then
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -1338,7 +1338,7 @@ when matched then
                         upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, string.Empty, upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -1349,7 +1349,7 @@ when matched then
                         upd_MD_8T = Prgs.UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn);
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -1359,31 +1359,31 @@ when matched then
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(
                          (DataTable)this.detailgridbs.DataSource, string.Empty, sql_UpdatePO_Supp_Detail, out resulttb, "#tmp", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
             }
             catch (Exception ex)
             {
-                _transactionscope.Dispose();
+                transactionscope.Dispose();
                 this.ShowErr("Commit transaction error.", ex);
             }
             #endregion
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             // AutoWHFabric WebAPI for Gensong
             this.SentToGensong_AutoWHFabric();
@@ -1566,11 +1566,11 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             #endregion 更新庫存數量  ftyinventory
 
             #region -- Transaction --
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
 
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 try
@@ -1584,7 +1584,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F, string.Empty, upd_Fty_2F, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -1596,7 +1596,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                         upd_MD_2F = Prgs.UpdateMPoDetail(2, data_MD_2F, false, sqlConn: sqlConn);
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2F, string.Empty, upd_MD_2F, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -1607,7 +1607,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                         upd_MD_8F = Prgs.UpdateMPoDetail(8, data_MD_8F, false, sqlConn: sqlConn);
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F, string.Empty, upd_MD_8F, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -1616,25 +1616,25 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
             #endregion
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             // AutoWHFabric WebAPI for Gensong
             this.SentToGensong_AutoWHFabric();
@@ -1764,7 +1764,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
         }
 
         // delete all
-        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
+        private void BtnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
 
@@ -1773,7 +1773,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
         }
 
         // Accumulated Form
-        private void btnAccumulatedQty_Click(object sender, EventArgs e)
+        private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new P18_AccumulatedQty(this.CurrentMaintain);
             frm.P18 = this;
@@ -1781,7 +1781,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
         }
 
         // Find
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -1799,7 +1799,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
             }
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             var frm = new P18_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
@@ -1807,7 +1807,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
             this.Change_record();
         }
 
-        private void txtFromFactory_Validating(object sender, CancelEventArgs e)
+        private void TxtFromFactory_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtFromFactory.Text))
             {
@@ -1823,7 +1823,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
             }
         }
 
-        private void txtFromFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtFromFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode)
             {

@@ -443,7 +443,7 @@ namespace Sci.Production.Quality
         }
 
         // [Find]
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             int Count = this.DetailDatas.Count;
             if (Count == 0)
@@ -506,7 +506,7 @@ namespace Sci.Production.Quality
         }
 
         // [Batch update N/A]
-        private void btnBatchUpdateNA_Click(object sender, EventArgs e)
+        private void BtnBatchUpdateNA_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (MyUtility.Check.Empty(this.comboOvenWashBoth.SelectedValue2))

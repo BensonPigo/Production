@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P10_PrintBarcodeData
+    internal class P10_PrintBarcodeData
     {
         public string Factory { get; set; }
 

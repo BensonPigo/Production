@@ -42,7 +42,7 @@
             this.btnPrint.TabIndex = 1;
             this.btnPrint.Text = "Print";
             this.btnPrint.UseVisualStyleBackColor = true;
-            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
+            this.btnPrint.Click += new System.EventHandler(this.BtnPrint_Click);
             // 
             // gridSticker
             // 

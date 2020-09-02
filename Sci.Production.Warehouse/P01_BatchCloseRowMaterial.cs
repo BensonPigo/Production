@@ -13,10 +13,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P01_BatchCloseRowMaterial : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
+        private DataRow dr_master;
+        private DataTable dt_detail;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable[] dtBatch;
 
         public P01_BatchCloseRowMaterial()
@@ -36,7 +36,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             this.QueryData(false);
         }
@@ -224,12 +224,12 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                ; // 8
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnBatchCloseRMTL_Click(object sender, EventArgs e)
+        private void BtnBatchCloseRMTL_Click(object sender, EventArgs e)
         {
             // listControlBindingSource1.EndEdit();
             this.gridBatchCloseRowMaterial.ValidateControl();
@@ -319,7 +319,7 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
             this.QueryData(true);
         }
 
-        private void btnToEexcel_Click(object sender, EventArgs e)
+        private void BtnToEexcel_Click(object sender, EventArgs e)
         {
             string cmd = @"select [SP#]=poid,[Factory]=FactoryID
 ,Category,[OrderType]=OrderTypeID,Style=StyleID,Brand=BrandID,[BuyerDelivery]=BuyerDelivery,[Last Pullout Date]=ActPulloutDate

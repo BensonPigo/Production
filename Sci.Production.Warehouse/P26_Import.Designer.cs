@@ -79,7 +79,7 @@
             this.btnCancel.TabIndex = 5;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnImport
             // 
@@ -91,7 +91,7 @@
             this.btnImport.TabIndex = 4;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // btnQuery
             // 
@@ -103,7 +103,7 @@
             this.btnQuery.TabIndex = 12;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // txtSPNo
             // 
@@ -154,7 +154,7 @@
             this.btnUpdateAllLocation.TabIndex = 3;
             this.btnUpdateAllLocation.Text = "Update All Location";
             this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateAllLocation.Click += new System.EventHandler(this.btnUpdateAllLocation_Click);
+            this.btnUpdateAllLocation.Click += new System.EventHandler(this.BtnUpdateAllLocation_Click);
             // 
             // txtLocation2
             // 
@@ -166,7 +166,7 @@
             this.txtLocation2.ReadOnly = true;
             this.txtLocation2.Size = new System.Drawing.Size(400, 23);
             this.txtLocation2.TabIndex = 2;
-            this.txtLocation2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtLocation2_MouseDown);
+            this.txtLocation2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtLocation2_MouseDown);
             // 
             // label2
             // 

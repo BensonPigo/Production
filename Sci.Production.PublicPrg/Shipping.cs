@@ -10,6 +10,9 @@ using Sci.Win.UI;
 
 namespace Sci.Production.PublicPrg
 {
+    /// <summary>
+    /// Prgs
+    /// </summary>
     public static partial class Prgs
     {
         #region ReCalculateExpress
@@ -17,7 +20,7 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// ReCalculateExpress(string)
         /// </summary>
-        /// <param name="expressID"></param>
+        /// <param name="expressID">expressID</param>
         /// <returns>string</returns>
         public static string ReCalculateExpress(string expressID)
         {
@@ -29,6 +32,18 @@ where ID = '{0}'", expressID);
         #endregion
 
         #region GetNLCodeDataByRefno
+
+        /// <summary>
+        /// GetNLCodeDataByRefno
+        /// </summary>
+        /// <param name="refno">refno</param>
+        /// <param name="usageQty">usageQty</param>
+        /// <param name="brandID">brandID</param>
+        /// <param name="type">type</param>
+        /// <param name="sciRefno">sciRefno</param>
+        /// <param name="nlCode">nlCode</param>
+        /// <param name="usageUnit">usageUnit</param>
+        /// <returns>DataRow</returns>
         public static DataRow GetNLCodeDataByRefno(string refno, string usageQty, string brandID, string type, string sciRefno = "", string nlCode = "", string usageUnit = "")
         {
             string sqlGetNLCode = string.Empty;
@@ -175,13 +190,23 @@ where Ltrim(Misc.ID)  = @Refno";
         }
         #endregion
 
+        /// <summary>
+        /// GetNeedCreateAppShipMode
+        /// </summary>
+        /// <returns>string</returns>
         public static string GetNeedCreateAppShipMode()
         {
             return MyUtility.GetValue.Lookup("SELECT Stuff((select concat( ', ',ID)   from ShipMode where NeedCreateAPP = 1 FOR XML PATH('')),1,1,'') ");
         }
 
         #region P02 檢查狀態是否為Approved/Junk
-        public static bool checkP02Status(string hCNo)
+
+        /// <summary>
+        /// checkP02Status
+        /// </summary>
+        /// <param name="hCNo">hCNo</param>
+        /// <returns>bool</returns>
+        public static bool CheckP02Status(string hCNo)
         { // 該單Approved / Junk都不允許調整資料
             if (MyUtility.Check.Seek($@"select 1 from Express where id='{hCNo}' and status in ('Junk','Approved')"))
             {
@@ -198,6 +223,12 @@ please check again.");
         #endregion
 
         #region B42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
+        /// <summary>
+        /// 42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
+        /// </summary>
+        /// <param name="checkList">checkList</param>
+        /// <param name="isShowID">isShowID</param>
+        /// <returns>bool</returns>
         public static bool CheckVNConsumption_Detail_Dup(DataRow[] checkList, bool isShowID)
         {
             var listDupNLCodeData = checkList
@@ -261,6 +292,10 @@ please check again.");
         #endregion
 
         #region B42 Batch Create 與Calculate用相同邏輯取資料
+
+        /// <summary>
+        /// B42 Batch Create 與Calculate用相同邏輯取資料
+        /// </summary>
         public class ParGetVNConsumption_Detail_Detail
         {
             public DateTime? dateBuyerDeliveryFrom;
@@ -274,6 +309,12 @@ please check again.");
             public string ContractID;
         }
 
+        /// <summary>
+        /// GetVNConsumption_Detail_Detail
+        /// </summary>
+        /// <param name="sqlPar">sqlPar</param>
+        /// <param name="dataTable">dataTable</param>
+        /// <returns>DualResult</returns>
         public static DualResult GetVNConsumption_Detail_Detail(ParGetVNConsumption_Detail_Detail sqlPar, out DataTable dataTable)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -1183,6 +1224,12 @@ drop table #tmpthreadStyle");
         #endregion
 
         #region Check CancelOrder cannot confirmed
+
+        /// <summary>
+        /// Check CancelOrder cannot confirmed
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns>string</returns>
         public static string ChkCancelOrder(string id)
         {
             DualResult result;
@@ -1246,7 +1293,6 @@ and exists (select 1 from orders where id = pd.OrderID and Junk = 1)
         /// <param name="listSP">listSP</param>
         public static void CheckIDDSame(List<Order_QtyShipKey> listSP)
         {
-
             DataTable dtSP = new DataTable();
             dtSP.Columns.Add("SP", typeof(string));
             dtSP.Columns.Add("Seq", typeof(string));
@@ -1292,7 +1338,6 @@ from    (   select  distinct IDD
         /// <param name="listSP">listSP</param>
         public static void CheckIDDSamePulloutDate(List<Order_QtyShipKey> listSP)
         {
-
             DataTable dtSP = new DataTable();
             dtSP.Columns.Add("SP", typeof(string));
             dtSP.Columns.Add("Seq", typeof(string));

@@ -69,35 +69,35 @@ namespace Sci.Production.Warehouse
             this.detailgrid.VirtualMode = true;
             this.detailgrid.CellValueNeeded += (s, e) =>
             {
-                string STRrequestqty = this.detailgrid.Rows[e.RowIndex].Cells["requestqty"].Value.ToString();
-                string STRaccu_issue = this.detailgrid.Rows[e.RowIndex].Cells["accu_issue"].Value.ToString();
-                string STRqty = this.detailgrid.Rows[e.RowIndex].Cells["qty"].Value.ToString();
-                decimal DECrequestqty;
-                decimal DECaccu_issue;
-                decimal DECqty;
-                if (!decimal.TryParse(STRrequestqty, out DECrequestqty))
+                string sTRrequestqty = this.detailgrid.Rows[e.RowIndex].Cells["requestqty"].Value.ToString();
+                string sTRaccu_issue = this.detailgrid.Rows[e.RowIndex].Cells["accu_issue"].Value.ToString();
+                string sTRqty = this.detailgrid.Rows[e.RowIndex].Cells["qty"].Value.ToString();
+                decimal dECrequestqty;
+                decimal dECaccu_issue;
+                decimal dECqty;
+                if (!decimal.TryParse(sTRrequestqty, out dECrequestqty))
                 {
-                    DECrequestqty = 0;
+                    dECrequestqty = 0;
                 }
 
-                if (!decimal.TryParse(STRaccu_issue, out DECaccu_issue))
+                if (!decimal.TryParse(sTRaccu_issue, out dECaccu_issue))
                 {
-                    DECaccu_issue = 0;
+                    dECaccu_issue = 0;
                 }
 
-                if (!decimal.TryParse(STRqty, out DECqty))
+                if (!decimal.TryParse(sTRqty, out dECqty))
                 {
-                    DECqty = 0;
+                    dECqty = 0;
                 }
 
                 if (e.ColumnIndex == this.detailgrid.Columns["bal_qty"].Index && !MyUtility.Check.Empty(this.detailgrid.Rows[e.RowIndex].Cells["requestqty"].Value))
                 {
-                    e.Value = DECrequestqty - DECaccu_issue;
+                    e.Value = dECrequestqty - dECaccu_issue;
                 }
 
                 if (e.ColumnIndex == this.detailgrid.Columns["var_qty"].Index && !MyUtility.Check.Empty(this.detailgrid.Rows[e.RowIndex].Cells["requestqty"].Value))
                 {
-                    e.Value = DECrequestqty - DECaccu_issue - DECqty;
+                    e.Value = dECrequestqty - dECaccu_issue - dECqty;
                 }
             };
 
@@ -691,48 +691,48 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     DataTable resulttb;
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(datacheck, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         /// <inheritdoc/>
@@ -872,48 +872,48 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
             #endregion 更新庫存數量  ftyinventory
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     DataTable resulttb;
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         /// <inheritdoc/>

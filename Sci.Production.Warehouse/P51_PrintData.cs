@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P51_PrintData
+    internal class P51_PrintData
     {
         public string StockType { get; set; }
 

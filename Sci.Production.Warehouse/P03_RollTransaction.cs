@@ -14,13 +14,13 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_RollTransaction : Win.Subs.Base
     {
-        DataRow dr;
-        DataTable dtFtyinventory;
-        DataTable dtTrans;
-        DataTable dtSummary;
-        DataSet data = new DataSet();
-        decimal useQty = 0;
-        bool bUseQty = false;
+        private DataRow dr;
+        private DataTable dtFtyinventory;
+        private DataTable dtTrans;
+        private DataTable dtSummary;
+        private DataSet data = new DataSet();
+        private decimal useQty = 0;
+        private bool bUseQty = false;
 
         public P03_RollTransaction(DataRow data)
         {
@@ -40,10 +40,10 @@ namespace Sci.Production.Warehouse
 
             // this.numericBox3.Value = (MyUtility.Check.Empty(dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["inqty"].ToString())) -
             //  ( MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString())) +(MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["adjustqty"].ToString()));
-            decimal IN = MyUtility.Check.Empty(this.dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["inqty"].ToString());
-            decimal OUT = MyUtility.Check.Empty(this.dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["outqty"].ToString());
-            decimal ADJ = MyUtility.Check.Empty(this.dr["adjustqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["adjustqty"].ToString());
-            this.numBalQtyBySeq.Value = IN - OUT + ADJ;
+            decimal iN = MyUtility.Check.Empty(this.dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["inqty"].ToString());
+            decimal oUT = MyUtility.Check.Empty(this.dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["outqty"].ToString());
+            decimal aDJ = MyUtility.Check.Empty(this.dr["adjustqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["adjustqty"].ToString());
+            this.numBalQtyBySeq.Value = iN - oUT + aDJ;
 
             #region "顯示DTM"
             DataTable dtmDt;
@@ -381,10 +381,10 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             }
 
             this.comboStockType.Text = "ALL";
-            this.change_Color();
+            this.Change_Color();
         }
 
-        private void change_Color()
+        private void Change_Color()
         {
             for (int i = 0; i < this.gridTrans.Rows.Count; i++)
             {
@@ -409,14 +409,14 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void comboStockType_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboStockType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.bindingSource1_PositionChanged(sender, e);  // 687: WAREHOUSE_P03_RollTransaction_Transaction Detail by Roll#，1.Grid3值不對
+            this.BindingSource1_PositionChanged(sender, e);  // 687: WAREHOUSE_P03_RollTransaction_Transaction Detail by Roll#，1.Grid3值不對
             switch (this.comboStockType.SelectedIndex)
             {
                 case 0:
@@ -431,12 +431,12 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             }
         }
 
-        private void gridFtyinventory_SelectionChanged(object sender, EventArgs e)
+        private void GridFtyinventory_SelectionChanged(object sender, EventArgs e)
         {
-            this.change_Color();
+            this.Change_Color();
         }
 
-        private void bindingSource1_PositionChanged(object sender, EventArgs e)
+        private void BindingSource1_PositionChanged(object sender, EventArgs e)
         {
             string[] tmpStocktype = new string[] { string.Empty, string.Empty };
 
@@ -481,7 +481,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             tmp.ToList().ForEach(q2 => this.dtSummary.Rows.Add(q2.roll, q2.dyelot, null, q2.inqty, q2.outQty, q2.AdjustQty, q2.balance, null, q2.rollcount, q2.DTM));
         }
 
-        private void btnPrint_Click(object sender, EventArgs e)
+        private void BtnPrint_Click(object sender, EventArgs e)
         {
             DataRow row = this.dr;
             string id = row["ID"].ToString();

@@ -13,10 +13,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P01_BatchReTransferMtlToScrap : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
+        private DataRow dr_master;
+        private DataTable dt_detail;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable dtReTransferToScrapList;
         protected DataTable[] dtBatch;
 
@@ -37,7 +37,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             this.QueryData(false);
         }
@@ -218,12 +218,12 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
                ; // 8
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnBatchCloseRMTL_Click(object sender, EventArgs e)
+        private void BtnBatchCloseRMTL_Click(object sender, EventArgs e)
         {
             this.gridBatchCloseRowMaterial.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
@@ -276,7 +276,7 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
             this.QueryData(true);
         }
 
-        private void gridBatchCloseRowMaterial_Sorted(object sender, EventArgs e)
+        private void GridBatchCloseRowMaterial_Sorted(object sender, EventArgs e)
         {
             this.ChangeGridstyle();
         }

@@ -169,7 +169,7 @@
             this.checkCartonsInClog.TabIndex = 53;
             this.checkCartonsInClog.Text = "Cartons in Clog";
             this.checkCartonsInClog.UseVisualStyleBackColor = true;
-            this.checkCartonsInClog.CheckedChanged += new System.EventHandler(this.checkCartonsInClog_CheckedChanged);
+            this.checkCartonsInClog.CheckedChanged += new System.EventHandler(this.CheckCartonsInClog_CheckedChanged);
             // 
             // btnFind
             // 
@@ -179,7 +179,7 @@
             this.btnFind.TabIndex = 4;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // btnSave
             // 
@@ -190,7 +190,7 @@
             this.btnSave.TabIndex = 5;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // btnColse
             // 
@@ -201,7 +201,7 @@
             this.btnColse.TabIndex = 6;
             this.btnColse.Text = "Close";
             this.btnColse.UseVisualStyleBackColor = true;
-            this.btnColse.Click += new System.EventHandler(this.btnColse_Click);
+            this.btnColse.Click += new System.EventHandler(this.BtnColse_Click);
             // 
             // grid
             // 

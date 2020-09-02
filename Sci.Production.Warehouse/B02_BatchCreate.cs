@@ -16,14 +16,14 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnCreate_Click(object sender, EventArgs e)
+        private void BtnCreate_Click(object sender, EventArgs e)
         {
-            List<MtlLocation> MtlLocations = new List<MtlLocation>();
+            List<MtlLocation> mtlLocations = new List<MtlLocation>();
             DualResult result;
             if (MyUtility.Check.Empty(this.txtID.Text) && !(this.chkBulk.Checked || this.chkInventory.Checked || this.chkScrap.Checked))
             {
@@ -44,7 +44,7 @@ namespace Sci.Production.Warehouse
             {
                 if (this.chkBulk.Checked)
                 {
-                    MtlLocations.Add(new MtlLocation()
+                    mtlLocations.Add(new MtlLocation()
                     {
                         ID = this.txtID.Text,
                         Description = this.txtDescription.Text,
@@ -56,7 +56,7 @@ namespace Sci.Production.Warehouse
 
                 if (this.chkInventory.Checked)
                 {
-                    MtlLocations.Add(new MtlLocation()
+                    mtlLocations.Add(new MtlLocation()
                     {
                         ID = this.txtID.Text,
                         Description = this.txtDescription.Text,
@@ -68,7 +68,7 @@ namespace Sci.Production.Warehouse
 
                 if (this.chkScrap.Checked)
                 {
-                    MtlLocations.Add(new MtlLocation()
+                    mtlLocations.Add(new MtlLocation()
                     {
                         ID = this.txtID.Text,
                         Description = this.txtDescription.Text,
@@ -81,7 +81,7 @@ namespace Sci.Production.Warehouse
 
             string insertCmd = string.Empty;
 
-            foreach (var item in MtlLocations)
+            foreach (var item in mtlLocations)
             {
                 List<SqlParameter> paras = new List<SqlParameter>();
                 string chkCmd = $"SELECT * FROM MtlLocation WHERE ID=@ID AND StockType=@StockType";

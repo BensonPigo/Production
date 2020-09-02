@@ -11,12 +11,12 @@ namespace Sci.Production.Quality
 {
     public partial class P07_Wash : Win.Subs.Input2A
     {
-        private DataRow maindr;
-        private string ID;
-        private string PoID;
-        private string SEQ1;
-        private string SEQ2;
-        private bool EDIT;
+        private readonly DataRow maindr;
+        private readonly string ID;
+        private readonly string PoID;
+        private readonly string SEQ1;
+        private readonly string SEQ2;
+        private readonly bool EDIT;
         string sql;
         DataRow DR;
 
@@ -113,7 +113,7 @@ namespace Sci.Production.Quality
             this.comboResult.SelectedValue2 = this.maindr["Wash"].ToString().Trim();
         }
 
-        private void txtScale_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtScale_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (!this.EDIT)
@@ -131,7 +131,7 @@ namespace Sci.Production.Quality
             this.txtScale.Text = item.GetSelectedString();
         }
 
-        private void txtScale_Validating(object sender, CancelEventArgs e)
+        private void TxtScale_Validating(object sender, CancelEventArgs e)
         {
             string textValue = this.txtScale.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtScale.OldValue)
@@ -147,7 +147,7 @@ namespace Sci.Production.Quality
         }
 
         // [Encode][Amend]
-        private void btnEncode_Click(object sender, EventArgs e)
+        private void BtnEncode_Click(object sender, EventArgs e)
         {
             if (this.btnEncode.Text == "Encode")
             {
@@ -292,13 +292,13 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
         //    }
 
         // }
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.SetView(this.maindr);
             this.Close();
         }
 
-        private void btnEdit_Click(object sender, EventArgs e)
+        private void BtnEdit_Click(object sender, EventArgs e)
         {
             if (this.btnEdit.Text == "Edit")
             {

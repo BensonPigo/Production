@@ -11,9 +11,9 @@ namespace Sci.Production.Quality
 {
     public partial class P01 : Win.Tems.Input6
     {
-        private string loginID = Env.User.UserID;
-        private string keyWord = Env.User.Keyword;
-        private bool boolFromP01;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string keyWord = Env.User.Keyword;
+        private readonly bool boolFromP01;
 
         int index;
         string find = string.Empty;
@@ -653,7 +653,7 @@ and ActualYds > 0
             }
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             DataTable detDtb = (DataTable)this.detailgridbs.DataSource;
 
@@ -734,7 +734,7 @@ and ActualYds > 0
             return DetailGridContextMenuMode.None;
         }
 
-        private void modifyPhysicalInspectionToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ModifyPhysicalInspectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentDetailData;
             if (dr == null)
@@ -766,7 +766,7 @@ and ActualYds > 0
             this.detailgrid.SelectRowTo(rowindex);
         }
 
-        private void modifyWeightTestToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ModifyWeightTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentDetailData;
             if (dr == null)
@@ -799,7 +799,7 @@ and ActualYds > 0
             this.detailgrid.SelectRowTo(rowindex);
         }
 
-        private void modifyShadeBondTestToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ModifyShadeBondTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentDetailData;
             if (dr == null)
@@ -831,7 +831,7 @@ and ActualYds > 0
             this.detailgrid.SelectRowTo(rowindex);
         }
 
-        private void modifyContinuityTestToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ModifyContinuityTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentDetailData;
             if (dr == null)
@@ -865,7 +865,7 @@ and ActualYds > 0
             this.detailgrid.SelectRowTo(rowindex);
         }
 
-        private void modifyOdorTestToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ModifyOdorTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentDetailData;
             if (dr == null)

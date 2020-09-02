@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P24_PrintData
+    internal class P24_PrintData
     {
         public string FromPOID { get; set; }
 
@@ -10,7 +10,7 @@
 
         public string MTLTYPE { get; set; }
 
-        public string unit { get; set; }
+        public string Unit { get; set; }
 
         public string FromRoll { get; set; }
 

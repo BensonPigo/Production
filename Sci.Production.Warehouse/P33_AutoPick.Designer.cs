@@ -88,7 +88,7 @@
             this.btnPick.TabIndex = 15;
             this.btnPick.Text = "Pick";
             this.btnPick.UseVisualStyleBackColor = true;
-            this.btnPick.Click += new System.EventHandler(this.btnPick_Click);
+            this.btnPick.Click += new System.EventHandler(this.BtnPick_Click);
             // 
             // btnCancel
             // 
@@ -100,7 +100,7 @@
             this.btnCancel.TabIndex = 16;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // groupBox1
             // 

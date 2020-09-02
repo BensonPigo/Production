@@ -462,8 +462,8 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -471,39 +471,39 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb,
                         "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         protected override void ClickUnconfirm()
@@ -583,8 +583,8 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -592,39 +592,39 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb,
                         "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         protected override bool ClickPrint()
@@ -637,8 +637,8 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
-            string Remark = row["Remark"].ToString();
-            string OrderID = row["OrderID"].ToString();
+            string remark = row["Remark"].ToString();
+            string orderID = row["OrderID"].ToString();
             string labtofty = string.Empty;
             string tofty = string.Empty;
             if (MyUtility.Convert.GetBool(row["ToSisterFty"]))
@@ -647,7 +647,7 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
                 tofty = MyUtility.Convert.GetString(row["ToFactory"]);
             }
 
-            string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string cDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
@@ -669,13 +669,13 @@ where id = @MDivision", pars, out dt);
                 return false;
             }
 
-            string RptTitle = dt.Rows[0]["NameEN"].ToString();
+            string rptTitle = dt.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", CDate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("OrderID", OrderID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", cDate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("OrderID", orderID));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("labTosisterfactory", labtofty));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tosisterfactory", tofty));
 
@@ -748,12 +748,12 @@ drop table #tmp
 
             // 指定是哪個 RDLC
             // DualResult result;
-            Type ReportResourceNamespace = typeof(P14_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P14_Print.rdlc";
+            Type reportResourceNamespace = typeof(P14_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P14_Print.rdlc";
 
             IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 // this.ShowException(result);
                 return false;

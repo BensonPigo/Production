@@ -13,10 +13,10 @@ namespace Sci.Production.Quality
 {
     public partial class P21 : Win.Tems.Input6
     {
-        private string loginID = Env.User.UserID;
+        private readonly string loginID = Env.User.UserID;
         string tmpId;
 
-        private Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
 
         public P21(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -666,7 +666,7 @@ where a.ID='{0}'",
             return base.ClickDeleteBefore();
         }
 
-        private void comboInspectionStage_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboInspectionStage_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (this.comboInspectionStage.Text)
             {
@@ -694,12 +694,12 @@ where a.ID='{0}'",
             }
         }
 
-        private void numGarmentOutput_TextChanged(object sender, EventArgs e)
+        private void NumGarmentOutput_TextChanged(object sender, EventArgs e)
         {
             this.numGarmentOutput.MaxLength = 3;
         }
 
-        private void txtSP_Validating(object sender, CancelEventArgs e)
+        private void TxtSP_Validating(object sender, CancelEventArgs e)
         {
 // if (MyUtility.Check.Empty(this.txtSP.Text))
 //            {
@@ -745,7 +745,7 @@ where a.ID='{0}'",
 //            }
         }
 
-        private void txtSP_Validated(object sender, EventArgs e)
+        private void TxtSP_Validated(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSP.Text))
             {

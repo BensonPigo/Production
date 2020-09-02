@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P31_PrintData
+    internal class P31_PrintData
     {
         public string FromSP { get; set; }
 
@@ -12,7 +12,7 @@
 
         public string Location { get; set; }
 
-        public string unit { get; set; }
+        public string Unit { get; set; }
 
         public string FromRoll { get; set; }
 

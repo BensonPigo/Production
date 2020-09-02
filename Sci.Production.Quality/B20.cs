@@ -99,7 +99,7 @@ namespace Sci.Production.Quality
             return base.ClickSavePost();
         }
 
-        private void btnSettingSort_Click(object sender, EventArgs e)
+        private void BtnSettingSort_Click(object sender, EventArgs e)
         {
             B20_SettingSort f = new B20_SettingSort();
             f.ShowDialog();

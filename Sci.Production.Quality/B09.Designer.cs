@@ -116,7 +116,7 @@
             this.btnAttach.TabIndex = 6;
             this.btnAttach.Text = "Attach";
             this.btnAttach.UseVisualStyleBackColor = true;
-            this.btnAttach.Click += new System.EventHandler(this.btnAttach_Click);
+            this.btnAttach.Click += new System.EventHandler(this.BtnAttach_Click);
             // 
             // btnDelete
             // 
@@ -126,7 +126,7 @@
             this.btnDelete.TabIndex = 7;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
             // pictureBoxSignature
             // 

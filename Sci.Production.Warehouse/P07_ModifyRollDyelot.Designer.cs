@@ -67,7 +67,7 @@
             this.btnCommit.TabIndex = 1;
             this.btnCommit.Text = "Commit";
             this.btnCommit.UseVisualStyleBackColor = true;
-            this.btnCommit.Click += new System.EventHandler(this.btnCommit_Click);
+            this.btnCommit.Click += new System.EventHandler(this.BtnCommit_Click);
             // 
             // btnClose
             // 
@@ -79,7 +79,7 @@
             this.btnClose.TabIndex = 2;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // splitContainer1
             // 
@@ -125,7 +125,7 @@
             this.gridModifyRoll.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridModifyRoll.TabIndex = 0;
             this.gridModifyRoll.TabStop = false;
-            this.gridModifyRoll.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_RowEnter);
+            this.gridModifyRoll.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid1_RowEnter);
             // 
             // gridDyelot
             // 

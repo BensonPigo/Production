@@ -110,8 +110,8 @@ namespace Sci.Production.Warehouse
 
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
-            string Remark = row["Remark"].ToString();
-            string M = this.CurrentMaintain["MdivisionID"].ToString();
+            string remark = row["Remark"].ToString();
+            string m = this.CurrentMaintain["MdivisionID"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -137,13 +137,13 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            string RptTitle = dt1.Rows[0]["nameEN"].ToString();
+            string rptTitle = dt1.Rows[0]["nameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new ReportParameter("ID", id));
-            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("Remark", remark));
             report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
-            report.ReportParameters.Add(new ReportParameter("Factory", M));
+            report.ReportParameters.Add(new ReportParameter("Factory", m));
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             #endregion
@@ -211,12 +211,12 @@ where t.id= @ID";
 
             // 指定是哪個 RDLC
             // DualResult result;
-            Type ReportResourceNamespace = typeof(P32_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P32_Print.rdlc";
+            Type reportResourceNamespace = typeof(P32_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P32_Print.rdlc";
 
             IReportResource reportresource;
-            if (!(result1 = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(result1 = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 // this.ShowException(result);
                 return false;
@@ -301,7 +301,7 @@ where t.id= @ID";
                 return false;
             }
 
-            if (!this.checkRoll())
+            if (!this.CheckRoll())
             {
                 return false;
             }
@@ -494,7 +494,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0)
             #endregion -- 檢查負數庫存 --
 
             #region -- 檢查目的Roll是否已存在資料 --
-            if (!this.checkRoll())
+            if (!this.CheckRoll())
             {
                 return;
             }
@@ -651,8 +651,8 @@ else
     end", this.CurrentMaintain["id"].ToString(), this.CurrentMaintain["borrowid"], DateTime.Parse(this.CurrentMaintain["issuedate"].ToString()).ToShortDateString()));
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -661,7 +661,7 @@ else
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B, out resulttb, "#TmpSource")))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -671,7 +671,7 @@ else
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(bs1I, string.Empty, sqlupd2_BI, out resulttb, "#TmpSource")))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -679,54 +679,54 @@ else
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs2, string.Empty, sqlupd2_A, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfioto, string.Empty, sqlupd2_FIO2, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd2.ToString(), result2);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     SentToGensong_AutoWHFabric(true);
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         // Unconfirm
@@ -995,8 +995,8 @@ else
     end", this.CurrentMaintain["id"].ToString(), this.CurrentMaintain["borrowid"], DateTime.Parse(this.CurrentMaintain["issuedate"].ToString()).ToShortDateString()));
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -1005,7 +1005,7 @@ else
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B, out resulttb, "#TmpSource")))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -1015,7 +1015,7 @@ else
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(bs1I, string.Empty, sqlupd2_BI, out resulttb, "#TmpSource")))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -1023,54 +1023,54 @@ else
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs2, string.Empty, sqlupd2_A, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfioto, string.Empty, sqlupd2_FIO2, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd2.ToString(), result2);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     SentToGensong_AutoWHFabric(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         private void SentToGensong_AutoWHFabric(bool IsConfirmed)
@@ -1121,7 +1121,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // delete all
-        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
+        private void BtnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
 
@@ -1130,7 +1130,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["borrowid"]))
             {
@@ -1144,14 +1144,14 @@ Where a.id = '{0}'", masterID);
             this.RenewData();
         }
 
-        private void btnAccumulatedQty_Click(object sender, EventArgs e)
+        private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new P32_AccumulatedQty(this.CurrentMaintain);
             frm.P32 = this;
             frm.ShowDialog(this);
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -1170,7 +1170,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // borrow id
-        private void txtBorrowID_Validating(object sender, CancelEventArgs e)
+        private void TxtBorrowID_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtBorrowID.Text))
             {
@@ -1215,7 +1215,7 @@ Where a.id = '{0}'", masterID);
         /// 確認 SP# & Seq 是否已經有重複的 Roll
         /// </summary>
         /// <returns>bool</returns>
-        private bool checkRoll()
+        private bool CheckRoll()
         {
             // 判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
             List<string> listMsg = new List<string>();

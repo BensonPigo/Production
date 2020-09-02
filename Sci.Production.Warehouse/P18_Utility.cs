@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    static class P18_Utility
+    internal static class P18_Utility
     {
         public static DualResult CheckDetailPOID(string poID, string fromFtyID, out string dataFrom)
         {

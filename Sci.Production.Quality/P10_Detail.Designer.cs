@@ -506,7 +506,7 @@
             this.txtSize.Name = "txtSize";
             this.txtSize.Size = new System.Drawing.Size(115, 23);
             this.txtSize.TabIndex = 28;
-            this.txtSize.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtSize_MouseDown);
+            this.txtSize.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtSize_MouseDown);
             // 
             // txtBrand
             // 
@@ -1278,7 +1278,7 @@
             this.gridAppearance.ShowCellToolTips = false;
             this.gridAppearance.Size = new System.Drawing.Size(1128, 417);
             this.gridAppearance.TabIndex = 1;
-            this.gridAppearance.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.gridAppearance_CellBeginEdit);
+            this.gridAppearance.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.GridAppearance_CellBeginEdit);
             // 
             // tabFGWT
             // 
@@ -1410,7 +1410,7 @@
             this.btnAmend.TabIndex = 4;
             this.btnAmend.Text = "Amend";
             this.btnAmend.UseVisualStyleBackColor = true;
-            this.btnAmend.Click += new System.EventHandler(this.btnAmend_Click);
+            this.btnAmend.Click += new System.EventHandler(this.BtnAmend_Click);
             // 
             // btnEncode
             // 
@@ -1421,7 +1421,7 @@
             this.btnEncode.TabIndex = 3;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
+            this.btnEncode.Click += new System.EventHandler(this.BtnEncode_Click);
             // 
             // panel2
             // 
@@ -1462,7 +1462,7 @@
             this.btnEdit.TabIndex = 7;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
-            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // btnClose
             // 
@@ -1473,7 +1473,7 @@
             this.btnClose.TabIndex = 6;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // panel3
             // 

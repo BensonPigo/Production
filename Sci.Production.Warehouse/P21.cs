@@ -15,7 +15,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P21 : Win.Tems.QueryForm
     {
-        DataTable dtReceiving = new DataTable();
+        private DataTable dtReceiving = new DataTable();
 
         public P21(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -49,7 +49,7 @@ namespace Sci.Production.Warehouse
                 curDr.EndEdit();
 
                 this.DifferentialColorChange(e.RowIndex);
-                this.selectModify(e.RowIndex);
+                this.SelectModify(e.RowIndex);
                 this.gridReceiving.RefreshEdit();
             };
 
@@ -73,7 +73,7 @@ namespace Sci.Production.Warehouse
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
                     curDr["Location"] = string.Empty;
-                    this.selectModify(e.RowIndex);
+                    this.SelectModify(e.RowIndex);
                     return;
                 }
 
@@ -93,7 +93,7 @@ namespace Sci.Production.Warehouse
                     curDr.EndEdit();
                 }
 
-                this.selectModify(e.RowIndex);
+                this.SelectModify(e.RowIndex);
                 this.gridReceiving.RefreshEdit();
             };
 
@@ -423,22 +423,22 @@ DROP TABLE #tmpStockType
             this.numSelectCnt.Value = 0;
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.Query();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void gridReceiving_Sorted(object sender, EventArgs e)
+        private void GridReceiving_Sorted(object sender, EventArgs e)
         {
             this.GridFormatChange();
         }
 
-        private void btnUpdate_Click(object sender, EventArgs e)
+        private void BtnUpdate_Click(object sender, EventArgs e)
         {
             var selectedReceiving = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1);
             if (!selectedReceiving.Any())
@@ -637,8 +637,8 @@ Insert into LocationTrans_Detail(   ID,
             }
 
             Exception errMsg = null;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -668,7 +668,7 @@ Insert into LocationTrans_Detail(   ID,
                         }
                     }
 
-                    _transactionscope.Complete();
+                    transactionscope.Complete();
                 }
                 catch (Exception ex)
                 {
@@ -696,7 +696,7 @@ Insert into LocationTrans_Detail(   ID,
         /// 有被修改過,就自動勾選資料
         /// </summary>
         /// <param name="rowIndex"></param>
-        private void selectModify(int rowIndex)
+        private void SelectModify(int rowIndex)
         {
             DataRow dr = this.gridReceiving.GetDataRow(rowIndex);
             bool chg_ActWeight = false;

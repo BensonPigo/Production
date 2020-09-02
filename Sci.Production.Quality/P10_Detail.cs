@@ -18,8 +18,8 @@ namespace Sci.Production.Quality
 {
     public partial class P10_Detail : Win.Forms.Base
     {
-        private DataRow Deatilrow;
-        private DataRow MasterRow;
+        private readonly DataRow Deatilrow;
+        private readonly DataRow MasterRow;
         private string style = string.Empty;
         private string season = string.Empty;
         private string brand = string.Empty;
@@ -208,7 +208,7 @@ namespace Sci.Production.Quality
 
         private void P10_Detail_Load(object sender, EventArgs e)
         {
-            this.btnenable();
+            this.Btnenable();
 
             this.comboTemperature.SelectedIndex = 0;
             this.comboMachineModel.SelectedIndex = 0;
@@ -885,18 +885,18 @@ namespace Sci.Production.Quality
             .Text("Result", header: "Result", width: Widths.AnsiChars(6), iseditingreadonly: true)
             ;
 
-            this.tab1Load();
-            this.tab2Load();
-            this.tab3Load();
-            this.tab4Load();
-            this.tab5Load();
+            this.Tab1Load();
+            this.Tab2Load();
+            this.Tab3Load();
+            this.Tab4Load();
+            this.Tab5Load();
 
             this.tabControl1.SelectedIndex = 1;
             this.tabControl1.SelectedIndex = 2;
             this.tabControl1.SelectedIndex = 0;
         }
 
-        private void btnenable()
+        private void Btnenable()
         {
             string detailstatus = MyUtility.GetValue.Lookup($"select Status from SampleGarmentTest_Detail where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}");
             this.btnEncode.Enabled = detailstatus.EqualString("New");
@@ -914,7 +914,7 @@ namespace Sci.Production.Quality
 
         #region tab載入
 
-        private void tab1Load()
+        private void Tab1Load()
         {
             // 主檔資料
             this.txtStyle.Text = MyUtility.Convert.GetString(this.MasterRow["StyleID"]);
@@ -977,7 +977,7 @@ and st.Article = '{this.MasterRow["Article"]}'
 
         DataTable dtShrinkage;
 
-        private void tab2Load()
+        private void Tab2Load()
         {
             this.gridShrinkage.IsEditingReadOnly = false;
 
@@ -1060,7 +1060,7 @@ order by LocationOrder ,seq";
 
         DataTable dtApperance;
 
-        private void tab3Load()
+        private void Tab3Load()
         {
             this.gridAppearance.IsEditingReadOnly = false;
 
@@ -1114,7 +1114,7 @@ order by seq";
 
         DataTable dtFGWT;
 
-        private void tab4Load()
+        private void Tab4Load()
         {
             this.gridFGWT.IsEditingReadOnly = false;
 
@@ -1164,7 +1164,7 @@ order by LocationText DESC";
             this.gridFGWT.DataSource = this.dtFGWT;
         }
 
-        private void tab4Save()
+        private void Tab4Save()
         {
             DataTable gridFGWT = (DataTable)this.gridFGWT.DataSource;
 
@@ -1236,7 +1236,7 @@ order by LocationText DESC
 
         DataTable dtFGPT;
 
-        private void tab5Load()
+        private void Tab5Load()
         {
             this.gridFGPT.IsEditingReadOnly = false;
 
@@ -1260,7 +1260,7 @@ order by LocationText DESC";
             this.gridFGPT.DataSource = this.dtFGPT;
         }
 
-        private void tab5Save()
+        private void Tab5Save()
         {
             DataTable gridFGPT = (DataTable)this.gridFGPT.DataSource;
 
@@ -1303,7 +1303,7 @@ order by LocationText DESC
 
         #region Edit存檔
 
-        private void btnEdit_Click(object sender, EventArgs e)
+        private void BtnEdit_Click(object sender, EventArgs e)
         {
             if (this.EditMode)
             {
@@ -1332,22 +1332,22 @@ order by LocationText DESC
                     this.ShowErr(dr);
                 }
                 #endregion
-                this.tab2ShrinkageSave();
-                this.tab2TwistingSave();
+                this.Tab2ShrinkageSave();
+                this.Tab2TwistingSave();
                 DBProxy.Current.Execute(null, $"update SampleGarmentTest_Detail set Editname = '{Env.User.UserID}',EditDate = getdate() where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]}");
-                this.tab2Load();
+                this.Tab2Load();
 
-                this.tab3ApperanceSave();
+                this.Tab3ApperanceSave();
 
-                this.tab3Load();
+                this.Tab3Load();
 
-                this.tab4Save();
-                this.tab4Load();
+                this.Tab4Save();
+                this.Tab4Load();
 
-                this.tab5Save();
-                this.tab5Load();
+                this.Tab5Save();
+                this.Tab5Load();
 
-                this.btnenable();
+                this.Btnenable();
 
                 this.gridAppearance.ForeColor = Color.Black;
                 this.gridFGPT.Columns["3Test"].DefaultCellStyle.BackColor = Color.White;
@@ -1410,7 +1410,7 @@ order by LocationText DESC
             this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
         }
 
-        private void tab2ShrinkageSave()
+        private void Tab2ShrinkageSave()
         {
             string savetab2Shrinkage = $@"
 update #tmp set Location = 'B' where Location = 'BOTTOM'
@@ -1443,7 +1443,7 @@ select * from [SampleGarmentTest_Detail_Shrinkage]  where id = {this.Deatilrow["
             }
         }
 
-        private void tab2TwistingSave()
+        private void Tab2TwistingSave()
         {
             string savetab2Twisting = $@"
 update [SampleGarmentTest_Detail_Twisting] set S1={this.numTopS1.Value},S2={this.numTopS2.Value},L={this.numTopL.Value},Twisting={this.numTwisTingTop.Value} where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='TOP'
@@ -1458,7 +1458,7 @@ update [SampleGarmentTest_Detail_Twisting] set S1={this.numBottomS1.Value},L={th
             }
         }
 
-        private void tab3ApperanceSave()
+        private void Tab3ApperanceSave()
         {
             DataTable gridAppearance = (DataTable)this.listControlBindingSource2.DataSource;
 
@@ -1493,7 +1493,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void txtSize_MouseDown(object sender, MouseEventArgs e)
+        private void TxtSize_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -1515,12 +1515,12 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnPDF_Click(object sender, EventArgs e)
+        private void BtnPDF_Click(object sender, EventArgs e)
         {
             if (this.dtApperance.Rows.Count == 0 || this.dtShrinkage.Rows.Count == 0)
             {
@@ -1711,7 +1711,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 string strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=1")[0]["Comment"]);
-                this.rowHeight(worksheet, 61, strComment);
+                this.RowHeight(worksheet, 61, strComment);
                 worksheet.Cells[61, 10] = strComment;
 
                 worksheet.Cells[62, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=2")[0]["Type"]);
@@ -1758,7 +1758,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=2")[0]["Comment"]);
-                this.rowHeight(worksheet, 62, strComment);
+                this.RowHeight(worksheet, 62, strComment);
                 worksheet.Cells[62, 10] = strComment;
 
                 worksheet.Cells[63, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=3")[0]["Type"]);
@@ -1805,7 +1805,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=3")[0]["Comment"]);
-                this.rowHeight(worksheet, 63, strComment);
+                this.RowHeight(worksheet, 63, strComment);
                 worksheet.Cells[63, 10] = strComment;
 
                 worksheet.Cells[64, 3] = this.dtApperance.Select("seq=4")[0]["Type"].ToString(); // type;
@@ -1870,7 +1870,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=4")[0]["Comment"]);
-                this.rowHeight(worksheet, 64, strComment);
+                this.RowHeight(worksheet, 64, strComment);
                 worksheet.Cells[64, 10] = strComment;
 
                 worksheet.Cells[65, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=5")[0]["Type"]);
@@ -1917,7 +1917,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=5")[0]["Comment"]);
-                this.rowHeight(worksheet, 65, strComment);
+                this.RowHeight(worksheet, 65, strComment);
                 worksheet.Cells[65, 10] = strComment;
 
                 worksheet.Cells[66, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=6")[0]["Type"]);
@@ -1964,7 +1964,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=6")[0]["Comment"]);
-                this.rowHeight(worksheet, 66, strComment);
+                this.RowHeight(worksheet, 66, strComment);
                 worksheet.Cells[66, 10] = strComment;
 
                 worksheet.Cells[67, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=7")[0]["Type"]);
@@ -2011,7 +2011,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=7")[0]["Comment"]);
-                this.rowHeight(worksheet, 67, strComment);
+                this.RowHeight(worksheet, 67, strComment);
                 worksheet.Cells[67, 10] = strComment;
 
                 worksheet.Cells[68, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=8")[0]["Type"]);
@@ -2058,7 +2058,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=8")[0]["Comment"]);
-                this.rowHeight(worksheet, 68, strComment);
+                this.RowHeight(worksheet, 68, strComment);
                 worksheet.Cells[68, 10] = strComment;
 
                 worksheet.Cells[69, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=9")[0]["Type"]);
@@ -2105,7 +2105,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=9")[0]["Comment"]);
-                this.rowHeight(worksheet, 69, strComment);
+                this.RowHeight(worksheet, 69, strComment);
                 worksheet.Cells[69, 10] = strComment;
                 #endregion
 
@@ -2188,35 +2188,35 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 {
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[44, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Waistband (relax)'", i + 1);
+                        worksheet.Cells[44, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Waistband (relax)'", i + 1);
 
                         // dtShrinkage.Select("Location = 'BOTTOM'and type ='Waistband (relax)'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[45, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Hip Width'", i + 1);
+                        worksheet.Cells[45, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Hip Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'BOTTOM'and type ='Hip Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[46, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Thigh Width'", i + 1);
+                        worksheet.Cells[46, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Thigh Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'BOTTOM'and type ='Thigh Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[47, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Side Seam'", i + 1);
+                        worksheet.Cells[47, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Side Seam'", i + 1);
 
                         // dtShrinkage.Select("Location = 'BOTTOM'and type ='Side Seam'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[48, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Leg Opening'", i + 1);
+                        worksheet.Cells[48, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Leg Opening'", i + 1);
 
                         // dtShrinkage.Select("Location = 'BOTTOM'and type ='Leg Opening'")[0][i+1];
                     }
@@ -2233,35 +2233,35 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 {
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[34, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Chest Width'", i + 1);
+                        worksheet.Cells[34, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Chest Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'OUTER'and type ='Chest Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[35, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Width'", i + 1);
+                        worksheet.Cells[35, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'OUTER'and type ='Sleeve Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[36, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Length'", i + 1);
+                        worksheet.Cells[36, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Length'", i + 1);
 
                         // dtShrinkage.Select("Location = 'OUTER'and type ='Sleeve Length'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[37, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Back Length'", i + 1);
+                        worksheet.Cells[37, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Back Length'", i + 1);
 
                         // dtShrinkage.Select("Location = 'OUTER'and type ='Back Length'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[38, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Hem Opening'", i + 1);
+                        worksheet.Cells[38, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Hem Opening'", i + 1);
 
                         // dtShrinkage.Select("Location = 'OUTER'and type ='Hem Opening'")[0][i + 1];
                     }
@@ -2278,35 +2278,35 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 {
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[26, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Chest Width'", i + 1);
+                        worksheet.Cells[26, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Chest Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'INNER'and type ='Chest Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[27, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Sleeve Width'", i + 1);
+                        worksheet.Cells[27, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Sleeve Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'INNER'and type ='Sleeve Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[28, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Sleeve Length'", i + 1);
+                        worksheet.Cells[28, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Sleeve Length'", i + 1);
 
                         // dtShrinkage.Select("Location = 'INNER'and type ='Sleeve Length'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[29, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Back Length'", i + 1);
+                        worksheet.Cells[29, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Back Length'", i + 1);
 
                         // dtShrinkage.Select("Location = 'INNER'and type ='Back Length'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[30, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Hem Opening'", i + 1);
+                        worksheet.Cells[30, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Hem Opening'", i + 1);
 
                         // dtShrinkage.Select("Location = 'INNER'and type ='Hem Opening'")[0][i + 1];
                     }
@@ -2323,35 +2323,35 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 {
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[18, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Chest Width'", i + 1);
+                        worksheet.Cells[18, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Chest Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'TOP'and type ='Chest Width'")[0][i+1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[19, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Sleeve Width'", i + 1);
+                        worksheet.Cells[19, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Sleeve Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'TOP'and type ='Sleeve Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[20, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Sleeve Length'", i + 1);
+                        worksheet.Cells[20, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Sleeve Length'", i + 1);
 
                         // dtShrinkage.Select("Location = 'TOP'and type ='Sleeve Length'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[21, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Back Length'", i + 1);
+                        worksheet.Cells[21, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Back Length'", i + 1);
 
                         // dtShrinkage.Select("Location = 'TOP'and type ='Back Length'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[22, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Hem Opening'", i + 1);
+                        worksheet.Cells[22, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Hem Opening'", i + 1);
 
                         // dtShrinkage.Select("Location = 'TOP'and type ='Hem Opening'")[0][i + 1];
                     }
@@ -2473,7 +2473,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 string strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=1")[0]["Comment"]);
-                this.rowHeight(worksheet, 61, strComment);
+                this.RowHeight(worksheet, 61, strComment);
                 worksheet.Cells[61, 10] = strComment;
 
                 worksheet.Cells[62, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=2")[0]["Type"]);
@@ -2520,7 +2520,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=2")[0]["Comment"]);
-                this.rowHeight(worksheet, 62, strComment);
+                this.RowHeight(worksheet, 62, strComment);
                 worksheet.Cells[62, 10] = strComment;
 
                 worksheet.Cells[63, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=3")[0]["Type"]).ToString(); // type;
@@ -2583,7 +2583,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=3")[0]["Comment"]);
-                this.rowHeight(worksheet, 63, strComment);
+                this.RowHeight(worksheet, 63, strComment);
                 worksheet.Cells[63, 10] = strComment;
 
                 worksheet.Cells[64, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=4")[0]["Type"]);
@@ -2630,7 +2630,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=4")[0]["Comment"]);
-                this.rowHeight(worksheet, 64, strComment);
+                this.RowHeight(worksheet, 64, strComment);
                 worksheet.Cells[64, 10] = strComment;
 
                 worksheet.Cells[65, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=5")[0]["Type"]);
@@ -2677,7 +2677,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=5")[0]["Comment"]);
-                this.rowHeight(worksheet, 65, strComment);
+                this.RowHeight(worksheet, 65, strComment);
                 worksheet.Cells[65, 10] = strComment;
 
                 worksheet.Cells[66, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=6")[0]["Type"]);
@@ -2724,7 +2724,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=6")[0]["Comment"]);
-                this.rowHeight(worksheet, 66, strComment);
+                this.RowHeight(worksheet, 66, strComment);
                 worksheet.Cells[66, 10] = strComment;
 
                 worksheet.Cells[67, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=7")[0]["Type"]);
@@ -2771,7 +2771,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=7")[0]["Comment"]);
-                this.rowHeight(worksheet, 67, strComment);
+                this.RowHeight(worksheet, 67, strComment);
                 worksheet.Cells[67, 10] = strComment;
 
                 worksheet.Cells[68, 3] = MyUtility.Convert.GetString(this.dtApperance.Select("seq=8")[0]["Type"]);
@@ -2818,7 +2818,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 }
 
                 strComment = MyUtility.Convert.GetString(this.dtApperance.Select("seq=8")[0]["Comment"]);
-                this.rowHeight(worksheet, 68, strComment);
+                this.RowHeight(worksheet, 68, strComment);
                 worksheet.Cells[68, 10] = strComment;
 
                 #endregion
@@ -2902,35 +2902,35 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 {
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[44, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Waistband (relax)'", i + 1);
+                        worksheet.Cells[44, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Waistband (relax)'", i + 1);
 
                         // dtShrinkage.Select("Location = 'BOTTOM'and type ='Waistband (relax)'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[45, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Hip Width'", i + 1);
+                        worksheet.Cells[45, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Hip Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'BOTTOM'and type ='Hip Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[46, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Thigh Width'", i + 1);
+                        worksheet.Cells[46, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Thigh Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'BOTTOM'and type ='Thigh Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[47, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Side Seam'", i + 1);
+                        worksheet.Cells[47, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Side Seam'", i + 1);
 
                         // dtShrinkage.Select("Location = 'BOTTOM'and type ='Side Seam'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[48, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Leg Opening'", i + 1);
+                        worksheet.Cells[48, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM'and type ='Leg Opening'", i + 1);
 
                         // dtShrinkage.Select("Location = 'BOTTOM'and type ='Leg Opening'")[0][i+1];
                     }
@@ -2947,35 +2947,35 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 {
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[34, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Chest Width'", i + 1);
+                        worksheet.Cells[34, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Chest Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'OUTER'and type ='Chest Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[35, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Width'", i + 1);
+                        worksheet.Cells[35, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'OUTER'and type ='Sleeve Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[36, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Length'", i + 1);
+                        worksheet.Cells[36, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Sleeve Length'", i + 1);
 
                         // dtShrinkage.Select("Location = 'OUTER'and type ='Sleeve Length'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[37, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Back Length'", i + 1);
+                        worksheet.Cells[37, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Back Length'", i + 1);
 
                         // dtShrinkage.Select("Location = 'OUTER'and type ='Back Length'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[38, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Hem Opening'", i + 1);
+                        worksheet.Cells[38, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER'and type ='Hem Opening'", i + 1);
 
                         // dtShrinkage.Select("Location = 'OUTER'and type ='Hem Opening'")[0][i + 1];
                     }
@@ -2992,35 +2992,35 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 {
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[26, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Chest Width'", i + 1);
+                        worksheet.Cells[26, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Chest Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'INNER'and type ='Chest Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[27, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Sleeve Width'", i + 1);
+                        worksheet.Cells[27, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Sleeve Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'INNER'and type ='Sleeve Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[28, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Sleeve Length'", i + 1);
+                        worksheet.Cells[28, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Sleeve Length'", i + 1);
 
                         // dtShrinkage.Select("Location = 'INNER'and type ='Sleeve Length'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[29, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Back Length'", i + 1);
+                        worksheet.Cells[29, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Back Length'", i + 1);
 
                         // dtShrinkage.Select("Location = 'INNER'and type ='Back Length'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[30, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Hem Opening'", i + 1);
+                        worksheet.Cells[30, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER'and type ='Hem Opening'", i + 1);
 
                         // dtShrinkage.Select("Location = 'INNER'and type ='Hem Opening'")[0][i + 1];
                     }
@@ -3037,35 +3037,35 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 {
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[18, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Chest Width'", i + 1);
+                        worksheet.Cells[18, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Chest Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'TOP'and type ='Chest Width'")[0][i+1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[19, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Sleeve Width'", i + 1);
+                        worksheet.Cells[19, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Sleeve Width'", i + 1);
 
                         // dtShrinkage.Select("Location = 'TOP'and type ='Sleeve Width'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[20, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Sleeve Length'", i + 1);
+                        worksheet.Cells[20, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Sleeve Length'", i + 1);
 
                         // dtShrinkage.Select("Location = 'TOP'and type ='Sleeve Length'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[21, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Back Length'", i + 1);
+                        worksheet.Cells[21, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Back Length'", i + 1);
 
                         // dtShrinkage.Select("Location = 'TOP'and type ='Back Length'")[0][i + 1];
                     }
 
                     for (int i = 4; i < this.dtShrinkage.Columns.Count - 1; i++)
                     {
-                        worksheet.Cells[22, i] = this.addShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Hem Opening'", i + 1);
+                        worksheet.Cells[22, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Hem Opening'", i + 1);
 
                         // dtShrinkage.Select("Location = 'TOP'and type ='Hem Opening'")[0][i + 1];
                     }
@@ -3100,7 +3100,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             }
         }
 
-        private void btnEncode_Click(object sender, EventArgs e)
+        private void BtnEncode_Click(object sender, EventArgs e)
         {
             DualResult dr = DBProxy.Current.Execute(null, $"Update [SampleGarmentTest_Detail] set Status='Confirmed' where id = '{this.MasterRow["ID"]}' AND No='{this.Deatilrow["No"]}'");
             if (!dr)
@@ -3109,11 +3109,11 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             }
             else
             {
-                this.btnenable();
+                this.Btnenable();
             }
         }
 
-        private void btnAmend_Click(object sender, EventArgs e)
+        private void BtnAmend_Click(object sender, EventArgs e)
         {
             DualResult dr = DBProxy.Current.Execute(null, $"Update [SampleGarmentTest_Detail] set Status='New'  where id = '{this.MasterRow["ID"]}' AND No='{this.Deatilrow["No"]}'");
             if (!dr)
@@ -3122,11 +3122,11 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             }
             else
             {
-                this.btnenable();
+                this.Btnenable();
             }
         }
 
-        private void rowHeight(Microsoft.Office.Interop.Excel.Worksheet worksheet, int row, string strComment)
+        private void RowHeight(Microsoft.Office.Interop.Excel.Worksheet worksheet, int row, string strComment)
         {
             if (strComment.Length > 15)
             {
@@ -3135,7 +3135,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             }
         }
 
-        private void gridAppearance_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        private void GridAppearance_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
             // 非第 0 column 則取消編輯動作
             // if (e.ColumnIndex == 0 && e.RowIndex!=3)
@@ -3151,7 +3151,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
         /// <param name="strFilter"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        private string addShrinkageUnit(DataTable dt, string strFilter, int count)
+        private string AddShrinkageUnit(DataTable dt, string strFilter, int count)
         {
             string strValie = dt.Select(strFilter)[0][count].ToString();
             if (((string.Compare(dt.Columns[count].ColumnName, "Shrinkage1", true) == 0) ||
@@ -3426,33 +3426,33 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
         private void BtnToReport_Click(object sender, EventArgs e)
         {
             Sci.Production.Quality.P10Data p10Data = new Sci.Production.Quality.P10Data();
-            p10Data.txtReportDate = this.txtReportDate.Value;
+            p10Data.TxtReportDate = this.txtReportDate.Value;
 
             //p04Data.numArriveQty = this.numArriveQty.Value;
-            p10Data.txtSize = this.txtSize.Text;
-            p10Data.rdbtnLine = this.rdbtnLine.Checked;
-            p10Data.rdbtnTumble = this.rdbtnTumble.Checked;
-            p10Data.rdbtnHand = this.rdbtnHand.Checked;
-            p10Data.comboTemperature = this.comboTemperature.Text;
-            p10Data.comboMachineModel = this.comboMachineModel.Text;
-            p10Data.txtFibreComposition = this.txtFibreComposition.Text;
-            p10Data.comboNeck = this.comboNeck.Text;
-            p10Data.numTwisTingBottom = this.numTwisTingBottom.Text;
-            p10Data.numBottomS1 = this.numTwisTingBottom.Value;
-            p10Data.numBottomL = this.numTwisTingBottom.Value;
-            p10Data.numTwisTingOuter = this.numTwisTingOuter.Text;
-            p10Data.numOuterS1 = this.numOuterS1.Value;
-            p10Data.numOuterS2 = this.numOuterS2.Value;
-            p10Data.numOuterL = this.numOuterL.Value;
-            p10Data.numTwisTingInner = this.numTwisTingInner.Text;
-            p10Data.numInnerS1 = this.numInnerS1.Value;
-            p10Data.numInnerS2 = this.numInnerS2.Value;
-            p10Data.numInnerL = this.numTwisTingBottom.Value;
-            p10Data.numTwisTingTop = this.numTwisTingTop.Text;
-            p10Data.numTopS1 = this.numTopS1.Value;
-            p10Data.numTopS2 = this.numTopS2.Value;
-            p10Data.numTopL = this.numTopL.Value;
-            p10Data.txtLotoFactory = this.txtLotoFactory.Text;
+            p10Data.TxtSize = this.txtSize.Text;
+            p10Data.RdbtnLine = this.rdbtnLine.Checked;
+            p10Data.RdbtnTumble = this.rdbtnTumble.Checked;
+            p10Data.RdbtnHand = this.rdbtnHand.Checked;
+            p10Data.ComboTemperature = this.comboTemperature.Text;
+            p10Data.ComboMachineModel = this.comboMachineModel.Text;
+            p10Data.TxtFibreComposition = this.txtFibreComposition.Text;
+            p10Data.ComboNeck = this.comboNeck.Text;
+            p10Data.NumTwisTingBottom = this.numTwisTingBottom.Text;
+            p10Data.NumBottomS1 = this.numTwisTingBottom.Value;
+            p10Data.NumBottomL = this.numTwisTingBottom.Value;
+            p10Data.NumTwisTingOuter = this.numTwisTingOuter.Text;
+            p10Data.NumOuterS1 = this.numOuterS1.Value;
+            p10Data.NumOuterS2 = this.numOuterS2.Value;
+            p10Data.NumOuterL = this.numOuterL.Value;
+            p10Data.NumTwisTingInner = this.numTwisTingInner.Text;
+            p10Data.NumInnerS1 = this.numInnerS1.Value;
+            p10Data.NumInnerS2 = this.numInnerS2.Value;
+            p10Data.NumInnerL = this.numTwisTingBottom.Value;
+            p10Data.NumTwisTingTop = this.numTwisTingTop.Text;
+            p10Data.NumTopS1 = this.numTopS1.Value;
+            p10Data.NumTopS2 = this.numTopS2.Value;
+            p10Data.NumTopL = this.numTopL.Value;
+            p10Data.TxtLotoFactory = this.txtLotoFactory.Text;
 
             P10_ToReport form = new P10_ToReport(this.MasterRow, this.Deatilrow, this.IsNewData, this.dtApperance, this.dtShrinkage, this.dtFGWT, this.dtFGPT, p10Data);
             form.ShowDialog(this);

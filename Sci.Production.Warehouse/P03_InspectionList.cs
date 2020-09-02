@@ -11,7 +11,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_InspectionList : Win.Subs.Base
     {
-        DataRow dr;
+        private DataRow dr;
 
         public P03_InspectionList(DataRow data)
         {
@@ -20,7 +20,7 @@ namespace Sci.Production.Warehouse
             this.Text += string.Format(" [Fabric Type : {0} SP# : {3} Seq : {1}-{2}]", this.dr["fabrictype2"], this.dr["seq1"], this.dr["seq2"], this.dr["id"]);
         }
 
-        private void open_QA_program(string this_inv, string inp_type, string receivingid)
+        private void Open_QA_program(string this_inv, string inp_type, string receivingid)
         {
             string sql = @"
 Select 
@@ -225,37 +225,37 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", this.dr["id"], this.dr["
                 DataGridViewGeneratorNumericColumnSettings inspection = new DataGridViewGeneratorNumericColumnSettings();
                 inspection.CellMouseDoubleClick += (s, e) =>
                 {
-                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.Open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
                 DataGridViewGeneratorTextColumnSettings physical = new DataGridViewGeneratorTextColumnSettings();
                 physical.CellMouseDoubleClick += (s, e) =>
                 {
-                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.Open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
                 DataGridViewGeneratorTextColumnSettings weight = new DataGridViewGeneratorTextColumnSettings();
                 weight.CellMouseDoubleClick += (s, e) =>
                 {
-                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "weight", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.Open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "weight", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
                 DataGridViewGeneratorTextColumnSettings shadebond = new DataGridViewGeneratorTextColumnSettings();
                 shadebond.CellMouseDoubleClick += (s, e) =>
                 {
-                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "shadebond", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.Open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "shadebond", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
                 DataGridViewGeneratorTextColumnSettings continuity = new DataGridViewGeneratorTextColumnSettings();
                 continuity.CellMouseDoubleClick += (s, e) =>
                 {
-                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "continuity", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.Open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "continuity", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
-                DataGridViewGeneratorTextColumnSettings Odor = new DataGridViewGeneratorTextColumnSettings();
-                Odor.CellMouseDoubleClick += (s, e) =>
+                DataGridViewGeneratorTextColumnSettings odor = new DataGridViewGeneratorTextColumnSettings();
+                odor.CellMouseDoubleClick += (s, e) =>
                 {
-                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "Odor", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.Open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "Odor", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
                 #endregion
 
@@ -281,7 +281,7 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", this.dr["id"], this.dr["
                      .Date("ShadeBondDate", header: "ShadeBondDate", width: Widths.AnsiChars(13))
                      .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(8), settings: continuity)
                      .Date("ContinuityDate", header: "ContinuityDate", width: Widths.AnsiChars(13))
-                     .Text("Odor", header: "Odor", width: Widths.AnsiChars(8), settings: Odor)
+                     .Text("Odor", header: "Odor", width: Widths.AnsiChars(8), settings: odor)
                      .Date("OdorDate", header: "OdorDate", width: Widths.AnsiChars(13))
                      ;
 
@@ -362,17 +362,17 @@ where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", this.dr["id"], this.dr["s
                 DataGridViewGeneratorTextColumnSettings crocking = new DataGridViewGeneratorTextColumnSettings();
                 crocking.CellMouseDoubleClick += (s, e) =>
                 {
-                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "crocking", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.Open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "crocking", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
                 DataGridViewGeneratorTextColumnSettings heat = new DataGridViewGeneratorTextColumnSettings();
                 heat.CellMouseDoubleClick += (s, e) =>
                 {
-                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "heat", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.Open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "heat", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
                 DataGridViewGeneratorTextColumnSettings wash = new DataGridViewGeneratorTextColumnSettings();
                 wash.CellMouseDoubleClick += (s, e) =>
                 {
-                    this.open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "wash", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
+                    this.Open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "wash", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
                 #endregion
 
@@ -456,7 +456,7 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", this.dr["id"], this.dr["
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

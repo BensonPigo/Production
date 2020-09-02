@@ -106,7 +106,7 @@ namespace Sci.Production.Warehouse
 
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
-            string Remark = row["Remark"].ToString();
+            string remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
             #region  抓表頭資料
@@ -129,11 +129,11 @@ where id = @MDivision", pars, out dt);
                 return false;
             }
 
-            string RptTitle = dt.Rows[0]["NameEN"].ToString();
+            string rptTitle = dt.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new ReportParameter("ID", id));
-            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("Remark", remark));
             report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
             #endregion
 
@@ -192,12 +192,12 @@ where a.id= @ID", pars, out dd);
             #region  指定是哪個 RDLC
 
             // DualResult result;
-            Type ReportResourceNamespace = typeof(P17_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P17_Print.rdlc";
+            Type reportResourceNamespace = typeof(P17_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P17_Print.rdlc";
 
             IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 // this.ShowException(result);
                 return false;
@@ -683,8 +683,8 @@ where isnull(f.OutQty,0) < d.Qty and d.Id = '{0}'", this.CurrentMaintain["id"]);
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion 更新庫存數量  ftyinventory
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -692,39 +692,39 @@ where isnull(f.OutQty,0) < d.Qty and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B, out resulttb,
                            "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
             // AutoWHFabric WebAPI for Gensong
             SentToGensong_AutoWHFabric();
         }
@@ -855,8 +855,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -864,39 +864,39 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B, out resulttb,
                            "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             // AutoWHFabric WebAPI for Gensong
             SentToGensong_AutoWHFabric();
@@ -980,7 +980,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // delete all
-        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
+        private void BtnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
 
@@ -988,14 +988,14 @@ Where a.id = '{0}'", masterID);
             ((DataTable)this.detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
         }
 
-        private void btnAccumulatedQty_Click(object sender, EventArgs e)
+        private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new P17_AccumulatedQty(this.CurrentMaintain);
             frm.P17 = this;
             frm.ShowDialog(this);
         }
 
-        private void txtTransfer_Validating(object sender, CancelEventArgs e)
+        private void TxtTransfer_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -1043,7 +1043,7 @@ AND o.Category <> 'A'
             }
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {

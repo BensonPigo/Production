@@ -66,7 +66,7 @@
             this.btnSave.TabIndex = 47;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // btnClose
             // 
@@ -78,7 +78,7 @@
             this.btnClose.TabIndex = 48;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // panel7
             // 
@@ -98,7 +98,7 @@
             this.btnImportFromBarcode.TabIndex = 7;
             this.btnImportFromBarcode.Text = "Import From Barcode";
             this.btnImportFromBarcode.UseVisualStyleBackColor = true;
-            this.btnImportFromBarcode.Click += new System.EventHandler(this.btnImportFromBarcode_Click);
+            this.btnImportFromBarcode.Click += new System.EventHandler(this.BtnImportFromBarcode_Click);
             // 
             // panel6
             // 
@@ -156,7 +156,7 @@
             this.btnFind.TabIndex = 6;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // txtPackID
             // 
@@ -273,7 +273,7 @@
             this.btnUpdateAll.TabIndex = 52;
             this.btnUpdateAll.Text = "Update All Return";
             this.btnUpdateAll.UseVisualStyleBackColor = true;
-            this.btnUpdateAll.Click += new System.EventHandler(this.btnUpdateAll_Click);
+            this.btnUpdateAll.Click += new System.EventHandler(this.BtnUpdateAll_Click);
             // 
             // panel1
             // 

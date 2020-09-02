@@ -12,9 +12,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class R12 : Win.Tems.PrintForm
     {
-        string sqlCmd = string.Empty;
-        List<SqlParameter> listSqlPar = new List<SqlParameter>();
-        DataTable dtResult;
+        private string sqlCmd = string.Empty;
+        private List<SqlParameter> listSqlPar = new List<SqlParameter>();
+        private DataTable dtResult;
 
         public R12(ToolStripMenuItem menuitem)
             : base(menuitem)

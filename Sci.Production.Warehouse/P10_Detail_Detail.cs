@@ -11,11 +11,11 @@ namespace Sci.Production.Warehouse
     public partial class P10_Detail_Detail : Win.Subs.Base
     {
         public Win.Subs.Base P10_Detail;
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtFtyinventory;
-        int Type;
+        private int Type;
 
         public P10_Detail_Detail(DataRow master, DataTable detail, int type = 0)
         {
@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
             }
         }
 
-        private void sum_checkedqty()
+        private void Sum_checkedqty()
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -130,7 +130,7 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", this.dr_master["poid"],
                     {
                         this.gridRollNo.GetDataRow(this.gridRollNo.GetSelectedRowIndex())["qty"] = e.FormattedValue;
                         this.gridRollNo.GetDataRow(this.gridRollNo.GetSelectedRowIndex())["selected"] = true;
-                        this.sum_checkedqty();
+                        this.Sum_checkedqty();
                     }
                 };
 
@@ -149,7 +149,7 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", this.dr_master["poid"],
                     }
 
                     dr.EndEdit();
-                    this.sum_checkedqty();
+                    this.Sum_checkedqty();
                 }
             };
 
@@ -169,12 +169,12 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", this.dr_master["poid"],
             this.gridRollNo.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridRollNo.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;

@@ -164,7 +164,7 @@
             this.btnImport.TabIndex = 64;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // dateIssueDate
             // 
@@ -243,7 +243,7 @@
             this.btnClearEmpty.TabIndex = 71;
             this.btnClearEmpty.Text = "Clear Qty is empty";
             this.btnClearEmpty.UseVisualStyleBackColor = true;
-            this.btnClearEmpty.Click += new System.EventHandler(this.btnClearEmpty_Click);
+            this.btnClearEmpty.Click += new System.EventHandler(this.BtnClearEmpty_Click);
             // 
             // btnFind
             // 
@@ -254,7 +254,7 @@
             this.btnFind.TabIndex = 70;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // txtLocateForSP
             // 

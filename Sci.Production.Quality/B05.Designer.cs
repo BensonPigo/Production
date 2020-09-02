@@ -132,7 +132,7 @@
             0,
             0,
             0});
-            this.numWeight.TextChanged += new System.EventHandler(this.numWeight_TextChanged);
+            this.numWeight.TextChanged += new System.EventHandler(this.NumWeight_TextChanged);
             // 
             // B05
             // 

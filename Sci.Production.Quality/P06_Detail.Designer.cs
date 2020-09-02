@@ -96,7 +96,7 @@
             this.btnToExcel.TabIndex = 95;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // dateTestDate
             // 
@@ -114,7 +114,7 @@
             this.btnEncode.TabIndex = 110;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
+            this.btnEncode.Click += new System.EventHandler(this.BtnEncode_Click);
             // 
             // txtRemark
             // 
@@ -155,7 +155,7 @@
             this.txtArticle.Name = "txtArticle";
             this.txtArticle.Size = new System.Drawing.Size(123, 23);
             this.txtArticle.TabIndex = 102;
-            this.txtArticle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtArticle_MouseDown);
+            this.txtArticle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtArticle_MouseDown);
             // 
             // txtNoofTest
             // 
@@ -367,7 +367,7 @@
             this.btnToPDF.TabIndex = 96;
             this.btnToPDF.Text = "To PDF";
             this.btnToPDF.UseVisualStyleBackColor = true;
-            this.btnToPDF.Click += new System.EventHandler(this.btnToPDF_Click);
+            this.btnToPDF.Click += new System.EventHandler(this.BtnToPDF_Click);
             // 
             // P06_Detail
             // 

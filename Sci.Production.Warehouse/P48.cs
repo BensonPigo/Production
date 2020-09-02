@@ -16,7 +16,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P48 : Win.Tems.QueryForm
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable dtInventory;
 
         public P48(ToolStripMenuItem menuitem)
@@ -26,7 +26,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Query
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp1 = this.txtSPNo1.Text.TrimEnd();
@@ -321,13 +321,13 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         // Close
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Update All
-        private void btnUpdateAll_Click(object sender, EventArgs e)
+        private void BtnUpdateAll_Click(object sender, EventArgs e)
         {
             string reasonid = this.comboReason.SelectedValue.ToString();
             this.gridImport.ValidateControl();
@@ -347,7 +347,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         // Location Valid
-        private void txtLocation_Validating(object sender, CancelEventArgs e)
+        private void TxtLocation_Validating(object sender, CancelEventArgs e)
         {
             if (this.txtLocation.Text.ToString() == string.Empty)
             {
@@ -372,7 +372,7 @@ where exists(
         }
 
         // Location 右鍵
-        private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -396,7 +396,7 @@ where   StockType='O'
         }
 
         // Create Batch
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
@@ -543,39 +543,39 @@ from #tmp";
             #endregion
 
             #region TransactionScope
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             DualResult result;
-            using (_transactionscope)
+            using (transactionscope)
             {
                 try
                 {
                     DataTable dtResult;
                     if ((result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, insertMaster, out dtResult)) == false)
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
                         return;
                     }
 
                     if ((result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, insertDetail, out dtResult)) == false)
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope = null;
+            transactionscope = null;
             #endregion
 
             // Create後Btn失效，需重新Qurey才能再使用。

@@ -13,10 +13,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P18_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
+        private DataRow dr_master;
+        private DataTable dt_detail;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtImportData;
 
         public P18_Import(DataRow master, DataTable detail)
@@ -30,7 +30,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Button Query
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string transid = this.txtTransferOutID.Text.TrimEnd();
@@ -158,8 +158,8 @@ WHERE   StockType='{0}'
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow CurrentDetailData = this.gridImport.GetDataRow(e.RowIndex);
-                    CurrentDetailData["stocktype"] = e.FormattedValue;
+                    DataRow currentDetailData = this.gridImport.GetDataRow(e.RowIndex);
+                    currentDetailData["stocktype"] = e.FormattedValue;
                     string sqlcmd = string.Format(
                         @"
 SELECT  id
@@ -167,10 +167,10 @@ SELECT  id
         , StockType 
 FROM    DBO.MtlLocation WITH (NOLOCK) 
 WHERE   StockType='{0}'
-        and junk != '1'", CurrentDetailData["stocktype"].ToString());
+        and junk != '1'", currentDetailData["stocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
-                    string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
+                    string[] getLocation = currentDetailData["location"].ToString().Split(',').Distinct().ToArray();
                     bool selectId = true;
                     List<string> errLocation = new List<string>();
                     List<string> trueLocation = new List<string>();
@@ -194,7 +194,7 @@ WHERE   StockType='{0}'
                     }
 
                     trueLocation.Sort();
-                    CurrentDetailData["location"] = string.Join(",", trueLocation.ToArray());
+                    currentDetailData["location"] = string.Join(",", trueLocation.ToArray());
 
                     // 去除錯誤的Location將正確的Location填回
                 }
@@ -229,12 +229,12 @@ WHERE   StockType='{0}'
             txt_dyelot.DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             this.gridImport.ValidateControl();

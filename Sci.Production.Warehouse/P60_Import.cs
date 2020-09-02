@@ -12,8 +12,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P60_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
+        private DataRow dr_master;
+        private DataTable dt_detail;
 
         // bool flag;
        // string poType;
@@ -27,20 +27,20 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             DateTime? issueDate1, issueDate2;
-            DateTime? DeliveryDate1, DeliveryDate2;
+            DateTime? deliveryDate1, deliveryDate2;
             string localpoid = this.txtLocalPO.Text;
             issueDate1 = this.datePOIssueDate.Value1;
             issueDate2 = this.datePOIssueDate.Value2;
-            DeliveryDate1 = this.dateRangeBuyerDelivery.Value1;
-            DeliveryDate2 = this.dateRangeBuyerDelivery.Value2;
+            deliveryDate1 = this.dateRangeBuyerDelivery.Value1;
+            deliveryDate2 = this.dateRangeBuyerDelivery.Value2;
             string spno1 = this.txtSPNoStart.Text;
             string spno2 = this.txtSPNoEnd.Text;
             string category = this.txtartworktype_ftyCategory.Text;
 
-            if (MyUtility.Check.Empty(localpoid) && MyUtility.Check.Empty(spno1) && MyUtility.Check.Empty(spno2) && MyUtility.Check.Empty(issueDate1) && MyUtility.Check.Empty(DeliveryDate1))
+            if (MyUtility.Check.Empty(localpoid) && MyUtility.Check.Empty(spno1) && MyUtility.Check.Empty(spno2) && MyUtility.Check.Empty(issueDate1) && MyUtility.Check.Empty(deliveryDate1))
             {
                 MyUtility.Msg.WarningBox("< Local Po# > < SP# > < Issue Date > < Buyer Delivery > can't be empty at the same time!!");
                 this.txtLocalPO.Focus();
@@ -118,11 +118,11 @@ Where b.Qty - b.InQty >0
                     Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d"));
             }
 
-            if (!MyUtility.Check.Empty(DeliveryDate1))
+            if (!MyUtility.Check.Empty(deliveryDate1))
             {
                 strSQLCmd += string.Format(
                     @" and o.BuyerDelivery between '{0}' and '{1}'",
-                    Convert.ToDateTime(DeliveryDate1).ToString("d"), Convert.ToDateTime(DeliveryDate2).ToString("d"));
+                    Convert.ToDateTime(deliveryDate1).ToString("d"), Convert.ToDateTime(deliveryDate2).ToString("d"));
             }
 
             if (!MyUtility.Check.Empty(spno1))
@@ -267,12 +267,12 @@ where	Junk != 1
             this.gridImport.Columns["location"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
 

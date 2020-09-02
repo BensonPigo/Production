@@ -712,7 +712,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             return this.result;
         }
 
-        Dictionary<string, System.Data.DataTable> dicFTY = new Dictionary<string, System.Data.DataTable>();
+        readonly Dictionary<string, System.Data.DataTable> dicFTY = new Dictionary<string, System.Data.DataTable>();
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
@@ -785,7 +785,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 sxc.DicDatas.Add("##adefect" + a, alldxtb);
             }
 
-            SaveXltReportCls.ReplaceAction adr = this.addrow;
+            SaveXltReportCls.ReplaceAction adr = this.Addrow;
             sxc.DicDatas.Add("##addRow", adr);
             #endregion
 
@@ -939,16 +939,16 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             SaveXltReportCls.ReplaceAction c = this.CopySheet;
             sxc.DicDatas.Add("##copysupsheet", c);
 
-            SaveXltReportCls.ReplaceAction d = this.addfilter;
+            SaveXltReportCls.ReplaceAction d = this.Addfilter;
             sxc.DicDatas.Add("##addfilter", d);
 
             sxc.Save(Class.MicrosoftFile.GetName("Quality_R41"));
             #endregion
-            this.clearall();
+            this.Clearall();
             return true;
         }
 
-        private void clearall()
+        private void Clearall()
         {
             this.Brand = null;
             this.Year = null;
@@ -1067,7 +1067,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             // mySheet.Delete();
         }
 
-        void addrow(Worksheet mySheet, int rowNo, int columnNo)
+        void Addrow(Worksheet mySheet, int rowNo, int columnNo)
         {
             Range fRow1 = (Range)mySheet.Rows[5];
             Range fRow2 = (Range)mySheet.Rows[6];
@@ -1126,7 +1126,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             fRow27.Insert(XlInsertShiftDirection.xlShiftDown, Type.Missing);
         }
 
-        void addfilter(Worksheet mySheet, int rowNo, int columnNo)
+        void Addfilter(Worksheet mySheet, int rowNo, int columnNo)
         {
             Range firstRow = (Range)mySheet.Rows[2];
             firstRow.Interior.Color = Color.SkyBlue;

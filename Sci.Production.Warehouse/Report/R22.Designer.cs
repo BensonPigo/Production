@@ -228,7 +228,7 @@
             this.chkQtyOver0.TabIndex = 136;
             this.chkQtyOver0.Text = "Qty > 0";
             this.chkQtyOver0.UseVisualStyleBackColor = true;
-            this.chkQtyOver0.CheckedChanged += new System.EventHandler(this.chkQtyOver0_CheckedChanged);
+            this.chkQtyOver0.CheckedChanged += new System.EventHandler(this.ChkQtyOver0_CheckedChanged);
             // 
             // txtMdivision1
             // 
@@ -249,7 +249,7 @@
             this.chkQtyless0.TabIndex = 138;
             this.chkQtyless0.Text = "Qty < 0";
             this.chkQtyless0.UseVisualStyleBackColor = true;
-            this.chkQtyless0.CheckedChanged += new System.EventHandler(this.chkQtyless0_CheckedChanged);
+            this.chkQtyless0.CheckedChanged += new System.EventHandler(this.ChkQtyless0_CheckedChanged);
             // 
             // R22
             // 

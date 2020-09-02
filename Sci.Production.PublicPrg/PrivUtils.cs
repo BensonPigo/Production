@@ -40,11 +40,11 @@ namespace Sci.Production.Prg
             /// <summary>
             /// Between function
             /// </summary>
-            /// <param name="colname">string</param>
-            /// <param name="value1">string</param>
-            /// <param name="value2">string</param>
-            /// <param name="conds">string</param>
-            /// <param name="paras">string</param>
+            /// <param name="colname">colname</param>
+            /// <param name="value1">value1</param>
+            /// <param name="value2">value2</param>
+            /// <param name="conds">conds</param>
+            /// <param name="paras">paras</param>
             public static void Between(string colname, string value1, string value2, IList<string> conds, IList<SqlParameter> paras)
             {
                 if (value1 != null && value1.Length > 0 && value2 != null && value2.Length > 0)
@@ -68,6 +68,14 @@ namespace Sci.Production.Prg
                 }
             }
 
+            /// <summary>
+            /// Between
+            /// </summary>
+            /// <param name="colname">colname</param>
+            /// <param name="value1">value1</param>
+            /// <param name="value2">value2</param>
+            /// <param name="conds">conds</param>
+            /// <param name="paras">paras</param>
             public static void Between(string colname, DateTime? value1, DateTime? value2, IList<string> conds, IList<SqlParameter> paras)
             {
                 if (value1.HasValue && value2.HasValue)
@@ -94,7 +102,7 @@ namespace Sci.Production.Prg
             /// <summary>
             /// Eq
             /// </summary>
-            /// <param name="colname"colname></param>
+            /// <param name="colname">colname></param>
             /// <param name="value">value</param>
             /// <param name="conds">conds</param>
             /// <param name="paras">paras</param>
@@ -321,7 +329,7 @@ namespace Sci.Production.Prg
                 var ecell = ParseCell(cols_or_formatters.Length);
 
                 // 欄位Format 主要針對儲存格格式設定過日期,數值,文字,但未設定到位置之範例檔
-                setFormat(sheet, rowix_begin);
+                SetFormat(sheet, rowix_begin);
                 foreach (DataRow it in datas.Rows)
                 {
                     var array = ToArray(it, cols_or_formatters);
@@ -342,7 +350,7 @@ namespace Sci.Production.Prg
                 // 欄寬調整
                 sheet.Range[string.Format("A:{0}", ecell)].WrapText = false;
                 sheet.get_Range(string.Format("A:{0}", ecell)).EntireColumn.AutoFit();
-                setPosition_Focus(sheet, ix);
+                SetPosition_Focus(sheet, ix);
             }
 
             /// <summary>
@@ -361,7 +369,7 @@ namespace Sci.Production.Prg
             /// </summary>
             /// <param name="sheet">sheet</param>
             /// <param name="rowix_begin">rowix_begin</param>
-            public static void setPosition_Focus(Worksheet sheet, int rowix_begin)
+            public static void SetPosition_Focus(Worksheet sheet, int rowix_begin)
             {
                 // Excel欄位Focus
                 sheet.Select();
@@ -376,7 +384,7 @@ namespace Sci.Production.Prg
             /// <param name="rowix_begin">rowix_begin</param>
             /// <param name="type">type</param>
             /// <param name="intRowsCount">intRowsCount</param>
-            public static void setFormat(Worksheet sheet, int rowix_begin, string type = "", int intRowsCount = 65536)
+            public static void SetFormat(Worksheet sheet, int rowix_begin, string type = "", int intRowsCount = 65536)
             {
                 sheet.Select();
                 if (type == string.Empty)
@@ -386,8 +394,8 @@ namespace Sci.Production.Prg
                     for (int k = 0; k < intColumns - 1; k++)
                     {
                         // wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).NumberFormatLocal = "yyyy/MM/dd";
-                        string ss = sheet.get_Range(string.Format("{1}{0}:{1}{0}", rowix_begin, getPosition(k + 1))).NumberFormatLocal;
-                        object val = sheet.get_Range(string.Format("{1}{0}:{1}{0}", rowix_begin - 1, getPosition(k + 1))).Value;
+                        string ss = sheet.get_Range(string.Format("{1}{0}:{1}{0}", rowix_begin, GetPosition(k + 1))).NumberFormatLocal;
+                        object val = sheet.get_Range(string.Format("{1}{0}:{1}{0}", rowix_begin - 1, GetPosition(k + 1))).Value;
                         if (val == null || val.ToString().Trim() == string.Empty)
                         {
                             break; // 遇欄位名稱空白-結束
@@ -401,19 +409,19 @@ namespace Sci.Production.Prg
                         // int rowCount = (intRowsCount + rowix_begin - 1) > 65536 ? 65536 : intRowsCount + rowix_begin - 1;
                         if (ss == "yyyy/m/d")
                         {
-                            sheet.get_Range(string.Format("{0}:{0}", getPosition(k + 1))).HorizontalAlignment = Constants.xlRight;
+                            sheet.get_Range(string.Format("{0}:{0}", GetPosition(k + 1))).HorizontalAlignment = Constants.xlRight;
                         }
                         else if (ss.Contains("#,##") || ss.Contains("0"))
                         {
-                            sheet.get_Range(string.Format("{0}:{0}", getPosition(k + 1))).HorizontalAlignment = Constants.xlRight;
+                            sheet.get_Range(string.Format("{0}:{0}", GetPosition(k + 1))).HorizontalAlignment = Constants.xlRight;
                         }
                         else if (ss == "@")
                         {
-                            sheet.get_Range(string.Format("{0}:{0}", getPosition(k + 1))).HorizontalAlignment = Constants.xlLeft;
+                            sheet.get_Range(string.Format("{0}:{0}", GetPosition(k + 1))).HorizontalAlignment = Constants.xlLeft;
                         }
                         else
                         {
-                            sheet.get_Range(string.Format("{0}:{0}", getPosition(k + 1))).HorizontalAlignment = Constants.xlLeft;
+                            sheet.get_Range(string.Format("{0}:{0}", GetPosition(k + 1))).HorizontalAlignment = Constants.xlLeft;
                         }
                     }
                 }
@@ -421,7 +429,17 @@ namespace Sci.Production.Prg
                 System.Diagnostics.Debug.WriteLine(type);
             }
 
-            public static DualResult writeExcelErr(EXCEL.Worksheet wsSheet, object[,] objArray, int rownum, int mm, int intColumns, Exception ex)
+            /// <summary>
+            /// writeExcelErr
+            /// </summary>
+            /// <param name="wsSheet">wsSheet</param>
+            /// <param name="objArray">objArray</param>
+            /// <param name="rownum">rownum</param>
+            /// <param name="mm">mm</param>
+            /// <param name="intColumns">intColumns</param>
+            /// <param name="ex">ex</param>
+            /// <returns>DualResult</returns>
+            public static DualResult WriteExcelErr(EXCEL.Worksheet wsSheet, object[,] objArray, int rownum, int mm, int intColumns, Exception ex)
             {
                 try
                 {
@@ -440,7 +458,7 @@ namespace Sci.Production.Prg
                                 scol += "err msg : 值有=號開頭, 寫入數值格式欄位,誤判為公式錯誤-->"; // Ex. =46=TW=9D
                             }
 
-                            scol += getPosition(k + 1) + " :: " + objArray[0, k].ToString() + "\r\n ";
+                            scol += GetPosition(k + 1) + " :: " + objArray[0, k].ToString() + "\r\n ";
                         }
 
                         return new DualResult(false, "Export excel error.  -> 所有欄位(排序)值 : \r\n" + scol, ex);
@@ -459,7 +477,7 @@ namespace Sci.Production.Prg
                             }
                         }
 
-                        wsSheet.Range[string.Format("A{0}:{2}{1}", rownum, rownum + mm - 1, getPosition(intColumns))].Value2 = objArray1;
+                        wsSheet.Range[string.Format("A{0}:{2}{1}", rownum, rownum + mm - 1, GetPosition(intColumns))].Value2 = objArray1;
                         try
                         {
                             rownum += mm;
@@ -472,16 +490,16 @@ namespace Sci.Production.Prg
                                 }
                             }
 
-                            wsSheet.Range[string.Format("A{0}:{2}{1}", rownum, rownum + kk - 1, getPosition(intColumns))].Value2 = objArray1;
+                            wsSheet.Range[string.Format("A{0}:{2}{1}", rownum, rownum + kk - 1, GetPosition(intColumns))].Value2 = objArray1;
                         }
                         catch (Exception ex1)
                         {
-                            return writeExcelErr(wsSheet, objArray1, rownum, kk - mm, intColumns, ex1);
+                            return WriteExcelErr(wsSheet, objArray1, rownum, kk - mm, intColumns, ex1);
                         }
                     }
                     catch (Exception ex2)
                     {
-                        return writeExcelErr(wsSheet, objArray1, rownum, mm, intColumns, ex2);
+                        return WriteExcelErr(wsSheet, objArray1, rownum, mm, intColumns, ex2);
                     }
                 }
                 catch (Exception e)
@@ -581,6 +599,11 @@ namespace Sci.Production.Prg
             }
         }
 
+        /// <summary>
+        /// CreateTable
+        /// </summary>
+        /// <typeparam name="TABLE">TABLE</typeparam>
+        /// <returns>TABLE()</returns>
         public static TABLE CreateTable<TABLE>()
             where TABLE : System.Data.DataTable, new()
         {
@@ -589,6 +612,10 @@ namespace Sci.Production.Prg
             return t;
         }
 
+        /// <summary>
+        /// ClearConstrants
+        /// </summary>
+        /// <param name="table">table</param>
         public static void ClearConstrants(System.Data.DataTable table)
         {
             if (table == null)
@@ -612,6 +639,12 @@ namespace Sci.Production.Prg
             }
         }
 
+        /// <summary>
+        /// GetString
+        /// </summary>
+        /// <param name="data">data</param>
+        /// <param name="col">col</param>
+        /// <returns>string</returns>
         public static string GetString(this DataRow data, DataColumn col)
         {
             if (data == null)
@@ -623,6 +656,12 @@ namespace Sci.Production.Prg
             return obj != DBNull.Value ? (string)obj : null;
         }
 
+        /// <summary>
+        /// GetDateTime
+        /// </summary>
+        /// <param name="data">data</param>
+        /// <param name="col">col</param>
+        /// <returns>DateTime</returns>
         public static DateTime? GetDateTime(this DataRow data, DataColumn col)
         {
             if (data == null)
@@ -634,8 +673,14 @@ namespace Sci.Production.Prg
             return obj != DBNull.Value ? (DateTime)obj : (DateTime?)null;
         }
 
-        // 取小數位數
-        public static string getValueFormat(string value, string type = "S", int exact = 2)
+        /// <summary>
+        /// 取小數位數
+        /// </summary>
+        /// <param name="value">value</param>
+        /// <param name="type">type</param>
+        /// <param name="exact">exact</param>
+        /// <returns>string</returns>
+        public static string GetValueFormat(string value, string type = "S", int exact = 2)
         {
             var rtn = value;
             switch (type)
@@ -681,7 +726,9 @@ namespace Sci.Production.Prg
 
                     break;
                 case "S":
-                    if (value.ToString().IndexOf("=") == 0) // 值有=號開頭, 若寫入數值格式欄位,誤判為公式錯誤-->";// Ex. =46=TW=9D
+
+                    // 值有=號開頭, 若寫入數值格式欄位,誤判為公式錯誤-->";// Ex. =46=TW=9D
+                    if (value.ToString().IndexOf("=") == 0)
                     {
                         rtn = " " + value; // 在 = 號前埔空白
                     }
@@ -694,8 +741,12 @@ namespace Sci.Production.Prg
             return rtn;
         }
 
-        // 取小數位數--取到為非 0 的位數
-        public static string getValueFormat_0(string value)
+        /// <summary>
+        /// 取小數位數--取到為非 0 的位數
+        /// </summary>
+        /// <param name="value">value</param>
+        /// <returns>string</returns>
+        public static string GetValueFormat_0(string value)
         {
             var rtn = value;
             decimal dvalue;
@@ -760,7 +811,12 @@ namespace Sci.Production.Prg
             return rtn;
         }
 
-        public static string getPath_XLT(string sPath)
+        /// <summary>
+        /// getPath_XLT
+        /// </summary>
+        /// <param name="sPath">sPath</param>
+        /// <returns>string</returns>
+        public static string GetPath_XLT(string sPath)
         {
             string rtn = string.Empty;
             if (Env.Cfg.XltPathDir != string.Empty)
@@ -781,7 +837,12 @@ namespace Sci.Production.Prg
             return rtn;
         }
 
-        public static string getPosition(int num)
+        /// <summary>
+        /// getPosition
+        /// </summary>
+        /// <param name="num">num</param>
+        /// <returns>string</returns>
+        public static string GetPosition(int num)
         {
             if (num < 0)
             {
@@ -812,7 +873,12 @@ namespace Sci.Production.Prg
             return cd;
         }
 
-        public static string getDayOfWeek(string value)
+        /// <summary>
+        /// getDayOfWeek
+        /// </summary>
+        /// <param name="value">value</param>
+        /// <returns>string</returns>
+        public static string GetDayOfWeek(string value)
         {
             var cd = string.Empty;
             switch (value)
@@ -846,7 +912,12 @@ namespace Sci.Production.Prg
             return cd;
         }
 
-        public static string getDayOfMonth(string value)
+        /// <summary>
+        /// getDayOfMonth
+        /// </summary>
+        /// <param name="value">value</param>
+        /// <returns>string</returns>
+        public static string GetDayOfMonth(string value)
         {
             var cd = string.Empty;
             switch (value)
@@ -895,13 +966,21 @@ namespace Sci.Production.Prg
             return cd;
         }
 
-        public static int getPageNum()
+        /// <summary>
+        /// getPageNum
+        /// </summary>
+        /// <returns>int</returns>
+        public static int GetPageNum()
         {
             int cd = 65537;
 
             return cd;
         }
 
+        /// <summary>
+        /// SetRangeNotMerageCell
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
         public static void SetRangeNotMerageCell(Range rngCell)
         {
             rngCell.MergeCells = false;
@@ -912,6 +991,10 @@ namespace Sci.Production.Prg
             rngCell.HorizontalAlignment = Constants.xlCenter;
         }
 
+        /// <summary>
+        /// SetRangeMerageCell
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
         public static void SetRangeMerageCell(Range rngCell)
         {
             // rngCell.WrapText = false;
@@ -930,8 +1013,8 @@ namespace Sci.Production.Prg
         /// <summary>
         /// 範圍內含合併儲存格 使用
         /// </summary>
-        /// <param name="rngCell"></param>
-        /// <param name="sLineType"></param>
+        /// <param name="rngCell">rngCell</param>
+        /// <param name="sLineType">sLineType</param>
         public static void SetRangeLineStyle_Clear(Range rngCell, string sLineType = "")
         {
             XlLineStyle xLineStyle = XlLineStyle.xlLineStyleNone;
@@ -945,6 +1028,11 @@ namespace Sci.Production.Prg
             // rngCell.Borders[XlBordersIndex.xlInsideHorizontal].LineStyle = xLineStyle;
         }
 
+        /// <summary>
+        /// SetRangeLineStyle_Merge
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
+        /// <param name="sLineType">sLineType</param>
         public static void SetRangeLineStyle_Merge(Range rngCell, string sLineType = "")
         {
             XlLineStyle xLineStyle = XlLineStyle.xlContinuous;
@@ -963,6 +1051,11 @@ namespace Sci.Production.Prg
             // rngCell.Borders[XlBordersIndex.xlInsideHorizontal].LineStyle = xLineStyle;
         }
 
+        /// <summary>
+        /// SetRangeLineStyle
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
+        /// <param name="sLineType">sLineType</param>
         public static void SetRangeLineStyle(Range rngCell, string sLineType = "")
         {
             XlLineStyle xLineStyle = XlLineStyle.xlContinuous;
@@ -987,6 +1080,11 @@ namespace Sci.Production.Prg
             rngCell.Borders[XlBordersIndex.xlInsideHorizontal].LineStyle = xLineStyle;
         }
 
+        /// <summary>
+        /// SetRangeLineStyle_Top
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
+        /// <param name="sLineType">sLineType</param>
         public static void SetRangeLineStyle_Top(Range rngCell, string sLineType = "")
         {
             XlLineStyle xLineStyle = XlLineStyle.xlContinuous;
@@ -1006,6 +1104,11 @@ namespace Sci.Production.Prg
             rngCell.Borders[XlBordersIndex.xlEdgeTop].Weight = xWeight;
         }
 
+        /// <summary>
+        /// SetRangeLineStyle_Bottom
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
+        /// <param name="sLineType">sLineType</param>
         public static void SetRangeLineStyle_Bottom(Range rngCell, string sLineType = "")
         {
             XlLineStyle xLineStyle = XlLineStyle.xlContinuous;
@@ -1025,6 +1128,11 @@ namespace Sci.Production.Prg
             rngCell.Borders[XlBordersIndex.xlEdgeBottom].Weight = xWeight;
         }
 
+        /// <summary>
+        /// SetRangeLineStyle_Left
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
+        /// <param name="sLineType">sLineType</param>
         public static void SetRangeLineStyle_Left(Range rngCell, string sLineType = "")
         {
             XlLineStyle xLineStyle = XlLineStyle.xlContinuous;
@@ -1044,6 +1152,11 @@ namespace Sci.Production.Prg
             rngCell.Borders[XlBordersIndex.xlEdgeLeft].Weight = xWeight;
         }
 
+        /// <summary>
+        /// SetRangeLineStyle_Right
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
+        /// <param name="sLineType">sLineType</param>
         public static void SetRangeLineStyle_Right(Range rngCell, string sLineType = "")
         {
             XlLineStyle xLineStyle = XlLineStyle.xlContinuous;
@@ -1063,7 +1176,12 @@ namespace Sci.Production.Prg
             rngCell.Borders[XlBordersIndex.xlEdgeRight].Weight = xWeight;
         }
 
-        public static string getVersion(string value)
+        /// <summary>
+        /// GetVersion
+        /// </summary>
+        /// <param name="value">value</param>
+        /// <returns>string</returns>
+        public static string GetVersion(string value)
         {
             var rtn = value; // String.Format("{0}          {1}", value, " version.2016111101 ");
 

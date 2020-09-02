@@ -246,8 +246,8 @@
             this.txtArticle.Name = "txtArticle";
             this.txtArticle.Size = new System.Drawing.Size(140, 23);
             this.txtArticle.TabIndex = 4;
-            this.txtArticle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtArticle_PopUp);
-            this.txtArticle.Validating += new System.ComponentModel.CancelEventHandler(this.txtArticle_Validating);
+            this.txtArticle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtArticle_PopUp);
+            this.txtArticle.Validating += new System.ComponentModel.CancelEventHandler(this.TxtArticle_Validating);
             // 
             // dateBoxReceivedDate
             // 

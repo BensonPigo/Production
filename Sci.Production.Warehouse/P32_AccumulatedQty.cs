@@ -104,7 +104,7 @@ left join Orders o  WITH (NOLOCK) on  p.id = o.id
                  ;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
