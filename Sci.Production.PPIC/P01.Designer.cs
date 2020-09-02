@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.dateKpiMNotice = new Sci.Win.UI.DateBox();
+            this.labelKpiMNotice = new Sci.Win.UI.Label();
+            this.dateKpiEachConsCheck = new Sci.Win.UI.DateBox();
+            this.labelKpiEachConsCheck = new Sci.Win.UI.Label();
             this.dateBoxChangeMemo = new Sci.Win.UI.DateBox();
             this.labChangeMemoDate = new Sci.Win.UI.Label();
             this.dateLastProductionDate = new Sci.Win.UI.DateBox();
@@ -153,10 +157,10 @@
             this.lineShape7 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape6 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.PcHandleText = new Sci.Production.Class.Txttpeuser();
-            this.txttpeuser3 = new Sci.Production.Class.Txttpeuser();
-            this.txttpeuser4 = new Sci.Production.Class.Txttpeuser();
             this.txttpeuser5 = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuser3 = new Sci.Production.Class.Txttpeuser();
+            this.PcHandleText = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuser4 = new Sci.Production.Class.Txttpeuser();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelBuyer = new Sci.Win.UI.Label();
@@ -305,10 +309,6 @@
             this.BtnBuyBack = new Sci.Win.UI.Button();
             this.btnComboType = new Sci.Win.UI.Button();
             this.displayBuyBackReason = new Sci.Win.UI.DisplayBox();
-            this.labelKpiEachConsCheck = new Sci.Win.UI.Label();
-            this.dateKpiEachConsCheck = new Sci.Win.UI.DateBox();
-            this.labelKpiMNotice = new Sci.Win.UI.Label();
-            this.dateKpiMNotice = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -633,12 +633,48 @@
             this.tabPage1.Controls.Add(this.txttpeuser3);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // dateKpiMNotice
+            // 
+            this.dateKpiMNotice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiMNotice", true));
+            this.dateKpiMNotice.IsSupportEditMode = false;
+            this.dateKpiMNotice.Location = new System.Drawing.Point(163, 143);
+            this.dateKpiMNotice.Name = "dateKpiMNotice";
+            this.dateKpiMNotice.ReadOnly = true;
+            this.dateKpiMNotice.Size = new System.Drawing.Size(100, 21);
+            this.dateKpiMNotice.TabIndex = 18;
+            // 
+            // labelKpiMNotice
+            // 
+            this.labelKpiMNotice.Location = new System.Drawing.Point(5, 143);
+            this.labelKpiMNotice.Name = "labelKpiMNotice";
+            this.labelKpiMNotice.Size = new System.Drawing.Size(149, 21);
+            this.labelKpiMNotice.TabIndex = 200;
+            this.labelKpiMNotice.Text = "Est M/Notice Apv.";
+            // 
+            // dateKpiEachConsCheck
+            // 
+            this.dateKpiEachConsCheck.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiEachConsCheck", true));
+            this.dateKpiEachConsCheck.IsSupportEditMode = false;
+            this.dateKpiEachConsCheck.Location = new System.Drawing.Point(163, 116);
+            this.dateKpiEachConsCheck.Name = "dateKpiEachConsCheck";
+            this.dateKpiEachConsCheck.ReadOnly = true;
+            this.dateKpiEachConsCheck.Size = new System.Drawing.Size(100, 21);
+            this.dateKpiEachConsCheck.TabIndex = 199;
+            // 
+            // labelKpiEachConsCheck
+            // 
+            this.labelKpiEachConsCheck.Location = new System.Drawing.Point(5, 116);
+            this.labelKpiEachConsCheck.Name = "labelKpiEachConsCheck";
+            this.labelKpiEachConsCheck.Size = new System.Drawing.Size(149, 21);
+            this.labelKpiEachConsCheck.TabIndex = 198;
+            this.labelKpiEachConsCheck.Text = "Est Each Con Apv.";
             // 
             // dateBoxChangeMemo
             // 
@@ -1795,7 +1831,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
+            this.shapeContainer2.Size = new System.Drawing.Size(990, 649);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -1844,14 +1880,15 @@
             this.lineShape5.Y1 = 53;
             this.lineShape5.Y2 = 53;
             // 
-            // PcHandleText
+            // txttpeuser5
             // 
-            this.PcHandleText.DisplayBox1Binding = "";
-            this.PcHandleText.DisplayBox2Binding = "";
-            this.PcHandleText.Location = new System.Drawing.Point(669, 31);
-            this.PcHandleText.Name = "PcHandleText";
-            this.PcHandleText.Size = new System.Drawing.Size(302, 23);
-            this.PcHandleText.TabIndex = 191;
+            this.txttpeuser5.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "OutstandingInCharge", true));
+            this.txttpeuser5.DisplayBox1Binding = "";
+            this.txttpeuser5.DisplayBox2Binding = "";
+            this.txttpeuser5.Location = new System.Drawing.Point(179, 339);
+            this.txttpeuser5.Name = "txttpeuser5";
+            this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser5.TabIndex = 70;
             // 
             // txttpeuser3
             // 
@@ -1862,6 +1899,15 @@
             this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser3.TabIndex = 6;
             // 
+            // PcHandleText
+            // 
+            this.PcHandleText.DisplayBox1Binding = "";
+            this.PcHandleText.DisplayBox2Binding = "";
+            this.PcHandleText.Location = new System.Drawing.Point(669, 31);
+            this.PcHandleText.Name = "PcHandleText";
+            this.PcHandleText.Size = new System.Drawing.Size(302, 23);
+            this.PcHandleText.TabIndex = 191;
+            // 
             // txttpeuser4
             // 
             this.txttpeuser4.DisplayBox1Binding = "";
@@ -1870,16 +1916,6 @@
             this.txttpeuser4.Name = "txttpeuser4";
             this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser4.TabIndex = 7;
-            // 
-            // txttpeuser5
-            // 
-            this.txttpeuser5.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "OutstandingInCharge", true));
-            this.txttpeuser5.DisplayBox1Binding = "";
-            this.txttpeuser5.DisplayBox2Binding = "";
-            this.txttpeuser5.Location = new System.Drawing.Point(179, 339);
-            this.txttpeuser5.Name = "txttpeuser5";
-            this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser5.TabIndex = 70;
             // 
             // lineShape10
             // 
@@ -3419,42 +3455,6 @@
             this.displayBuyBackReason.Name = "displayBuyBackReason";
             this.displayBuyBackReason.Size = new System.Drawing.Size(88, 21);
             this.displayBuyBackReason.TabIndex = 239;
-            // 
-            // labelKpiEachConsCheck
-            // 
-            this.labelKpiEachConsCheck.Location = new System.Drawing.Point(5, 116);
-            this.labelKpiEachConsCheck.Name = "labelKpiEachConsCheck";
-            this.labelKpiEachConsCheck.Size = new System.Drawing.Size(149, 21);
-            this.labelKpiEachConsCheck.TabIndex = 198;
-            this.labelKpiEachConsCheck.Text = "Est Each Con Apv.";
-            // 
-            // dateKpiEachConsCheck
-            // 
-            this.dateKpiEachConsCheck.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiEachConsCheck", true));
-            this.dateKpiEachConsCheck.IsSupportEditMode = false;
-            this.dateKpiEachConsCheck.Location = new System.Drawing.Point(163, 116);
-            this.dateKpiEachConsCheck.Name = "dateKpiEachConsCheck";
-            this.dateKpiEachConsCheck.ReadOnly = true;
-            this.dateKpiEachConsCheck.Size = new System.Drawing.Size(100, 21);
-            this.dateKpiEachConsCheck.TabIndex = 199;
-            // 
-            // labelKpiMNotice
-            // 
-            this.labelKpiMNotice.Location = new System.Drawing.Point(5, 143);
-            this.labelKpiMNotice.Name = "labelKpiMNotice";
-            this.labelKpiMNotice.Size = new System.Drawing.Size(149, 21);
-            this.labelKpiMNotice.TabIndex = 200;
-            this.labelKpiMNotice.Text = "Est M/Notice Apv.";
-            // 
-            // dateKpiMNotice
-            // 
-            this.dateKpiMNotice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiMNotice", true));
-            this.dateKpiMNotice.IsSupportEditMode = false;
-            this.dateKpiMNotice.Location = new System.Drawing.Point(163, 143);
-            this.dateKpiMNotice.Name = "dateKpiMNotice";
-            this.dateKpiMNotice.ReadOnly = true;
-            this.dateKpiMNotice.Size = new System.Drawing.Size(100, 21);
-            this.dateKpiMNotice.TabIndex = 18;
             // 
             // P01
             // 

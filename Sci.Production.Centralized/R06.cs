@@ -134,7 +134,7 @@ from SewingOutput_Detail SD
 Inner join SewingOutput S on SD.ID=S.ID
 Inner join Order_Location OL on SD.orderID=OL.OrderID
 Inner join Orders O on SD.OrderID=O.ID 
-Where O.LocalOrder=1 and O.SubconInType = '2'--(找出外代工的訂單)
+Where O.LocalOrder=1 and O.SubconInType in ('2','1')--(找出外代工的訂單)
 AND EXISTS(SELECT 1 FROM Order_TmsCost OT WHERE SD.OrderID=OT.ID)
 {strWhere}
 GROUP BY o.MDivisionID ,o.FtyGroup,o.ID,o.StyleID
@@ -361,12 +361,12 @@ into #tmpFinal1
 from
 (
 	select distinct
-		 t.MDivisionID
-		,t.FactoryID		
-		,t.OrderID
+		 M = t.MDivisionID
+		,Factory = t.FactoryID		
+		,[SP#] = t.OrderID
 		,t.CustPONo
-		,t.StyleID
-		,t.Location			
+		,[Style#] = t.StyleID
+		,[Combo Type] = t.Location		
 		,CPU = t.CPU * t.Rate
 		'+@Artwork+N'
 		,t.QAQty
@@ -376,7 +376,7 @@ from #oid_at o
 left join #idat t on o.orderid = t.OrderId and 
                            o.FactoryID = t.FactoryID
 )a
-order by MDivisionID,FactoryID,OrderId
+order by M,Factory,SP#
 '
 
 +N'
@@ -385,12 +385,12 @@ into #tmpFinal2
 from
 (
 	select distinct
-		 t.MDivisionID
-		,t.FactoryID		
-		,t.OrderID
+		 M = t.MDivisionID
+		,Factory = t.FactoryID		
+		,[SP#] = t.OrderID
 		,t.CustPONo
-		,t.StyleID
-		,t.Location		
+		,[Style#] = t.StyleID
+		,[Combo Type] = t.Location		
 		,CPU = t.CPU * t.Rate
 		'+@Artwork+N'
 		,t.QAQty
@@ -400,12 +400,12 @@ from #oid_at2 o
 left join #idat2 t on o.orderid = t.OrderId and 
                            o.FactoryID = t.FactoryID
 )a
-order by MDivisionID,FactoryID,OrderId
+order by M,Factory,SP#
 
 select * from (
-select id = OrderID,* from #tmpFinal1
+select id = [SP#],* from #tmpFinal1
 union all
-select id = OrderID ,* from #tmpFinal2 
+select id = [SP#] ,* from #tmpFinal2 
 ) a
 
 
@@ -505,6 +505,8 @@ drop table #tmpBase1,#tmpBase2,#TPEtmp,#AT
             string excelFile = "Centralized_R06.xltx";
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
             Microsoft.Office.Interop.Excel.Worksheet objSheets;   // 取得工作表
+
+            // 依Tables數量來新增Sheet
             for (int s = 1; s <= this.dsAllData.Tables.Count; s++)
             {
                 objSheets = objApp.ActiveWorkbook.Worksheets[s];
@@ -519,7 +521,7 @@ drop table #tmpBase1,#tmpBase2,#TPEtmp,#AT
                 dt.Columns.Remove("ID");
                 dt.Columns.Remove("CustPONO");
 
-                // 動態調整各sheet欄位名稱
+                // 動態新增各sheet Artwork欄位名稱
                 for (int c = start_columns; c <= dt.Columns.Count; c++)
                 {
                     objSheets.Cells[1, c] = dt.Columns[c - 1].ColumnName;
@@ -544,7 +546,7 @@ drop table #tmpBase1,#tmpBase2,#TPEtmp,#AT
                 for (int i = 1; i <= intColumns; i++)
                 {
                     string statColumns_Name = MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)objSheets.Cells[1, i]).Text);
-                    if (statColumns_Name == "TotalCPU")
+                    if (statColumns_Name == "Combo Type")
                     {
                         objSheets.Cells[intRowsCount + 2, i] = "TTL Diff:";
                         for (int cc = i; cc < intColumns; cc++)
@@ -577,11 +579,19 @@ drop table #tmpBase1,#tmpBase2,#TPEtmp,#AT
                 for (int j = intColumns; j > 0; j--)
                 {
                     string rowValue = MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)objSheets.Cells[intRowsCount + 2, j]).Text);
-                    if (rowValue == "TotalCPU")
+                    string columnName = MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)objSheets.Cells[1, j]).Text);
+                    if (columnName == "Combo Type")
                     {
                         break;
                     }
 
+                    // 以下欄位不能刪除
+                    else if (columnName == "TotalCPU" || columnName == "QAQty")
+                    {
+                        continue;
+                    }
+
+                    // 相減為0的刪除
                     if (rowValue == "0")
                     {
                         objSheets.Columns[j].Delete();
