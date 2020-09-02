@@ -26,14 +26,14 @@ namespace Sci.Production.Warehouse
             comboBox1_RowSource.Add(string.Empty, "All");
             comboBox1_RowSource.Add("F", "Fabric");
             comboBox1_RowSource.Add("A", "Accessory");
-            this.cmbMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
-            this.cmbMaterialType.ValueMember = "Key";
-            this.cmbMaterialType.DisplayMember = "Value";
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+
+            this.dateTimePicker.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+            this.dateTimePicker.Text = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
 
             DataGridViewGeneratorNumericColumnSettings cellActWeight = new DataGridViewGeneratorNumericColumnSettings();
             cellActWeight.CellValidating += (s, e) =>
@@ -125,6 +125,7 @@ namespace Sci.Production.Warehouse
                  .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("StockQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                  .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .DateTime("CutShadebandTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(20), iseditingreadonly: false)
                  .Text("Location", header: "Location", width: Widths.AnsiChars(12), settings: cellLocation)
                  .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
                  .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(8), decimal_places: 2, settings: cellActWeight)
@@ -137,6 +138,7 @@ namespace Sci.Production.Warehouse
             this.gridReceiving.Columns["Location"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["ActualWeight"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridReceiving.Columns["CutShadebandTime"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void DifferentialColorChange(int rowIndex)
@@ -211,12 +213,6 @@ namespace Sci.Production.Warehouse
             {
                 sqlWhere += $" and rd.dyelot = '{this.txtDyelot.Text}'";
                 sqlWhere2 += $" and td.dyelot = '{this.txtDyelot.Text}'";
-            }
-
-            if (!MyUtility.Check.Empty(this.cmbMaterialType.SelectedValue.ToString()))
-            {
-                sqlWhere += $" and psd.FabricType = '{this.cmbMaterialType.SelectedValue.ToString()}'";
-                sqlWhere2 += $" and psd.FabricType = '{this.cmbMaterialType.SelectedValue.ToString()}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtRecivingID.Text))
@@ -307,6 +303,8 @@ rd.Seq2
 ,[LastRemark] = LastEditDate.Remark
 ,[LastEditDate]=LastEditDate.EditDate
 ,[ReceivingSource]='Receiving'
+,[CutShadebandTime]=cutTime.CutTime
+,[OldCutShadebandTime]=cutTime.CutTime
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
@@ -335,8 +333,16 @@ OUTER APPLY(
 			FOR XML PATH('') )
 			, 1, 1, '')
 )Location
+OUTER APPLY(
+	SELECT  fs.CutTime
+	FROM FIR f
+	INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
+	WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
+)cutTime
 
-where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
+where r.MDivisionID  = '{Env.User.Keyword}'
+AND psd.FabricType ='F'
+{sqlWhere}
 
 UNION 
 
@@ -367,6 +373,8 @@ td.Seq2
 ,[LastRemark] = LastEditDate.Remark
 ,[LastEditDate]=LastEditDate.EditDate
 ,[ReceivingSource]='TransferIn'
+,[CutShadebandTime]=cutTime.CutTime
+,[OldCutShadebandTime]=cutTime.CutTime
 FROM TransferIn t with (nolock)
 INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
 INNER JOIN PO_Supp_Detail psd with (nolock) on td.PoId = psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
@@ -395,10 +403,18 @@ OUTER APPLY(
 	WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
     order by lt.EditDate desc
 )LastEditDate
+OUTER APPLY(
+	SELECT  fs.CutTime
+	FROM FIR f
+	INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
+	WHERE  t.id = f.ReceivingID and td.PoId = F.POID and td.Seq1 = F.SEQ1 and td.Seq2 = F.SEQ2 AND td.Roll = fs.Roll and td.Dyelot = fs.Dyelot
+)cutTime
+
 
 
 WHERE t.Status='Confirmed' 
 AND t.MDivisionID  = '{Env.User.Keyword}'
+AND psd.FabricType ='F'
 {sqlWhere2}
 
 DROP TABLE #tmpStockType
@@ -425,6 +441,7 @@ DROP TABLE #tmpStockType
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
+            this.dateTimePicker.Value = DateTime.Now;
             this.Query();
         }
 
@@ -440,6 +457,8 @@ DROP TABLE #tmpStockType
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
+            this.dateTimePicker.Value = DateTime.Now;
+
             var selectedReceiving = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1);
             if (!selectedReceiving.Any())
             {
@@ -463,6 +482,9 @@ DROP TABLE #tmpStockType
                                                                              && !x.Field<string>("Location").EqualString(x.Field<string>("OldLocation"))).ToArray();
             DataRow[] drArryActualWeight = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
                                                                              && x.Field<decimal>("ActualWeight") != x.Field<decimal>("OldActualWeight")).ToArray();
+            DataRow[] drArryCutShadebandTime = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
+                                                                             //&& !MyUtility.Check.Empty(x["CutShadebandTime"])
+                                                                             && !MyUtility.Convert.GetDate(x["CutShadebandTime"]).EqualString(MyUtility.Convert.GetDate(x["OldCutShadebandTime"]))).ToArray();
 
             // Remark沒資料則統一合併後寫入P26 同ID，排除Location沒有修改的資料
             var selectedReceivingSummary = drArryNotExistRemark
@@ -498,9 +520,9 @@ DROP TABLE #tmpStockType
             List<string> id_list = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "LH", "LocationTrans", batchNumber: cntID, sequenceMode: 2); // 批次產生ID
             int idcnt = 0;
 
-            if (id_list.Count == 0 && drArryActualWeight.Length == 0)
+            if (id_list.Count == 0 && drArryActualWeight.Length == 0 && drArryCutShadebandTime.Length == 0)
             {
-                MyUtility.Msg.WarningBox("There is no Location, Act.(kg) changed.");
+                MyUtility.Msg.WarningBox("There is no Location, Act.(kg), Cut Shadeband Time changed.");
                 return;
             }
 
@@ -636,6 +658,26 @@ Insert into LocationTrans_Detail(   ID,
                 }
             }
 
+            string sqlUpdateFIR_Shadebone = string.Empty;
+            foreach (var updateItem in drArryCutShadebandTime)
+            {
+                string cutTime = MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).HasValue ? "'" + MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).Value.ToString("yyyy/MM/dd HH:mm:ss") + "'" : "NULL";
+
+                sqlUpdateFIR_Shadebone += $@"
+UPDATE fs
+SET  fs.CutTime = {cutTime}
+FROM FIR f
+INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
+WHERE  f.ReceivingID='{updateItem["ID"]}'
+    AND f.PoId = '{updateItem["PoId"]}'
+    AND f.Seq1 = '{updateItem["Seq1"]}'
+    AND f.Seq2 ='{updateItem["Seq2"]}'
+    AND fs.Roll = '{updateItem["Roll"]}'
+    AND fs.Dyelot = '{updateItem["Dyelot"]}'
+;
+";
+            }
+
             Exception errMsg = null;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -662,6 +704,15 @@ Insert into LocationTrans_Detail(   ID,
                     if (!MyUtility.Check.Empty(sqlUpdateReceiving_Detail))
                     {
                         result = DBProxy.Current.Execute(null, sqlUpdateReceiving_Detail);
+                        if (!result)
+                        {
+                            throw result.GetException();
+                        }
+                    }
+
+                    if (!MyUtility.Check.Empty(sqlUpdateFIR_Shadebone))
+                    {
+                        result = DBProxy.Current.Execute(null, sqlUpdateFIR_Shadebone);
                         if (!result)
                         {
                             throw result.GetException();
@@ -701,6 +752,7 @@ Insert into LocationTrans_Detail(   ID,
             DataRow dr = this.gridReceiving.GetDataRow(rowIndex);
             bool chg_ActWeight = false;
             bool chg_Location = false;
+            bool chg_CutShadebandTime = false;
 
             decimal oldActualWeight = MyUtility.Convert.GetDecimal(dr["OldActualWeight"]);
             decimal newActualWeight = MyUtility.Convert.GetDecimal(dr["ActualWeight"]);
@@ -711,6 +763,17 @@ Insert into LocationTrans_Detail(   ID,
             else
             {
                 chg_ActWeight = false;
+            }
+
+            decimal oldCutShadebandTime = MyUtility.Convert.GetDecimal(dr["OldCutShadebandTime"]);
+            decimal cutShadebandTime = MyUtility.Convert.GetDecimal(dr["CutShadebandTime"]);
+            if (!oldCutShadebandTime.Equals(cutShadebandTime))
+            {
+                chg_CutShadebandTime = true;
+            }
+            else
+            {
+                chg_CutShadebandTime = false;
             }
 
             // 判斷Location 有變更資料就自動勾選
@@ -725,7 +788,7 @@ Insert into LocationTrans_Detail(   ID,
                 chg_Location = false;
             }
 
-            if (chg_Location || chg_ActWeight)
+            if (chg_Location || chg_ActWeight || chg_CutShadebandTime)
             {
                 dr["select"] = 1;
             }
@@ -745,6 +808,22 @@ Insert into LocationTrans_Detail(   ID,
                 {
                     int cnt = MyUtility.Convert.GetInt(dt.Compute("count(select)", "select = 1"));
                     this.numSelectCnt.Value = cnt;
+                }
+            }
+        }
+
+        private void BtnUpdateTime_Click(object sender, EventArgs e)
+        {
+            if (this.dtReceiving != null && this.dtReceiving.Rows.Count > 0)
+            {
+                var selectedReceiving = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1);
+                DateTime dateTime = this.dateTimePicker.Value;
+
+                DataRow[] dataRows = this.dtReceiving.Select("select=1");
+
+                foreach (var item in dataRows)
+                {
+                    item["CutShadebandTime"] = dateTime;
                 }
             }
         }
