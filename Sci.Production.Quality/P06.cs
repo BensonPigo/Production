@@ -19,7 +19,7 @@ namespace Sci.Production.Quality
 
         // 宣告Context Menu Item
         ToolStripMenuItem delete;
-        private new bool IsSupportEdit = true;
+        private new readonly bool IsSupportEdit = true;
 
         public P06(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -96,7 +96,7 @@ namespace Sci.Production.Quality
             }
 
             // 判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
-            this.contextMenuStrip();
+            this.ContextMenuStrip();
 
             base.OnDetailEntered();
         }
@@ -188,12 +188,12 @@ namespace Sci.Production.Quality
                 .Text("LastUpdate", header: "Last Update", width: Widths.AnsiChars(30), iseditingreadonly: true);
         }
 
-        public void grid_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        public void Grid_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            this.grid_CellMouseClick(e.Button, e.RowIndex);
+            this.Grid_CellMouseClick(e.Button, e.RowIndex);
         }
 
-        public void grid_CellMouseClick(MouseButtons eButton, int eRowIndex)
+        public void Grid_CellMouseClick(MouseButtons eButton, int eRowIndex)
         {
             if (eButton == MouseButtons.Right)
             {
@@ -309,12 +309,12 @@ namespace Sci.Production.Quality
                 }
             }
 
-            this.contextMenuStrip();
+            this.ContextMenuStrip();
             this.RenewData();
             this.OnDetailEntered();
         }
 
-        private void contextMenuStrip()
+        private void ContextMenuStrip()
         {
             var dr = this.CurrentDetailData;
             DataTable dtCheck;
@@ -392,7 +392,7 @@ namespace Sci.Production.Quality
 
         protected override void OnDetailGridRowChanged()
         {
-            this.contextMenuStrip();
+            this.ContextMenuStrip();
             base.OnDetailGridRowChanged();
         }
     }

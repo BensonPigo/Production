@@ -56,7 +56,7 @@ namespace Sci.Production.Quality
             return result;
         }
 
-        private void txtRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 @"SELECT DISTINCT RefNo
@@ -71,7 +71,7 @@ FROM Fabric WHERE junk=0 AND TYPE='F' ORDER BY RefNo", "25", "Refno");
             this.txtReson.Text = "Shrinkage Issue, Spreading Backward Speed: 2, Loose Tension";
         }
 
-        private void txtRefno_Validating(object sender, CancelEventArgs e)
+        private void TxtRefno_Validating(object sender, CancelEventArgs e)
         {
             if (this.txtRefno.Text.Trim() == string.Empty)
             {

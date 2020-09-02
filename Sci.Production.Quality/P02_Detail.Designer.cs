@@ -98,12 +98,12 @@
             // left
             // 
             this.left.Enabled = true;
-            this.left.Click += new System.EventHandler(this.left_Click);
+            this.left.Click += new System.EventHandler(this.Left_Click);
             // 
             // right
             // 
             this.right.Enabled = true;
-            this.right.Click += new System.EventHandler(this.right_Click);
+            this.right.Click += new System.EventHandler(this.Right_Click);
             // 
             // btnAmend
             // 
@@ -113,7 +113,7 @@
             this.btnAmend.TabIndex = 117;
             this.btnAmend.Text = "Amend";
             this.btnAmend.UseVisualStyleBackColor = true;
-            this.btnAmend.Click += new System.EventHandler(this.btnAmend_Click);
+            this.btnAmend.Click += new System.EventHandler(this.BtnAmend_Click);
             // 
             // txtInspectedQty
             // 
@@ -392,7 +392,7 @@
             this.editDefect.ReadOnly = true;
             this.editDefect.Size = new System.Drawing.Size(288, 92);
             this.editDefect.TabIndex = 132;
-            this.editDefect.MouseDown += new System.Windows.Forms.MouseEventHandler(this.editDefect_MouseDown);
+            this.editDefect.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EditDefect_MouseDown);
             // 
             // panel1
             // 
@@ -425,7 +425,7 @@
             this.btnClose.TabIndex = 135;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnEdit
             // 
@@ -436,7 +436,7 @@
             this.btnEdit.TabIndex = 136;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
-            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // txtsupplier
             // 

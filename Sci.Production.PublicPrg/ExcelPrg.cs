@@ -8,6 +8,9 @@ using MsExcel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Prg
 {
+    /// <summary>
+    /// Excel Program
+    /// </summary>
     public partial class ExcelPrg
     {
         /// <summary>
@@ -31,10 +34,9 @@ namespace Sci.Production.Prg
                 SheetNumber = sheetNum,
                 SheetName = sheetName,
                 CaptionIndex = captionIndex,
-                ColumnTypes = columnTypes
+                ColumnTypes = columnTypes,
             }.Load();
         }
-
 
         private static System.Data.DataTable SelectExcelEx(SelectExcelAgent setting)
         {
@@ -139,12 +141,14 @@ namespace Sci.Production.Prg
                             {
                                 fieldName = fieldName + idxSuffix++;
                             }
+
                             dt.Columns.Add(fieldName, columnType);
                             if (columnType == typeof(DateTime))
                             {
                                 dateTimeColumnIndexies.Add(idx);
                             }
                         }
+
                         return 1;
                     })
                     .ToList();

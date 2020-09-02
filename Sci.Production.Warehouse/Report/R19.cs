@@ -9,9 +9,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class R19 : Win.Tems.PrintForm
     {
-        DataTable dt;
+        private DataTable dt;
 
-        int selectindex = 0;
+        private int selectindex = 0;
 
         public R19(ToolStripMenuItem menuitem)
             : base(menuitem)

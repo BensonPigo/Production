@@ -178,7 +178,7 @@
             this.txtActionCode.ReadOnly = true;
             this.txtActionCode.Size = new System.Drawing.Size(198, 23);
             this.txtActionCode.TabIndex = 19;
-            this.txtActionCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtActionCode_PopUp);
+            this.txtActionCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtActionCode_PopUp);
             // 
             // B03
             // 

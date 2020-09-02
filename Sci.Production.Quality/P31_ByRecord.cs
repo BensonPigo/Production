@@ -19,8 +19,8 @@ namespace Sci.Production.Quality
     public partial class P31_ByRecord : Sci.Win.Forms.Base
     {
 
-        private string _OrderID = "";
-        private string _OrderShipmodeSeq = "";
+        private readonly string _OrderID = "";
+        private readonly string _OrderShipmodeSeq = "";
 
         public P31_ByRecord(string OrderID , string OrderShipmodeSeq)
         {
@@ -58,6 +58,7 @@ WHERE OrderID= '{this._OrderID}'  and SEQ='{this._OrderShipmodeSeq}'
             {
                 this.ShowErr(res);
             }
+
             this.listControlBindingSource.DataSource = dt;
 
             this.grid.IsEditingReadOnly = true;

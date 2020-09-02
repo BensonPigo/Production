@@ -12,9 +12,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P04_LocalTransaction : Win.Subs.Base
     {
-        DataRow dataRow;
-        DataTable dataTable;
-        List<SqlParameter> sqlPar = new List<SqlParameter>();
+        private DataRow dataRow;
+        private DataTable dataTable;
+        private List<SqlParameter> sqlPar = new List<SqlParameter>();
 
         public P04_LocalTransaction(DataRow dataRow, string from_program)
             : base()
@@ -39,7 +39,7 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.loadData();
+            this.LoadData();
             #region Set Grid
             this.Helper.Controls.Grid.Generator(this.gridLocalTransaction)
                .Text("date", header: "Date", iseditingreadonly: true, width: Widths.AnsiChars(13))
@@ -52,7 +52,7 @@ namespace Sci.Production.Warehouse
             #endregion
         }
 
-        private void loadData()
+        private void LoadData()
         {
             #region SQL Command
             string sql = @"
@@ -162,7 +162,7 @@ order by s.date, s.Name, arrivedQty, releasedQty
             this.HideWaitMessage();
         }
 
-        private void btnReCalculate_Click(object sender, EventArgs e)
+        private void BtnReCalculate_Click(object sender, EventArgs e)
         {
             #region SQL Command
             string sql = @"
@@ -233,10 +233,10 @@ WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
             }
             #endregion
             this.HideWaitMessage();
-            this.loadData();
+            this.LoadData();
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             if (this.dataTable != null && this.dataTable.Rows.Count > 0)
             {
@@ -261,7 +261,7 @@ WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

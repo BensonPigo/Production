@@ -8,11 +8,11 @@ namespace Sci.Production.Quality
 {
     public partial class P01_PhysicalInspection_Defect : Win.Subs.Input6A
     {
-        DataTable DefectTb;
+        readonly DataTable DefectTb;
         DataTable DefectFilterTb;
         private DataTable gridTb;
         public DataRow mainrow;
-        bool editm = false;
+        readonly bool editm = false;
 
         public P01_PhysicalInspection_Defect(DataTable defectTb, DataRow maindr, bool edit)
         {

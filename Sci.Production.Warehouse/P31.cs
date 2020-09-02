@@ -109,8 +109,8 @@ namespace Sci.Production.Warehouse
 
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
-            string Estbackdate = ((DateTime)MyUtility.Convert.GetDate(row["Estbackdate"])).ToShortDateString();
-            string Remark = row["Remark"].ToString();
+            string estbackdate = ((DateTime)MyUtility.Convert.GetDate(row["Estbackdate"])).ToShortDateString();
+            string remark = row["Remark"].ToString();
             string mdivisionid = this.CurrentMaintain["mdivisionid"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
@@ -136,12 +136,12 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            string RptTitle = dtt.Rows[0]["nameEN"].ToString();
+            string rptTitle = dtt.Rows[0]["nameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new ReportParameter("ID", id));
-            report.ReportParameters.Add(new ReportParameter("Estbackdate", Estbackdate));
-            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("Estbackdate", estbackdate));
+            report.ReportParameters.Add(new ReportParameter("Remark", remark));
             report.ReportParameters.Add(new ReportParameter("mdivisionid", mdivisionid));
             report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
             #endregion
@@ -196,7 +196,7 @@ where a.id= @ID", pars, out dd);
                     DESC = row1["DESC"].ToString().Trim(),
                     StockType = row1["StockType"].ToString().Trim(),
                     Location = row1["Location"].ToString().Trim(),
-                    unit = row1["unit"].ToString().Trim(),
+                    Unit = row1["unit"].ToString().Trim(),
                     FromRoll = row1["FromRoll"].ToString().Trim(),
                     FromDyelot = row1["FromDyelot"].ToString().Trim(),
                     QTY = MyUtility.Convert.GetDecimal(row1["QTY"]),
@@ -210,12 +210,12 @@ where a.id= @ID", pars, out dd);
             #region  指定是哪個 RDLC
 
             // DualResult result;
-            Type ReportResourceNamespace = typeof(P31_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P31_Print.rdlc";
+            Type reportResourceNamespace = typeof(P31_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P31_Print.rdlc";
 
             IReportResource reportresource1;
-            if (!(result1 = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource1)))
+            if (!(result1 = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource1)))
             {
                 // this.ShowException(result);
                 return false;
@@ -330,7 +330,7 @@ where a.id= @ID", pars, out dd);
                 return false;
             }
 
-            if (!this.checkRoll())
+            if (!this.CheckRoll())
             {
                 return false;
             }
@@ -494,7 +494,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #endregion -- 檢查負數庫存 --
 
             #region -- 檢查目的Roll是否已存在資料 --
-            if (!this.checkRoll())
+            if (!this.CheckRoll())
             {
                 return;
             }
@@ -618,11 +618,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量 ftyinventory
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
 
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 try
@@ -636,14 +636,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4T, string.Empty, upd_Fty_4T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -666,7 +666,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4T, string.Empty, upd_MD_4T, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -676,7 +676,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -684,7 +684,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, string.Empty, upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -692,26 +692,26 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     SentToGensong_AutoWHFabric(true);
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             // this.RenewData();
             // this.OnDetailEntered();
@@ -931,11 +931,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             upd_Fty_2F = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion 更新庫存數量  ftyinventory
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
 
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 try
@@ -949,14 +949,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4F, string.Empty, upd_Fty_4F, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F, string.Empty, upd_Fty_2F, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -979,7 +979,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4F, string.Empty, upd_MD_4F, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -989,7 +989,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F, string.Empty, upd_MD_8F, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -997,7 +997,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2F, string.Empty, upd_MD_2F, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -1005,35 +1005,35 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     SentToGensong_AutoWHFabric(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
-        private void SentToGensong_AutoWHFabric(bool IsConfirmed)
+        private void SentToGensong_AutoWHFabric(bool isConfirmed)
         {
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
                 DataTable dtDetail = (DataTable)detailgridbs.DataSource;
-                Task.Run(() => new Gensong_AutoWHFabric().SentBorrowBackToGensongAutoWHFabric(dtDetail, IsConfirmed))
+                Task.Run(() => new Gensong_AutoWHFabric().SentBorrowBackToGensongAutoWHFabric(dtDetail, isConfirmed))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
@@ -1080,7 +1080,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // delete all
-        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
+        private void BtnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
 
@@ -1089,21 +1089,21 @@ Where a.id = '{0}'", masterID);
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             var frm = new P31_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
 
-        private void btnAccumulatedQty_Click(object sender, EventArgs e)
+        private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new P31_AccumulatedQty(this.CurrentMaintain);
             frm.P31 = this;
             frm.ShowDialog(this);
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -1125,7 +1125,7 @@ Where a.id = '{0}'", masterID);
         /// 確認是否已經有重複的Roll
         /// </summary>
         /// <returns>bool</returns>
-        private bool checkRoll()
+        private bool CheckRoll()
         {
             // 判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
             List<string> listMsg = new List<string>();

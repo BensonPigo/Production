@@ -9,6 +9,9 @@ using System.Linq;
 
 namespace Sci.Production.PublicPrg
 {
+    /// <summary>
+    /// Prgs
+    /// </summary>
     public static partial class Prgs
     {
         /// <summary>
@@ -22,16 +25,54 @@ namespace Sci.Production.PublicPrg
 
         private static DataTable dtPass1 = null;
 
+        /// <summary>
+        /// Pass1Format
+        /// </summary>
         public enum Pass1Format
         {
+            /// <summary>
+            /// IDNameExtDateTime
+            /// </summary>
             IDNameExtDateTime = 1,
+
+            /// <summary>
+            /// IDNameDateTime
+            /// </summary>
             IDNameDateTime = 2,
+
+            /// <summary>
+            /// NameExtDateTime
+            /// </summary>
             NameExtDateTime = 3,
+
+            /// <summary>
+            /// NameDateTime
+            /// </summary>
             NameDateTime = 4,
+
+            /// <summary>
+            /// IDNameExtDate
+            /// </summary>
             IDNameExtDate = 5,
+
+            /// <summary>
+            /// IDNameDate
+            /// </summary>
             IDNameDate = 6,
+
+            /// <summary>
+            /// NameExtDate
+            /// </summary>
             NameExtDate = 7,
+
+            /// <summary>
+            /// NameDate
+            /// </summary>
             NameDate = 8,
+
+            /// <summary>
+            /// NameExt
+            /// </summary>
             NameExt = 9,
         }
 
@@ -49,7 +90,7 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// GetAuthority()
         /// </summary>
-        /// <param name="checkid"></param>
+        /// <param name="checkid">checkid</param>
         /// <returns>bool</returns>
         public static bool GetAuthority(string checkid)
         {
@@ -59,10 +100,9 @@ namespace Sci.Production.PublicPrg
             }
             else
             {
-                string sqlCmd = string.Format(
-                    @"with handlepass1
+                string sqlCmd = $@"with handlepass1
 as
-(select ID,Supervisor,Deputy from Pass1 WITH (NOLOCK) where ID = '{0}'),
+(select ID,Supervisor,Deputy from Pass1 WITH (NOLOCK) where ID = '{checkid}'),
 superpass1
 as
 (select Pass1.ID,Pass1.Supervisor,Pass1.Deputy from Pass1 WITH (NOLOCK) ,handlepass1 where Pass1.ID = handlepass1.Supervisor),
@@ -72,7 +112,7 @@ as
  union
  select * from superpass1
 )
-select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'", checkid, Env.User.UserID);
+select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User.UserID}' or Deputy = '{Env.User.UserID}'";
 
                 return MyUtility.Check.Seek(sqlCmd) ? true : false;
             }
@@ -81,9 +121,9 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
         /// <summary>
         /// GetAuthority()
         /// </summary>
-        /// <param name="checkid"></param>
-        /// <param name="formcaption"></param>
-        /// <param name="pass2colname"></param>
+        /// <param name="checkid">checkid</param>
+        /// <param name="formcaption">formcaption</param>
+        /// <param name="pass2colname">pass2colname</param>
         /// <returns>bool</returns>
         public static bool GetAuthority(string checkid, string formcaption, string pass2colname)
         {
@@ -94,12 +134,12 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             else
             {
                 // Sci.Env.User.PositionID
-                string PositionID = "1";
+                string positionID = "1";
                 string sql = string.Format("select FKPass0 from Pass1 WITH (NOLOCK) where ID='{0}'", Env.User.UserID);
-                PositionID = MyUtility.GetValue.Lookup(sql);
+                positionID = MyUtility.GetValue.Lookup(sql);
 
                 DataTable dt;
-                DualResult result = DBProxy.Current.Select(null, string.Format("select {0} as Result from Pass2 WITH (NOLOCK) where FKPass0 = {1} and UPPER(BarPrompt) = N'{2}'", pass2colname, PositionID, formcaption.ToUpper()), out dt);
+                DualResult result = DBProxy.Current.Select(null, string.Format("select {0} as Result from Pass2 WITH (NOLOCK) where FKPass0 = {1} and UPPER(BarPrompt) = N'{2}'", pass2colname, positionID, formcaption.ToUpper()), out dt);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());
@@ -111,10 +151,9 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
                     return false;
                 }
 
-                string sqlCmd = string.Format(
-                    @"with handlepass1
+                string sqlCmd = $@"with handlepass1
 as
-(select ID,Supervisor,Deputy from Pass1 WITH (NOLOCK) where ID = '{0}'),
+(select ID,Supervisor,Deputy from Pass1 WITH (NOLOCK) where ID = '{checkid}'),
 superpass1
 as
 (select Pass1.ID,Pass1.Supervisor,Pass1.Deputy from Pass1 WITH (NOLOCK) ,handlepass1 where Pass1.ID = handlepass1.Supervisor),
@@ -124,7 +163,7 @@ as
  union
  select * from superpass1
 )
-select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'", checkid, Env.User.UserID);
+select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User.UserID}' or Deputy = '{Env.User.UserID}'";
 
                 return MyUtility.Check.Seek(sqlCmd) ? true : false;
             }
@@ -134,9 +173,9 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
         /// <summary>
         /// GetAddOrEditBy()
         /// </summary>
-        /// <param name="string id"></param>
-        /// <param name="[Object datetime = null]"></param>
-        /// <param name="[int format = 1]"></param>
+        /// <param name="id">id</param>
+        /// <param name="dateColumn">dateColumn</param>
+        /// <param name="format">format</param>
         /// <returns>string</returns>
         public static string GetAddOrEditBy(object id, object dateColumn = null, int format = 1)
         {
@@ -196,20 +235,22 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
         }
 
         /// <summary>
-        /// GetGarmentList()
+        /// GetGarmentListTable
         /// </summary>
-        /// <param name="string styleukey"></param>
-        /// <param name="Out DataTable(GarmentList Table)"></param>
-        public static void GetGarmentListTable(string cutref, string OrderID, string sizeGroup, out DataTable OutTb)
+        /// <param name="cutref">cutref</param>
+        /// <param name="orderID">orderID</param>
+        /// <param name="sizeGroup">sizeGroup</param>
+        /// <param name="outTb">outTb</param>
+        public static void GetGarmentListTable(string cutref, string orderID, string sizeGroup, out DataTable outTb)
         {
             DataTable garmentListTb;
-            string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", OrderID, "Orders", "ID");
+            string styleyukey = MyUtility.GetValue.Lookup("Styleukey", orderID, "Orders", "ID");
 
             #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
-            OutTb = null;
+            outTb = null;
             string patidsql;
 
-            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{OrderID}','{cutref}','',{Styleyukey},'{sizeGroup}')s";
+            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{orderID}','{cutref}','',{styleyukey},'{sizeGroup}')s";
 
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             #endregion
@@ -224,7 +265,7 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             }
             #endregion
             #region 建立Table
-            string tablecreatesql = string.Format("Select '{0}' as orderid,a.*,'' as F_CODE", OrderID);
+            string tablecreatesql = string.Format("Select '{0}' as orderid,a.*,'' as F_CODE", orderID);
             foreach (DataRow dr in headertb.Rows)
             {
                 tablecreatesql = tablecreatesql + string.Format(" ,'' as {0}", dr["ArticleGroup"]);
@@ -265,10 +306,14 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
                 }
             }
             #endregion
-            OutTb = garmentListTb;
+            outTb = garmentListTb;
         }
 
-        // 測試mail是否真實存在
+        /// <summary>
+        /// 測試mail是否真實存在
+        /// </summary>
+        /// <param name="mailTo">mailTo</param>
+        /// <returns>bool</returns>
         public static bool TestMail(string mailTo)
         {
             SmtpMail oMail = new SmtpMail("TryIt");
@@ -296,6 +341,10 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             return true;
         }
 
+        /// <summary>
+        /// Delete
+        /// </summary>
+        /// <param name="rows">rows</param>
         public static void Delete(this IEnumerable<DataRow> rows)
         {
             foreach (var row in rows)
@@ -304,6 +353,11 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             }
         }
 
+        /// <summary>
+        /// TryRemoveColumn
+        /// </summary>
+        /// <param name="columns">columns</param>
+        /// <param name="dt">dt</param>
         public static void TryRemoveColumn(string columns, DataTable dt)
         {
             if (columns.Contains(columns))
@@ -344,12 +398,12 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             }
         }
 
-        private static bool IsLoadded = false;
-
         /// <summary>
         /// 建立一個起檔案的視窗，交給來源端的moreSetting方法做設定，然後開窗，成功選擇檔案的話會記錄選擇位置，以供下次開啟
         /// </summary>
-        /// <inheritdoc/>
+        /// <param name="afterSelected">afterSelected</param>
+        /// <param name="moreSetting">moreSetting</param>
+        /// <param name="filterSetting">filterSetting</param>
         public static void ShowDialog(Action<OpenFileDialog> afterSelected, Action<OpenFileDialog> moreSetting = null, params OpenFileDialogFilterPair[] filterSetting)
         {
             if (afterSelected == null)

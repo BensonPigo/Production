@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P19_FabricSticker_PrintData
+    internal class P19_FabricSticker_PrintData
     {
         public int RowNo { get; set; }
 
@@ -20,7 +20,7 @@
 
         public string StockUnit { get; set; }
 
-        public string location { get; set; }
+        public string Location { get; set; }
 
         public double Qty { get; set; }
 

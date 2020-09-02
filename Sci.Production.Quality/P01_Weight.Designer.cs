@@ -336,7 +336,7 @@
             this.btnApprove.TabIndex = 127;
             this.btnApprove.Text = "Approve";
             this.btnApprove.UseVisualStyleBackColor = true;
-            this.btnApprove.Click += new System.EventHandler(this.btnApprove_Click);
+            this.btnApprove.Click += new System.EventHandler(this.BtnApprove_Click);
             // 
             // btnEncode
             // 
@@ -346,7 +346,7 @@
             this.btnEncode.TabIndex = 128;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
+            this.btnEncode.Click += new System.EventHandler(this.BtnEncode_Click);
             // 
             // labelApprover
             // 
@@ -375,7 +375,7 @@
             this.btnToExcel.TabIndex = 132;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // txtuserApprover
             // 
@@ -440,7 +440,7 @@
             this.buttonToPDF.TabIndex = 133;
             this.buttonToPDF.Text = "To PDF";
             this.buttonToPDF.UseVisualStyleBackColor = true;
-            this.buttonToPDF.Click += new System.EventHandler(this.buttonToPDF_Click);
+            this.buttonToPDF.Click += new System.EventHandler(this.ButtonToPDF_Click);
             // 
             // txtWeightInspector
             // 

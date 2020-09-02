@@ -117,7 +117,7 @@
             this.gridBulk.ShowCellToolTips = false;
             this.gridBulk.Size = new System.Drawing.Size(824, 183);
             this.gridBulk.TabIndex = 4;
-            this.gridBulk.Sorted += new System.EventHandler(this.gridBulk_Sorted);
+            this.gridBulk.Sorted += new System.EventHandler(this.GridBulk_Sorted);
             // 
             // btnRetransferToScrap
             // 
@@ -127,7 +127,7 @@
             this.btnRetransferToScrap.TabIndex = 5;
             this.btnRetransferToScrap.Text = "Re-Transfer to Scrap";
             this.btnRetransferToScrap.UseVisualStyleBackColor = true;
-            this.btnRetransferToScrap.Click += new System.EventHandler(this.btnRetransferToScrap_Click);
+            this.btnRetransferToScrap.Click += new System.EventHandler(this.BtnRetransferToScrap_Click);
             // 
             // btnClose
             // 
@@ -137,7 +137,7 @@
             this.btnClose.TabIndex = 6;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // lblFtyInventoryLockHint
             // 

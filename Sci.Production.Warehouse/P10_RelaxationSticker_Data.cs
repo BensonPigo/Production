@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P10_RelaxationSticker_Data
+    internal class P10_RelaxationSticker_Data
     {
         public int RowNo { get; set; }
 

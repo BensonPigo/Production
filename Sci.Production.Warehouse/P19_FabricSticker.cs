@@ -83,7 +83,7 @@ order by RowNo";
             #endregion
         }
 
-        private void btnPrint_Click(object sender, EventArgs e)
+        private void BtnPrint_Click(object sender, EventArgs e)
         {
             DualResult result;
             DataTable dtPrint = (DataTable)this.listControlBindingSource.DataSource;
@@ -116,7 +116,7 @@ order by NewRowNo";
                     Roll = row["Roll"].ToString().Trim(),
                     Dyelot = row["Dyelot"].ToString().Trim(),
                     ToFactory = row["ToFactory"].ToString().Trim(),
-                    location = row["location"].ToString().Trim(),
+                    Location = row["location"].ToString().Trim(),
                     Color = row["Color"].ToString().Trim(),
                     StockUnit = row["StockUnit"].ToString().Trim(),
                     Qty = Convert.ToDouble(row["Qty"]),
@@ -127,13 +127,13 @@ order by NewRowNo";
                 report.ReportDataSource = listData;
 
                 // 指定是哪個 RDLC
-                Type ReportResourceNamespace = typeof(P23_PrintData);
-                Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-                string ReportResourceName = "P19_FabricSticker_Print.rdlc";
+                Type reportResourceNamespace = typeof(P23_PrintData);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P19_FabricSticker_Print.rdlc";
 
                 IReportResource reportresource;
 
-                if ((result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)) == false)
+                if ((result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)) == false)
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;

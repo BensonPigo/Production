@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string ID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            string iD = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"
 select  LID.ID
@@ -48,7 +48,7 @@ left join LocalInventory Linv on LID.OrderID = Linv.OrderID
                                  and LID.ThreadColorID = Linv.ThreadColorID
 left join LocalItem Litem on LID.Refno = Litem.Refno
 where   LI.ID = '{0}' 
-        and LI.MDivisionID = '{1}'", ID, Env.User.Keyword);
+        and LI.MDivisionID = '{1}'", iD, Env.User.Keyword);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -539,7 +539,7 @@ where LID.ID = @ID";
 
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -557,13 +557,13 @@ where LID.ID = @ID";
             }
         }
 
-        private void btnClearEmpty_Click(object sender, EventArgs e)
+        private void BtnClearEmpty_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
             ((DataTable)this.detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             var frm = new P61_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
@@ -592,13 +592,13 @@ where LID.ID = @ID";
             }
             #endregion
             ReportDefinition report = new ReportDefinition();
-            string MDivisonName = MyUtility.GetValue.Lookup(string.Format(
+            string mDivisonName = MyUtility.GetValue.Lookup(string.Format(
                 @"
 select NameEN
 from factory
 where id = '{0}'", Env.User.Keyword));
             #region Set RDLC_Title Data
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("MDivision", MDivisonName));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("MDivision", mDivisonName));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", this.CurrentMaintain["ID"].ToString()));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", this.CurrentMaintain["FactoryID"].ToString()));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", string.Format("{0:yyyy-MM-dd}", this.CurrentMaintain["IssueDate"])));

@@ -179,7 +179,7 @@ AND (
                 .OrderBy(o => o.Date).ToList();
             #endregion
 
-            this.AllData = GetInOffLineList(dt_Schedule, this.Days, Enddate: this.displayday2, ori_startdate: start_where, ori_Enddate: end_where);
+            this.AllData = GetInOffLineList(dt_Schedule, this.Days, enddate: this.displayday2, ori_startdate: start_where, ori_Enddate: end_where);
 
             List<DataTable> leadTimeList = GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
 

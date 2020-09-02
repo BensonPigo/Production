@@ -134,7 +134,7 @@
             this.comboSortBy.Name = "comboSortBy";
             this.comboSortBy.Size = new System.Drawing.Size(100, 24);
             this.comboSortBy.TabIndex = 1;
-            this.comboSortBy.SelectedIndexChanged += new System.EventHandler(this.comboSortBy_SelectedIndexChanged);
+            this.comboSortBy.SelectedIndexChanged += new System.EventHandler(this.ComboSortBy_SelectedIndexChanged);
             // 
             // btnClose
             // 
@@ -146,7 +146,7 @@
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // P03_TaipeiInventory
             // 

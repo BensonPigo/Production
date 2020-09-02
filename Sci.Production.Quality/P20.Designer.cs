@@ -218,7 +218,7 @@
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(118, 23);
             this.txtSP.TabIndex = 3;
-            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
+            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSP_Validating);
             // 
             // labelDate
             // 
@@ -519,7 +519,7 @@
             this.txtLine.Size = new System.Drawing.Size(118, 23);
             this.txtLine.SPtxt = this.txtSP;
             this.txtLine.TabIndex = 4;
-            this.txtLine.Validated += new System.EventHandler(this.txtLine_Validated);
+            this.txtLine.Validated += new System.EventHandler(this.TxtLine_Validated);
             // 
             // comboShift
             // 

@@ -512,7 +512,7 @@ order by data",
             string temfile = string.Empty;
             DualResult result = Ict.Result.True;
 
-            string strPath = PrivUtils.getPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
+            string strPath = PrivUtils.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
             temfile = strPath + @"\Centralized_R01.Matrix.xltx";
 
             SaveXltReportCls sxrc = new SaveXltReportCls(temfile);

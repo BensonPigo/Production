@@ -67,7 +67,7 @@ where Classify = 'p'
             }
         }
 
-        private void textBoxLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TextBoxLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string strLocation = string.Format(
                 @"
@@ -88,7 +88,7 @@ where   junk != '1'
             }
         }
 
-        private void buttonFindNow_Click(object sender, EventArgs e)
+        private void ButtonFindNow_Click(object sender, EventArgs e)
         {
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
             #region SqlParameter
@@ -226,7 +226,7 @@ order by Datas.Poid, Datas.Refno",
             this.HideWaitMessage();
         }
 
-        private void buttonImport_Click(object sender, EventArgs e)
+        private void ButtonImport_Click(object sender, EventArgs e)
         {
             if (this.grid.Rows.Count > 0 && ((DataTable)this.grid.DataSource).AsEnumerable().Any(row => row["sel"].EqualDecimal(1)))
             {
@@ -238,17 +238,17 @@ order by Datas.Poid, Datas.Refno",
             this.Close();
         }
 
-        public bool getBoolImport()
+        public bool GetBoolImport()
         {
             return this.boolImport;
         }
 
-        public DataTable getResultImportDatas()
+        public DataTable GetResultImportDatas()
         {
             return this.dtResultImportData;
         }
 
-        private void buttonCancel_Click(object sender, EventArgs e)
+        private void ButtonCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }

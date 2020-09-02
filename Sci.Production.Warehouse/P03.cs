@@ -13,9 +13,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03 : Win.Tems.QueryForm
     {
-        string userCountry = string.Empty;
-        string SpNo = string.Empty;
-        bool ButtonOpen = false;
+        private string userCountry = string.Empty;
+        private string SpNo = string.Empty;
+        private bool ButtonOpen = false;
         private static string _Refno;
         private static string _MaterialType;
         private static string _Color;
@@ -45,7 +45,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Form to Form W/H.P01
-        public P03(string P01SPNo, ToolStripMenuItem menuitem)
+        public P03(string p01SPNo, ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -67,13 +67,13 @@ namespace Sci.Production.Warehouse
                 this.userCountry = dt.Rows[0]["CountryID"].ToString();
             }
             #endregion
-            this.SpNo = P01SPNo;
+            this.SpNo = p01SPNo;
             this.txtSPNo.Text = this.SpNo.Trim();
             this.ButtonOpen = true;
         }
 
         // Form to Form W/H.P05
-        public static void P05Filter(string P01SPNo, string Refno, string MaterialType, string Color, Form MdiParent)
+        public static void P05Filter(string p01SPNo, string refno, string materialType, string color, Form mdiParent)
         {
             foreach (Form form in Application.OpenForms)
             {
@@ -81,13 +81,13 @@ namespace Sci.Production.Warehouse
                 {
                     form.Activate();
                     P03 activateForm = (P03)form;
-                    activateForm.setTxtSPNo(P01SPNo);
+                    activateForm.SetTxtSPNo(p01SPNo);
                     activateForm.Query();
                     return;
                 }
             }
 
-            ToolStripMenuItem P03MenuItem = null;
+            ToolStripMenuItem p03MenuItem = null;
             foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
@@ -98,7 +98,7 @@ namespace Sci.Production.Warehouse
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
                             {
-                                P03MenuItem = (ToolStripMenuItem)subMenuItem;
+                                p03MenuItem = (ToolStripMenuItem)subMenuItem;
                                 break;
                             }
                         }
@@ -106,23 +106,23 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            P03 call = new P03(P01SPNo, P03MenuItem);
+            P03 call = new P03(p01SPNo, p03MenuItem);
 
-            call.MdiParent = MdiParent;
+            call.MdiParent = mdiParent;
             call.Show();
 
             // 改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
-            call.P03Data(P01SPNo);
+            call.P03Data(p01SPNo);
             call.Activate();
-            _Refno = Refno;
-            _MaterialType = (MaterialType == "F") ? "Fabric" : (MaterialType == "A") ? "Accessory" : (MaterialType == "O") ? "Orher" : string.Empty;
-            _Color = Color;
-            call.grid_Filter();
+            _Refno = refno;
+            _MaterialType = (materialType == "F") ? "Fabric" : (materialType == "A") ? "Accessory" : (materialType == "O") ? "Orher" : string.Empty;
+            _Color = color;
+            call.Grid_Filter();
             call.ChangeDetailColor();
         }
 
         // PPIC_P01 Called
-        public static void Call(string PPIC_SPNo, Form MdiParent)
+        public static void Call(string pPIC_SPNo, Form mdiParent)
         {
             foreach (Form form in Application.OpenForms)
             {
@@ -130,13 +130,13 @@ namespace Sci.Production.Warehouse
                 {
                     form.Activate();
                     P03 activateForm = (P03)form;
-                    activateForm.setTxtSPNo(PPIC_SPNo);
+                    activateForm.SetTxtSPNo(pPIC_SPNo);
                     activateForm.Query();
                     return;
                 }
             }
 
-            ToolStripMenuItem P03MenuItem = null;
+            ToolStripMenuItem p03MenuItem = null;
             foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
@@ -147,7 +147,7 @@ namespace Sci.Production.Warehouse
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
                             {
-                                P03MenuItem = (ToolStripMenuItem)subMenuItem;
+                                p03MenuItem = (ToolStripMenuItem)subMenuItem;
                                 break;
                             }
                         }
@@ -155,22 +155,22 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            P03 call = new P03(PPIC_SPNo, P03MenuItem);
+            P03 call = new P03(pPIC_SPNo, p03MenuItem);
 
-            call.MdiParent = MdiParent;
+            call.MdiParent = mdiParent;
             call.Show();
 
             // 改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
-            call.P03Data(PPIC_SPNo);
+            call.P03Data(pPIC_SPNo);
             call.Activate();
             call.ChangeDetailColor();
         }
 
         // 隨著 P01上下筆SP#切換資料
-        public void P03Data(string P01SPNo)
+        public void P03Data(string p01SPNo)
         {
             this.EditMode = true;
-            this.SpNo = P01SPNo;
+            this.SpNo = p01SPNo;
             this.txtSPNo.Text = this.SpNo.Trim();
             this.ButtonOpen = true;
             this.Query();
@@ -217,8 +217,8 @@ namespace Sci.Production.Warehouse
             #endregion
 
             #region OrderList 開窗
-            DataGridViewGeneratorTextColumnSettings OrderList = new DataGridViewGeneratorTextColumnSettings();
-            OrderList.CellMouseDoubleClick += (s, e) =>
+            DataGridViewGeneratorTextColumnSettings orderList = new DataGridViewGeneratorTextColumnSettings();
+            orderList.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex >= 0)
                 {
@@ -450,7 +450,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true, width: Widths.AnsiChars(4)) // 20
             .Text("Complete", header: "Cmplt", iseditingreadonly: true, width: Widths.AnsiChars(3)) // 21
             .Text("FinalETA", header: "Act.ETA", width: Widths.AnsiChars(8), iseditingreadonly: true) // 22
-            .Text("OrderIdList", header: "Order List", iseditingreadonly: true, settings: OrderList) // 23
+            .Text("OrderIdList", header: "Order List", iseditingreadonly: true, settings: orderList) // 23
             .Numeric("InQty", header: "Arrived" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true) // 24
             .Text("StockUnit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4)) // 25
             .Numeric("OutQty", header: "Released" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts5) // 26
@@ -511,11 +511,11 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
                         this.gridMaterialStatus.Rows[i].Cells["description"].Style.BackColor = Color.FromArgb(255, 170, 100);
                     }
 
-                    decimal ShipQty = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(dr["ShipQty"]) + MyUtility.Convert.GetDecimal(dr["ShipFOC"])) ? 0 : MyUtility.Convert.GetDecimal(dr["ShipQty"]) + MyUtility.Convert.GetDecimal(dr["ShipFOC"]);
-                    decimal Qty = MyUtility.Check.Empty(dr["Qty"].ToString()) ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
+                    decimal shipQty = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(dr["ShipQty"]) + MyUtility.Convert.GetDecimal(dr["ShipFOC"])) ? 0 : MyUtility.Convert.GetDecimal(dr["ShipQty"]) + MyUtility.Convert.GetDecimal(dr["ShipFOC"]);
+                    decimal qty = MyUtility.Check.Empty(dr["Qty"].ToString()) ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
                     if (!dr["ShipQty"].ToString().Empty() && !dr["Qty"].ToString().Empty())
                     {
-                        if (ShipQty < Qty)
+                        if (shipQty < qty)
                     {
                         this.gridMaterialStatus.Rows[i].Cells["ShipQty"].Style.ForeColor = Color.Red;
                     }
@@ -539,7 +539,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
         }
 
         // Query
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSPNo.Text))
             {
@@ -1023,8 +1023,8 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
                 }
 
                 this.listControlBindingSource1.DataSource = this.ReCombineOrderList(dtData);
-                this.grid_Filter();
-                this.grid1_sorting();
+                this.Grid_Filter();
+                this.Grid1_sorting();
                 this.ChangeDetailColor();
                 this.ButtonOpen = false;
             }
@@ -1139,7 +1139,7 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
             return arrayDiffAsID.Count() > 0 ? true : false;
         }
 
-        private void grid_Filter()
+        private void Grid_Filter()
         {
             string filter = string.Empty;
             if (this.gridMaterialStatus.RowCount > 0)
@@ -1185,7 +1185,7 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
             }
         }
 
-        private void grid1_sorting()
+        private void Grid1_sorting()
         {
             if (this.gridMaterialStatus.RowCount > 0)
             {
@@ -1212,13 +1212,13 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
         }
 
         // Close
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Excel
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             if (this.gridMaterialStatus.CurrentRow == null)
             {
@@ -1239,15 +1239,15 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
             return;
         }
 
-        private void comboSortBy_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboSortBy_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSPNo.Text))
             {
                 return;
             }
 
-            this.grid_Filter();
-            this.grid1_sorting();
+            this.Grid_Filter();
+            this.Grid1_sorting();
             this.ChangeDetailColor();
         }
 
@@ -1266,23 +1266,23 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void gridMaterialStatus_Sorted(object sender, EventArgs e)
+        private void GridMaterialStatus_Sorted(object sender, EventArgs e)
         {
             this.ChangeDetailColor();
         }
 
-        private void btnNewSearch_Click(object sender, EventArgs e)
+        private void BtnNewSearch_Click(object sender, EventArgs e)
         {
             this.txtSPNo.ResetText();
             this.txtSPNo.Select();
         }
 
-        public void setTxtSPNo(string spNo)
+        public void SetTxtSPNo(string spNo)
         {
             this.txtSPNo.Text = spNo;
         }
 
-        private void gridMaterialStatus_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        private void GridMaterialStatus_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             this.ShowErr(e.Exception);
             e.ThrowException = false;
@@ -1294,10 +1294,10 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
             }
         }
 
-        private void chk_includeJunk_CheckedChanged(object sender, EventArgs e)
+        private void Chk_includeJunk_CheckedChanged(object sender, EventArgs e)
         {
-            this.grid_Filter();
-            this.grid1_sorting();
+            this.Grid_Filter();
+            this.Grid1_sorting();
             this.ChangeDetailColor();
         }
     }

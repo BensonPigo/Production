@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P14_PrintData
+    internal class P14_PrintData
     {
         public string POID { get; set; }
 

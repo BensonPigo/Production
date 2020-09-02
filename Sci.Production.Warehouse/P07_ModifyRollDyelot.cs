@@ -14,13 +14,13 @@ namespace Sci.Production.Warehouse
 {
     public partial class P07_ModifyRollDyelot : Win.Subs.Base
     {
-        DataTable source;
-        DataTable dtGridDyelot;
-        string docno = string.Empty;
+        private DataTable source;
+        private DataTable dtGridDyelot;
+        private string docno = string.Empty;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-        Ict.Win.UI.DataGridViewTextBoxColumn col_roll;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_dyelot;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_ActQty;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_roll;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_dyelot;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_ActQty;
 
         public P07_ModifyRollDyelot(object data, string data2)
         {
@@ -99,11 +99,11 @@ namespace Sci.Production.Warehouse
             ;
 
             this.LoadDate();
-            this.setCloumn();
-            this.changeeditable();
+            this.SetCloumn();
+            this.Changeeditable();
         }
 
-        private void changeeditable()
+        private void Changeeditable()
         {
             #region roll
             this.col_roll.EditingControlShowing += (s, e) =>
@@ -222,7 +222,7 @@ namespace Sci.Production.Warehouse
             #endregion
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
@@ -233,7 +233,7 @@ namespace Sci.Production.Warehouse
             this.btnCommit.Enabled = false;
         }
 
-        private void setCloumn()
+        private void SetCloumn()
         {
             foreach (DataGridViewRow item in this.gridModifyRoll.Rows)
             {
@@ -459,7 +459,7 @@ from (
             this.HideWaitMessage();
         }
 
-        private void grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
+        private void Grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             if (this.dtGridDyelot == null)
             {
@@ -505,7 +505,7 @@ from (
             this.gridDyelot.AutoResizeColumns();
         }
 
-        private void btnCommit_Click(object sender, EventArgs e)
+        private void BtnCommit_Click(object sender, EventArgs e)
         {
             var modifyDrList = this.source.AsEnumerable().Where(s => s.RowState == DataRowState.Modified);
             if (modifyDrList.Count() == 0)
@@ -533,11 +533,11 @@ from (
             {
                 // modifyDrList.GroupBy(o => new { POID = o["POID"].ToString(), Seq = o["Seq"].ToString(), Roll = o["Roll"].ToString(), Dyelot = o["Dyelot"].ToString() })
                 //    .Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Any(r => r.ct > 1)
-                var CheckList = allDatas.GroupBy(o => new { POID = o["POID"].ToString(), Seq = o["Seq"].ToString(), Roll = o["Roll"].ToString(), Dyelot = o["Dyelot"].ToString() }).Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Where(o => o.ct > 1).ToList();
+                var checkList = allDatas.GroupBy(o => new { POID = o["POID"].ToString(), Seq = o["Seq"].ToString(), Roll = o["Roll"].ToString(), Dyelot = o["Dyelot"].ToString() }).Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Where(o => o.ct > 1).ToList();
 
                 List<string> _duplicateList = new List<string>();
 
-                foreach (var item in CheckList)
+                foreach (var item in checkList)
                 {
                     _duplicateList.Add($"{item.POID}-{item.Seq}-{item.Roll}-{item.Dyelot}");
                 }
@@ -587,13 +587,13 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
             // 修改到Roll或Dyelot時。因為主索引鍵被修改，需要檢查
             foreach (var drModify in modifyDrList)
             {
-                string Original_Roll = drModify["roll", DataRowVersion.Original].ToString();
-                string Current_Roll = drModify["roll", DataRowVersion.Current].ToString();
+                string original_Roll = drModify["roll", DataRowVersion.Original].ToString();
+                string current_Roll = drModify["roll", DataRowVersion.Current].ToString();
 
-                string Original_Dyelot = drModify["dyelot", DataRowVersion.Original].ToString();
-                string Current_Dyelot = drModify["dyelot", DataRowVersion.Current].ToString();
+                string original_Dyelot = drModify["dyelot", DataRowVersion.Original].ToString();
+                string current_Dyelot = drModify["dyelot", DataRowVersion.Current].ToString();
 
-                if (Original_Roll != Current_Roll || Original_Dyelot != Current_Dyelot)
+                if (original_Roll != current_Roll || original_Dyelot != current_Dyelot)
                 {
                         // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
                         sqlcmd = string.Format(
@@ -629,13 +629,13 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
 
             foreach (var drModify in modifyDrList)
             {
-                string Original_Roll = drModify["roll", DataRowVersion.Original].ToString();
-                string Current_Roll = drModify["roll", DataRowVersion.Current].ToString();
+                string original_Roll = drModify["roll", DataRowVersion.Original].ToString();
+                string current_Roll = drModify["roll", DataRowVersion.Current].ToString();
 
-                string Original_Dyelot = drModify["dyelot", DataRowVersion.Original].ToString();
-                string Current_Dyelot = drModify["dyelot", DataRowVersion.Current].ToString();
+                string original_Dyelot = drModify["dyelot", DataRowVersion.Original].ToString();
+                string current_Dyelot = drModify["dyelot", DataRowVersion.Current].ToString();
 
-                string FirID = MyUtility.GetValue.Lookup($@"
+                string firID = MyUtility.GetValue.Lookup($@"
 SELECT   [FirID]=f.ID
 FROM Receiving_Detail r
 INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
@@ -658,7 +658,7 @@ set roll = '{drModify["roll"]}'
 ,InQty   = '{drModify["stockqty"]}'
 where poid ='{drModify["poid"]}' 
 and seq1='{drModify["seq1"]}' and seq2='{drModify["seq2"]}' 
-and roll='{Original_Roll}' and dyelot='{Original_Dyelot}' 
+and roll='{original_Roll}' and dyelot='{original_Dyelot}' 
 and stocktype = '{drModify["stocktype"]}';
 
 
@@ -669,54 +669,54 @@ Roll = '{drModify["roll"]}'
 ,TicketYds   = '{drModify["ActualQty"]}'
 ,EditName = '{Env.User.UserID}'
 ,EditDate = GETDATE()
-WHERE  roll='{Original_Roll}' AND dyelot='{Original_Dyelot}' AND ID='{FirID}'
+WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
 ";
             }
 
             DualResult result1, result2;
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(result1 = DBProxy.Current.Execute(null, sqlupd1)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd1, result1);
                         return;
                     }
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd2, result2);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Commit successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             #region 更新FIR,AIR資料
 
-            List<SqlParameter> Fir_Air_Proce = new List<SqlParameter>();
-            Fir_Air_Proce.Add(new SqlParameter("@ID", this.docno));
-            Fir_Air_Proce.Add(new SqlParameter("@LoginID", Sci.Env.User.UserID));
+            List<SqlParameter> fir_Air_Proce = new List<SqlParameter>();
+            fir_Air_Proce.Add(new SqlParameter("@ID", this.docno));
+            fir_Air_Proce.Add(new SqlParameter("@LoginID", Sci.Env.User.UserID));
             DualResult result;
 
-            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", Fir_Air_Proce)))
+            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", fir_Air_Proce)))
             {
                 Exception ex = result.GetException();
                 MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));

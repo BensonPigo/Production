@@ -9,9 +9,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P12_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         // bool flag;
        // string poType;
@@ -25,7 +25,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             string sp_b = this.txtSPNo.Text;
 
@@ -136,12 +136,12 @@ Where a.id = '{0}'
             this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;  // PCS/Stitch
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             // listControlBindingSource1.EndEdit();
             this.gridImport.ValidateControl();

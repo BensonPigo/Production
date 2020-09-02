@@ -12,12 +12,12 @@ namespace Sci.Production.Warehouse
 {
     public partial class P33_IssueBreakDown : Win.Subs.Base
     {
-        DataRow Master;
-        DataTable dtQtyBreakDown;
-        DataTable DtIssueBreakDown;
-        DataTable DtSizeCode;
-        DataTable DtModifyIssueBDown;
-        StringBuilder sbSizecode;
+        private DataRow Master;
+        private DataTable dtQtyBreakDown;
+        private DataTable DtIssueBreakDown;
+        private DataTable DtSizeCode;
+        private DataTable DtModifyIssueBDown;
+        private StringBuilder sbSizecode;
 
         public P33_IssueBreakDown()
         {
@@ -105,8 +105,8 @@ order by [OrderID], [Article]", this.Master["orderid"], this.sbSizecode.ToString
             // 設定Columns 位置
             this.DtModifyIssueBDown.Columns["Selected"].SetOrdinal(0);
 
-            DataTable ReadonlyDT;
-            result = DBProxy.Current.Select(null, "SELECT ID FROM Orders WITH(NOLOCK) WHERE (Junk=1 AND NeedProduction = 0) OR (IsBuyBack=1 AND BuyBackReason='Garment') ", out ReadonlyDT);
+            DataTable readonlyDT;
+            result = DBProxy.Current.Select(null, "SELECT ID FROM Orders WITH(NOLOCK) WHERE (Junk=1 AND NeedProduction = 0) OR (IsBuyBack=1 AND BuyBackReason='Garment') ", out readonlyDT);
 
             if (!result)
             {
@@ -114,13 +114,13 @@ order by [OrderID], [Article]", this.Master["orderid"], this.sbSizecode.ToString
                 return;
             }
 
-            if (ReadonlyDT.Rows.Count > 0)
+            if (readonlyDT.Rows.Count > 0)
             {
-                List<string> ReadonlyList = ReadonlyDT.AsEnumerable().Select(o => o["ID"].ToString()).Distinct().ToList();
+                List<string> readonlyList = readonlyDT.AsEnumerable().Select(o => o["ID"].ToString()).Distinct().ToList();
 
                 foreach (DataRow item in this.DtModifyIssueBDown.Rows)
                 {
-                    if (ReadonlyList.Where(o => o == item["OrderID"].ToString()).Any())
+                    if (readonlyList.Where(o => o == item["OrderID"].ToString()).Any())
                     {
                         item["Selected"] = false;
                     }
@@ -151,12 +151,12 @@ order by [OrderID], [Article]", this.Master["orderid"], this.sbSizecode.ToString
             this.Pink();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             if (!this.gridIssueBreakDown.ValidateControl())
             {
@@ -217,7 +217,7 @@ order by [OrderID], [Article]", this.Master["orderid"], this.sbSizecode.ToString
             }
         }
 
-        private void gridIssueBreakDown_CellValidated(object sender, DataGridViewCellEventArgs e)
+        private void GridIssueBreakDown_CellValidated(object sender, DataGridViewCellEventArgs e)
         {
             var dataRow = this.gridIssueBreakDown.GetDataRow(this.gridIssueBreakDownBS.Position);
             if (e.ColumnIndex > 1 && dataRow != null)
@@ -233,7 +233,7 @@ order by [OrderID], [Article]", this.Master["orderid"], this.sbSizecode.ToString
             }
         }
 
-        private void gridIssueBreakDown_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        private void GridIssueBreakDown_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             var dataRow = this.gridIssueBreakDown.GetDataRow(this.gridIssueBreakDownBS.Position);
             if (e.ColumnIndex > 1 && dataRow != null)
@@ -246,12 +246,12 @@ order by [OrderID], [Article]", this.Master["orderid"], this.sbSizecode.ToString
             }
         }
 
-        private void gridIssueBreakDown_Sorted(object sender, EventArgs e)
+        private void GridIssueBreakDown_Sorted(object sender, EventArgs e)
         {
             this.Pink();
         }
 
-        private void btnSet_Click(object sender, EventArgs e)
+        private void BtnSet_Click(object sender, EventArgs e)
         {
             if (this.dtQtyBreakDown == null || this.DtModifyIssueBDown == null)
             {
@@ -287,16 +287,16 @@ order by [OrderID], [Article]", this.Master["orderid"], this.sbSizecode.ToString
         private void HideNullColumn(Win.UI.Grid grid)
         {
             List<string> nullCol = new List<string>();
-            foreach (DataGridViewColumn Column in grid.Columns)
+            foreach (DataGridViewColumn column in grid.Columns)
             {
                 int rowCount = 0;
                 int nullCount = 0;
-                string ColumnName = Column.Name;
-                if (ColumnName != "Selected" && ColumnName != "Article" && ColumnName != "OrderID")
+                string columnName = column.Name;
+                if (columnName != "Selected" && columnName != "Article" && columnName != "OrderID")
                 {
-                    foreach (DataGridViewRow Row in grid.Rows)
+                    foreach (DataGridViewRow row in grid.Rows)
                     {
-                        string val = Row.Cells[ColumnName].Value.ToString();
+                        string val = row.Cells[columnName].Value.ToString();
                         if (MyUtility.Check.Empty(val))
                         {
                             nullCount++;
@@ -307,7 +307,7 @@ order by [OrderID], [Article]", this.Master["orderid"], this.sbSizecode.ToString
 
                     if (rowCount == nullCount)
                     {
-                        nullCol.Add(ColumnName);
+                        nullCol.Add(columnName);
                     }
                 }
             }
@@ -323,65 +323,65 @@ order by [OrderID], [Article]", this.Master["orderid"], this.sbSizecode.ToString
             DataTable dt;
             DBProxy.Current.Select(null, "SELECT ID FROM Orders WITH(NOLOCK) WHERE (Junk=1 AND NeedProduction = 0) OR (IsBuyBack=1 AND BuyBackReason='Garment')", out dt);
 
-            foreach (DataGridViewColumn Column in this.gridIssueBreakDown.Columns)
+            foreach (DataGridViewColumn column in this.gridIssueBreakDown.Columns)
             {
-                string ColumnName = Column.Name;
+                string columnName = column.Name;
 
-                if (ColumnName != "Selected" && ColumnName != "Article" && ColumnName != "OrderID")
+                if (columnName != "Selected" && columnName != "Article" && columnName != "OrderID")
                 {
-                    foreach (DataGridViewRow Row in this.gridIssueBreakDown.Rows)
+                    foreach (DataGridViewRow row in this.gridIssueBreakDown.Rows)
                     {
-                        string val = Row.Cells[ColumnName].Value.ToString();
+                        string val = row.Cells[columnName].Value.ToString();
                         if (!MyUtility.Check.Empty(val))
                         {
-                            Row.Cells[ColumnName].Style.BackColor = Color.Pink;
+                            row.Cells[columnName].Style.BackColor = Color.Pink;
                         }
                         else
                         {
-                            Row.Cells[ColumnName].ReadOnly = true;
+                            row.Cells[columnName].ReadOnly = true;
                         }
                     }
                 }
 
-                if (ColumnName == "Selected")
+                if (columnName == "Selected")
                 {
-                    foreach (DataGridViewRow Row in this.gridIssueBreakDown.Rows)
+                    foreach (DataGridViewRow row in this.gridIssueBreakDown.Rows)
                     {
-                        Row.Cells[ColumnName].Style.BackColor = Color.Pink;
+                        row.Cells[columnName].Style.BackColor = Color.Pink;
                     }
                 }
             }
 
-            foreach (DataGridViewRow Row in this.gridIssueBreakDown.Rows)
+            foreach (DataGridViewRow row in this.gridIssueBreakDown.Rows)
             {
-                string orderID = Row.Cells["OrderID"].Value.ToString();
+                string orderID = row.Cells["OrderID"].Value.ToString();
 
                 DataRow[] s = dt.Select($"ID = '{orderID}'");
 
                 if (s.Length > 0)
                 {
-                    foreach (DataGridViewColumn Column in this.gridIssueBreakDown.Columns)
+                    foreach (DataGridViewColumn column in this.gridIssueBreakDown.Columns)
                     {
-                        Row.Cells[Column.Name].Style.BackColor = Color.LightGray;
-                        Row.ReadOnly = true;
+                        row.Cells[column.Name].Style.BackColor = Color.LightGray;
+                        row.ReadOnly = true;
                     }
 
-                    Row.Cells["Selected"].Value = false;
+                    row.Cells["Selected"].Value = false;
                 }
             }
 
-            foreach (DataGridViewRow Row in this.gridQtyBreakDown.Rows)
+            foreach (DataGridViewRow row in this.gridQtyBreakDown.Rows)
             {
-                string orderID = Row.Cells["OrderID"].Value.ToString();
+                string orderID = row.Cells["OrderID"].Value.ToString();
 
                 DataRow[] s = dt.Select($"ID = '{orderID}'");
 
                 if (s.Length > 0)
                 {
-                    foreach (DataGridViewColumn Column in this.gridQtyBreakDown.Columns)
+                    foreach (DataGridViewColumn column in this.gridQtyBreakDown.Columns)
                     {
-                        Row.Cells[Column.Name].Style.BackColor = Color.LightGray;
-                        Row.ReadOnly = true;
+                        row.Cells[column.Name].Style.BackColor = Color.LightGray;
+                        row.ReadOnly = true;
                     }
                 }
             }

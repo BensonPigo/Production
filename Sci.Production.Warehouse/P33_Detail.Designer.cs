@@ -83,7 +83,7 @@
             // 
             this.save.Location = new System.Drawing.Point(838, 5);
             this.save.TabIndex = 7;
-            this.save.Click += new System.EventHandler(this.save_Click);
+            this.save.Click += new System.EventHandler(this.Save_Click);
             // 
             // undo
             // 
@@ -97,7 +97,7 @@
             // delete
             // 
             this.delete.TabIndex = 3;
-            this.delete.Click += new System.EventHandler(this.delete_Click);
+            this.delete.Click += new System.EventHandler(this.Delete_Click);
             // 
             // next
             // 
@@ -333,7 +333,7 @@
             this.btnAutoPick.TabIndex = 4;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
-            this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
+            this.btnAutoPick.Click += new System.EventHandler(this.BtnAutoPick_Click);
             // 
             // label2
             // 

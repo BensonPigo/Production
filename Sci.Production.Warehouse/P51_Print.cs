@@ -19,7 +19,7 @@ namespace Sci.Production.Warehouse
         {
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
-            string Issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -44,14 +44,14 @@ left join dbo.FtyInventory Fi on s.poid = fi.poid and s.seq1 = fi.seq1 and s.seq
     and s.roll = fi.roll and s.stocktype = fi.stocktype and s.Dyelot = fi.Dyelot
 LEFT JOIN DBO.Stocktaking T  WITH (NOLOCK) ON T.ID = S.Id  WHERE S.Id = @ID", pars, out dt);
 
-            string StockType;
-            StockType = dt.Rows.Count == 0 ? string.Empty : dt.Rows[0]["stocktype"].ToString();
+            string stockType;
+            stockType = dt.Rows.Count == 0 ? string.Empty : dt.Rows[0]["stocktype"].ToString();
 
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", Issuedate));
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", issuedate));
             if (this.ReportResourceName == "P51_Report2.rdlc")
             {
-                e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("StockType", StockType));
+                e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("StockType", stockType));
 
                 List<P51_PrintData> data = dt.AsEnumerable()
                                .Select(row1 => new P51_PrintData()
@@ -80,7 +80,7 @@ LEFT JOIN DBO.Stocktaking T  WITH (NOLOCK) ON T.ID = S.Id  WHERE S.Id = @ID", pa
 
         public DataRow CurrentDataRow { get; set; }
 
-        private void radioGroup1_ValueChanged(object sender, EventArgs e)
+        private void RadioGroup1_ValueChanged(object sender, EventArgs e)
         {
             this.ReportResourceNamespace = typeof(P51_PrintData);
             this.ReportResourceAssembly = this.ReportResourceNamespace.Assembly;

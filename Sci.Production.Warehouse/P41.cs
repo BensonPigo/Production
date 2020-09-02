@@ -63,7 +63,7 @@ namespace Sci.Production.Warehouse
                   ;
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             DataTable dtData;
             string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, buyerdlv_b, buyerdlv_e;
@@ -187,7 +187,7 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", E
                 }
 
                 this.listControlBindingSource1.DataSource = dtData;
-                this.checkBoxs_Status();
+                this.CheckBoxs_Status();
             }
             else
             {
@@ -195,12 +195,12 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", E
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
@@ -218,7 +218,7 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", E
             }
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             if (this.listControlBindingSource1.DataSource == null)
             {
@@ -243,17 +243,17 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", E
             sdExcel.Save(Class.MicrosoftFile.GetName("Warehouse_P41"));
         }
 
-        private void checkEachCons_CheckedChanged(object sender, EventArgs e)
+        private void CheckEachCons_CheckedChanged(object sender, EventArgs e)
         {
-            this.checkBoxs_Status();
+            this.CheckBoxs_Status();
         }
 
-        private void checkEmptyMtlETA_CheckedChanged(object sender, EventArgs e)
+        private void CheckEmptyMtlETA_CheckedChanged(object sender, EventArgs e)
         {
-            this.checkBoxs_Status();
+            this.CheckBoxs_Status();
         }
 
-        private void checkBoxs_Status()
+        private void CheckBoxs_Status()
         {
             if (this.listControlBindingSource1.DataSource == null)
             {

@@ -26,11 +26,11 @@ namespace Sci.Production.Quality
         private List<string> listSQLFilter;
         private string boolHoliday;
         private StringBuilder sbFtycode;
-        private Color BackRed = Color.FromArgb(255, 155, 155);
-        private Color FontRed = Color.FromArgb(255, 0, 0);
-        private Color BackGreen = Color.FromArgb(167, 255, 190);
-        private Color FontGreen = Color.FromArgb(0, 126, 15);
-        private Color BackGray = Color.FromArgb(217, 217, 217);
+        private readonly Color BackRed = Color.FromArgb(255, 155, 155);
+        private readonly Color FontRed = Color.FromArgb(255, 0, 0);
+        private readonly Color BackGreen = Color.FromArgb(167, 255, 190);
+        private readonly Color FontGreen = Color.FromArgb(0, 126, 15);
+        private readonly Color BackGray = Color.FromArgb(217, 217, 217);
 
         public R23(ToolStripMenuItem menuitem)
             : base(menuitem)

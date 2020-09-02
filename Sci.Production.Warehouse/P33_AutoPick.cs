@@ -13,10 +13,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P33_AutoPick : Win.Subs.Base
     {
-        StringBuilder sbSizecode;
-        string poid;
-        string issueid;
-        string orderid;
+        private StringBuilder sbSizecode;
+        private string poid;
+        private string issueid;
+        private string orderid;
         public DataTable BOA;
         public DataTable BOA_Orderlist;
         public DataTable BOA_PO;
@@ -24,11 +24,11 @@ namespace Sci.Production.Warehouse
         public DataTable dtIssueBreakDown;
         public DataRow[] importRows;
         public List<IssueQtyBreakdown> _IssueQtyBreakdownList = new List<IssueQtyBreakdown>();
-        bool combo;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private bool combo;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
 
-        public P33_AutoPick(string _issueid, string _poid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo, List<IssueQtyBreakdown> IssueQtyBreakdownList)
+        public P33_AutoPick(string _issueid, string _poid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo, List<IssueQtyBreakdown> issueQtyBreakdownList)
         {
             this.InitializeComponent();
             this.poid = _poid;
@@ -39,7 +39,7 @@ namespace Sci.Production.Warehouse
             this.dtIssueBreakDown = _dtIssueBreakDown;
             this.sbSizecode = _sbSizecode;
             this.combo = _combo;
-            this._IssueQtyBreakdownList = IssueQtyBreakdownList;
+            this._IssueQtyBreakdownList = issueQtyBreakdownList;
             this.Text += string.Format(" ({0})", this.poid);
         }
 
@@ -83,11 +83,11 @@ namespace Sci.Production.Warehouse
             this.BOA_PO_Size = null;
 
             // 整理出#tmp傳進 SQL 使用
-            DataTable IssueBreakDown_Dt = new DataTable();
+            DataTable issueBreakDown_Dt = new DataTable();
 
             // IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
-            IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
-            IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
+            issueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
+            issueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
 
             var groupByData = this._IssueQtyBreakdownList.GroupBy(o => new { o.Article }).Select(o => new
             {
@@ -98,13 +98,13 @@ namespace Sci.Production.Warehouse
             {
                 if (model.Qty > 0)
                 {
-                    DataRow newDr = IssueBreakDown_Dt.NewRow();
+                    DataRow newDr = issueBreakDown_Dt.NewRow();
 
                     // newDr["OrderID"] = model.OrderID;
                     newDr["Article"] = model.Article;
                     newDr["Qty"] = model.Qty;
 
-                    IssueBreakDown_Dt.Rows.Add(newDr);
+                    issueBreakDown_Dt.Rows.Add(newDr);
                 }
             }
 
@@ -309,7 +309,7 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_s
             {
                 // SqlConnection conn;
                 DBProxy.Current.OpenConnection(null, out sqlConnection);
-                var dualResult = MyUtility.Tool.ProcessWithDatatable(IssueBreakDown_Dt, string.Empty, sqlcmd, out result, "#tmp", conn: sqlConnection);
+                var dualResult = MyUtility.Tool.ProcessWithDatatable(issueBreakDown_Dt, string.Empty, sqlcmd, out result, "#tmp", conn: sqlConnection);
 
                 if (!dualResult)
                 {
@@ -338,23 +338,23 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_s
 
             this.gridAutoPick.AutoResizeColumns();
 
-            DataGridViewGeneratorNumericColumnSettings Qty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
 
-            Qty.CellMouseDoubleClick += (s, e) =>
+            qty.CellMouseDoubleClick += (s, e) =>
             {
                 DataTable detail = (DataTable)this.listControlBindingSource1.DataSource;
                 DataRow currentRow = detail.Rows[e.RowIndex];
 
-                string SCIRefNo = currentRow["SCIRefNo"].ToString();
-                string ColorID = currentRow["ColorID"].ToString();
-                List<string> Articles = this._IssueQtyBreakdownList.Where(o => o.Qty > 0).Select(o => o.Article).Distinct().ToList();
+                string sCIRefNo = currentRow["SCIRefNo"].ToString();
+                string colorID = currentRow["ColorID"].ToString();
+                List<string> articles = this._IssueQtyBreakdownList.Where(o => o.Qty > 0).Select(o => o.Article).Distinct().ToList();
                 string cmd = $@"
 
 SELECT Article, [Qty]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance *Segment))) 
 FROM dbo.GetThreadUsedQtyByBOT('{this.poid}')
-WHERE SCIRefNo='{SCIRefNo}' 
-AND ColorID='{ColorID}'
-AND Article IN ('{Articles.JoinToString("','")}')
+WHERE SCIRefNo='{sCIRefNo}' 
+AND ColorID='{colorID}'
+AND Article IN ('{articles.JoinToString("','")}')
 GROUP BY Article
 
 ";
@@ -381,7 +381,7 @@ GROUP BY Article
                  .Text("ColorID", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                 .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15), decimal_places: 2, iseditingreadonly: true, settings: Qty)
+                 .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15), decimal_places: 2, iseditingreadonly: true, settings: qty)
                  .Numeric("Use Qty By Stock Unit", header: "Use Qty\r\nBy Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                  .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("Use Qty By Use Unit", header: "Use Qty\r\nBy Use Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
@@ -395,25 +395,25 @@ GROUP BY Article
 
         }
 
-        public void sum_subDetail(DataRow target, DataTable source)
+        public void Sum_subDetail(DataRow target, DataTable source)
         {
             DataTable tmpDt = source;
             DataRow dr = target;
             if (tmpDt != null)
             {
-                var Output = string.Empty;
-                decimal SumQTY = 0;
+                var output = string.Empty;
+                decimal sumQTY = 0;
                 foreach (DataRow dr2 in tmpDt.ToList())
                 {
                     if (Convert.ToDecimal(dr2["qty"]) != 0)
                     {
-                        Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
-                        SumQTY += Convert.ToDecimal(dr2["qty"]);
+                        output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
+                        sumQTY += Convert.ToDecimal(dr2["qty"]);
                     }
                 }
 
-                dr["Output"] = Output;
-                dr["qty"] = Math.Round(SumQTY, 2);
+                dr["Output"] = output;
+                dr["qty"] = Math.Round(sumQTY, 2);
             }
 
             if (Convert.ToDecimal(dr["qty"]) > 0)
@@ -426,12 +426,12 @@ GROUP BY Article
             }
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnPick_Click(object sender, EventArgs e)
+        private void BtnPick_Click(object sender, EventArgs e)
         {
             this.gridAutoPick.ValidateControl();
             DataRow[] dr2 = this.BOA_PO.Select("Selected = 1");
@@ -557,25 +557,25 @@ GROUP BY Article
             }
         }
 
-        public DataTable getAutoDetailDataTable(int RowIndex)
+        public DataTable GetAutoDetailDataTable(int rowIndex)
         {
-            DataTable tmpDt = this.dictionaryDatas[this.gridAutoPick.GetDataRow(RowIndex)];
+            DataTable tmpDt = this.dictionaryDatas[this.gridAutoPick.GetDataRow(rowIndex)];
             return tmpDt;
         }
 
-        public DataRow getAutoDetailDataRow(int RowIndex)
+        public DataRow GetAutoDetailDataRow(int rowIndex)
         {
-            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(RowIndex);
+            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(rowIndex);
             return tmpDt;
         }
 
-        public DataRow getNeedChangeDataRow(int RowIndex)
+        public DataRow GetNeedChangeDataRow(int rowIndex)
         {
-            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(RowIndex);
+            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(rowIndex);
             return tmpDt;
         }
 
-        public void dictionaryDatasRejectChanges()
+        public void DictionaryDatasRejectChanges()
         {
             var d = this.dictionaryDatas.AsEnumerable().ToList();
             for (int i = 0; i < d.Count; i++)
@@ -591,7 +591,7 @@ GROUP BY Article
             // }
         }
 
-        public void dictionaryDatasAcceptChanges()
+        public void DictionaryDatasAcceptChanges()
         {
             // 批次RejectChanges
             var d = this.dictionaryDatas.AsEnumerable().ToList();

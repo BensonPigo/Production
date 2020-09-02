@@ -12,11 +12,11 @@ namespace Sci.Production.Warehouse
         public static string TypeAccessory = "A";
         protected string FabricType;
 
-        public P15_Unfinish(string FabricType, string title)
+        public P15_Unfinish(string fabricType, string title)
         {
             this.Text = title.ToString();
             this.InitializeComponent();
-            this.FabricType = FabricType;
+            this.FabricType = fabricType;
 
             // 請勿刪除 Hide & Timer ！！！
             // this.timer();
@@ -26,7 +26,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
 
-            this.selectData();
+            this.SelectData();
 
             // 設定Grid1的顯示欄位
             this.gridUnfinish.IsEditingReadOnly = true;
@@ -37,7 +37,7 @@ namespace Sci.Production.Warehouse
                  .Date("issuedate", header: "Date", width: Widths.AnsiChars(13));
         }
 
-        private void selectData()
+        private void SelectData()
         {
             string selectCmd = string.Format(
                 @"
@@ -61,18 +61,18 @@ ORDER BY issuedate desc,id asc;", Env.User.Keyword, this.FabricType);
             this.bindingSource1.DataSource = selectDataTable1;
         }
 
-        private void btnHide_Click(object sender, EventArgs e)
+        private void BtnHide_Click(object sender, EventArgs e)
         {
             this.timer1.Start();
             this.Hide();
         }
 
-        private void btnRefresh_Click(object sender, EventArgs e)
+        private void BtnRefresh_Click(object sender, EventArgs e)
         {
-            this.selectData();
+            this.SelectData();
         }
 
-        private void timer()
+        private void Timer()
         {
             this.timer1.Interval = 5000;
             this.timer1.Tick += (o, e) =>
@@ -84,7 +84,7 @@ ORDER BY issuedate desc,id asc;", Env.User.Keyword, this.FabricType);
 
                 // this.Activate();
                 // this.TopMost = false;
-                this.selectData();
+                this.SelectData();
             };
         }
     }

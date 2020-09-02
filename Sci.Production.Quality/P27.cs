@@ -16,15 +16,15 @@ namespace Sci.Production.Quality
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_location;
         private DataTable gridData;
-        private IList<string> comboBox2_RowSource1 = new List<string>();
-        private IList<string> comboBox2_RowSource2 = new List<string>();
-        private IList<string> comboBox2_RowSource3 = new List<string>();
-        private IList<string> comboBox2_RowSource4 = new List<string>();
-        private IList<string> comboBox2_RowSource5 = new List<string>();
-        private IList<string> comboBox3_RowSource = new List<string>();
+        private readonly IList<string> comboBox2_RowSource1 = new List<string>();
+        private readonly IList<string> comboBox2_RowSource2 = new List<string>();
+        private readonly IList<string> comboBox2_RowSource3 = new List<string>();
+        private readonly IList<string> comboBox2_RowSource4 = new List<string>();
+        private readonly IList<string> comboBox2_RowSource5 = new List<string>();
+        private readonly IList<string> comboBox3_RowSource = new List<string>();
         private BindingSource comboxbs1;
         private BindingSource comboxbs2;
-        private string selectDataTable_DefaultView_Sort = string.Empty;
+        private readonly string selectDataTable_DefaultView_Sort = string.Empty;
 
         public P27(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -65,7 +65,7 @@ namespace Sci.Production.Quality
             {
                 if (this.gridPackID.Columns[e.ColumnIndex].Name == this.col_chk.Name)
                 {
-                    this.calcCTNQty();
+                    this.CalcCTNQty();
                 }
             };
 
@@ -574,11 +574,11 @@ order by rn");
             ((List<string>)this.comboBox2_RowSource4).Sort();
             ((List<string>)this.comboBox2_RowSource5).Sort();
 
-            this.calcCTNQty();
+            this.CalcCTNQty();
             return true;
         }
 
-        private void calcCTNQty()
+        private void CalcCTNQty()
         {
             if (this.listControlBindingSource1.DataSource != null)
             {

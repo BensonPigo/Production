@@ -574,6 +574,7 @@ delete ShippingMarkPic_Detail where ShippingMarkPicUkey = {this.CurrentMaintain[
                     MyUtility.Msg.ErrorBox("Error: update file fail. Original error: " + exception.Message);
                 }
             }
+
             return DBProxy.Current.Execute(null, sqldelete);
         }
 

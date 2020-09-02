@@ -16,17 +16,17 @@ namespace Sci.Production.Warehouse
     {
         public DataRow CurrentDataRow { get; set; }
 
-        BindingList<P07_Sticker_Data> Data = new BindingList<P07_Sticker_Data>();
+        private BindingList<P07_Sticker_Data> Data = new BindingList<P07_Sticker_Data>();
 
         public P07_Sticker(DataRow row)
         {
             this.InitializeComponent();
             this.gridSticker.DataSource = this.Data;
             this.GridSetup();
-            string RcvDate = string.Empty;
+            string rcvDate = string.Empty;
             if (!MyUtility.Check.Empty(row["WhseArrival"]))
             {
-                RcvDate = ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();
+                rcvDate = ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();
             }
 
             DualResult result;
@@ -79,7 +79,7 @@ namespace Sci.Production.Warehouse
                     QTY = row1["stockqty"].ToString(),
                     MRName = row1["MRName"].ToString(),
                     Season = row1["Seasonid"].ToString(),
-                    RcvDate = RcvDate,
+                    RcvDate = rcvDate,
                     Brand = row1["BrandId"].ToString(),
                     RefNo = row1["refno"].ToString(),
                     Style = row1["styleid"].ToString(),
@@ -92,7 +92,7 @@ namespace Sci.Production.Warehouse
 
         }
 
-        void GridSetup()
+        private void GridSetup()
         {
             this.gridSticker.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridSticker)
@@ -104,17 +104,17 @@ namespace Sci.Production.Warehouse
                 ;
         }
 
-        private void btnPrint_Click(object sender, EventArgs e)
+        private void BtnPrint_Click(object sender, EventArgs e)
         {
-            List<P07_Sticker_Data> tmpData = this.Data.Where(data => data.selected).ToList();
+            List<P07_Sticker_Data> tmpData = this.Data.Where(data => data.Selected).ToList();
 
             // 指定是哪個 RDLC
             DualResult result;
-            Type ReportResourceNamespace = typeof(P07_Sticker_Data);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P07_Sticker.rdlc";
+            Type reportResourceNamespace = typeof(P07_Sticker_Data);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P07_Sticker.rdlc";
             IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 // this.ShowException(result);
                 return;

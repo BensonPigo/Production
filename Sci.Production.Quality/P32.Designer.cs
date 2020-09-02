@@ -533,8 +533,8 @@
             this.txtSewingLine.Name = "txtSewingLine";
             this.txtSewingLine.Size = new System.Drawing.Size(130, 23);
             this.txtSewingLine.TabIndex = 6;
-            this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSewingLine_PopUp);
-            this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtSewingLine_Validating);
+            this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLine_PopUp);
+            this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSewingLine_Validating);
             // 
             // comboTeam
             // 
@@ -552,7 +552,7 @@
             this.comboTeam.OldText = "";
             this.comboTeam.Size = new System.Drawing.Size(63, 24);
             this.comboTeam.TabIndex = 7;
-            this.comboTeam.SelectedIndexChanged += new System.EventHandler(this.comboTeam_SelectedIndexChanged);
+            this.comboTeam.SelectedIndexChanged += new System.EventHandler(this.ComboTeam_SelectedIndexChanged);
             // 
             // numClogReceivedPercentage
             // 
@@ -615,7 +615,7 @@
             this.comboResult.OldText = "";
             this.comboResult.Size = new System.Drawing.Size(135, 24);
             this.comboResult.TabIndex = 9;
-            this.comboResult.SelectedIndexChanged += new System.EventHandler(this.comboResult_SelectedIndexChanged);
+            this.comboResult.SelectedIndexChanged += new System.EventHandler(this.ComboResult_SelectedIndexChanged);
             // 
             // txtInspectedCarton
             // 
@@ -626,7 +626,7 @@
             this.txtInspectedCarton.Name = "txtInspectedCarton";
             this.txtInspectedCarton.Size = new System.Drawing.Size(135, 23);
             this.txtInspectedCarton.TabIndex = 10;
-            this.txtInspectedCarton.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtInspectedCarton_PopUp);
+            this.txtInspectedCarton.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtInspectedCarton_PopUp);
             this.txtInspectedCarton.Validating += new System.ComponentModel.CancelEventHandler(this.TxtInspectedCarton_Validating);
             // 
             // numInspectQty
@@ -649,7 +649,7 @@
             0,
             0,
             0});
-            this.numInspectQty.Validating += new System.ComponentModel.CancelEventHandler(this.numInspectQty_Validating);
+            this.numInspectQty.Validating += new System.ComponentModel.CancelEventHandler(this.NumInspectQty_Validating);
             // 
             // numDefectQty
             // 

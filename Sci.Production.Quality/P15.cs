@@ -144,7 +144,7 @@ masterID);
             }
         }
 
-        private void txtArticle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtArticle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string styleUkey;
             styleUkey = MyUtility.GetValue.Lookup($"select ukey from style where ID = '{this.CurrentMaintain["StyleID"].ToString()}' and BrandID = '{this.CurrentMaintain["BrandID"].ToString()}' and SeasonID = '{this.CurrentMaintain["SeasonID"].ToString()}'");
@@ -176,7 +176,7 @@ masterID);
             this.txtseason.ReadOnly = true;
         }
 
-        private void txtArticle_Validating(object sender, CancelEventArgs e)
+        private void TxtArticle_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtArticle.Text))
             {

@@ -9,6 +9,9 @@ using System.Linq;
 
 namespace Sci.Production.PublicPrg
 {
+    /// <summary>
+    /// Prgs
+    /// </summary>
     public static partial class Prgs
     {
         #region Query QA Inspection header function QA 的表頭抓取共用程式
@@ -16,7 +19,8 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// 可取出Style,Season,Brand,Cutinline,earliestSciDelivery,MtlLeadTime from Orders,System
         /// </summary>
-        /// <param name="poid"></param>
+        /// <param name="poid">poid</param>
+        /// <param name="orderDr">orderDr</param>
         /// <returns>DataRow</returns>
         public static DualResult QueryQaInspectionHeader(string poid, out DataRow orderDr)
         {
@@ -40,8 +44,9 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// 找QA 的Target Lead Time (比較Cutinline跟SciDelv-system.MtlLeadTime找出比較小的日期)
         /// </summary>
-        /// <param name="poid"></param>
-        /// <returns>DataRow</returns>
+        /// <param name="cu">cu</param>
+        /// <param name="del">del</param>
+        /// <returns>DateTime</returns>
         public static DateTime? GetTargetLeadTime(object cu, object del)
         {
             DateTime? cutinline, sciDelv;
@@ -64,7 +69,7 @@ namespace Sci.Production.PublicPrg
                 sciDelv = Convert.ToDateTime(del);
             }
 
-            DateTime? TargetSciDel;
+            DateTime? targetSciDel;
             double mtlLeadT = Convert.ToDouble(MyUtility.GetValue.Lookup("Select MtlLeadTime from System WITH (NOLOCK) ", null));
             if (sciDelv == null)
             {
@@ -73,20 +78,20 @@ namespace Sci.Production.PublicPrg
 
             if (MyUtility.Check.Empty(mtlLeadT))
             {
-                TargetSciDel = sciDelv;
+                targetSciDel = sciDelv;
             }
             else
             {
-                TargetSciDel = ((DateTime)sciDelv).AddDays(Convert.ToDouble(mtlLeadT));
+                targetSciDel = ((DateTime)sciDelv).AddDays(Convert.ToDouble(mtlLeadT));
             }
 
-            if (cutinline < TargetSciDel)
+            if (cutinline < targetSciDel)
             {
                 return cutinline;
             }
             else
             {
-                return TargetSciDel;
+                return targetSciDel;
             }
         }
         #endregion;
@@ -95,8 +100,8 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// 判斷並回寫Physical OverallResult, Status string[0]=Result, string[1]=status
         /// </summary>
-        /// <param name ="ID"></param>
-        /// <returns></returns>
+        /// <param name ="maindr">maindr</param>
+        /// <returns>string[]</returns>
         public static string[] GetOverallResult_Status(DataRow maindr)
         {
             string allResult = string.Empty;
@@ -141,8 +146,8 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// 判斷並回寫FIR_Laboratory OverallResult, string[0]=Result
         /// </summary>
-        /// <param name ="ID"></param>
-        /// <returns></returns>
+        /// <param name ="fir_id">fir_id</param>
+        /// <returns>string[]</returns>
         public static string[] GetOverallResult_Lab(object fir_id)
         {
             DataRow maindr;
@@ -175,12 +180,16 @@ namespace Sci.Production.PublicPrg
         /// Double Click後將Result替換成相反結果(Pass<=>Fail)
         /// </summary>
         /// <returns></returns>
-        public class cellResult : DataGridViewGeneratorTextColumnSettings
+        public class CellResult : DataGridViewGeneratorTextColumnSettings
         {
+            /// <summary>
+            /// GetGridCell
+            /// </summary>
+            /// <returns>CellResult</returns>
             public static DataGridViewGeneratorTextColumnSettings GetGridCell()
             {
-                cellResult Result = new cellResult();
-                Result.CellMouseDoubleClick += (s, e) =>
+                CellResult result = new CellResult();
+                result.CellMouseDoubleClick += (s, e) =>
                 {
                     if (e.RowIndex == -1)
                     {
@@ -203,7 +212,7 @@ namespace Sci.Production.PublicPrg
                         dr["Result"] = "Pass";
                     }
                 };
-                return Result;
+                return result;
             }
         }
 
@@ -212,14 +221,29 @@ namespace Sci.Production.PublicPrg
         /// </summary>
         public class FGWT
         {
+            /// <summary>
+            /// Location
+            /// </summary>
             public string Location { get; set; }
 
+            /// <summary>
+            /// Type
+            /// </summary>
             public string Type { get; set; }
 
+            /// <summary>
+            /// Scale
+            /// </summary>
             public string Scale { get; set; }
 
+            /// <summary>
+            /// TestDetail
+            /// </summary>
             public string TestDetail { get; set; }
 
+            /// <summary>
+            /// Criteria
+            /// </summary>
             public double Criteria { get; set; }
         }
 
@@ -228,18 +252,39 @@ namespace Sci.Production.PublicPrg
         /// </summary>
         public class FGPT
         {
+            /// <summary>
+            /// Location
+            /// </summary>
             public string Location { get; set; }
 
+            /// <summary>
+            /// Type
+            /// </summary>
             public string Type { get; set; }
 
+            /// <summary>
+            /// Scale
+            /// </summary>
             public string Scale { get; set; }
 
+            /// <summary>
+            /// TestDetail
+            /// </summary>
             public string TestDetail { get; set; }
 
+            /// <summary>
+            /// Criteria
+            /// </summary>
             public double Criteria { get; set; }
 
+            /// <summary>
+            /// TestUnit
+            /// </summary>
             public string TestUnit { get; set; }
 
+            /// <summary>
+            /// TestName
+            /// </summary>
             public string TestName { get; set; }
         }
 
@@ -249,6 +294,7 @@ namespace Sci.Production.PublicPrg
         /// <param name="isTop">是否TOP</param>
         /// <param name="isBottom">>是否Bottom</param>
         /// <param name="isTop_Bottom">>是否TOP & Bottom</param>
+        /// <param name="mtlTypeID">mtlTypeID</param>
         /// <param name="isAll">>是否All</param>
         /// <returns>預設清單</returns>
         public static List<FGWT> GetDefaultFGWT(bool isTop, bool isBottom, bool isTop_Bottom, string mtlTypeID, bool isAll = true)
@@ -327,15 +373,15 @@ namespace Sci.Production.PublicPrg
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment a) length of front leg", Criteria = percent_three_two },
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment b) length of back leg", Criteria = percent_three_two },
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment c) length of inside leg", Criteria = percent_three_two },
-                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment d) width at waist", Criteria = percent_three_two},
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment d) width at waist", Criteria = percent_three_two },
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment e) width at bottom of leg", Criteria = percent_three_two },
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment f) width of leg halfway", Criteria = percent_three_two },
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of trouser-like garment g) width of top of leg", Criteria = percent_three_two },
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: skirt a) length from waist to bottom hem", Criteria = percent_three_two },
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: skirt b) width at waistband", Criteria = percent_three_two },
-                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: skirt c) width below top/bottom edge of waistband (average)", Criteria = percent_three_two},
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: skirt c) width below top/bottom edge of waistband (average)", Criteria = percent_three_two },
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of skirt a) length from waist to bottom hem", Criteria = percent_three_two },
-                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of skirt b) width at waistband", Criteria = percent_three_two},
+                new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of skirt b) width at waistband", Criteria = percent_three_two },
                 new FGWT() { Location = "Bottom", TestDetail = "%", Type = "dimensional change: lining of skirt c) width below top/bottom edge of waistband (average)", Criteria = percent_three_two },
             };
 
@@ -413,8 +459,14 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// 取得預設FGPT
         /// </summary>
-        /// <returns>res</returns>
-        public static List<FGPT> GetDefaultFGPT(bool isTop, bool isBottom, bool isTop_Bottom, bool isRugbyFootBall, bool isLining,/*, string mtlTypeID*/ string location)
+        /// <param name="isTop">isTop</param>
+        /// <param name="isBottom">isBottom</param>
+        /// <param name="isTop_Bottom">isTop_Bottom</param>
+        /// <param name="isRugbyFootBall">isRugbyFootBall</param>
+        /// <param name="isLining">isLining</param>
+        /// <param name="location">location</param>
+        /// <returns>List<FGPT></returns>
+        public static List<FGPT> GetDefaultFGPT(bool isTop, bool isBottom, bool isTop_Bottom, bool isRugbyFootBall, bool isLining, string location)
         {
             List<FGPT> defaultFGPTList = new List<FGPT>();
 
@@ -467,7 +519,6 @@ namespace Sci.Production.PublicPrg
                 new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - length direction - lower body wear/ full body wear", Criteria = lowerFullBodywearCriteria },
                 new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - lower body wear/ full body wear", Criteria = lowerFullBodywearCriteria },
                 new FGPT() { Location = "Full", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - lower body wear/ full body wear", Criteria = lowerFullBodywearCriteria },
-
             };
 
             List<FGPT> lining_Upper = new List<FGPT>()

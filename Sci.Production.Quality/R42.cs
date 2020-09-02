@@ -72,7 +72,7 @@ order by M desc";
             this.comboYear.SelectedValue = DateTime.Today.AddMonths(-1).Year;
         }
 
-        Dictionary<string, System.Data.DataTable> PrintingData = new Dictionary<string, System.Data.DataTable>();
+        readonly Dictionary<string, System.Data.DataTable> PrintingData = new Dictionary<string, System.Data.DataTable>();
 
         protected override bool ValidateInput()
         {
@@ -490,7 +490,7 @@ from
             return this.result;  // base.OnAsyncDataLoad(e);
         }
 
-        Dictionary<string, System.Data.DataTable> dicSUP = new Dictionary<string, System.Data.DataTable>();
+        readonly Dictionary<string, System.Data.DataTable> dicSUP = new Dictionary<string, System.Data.DataTable>();
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
@@ -557,7 +557,7 @@ from
 
             xl.DicDatas.Add("##copysupsheet", c);
 
-            SaveXltReportCls.ReplaceAction d = this.addfilter;
+            SaveXltReportCls.ReplaceAction d = this.Addfilter;
             xl.DicDatas.Add("##addfilter", d);
 
             xl.Save(Class.MicrosoftFile.GetName("Quality_R42"));
@@ -658,7 +658,7 @@ from
             }
         }
 
-        void addfilter(Worksheet mySheet, int rowNo, int columnNo)
+        void Addfilter(Worksheet mySheet, int rowNo, int columnNo)
         {
             Range firstRow = (Range)mySheet.Rows[1];
             firstRow.AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlAnd, Type.Missing, true);

@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P33_PrintData
+    internal class P33_PrintData
     {
         public string RefNo { get; set; }
 

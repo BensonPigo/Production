@@ -47,7 +47,7 @@
             this.radioPanel1.Size = new System.Drawing.Size(454, 143);
             this.radioPanel1.TabIndex = 94;
             this.radioPanel1.Value = "P/L Rcv Report";
-            this.radioPanel1.ValueChanged += new System.EventHandler(this.radioGroup1_ValueChanged);
+            this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioGroup1_ValueChanged);
             // 
             // txtSPNo
             // 
@@ -95,7 +95,7 @@
             this.radioPLRcvReport.Text = "P/L Rcv Report";
             this.radioPLRcvReport.UseVisualStyleBackColor = true;
             this.radioPLRcvReport.Value = "P/L Rcv Report";
-            this.radioPLRcvReport.CheckedChanged += new System.EventHandler(this.radioPLRcvReport_CheckedChanged);
+            this.radioPLRcvReport.CheckedChanged += new System.EventHandler(this.RadioPLRcvReport_CheckedChanged);
             // 
             // P07_Print
             // 

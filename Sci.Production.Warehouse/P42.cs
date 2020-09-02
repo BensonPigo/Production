@@ -10,7 +10,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P42 : Win.Tems.QueryForm
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         public P42(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -70,7 +70,7 @@ namespace Sci.Production.Warehouse
             {
                 if (this.gridCuttingTapeQuickAdjust.Columns[e.ColumnIndex].Name == this.col_chk.Name)
                 {
-                    this.sum_checkedqty();
+                    this.Sum_checkedqty();
                 }
             };
             DataGridViewGeneratorDateColumnSettings ts2 = new DataGridViewGeneratorDateColumnSettings();
@@ -136,7 +136,7 @@ namespace Sci.Production.Warehouse
                   ;
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             DataTable dtData;
             string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, buyerdlv_b, buyerdlv_e;
@@ -267,7 +267,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Ke
                 }
 
                 this.listControlBindingSource1.DataSource = dtData;
-                this.checkBoxs_Status();
+                this.CheckBoxs_Status();
             }
             else
             {
@@ -275,12 +275,12 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Ke
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             DualResult result;
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -362,7 +362,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Ke
             }
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void PictureBox1_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -386,7 +386,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Ke
             }
         }
 
-        private void pictureBox2_Click(object sender, EventArgs e)
+        private void PictureBox2_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -409,7 +409,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Ke
             }
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
@@ -427,7 +427,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Ke
             }
         }
 
-        private void sum_checkedqty()
+        private void Sum_checkedqty()
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -435,17 +435,17 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Ke
             this.displayCheckedQty.Value = MyUtility.Convert.GetDecimal(localPrice).ToString("F2");
         }
 
-        private void checkEmptyEachCons_CheckedChanged(object sender, EventArgs e)
+        private void CheckEmptyEachCons_CheckedChanged(object sender, EventArgs e)
         {
-            this.checkBoxs_Status();
+            this.CheckBoxs_Status();
         }
 
-        private void checkEmptyMtlETA_CheckedChanged(object sender, EventArgs e)
+        private void CheckEmptyMtlETA_CheckedChanged(object sender, EventArgs e)
         {
-            this.checkBoxs_Status();
+            this.CheckBoxs_Status();
         }
 
-        private void checkBoxs_Status()
+        private void CheckBoxs_Status()
         {
             if (this.listControlBindingSource1.DataSource == null)
             {

@@ -13,9 +13,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P46_Import : Win.Forms.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtInventory;
 
         public P46_Import(DataRow master, DataTable detail)
@@ -25,7 +25,7 @@ namespace Sci.Production.Warehouse
             this.dt_detail = detail;
         }
 
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtSPNo.Text.TrimEnd();
@@ -134,10 +134,10 @@ where 1=1 and Linv.LobQty>0 ");
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
-                decimal CurrentQty = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                decimal currentQty = MyUtility.Convert.GetDecimal(e.FormattedValue);
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    if (CurrentQty >= MyUtility.Convert.GetDecimal(this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["QtyBefore"]))
+                    if (currentQty >= MyUtility.Convert.GetDecimal(this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["QtyBefore"]))
                     {
                         MyUtility.Msg.WarningBox("Current Qty cannot >= Original Qty!");
                         e.Cancel = true;
@@ -244,7 +244,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         // Localtion Popup
-        private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode)
             {
@@ -268,7 +268,7 @@ where   StockType='O'
         }
 
         // Localtion Validating
-        private void txtLocation_Validating(object sender, CancelEventArgs e)
+        private void TxtLocation_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtLocation.Text.ToString()))
             {
@@ -293,13 +293,13 @@ where exists(
         }
 
         // Cancel
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
@@ -347,7 +347,7 @@ where exists(
         }
 
         // Update Reason All
-        private void btnUpdateAll_Click(object sender, EventArgs e)
+        private void BtnUpdateAll_Click(object sender, EventArgs e)
         {
             string reasonid = this.comboReason.SelectedValue.ToString();
             this.gridImport.ValidateControl();

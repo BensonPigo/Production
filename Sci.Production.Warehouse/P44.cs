@@ -471,14 +471,14 @@ where AL2.Id='{0}'", this.CurrentMaintain["id"]);
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             var frm = new P44_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {

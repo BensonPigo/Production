@@ -12,22 +12,22 @@ namespace Sci.Production.Warehouse
 {
     public partial class R20 : Win.Tems.PrintForm
     {
-        string dateFormate = "yyyy-MM-dd";
-        string StartBuyerDelivery;
-        string EndBuyerDelivery;
-        string StartDeadLine;
-        string EndDeadLine;
-        string StartETA;
-        string EndETA;
-        string StartSPNo;
-        string EndSPNo;
-        string MDivision;
-        string Factory;
-        string StartRefno;
-        string EndRefno;
+        private string dateFormate = "yyyy-MM-dd";
+        private string StartBuyerDelivery;
+        private string EndBuyerDelivery;
+        private string StartDeadLine;
+        private string EndDeadLine;
+        private string StartETA;
+        private string EndETA;
+        private string StartSPNo;
+        private string EndSPNo;
+        private string MDivision;
+        private string Factory;
+        private string StartRefno;
+        private string EndRefno;
 
-        bool boolCheckQty;
-        DataTable printData;
+        private bool boolCheckQty;
+        private DataTable printData;
 
         public R20(ToolStripMenuItem menuitem)
             : base(menuitem)

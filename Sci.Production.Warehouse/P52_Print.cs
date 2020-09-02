@@ -8,8 +8,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P52_Print : Win.Tems.PrintForm
     {
-        DataRow drP52Title;
-        List<P52_PrintData> printData;
+        private DataRow drP52Title;
+        private List<P52_PrintData> printData;
 
         public P52_Print(DataRow drP52Title, DataTable dtP52Detail)
         {

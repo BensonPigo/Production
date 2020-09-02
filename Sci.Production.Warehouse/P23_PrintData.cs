@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P23_PrintData
+    internal class P23_PrintData
     {
         public string StockSP { get; set; }
 
@@ -26,7 +26,7 @@
 
         public string TotalQTY { get; set; }
 
-        public string groupby
+        public string Groupby
         {
             get { return this.StockSP + this.StockSEQ; }
         }

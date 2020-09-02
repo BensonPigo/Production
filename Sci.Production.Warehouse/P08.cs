@@ -24,7 +24,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this.DefaultFilter = string.Format("Type='B'");
             string factory = Env.User.Factory;
-            string Mdvision = Env.User.Keyword;
+            string mdvision = Env.User.Keyword;
 
           // ChangeDetailColor();
             this.di_fabrictype.Add("F", "Fabric");
@@ -116,7 +116,7 @@ namespace Sci.Production.Warehouse
             #endregion 必輸檢查
             foreach (DataRow row in this.DetailDatas)
             {
-                bool IsFabric = row["fabrictype"].EqualString("F");
+                bool isFabric = row["fabrictype"].EqualString("F");
                 string warningString = string.Empty;
 
                 if (MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"]))
@@ -600,10 +600,10 @@ drop table #tmp2
             upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 try
@@ -617,7 +617,7 @@ drop table #tmp2
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -628,7 +628,7 @@ drop table #tmp2
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, string.Empty, upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -637,25 +637,25 @@ drop table #tmp2
                     if (// !(result = DBProxy.Current.Execute(null, sqlupd3)))  jimmy 105/11/15
                         !(result = MyUtility.Tool.ProcessWithDatatable(detailDt, string.Join(",", detailDt.Columns.Cast<DataColumn>().Select(col => col.ColumnName).ToArray()), sqlupd3, out dtOut)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         // Unconfirm
@@ -789,10 +789,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
             upd_Fty_2F = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion 更新庫存數量  ftyinventory
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 try
@@ -806,7 +806,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F, string.Empty, upd_Fty_2F, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -817,7 +817,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2F, string.Empty, upd_MD_2F, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -825,25 +825,25 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         // 寫明細撈出的sql command
@@ -876,13 +876,13 @@ Where a.id = '{0}' ", masterID);
         }
 
         // delete all
-        private void btnDeleteAll_Click(object sender, EventArgs e)
+        private void BtnDeleteAll_Click(object sender, EventArgs e)
         {
             ((DataTable)this.detailgridbs.DataSource).Rows.Clear();  // 清空表身資料
         }
 
         // Accumulated Qty
-        private void btnAccumulatedQty_Click(object sender, EventArgs e)
+        private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new P08_AccumulatedQty(this.CurrentMaintain);
             frm.P08 = this;
@@ -890,7 +890,7 @@ Where a.id = '{0}' ", masterID);
         }
 
         // find
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -908,7 +908,7 @@ Where a.id = '{0}' ", masterID);
             }
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             P08_Import form = new P08_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             form.ShowDialog(this);

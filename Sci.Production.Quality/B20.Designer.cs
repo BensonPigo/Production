@@ -162,7 +162,7 @@
             this.btnSettingSort.TabIndex = 3;
             this.btnSettingSort.Text = "Setting Sort";
             this.btnSettingSort.UseVisualStyleBackColor = true;
-            this.btnSettingSort.Click += new System.EventHandler(this.btnSettingSort_Click);
+            this.btnSettingSort.Click += new System.EventHandler(this.BtnSettingSort_Click);
             // 
             // grid1
             // 

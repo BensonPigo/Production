@@ -14,10 +14,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P10_PrintBarcode : PrintForm
     {
-        DataTable printData;
-        string issueIdFrom = string.Empty;
-        string issueIdTo = string.Empty;
-        DualResult result;
+        private DataTable printData;
+        private string issueIdFrom = string.Empty;
+        private string issueIdTo = string.Empty;
+        private DualResult result;
 
         public P10_PrintBarcode(string inputIssueID)
         {
@@ -118,12 +118,12 @@ where isd.Id >= '{this.issueIdFrom}' and isd.Id <= '{this.issueIdTo}'";
 
             report.ReportDataSource = finalData;
 
-            Type ReportResourceNamespace = typeof(P10_PrintBarcodeData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P10_PrintBarcode.rdlc";
+            Type reportResourceNamespace = typeof(P10_PrintBarcodeData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P10_PrintBarcode.rdlc";
 
             IReportResource reportresource;
-            if (!(this.result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(this.result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 this.ShowException(this.result);
                 return this.result;

@@ -56,7 +56,7 @@ group by a.FromPoId,a.FromSeq1,a.FromSeq2", this.dr["id"].ToString()));
                  ;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

@@ -83,7 +83,7 @@
             this.btnFind.TabIndex = 7;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // btnQuery
             // 
@@ -93,7 +93,7 @@
             this.btnQuery.TabIndex = 5;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // txtLocateForSP
             // 
@@ -123,7 +123,7 @@
             this.checkEmptyMtlETA.TabIndex = 4;
             this.checkEmptyMtlETA.Text = "Filter empty Mtl. ETA";
             this.checkEmptyMtlETA.UseVisualStyleBackColor = true;
-            this.checkEmptyMtlETA.CheckedChanged += new System.EventHandler(this.checkEmptyMtlETA_CheckedChanged);
+            this.checkEmptyMtlETA.CheckedChanged += new System.EventHandler(this.CheckEmptyMtlETA_CheckedChanged);
             // 
             // checkEachCons
             // 
@@ -135,7 +135,7 @@
             this.checkEachCons.TabIndex = 3;
             this.checkEachCons.Text = "Filter empty Each Cons.";
             this.checkEachCons.UseVisualStyleBackColor = true;
-            this.checkEachCons.CheckedChanged += new System.EventHandler(this.checkEachCons_CheckedChanged);
+            this.checkEachCons.CheckedChanged += new System.EventHandler(this.CheckEachCons_CheckedChanged);
             // 
             // dateBuyerDelivery
             // 
@@ -205,7 +205,7 @@
             this.btnToExcel.TabIndex = 4;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // btnClose
             // 
@@ -216,7 +216,7 @@
             this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // panel2
             // 

@@ -63,7 +63,7 @@ namespace Sci.Production.Shipping
             }
 
             // 該單Approved / Junk都不允許調整資料
-            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            if (!Prgs.CheckP02Status(this.CurrentData["ID"].ToString()))
             {
                 return false;
             }
@@ -89,7 +89,7 @@ namespace Sci.Production.Shipping
         protected override bool OnDeleteBefore()
         {
             // 該單Approved / Junk都不允許調整資料
-            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            if (!Prgs.CheckP02Status(this.CurrentData["ID"].ToString()))
             {
                 return false;
             }

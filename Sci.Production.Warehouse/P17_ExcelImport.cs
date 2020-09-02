@@ -16,27 +16,27 @@ namespace Sci.Production.Warehouse
 {
     public partial class P17_ExcelImport : Win.Subs.Base
     {
-        DataTable grid2Data = new DataTable();
-        DataTable detailData;
-        DataRow master;
+        private DataTable grid2Data = new DataTable();
+        private DataTable detailData;
+        private DataRow master;
 
-        public P17_ExcelImport(DataRow _master, DataTable DetailData)
+        public P17_ExcelImport(DataRow _master, DataTable detailData)
         {
             this.InitializeComponent();
-            this.detailData = DetailData;
+            this.detailData = detailData;
             this.master = _master;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable ExcelFile = new DataTable();
-            ExcelFile.Columns.Add("Filename", typeof(string));
-            ExcelFile.Columns.Add("Status", typeof(string));
-            ExcelFile.Columns.Add("Count", typeof(string));
-            ExcelFile.Columns.Add("FullFileName", typeof(string));
+            DataTable excelFile = new DataTable();
+            excelFile.Columns.Add("Filename", typeof(string));
+            excelFile.Columns.Add("Status", typeof(string));
+            excelFile.Columns.Add("Count", typeof(string));
+            excelFile.Columns.Add("FullFileName", typeof(string));
 
-            this.listControlBindingSource1.DataSource = ExcelFile;
+            this.listControlBindingSource1.DataSource = excelFile;
             this.gridAttachFile.DataSource = this.listControlBindingSource1;
             this.gridAttachFile.IsEditingReadOnly = true;
             this.Helper.Controls.Grid.Generator(this.gridAttachFile)
@@ -84,7 +84,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Add Excel
-        private void btnAddExcel_Click(object sender, EventArgs e)
+        private void BtnAddExcel_Click(object sender, EventArgs e)
         {
             this.openFileDialog1.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls";
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK) // 開窗且有選擇檔案
@@ -99,7 +99,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Remove Excel
-        private void btnRemoveExcel_Click(object sender, EventArgs e)
+        private void BtnRemoveExcel_Click(object sender, EventArgs e)
         {
             if (this.listControlBindingSource1.Position != -1)
             {
@@ -108,7 +108,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Check & Import
-        private void btnCheckImport_Click(object sender, EventArgs e)
+        private void BtnCheckImport_Click(object sender, EventArgs e)
         {
             #region -- 判斷第一個Grid是否有資料 --
             if (this.listControlBindingSource1.Count <= 0)
@@ -178,32 +178,32 @@ namespace Sci.Production.Warehouse
                 // 檢查Excel格式
                 Excel.Range range = worksheet.Range[string.Format("A{0}:AE{0}", 2)];
                 object[,] objCellArray = range.Value;
-                string[] ItemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty", "Bulk Location" };
-                int[] ItemPosition = new int[ItemCheck.Length];
-                string[] ExcelItem = new string[intColumnsCount + 1];
+                string[] itemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty" };
+                int[] itemPosition = new int[itemCheck.Length];
+                string[] excelItem = new string[intColumnsCount + 1];
 
                 for (int y = 1; y <= intColumnsCount; y++)
                 {
-                    ExcelItem[y] = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, y], "C").ToString();
+                    excelItem[y] = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, y], "C").ToString();
                 }
 
                 StringBuilder columnName = new StringBuilder();
 
                 // 確認Excel各Item是否存在，並儲存所在位置
-                for (int x = 0; x < ItemCheck.Length; x++)
+                for (int x = 0; x < itemCheck.Length; x++)
                 {
                     for (int y = 1; y <= intColumnsCount; y++)
                     {
-                        if (ExcelItem[y] == ItemCheck[x])
+                        if (excelItem[y] == itemCheck[x])
                         {
-                            ItemPosition[x] = y;
+                            itemPosition[x] = y;
                             break;
                         }
                     }
 
-                    if (MyUtility.Check.Empty(ItemPosition[x]))
+                    if (MyUtility.Check.Empty(itemPosition[x]))
                     {
-                        columnName.Append("< " + ItemCheck[x].ToString() + " >, ");
+                        columnName.Append("< " + itemCheck[x].ToString() + " >, ");
                     }
                 }
 
@@ -228,11 +228,11 @@ namespace Sci.Production.Warehouse
                     Dictionary<string, bool> listNewRowErrMsg = new Dictionary<string, bool>();
 
                     DataRow newRow = this.grid2Data.NewRow();
-                    string seq1 = (objCellArray[1, ItemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]].ToString().Trim(), "C").ToString();
-                    string seq2 = (objCellArray[1, ItemPosition[2]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]].ToString().Trim(), "C").ToString();
+                    string seq1 = (objCellArray[1, itemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[1]].ToString().Trim(), "C").ToString();
+                    string seq2 = (objCellArray[1, itemPosition[2]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[2]].ToString().Trim(), "C").ToString();
 
                     // Location處理
-                    string oriLocation = (objCellArray[1, ItemPosition[6]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]].ToString().Trim(), "C").ToString();
+                    string oriLocation = (objCellArray[1, itemPosition[6]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[6]].ToString().Trim(), "C").ToString();
                     string locations = oriLocation.Split(',').ToList().Where(o => !MyUtility.Check.Empty(o)).Distinct().JoinToString(",");
                     string notLocationExistsList = locations.Split(',').ToList().Where(o => !Prgs.CheckLocationExists("B", o)).JoinToString(",");
 
@@ -245,14 +245,13 @@ namespace Sci.Production.Warehouse
                         isLocationExists = false;
                     }
 
-                    newRow["poid"] = (objCellArray[1, ItemPosition[0]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[0]].ToString().Trim(), "C");
+                    newRow["poid"] = (objCellArray[1, itemPosition[0]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[0]].ToString().Trim(), "C");
                     newRow["seq"] = seq1 + " " + seq2;
                     newRow["seq1"] = seq1;
                     newRow["seq2"] = seq2;
-                    newRow["Roll"] = (objCellArray[1, ItemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]].ToString().Trim(), "C");
-                    newRow["Dyelot"] = (objCellArray[1, ItemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]].ToString().Trim(), "C").ToString();
-                    newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "N");
-                    newRow["Location"] = locations;
+                    newRow["Roll"] = (objCellArray[1, itemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[3]].ToString().Trim(), "C");
+                    newRow["Dyelot"] = (objCellArray[1, itemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[4]].ToString().Trim(), "C").ToString();
+                    newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[5]], "N");
                     newRow["CanWriteIn"] = true;
                     #region check Columns length
                     List<string> listColumnLengthErrMsg = new List<string>();
@@ -431,7 +430,7 @@ and f.MDivisionID = @MDivisionID ";
         }
 
         // Write in
-        private void btnWriteIn_Click(object sender, EventArgs e)
+        private void BtnWriteIn_Click(object sender, EventArgs e)
         {
             var tmpPacking = ((DataTable)this.listControlBindingSource2.DataSource).AsEnumerable();
 

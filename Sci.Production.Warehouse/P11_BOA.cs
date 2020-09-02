@@ -8,10 +8,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P11_BOA : Win.Subs.Base
     {
-        string poid;
-        string issueid;
-        string cutplanid;
-        string orderid;
+        private string poid;
+        private string issueid;
+        private string cutplanid;
+        private string orderid;
 
        // Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public P11_BOA(string _issueid, string _poid, string _cutplanid, string _orderid)
@@ -27,15 +27,15 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable BOA, BOA_Orderlist, BOA_PO;
+            DataTable bOA, bOA_Orderlist, bOA_PO;
             SqlConnection sqlConnection = null;
             SqlCommand sqlCmd = null;
             DataSet dataSet = new DataSet();
             SqlDataAdapter sqlDataAdapter = null;
 
-            BOA = null;
-            BOA_Orderlist = null;
-            BOA_PO = null;
+            bOA = null;
+            bOA_Orderlist = null;
+            bOA_PO = null;
 
             // 呼叫procedure，取得BOA展開結果
             try
@@ -59,10 +59,10 @@ namespace Sci.Production.Warehouse
 
                 if (dataSet.Tables.Count > 0)
                 {
-                    BOA = dataSet.Tables[0];
-                    BOA_Orderlist = dataSet.Tables[1];
-                    BOA_PO = dataSet.Tables[2];
-                    BOA_PO.DefaultView.Sort = "qty desc,scirefno,poid,seq1,seq2";
+                    bOA = dataSet.Tables[0];
+                    bOA_Orderlist = dataSet.Tables[1];
+                    bOA_PO = dataSet.Tables[2];
+                    bOA_PO.DefaultView.Sort = "qty desc,scirefno,poid,seq1,seq2";
                 }
             }
             catch (Exception ex)
@@ -77,7 +77,7 @@ namespace Sci.Production.Warehouse
                 sqlConnection.Close();
             }
 
-            this.gridBOA.DataSource = BOA;
+            this.gridBOA.DataSource = bOA;
 
             // 設定Grid1的顯示欄位
             this.gridBOA.IsEditingReadOnly = true;
@@ -107,7 +107,7 @@ namespace Sci.Production.Warehouse
             this.gridBOA.Columns[5].Frozen = true;  // Order Qty
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

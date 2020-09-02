@@ -19,8 +19,11 @@ namespace Sci.Production.Quality
 
         DateTime? Buyerdelivery1, Buyerdelivery2;
         string sp1, sp2, MDivisionID, FactoryID, Brand;
-        bool exSis,bulk,sample,garment;
-        List<string> categoryList = new List<string>();
+        private bool exSis;
+        private readonly bool bulk;
+        private readonly bool sample;
+        private readonly bool garment;
+        readonly List<string> categoryList = new List<string>();
 
         public R31(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -248,12 +251,14 @@ WHERE 1=1
                 sqlCmd.Append($"AND o.MDivisionID=@MDivisionID " + Environment.NewLine);
                 paramList.Add(new SqlParameter("@MDivisionID", MDivisionID));
             }
+
             if (!MyUtility.Check.Empty(FactoryID))
             {
                 sqlCmd.Append($"AND o.FtyGroup=@FactoryID " + Environment.NewLine);
                 paramList.Add(new SqlParameter("@FactoryID", FactoryID));
 
             }
+
             if (!MyUtility.Check.Empty(Brand))
             {
                 sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
@@ -265,6 +270,7 @@ WHERE 1=1
             {
                 sqlCmd.Append($"AND f.IsProduceFty = 1" + Environment.NewLine);
             }
+
             if (categoryList.Count > 0)
             {
                 sqlCmd.Append($"AND o.Category IN ('{categoryList.JoinToString("','")}') " + Environment.NewLine);

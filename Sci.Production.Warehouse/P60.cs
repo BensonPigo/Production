@@ -31,7 +31,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
             this.gridicon.RemoveClick += (s, e) =>
             {
-                this.computeTotalQty();
+                this.ComputeTotalQty();
             };
         }
 
@@ -167,7 +167,7 @@ where ID = '{0}'", this.CurrentMaintain["ID"].ToString()));
             #endregion Status Label
         }
 
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
 
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
@@ -194,7 +194,7 @@ where ID = '{0}'", this.CurrentMaintain["ID"].ToString()));
                     }
 
                     dr.EndEdit();
-                    this.computeTotalQty();
+                    this.ComputeTotalQty();
                 }
             };
             #endregion
@@ -453,47 +453,47 @@ when not matched then
             sqlcmd = this.DoUpdateLocalPoInQty();
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     DataTable resultDt;
                     if (!(result2 = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2.ToString(), out resultDt, "#tmp")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd2.ToString(), result2);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlcmd, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         // Unconfirm
@@ -604,46 +604,46 @@ when not matched then
             sqlcmd = this.DoUpdateLocalPoInQty();
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd2.ToString(), result2);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlcmd, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         private string DoUpdateLocalPoInQty()
@@ -699,13 +699,13 @@ Where a.id = '{0}' ", masterID);
         }
 
         // delete all
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void BtnDelete_Click(object sender, EventArgs e)
         {
             ((DataTable)this.detailgridbs.DataSource).Select(string.Empty).ToList().ForEach(r => r.Delete());
         }
 
         // find
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -724,7 +724,7 @@ Where a.id = '{0}' ", masterID);
         }
 
         // Batch Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["localsuppid"]))
             {
@@ -735,11 +735,11 @@ Where a.id = '{0}' ", masterID);
 
             var frm = new P60_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
-            this.computeTotalQty();
+            this.ComputeTotalQty();
             this.RenewData();
         }
 
-        private void computeTotalQty()
+        private void ComputeTotalQty()
         {
             this.txtTotal.Text = this.detailgrid.Rows.Cast<DataGridViewRow>().AsEnumerable().Sum(row => decimal.Parse(row.Cells["Qty"].Value.ToString())).ToString();
         }
@@ -748,10 +748,10 @@ Where a.id = '{0}' ", masterID);
         {
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
-            string Issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
-            string Invoice = row["InvNo"].ToString();
-            string Remarks = row["Remark"].ToString();
-            string Rpttitle = Env.User.Factory;
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string invoice = row["InvNo"].ToString();
+            string remarks = row["Remark"].ToString();
+            string rpttitle = Env.User.Factory;
 
             #region -- 撈表頭資料 --
             DataTable dt;
@@ -768,14 +768,14 @@ Where a.id = '{0}' ", masterID);
                 this.ShowErr(result);
             }
 
-            string Supplier = dt.Rows[0]["Supplier"].ToString();
+            string supplier = dt.Rows[0]["Supplier"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", Invoice));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", invoice));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remarks));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", Issuedate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", Rpttitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remarks));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", issuedate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", supplier));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rpttitle));
 
             #endregion
             #region -- 撈表身資料 --
@@ -831,12 +831,12 @@ Where a.id = '{0}' ", masterID);
 
             // 指定是哪個 RDLC
             // DualResult result;
-            Type ReportResourceNamespace = typeof(P60_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P60_Print.rdlc";
+            Type reportResourceNamespace = typeof(P60_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P60_Print.rdlc";
 
             IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 // this.ShowException(result);
                 return false;

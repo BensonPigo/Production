@@ -21,7 +21,7 @@ namespace Sci.Production.Quality
         private string T1SubconName;
         private string T2SubconName;
 
-        private void txtCombineStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtCombineStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string item_cmd = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
             SelectItem item = new SelectItem(item_cmd, string.Empty, string.Empty, string.Empty);
@@ -36,7 +36,7 @@ namespace Sci.Production.Quality
             this.txtseason.Text = item.GetSelecteds()[0]["SeasonID"].ToString();
         }
 
-        private void txtCombineStyle_Validating(object sender, CancelEventArgs e)
+        private void TxtCombineStyle_Validating(object sender, CancelEventArgs e)
         {
             string sqlcmd = $@"select 1 from Style WITH (NOLOCK) where Junk = 0 and id ='{this.txtCombineStyle.Text}'";
             if (!MyUtility.Check.Seek(sqlcmd))
@@ -50,7 +50,7 @@ namespace Sci.Production.Quality
 
         private DataTable printData;
 
-        private void comboBoxTypeofPrint_SelectedValueChanged(object sender, EventArgs e)
+        private void ComboBoxTypeofPrint_SelectedValueChanged(object sender, EventArgs e)
         {
             if (this.comboBoxTypeofPrint.SelectedValue == null)
             {

@@ -16,7 +16,7 @@ namespace Sci.Production.Quality
     {
         protected DataRow motherData;
         Size thisSize;
-        bool FirstTime = true;
+        readonly bool FirstTime = true;
 
         // (menuitem, args= 參數)
         public P30(ToolStripMenuItem menuitem, string history)
@@ -49,20 +49,20 @@ namespace Sci.Production.Quality
             }
 
             base.OnEditModeChanged();
-            this.button_enable();
+            this.Button_enable();
         }
 
-        public void colorSelect_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        public void ColorSelect_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            this.colorSelect_CellMouseClick(e.Button, e.RowIndex);
+            this.ColorSelect_CellMouseClick(e.Button, e.RowIndex);
         }
 
-        public void colorSelect_CellMouseClick(object sender, DataGridViewEditingControlMouseEventArgs e)
+        public void ColorSelect_CellMouseClick(object sender, DataGridViewEditingControlMouseEventArgs e)
         {
-            this.colorSelect_CellMouseClick(e.Button, e.RowIndex);
+            this.ColorSelect_CellMouseClick(e.Button, e.RowIndex);
         }
 
-        public void colorSelect_CellMouseClick(MouseButtons eButton, int eRowIndex)
+        public void ColorSelect_CellMouseClick(MouseButtons eButton, int eRowIndex)
         {
             if (eButton == MouseButtons.Right)
             {
@@ -104,17 +104,17 @@ order by RowNum", this.txtSP.Text.ToString());
             }
         }
 
-        public void itemSelect_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        public void ItemSelect_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            this.itemSelect_CellMouseClick(e.Button, e.RowIndex);
+            this.ItemSelect_CellMouseClick(e.Button, e.RowIndex);
         }
 
-        public void itemSelect_CellMouseClick(object sender, DataGridViewEditingControlMouseEventArgs e)
+        public void ItemSelect_CellMouseClick(object sender, DataGridViewEditingControlMouseEventArgs e)
         {
-            this.itemSelect_CellMouseClick(e.Button, e.RowIndex);
+            this.ItemSelect_CellMouseClick(e.Button, e.RowIndex);
         }
 
-        public void itemSelect_CellMouseClick(MouseButtons eButton, int eRowIndex)
+        public void ItemSelect_CellMouseClick(MouseButtons eButton, int eRowIndex)
         {
             DataRow dr1 = this.detailgrid.GetDataRow<DataRow>(eRowIndex);
             if (dr1["Type"].ToString().ToUpper() != "ACCESSORY ITEMS")
@@ -164,8 +164,8 @@ order by RowNum", this.txtSP.Text.ToString());
             DataGridViewGeneratorTextColumnSettings itemSelect = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings typeSetting = new DataGridViewGeneratorTextColumnSettings();
             typeSetting.CharacterCasing = CharacterCasing.Normal;
-            colorSelect.CellMouseClick += this.colorSelect_CellMouseClick;
-            colorSelect.EditingMouseDown += this.colorSelect_CellMouseClick;
+            colorSelect.CellMouseClick += this.ColorSelect_CellMouseClick;
+            colorSelect.EditingMouseDown += this.ColorSelect_CellMouseClick;
             itemSelect.CellEditable += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -276,8 +276,8 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
             };
 
             // colorSelect.EditingMouseDown
-            itemSelect.CellMouseClick += this.itemSelect_CellMouseClick;
-            itemSelect.EditingMouseDown += this.itemSelect_CellMouseClick;
+            itemSelect.CellMouseClick += this.ItemSelect_CellMouseClick;
+            itemSelect.EditingMouseDown += this.ItemSelect_CellMouseClick;
 
             #endregion
 
@@ -440,7 +440,7 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.button_enable();
+            this.Button_enable();
         }
 
         protected override bool ClickSaveBefore()
@@ -473,7 +473,7 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
             return base.ClickSaveBefore();
         }
 
-        private void button_enable()
+        private void Button_enable()
         {
             DataTable dt;
             string cmd = string.Format("select MDClose from orders where id='{0}' ", this.txtSP.Text);
@@ -493,7 +493,7 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
         }
 
         // Button Finished
-        private void btnFinished_Click(object sender, EventArgs e)
+        private void BtnFinished_Click(object sender, EventArgs e)
         {
             if (this.btnFinished.Text == "Finished")
             {
@@ -556,13 +556,13 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
             this.gridbs.Position = rowindex;
         }
 
-        private void btnFabricInspectionList_Click(object sender, EventArgs e)
+        private void BtnFabricInspectionList_Click(object sender, EventArgs e)
         {
             P01 callNextForm = new P01(MyUtility.Convert.GetString(this.txtSP.Text));
             callNextForm.ShowDialog(this);
         }
 
-        private void btnAccessoryInspectionList_Click(object sender, EventArgs e)
+        private void BtnAccessoryInspectionList_Click(object sender, EventArgs e)
         {
             P02 callNextForm = new P02(MyUtility.Convert.GetString(this.txtSP.Text));
             callNextForm.ShowDialog(this);

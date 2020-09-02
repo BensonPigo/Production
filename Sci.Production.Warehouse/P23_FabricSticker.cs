@@ -88,7 +88,7 @@ order by RowNo";
             #endregion
         }
 
-        private void btnPrint_Click(object sender, EventArgs e)
+        private void BtnPrint_Click(object sender, EventArgs e)
         {
             DualResult result;
             DataTable dtPrint = (DataTable)this.listControlBindingSource.DataSource;
@@ -133,13 +133,13 @@ order by NewRowNo";
                 report.ReportDataSource = listData;
 
                 // 指定是哪個 RDLC
-                Type ReportResourceNamespace = typeof(P23_PrintData);
-                Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-                string ReportResourceName = "P23_FabricSticker_Print.rdlc";
+                Type reportResourceNamespace = typeof(P23_PrintData);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P23_FabricSticker_Print.rdlc";
 
                 IReportResource reportresource;
 
-                if ((result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)) == false)
+                if ((result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)) == false)
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;

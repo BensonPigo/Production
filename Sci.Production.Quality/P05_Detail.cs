@@ -16,16 +16,16 @@ namespace Sci.Production.Quality
 {
     public partial class P05_Detail : Win.Subs.Input4
     {
-        private string loginID = Env.User.UserID;
-        private string aa = Env.User.Keyword;
-        private DataRow maindr;
-        private string PoID;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string aa = Env.User.Keyword;
+        private readonly DataRow maindr;
+        private readonly string PoID;
         private string ID;
         private DataTable dtOven;
         private bool newOven = false;
         private bool isModify = false;  // 註記[Test Date][Article][Inspector][Remark]是否修改
-        private bool isSee = false;
-        bool canEdit = true;
+        private readonly bool isSee = false;
+        readonly bool canEdit = true;
 
         public P05_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr, string Poid)
             : base(canedit, id, keyvalue2, keyvalue3)
@@ -238,7 +238,7 @@ and a.seq1=@seq1";
             DataGridViewGeneratorTextColumnSettings rollCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings chgCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings staCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings resultCell = Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings resultCell = Prgs.CellResult.GetGridCell();
             DataGridViewGeneratorTextColumnSettings resultChangeCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings resultStainCell = new DataGridViewGeneratorTextColumnSettings();
 
@@ -1069,7 +1069,7 @@ SET IDENTITY_INSERT oven off";
         }
 
         #region 表頭Article 右鍵事件: 1.右鍵selectItem 2.判斷validated
-        private void txtArticle_MouseDown(object sender, MouseEventArgs e)
+        private void TxtArticle_MouseDown(object sender, MouseEventArgs e)
         {
             if (this.EditMode == false)
             {
@@ -1096,7 +1096,7 @@ SET IDENTITY_INSERT oven off";
             }
         }
 
-        private void txtArticle_Validating(object sender, CancelEventArgs e)
+        private void TxtArticle_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode || this.txtArticle.Text.Empty())
             {
@@ -1131,7 +1131,7 @@ SET IDENTITY_INSERT oven off";
         }
 #endregion
 
-        private void btnEncode_Click(object sender, EventArgs e)
+        private void BtnEncode_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
             bool result = true;
@@ -1208,7 +1208,7 @@ SET IDENTITY_INSERT oven off";
             this.OnRequery();
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
             string[] columnNames = new string[] { "OvenGroup", "SEQ", "Roll", "Dyelot", "SCIRefno", "Colorid", "Supplier", "Changescale", "StainingScale", "Result", "Remark" };
@@ -1307,7 +1307,7 @@ SET IDENTITY_INSERT oven off";
             this.isModify = true;
         }
 
-        private void btnToPDF_Click(object sender, EventArgs e)
+        private void BtnToPDF_Click(object sender, EventArgs e)
         {
             DualResult result;
             DataTable dt = (DataTable)this.gridbs.DataSource;
@@ -1532,7 +1532,7 @@ SET IDENTITY_INSERT oven off";
             Marshal.ReleaseComObject(excel);
         }
 
-        private void txtuserInspector_Validating(object sender, CancelEventArgs e)
+        private void TxtuserInspector_Validating(object sender, CancelEventArgs e)
         {
             this.isModify = true;
         }

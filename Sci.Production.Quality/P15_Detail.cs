@@ -22,10 +22,10 @@ namespace Sci.Production.Quality
         private DataRow masterDr;
         private DataRow Detaildr;
         private string reportNo;
-        private string id;
-        private bool isSee = false;
+        private readonly string id;
+        private readonly bool isSee = false;
         private string status;
-        private Dictionary<string, string> listTestingMethod = new Dictionary<string, string>()
+        private readonly Dictionary<string, string> listTestingMethod = new Dictionary<string, string>()
         {
            { "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle", "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle" },
            { "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle", "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle" },
@@ -48,16 +48,16 @@ namespace Sci.Production.Quality
             this.comboTestingMethod.DisplayMember = "Value";
 
             this.comboTestingMethod.DrawMode = DrawMode.OwnerDrawVariable;
-            this.comboTestingMethod.DrawItem += new DrawItemEventHandler(this.comboBox2_DrawItem);
-            this.comboTestingMethod.MeasureItem += new MeasureItemEventHandler(this.comboBox2_MeasureItem);
-            this.comboTestingMethod.SelectedIndexChanged += new EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.comboTestingMethod.DrawItem += new DrawItemEventHandler(this.ComboBox2_DrawItem);
+            this.comboTestingMethod.MeasureItem += new MeasureItemEventHandler(this.ComboBox2_MeasureItem);
+            this.comboTestingMethod.SelectedIndexChanged += new EventHandler(this.ComboBox2_SelectedIndexChanged);
             this.comboTestingMethod.SelectedIndex = 0;
             this.chkOtherMethod.Checked = false;
             this.txtOther.Visible = false;
             this.comboTestingMethod.Visible = true;
         }
 
-        private void comboBox2_MeasureItem(object sender, MeasureItemEventArgs e)
+        private void ComboBox2_MeasureItem(object sender, MeasureItemEventArgs e)
         {
             ComboxBoxEx cbox = (ComboxBoxEx)sender;
             e.ItemHeight = 46;
@@ -66,7 +66,7 @@ namespace Sci.Production.Quality
             cbox.ItemHeights.Add(e.ItemHeight);
         }
 
-        private void comboBox2_DrawItem(object sender, DrawItemEventArgs e)
+        private void ComboBox2_DrawItem(object sender, DrawItemEventArgs e)
         {
             ComboxBoxEx cbox = (ComboxBoxEx)sender;
 
@@ -90,7 +90,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboxBoxEx cbox = (ComboxBoxEx)sender;
             if (cbox.SelectedItem == null)
@@ -237,7 +237,7 @@ namespace Sci.Production.Quality
 
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings ResulCell = Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResulCell = Prgs.CellResult.GetGridCell();
             #region Artwork event
             DataGridViewGeneratorTextColumnSettings ts_artwork = new DataGridViewGeneratorTextColumnSettings();
             ts_artwork.EditingMouseDown += (s, e) =>
@@ -474,7 +474,7 @@ namespace Sci.Production.Quality
             return true;
         }
 
-        private void txtCombineStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtCombineStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string item_cmd = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
             SelectItem2 item = new SelectItem2(item_cmd, string.Empty, string.Empty, string.Empty);
@@ -570,12 +570,12 @@ where ReportNo = '{this.reportNo}';";
             return base.OnSavePost();
         }
 
-        private void txtCombineStyle_KeyPress(object sender, KeyPressEventArgs e)
+        private void TxtCombineStyle_KeyPress(object sender, KeyPressEventArgs e)
         {
             e.Handled = true;
         }
 
-        private void btnSendMR_Click(object sender, EventArgs e)
+        private void BtnSendMR_Click(object sender, EventArgs e)
         {
             string pdf_path = this.CreatePDF();
             this.HideWaitMessage();
@@ -593,7 +593,7 @@ where ReportNo = '{this.reportNo}';";
             email.ShowDialog(this);
         }
 
-        private void btnPDF_Click(object sender, EventArgs e)
+        private void BtnPDF_Click(object sender, EventArgs e)
         {
             string pdf_path = this.CreatePDF();
             this.HideWaitMessage();
@@ -757,7 +757,7 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             }
         }
 
-        private void chkOtherMethod_CheckedChanged(object sender, EventArgs e)
+        private void ChkOtherMethod_CheckedChanged(object sender, EventArgs e)
         {
             if (this.chkOtherMethod.Checked)
             {

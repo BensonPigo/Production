@@ -206,7 +206,7 @@
             this.comboBoxStockType.Name = "comboBoxStockType";
             this.comboBoxStockType.Size = new System.Drawing.Size(121, 24);
             this.comboBoxStockType.TabIndex = 4;
-            this.comboBoxStockType.SelectedIndexChanged += new System.EventHandler(this.comboBoxStockType_SelectedIndexChanged);
+            this.comboBoxStockType.SelectedIndexChanged += new System.EventHandler(this.ComboBoxStockType_SelectedIndexChanged);
             // 
             // buttonGenerate
             // 
@@ -217,7 +217,7 @@
             this.buttonGenerate.TabIndex = 5;
             this.buttonGenerate.Text = "generate";
             this.buttonGenerate.UseVisualStyleBackColor = true;
-            this.buttonGenerate.Click += new System.EventHandler(this.buttonGenerate_Click);
+            this.buttonGenerate.Click += new System.EventHandler(this.ButtonGenerate_Click);
             // 
             // labelRemark
             // 

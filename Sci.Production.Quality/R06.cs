@@ -219,6 +219,7 @@ WHERE NOT EXISTS(SELECT * FROM #All_Fir_shadebone b WHERE  b.Suppid=t.SuppID AND
 GROUP BY t.SuppID
 " : string.Empty)}
 
+
 ------------Total Point----------
 select g.{groupby_col},sum(fp.TotalPoint) TotalPoint
 into #tmpTotalPoint

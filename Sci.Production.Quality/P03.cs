@@ -13,8 +13,8 @@ namespace Sci.Production.Quality
 {
     public partial class P03 : Win.Tems.Input6
     {
-        private string loginID = Env.User.UserID;
-        private string keyWord = Env.User.Keyword;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string keyWord = Env.User.Keyword;
         int index;
         DataRow[] find_dr;
 
@@ -49,7 +49,7 @@ namespace Sci.Production.Quality
             return DetailGridContextMenuMode.None;
         }
 
-        void contextMenuStrip1_VisibleChanged(object sender, EventArgs e)
+        void ContextMenuStrip1_VisibleChanged(object sender, EventArgs e)
         {
             if (this.contextMenuStrip1.Visible && this.EditMode)
             {
@@ -512,7 +512,7 @@ masterID);
             base.ClickSaveAfter();
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             DataTable detDtb = (DataTable)this.detailgridbs.DataSource;
 
@@ -594,7 +594,7 @@ masterID);
             }
         }
 
-        private void modifyToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ModifyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgrid) || this.detailgrid.RowCount == 0)
             {
@@ -625,7 +625,7 @@ masterID);
             this.detailgrid.SelectRowTo(rowindex);
         }
 
-        private void modifyHeatTestToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ModifyHeatTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgrid) || this.detailgrid.RowCount == 0)
             {
@@ -656,7 +656,7 @@ masterID);
             this.detailgrid.SelectRowTo(rowindex);
         }
 
-        private void modifyWashTestToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ModifyWashTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgrid) || this.detailgrid.RowCount == 0)
             {

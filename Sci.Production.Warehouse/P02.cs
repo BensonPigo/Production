@@ -251,30 +251,30 @@ where ed.ID = '{0}'", masterID);
 
         protected override bool ClickSaveBefore()
         {
-            DateTime ArrivePortDate;
-            DateTime WhseArrival;
-            DateTime ETA;
+            DateTime arrivePortDate;
+            DateTime whseArrival;
+            DateTime eTA;
             bool chk;
             string msg;
 
             // Arrive Port Date 不可晚於 Arrive W/H Date
             if (!MyUtility.Check.Empty(this.CurrentMaintain["PortArrival"]) && !MyUtility.Check.Empty(this.CurrentMaintain["WhseArrival"]))
             {
-                ArrivePortDate = DateTime.Parse(this.CurrentMaintain["PortArrival"].ToString());
-                WhseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString());
-                if (!(chk = PublicPrg.Prgs.CheckArrivedWhseDateWithArrivedPortDate(ArrivePortDate, WhseArrival, out msg)))
+                arrivePortDate = DateTime.Parse(this.CurrentMaintain["PortArrival"].ToString());
+                whseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString());
+                if (!(chk = PublicPrg.Prgs.CheckArrivedWhseDateWithArrivedPortDate(arrivePortDate, whseArrival, out msg)))
                 {
                     MyUtility.Msg.WarningBox(msg);
                     return false;
                 }
             }
 
-            ETA = DateTime.Parse(this.CurrentMaintain["eta"].ToString()); // eta
-            WhseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString());
+            eTA = DateTime.Parse(this.CurrentMaintain["eta"].ToString()); // eta
+            whseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString());
 
             // 到倉日如果早於ETA 3天，則提示窗請USER再確認是否存檔。
             // 到倉日如果晚於ETA 15天，則提示窗請USER再確認是否存檔。
-            if (!(chk = PublicPrg.Prgs.CheckArrivedWhseDateWithEta(ETA, WhseArrival, out msg)))
+            if (!(chk = PublicPrg.Prgs.CheckArrivedWhseDateWithEta(eTA, whseArrival, out msg)))
             {
                 DialogResult dResult = MyUtility.Msg.QuestionBox(msg);
                 if (dResult == DialogResult.No)
@@ -294,7 +294,7 @@ where ed.ID = '{0}'", masterID);
         }
 
         // Find
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -332,7 +332,7 @@ where ed.ID = '{0}'", masterID);
         }
 
         // Shipping Mark
-        private void btnShippingMark_Click(object sender, EventArgs e)
+        private void BtnShippingMark_Click(object sender, EventArgs e)
         {
             Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
             callNextForm.ShowDialog(this);

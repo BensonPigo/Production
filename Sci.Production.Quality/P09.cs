@@ -27,7 +27,7 @@ namespace Sci.Production.Quality
 
         private DataTable dt1;
         private DataTable dt2;
-        private string Filepath = @"MMC\";
+        private readonly string Filepath = @"MMC\";
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ApprovedSeason;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_FirstDyelot;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_TestReportCheckClima;
@@ -648,7 +648,7 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
             this.Page1_Query();
         }
 
-        TransferPms transferPMS = new TransferPms();
+        readonly TransferPms transferPMS = new TransferPms();
 
         private void BtnDownloadFile_Click(object sender, EventArgs e)
         {

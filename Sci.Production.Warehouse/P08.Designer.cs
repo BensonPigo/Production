@@ -236,7 +236,7 @@
             this.btnAccumulatedQty.TabIndex = 10;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
-            this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
+            this.btnAccumulatedQty.Click += new System.EventHandler(this.BtnAccumulatedQty_Click);
             // 
             // shapeContainer1
             // 
@@ -266,7 +266,7 @@
             this.btnFind.TabIndex = 5;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // txtLocateForSP
             // 
@@ -295,7 +295,7 @@
             this.btnDeleteAll.TabIndex = 7;
             this.btnDeleteAll.Text = "Delete all";
             this.btnDeleteAll.UseVisualStyleBackColor = true;
-            this.btnDeleteAll.Click += new System.EventHandler(this.btnDeleteAll_Click);
+            this.btnDeleteAll.Click += new System.EventHandler(this.BtnDeleteAll_Click);
             // 
             // labelRemark
             // 
@@ -326,7 +326,7 @@
             this.btnImport.TabIndex = 9;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // P08
             // 

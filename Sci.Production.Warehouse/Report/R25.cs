@@ -26,7 +26,7 @@ namespace Sci.Production.Warehouse
         private string M;
         private string Factorys;
         private string MtlType;
-        DataTable dataTable;
+        private DataTable dataTable;
 
         public R25(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -35,7 +35,7 @@ namespace Sci.Production.Warehouse
             this.comboMDivision1.SetDefalutIndex(true);
         }
 
-        private void txtfactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void Txtfactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "select distinct ID from Factory WITH (NOLOCK) order by ID";
             Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.txtfactory.Text, null, null, null);
@@ -49,7 +49,7 @@ namespace Sci.Production.Warehouse
             this.txtfactory.Text = item.GetSelectedString();
         }
 
-        private void txtfactory_Validating(object sender, CancelEventArgs e)
+        private void Txtfactory_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtfactory.Text))
             {

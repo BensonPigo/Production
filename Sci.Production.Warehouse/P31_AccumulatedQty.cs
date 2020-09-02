@@ -70,7 +70,7 @@ GROUP BY A.FromPoId,A.FromSeq1,A.FromSeq2,a.FromStocktype,pd.Refno,c.Name", this
                  ;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

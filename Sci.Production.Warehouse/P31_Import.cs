@@ -14,11 +14,11 @@ namespace Sci.Production.Warehouse
 {
     public partial class P31_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_roll;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_roll;
 
         protected DataTable dtBorrow;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -33,7 +33,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtToSP.Text.TrimEnd();
@@ -144,11 +144,11 @@ AND Orders.Category <> 'A' ");
                     }
 
                     this.listControlBindingSource1.DataSource = this.dtBorrow;
-                    this.grid_Filter();
+                    this.Grid_Filter();
                     if (this.gridImport.Rows.Count == 0)
                     {
                         this.chkNoLock.Checked = false;
-                        this.grid_Filter();
+                        this.Grid_Filter();
                     }
 
                     this.dtBorrow.DefaultView.Sort = "fromseq1,fromseq2,location,fromdyelot,balance desc";
@@ -163,7 +163,7 @@ AND Orders.Category <> 'A' ");
             }
         }
 
-        private void sum_checkedqty()
+        private void Sum_checkedqty()
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -182,7 +182,7 @@ AND Orders.Category <> 'A' ");
                     {
                         this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
                         this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["selected"] = true;
-                        this.sum_checkedqty();
+                        this.Sum_checkedqty();
                     }
                 };
 
@@ -201,7 +201,7 @@ AND Orders.Category <> 'A' ");
                     }
 
                     dr.EndEdit();
-                    this.sum_checkedqty();
+                    this.Sum_checkedqty();
                 }
             };
 
@@ -229,13 +229,13 @@ AND Orders.Category <> 'A' ");
             cbb_stocktype.DisplayMember = "Value";
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             StringBuilder warningmsg = new StringBuilder();
 
@@ -308,7 +308,7 @@ AND Orders.Category <> 'A' ");
         }
 
         // To SP# Valid
-        private void txtToSP_Validating(object sender, CancelEventArgs e)
+        private void TxtToSP_Validating(object sender, CancelEventArgs e)
         {
 // string sp = textBox1.Text.TrimEnd();
 
@@ -345,13 +345,13 @@ AND Orders.Category <> 'A' ");
 //            }
         }
 
-        private void chkNoLock_CheckedChanged(object sender, EventArgs e)
+        private void ChkNoLock_CheckedChanged(object sender, EventArgs e)
         {
-            this.grid_Filter();
+            this.Grid_Filter();
             this.ChangeColor();
         }
 
-        private void grid_Filter()
+        private void Grid_Filter()
         {
             string filter = string.Empty;
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -432,12 +432,12 @@ AND Orders.Category <> 'A' ");
             }
         }
 
-        private void gridImport_Validated(object sender, EventArgs e)
+        private void GridImport_Validated(object sender, EventArgs e)
         {
             this.ChangeColor();
         }
 
-        private void gridImport_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void GridImport_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             this.ChangeColor();
         }

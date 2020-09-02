@@ -8,7 +8,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_InventoryStatus : Win.Subs.Base
     {
-        DataRow dr;
+        private DataRow dr;
 
         public P03_InventoryStatus(DataRow data)
         {
@@ -159,7 +159,7 @@ from TMP",
             this.gridInventoryStatus.Columns[1].Frozen = true;  // Fabric Type
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

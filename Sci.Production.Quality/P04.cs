@@ -15,8 +15,8 @@ namespace Sci.Production.Quality
 {
     public partial class P04 : Win.Tems.Input6
     {
-        private string loginID = Env.User.UserID;
-        private string Factory = Env.User.Keyword;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string Factory = Env.User.Keyword;
 
         // 宣告Context Menu Item
         ToolStripMenuItem edit;
@@ -28,7 +28,7 @@ namespace Sci.Production.Quality
             this.DefaultFilter = string.Format("MDivisionid='{0}'", this.Factory);
 
             // this.detailgrid.ContextMenuStrip = detailgridmenus;
-            this.detailgrid.ContextMenuShowing += new EventHandler<ContextMenuShowingEventArgs>(this.detailgrid_ContextMenuShowing);
+            this.detailgrid.ContextMenuShowing += new EventHandler<ContextMenuShowingEventArgs>(this.Detailgrid_ContextMenuShowing);
         }
 
         protected override DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
@@ -41,7 +41,7 @@ namespace Sci.Production.Quality
             return DetailGridContextMenuMode.None;
         }
 
-        private void detailgrid_ContextMenuShowing(object sender, ContextMenuShowingEventArgs e)
+        private void Detailgrid_ContextMenuShowing(object sender, ContextMenuShowingEventArgs e)
         {
             if (this.EditMode)
             {
@@ -208,7 +208,7 @@ namespace Sci.Production.Quality
             return base.OnRenewDataDetailPost(e);
         }
 
-        private void btnReceive(object sender, EventArgs e)
+        private void BtnReceive(object sender, EventArgs e)
         {
             if (this.EditMode == true)
             {
@@ -227,7 +227,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void btnSend(object sender, EventArgs e)
+        private void BtnSend(object sender, EventArgs e)
         {
             if (this.EditMode == true)
             {
@@ -425,7 +425,7 @@ namespace Sci.Production.Quality
                 }
 
                 this.CurrentDetailData.EndEdit();
-                this.update_detailgrid_CellValidated(e.RowIndex);
+                this.Update_detailgrid_CellValidated(e.RowIndex);
             };
             #endregion
 
@@ -593,12 +593,12 @@ namespace Sci.Production.Quality
             .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(18), settings: inspectorCell)
             .Text("Showname", header: "Inspector Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Remark", header: "Comments", width: Widths.AnsiChars(10), settings: CommentsCell)
-            .Button("Send", null, header: "Send", width: Widths.AnsiChars(5), onclick: this.btnSend)
+            .Button("Send", null, header: "Send", width: Widths.AnsiChars(5), onclick: this.BtnSend)
             .Text("Sender", header: "Sender", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("SendDate", header: "Send Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
 
             // 將Receive換成button,按Receive之後將登入帳號填入Receiver、Receive填入今天的日期 20161020
-            .Button("Receive", null, header: "Receive", width: Widths.AnsiChars(5), onclick: this.btnReceive)
+            .Button("Receive", null, header: "Receive", width: Widths.AnsiChars(5), onclick: this.BtnReceive)
             .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("AddName", header: "Add Name", width: Widths.AnsiChars(25), iseditingreadonly: true) // addName + addDate
@@ -985,7 +985,7 @@ INSERT INTO GarmentTest_Detail_FGPT
             return base.ClickSave();
         }
 
-        private void txtSP_Validated(object sender, EventArgs e)
+        private void TxtSP_Validated(object sender, EventArgs e)
         {
             DataTable dt;
             DualResult result;
@@ -1006,7 +1006,7 @@ left join Order_Qty c WITH (NOLOCK) on a.ID=c.ID and c.Article=b.Article where a
             }
         }
 
-        void update_detailgrid_CellValidated(int RowIndex)
+        void Update_detailgrid_CellValidated(int RowIndex)
         {
             this.detailgrid.InvalidateRow(RowIndex);
         }

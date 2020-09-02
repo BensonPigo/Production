@@ -15,15 +15,15 @@ namespace Sci.Production.Quality
 {
     public partial class P06_Detail : Win.Subs.Input4
     {
-        private string loginID = Env.User.UserID;
-        private DataRow maindr;
+        private readonly string loginID = Env.User.UserID;
+        private readonly DataRow maindr;
         private DualResult result;
-        private string PoID;
+        private readonly string PoID;
         private string ID;
         private DataTable dtColorFastness;  // dtOven
         private bool newOven = false;
-        private bool isSee = false;
-        bool canEdit = true;
+        private readonly bool isSee = false;
+        readonly bool canEdit = true;
 
         public P06_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr, string Poid)
             : base(canedit, id, keyvalue2, keyvalue3)
@@ -826,7 +826,7 @@ namespace Sci.Production.Quality
             };
             #endregion
 
-            DataGridViewGeneratorTextColumnSettings resultCell = Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings resultCell = Prgs.CellResult.GetGridCell();
             seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
 
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -995,7 +995,7 @@ where id='{this.ID}'";
         }
 
         #region 表頭Article 右鍵事件: 1.右鍵selectItem 2.判斷validated
-        private void txtArticle_MouseDown(object sender, MouseEventArgs e)
+        private void TxtArticle_MouseDown(object sender, MouseEventArgs e)
         {
             if (this.EditMode == false)
             {
@@ -1024,7 +1024,7 @@ where id='{this.ID}'";
 
         #endregion
 
-        private void btnEncode_Click(object sender, EventArgs e)
+        private void BtnEncode_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
             bool result = true;
@@ -1114,7 +1114,7 @@ where id='{this.ID}'";
             this.OnRequery();
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
             string[] columnNames = new string[] { "ColorFastnessGroup", "SEQ", "Roll", "Dyelot", "SCIRefno", "Colorid", "Supplier", "Changescale", "StainingScale", "Result", "Remark" };
@@ -1199,7 +1199,7 @@ where id='{this.ID}'";
             #endregion
         }
 
-        private void btnToPDF_Click(object sender, EventArgs e)
+        private void BtnToPDF_Click(object sender, EventArgs e)
         {
             DataTable dtSubDate;
             if (!(this.result = DBProxy.Current.Select(null, $@"select distinct CONVERT(varchar(100), SubmitDate, 111) as SubmitDate from ColorFastness_Detail WITH (NOLOCK) where id='{this.ID}'", out dtSubDate)))

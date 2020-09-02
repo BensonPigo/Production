@@ -60,7 +60,7 @@ WHERE p1.ID ='{Env.User.UserID}'
                     }
                 }
 
-               ToolStripMenuItem P02MenuItem = null;
+               ToolStripMenuItem p02MenuItem = null;
 
                foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
                 {
@@ -72,7 +72,7 @@ WHERE p1.ID ='{Env.User.UserID}'
                             {
                                 if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P02. Import schedule"))
                                 {
-                                    P02MenuItem = (ToolStripMenuItem)subMenuItem;
+                                    p02MenuItem = (ToolStripMenuItem)subMenuItem;
                                     break;
                                 }
                             }
@@ -80,7 +80,7 @@ WHERE p1.ID ='{Env.User.UserID}'
                     }
                 }
 
-               callP02 = new P02(dr["ID"].ToString(), null, P02MenuItem);
+               callP02 = new P02(dr["ID"].ToString(), null, p02MenuItem);
                callP02.MdiParent = this.MdiParent;
                callP02.Show();
             };
@@ -116,7 +116,7 @@ WHERE p1.ID ='{Env.User.UserID}'
                     }
                 }
 
-                ToolStripMenuItem P02MenuItem = null;
+                ToolStripMenuItem p02MenuItem = null;
 
                 foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
                 {
@@ -128,7 +128,7 @@ WHERE p1.ID ='{Env.User.UserID}'
                             {
                                 if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P02. Import schedule"))
                                 {
-                                    P02MenuItem = (ToolStripMenuItem)subMenuItem;
+                                    p02MenuItem = (ToolStripMenuItem)subMenuItem;
                                     break;
                                 }
                             }
@@ -136,7 +136,7 @@ WHERE p1.ID ='{Env.User.UserID}'
                     }
                 }
 
-                callP02 = new P02(null, dr["POID"].ToString(), P02MenuItem);
+                callP02 = new P02(null, dr["POID"].ToString(), p02MenuItem);
                 callP02.MdiParent = this.MdiParent;
                 callP02.Show();
             };
@@ -161,7 +161,7 @@ WHERE p1.ID ='{Env.User.UserID}'
             }
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             if (!MyUtility.Check.Empty(this.txtWkNo.Text))
             {

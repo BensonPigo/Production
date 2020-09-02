@@ -57,7 +57,7 @@
             this.btnCanel.TabIndex = 3;
             this.btnCanel.Text = "Cancel";
             this.btnCanel.UseVisualStyleBackColor = true;
-            this.btnCanel.Click += new System.EventHandler(this.btnCanel_Click);
+            this.btnCanel.Click += new System.EventHandler(this.BtnCanel_Click);
             // 
             // btnImport
             // 
@@ -69,7 +69,7 @@
             this.btnImport.TabIndex = 2;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // btnFind
             // 
@@ -81,7 +81,7 @@
             this.btnFind.TabIndex = 1;
             this.btnFind.Text = "Find Now";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // txtSPNo
             // 
@@ -123,7 +123,7 @@
             this.checkBalance.TabIndex = 4;
             this.checkBalance.Text = "Only show data of stock quantity > 0";
             this.checkBalance.UseVisualStyleBackColor = true;
-            this.checkBalance.Click += new System.EventHandler(this.checkBalance_Click);
+            this.checkBalance.Click += new System.EventHandler(this.CheckBalance_Click);
             // 
             // groupBox1
             // 

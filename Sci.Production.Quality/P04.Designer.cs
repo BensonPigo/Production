@@ -329,7 +329,7 @@
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(140, 23);
             this.txtSP.TabIndex = 18;
-            this.txtSP.Validated += new System.EventHandler(this.txtSP_Validated);
+            this.txtSP.Validated += new System.EventHandler(this.TxtSP_Validated);
             // 
             // displayStyle
             // 

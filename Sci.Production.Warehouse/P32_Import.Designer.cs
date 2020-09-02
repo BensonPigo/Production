@@ -67,7 +67,7 @@
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnImport
             // 
@@ -79,7 +79,7 @@
             this.btnImport.TabIndex = 0;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // groupBox2
             // 
@@ -127,7 +127,7 @@
             this.gridFromPoId.Size = new System.Drawing.Size(485, 209);
             this.gridFromPoId.TabIndex = 13;
             this.gridFromPoId.TabStop = false;
-            this.gridFromPoId.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.grid2_RowSelecting);
+            this.gridFromPoId.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.Grid2_RowSelecting);
             // 
             // panel2
             // 
@@ -268,7 +268,7 @@
             this.gridImport.Size = new System.Drawing.Size(1008, 240);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
-            this.gridImport.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_RowLeave);
+            this.gridImport.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid1_RowLeave);
             // 
             // P32_Import
             // 

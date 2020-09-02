@@ -12,20 +12,20 @@ namespace Sci.Production.Warehouse
 {
     public partial class P01_TrimCardPrint : Win.Tems.PrintForm
     {
-        DataTable dtPrint_Content;
-        DataTable dtPrint_LeftColumn;
-        DataTable dtColor;
-        DataTable dtColor2;
-        DataRow rowColor;
-        string sql;
-        string temp;
-        string orderID;
-        string StyleID;
-        string SeasonID;
-        string FactoryID;
-        string BrandID;
-        string POID;
-        List<string> ListColor = new List<string>();
+        private DataTable dtPrint_Content;
+        private DataTable dtPrint_LeftColumn;
+        private DataTable dtColor;
+        private DataTable dtColor2;
+        private DataRow rowColor;
+        private string sql;
+        private string temp;
+        private string orderID;
+        private string StyleID;
+        private string SeasonID;
+        private string FactoryID;
+        private string BrandID;
+        private string POID;
+        private List<string> ListColor = new List<string>();
 
         public P01_TrimCardPrint(string _orderID, string _StyleID, string _SeasonID, string _FactoryID, string _BrandID, string _POID)
         {
@@ -659,7 +659,7 @@ ORDER BY ThreadColorID ASC
                 #endregion
 
                 #region ROW2
-                string Row2Type = string.Empty;
+                string row2Type = string.Empty;
 
                  // if (radioFabric.Checked)
                  // {
@@ -679,30 +679,30 @@ ORDER BY ThreadColorID ASC
                  // }
                 if (this.radioFabric.Checked)
                  {
-                     Row2Type = "FABRIC";
+                     row2Type = "FABRIC";
                  }
                  else if (this.radioAccessory.Checked)
                  {
-                     Row2Type = "ACCESSORY";
+                     row2Type = "ACCESSORY";
                  }
                  else if (this.radioOther.Checked)
                  {
-                     Row2Type = "OTHER";
+                     row2Type = "OTHER";
                  }
                  else if (this.radioThread.Checked)
                  {
-                     Row2Type = "Thread";
+                     row2Type = "Thread";
                  }
                 #endregion
 
                 #region 計算共要幾頁
                 int pagecount;
-                int CC, rC;
+                int cC, rC;
                 if (this.radioOther.Checked)
                 {
-                    CC = ((this.dtPrint_Content.Rows.Count - 1) / 6) + 1;
+                    cC = ((this.dtPrint_Content.Rows.Count - 1) / 6) + 1;
                     rC = ((this.dtPrint_LeftColumn.Rows.Count - 1) / 7) + 1;
-                    pagecount = CC * rC;
+                    pagecount = cC * rC;
                 }
                 else if (this.radioThread.Checked)
                 {
@@ -723,16 +723,16 @@ from (
                     else
                     {
                         intThreadMaxLength = Convert.ToInt32(dtMaxLength.Rows[0][0]);
-                        CC = ((intThreadMaxLength - 1) / 6) + 1;
+                        cC = ((intThreadMaxLength - 1) / 6) + 1;
                         rC = ((this.dtPrint_LeftColumn.Rows.Count - 1) / 4) + 1;
-                        pagecount = CC * rC;
+                        pagecount = cC * rC;
                     }
                 }
                 else
                 {
-                    CC = ((this.dtPrint_Content.Rows.Count - 1) / 6) + 1;
+                    cC = ((this.dtPrint_Content.Rows.Count - 1) / 6) + 1;
                     rC = ((this.dtPrint_LeftColumn.Rows.Count - 1) / 4) + 1;
-                    pagecount = CC * rC;
+                    pagecount = cC * rC;
                 }
                 #endregion
 
@@ -756,7 +756,7 @@ from (
                 tables = table[nextPage];
                 if (this.radioFabric.Checked || this.radioAccessory.Checked || this.radioThread.Checked)
                 {
-                    for (int j = 0; j < CC; j++)
+                    for (int j = 0; j < cC; j++)
                     {
                         for (int i = 0; i < this.dtPrint_LeftColumn.Rows.Count; i++)
                         {
@@ -776,7 +776,7 @@ from (
                 }
                 else if (this.radioOther.Checked)
                 {
-                    for (int j = 0; j < CC; j++)
+                    for (int j = 0; j < cC; j++)
                     {
                         for (int i = 0; i < this.dtPrint_LeftColumn.Rows.Count; i++)
                         {
@@ -818,7 +818,7 @@ from (
                             tables = table[nextPage + (i / 6 * rC) + j];
 
                             // 有資料時才顯示Type
-                            tables.Cell(2, 2 + (i % 6)).Range.Text = Row2Type;
+                            tables.Cell(2, 2 + (i % 6)).Range.Text = row2Type;
                             tables.Cell(3, 2 + (i % 6)).Range.Text = this.temp;
                         }
                         #endregion
@@ -868,7 +868,7 @@ from (
                             tables = table[nextPage + (i / 6 * rC) + j];
 
                             // 有資料時才顯示Type
-                            tables.Cell(2, 2 + (i % 6)).Range.Text = Row2Type;
+                            tables.Cell(2, 2 + (i % 6)).Range.Text = row2Type;
                             tables.Cell(3, 2 + (i % 6)).Range.Text = this.temp;
                         }
                         #endregion
@@ -915,7 +915,7 @@ from (
                             tables = table[nextPage + (i / 6 * rC) + j];
 
                             // 有資料時才顯示Type
-                            tables.Cell(2, 2 + (i % 6)).Range.Text = Row2Type;
+                            tables.Cell(2, 2 + (i % 6)).Range.Text = row2Type;
                             tables.Cell(3, 2 + (i % 6)).Range.Text = this.temp;
                         }
                         #endregion
@@ -932,7 +932,7 @@ from (
                             tables = table[nextPage + (i / 6 * rC) + j];
 
                             // 有資料時才顯示Type
-                            tables.Cell(2, 2 + (i % 6)).Range.Text = Row2Type;
+                            tables.Cell(2, 2 + (i % 6)).Range.Text = row2Type;
                         }
                     }
                     #region 填入Datas

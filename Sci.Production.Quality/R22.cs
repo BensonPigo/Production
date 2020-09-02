@@ -22,7 +22,7 @@ namespace Sci.Production.Quality
         }
 
         // radio改變
-        private void radioPerBrand_CheckedChanged(object sender, EventArgs e)
+        private void RadioPerBrand_CheckedChanged(object sender, EventArgs e)
         {
             if (this.radioPerBrand.Checked)
             {
@@ -32,7 +32,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void radioPerDateFactory_CheckedChanged(object sender, EventArgs e)
+        private void RadioPerDateFactory_CheckedChanged(object sender, EventArgs e)
         {
             if (this.radioPerDateFactory.Checked)
             {
@@ -41,7 +41,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void radioPerDateBrand_CheckedChanged(object sender, EventArgs e)
+        private void RadioPerDateBrand_CheckedChanged(object sender, EventArgs e)
         {
             if (this.radioPerDateBrand.Checked)
             {
@@ -734,7 +734,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
             return Ict.Result.True;
         }
 
-        protected string intToExcelcolumn(int cc) // 將數字轉換EXCEL的英文欄位;例27→AA
+        protected string IntToExcelcolumn(int cc) // 將數字轉換EXCEL的英文欄位;例27→AA
         {
             int cc1 = 0, cc2 = 0;
             string c3 = string.Empty;
@@ -790,15 +790,15 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
 
                 objSheets.Cells[2, 2] = "Audit Date:" + d1; // 加入日期條件
 
-                objSheets.get_Range("A1", this.intToExcelcolumn(this.printData.Columns.Count) + "1").Merge(false); // 合併欄位,要合併到哪個欄位並加入Pass Rate字串
+                objSheets.get_Range("A1", this.IntToExcelcolumn(this.printData.Columns.Count) + "1").Merge(false); // 合併欄位,要合併到哪個欄位並加入Pass Rate字串
                 objSheets.Cells[1, 1] = "Pass Rate"; // 加入Pass Rate
 
                 #region 依據欄位數量,指定合併,框線,底色
                 for (int i = 1; i < ((this.printData.Columns.Count - 4) / 3) + 1; i++) // 第4列,在summary之後要做幾次合併
                 {
-                    string s1 = this.intToExcelcolumn(2 + (i * 3)) + "4";
-                    string s2 = this.intToExcelcolumn(4 + (i * 3)) + "4";
-                    string s3 = this.intToExcelcolumn(4 + (i * 3));
+                    string s1 = this.IntToExcelcolumn(2 + (i * 3)) + "4";
+                    string s2 = this.IntToExcelcolumn(4 + (i * 3)) + "4";
+                    string s3 = this.IntToExcelcolumn(4 + (i * 3));
                     objSheets.get_Range(s1, s2).Merge(false); // 合併欄位
                     objSheets.get_Range(s1, s2).Interior.Color = Color.FromArgb(222, 186, 252); // 設定指定儲存格背景色
                     string[] cname = this.printData.Columns[2 + (i * 3)].ToString().Split('_'); // 把欄位名稱以_字元分割
@@ -811,7 +811,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 }
                 #endregion
                 objSheets.get_Range("D" + 5, "D" + (4 + this.printData.Rows.Count)).Interior.Color = Color.FromArgb(204, 255, 102); // summary_PASS RATE儲存格背景色
-                string lastright = this.intToExcelcolumn(this.printData.Columns.Count) + (4 + this.printData.Rows.Count);
+                string lastright = this.IntToExcelcolumn(this.printData.Columns.Count) + (4 + this.printData.Rows.Count);
                 objSheets.get_Range("A" + (4 + this.printData.Rows.Count), lastright).Interior.Color = Color.FromArgb(204, 255, 102); // 最後一列儲存格背景色
                 objSheets.get_Range("A3", lastright).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous; // 設定有資料範圍所有框線
                 objSheets.get_Range("A3", lastright).EntireRow.AutoFit(); // 自動調整列高
@@ -838,9 +838,9 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 #region 依據欄位數量,指定合併,框線,底色
                 for (int i = 1; i < ((this.printData.Columns.Count - 1) / 3) + 1; i++) // 第3列,在date之後要做幾次合併
                 {
-                    string s1 = this.intToExcelcolumn(-1 + (i * 3)) + "3";
-                    string s2 = this.intToExcelcolumn(1 + (i * 3)) + "3";
-                    string s3 = this.intToExcelcolumn(1 + (i * 3));
+                    string s1 = this.IntToExcelcolumn(-1 + (i * 3)) + "3";
+                    string s2 = this.IntToExcelcolumn(1 + (i * 3)) + "3";
+                    string s3 = this.IntToExcelcolumn(1 + (i * 3));
                     objSheets.get_Range(s1, s2).Merge(false); // 合併欄位
                     objSheets.get_Range(s1, s2).Interior.Color = Color.FromArgb(222, 186, 252); // 設定指定儲存格背景色
                     string[] cname = this.printData.Columns[(i * 3) - 1].ToString().Split('_'); // 把欄位名稱以_字元分割
@@ -852,12 +852,12 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                     objSheets.get_Range(s3 + ":" + s3, Type.Missing).NumberFormat = "0.00%";
                 }
                 #endregion
-                string right = this.intToExcelcolumn(this.printData.Columns.Count);
-                string lastright = this.intToExcelcolumn(this.printData.Columns.Count) + (3 + this.printData.Rows.Count);
+                string right = this.IntToExcelcolumn(this.printData.Columns.Count);
+                string lastright = this.IntToExcelcolumn(this.printData.Columns.Count) + (3 + this.printData.Rows.Count);
 
                 objSheets.Cells[this.printData.Rows.Count + 3, 1] = "Total";
 
-                objSheets.get_Range(this.intToExcelcolumn(this.printData.Columns.Count - 2) + 3, right + 3).Interior.Color = Color.FromArgb(204, 255, 102); // summary儲存格背景色
+                objSheets.get_Range(this.IntToExcelcolumn(this.printData.Columns.Count - 2) + 3, right + 3).Interior.Color = Color.FromArgb(204, 255, 102); // summary儲存格背景色
 
                 objSheets.get_Range(right + 4, right + (this.printData.Rows.Count + 3)).Interior.Color = Color.FromArgb(204, 255, 102); // summary_PASS RATE儲存格背景色
                 objSheets.get_Range("A" + (3 + this.printData.Rows.Count), lastright).Interior.Color = Color.FromArgb(204, 255, 102); // 最後一列儲存格背景色
@@ -887,9 +887,9 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 #region 依據欄位數量,指定合併,框線,底色
                 for (int i = 1; i < ((this.printData.Columns.Count - 1) / 3) + 1; i++) // 第3列,在date之後要做幾次合併
                 {
-                    string s1 = this.intToExcelcolumn(-1 + (i * 3)) + "3";
-                    string s2 = this.intToExcelcolumn(1 + (i * 3)) + "3";
-                    string s3 = this.intToExcelcolumn(1 + (i * 3));
+                    string s1 = this.IntToExcelcolumn(-1 + (i * 3)) + "3";
+                    string s2 = this.IntToExcelcolumn(1 + (i * 3)) + "3";
+                    string s3 = this.IntToExcelcolumn(1 + (i * 3));
                     objSheets.get_Range(s1, s2).Merge(false); // 合併欄位
                     objSheets.get_Range(s1, s2).Interior.Color = Color.FromArgb(222, 186, 252); // 設定指定儲存格背景色
                     string[] cname = this.printData.Columns[(i * 3) - 1].ToString().Split('_'); // 把欄位名稱以_字元分割
@@ -901,12 +901,12 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                     objSheets.get_Range(s3 + ":" + s3, Type.Missing).NumberFormat = "0.00%";
                 }
                 #endregion
-                string right = this.intToExcelcolumn(this.printData.Columns.Count);
-                string lastright = this.intToExcelcolumn(this.printData.Columns.Count) + (3 + this.printData.Rows.Count);
+                string right = this.IntToExcelcolumn(this.printData.Columns.Count);
+                string lastright = this.IntToExcelcolumn(this.printData.Columns.Count) + (3 + this.printData.Rows.Count);
 
                 objSheets.Cells[this.printData.Rows.Count + 3, 1] = "Total";
 
-                objSheets.get_Range(this.intToExcelcolumn(this.printData.Columns.Count - 2) + 3, right + 3).Interior.Color = Color.FromArgb(204, 255, 102); // summary儲存格背景色
+                objSheets.get_Range(this.IntToExcelcolumn(this.printData.Columns.Count - 2) + 3, right + 3).Interior.Color = Color.FromArgb(204, 255, 102); // summary儲存格背景色
 
                 objSheets.get_Range(right + 4, right + (this.printData.Rows.Count + 3)).Interior.Color = Color.FromArgb(204, 255, 102); // summary_PASS RATE儲存格背景色
                 objSheets.get_Range("A" + (3 + this.printData.Rows.Count), lastright).Interior.Color = Color.FromArgb(204, 255, 102); // 最後一列儲存格背景色

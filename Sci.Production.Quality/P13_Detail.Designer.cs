@@ -444,7 +444,7 @@
             this.chkOtherMethod.TabIndex = 33;
             this.chkOtherMethod.Text = "Other Method";
             this.chkOtherMethod.UseVisualStyleBackColor = true;
-            this.chkOtherMethod.CheckedChanged += new System.EventHandler(this.chkOtherMethod_CheckedChanged);
+            this.chkOtherMethod.CheckedChanged += new System.EventHandler(this.ChkOtherMethod_CheckedChanged);
             // 
             // comboTestingMethod
             // 
@@ -515,8 +515,8 @@
             this.txtCombineStyle.Name = "txtCombineStyle";
             this.txtCombineStyle.Size = new System.Drawing.Size(366, 23);
             this.txtCombineStyle.TabIndex = 20;
-            this.txtCombineStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtCombineStyle_PopUp);
-            this.txtCombineStyle.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtCombineStyle_KeyPress);
+            this.txtCombineStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCombineStyle_PopUp);
+            this.txtCombineStyle.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtCombineStyle_KeyPress);
             // 
             // displayResult
             // 
@@ -694,7 +694,7 @@
             this.btnPDF.TabIndex = 95;
             this.btnPDF.Text = "To PDF";
             this.btnPDF.UseVisualStyleBackColor = true;
-            this.btnPDF.Click += new System.EventHandler(this.btnPDF_Click);
+            this.btnPDF.Click += new System.EventHandler(this.BtnPDF_Click);
             // 
             // btnSendMR
             // 
@@ -705,7 +705,7 @@
             this.btnSendMR.TabIndex = 96;
             this.btnSendMR.Text = "Send to MR";
             this.btnSendMR.UseVisualStyleBackColor = true;
-            this.btnSendMR.Click += new System.EventHandler(this.btnSendMR_Click);
+            this.btnSendMR.Click += new System.EventHandler(this.BtnSendMR_Click);
             // 
             // P13_Detail
             // 

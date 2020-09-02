@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P37_PrintData
+    internal class P37_PrintData
     {
         public string NoID { get; set; }
 

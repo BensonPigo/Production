@@ -64,7 +64,7 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["id"] = string.Empty;
         }
 
-        private void txtActionCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtActionCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.Tools.SelectItem item = new Win.Tools.SelectItem("select id,description from whseReason WITH (NOLOCK) where type='RA' and junk = 0", "10,20", this.txtDesc.Text, true, ",");
             DialogResult result = item.ShowDialog();

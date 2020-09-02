@@ -16,9 +16,9 @@ namespace Sci.Production.Quality
 {
     public partial class P03_Heat : Win.Subs.Input4
     {
-        private string loginID = Env.User.UserID;
+        private readonly string loginID = Env.User.UserID;
         private DataRow maindr;
-        private string ID;
+        private readonly string ID;
 
         public P03_Heat(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, id, keyvalue2, keyvalue3)
@@ -32,14 +32,14 @@ namespace Sci.Production.Quality
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
-            this.button_enable();
+            this.Button_enable();
         }
 
         // 設定表頭資料
         protected override DualResult OnRequery()
         {
-            this.mainDBQuery(); // 重新query maindr
-            this.button_enable();
+            this.MainDBQuery(); // 重新query maindr
+            this.Button_enable();
 
             // 表頭 資料設定
             this.save.Enabled = !MyUtility.Convert.GetBool(this.maindr["HeatEncode"]);
@@ -170,7 +170,7 @@ this.ID);
             DataGridViewGeneratorTextColumnSettings DyelotCell = new DataGridViewGeneratorTextColumnSettings();
 
             DataGridViewGeneratorTextColumnSettings LabTechCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResultCell = PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResultCell = PublicPrg.Prgs.CellResult.GetGridCell();
 
             #region 設定GridMouse Click 事件
 
@@ -898,7 +898,7 @@ this.ID);
             return upResult;
         }
 
-        private void btnEncode_Click(object sender, EventArgs e)
+        private void BtnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
             if (!MyUtility.Convert.GetBool(this.maindr["HeatEncode"]))
@@ -1015,7 +1015,7 @@ this.ID);
         }
 
         // 編輯權限設定
-        private void button_enable()
+        private void Button_enable()
         {
             // return;
             if (this.maindr == null)
@@ -1030,7 +1030,7 @@ this.ID);
         }
 
         // maindr where id,poid重新query
-        private void mainDBQuery()
+        private void MainDBQuery()
         {
             string cmd = @"select a.id,a.poid,(a.SEQ1+a.SEQ2) as seq,a.SEQ1,a.SEQ2,a.ReceivingID,Refno,a.SCIRefno,
                 b.CrockingEncode,b.HeatEncode,b.WashEncode,
@@ -1056,7 +1056,7 @@ this.ID);
             }
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
             string[] columnNames = new string[]

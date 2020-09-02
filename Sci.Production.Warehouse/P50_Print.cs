@@ -18,7 +18,7 @@ namespace Sci.Production.Warehouse
             this.CurrentDataRow = row;
         }
 
-        string selectOption;
+        private string selectOption;
 
         protected override bool ValidateInput()
         {
@@ -46,8 +46,8 @@ where id = @ID",
                 return result;
             }
 
-            string ST = dt.Rows[0]["ST"].ToString();
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ST", ST));
+            string sT = dt.Rows[0]["ST"].ToString();
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ST", sT));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
 
@@ -145,9 +145,9 @@ where a.id= @ID", pars, out da);
             return Ict.Result.True;
         }
 
-        bool isStockList = false;
+        private bool isStockList = false;
 
-        private void radioGroup1_ValueChanged(object sender, EventArgs e)
+        private void RadioGroup1_ValueChanged(object sender, EventArgs e)
         {
             this.selectOption = this.radioGroup1.Value;
             this.isStockList = this.selectOption == this.radioStocktakingList.Value;

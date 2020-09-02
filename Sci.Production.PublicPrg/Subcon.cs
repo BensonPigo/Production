@@ -11,14 +11,13 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// GetItemDesc()
         /// </summary>
-        /// <param name="String Category"></param>
-        /// <param name="String Refno"></param>
+        /// <param name="category">category</param>
+        /// <param name="refno">refno</param>
         /// <returns>String Desc</returns>
         public static string GetItemDesc(string category, string refno)
         {
-            string desc = MyUtility.GetValue.Lookup(string.Format(
-                @"
-                    select description from localitem WITH (NOLOCK) where refno = '{0}' and category = '{1}'", refno.Replace("'", "''"), category));
+            string desc = MyUtility.GetValue.Lookup($@"
+                    select description from localitem WITH (NOLOCK) where refno = '{refno.Replace("'", "''")}' and category = '{category}'");
             string[] descs = desc.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             if (descs.Length == 0)
             {
@@ -31,6 +30,11 @@ namespace Sci.Production.PublicPrg
         }
         #endregion
 
+        /// <summary>
+        /// CheckNeedPlanningP03Quote
+        /// </summary>
+        /// <param name="artworktypeID">artworktypeID</param>
+        /// <returns>bool</returns>
         public static bool CheckNeedPlanningP03Quote(string artworktypeID)
         {
             string sqlCheckNeedPlanningP03Quote = $@"
@@ -41,6 +45,11 @@ select 1 from ArtworkType with (nolock)
             return MyUtility.Check.Seek(sqlCheckNeedPlanningP03Quote);
         }
 
+        /// <summary>
+        /// CheckIsArtworkorUseArtwork
+        /// </summary>
+        /// <param name="artworktypeID">artworktypeID</param>
+        /// <returns>bool</returns>
         public static bool CheckIsArtworkorUseArtwork(string artworktypeID)
         {
             string sqlCheckIsArtworkorUseArtwork = $@"
@@ -50,6 +59,11 @@ select 1 from ArtworkType with (nolock)
             return MyUtility.Check.Seek(sqlCheckIsArtworkorUseArtwork);
         }
 
+        /// <summary>
+        /// UpdateArtworkReq_DetailArtworkPOID
+        /// </summary>
+        /// <param name="artworkPOID">artworkPOID</param>
+        /// <returns>DualResult</returns>
         public static DualResult UpdateArtworkReq_DetailArtworkPOID(string artworkPOID)
         {
             string sqlUpdateArtworkReq_Detail = $@"
@@ -67,12 +81,28 @@ update ard  set ard.ArtworkPOID = '{artworkPOID}'
             return DBProxy.Current.Execute(null, sqlUpdateArtworkReq_Detail);
         }
 
+        /// <summary>
+        /// CallFormAction
+        /// </summary>
         public enum CallFormAction
         {
+            /// <summary>
+            /// Save
+            /// </summary>
             Save = 1,
+
+            /// <summary>
+            /// Confirm
+            /// </summary>
             Confirm = 2,
         }
 
+        /// <summary>
+        /// CheckLocalSupp_BankStatus
+        /// </summary>
+        /// <param name="suppID">suppID</param>
+        /// <param name="callFormAction">callFormAction</param>
+        /// <returns>DualResult</returns>
         public static DualResult CheckLocalSupp_BankStatus(string suppID, CallFormAction callFormAction)
         {
             string sqlCheck = $@"select top 1 Status from dbo.LocalSupp_Bank where ID = '{suppID}' order by Adddate desc";

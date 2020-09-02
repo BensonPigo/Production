@@ -185,7 +185,7 @@
             this.txtRequest.Name = "txtRequest";
             this.txtRequest.Size = new System.Drawing.Size(107, 23);
             this.txtRequest.TabIndex = 4;
-            this.txtRequest.Validating += new System.ComponentModel.CancelEventHandler(this.txtRequest_Validating);
+            this.txtRequest.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRequest_Validating);
             // 
             // labelIssueDate
             // 
@@ -285,7 +285,7 @@
             this.btnAutoPick.TabIndex = 15;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
-            this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
+            this.btnAutoPick.Click += new System.EventHandler(this.BtnAutoPick_Click);
             // 
             // labelNotApprove
             // 
@@ -309,7 +309,7 @@
             this.btnCutRef.TabIndex = 45;
             this.btnCutRef.Text = "Cut Ref#";
             this.btnCutRef.UseVisualStyleBackColor = true;
-            this.btnCutRef.Click += new System.EventHandler(this.btnCutRef_Click);
+            this.btnCutRef.Click += new System.EventHandler(this.BtnCutRef_Click);
             // 
             // P10
             // 
