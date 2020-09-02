@@ -631,9 +631,11 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Controls.Add(this.txttpeuser4);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -1828,7 +1830,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
+            this.shapeContainer2.Size = new System.Drawing.Size(990, 649);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -2017,6 +2019,7 @@
             this.txtPONo.Name = "txtPONo";
             this.txtPONo.Size = new System.Drawing.Size(200, 21);
             this.txtPONo.TabIndex = 1;
+            this.txtPONo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtPONo_Validating);
             // 
             // txtStyle
             // 
