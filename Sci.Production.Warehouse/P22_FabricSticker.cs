@@ -12,16 +12,19 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P22_FabricSticker : Win.Subs.Base
     {
-        private object strSubTransferID;
+        private readonly object strSubTransferID;
 
+        /// <inheritdoc/>
         public P22_FabricSticker(object strSubTransferID)
         {
             this.InitializeComponent();
             this.strSubTransferID = strSubTransferID;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -46,30 +49,31 @@ namespace Sci.Production.Warehouse
             #endregion
 
             #region Set Grid Datas
-            List<SqlParameter> listSqlParameters = new List<SqlParameter>();
-            listSqlParameters.Add(new SqlParameter("@ID", this.strSubTransferID));
+            List<SqlParameter> listSqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", this.strSubTransferID),
+            };
             string sqlcmd = @"
 select Sel = 0
-       , RowNo = Row_Number() over (order by std.FromPOID, std.ToSeq1, std.ToSeq2)
-       , SPNo = std.FromPOID
-	   , Seq = Concat (std.FromSeq1, '-', std.FromSeq2)
-	   , Refno = isnull (psd.Refno, '')
-	   , Color = isnull (psd.ColorID, '')
-	   , ToRoll = std.ToRoll
-	   , ToDyelot = std.ToDyelot
-	   , Qty = std.Qty
-	   , ToFactory = std.ToFactoryID
-	   , SPDetail = std.FromPOID+' '+std.FromSeq1+'-'+std.FromSeq2
-       , StockUnit = psd.StockUnit
-	   , ToLocation = isnull(std.ToLocation,'')
+	, RowNo = Row_Number() over (order by std.FromPOID, std.ToSeq1, std.ToSeq2)
+	, SPNo = std.FromPOID
+	, Seq = Concat (std.FromSeq1, '-', std.FromSeq2)
+	, Refno = isnull (psd.Refno, '')
+    , Color =  IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,SuppColor, isnull(dbo.GetColorMultipleID (o.BrandID, psd.ColorID), ''))
+	, ToRoll = std.ToRoll
+	, ToDyelot = std.ToDyelot
+	, Qty = std.Qty
+	, ToFactory = std.ToFactoryID
+	, SPDetail = std.FromPOID+' '+std.FromSeq1+'-'+std.FromSeq2
+	, StockUnit = psd.StockUnit
+	, ToLocation = isnull(std.ToLocation,'')
 from SubTransfer_Detail std
-left join Po_Supp_Detail psd on std.FromPOID = psd.ID
-								and std.FromSeq1 = psd.SEQ1
-								and std.FromSeq2 = psd.SEQ2
+left join Orders o on std.FromPOID = o.ID
+left join Po_Supp_Detail psd on std.FromPOID = psd.ID and std.FromSeq1 = psd.SEQ1 and std.FromSeq2 = psd.SEQ2
+left join Fabric on Fabric.SCIRefno = psd.SCIRefno
 where std.ID = @ID
 order by RowNo";
-            DataTable dtResult;
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, listSqlParameters, out dtResult);
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, listSqlParameters, out DataTable dtResult);
             this.listControlBindingSource.DataSource = dtResult;
 
             if (result == false)
@@ -119,17 +123,17 @@ order by NewRowNo";
                     Qty = Convert.ToDouble(row["Qty"]),
                 }).ToList();
 
-                ReportDefinition report = new ReportDefinition();
-                report.ReportDataSource = listData;
+                ReportDefinition report = new ReportDefinition
+                {
+                    ReportDataSource = listData,
+                };
 
                 // 指定是哪個 RDLC
                 Type reportResourceNamespace = typeof(P22_PrintData);
                 Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
                 string reportResourceName = "P22_FabricSticker_Print.rdlc";
 
-                IReportResource reportresource;
-
-                if ((result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)) == false)
+                if ((result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)) == false)
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;
@@ -138,8 +142,10 @@ order by NewRowNo";
                 report.ReportResource = reportresource;
 
                 // 開啟 report view
-                var frm = new Win.Subs.ReportView(report);
-                frm.MdiParent = this.MdiParent;
+                var frm = new Win.Subs.ReportView(report)
+                {
+                    MdiParent = this.MdiParent,
+                };
                 frm.Show();
                 #endregion
             }
