@@ -6,6 +6,7 @@ using Ict;
 using EASendMail;
 using System.Windows.Forms;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.PublicPrg
 {
@@ -14,6 +15,13 @@ namespace Sci.Production.PublicPrg
     /// </summary>
     public static partial class Prgs
     {
+        /// <inheritdoc/>
+        public static bool CheckFloat(string svalue, int dp1, int dp2)
+        {
+            // 檢查值是否為浮點數字,dp1 ~ dp2 位小數
+            return Regex.IsMatch(svalue, @"^[0-9](.[0-9]{" + dp1.ToString() + "," + dp2.ToString() + "})?$");
+        }
+
         /// <summary>
         /// 轉呼叫string.IsNullOrWhiteSpace(source)
         /// </summary>

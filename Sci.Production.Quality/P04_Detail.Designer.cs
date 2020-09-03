@@ -131,6 +131,7 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnToReport = new Sci.Win.UI.Button();
+            this.btnDelete = new Sci.Win.UI.Button();
             this.tabControl1.SuspendLayout();
             this.tabDetail.SuspendLayout();
             this.tabShrinkage.SuspendLayout();
@@ -168,6 +169,7 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1059, 509);
             this.tabControl1.TabIndex = 0;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.TabControl1_SelectedIndexChanged);
             // 
             // tabDetail
             // 
@@ -1441,9 +1443,21 @@
             this.btnToReport.UseVisualStyleBackColor = true;
             this.btnToReport.Click += new System.EventHandler(this.BtnToReport_Click);
             // 
+            // btnDelete
+            // 
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDelete.Location = new System.Drawing.Point(7, 541);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(97, 30);
+            this.btnDelete.TabIndex = 13;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
+            // 
             // P04_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1059, 572);
+            this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnToReport);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnClose);
@@ -1584,5 +1598,6 @@
         private Win.UI.Panel panel7;
         private Win.UI.Grid gridFGPT;
         private Win.UI.Button btnToReport;
+        private Win.UI.Button btnDelete;
     }
 }
