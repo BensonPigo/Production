@@ -1,5 +1,4 @@
-
-CREATE PROCEDURE [dbo].[exp_Express]
+Create PROCEDURE [dbo].[exp_Express]
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -23,15 +22,19 @@ END
 --1. 優先取得Production.dbo.DateInfo
 declare @DateInfoName varchar(30) ='FactoryExpress';
 declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
+declare @DateEnd date = (select DateEnd from Production.dbo.DateInfo where name = @DateInfoName);
 declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
 --2.取得預設值
 if @DateStart is Null
 	set @DateStart= CONVERT(DATE,DATEADD(day,-30,GETDATE()))
 
+if @DateEnd is null
+	set @DateEnd = '9999-12-31'
+
 --3.更新Pms_To_Trade.dbo.dateInfo
 if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
-	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateStart, Remark=@Remark where Name = @DateInfoName 
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateEnd, Remark=@Remark where Name = @DateInfoName 
 else
 	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
 	values (@DateInfoName,@DateStart,@DateStart,@Remark);
