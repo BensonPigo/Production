@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.btnSetting = new Sci.Win.UI.Button();
             this.comboBoxSetting = new Sci.Win.UI.ComboBox();
             this.radioBundleCardRF = new System.Windows.Forms.RadioButton();
             this.checkExtendAllParts = new System.Windows.Forms.CheckBox();
             this.radioBundleChecklist = new System.Windows.Forms.RadioButton();
             this.radioBundleCard = new System.Windows.Forms.RadioButton();
+            this.btnSetting = new Sci.Win.UI.Button();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,17 +65,6 @@
             this.radioPanel1.Size = new System.Drawing.Size(350, 113);
             this.radioPanel1.TabIndex = 0;
             this.radioPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.RadioPanel1_Paint);
-            // 
-            // btnSetting
-            // 
-            this.btnSetting.Location = new System.Drawing.Point(349, 60);
-            this.btnSetting.Name = "btnSetting";
-            this.btnSetting.Size = new System.Drawing.Size(80, 30);
-            this.btnSetting.TabIndex = 8;
-            this.btnSetting.Text = "Setting";
-            this.btnSetting.UseVisualStyleBackColor = true;
-            this.btnSetting.Visible = false;
-            this.btnSetting.Click += new System.EventHandler(this.BtnSetting_Click);
             // 
             // comboBoxSetting
             // 
@@ -132,6 +121,17 @@
             this.radioBundleCard.TabStop = true;
             this.radioBundleCard.Text = "Bundle Card(A4)";
             this.radioBundleCard.UseVisualStyleBackColor = true;
+            // 
+            // btnSetting
+            // 
+            this.btnSetting.Location = new System.Drawing.Point(349, 60);
+            this.btnSetting.Name = "btnSetting";
+            this.btnSetting.Size = new System.Drawing.Size(80, 30);
+            this.btnSetting.TabIndex = 8;
+            this.btnSetting.Text = "Setting";
+            this.btnSetting.UseVisualStyleBackColor = true;
+            this.btnSetting.Visible = false;
+            this.btnSetting.Click += new System.EventHandler(this.BtnSetting_Click);
             // 
             // P10_Print
             // 

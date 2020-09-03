@@ -797,6 +797,10 @@ order by x.[Bundle]");
             }
         }
 
+        /// <summary>
+        /// RF 測試用
+        /// 現行流程 Open -> C31 -> P21 -> P42 -> P35 -> P41 -> (F30 -> WDB) -> C34 -> Close
+        /// </summary>
         private void BtnSetting_Click(object sender, EventArgs e)
         {
             if (this.dt == null || this.dt.Rows.Count == 0)

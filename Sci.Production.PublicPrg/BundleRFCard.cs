@@ -163,8 +163,8 @@ from
 		, br.BuyerID
 		, [MK] = iif(isnull(b.CutRef,'') <> '',(select top 1 WorkOrder.MarkerNo from WorkOrder WITH (NOLOCK) where WorkOrder.CutRef= b.CutRef and WorkOrder.id = b.poid),'')
 		, [BodyCut] = concat(isnull(b.PatternPanel,''),'-', b.FabricPanelCode ,'-',convert(varchar, b.Cutno))
-		, [Artwork]= iif(len(Artwork.Artwork) > 43, substring(Artwork.Artwork ,0,43), Artwork.Artwork)
-		, bd.PatternDesc
+		, [Artwork]= ''
+		, bda.PatternDesc
         , [BundleID] = b.ID
         , bd.BundleNo
 	from Bundle b WITH (NOLOCK)
@@ -181,16 +181,11 @@ from
 	) bd_count
 	outer apply
 	(
-		select Artwork= stuff((
-			 Select distinct concat('+', bda.SubprocessId)
-			 from Bundle_Detail_Art bda with (nolock, index(ID_Bundleno_SubID))
-			 left join Bundle_Detail_Allpart bdall WITH (NOLOCK) on bdall.ID = bda.ID 
-			 where bda.id = bd.Id 
-			 and bda.PatternCode = bdall.PatternCode
-			 and bda.Bundleno=bd.BundleNo 
-		 for xml path('')
-		),1,1,'')
-	)as Artwork
+		select distinct bda.PatternCode, bda.PatternDesc, bda.Parts
+		from Bundle_Detail_Allpart bda with(nolock)
+		where bda.id = b.id
+
+	) bda
 	where b.ID = @ID
     {sqlWhere}
 	and bd.Patterncode = 'ALLPARTS'
