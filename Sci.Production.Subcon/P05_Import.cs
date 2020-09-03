@@ -717,7 +717,7 @@ outer apply(
             PatternCode = isnull(fr.PatternCode,'') and
             PatternDesc = isnull(fr.PatternDesc,'')  
 ) CurrentReq
-
+order by    fr.orderID, fr.Article, fr.SizeCode
 ";
 
             return strSQLCmd;
