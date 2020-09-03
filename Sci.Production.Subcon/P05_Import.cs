@@ -11,6 +11,7 @@ using Ict.Win;
 using Sci;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using Sci.Win.UI;
 
 namespace Sci.Production.Subcon
 {
@@ -32,6 +33,7 @@ namespace Sci.Production.Subcon
         private bool isNeedPlanningB03Quote = false;
         private bool IsSintexSubcon = false;
         private bool fromPlanningB03Quote = false;
+        private P05 p05;
 
         /// <summary>
         /// P05_Import
@@ -241,7 +243,7 @@ namespace Sci.Production.Subcon
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
+            this.p05 = (P05)this.ParentIForm;
             Ict.Win.DataGridViewGeneratorNumericColumnSettings col_ReqQty = new DataGridViewGeneratorNumericColumnSettings();
 
             col_ReqQty.CellMouseDoubleClick += (s, e) =>
@@ -266,6 +268,21 @@ where id ='{this.dr_artworkReq["artworktypeid"]}'
 ");
             }
 
+            DataGridViewGeneratorNumericColumnSettings tsReqQty = new DataGridViewGeneratorNumericColumnSettings();
+
+            tsReqQty.CellMouseDoubleClick += (s, e) =>
+            {
+                DataTable dtMsg = ((DataTable)this.listControlBindingSource1.DataSource).Clone();
+                dtMsg.ImportRow(this.gridBatchImport.GetDataRow(e.RowIndex));
+                MsgGridForm msgGridForm = new MsgGridForm(dtMsg, "Buy Back Qty", "Buy Back Qty", "orderID,OrderQty,BuyBackArtworkReq");
+                msgGridForm.grid1.Columns[0].HeaderText = "SP";
+                msgGridForm.grid1.Columns[1].HeaderText = "Order\r\nQty";
+                msgGridForm.grid1.Columns[2].HeaderText = "Buy Back\r\nQty";
+                msgGridForm.grid1.AutoResizeColumns();
+                msgGridForm.grid1.Columns[0].Width = 120;
+                msgGridForm.ShowDialog();
+            };
+
             this.gridBatchImport.Font = new Font("Arial", 9);
             this.gridBatchImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridBatchImport.DataSource = this.listControlBindingSource1;
@@ -274,7 +291,7 @@ where id ='{this.dr_artworkReq["artworktypeid"]}'
                 .Text("orderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14))
                 .Numeric("OrderQty", header: "Order Qty", iseditingreadonly: true)
                 .Numeric("AccReqQty", header: "Accu. Req. Qty", iseditingreadonly: true, settings: col_ReqQty)
-                .Numeric("ReqQty", header: "Req. Qty", iseditable: true)
+                .Numeric("ReqQty", header: "Req. Qty", iseditable: true, settings: tsReqQty)
                 .Date("sewinline", header: "Sew. Inline", iseditingreadonly: true)
                 .Date("SciDelivery", header: "SCI Delivery", iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -375,7 +392,6 @@ select  distinct
 		, o.POID
         , id = ''
         , ExceedQty = 0
-        , [StyleArtworkUkey] = null
 into #baseArtworkReq
 from  orders o WITH (NOLOCK)
 inner join Order_Qty oq with (nolock) on o.ID = oq.ID
@@ -388,7 +404,7 @@ where f.IsProduceFty=1
 and o.category in ('B','S')
 and ot.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) 
+and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1 or o.KeepPanels=1) 
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 {sqlWhere}
 
@@ -405,7 +421,7 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
             string tmpcurrentReq = string.Empty;
 
             strSQLCmd = $@"
-select  [LocalSuppId] = ''
+select  [LocalSuppId] = isnull(sao.LocalSuppId, '')
 		, [orderID] = o.ID
         , oa.Article
         , oa.SizeCode
@@ -421,7 +437,6 @@ select  [LocalSuppId] = ''
 		, o.POID
         , id = ''
         , ExceedQty = 0
-        , vsa.StyleArtworkUkey
 into #baseArtworkReq
 from  orders o WITH (NOLOCK) 
 inner join dbo.View_Order_Artworks oa on oa.ID = o.ID
@@ -432,12 +447,15 @@ left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and
                                         vsa.ArtworkTypeID = oa.ArtworkTypeID and 
                                         vsa.PatternCode = oa.PatternCode and
 										vsa.PatternDesc = oa.PatternDesc 
+left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
+                                                    sao.LocalSuppId = '{this.dr_artworkReq["LocalSuppId"]}' and
+                                                    (sao.SizeCode = oa.SizeCode or sao.SizeCode = '') 
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 where f.IsProduceFty=1
 and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
+and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1 or o.KeepPanels=1)
 {sqlWhere}
 ";
 
@@ -467,7 +485,6 @@ select  [LocalSuppId] = '{this.dr_artworkReq["LocalSuppId"]}'
 		, o.POID
         , id = ''
         , ExceedQty = 0
-        , [StyleArtworkUkey] = null
 into #baseArtworkReq
 from  Order_TmsCost ot
 inner join orders o WITH (NOLOCK) on ot.ID = o.ID
@@ -479,7 +496,7 @@ and ot.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
 and ot.Price > 0
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
+and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1 or o.KeepPanels=1)
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 {sqlWhere}
 ";
@@ -489,12 +506,6 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 
         private string FinalGetDataSql(string sql)
         {
-            string sqlCheckB03Supp = this.fromPlanningB03Quote ? $@"left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = fr.StyleArtworkUkey and 
-                                                                    sao.LocalSuppId = '{this.dr_artworkReq["LocalSuppId"]}' and
-                                                                    sao.SizeCode = fr.SizeCode " : string.Empty;
-
-            string colSupp = this.fromPlanningB03Quote ? " ,[LocalSuppId] = isnull(sao.LocalSuppId, '') " : ",fr.LocalSuppId";
-
             string strSQLCmd = sql + $@"
 select  * into #FinalArtworkReq
 from (
@@ -514,10 +525,9 @@ select  LocalSuppId
 		,POID
         ,id
         ,ExceedQty
-        ,StyleArtworkUkey
 from #baseArtworkReq
 union all
-select  LocalSuppId
+select  [LocalSuppId] = isnull(LocalSuppId.val,'')
 		,orderID
         ,Article
         ,[SizeCode] = ''
@@ -533,9 +543,17 @@ select  LocalSuppId
 		,POID
         ,id
         ,ExceedQty
-        ,StyleArtworkUkey
-from #baseArtworkReq
-group by     LocalSuppId
+from #baseArtworkReq t
+outer apply (select top 1 val = LocalSuppId
+			 from #baseArtworkReq t1 
+			 where  t1.orderID = t.orderID and
+					t1.Article = t.Article and
+					t1.PatternCode = t.PatternCode and
+					t1.PatternDesc = t.PatternDesc and
+					t1.ArtworkID = t.ArtworkID and
+					t1.LocalSuppId <> ''
+			 ) LocalSuppId
+group by     LocalSuppId.val
 		    ,orderID
             ,Article
 		    ,SewInLIne
@@ -549,9 +567,8 @@ group by     LocalSuppId
 		    ,POID
             ,id
             ,ExceedQty
-            ,StyleArtworkUkey
 union all
-select  LocalSuppId
+select  [LocalSuppId] = isnull(LocalSuppId.val,'')
 		,orderID
         ,[Article] = ''
         ,SizeCode
@@ -567,9 +584,17 @@ select  LocalSuppId
 		,POID
         ,id
         ,ExceedQty
-        ,StyleArtworkUkey
-from #baseArtworkReq
-group by     LocalSuppId
+from #baseArtworkReq t
+outer apply (select top 1 val = LocalSuppId
+			 from #baseArtworkReq t1 
+			 where  t1.orderID = t.orderID and
+					t1.SizeCode = t.SizeCode and
+					t1.PatternCode = t.PatternCode and
+					t1.PatternDesc = t.PatternDesc and
+					t1.ArtworkID = t.ArtworkID and
+					t1.LocalSuppId <> ''
+			 ) LocalSuppId
+group by     LocalSuppId.val
 		    ,orderID
             ,SizeCode
 		    ,SewInLIne
@@ -583,9 +608,8 @@ group by     LocalSuppId
 		    ,POID
             ,id
             ,ExceedQty
-            ,StyleArtworkUkey
 union all
-select  LocalSuppId
+select  [LocalSuppId] = isnull(LocalSuppId.val,'')
 		,orderID
         ,[Article] = ''
         ,[SizeCode] = ''
@@ -601,9 +625,16 @@ select  LocalSuppId
 		,POID
         ,id
         ,ExceedQty
-        ,StyleArtworkUkey
-from #baseArtworkReq
-group by     LocalSuppId
+from #baseArtworkReq t
+outer apply (select top 1 val = LocalSuppId
+			 from #baseArtworkReq t1 
+			 where  t1.orderID = t.orderID and
+					t1.PatternCode = t.PatternCode and
+					t1.PatternDesc = t.PatternDesc and
+					t1.ArtworkID = t.ArtworkID and
+					t1.LocalSuppId <> ''
+			 ) LocalSuppId
+group by     LocalSuppId.val
 		    ,orderID
 		    ,SewInLIne
 		    ,SciDelivery
@@ -616,17 +647,19 @@ group by     LocalSuppId
 		    ,POID
             ,id
             ,ExceedQty
-            ,StyleArtworkUkey
 ) a
 
+{this.p05.SqlGetBuyBackDeduction(this.dr_artworkReq["artworktypeid"].ToString())}
+
 select  [Selected] = 0
-        {colSupp}
-		,fr.orderID
+        ,fr.orderID
+		,fr.LocalSuppId
         ,fr.Article
         ,fr.SizeCode
         ,fr.OrderQty
         ,[AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) + isnull(CurrentReq.value,0)
-        ,ReqQty = iif(fr.OrderQty-(ReqQty.value + PoQty.value + isnull(CurrentReq.value,0)) < 0, 0, fr.OrderQty - (ReqQty.value + PoQty.value + isnull(CurrentReq.value,0)))
+        ,ReqQty = iif(  fr.OrderQty - (ReqQty.value + PoQty.value + isnull(CurrentReq.value,0) + isnull(tbbd.BuyBackArtworkReq, 0)) < 0, 0, 
+                        fr.OrderQty - (ReqQty.value + PoQty.value + isnull(CurrentReq.value,0) + isnull(tbbd.BuyBackArtworkReq, 0)))
 		,fr.SewInLIne
 		,fr.SciDelivery
 		,fr.ArtworkID
@@ -638,8 +671,15 @@ select  [Selected] = 0
 		,fr.POID
         ,fr.id
         ,fr.ExceedQty
+        ,[BuyBackArtworkReq] = isnull(tbbd.BuyBackArtworkReq, 0)
 from #FinalArtworkReq fr
-{sqlCheckB03Supp}
+left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = fr.OrderID       and
+                                        tbbd.Article = fr.Article       and
+                                        tbbd.SizeCode = fr.SizeCode     and
+                                        tbbd.PatternCode = fr.PatternCode   and
+                                        tbbd.PatternDesc = fr.PatternDesc   and
+                                        tbbd.ArtworkID = fr.ArtworkID and
+										tbbd.LocalSuppID = fr.LocalSuppID
 outer apply (
         select value = ISNULL(sum(ReqQty),0)
         from ArtworkReq_Detail AD with (nolock)
@@ -677,6 +717,7 @@ outer apply(
             PatternCode = isnull(fr.PatternCode,'') and
             PatternDesc = isnull(fr.PatternDesc,'')  
 ) CurrentReq
+order by    fr.orderID, fr.Article, fr.SizeCode
 ";
 
             return strSQLCmd;
