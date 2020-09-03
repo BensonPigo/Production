@@ -37,7 +37,7 @@ if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
 	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateEnd, Remark=@Remark where Name = @DateInfoName 
 else
 	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
-	values (@DateInfoName,@DateStart,@DateStart,@Remark);
+	values (@DateInfoName,@DateStart,@DateEnd,@Remark);
 ------------------------------------------------------------------------------------------------------
 
 
