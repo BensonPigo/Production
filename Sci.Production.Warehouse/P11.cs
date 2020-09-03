@@ -426,6 +426,7 @@ select  a.Id
 				select CONCAT(',',rtrim(iss.SizeCode),'*',iss.AutoPickQty)
 				from Issue_Size iss
 				where iss.Issue_DetailUkey = a.ukey
+                and iss.AutoPickQty <> 0
 				for xml path('')
 			),1,1,'')
 			)
@@ -943,13 +944,15 @@ where a.id='{0}' order by Seq", this.poid,
         {
             string masterID = (e.Detail == null) ? string.Empty : e.Detail["ID"].ToString();
             string ukey = (e.Detail == null || MyUtility.Check.Empty(e.Detail["ukey"])) ? "0" : e.Detail["ukey"].ToString();
-            this.SubDetailSelectCommand = string.Format(
-                @"
+            string poid1 = MyUtility.GetValue.Lookup($"select poid from dbo.cutplan WITH (NOLOCK) where id='{this.CurrentMaintain["cutplanid"]}' and mdivisionid = '{Env.User.Keyword}'");
+            string poid2 = MyUtility.GetValue.Lookup($"select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{this.CurrentMaintain["orderid"]}' and Factory.mdivisionid = '{Env.User.Keyword}'");
+            string poid = poid1.Empty() ? poid2 : poid1;
+            this.SubDetailSelectCommand = $@"
 ;with aaa as(
     select  
          a.SizeCode
         , b.Id
-        , Issue_DetailUkey =  '{2}'
+        , Issue_DetailUkey =  b.Issue_DetailUkey
         , QTY = isnull(b.Qty,0)
         , isvirtual = IIF(b.Qty IS NULL , 1 ,0)
         , seq
@@ -957,18 +960,9 @@ where a.id='{0}' order by Seq", this.poid,
         , Diffqty = isnull(AutoPickQty, 0) - isnull(b.Qty,0)
     from  dbo.Issue_Size b WITH (NOLOCK) 
     inner join dbo.Order_SizeCode a WITH (NOLOCK) on b.SizeCode = a.SizeCode
-    outer apply(select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{3}')poid1
-    outer apply(select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{4}' and Factory.mdivisionid = '{3}')poid2
-    where a.id= iif(isnull(poid1.POID,'')='',poid2.POID,poid1.poid)
-    and b.id = '{1}' and b.Issue_DetailUkey = {2}
-)",
-                this.CurrentMaintain["cutplanid"].ToString(),
-                masterID,
-                ukey,
-                Env.User.Keyword,
-                this.CurrentMaintain["orderid"].ToString());
-
-            this.SubDetailSelectCommand += $@"
+    where a.id= '{poid}'
+    and b.id = '{masterID}' and b.Issue_DetailUkey = {ukey}
+)
 ,bbb as(
 	select distinct os.sizecode,ID = '{this.CurrentMaintain["orderid"]}',Issue_DetailUkey = '{ukey}',QTY=0,isvirtual = 1,seq, AutoPickQty=0,Diffqty = 0
 	from dbo.Order_SizeCode os WITH(NOLOCK)
