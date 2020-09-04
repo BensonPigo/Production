@@ -3786,12 +3786,12 @@ update tar set
 ,tar.EditDate	   = S.EditDate
 from Trade_To_Pms.dbo.SubProDefectCode S
 inner join Production.dbo.SubProDefectCode tar 
-	on tar.ArtworkTypeID	 = S.ArtworkTypeID	
+	on tar.SubProcessID	 = S.SubProcessID	
 	and tar.DefectCode	 = S.DefectCode	
 	
 INSERT INTO SubProDefectCode
 (
-	[ArtworkTypeID]
+	[SubProcessID]
 	,[DefectCode]
 	,[Junk]
 	,[Description]
@@ -3801,7 +3801,7 @@ INSERT INTO SubProDefectCode
 	,[Editname]
 )
 SELECT
-	[ArtworkTypeID]
+	[SubProcessID]
 	,[DefectCode]
 	,[Junk]
 	,[Description]
@@ -3813,7 +3813,7 @@ from Trade_To_Pms.dbo.SubProDefectCode S
 where not exists(
 	select 1
 	from Production.dbo.SubProDefectCode tar
-	where tar.ArtworkTypeID	 = S.ArtworkTypeID	
+	where tar.SubProcessID	 = S.SubProcessID	
 	and tar.DefectCode	 = S.DefectCode	)
 	
 DELETE S
@@ -3821,7 +3821,7 @@ from Production.dbo.SubProDefectCode S
 where not exists(
 	select 1
 	from Trade_To_Pms.dbo.SubProDefectCode tar
-	where tar.ArtworkTypeID	 = S.ArtworkTypeID	
+	where tar.SubProcessID	 = S.SubProcessID	
 	and tar.DefectCode	 = S.DefectCode	)
 END
 
