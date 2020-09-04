@@ -2529,6 +2529,7 @@
     <Build Include="dbo\Tables\ShippingMarkCombination.sql" />
     <Build Include="dbo\Tables\ShippingMarkCombination_Detail.sql" />
     <Build Include="dbo\Tables\ShippingMarkPicture_Detail.sql" />
+    <Build Include="dbo\Tables\GarmentTest_Detail_FGPT.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

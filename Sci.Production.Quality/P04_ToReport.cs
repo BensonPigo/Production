@@ -2320,7 +2320,7 @@ namespace Sci.Production.Quality
             worksheet.Cells[150, 3] = MyUtility.Convert.GetString(testName_3.FirstOrDefault()["Type"]);
 
             // Test Results
-            worksheet.Cells[150, 4] = MyUtility.Convert.GetString(testName_3.FirstOrDefault()["3Test"]);
+            worksheet.Cells[150, 4] = MyUtility.Convert.GetString(testName_3.FirstOrDefault()["TestResult"]);
 
             // Test Details
             worksheet.Cells[150, 5] = MyUtility.Convert.GetString(testName_3.FirstOrDefault()["TestDetail"]);
@@ -2372,7 +2372,7 @@ namespace Sci.Production.Quality
                 worksheet.Cells[startRowIndex, 3] = MyUtility.Convert.GetString(dr["Type"]);
 
                 // Test Results
-                worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetString(dr["3Test"]);
+                worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetString(dr["TestResult"]);
 
                 // Test Details
                 worksheet.Cells[startRowIndex, 5] = MyUtility.Convert.GetString(dr["TestDetail"]);
@@ -2393,7 +2393,7 @@ namespace Sci.Production.Quality
                 worksheet.Cells[startRowIndex, 3] = MyUtility.Convert.GetString(dr["Type"]);
 
                 // Test Results
-                worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetString(dr["3Test"]);
+                worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetString(dr["TestResult"]);
 
                 // Test Details
                 worksheet.Cells[startRowIndex, 5] = MyUtility.Convert.GetString(dr["TestDetail"]);
