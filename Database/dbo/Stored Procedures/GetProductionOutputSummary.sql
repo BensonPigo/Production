@@ -222,7 +222,7 @@ from (
 Declare @tmpSewingOutput Table(
 	[OrderID]  varchar(13)  INDEX tmpSewingOutputID_IDX CLUSTERED,
 	[OutputDate] date,
-	[QAQty] int
+	[QAQty] [NUMERIC](16,6)
 )
 
 
