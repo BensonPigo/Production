@@ -1227,7 +1227,7 @@ select  s.SewingLineID
                                 and pd.ReceiveDate is not null
                      ), '') as ClogQty
 			, [FirststCuttingOutputDate]=FirststCuttingOutputDate.Date
-            , o.InspDate
+            , InspDate = InspctDate.Val
             , s.StandardOutput
             , [Eff] = case when (s.sewer * s.workhour) = 0 then 0
                       ELSE ROUND(CONVERT(float ,(s.AlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
@@ -1264,6 +1264,14 @@ select  s.SewingLineID
 		INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
 		where wd2.OrderID =o.ID
 	)FirststCuttingOutputDate
+	OUTER APPLY(
+		SELECT [Val]=STUFF((
+		    SELECT  DISTINCT ','+ Cast(CFAFinalInspectDate as varchar)
+		    from Order_QtyShip oq
+		    WHERE ID = o.id
+		    FOR XML PATH('')
+		),1,1,'')
+	)InspctDate
     where 1=1
 ");
             #endregion
@@ -1500,7 +1508,7 @@ select  s.SewingLineID
 			, sd.SizeCode
             , o.CdCodeID
             , o.StyleID 
-            , o.InspDate
+            , InspDate = InspctDate.Val
             , s.StandardOutput 
             , [Eff] = case when (s.sewer * s.workhour) = 0 then 0
                       ELSE ROUND(CONVERT(float ,(s.AlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
@@ -1540,6 +1548,15 @@ select  s.SewingLineID
 		INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
 		where wd2.OrderID =o.ID
 	)FirststCuttingOutputDate
+	OUTER APPLY(
+
+		SELECT [Val]=STUFF((
+		select  DISTINCT ','+ Cast(CFAFinalInspectDate as varchar)
+		from Order_QtyShip oq
+		WHERE ID = o.id
+		FOR XML PATH('')
+		),1,1,'')
+	)InspctDate
     where 1 = 1 
 ");
             #endregion
