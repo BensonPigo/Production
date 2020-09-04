@@ -1229,6 +1229,15 @@ drop table #tmpListPoCombo,#tmp_PFRemark,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_Packi
             , ProductionUnit = '' 
             , SystemType = ''
             , FakeID = '9999ZZ'
+            , ColumnN = 'POSubCon'
+            , ColumnSeq = '998'
+	union all
+    SELECT  ID = 'PrintSubCon'
+            , Seq = ''
+            , ArtworkUnit = '' 
+            , ProductionUnit = '' 
+            , SystemType = ''
+            , FakeID = '9999ZZ'
             , ColumnN = 'SubCon'
             , ColumnSeq = '999'";
 
@@ -1491,6 +1500,11 @@ select  ot.ID
         , isnull(ot.Qty,0) Qty 
         , ot.TMS
         , isnull(ot.Price,0) Price
+		, PoSupp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', (select Abb 
+                                                                              from LocalSupp WITH (NOLOCK) 
+                                                                              where ID = LocalSuppID)
+                                                                           , ot.LocalSuppID)
+                                                  , '')
         , Supp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', ap.Abb, ot.LocalSuppID) , '')
         , AUnitRno = a.rno 
         , PUnitRno = a1.rno
@@ -1566,7 +1580,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
 #endif
 
             // 填Subprocess欄位名稱
-            int subConCol = 9999, ttlTMS = lastCol + 1; // 紀錄SubCon與TTL_TMS的欄位
+            int poSubConCol = 9999, subConCol = 9999, ttlTMS = lastCol + 1; // 紀錄SubCon與TTL_TMS的欄位
             string excelColEng = string.Empty;
             if (this.artwork || this.pap)
             {
@@ -1574,10 +1588,16 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 {
                     worksheet.Cells[1, MyUtility.Convert.GetInt(dr["rno"])] = MyUtility.Convert.GetString(dr["ColumnN"]);
                     lastCol = MyUtility.Convert.GetInt(dr["rno"]);
+
+                    if (MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "POSUBCON")
+                    {
+                        poSubConCol = MyUtility.Convert.GetInt(dr["rno"]);
+                        this.Subtrue = 1;
+                    }
+
                     if (MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "SUBCON")
                     {
                         subConCol = MyUtility.Convert.GetInt(dr["rno"]);
-                        this.Subtrue = 1;
                     }
 
                     if (MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "TTL_TMS")
@@ -1825,6 +1845,15 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                             if (!MyUtility.Check.Empty(sdr["TNRno"]))
                             {
                                 objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["TNRno"]) - 1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(sdr["Qty"]);
+                            }
+
+                            if (poSubConCol != 9999)
+                            {
+                                objArray[intRowsStart, poSubConCol - 1] = string.Empty;
+                                if (!MyUtility.Check.Empty(sdr["PoSupp"]))
+                                {
+                                    objArray[intRowsStart, poSubConCol - 1] = sdr["PoSupp"];
+                                }
                             }
 
                             if (subConCol != 9999)
