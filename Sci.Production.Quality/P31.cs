@@ -37,7 +37,7 @@ namespace Sci.Production.Quality
 EXISTS (
     SELECT 1 
     FROM Orders o WITH (NOLOCK) 
-    WHERE MDivisionID='{Sci.Env.User.Keyword}' 
+    WHERE o.Ftygroup = '{Sci.Env.User.Factory}'  --MDivisionID='{Sci.Env.User.Keyword}' 
     AND Finished = {Isfinished} 
 	AND o.ID = Order_QtyShip.ID
     AND o.Category IN ('B','S','G')

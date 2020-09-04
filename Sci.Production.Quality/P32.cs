@@ -31,7 +31,7 @@ namespace Sci.Production.Quality
             this._sourceHeader = null;
 
             string Isfinished = type == "1" ? "0" : "1";
-            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE MDivisionID='{Sci.Env.User.Keyword}' AND Finished = {Isfinished} AND ID = CFAInspectionRecord.OrderID)";
+            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE Ftygroup='{Sci.Env.User.Factory}' AND Finished = {Isfinished} AND ID = CFAInspectionRecord.OrderID)";
             this.DefaultFilter = defaultFilter;
 
             if (type != "1")
@@ -58,7 +58,7 @@ namespace Sci.Production.Quality
             this._sourceHeader = sourceHeader;
 
             string Isfinished = type == "1" ? "0" : "1";
-            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE MDivisionID='{Sci.Env.User.Keyword}' AND Finished = {Isfinished} AND ID = CFAInspectionRecord.OrderID)";
+            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE Ftygroup='{Sci.Env.User.Factory}' AND Finished = {Isfinished} AND ID = CFAInspectionRecord.OrderID)";
             this.DefaultFilter = defaultFilter;
 
             if (type != "1")
@@ -90,7 +90,7 @@ namespace Sci.Production.Quality
             {
                 this.DoNew();
             }
-            
+
         }
 
         /// <inheritdoc/>
@@ -352,9 +352,6 @@ WHERE a.ID ='{masterID}'
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            string TempId = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CI", "CFAInspectionRecord", DateTime.Now);
-
-            this.CurrentMaintain["ID"] = TempId;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["AuditDate"] = DateTime.Now;
             this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
@@ -403,7 +400,7 @@ WHERE a.ID ='{masterID}'
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
-            string updateCmd = "";
+            string updateCmd = string.Empty;
 
             if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "3rd party")
             {
@@ -433,6 +430,7 @@ BEGIN
                     updateCmd += $@"
     , CFAFinalInspectResult = '{this.CurrentMaintain["Result"].ToString()}'
     , CFAFinalInspectDate = '{MyUtility.Convert.GetDate(this.CurrentMaintain["AuditDate"]).Value.ToString("yyyy/MM/dd")}'
+    , CFAFinalInspectHandle = '{Sci.Env.User.UserID}'
 ";
                 }
 
@@ -441,8 +439,8 @@ BEGIN
                     updateCmd += $@"
     , CFA3rdInspectResult = '{this.CurrentMaintain["Result"].ToString()}'
     , CFA3rdInspectDate = '{MyUtility.Convert.GetDate(this.CurrentMaintain["AuditDate"]).Value.ToString("yyyy/MM/dd")}'
+    , CFAIs3rdInspectHandle = '{Sci.Env.User.UserID}'
 ";
-
                 }
 
                 updateCmd += $@"
@@ -452,7 +450,6 @@ END
             }
             else
             {
-
                 updateCmd += $@"
 UPDATE CFAInspectionRecord SET Status='Confirmed',EditName='{Sci.Env.User.UserID}' ,EditDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' 
 
@@ -460,9 +457,7 @@ UPDATE Order_QtyShip
 SET CFAUpdateDate=GETDATE()
 WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["Seq"]}'
 ";
-                
             }
-
 
             DualResult r;
             r = DBProxy.Current.Execute(null, updateCmd);
@@ -477,11 +472,21 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
         /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
-            string updateCmd = "";
+            string updateCmd = string.Empty;
             if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "3rd party")
             {
-
                 updateCmd += $@"
+SELECT TOP 1 EditName
+INTO #LastConfirm
+FROM CFAInspectionRecord
+WHERE Result='Fail'
+AND OrderID='{this.CurrentMaintain["OrderID"].ToString()}'
+AND Seq='{this.CurrentMaintain["Seq"].ToString()}'
+AND Stage='{this.CurrentMaintain["Stage"].ToString()}'
+AND Status = 'Confirmed'
+AND ID != '{this.CurrentMaintain["ID"].ToString()}'
+ORDER BY EditDate DESC
+
 UPDATE CFAInspectionRecord SET Status='New',EditName='{Sci.Env.User.UserID}' ,EditDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' ";
 
                 updateCmd += $@"
@@ -516,6 +521,7 @@ BEGIN
                     updateCmd += $@"
         , CFAFinalInspectResult = (SELECT Result FROM #LastFail)
         , CFAFinalInspectDate =  IIF((SELECT EditDate FROM #LastFail)='',NULL,(SELECT EditDate FROM #LastFail))
+        , CFAFinalInspectHandle  = ISNULL((SELECT EditName FROM #LastConfirm) ,'')
 ";
                 }
 
@@ -524,6 +530,7 @@ BEGIN
                     updateCmd += $@"
         , CFA3rdInspectResult = (SELECT Result FROM #LastFail)
         , CFA3rdInspectDate =  IIF((SELECT EditDate FROM #LastFail)='',NULL,(SELECT EditDate FROM #LastFail))
+        , CFAIs3rdInspectHandle   = ISNULL( (SELECT EditName FROM #LastConfirm),'')
 ";
 
                 }
@@ -588,10 +595,19 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
                 return false;
             }
 
-            List<string> Cartons = this.CurrentMaintain["Carton"].ToString().Split(',').ToList();
+            bool sameFactory = MyUtility.Check.Seek($@"
+SELECT 1 FROM Orders WHERE ID='{this.CurrentMaintain["OrderID"]}' AND FtyGroup = '{Sci.Env.User.Factory}'
+");
 
+            if (!sameFactory)
+            {
+                MyUtility.Msg.WarningBox("Factory is different!!");
+                return false;
+            }
 
-            if (Cartons.Where(o => !MyUtility.Check.Empty(o)).Count() == 0 && this.CurrentMaintain["Stage"].ToString() == "Staggered")
+            List<string> cartons = this.CurrentMaintain["Carton"].ToString().Split(',').ToList();
+
+            if (cartons.Where(o => !MyUtility.Check.Empty(o)).Count() == 0 && (this.CurrentMaintain["Stage"].ToString() == "Staggered" || this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party"))
             {
                 MyUtility.Msg.WarningBox("Inspected Carton can't be empty!!");
                 return false;
@@ -602,20 +618,21 @@ SELECT 1
 FROM PackingList_Detail
 WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
 AND OrderShipmodeSeq ='{this.CurrentMaintain["Seq"]}'
-AND CTNStartNo IN ('{Cartons.JoinToString("','")}')
+AND CTNStartNo IN ('{cartons.JoinToString("','")}')
 AND StaggeredCFAInspectionRecordID <> '{this.CurrentMaintain["ID"]}'
 AND StaggeredCFAInspectionRecordID <> ''
 ";
-
-            bool duplicate = MyUtility.Check.Seek(cmd);
-
-            if (duplicate)
+            if (this.CurrentMaintain["Stage"].ToString() == "Staggered")
             {
-                MyUtility.Msg.WarningBox("Carton already exists CFA Inspection Record!!");
-                return false;
+                bool duplicate = MyUtility.Check.Seek(cmd);
+
+                if (duplicate)
+                {
+                    MyUtility.Msg.WarningBox("Carton already exists CFA Inspection Record!!");
+                    return false;
+                }
             }
 
-            // 
             if (MyUtility.Convert.GetInt(this.CurrentMaintain["DefectQty"]) > MyUtility.Convert.GetInt(this.CurrentMaintain["InspectQty"]))
             {
                 MyUtility.Msg.WarningBox("Defects Qty can't more than Inspect Qty!!");
@@ -623,7 +640,6 @@ AND StaggeredCFAInspectionRecordID <> ''
 
             }
 
-            // 
             if (MyUtility.Convert.GetInt(this.CurrentMaintain["InspectQty"]) > MyUtility.Convert.GetInt(this.disOrderQty.Value))
             {
                 MyUtility.Msg.WarningBox("Inspect Qty can't more than Order Qty!!");
@@ -631,7 +647,6 @@ AND StaggeredCFAInspectionRecordID <> ''
 
             }
 
-            //
             if ((this.CurrentMaintain["Stage"].ToString().ToLower() == "final" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party") && (this.CurrentMaintain["Result"].ToString().ToLower() == "pass" || this.CurrentMaintain["Result"].ToString().ToLower() == "fail but release"))
             {
                 bool hasSameSpSeq = MyUtility.Check.Seek($@"
@@ -679,12 +694,16 @@ FROM PackingList_Detail WITH(NOLOCK)
 where OrderID = '{this.CurrentMaintain["OrderID"]}' AND OrderShipmodeSeq = '{this.CurrentMaintain["Seq"]}'
 "));
 
-
-            bool IsSameM = MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID='{this.CurrentMaintain["OrderID"]}' AND MDivisionID = '{Sci.Env.User.Keyword}'");
-            if (!IsSameM)
+            if (this.IsDetailInserting)
             {
-                MyUtility.Msg.InfoBox("MDivisionID is different!!");
-                return false;
+                string tempId = MyUtility.GetValue.GetID(Sci.Env.User.Factory + "CI", "CFAInspectionRecord", DateTime.Now);
+                if (MyUtility.Check.Empty(tempId))
+                {
+                    MyUtility.Msg.WarningBox("Get document ID fail!!");
+                    return false;
+                }
+
+                this.CurrentMaintain["ID"] = tempId;
             }
 
             return base.ClickSaveBefore();
@@ -693,19 +712,19 @@ where OrderID = '{this.CurrentMaintain["OrderID"]}' AND OrderShipmodeSeq = '{thi
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            // Inspection stage為Staggered且Inspection result Fail不需要將檢驗的箱號回寫PackingList_Detail.StaggeredCFAInspectionRecordID
-
-            List<string> Cartons = this.CurrentMaintain["Carton"].ToString().Split(',').ToList();
+            // 只有Inspection stage為Staggered且Inspection result = Pass ，才需要將檢驗的箱號回寫PackingList_Detail.StaggeredCFAInspectionRecordID
+            List<string> cartons = this.CurrentMaintain["Carton"].ToString().Split(',').ToList();
             string cmd = string.Empty;
 
-            if (this.CurrentMaintain["Stage"].ToString() == "Staggered" && this.CurrentMaintain["Result"].ToString() == "Fail")
+            if (this.CurrentMaintain["Stage"].ToString() == "Staggered" && this.CurrentMaintain["Result"].ToString() == "Pass")
             {
                 cmd = $@"
 UPDATE PackingList_Detail
-SET StaggeredCFAInspectionRecordID=''
+SET StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
 WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
-AND OrderShipmodeSeq ='{this.CurrentMaintain["Seq"]}' 
-AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
+    AND OrderShipmodeSeq ='{this.CurrentMaintain["Seq"]}' 
+    AND CTNStartNo IN ('{cartons.JoinToString("','")}')
+    AND StaggeredCFAInspectionRecordID = ''
 ";
             }
             else
@@ -717,24 +736,21 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
 AND OrderShipmodeSeq ='{this.CurrentMaintain["Seq"]}' 
 AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
 ;
-UPDATE PackingList_Detail
-SET StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
-WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
-    AND OrderShipmodeSeq ='{this.CurrentMaintain["Seq"]}' 
-    AND CTNStartNo IN ('{Cartons.JoinToString("','")}')
-    AND StaggeredCFAInspectionRecordID = ''
 ";
 
             }
 
-            DualResult result = DBProxy.Current.Execute(null, cmd);
-
-            if (!result)
+            if (!MyUtility.Check.Empty(cmd))
             {
-                this.ShowErr(result);
-                return result;
+                DualResult result = DBProxy.Current.Execute(null, cmd);
+
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return result;
+                }
             }
-                    
+
             return base.ClickSavePost();
         }
 
@@ -1015,6 +1031,81 @@ ORDER BY Cast([CTN#] as int)
 DROP TABLE #MixCTNStartNo 
 
 ";
+                if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party")
+                {
+                    sqlCmd = $@"
+
+----記錄哪些箱號有混尺碼
+SELECT ID,OrderID,OrderShipmodeSeq,CTNStartNo
+		,[ArticleCount]=COUNT(DISTINCT Article)
+		,[SizeCodeCount]=COUNT(DISTINCT SizeCode)
+INTO #MixCTNStartNo
+FROM PackingList_Detail pd
+WHERE OrderID = @OrderID
+AND OrderShipmodeSeq = @Seq
+GROUP BY ID,OrderID,OrderShipmodeSeq,CTNStartNo
+HAVING COUNT(DISTINCT Article) > 1 OR COUNT(DISTINCT SizeCode) > 1
+
+
+SELECT * FROM (
+    ----不是混尺碼的正常做
+	SELECT [CTN#]=CTNStartNo
+		,Article 
+		,[Size]=SizeCode 
+		,[Qty]=SUM(ShipQty) 
+	FROM PackingList_Detail pd
+	WHERE pd.OrderID= @OrderID
+	AND OrderShipmodeSeq =  @Seq
+	AND NOT EXISTS(
+		SELECT  *  
+		FROM #MixCTNStartNo t 
+		WHERE t.ID = pd.ID AND t.OrderID = pd.OrderID 
+		AND t.OrderShipmodeSeq=pd.OrderShipmodeSeq AND t.CTNStartNo=pd.CTNStartNo
+	)
+	GROUP BY CTNStartNo,Article ,SizeCode
+	UNION
+    ----混尺碼分開處理
+	SELECt [CTN#]=t.CTNStartNo
+		,[Article]=MixArticle.Val 
+		,[Size]=MixSizeCode.Val
+		,[Qty]=ShipQty.Val
+	FROM #MixCTNStartNo t
+	OUTER APPLY(
+		SELECT  [Val]=  STUFF((
+			SELECT DISTINCT ','+Article  
+			FROM PackingList_Detail pd
+			WHERE pd.ID = t.ID 
+			AND pd.OrderID = t.OrderID 
+			AND pd.CTNStartNo = t.CTNStartNo
+		FOR XML PATH(''))
+		,1,1,'')
+	)MixArticle
+	OUTER APPLY(
+		SELECT  [Val]=  STUFF((
+			SELECT DISTINCT ','+SizeCode  
+			FROM PackingList_Detail pd
+			WHERE pd.ID = t.ID 
+			AND pd.OrderID = t.OrderID 
+			AND pd.CTNStartNo = t.CTNStartNo
+		FOR XML PATH(''))
+		,1,1,'')
+	)MixSizeCode
+	OUTER APPLY(
+		SELECT  [Val]=SUM(pd.ShipQty)
+		FROM PackingList_Detail pd
+		WHERE pd.ID = t.ID 
+			AND pd.OrderID = t.OrderID 
+			AND pd.CTNStartNo = t.CTNStartNo
+	)ShipQty
+) a
+ORDER BY Cast([CTN#] as int)
+
+
+DROP TABLE #MixCTNStartNo 
+
+";
+                }
+
                 DataTable dt;
                 DBProxy.Current.Select(null, sqlCmd, paras, out dt);
                 Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(dt, "CTN#,Article,Size,Qty", "CTN#,Article,Size,Qty", "3,15,20,5", this.CurrentMaintain["Carton"].ToString(), null, null, null);
@@ -1048,6 +1139,18 @@ AND CTNStartNo = @CTNStartNo
 AND (StaggeredCFAInspectionRecordID = @ID OR StaggeredCFAInspectionRecordID = '')
 
 ";
+                    if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party")
+                    {
+                        sqlCmd = $@"
+SELECT * 
+FROM PackingList_Detail pd
+WHERE OrderID = @OrderID
+AND OrderShipmodeSeq = @Seq
+AND CTNStartNo = @CTNStartNo
+
+";
+                    }
+
                     List<SqlParameter> paras = new List<SqlParameter>();
                     paras.Add(new SqlParameter("@OrderID", this.CurrentMaintain["OrderID"].ToString()));
                     paras.Add(new SqlParameter("@Seq", this.CurrentMaintain["Seq"].ToString()));
@@ -1097,6 +1200,8 @@ AND (StaggeredCFAInspectionRecordID = @ID OR StaggeredCFAInspectionRecordID = ''
                 return;
             }
 
+            this.CurrentMaintain["Carton"] = string.Empty;
+
             // 只有選擇Staggered時Inspected Carton、Shift才可以欄位才可以編輯，選到其他Stage時請一併清除這些欄位資料。
             if (stage == "Staggered")
             {
@@ -1106,9 +1211,8 @@ AND (StaggeredCFAInspectionRecordID = @ID OR StaggeredCFAInspectionRecordID = ''
                 this.txtshift.IsSupportEditMode = true;
                 this.txtshift.ReadOnly = false;
             }
-            else
+            else if (stage == "Inline" || MyUtility.Check.Empty(stage))
             {
-                this.CurrentMaintain["Carton"] = string.Empty;
                 this.txtInspectedCarton.Text = string.Empty;
                 this.txtInspectedCarton.IsSupportEditMode = false;
                 this.txtInspectedCarton.ReadOnly = true;
@@ -1117,6 +1221,19 @@ AND (StaggeredCFAInspectionRecordID = @ID OR StaggeredCFAInspectionRecordID = ''
                 this.txtshift.Text = string.Empty;
                 this.txtshift.IsSupportEditMode = false;
                 this.txtshift.ReadOnly = true;
+            }
+            else
+            {
+                this.txtInspectedCarton.IsSupportEditMode = true;
+                this.txtInspectedCarton.ReadOnly = false;
+                // this.CurrentMaintain["Carton"] = string.Empty;
+
+                //this.CurrentMaintain["Shift"] = string.Empty;
+                //this.txtshift.Text = string.Empty;
+                //this.txtshift.IsSupportEditMode = false;
+                //this.txtshift.ReadOnly = true;
+                this.txtshift.IsSupportEditMode = true;
+                this.txtshift.ReadOnly = false;
             }
 
             // Stage若是3rd party則要檢查Order_QtyShip.CFAIs3rdInspect是否為1，若不是則不能存檔，並跳出警告視窗
