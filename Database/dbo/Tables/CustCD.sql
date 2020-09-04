@@ -41,6 +41,7 @@
     [Need3rdInspect] BIT CONSTRAINT [DF_CustCD_Need3rdInspect] NOT NULL DEFAULT ((0)), 
     [QAEditName] VARCHAR(10) CONSTRAINT [DF_CustCD_QAEditName] NOT NULL DEFAULT (''), 
     [QAEditDate] DATETIME NULL, 
+    [StampCombinationUkey] bigint CONSTRAINT [DF_CustCD_StampCombinationUkey] DEFAULT(''), 
     CONSTRAINT [PK_CustCD] PRIMARY KEY CLUSTERED ([BrandID] ASC, [ID] ASC)
 );
 
@@ -222,3 +223,9 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'CustCD',
     @level2type = N'COLUMN',
     @level2name = N'QAEditName'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'噴碼組合'
+	, @level0type = N'SCHEMA', @level0name = N'dbo'
+	, @level1type = N'TABLE', @level1name = N'CustCD'
+	, @level2type = N'COLUMN', @level2name = N'StampCombinationUkey';
+;
+Go

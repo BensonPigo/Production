@@ -169,6 +169,10 @@
     [IsBuyBackCrossArticle] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossArticle] DEFAULT (0), 
     [IsBuyBackCrossSizeCode] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossSizeCode] DEFAULT (0), 
     [KpiEachConsCheck] DATE NULL, 
+    [CAB] Varchar(10) CONSTRAINT [DF_Orders_CAB] DEFAULT(''), 
+    [FinalDest] Varchar(50) CONSTRAINT [DF_Orders_FinalDest] DEFAULT(''), 
+    [Customer_PO] Varchar(50) CONSTRAINT [DF_Orders_Customer_PO] DEFAULT(''), 
+    [AFS_STOCK_CATEGORY] Varchar(50) CONSTRAINT [DF_Orders_AFS_STOCK_CATEGORY] DEFAULT(''), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -843,3 +847,29 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Orders',
     @level2type = N'COLUMN',
     @level2name = N'KpiEachConsCheck'
+	;
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nike - Mercury - CAB'
+	, @level0type = N'SCHEMA', @level0name = N'dbo'
+	, @level1type = N'TABLE', @level1name = N'Orders'
+	, @level2type = N'COLUMN', @level2name = N'CAB';
+;
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nike - Mercury - FinalDest'
+	, @level0type = N'SCHEMA', @level0name = N'dbo'
+	, @level1type = N'TABLE', @level1name = N'Orders'
+	, @level2type = N'COLUMN', @level2name = N'FinalDest';
+;
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nike - Mercury - Customer_PO'
+	, @level0type = N'SCHEMA', @level0name = N'dbo'
+	, @level1type = N'TABLE', @level1name = N'Orders'
+	, @level2type = N'COLUMN', @level2name = N'Customer_PO';
+;
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nike - Mercury - AFS_STOCK_CATEGORY'
+	, @level0type = N'SCHEMA', @level0name = N'dbo'
+	, @level1type = N'TABLE', @level1name = N'Orders'
+	, @level2type = N'COLUMN', @level2name = N'AFS_STOCK_CATEGORY';
+;
+GO
