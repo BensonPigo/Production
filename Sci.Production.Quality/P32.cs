@@ -58,7 +58,7 @@ namespace Sci.Production.Quality
             this._sourceHeader = sourceHeader;
 
             string Isfinished = type == "1" ? "0" : "1";
-            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE MDivisionID='{Sci.Env.User.Keyword}' AND Finished = {Isfinished} AND ID = CFAInspectionRecord.OrderID)";
+            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE Ftygroup='{Sci.Env.User.Factory}' AND Finished = {Isfinished} AND ID = CFAInspectionRecord.OrderID)";
             this.DefaultFilter = defaultFilter;
 
             if (type != "1")
@@ -694,18 +694,16 @@ FROM PackingList_Detail WITH(NOLOCK)
 where OrderID = '{this.CurrentMaintain["OrderID"]}' AND OrderShipmodeSeq = '{this.CurrentMaintain["Seq"]}'
 "));
 
-            bool IsSameM = MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID='{this.CurrentMaintain["OrderID"]}' AND MDivisionID = '{Sci.Env.User.Keyword}'");
-            if (!IsSameM)
-            {
-                MyUtility.Msg.InfoBox("MDivisionID is different!!");
-                return false;
-            }
-
-            string TempId = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CI", "CFAInspectionRecord", DateTime.Now);
-
             if (this.IsDetailInserting)
             {
-                this.CurrentMaintain["ID"] = TempId;
+                string tempId = MyUtility.GetValue.GetID(Sci.Env.User.Factory + "CI", "CFAInspectionRecord", DateTime.Now);
+                if (MyUtility.Check.Empty(tempId))
+                {
+                    MyUtility.Msg.WarningBox("Get document ID fail!!");
+                    return false;
+                }
+
+                this.CurrentMaintain["ID"] = tempId;
             }
 
             return base.ClickSaveBefore();
@@ -1202,6 +1200,8 @@ AND CTNStartNo = @CTNStartNo
                 return;
             }
 
+            this.CurrentMaintain["Carton"] = string.Empty;
+
             // 只有選擇Staggered時Inspected Carton、Shift才可以欄位才可以編輯，選到其他Stage時請一併清除這些欄位資料。
             if (stage == "Staggered")
             {
@@ -1213,7 +1213,6 @@ AND CTNStartNo = @CTNStartNo
             }
             else if (stage == "Inline" || MyUtility.Check.Empty(stage))
             {
-                this.CurrentMaintain["Carton"] = string.Empty;
                 this.txtInspectedCarton.Text = string.Empty;
                 this.txtInspectedCarton.IsSupportEditMode = false;
                 this.txtInspectedCarton.ReadOnly = true;
