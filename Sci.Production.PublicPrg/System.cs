@@ -19,7 +19,7 @@ namespace Sci.Production.PublicPrg
         public static bool CheckFloat(string svalue, int dp1, int dp2)
         {
             // 檢查值是否為浮點數字,dp1 ~ dp2 位小數
-            return Regex.IsMatch(svalue, @"^[0-9](.[0-9]{" + dp1.ToString() + "," + dp2.ToString() + "})?$");
+            return Regex.IsMatch(svalue, @"^[0-9]+(.[0-9]{" + dp1.ToString() + "," + dp2.ToString() + "})?$");
         }
 
         /// <summary>
