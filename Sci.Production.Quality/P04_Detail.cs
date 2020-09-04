@@ -1107,7 +1107,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 						ELSE ''
 					END
 		,f.*
-        ,[Result]=	CASE WHEN  f.TestUnit = 'N' AND f.[TestResult] !='' THEN IIF( Cast( f.[TestResult] as INT) >= f.Criteria ,'Pass' ,'Fail')
+        ,[Result]=	CASE WHEN  f.TestUnit = 'N' AND f.[TestResult] !='' THEN IIF( Cast( f.[TestResult] as decimal) >= f.Criteria ,'Pass' ,'Fail')
 						 WHEN  f.TestUnit = 'mm' THEN IIF(  f.[TestResult] = '<=4' OR f.[TestResult] = '≦4','Pass' , IIF( f.[TestResult]='>4','Fail','')  )
 						 WHEN  f.TestUnit = 'Pass/Fail'  THEN f.[TestResult]
 					 	 ELSE ''
@@ -1215,7 +1215,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 						ELSE ''
 					END
 		,f.*
-        ,[Result]=	CASE WHEN  f.TestUnit = 'N' AND f.[TestResult] !='' THEN IIF( Cast( f.[TestResult] as INT) >= f.Criteria ,'Pass' ,'Fail')
+        ,[Result]=	CASE WHEN  f.TestUnit = 'N' AND f.[TestResult] !='' THEN IIF( Cast( f.[TestResult] as decimal) >= f.Criteria ,'Pass' ,'Fail')
 						 WHEN  f.TestUnit = 'mm' THEN IIF(  f.[TestResult] = '<=4' OR f.[TestResult] = '≦4','Pass' , IIF( f.[TestResult]='>4','Fail','')  )
 						 WHEN  f.TestUnit = 'Pass/Fail'  THEN f.[TestResult]
 					 	 ELSE ''
