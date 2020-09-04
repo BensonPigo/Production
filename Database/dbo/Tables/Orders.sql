@@ -169,10 +169,10 @@
     [IsBuyBackCrossArticle] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossArticle] DEFAULT (0), 
     [IsBuyBackCrossSizeCode] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossSizeCode] DEFAULT (0), 
     [KpiEachConsCheck] DATE NULL, 
-    [CAB] Varchar(10) CONSTRAINT [DF_Orders_CAB] DEFAULT(''), 
-    [FinalDest] Varchar(50) CONSTRAINT [DF_Orders_FinalDest] DEFAULT(''), 
-    [Customer_PO] Varchar(50) CONSTRAINT [DF_Orders_Customer_PO] DEFAULT(''), 
-    [AFS_STOCK_CATEGORY] Varchar(50) CONSTRAINT [DF_Orders_AFS_STOCK_CATEGORY] DEFAULT(''), 
+    [CAB] Varchar(10) NOT NULL CONSTRAINT [DF_Orders_CAB] DEFAULT(''), 
+    [FinalDest] Varchar(50) NOT NULL CONSTRAINT [DF_Orders_FinalDest] DEFAULT(''), 
+    [Customer_PO] Varchar(50) NOT NULL CONSTRAINT [DF_Orders_Customer_PO] DEFAULT(''), 
+    [AFS_STOCK_CATEGORY] Varchar(50) NOT NULL CONSTRAINT [DF_Orders_AFS_STOCK_CATEGORY] DEFAULT(''), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
