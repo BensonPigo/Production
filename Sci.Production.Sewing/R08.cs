@@ -64,20 +64,6 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             this.comboM.Text = Env.User.Keyword;
         }
 
-        // Date
-        private void DateDateStart_Validated(object sender, EventArgs e)
-        {
-            if (MyUtility.Check.Empty(this.dateDateStart.Value))
-            {
-                this.dateDateEnd.Value = null;
-            }
-            else
-            {
-                this.dateDateStart.Value = Convert.ToDateTime(this.dateDateStart.Value).GetFirstDayOfMonth();
-                this.dateDateEnd.Value = Convert.ToDateTime(this.dateDateStart.Value).AddMonths(11).GetLastDayOfMonth();
-            }
-        }
-
         private string SelectSewingLine(string line)
         {
             string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}", MyUtility.Check.Empty(this.comboFactory.Text) ? string.Empty : string.Format(" where FactoryID = '{0}'", this.comboFactory.Text));
@@ -109,7 +95,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(this.dateDateStart.Value))
+            if (MyUtility.Check.Empty(this.dateDateStart.Value) || MyUtility.Check.Empty(this.dateDateEnd.Value))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
@@ -728,7 +714,7 @@ where f.Junk = 0",
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Env.Cfg.XltPathDir + "\\Sewing_R08_Factory_Yearly_CMP_Report.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Sewing_R08_Factory_CMP_Report.xltx";
             Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -739,7 +725,7 @@ where f.Junk = 0",
             Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 1] = string.Format("{0}", this.factoryName);
-            worksheet.Cells[3, 1] = $"All Factory Yearly CMP Report, Date:{Convert.ToDateTime(this.dateDateStart.Value).ToString("yyyy/MM")}-{Convert.ToDateTime(this.dateDateEnd.Value).ToString("yyyy/MM")}";
+            worksheet.Cells[3, 1] = $"All Factory CMP Report, Date:{Convert.ToDateTime(this.dateDateStart.Value).ToString("yyyy/MM/dd")}-{Convert.ToDateTime(this.dateDateEnd.Value).ToString("yyyy/MM/dd")}";
 
             worksheet.Cells[4, 3] = "Total CPU Included Subcon-In";
 
@@ -1099,7 +1085,7 @@ where f.Junk = 0",
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName("Sewing_R08_Factory_Yearly_CMP_Report");
+            string strExcelName = Class.MicrosoftFile.GetName("Sewing_R08_Factory_CMP_Report");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
