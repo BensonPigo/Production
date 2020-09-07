@@ -171,7 +171,7 @@ BEGIN
 
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 	, iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
-	, iif(f2.Type = 'S', 'Sample', f2.MDivisionID) as MDivisionID2
+	, iif(f2.Type = 'S', 'Sample', f2.ProduceM) as MDivisionID2
 	, f2.Zone as Zone2
 	, Factory.CountryID
 	, f2.CountryID as CountryID2
