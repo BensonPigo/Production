@@ -232,7 +232,7 @@
             this.btnFind.TabIndex = 3;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // displayMTLCmlpt
             // 
@@ -492,7 +492,7 @@
             this.btnBatchEncode.TabIndex = 161;
             this.btnBatchEncode.Text = "Batch Encode";
             this.btnBatchEncode.UseVisualStyleBackColor = true;
-            this.btnBatchEncode.Click += new System.EventHandler(this.btnBatchEncode_Click);
+            this.btnBatchEncode.Click += new System.EventHandler(this.BtnBatchEncode_Click);
             // 
             // chkInspAutoLockAcc
             // 

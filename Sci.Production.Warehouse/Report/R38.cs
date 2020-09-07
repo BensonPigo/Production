@@ -12,15 +12,15 @@ namespace Sci.Production.Warehouse
 {
     public partial class R38 : Win.Tems.PrintForm
     {
-        string strSp1;
-        string strSp2;
-        string strM;
-        string strFty;
-        string strStockType;
-        string strLockStatus;
-        DataTable dataTable;
+        private string strSp1;
+        private string strSp2;
+        private string strM;
+        private string strFty;
+        private string strStockType;
+        private string strLockStatus;
+        private DataTable dataTable;
 
-        private void label1_Click(object sender, EventArgs e)
+        private void Label1_Click(object sender, EventArgs e)
         {
         }
 

@@ -119,7 +119,7 @@
             this.cmbFactory.Name = "cmbFactory";
             this.cmbFactory.Size = new System.Drawing.Size(121, 24);
             this.cmbFactory.TabIndex = 10;
-            this.cmbFactory.SelectedIndexChanged += new System.EventHandler(this.combo_SelectedIndexChanged);
+            this.cmbFactory.SelectedIndexChanged += new System.EventHandler(this.Combo_SelectedIndexChanged);
             // 
             // lbfactory
             // 
@@ -139,7 +139,7 @@
             this.comboSize.Name = "comboSize";
             this.comboSize.Size = new System.Drawing.Size(121, 24);
             this.comboSize.TabIndex = 8;
-            this.comboSize.SelectedIndexChanged += new System.EventHandler(this.combo_SelectedIndexChanged);
+            this.comboSize.SelectedIndexChanged += new System.EventHandler(this.Combo_SelectedIndexChanged);
             // 
             // labelSize
             // 
@@ -159,7 +159,7 @@
             this.comboColor.Name = "comboColor";
             this.comboColor.Size = new System.Drawing.Size(121, 24);
             this.comboColor.TabIndex = 6;
-            this.comboColor.SelectedIndexChanged += new System.EventHandler(this.combo_SelectedIndexChanged);
+            this.comboColor.SelectedIndexChanged += new System.EventHandler(this.Combo_SelectedIndexChanged);
             // 
             // labelColor
             // 
@@ -187,7 +187,7 @@
             this.btnToExcel.TabIndex = 1;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // btnClose
             // 
@@ -199,7 +199,7 @@
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // P03_Refno
             // 

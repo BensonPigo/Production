@@ -287,7 +287,7 @@
             this.btnQuery.TabIndex = 9;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // panel2
             // 
@@ -345,7 +345,7 @@
             this.btnExcel.TabIndex = 0;
             this.btnExcel.Text = "To Excel";
             this.btnExcel.UseVisualStyleBackColor = true;
-            this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
+            this.btnExcel.Click += new System.EventHandler(this.BtnExcel_Click);
             // 
             // btnLock
             // 
@@ -356,7 +356,7 @@
             this.btnLock.TabIndex = 1;
             this.btnLock.Text = "Lock";
             this.btnLock.UseVisualStyleBackColor = true;
-            this.btnLock.Click += new System.EventHandler(this.btnLock_Click);
+            this.btnLock.Click += new System.EventHandler(this.BtnLock_Click);
             // 
             // btnClose
             // 
@@ -367,7 +367,7 @@
             this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnUnlock
             // 
@@ -378,7 +378,7 @@
             this.btnUnlock.TabIndex = 2;
             this.btnUnlock.Text = "Unlock";
             this.btnUnlock.UseVisualStyleBackColor = true;
-            this.btnUnlock.Click += new System.EventHandler(this.btnUnlock_Click);
+            this.btnUnlock.Click += new System.EventHandler(this.BtnUnlock_Click);
             // 
             // P38
             // 

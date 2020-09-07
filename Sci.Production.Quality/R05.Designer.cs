@@ -116,7 +116,7 @@
             this.comboMaterialType.OldText = "";
             this.comboMaterialType.Size = new System.Drawing.Size(125, 24);
             this.comboMaterialType.TabIndex = 103;
-            this.comboMaterialType.SelectedValueChanged += new System.EventHandler(this.comboMaterialType_SelectedValueChanged);
+            this.comboMaterialType.SelectedValueChanged += new System.EventHandler(this.ComboMaterialType_SelectedValueChanged);
             // 
             // labelMaterialType
             // 

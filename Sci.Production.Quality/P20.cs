@@ -46,7 +46,7 @@ namespace Sci.Production.Quality
             this.displayCell.Text = string.Empty;
         }
 
-        private void txtSP_Validating(object sender, CancelEventArgs e)
+        private void TxtSP_Validating(object sender, CancelEventArgs e)
         {
             string textValue = this.txtSP.Text;
 
@@ -562,7 +562,7 @@ select B.StyleID
             return base.ClickNew();
         }
 
-        private void txtLine_Validated(object sender, EventArgs e)
+        private void TxtLine_Validated(object sender, EventArgs e)
         {
             this.displayCell.Text = this.txtLine.Cell;
         }

@@ -505,7 +505,7 @@ Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        private void comboStockType_Validating(object sender, CancelEventArgs e)
+        private void ComboStockType_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(this.comboStockType.SelectedValue) && this.comboStockType.SelectedValue != this.comboStockType.OldValue)
             {

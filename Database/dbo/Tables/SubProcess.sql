@@ -16,6 +16,7 @@
     [IsLackingAndReplacement] BIT          DEFAULT ((0)) NOT NULL,
     [Seq]                     TINYINT      DEFAULT ((0)) NOT NULL,
     [IsBoundedProcess]        BIT          DEFAULT ((0)) NOT NULL,
+    [IsSubprocessInspection] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_SubProcess] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 

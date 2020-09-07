@@ -114,7 +114,13 @@ select
 	CR.InspectQty,
 	CR.RejectQty,
 	Inspector = dbo.getPass1(CR.AddName),
-	CR.Remark
+	CR.Remark,
+    CR.AddDate,
+    CR.RepairedDatetime,
+	RepairedTime = iif(RepairedDatetime is null,null,
+		concat(IIF(ttlMINUTE > 1440, ttlMINUTE / 1440, 0), ' ',
+			IIF(ttlMINUTE_D > 60, ttlMINUTE_D / 60, 0), ':',
+			isnull(ttlMINUTE_D_HR, 0)))
 from CutInsRecord CR WITH(NOLOCK)
 outer apply(
 	select Roll = STUFF((
@@ -198,6 +204,9 @@ outer apply(
 )SizeCode
 outer apply(select Ratio = SUM(Qty) from WorkOrder_SizeRatio WS WITH(NOLOCK) where WS.WorkOrderUkey = W.Ukey)WS
 outer apply(select Layer = SUM(Layer) from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef and CR.MDivisionID=W.MDivisionID)Layer
+outer apply(select ttlMINUTE = DATEDIFF(MINUTE, CR.AddDate, CR.RepairedDatetime))ttlMINUTE
+outer apply(select ttlMINUTE_D = IIF(ttlMINUTE > 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
+outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D > 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
 where 1=1
 ");
             this.Sqlcmd.Append(sqlwhere);

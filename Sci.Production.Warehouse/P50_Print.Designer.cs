@@ -45,7 +45,7 @@
             this.radioGroup1.TabStop = false;
             this.radioGroup1.Text = "Report Type";
             this.radioGroup1.Value = "Forward Stocktaking without Book Qty";
-            this.radioGroup1.ValueChanged += new System.EventHandler(this.radioGroup1_ValueChanged);
+            this.radioGroup1.ValueChanged += new System.EventHandler(this.RadioGroup1_ValueChanged);
             // 
             // radioStocktakingList
             // 

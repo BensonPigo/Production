@@ -8,7 +8,7 @@
 
         public string DESC { get; set; }
 
-        public string unit { get; set; }
+        public string Unit { get; set; }
 
         public string QTY { get; set; }
 

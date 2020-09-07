@@ -37,7 +37,7 @@ namespace Sci.Production.Quality
             {
                 if (this.grid.Columns[e.ColumnIndex].Name == this.col_chk.Name)
                 {
-                    this.calcCTNQty();
+                    this.CalcCTNQty();
                 }
             };
 
@@ -190,15 +190,15 @@ order by p2.ID,p2.CTNStartNo";
             }
 
             this.HideWaitMessage();
-            this.calcCTNQty();
+            this.CalcCTNQty();
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             this.Find();
         }
 
-        private void btnImportFromBarcode_Click(object sender, EventArgs e)
+        private void BtnImportFromBarcode_Click(object sender, EventArgs e)
         {
             // 設定只能選txt檔
             this.openFileDialog1.Filter = "txt files (*.txt)|*.txt";
@@ -464,11 +464,11 @@ order by p2.ID,p2.CTNStartNo
                     }
                 }
 
-                this.calcCTNQty();
+                this.CalcCTNQty();
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             // 檢查是否有勾選資料
             this.grid.ValidateControl();
@@ -608,15 +608,15 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Env.User.Keyword}','{dr["OrderID"
             }
 
             this.HideWaitMessage();
-            this.calcCTNQty();
+            this.CalcCTNQty();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void calcCTNQty()
+        private void CalcCTNQty()
         {
             if (this.listControlBindingSource1.DataSource != null)
             {

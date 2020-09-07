@@ -116,15 +116,15 @@ namespace Sci.Production.Warehouse
         {
             base.ClickConfirm();
             StringBuilder sqlup = new StringBuilder();
-            string Location = string.Empty;
+            string location = string.Empty;
             if (this.CurrentMaintain["StockType"].EqualString("B"))
             {
-                Location = "ALocation";
+                location = "ALocation";
             }
 
             if (this.CurrentMaintain["StockType"].EqualString("O"))
             {
-                Location = "CLocation";
+                location = "CLocation";
             }
 
             sqlup.Append(string.Format(
@@ -132,7 +132,7 @@ namespace Sci.Production.Warehouse
 update LI set LI.{1} = LD.ToLocation 
 from LocationTransLocal_Detail LD 
 left join LocalInventory LI on LI.OrderID = LD.PoId and LI.Refno = LD.Refno and LI.ThreadColorID = LD.Color
-where LD.Id = '{0}';", this.CurrentMaintain["id"], Location));
+where LD.Id = '{0}';", this.CurrentMaintain["id"], location));
 
             sqlup.Append(string.Format("update LocationTransLocal set status='Confirmed' where id = '{0}'", this.CurrentMaintain["id"]));
 
@@ -259,14 +259,14 @@ Where LD.id = '{0}' ", masterID);
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             var frm = new P27_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
         }
 
         // 當表身已經有值時，編輯時若換了stock type則表身要一併清空。
-        private void comboStockType_Validating(object sender, CancelEventArgs e)
+        private void ComboStockType_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(this.comboStockType.SelectedValue) && this.comboStockType.SelectedValue != this.comboStockType.OldValue)
             {

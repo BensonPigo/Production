@@ -8,7 +8,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_Wkno : Win.Subs.Base
     {
-        DataRow dr;
+        private DataRow dr;
 
         public P03_Wkno(DataRow data)
         {
@@ -75,7 +75,7 @@ And b.seq2 = '{this.dr["Seq2"]}'
                  .Text("Container", header: "ContainerType & No", width: Widths.AnsiChars(20));
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

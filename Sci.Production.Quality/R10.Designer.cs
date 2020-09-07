@@ -124,7 +124,7 @@
             this.comboBoxTypeofPrint.OldText = "";
             this.comboBoxTypeofPrint.Size = new System.Drawing.Size(121, 24);
             this.comboBoxTypeofPrint.TabIndex = 102;
-            this.comboBoxTypeofPrint.SelectedValueChanged += new System.EventHandler(this.comboBoxTypeofPrint_SelectedValueChanged);
+            this.comboBoxTypeofPrint.SelectedValueChanged += new System.EventHandler(this.ComboBoxTypeofPrint_SelectedValueChanged);
             // 
             // txtCombineStyle
             // 
@@ -135,8 +135,8 @@
             this.txtCombineStyle.Name = "txtCombineStyle";
             this.txtCombineStyle.Size = new System.Drawing.Size(252, 23);
             this.txtCombineStyle.TabIndex = 103;
-            this.txtCombineStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtCombineStyle_PopUp);
-            this.txtCombineStyle.Validating += new System.ComponentModel.CancelEventHandler(this.txtCombineStyle_Validating);
+            this.txtCombineStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCombineStyle_PopUp);
+            this.txtCombineStyle.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCombineStyle_Validating);
             // 
             // txtseason
             // 

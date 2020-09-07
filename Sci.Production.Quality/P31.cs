@@ -23,7 +23,7 @@ namespace Sci.Production.Quality
         private List<string> _Articles_c = new List<string>();
 
         // 每一Article底下的Size數量
-        private Dictionary<string, int> Size_per_Article = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> Size_per_Article = new Dictionary<string, int>();
 
         public P31(ToolStripMenuItem menuitem,string type)
             : base(menuitem)
@@ -37,7 +37,7 @@ namespace Sci.Production.Quality
 EXISTS (
     SELECT 1 
     FROM Orders o WITH (NOLOCK) 
-    WHERE MDivisionID='{Sci.Env.User.Keyword}' 
+    WHERE o.Ftygroup = '{Sci.Env.User.Factory}'  --MDivisionID='{Sci.Env.User.Keyword}' 
     AND Finished = {Isfinished} 
 	AND o.ID = Order_QtyShip.ID
     AND o.Category IN ('B','S','G')
@@ -419,6 +419,7 @@ DROP TABLE #tmp
 
                 source_QtyBreakdown.Rows.Add(newRow);
             }
+
             source_QtyBreakdown.AcceptChanges();
             #endregion
 
@@ -612,6 +613,7 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
                 this.ShowErr(r);
                 return;
             }
+
             var CartonSummary = dtCtnSummary.AsEnumerable().ToList();
 
             List<string> Articles_c = new List<string>();
@@ -707,6 +709,7 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
 
                 source_CartonSummary.Rows.Add(newRow);
             }
+
             source_CartonSummary.AcceptChanges();
             #endregion
 
@@ -721,7 +724,7 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
         }
 
 
-        private void gridQtyBreakdown_Paint(object sender, PaintEventArgs e)
+        private void GridQtyBreakdown_Paint(object sender, PaintEventArgs e)
         {
             int col = 0;
 
@@ -779,17 +782,17 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
             }
         }
 
-        private void gridQtyBreakdown_Scroll(object sender, ScrollEventArgs e)
+        private void GridQtyBreakdown_Scroll(object sender, ScrollEventArgs e)
         {
             this.InvalidateHeader();
         }
 
-        private void gridQtyBreakdown_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+        private void GridQtyBreakdown_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
         {
             this.InvalidateHeader();
         }
 
-        private void gridQtyBreakdown_Resize(object sender, EventArgs e)
+        private void GridQtyBreakdown_Resize(object sender, EventArgs e)
         {
             this.InvalidateHeader();
         }
@@ -806,7 +809,7 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
             this.gridCartonSummary.Invalidate(rtHeader_c);
         }
 
-        private void gridCartonSummary_Paint(object sender, PaintEventArgs e)
+        private void GridCartonSummary_Paint(object sender, PaintEventArgs e)
         {
             int col = 0;
 
@@ -864,17 +867,17 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
             }
         }
 
-        private void gridCartonSummary_Scroll(object sender, ScrollEventArgs e)
+        private void GridCartonSummary_Scroll(object sender, ScrollEventArgs e)
         {
             this.InvalidateHeader();
         }
 
-        private void gridCartonSummary_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+        private void GridCartonSummary_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
         {
             this.InvalidateHeader();
         }
 
-        private void gridCartonSummary_Resize(object sender, EventArgs e)
+        private void GridCartonSummary_Resize(object sender, EventArgs e)
         {
             this.InvalidateHeader();
         }
@@ -891,10 +894,10 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
             this.gridQtyBreakdown.IsEditingReadOnly = true;
 
             // 動態畫出第一行Header
-            this.gridQtyBreakdown.Paint += gridQtyBreakdown_Paint;
-            this.gridQtyBreakdown.Scroll += gridQtyBreakdown_Scroll;
-            this.gridQtyBreakdown.ColumnWidthChanged += gridQtyBreakdown_ColumnWidthChanged;
-            this.gridQtyBreakdown.Resize += gridQtyBreakdown_Resize;
+            this.gridQtyBreakdown.Paint += GridQtyBreakdown_Paint;
+            this.gridQtyBreakdown.Scroll += GridQtyBreakdown_Scroll;
+            this.gridQtyBreakdown.ColumnWidthChanged += GridQtyBreakdown_ColumnWidthChanged;
+            this.gridQtyBreakdown.Resize += GridQtyBreakdown_Resize;
 
             /*--------------------我是分隔線--------------------*/
 
@@ -908,15 +911,15 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
             this.gridCartonSummary.IsEditingReadOnly = true;
 
             // 動態畫出第一行Header
-            this.gridCartonSummary.Paint += gridCartonSummary_Paint;
-            this.gridCartonSummary.Scroll += gridCartonSummary_Scroll;
-            this.gridCartonSummary.ColumnWidthChanged += gridCartonSummary_ColumnWidthChanged;
-            this.gridCartonSummary.Resize += gridCartonSummary_Resize;
+            this.gridCartonSummary.Paint += GridCartonSummary_Paint;
+            this.gridCartonSummary.Scroll += GridCartonSummary_Scroll;
+            this.gridCartonSummary.ColumnWidthChanged += GridCartonSummary_ColumnWidthChanged;
+            this.gridCartonSummary.Resize += GridCartonSummary_Resize;
 
         }
 
 
-        private void chkForThird_CheckedChanged(object sender, EventArgs e)
+        private void ChkForThird_CheckedChanged(object sender, EventArgs e)
         {
             if (this.CurrentMaintain !=  null)
             {
@@ -940,7 +943,7 @@ AND Stage='3rd party'
             }
         }
 
-        private void btnH_Click(object sender, EventArgs e)
+        private void BtnH_Click(object sender, EventArgs e)
         {
             string content = MyUtility.GetValue.Lookup($@"
 SELECT Packing2
@@ -957,14 +960,14 @@ WHERE ID='{this.CurrentMaintain["ID"]}'
             form.ShowDialog();
         }
 
-        private void btnByRecord_Click(object sender, EventArgs e)
+        private void BtnByRecord_Click(object sender, EventArgs e)
         {
 
             P31_ByRecord form = new P31_ByRecord(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["Seq"].ToString());
             form.ShowDialog();
         }
 
-        private void btnCreateInsRecord_Click(object sender, EventArgs e)
+        private void BtnCreateInsRecord_Click(object sender, EventArgs e)
         {
             P32Header obj = new P32Header()
             {

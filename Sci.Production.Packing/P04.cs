@@ -941,6 +941,7 @@ where InvA.OrderID = '{0}'
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             #endregion
         }
+
         protected override DualResult ClickDeletePost()
         {
             #region ISP20200757 資料交換 - Sunrise

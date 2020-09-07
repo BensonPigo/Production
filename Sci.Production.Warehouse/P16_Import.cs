@@ -13,9 +13,9 @@ namespace Sci.Production.Warehouse
     public partial class P16_Import : Win.Subs.Base
     {
         public Win.Tems.Base P16;
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
        // bool flag;
        // string poType;
@@ -24,7 +24,7 @@ namespace Sci.Production.Warehouse
        // bool flag;
        // string poType;
         protected DataTable dtftyinventory;
-        string Type;
+        private string Type;
 
         public P16_Import(DataRow master, DataTable detail, string type, string title)
         {
@@ -35,14 +35,14 @@ namespace Sci.Production.Warehouse
             this.Type = type;
         }
 
-        private void sum_checkedqty()
+        private void Sum_checkedqty()
         {
             this.listControlBindingSource2.EndEdit();
             object localPrice = this.dtftyinventory.Compute("Sum(qty)", "selected = 1");
             this.displayTotalQty.Value = localPrice.ToString();
         }
 
-        private void grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
+        private void Grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             this.gridLack_Detail.ValidateControl();
         }
@@ -195,7 +195,7 @@ Where a.id = '{0}'
                         }
 
                         this.gridLack_Detail.GetDataRow(e.RowIndex)["selected"] = true;
-                        this.sum_checkedqty();
+                        this.Sum_checkedqty();
                     }
                 };
 
@@ -214,7 +214,7 @@ Where a.id = '{0}'
                     }
 
                     dr.EndEdit();
-                    this.sum_checkedqty();
+                    this.Sum_checkedqty();
                 }
             };
 
@@ -233,13 +233,13 @@ Where a.id = '{0}'
 
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             // listControlBindingSource1.EndEdit();
             this.gridLack_Detail.ValidateControl();

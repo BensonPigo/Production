@@ -308,8 +308,8 @@
             this.txtfactory.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtfactory.Size = new System.Drawing.Size(147, 23);
             this.txtfactory.TabIndex = 10;
-            this.txtfactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtfactory_PopUp);
-            this.txtfactory.Validating += new System.ComponentModel.CancelEventHandler(this.txtfactory_Validating);
+            this.txtfactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.Txtfactory_PopUp);
+            this.txtfactory.Validating += new System.ComponentModel.CancelEventHandler(this.Txtfactory_Validating);
             // 
             // comboDropDownList1
             // 

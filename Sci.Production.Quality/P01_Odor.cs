@@ -13,9 +13,9 @@ namespace Sci.Production.Quality
 {
     public partial class P01_Odor : Win.Subs.Input4
     {
-        private DataRow maindr;
-        private string loginID = Env.User.UserID;
-        private string keyWord = Env.User.Keyword;
+        private readonly DataRow maindr;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string keyWord = Env.User.Keyword;
         string excelFile;
 
         public P01_Odor(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
@@ -29,13 +29,13 @@ namespace Sci.Production.Quality
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
-            this.button_enable();
+            this.Button_enable();
         }
 
         protected override DualResult OnRequery()
         {
             #region Encode/Approve Enable
-            this.button_enable();
+            this.Button_enable();
             this.btnEncode.Text = MyUtility.Convert.GetBool(this.maindr["OdorEncode"]) ? "Amend" : "Encode";
             this.btnApprove.Text = this.maindr["Status"].ToString() == "Approved" ? "Unapprove" : "Approve";
             #endregion
@@ -131,7 +131,7 @@ namespace Sci.Production.Quality
         {
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Resultcell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResulCell = PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResulCell = PublicPrg.Prgs.CellResult.GetGridCell();
 
             #region Roll
             Rollcell.EditingMouseDown += (s, e) =>
@@ -296,7 +296,7 @@ namespace Sci.Production.Quality
             return base.OnSaveBefore();
         }
 
-        private void btnEncode_Click(object sender, EventArgs e)
+        private void BtnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
             if (MyUtility.Check.Empty(this.CurrentData) && this.btnEncode.Text == "Encode")
@@ -450,7 +450,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             this.OnRequery();
         }
 
-        private void btnApprove_Click(object sender, EventArgs e)
+        private void BtnApprove_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
 
@@ -520,7 +520,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             this.OnRequery();
         }
 
-        private void button_enable()
+        private void Button_enable()
         {
             if (this.maindr == null)
             {
@@ -552,7 +552,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             }
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             this.ToExcel(false);
         }

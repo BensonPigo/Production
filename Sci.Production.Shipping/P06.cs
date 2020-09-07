@@ -397,6 +397,7 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                     }
                 }
             }
+
             return base.ClickSave();
         }
 
@@ -573,7 +574,7 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 return;
             }
 
-            if (!Prgs.CheckExistsOrder_QtyShip_Detail(PulloutID: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(pulloutID: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
             {
                 return;
             }

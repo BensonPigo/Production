@@ -91,7 +91,7 @@
             this.btnToExcel.TabIndex = 1;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // labelTotal
             // 
@@ -159,7 +159,7 @@
             this.btnReCalculate.TabIndex = 0;
             this.btnReCalculate.Text = "Re-Calculate";
             this.btnReCalculate.UseVisualStyleBackColor = true;
-            this.btnReCalculate.Click += new System.EventHandler(this.btnReCalculate_Click);
+            this.btnReCalculate.Click += new System.EventHandler(this.BtnReCalculate_Click);
             // 
             // btnClose
             // 
@@ -171,7 +171,7 @@
             this.btnClose.TabIndex = 2;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // gridLocalTransaction
             // 

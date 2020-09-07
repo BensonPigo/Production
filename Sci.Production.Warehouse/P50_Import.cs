@@ -12,12 +12,12 @@ namespace Sci.Production.Warehouse
 {
     public partial class P50_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        int price1 = 0;
-        int price2 = 0;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private int price1 = 0;
+        private int price2 = 0;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
       // bool flag;
       //  string poType;
@@ -41,7 +41,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
 
@@ -209,12 +209,12 @@ and f.MDivisionID='{0}' ", Env.User.Keyword, this.dr_master["stocktype"]));
             cbb_fabrictype.DisplayMember = "Value";
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             // listControlBindingSource1.EndEdit();
             this.gridImport.ValidateControl();
@@ -252,11 +252,11 @@ and f.MDivisionID='{0}' ", Env.User.Keyword, this.dr_master["stocktype"]));
             this.Close();
         }
 
-        private void numRandom_TextChanged(object sender, EventArgs e)
+        private void NumRandom_TextChanged(object sender, EventArgs e)
         {
         }
 
-        private void comboSortby_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboSortby_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (this.comboSortby.SelectedIndex)
             {
@@ -277,7 +277,7 @@ and f.MDivisionID='{0}' ", Env.User.Keyword, this.dr_master["stocktype"]));
             }
         }
 
-        private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.txtLocation.ReadOnly == true)

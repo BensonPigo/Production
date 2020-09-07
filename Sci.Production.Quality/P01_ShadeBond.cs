@@ -18,11 +18,11 @@ namespace Sci.Production.Quality
 {
     public partial class P01_ShadeBond : Win.Subs.Input4
     {
-        private DataRow maindr;
-        private string loginID = Env.User.UserID;
-        private string keyWord = Env.User.Keyword;
+        private readonly DataRow maindr;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string keyWord = Env.User.Keyword;
         string excelFile;
-        string ID;
+        readonly string ID;
 
         public P01_ShadeBond(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
@@ -35,13 +35,13 @@ namespace Sci.Production.Quality
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
-            this.button_enable();
+            this.Button_enable();
         }
 
         protected override DualResult OnRequery()
         {
             #region Encode/Approve Enable
-            this.button_enable();
+            this.Button_enable();
             this.btnEncode.Text = MyUtility.Convert.GetBool(this.maindr["shadebondEncode"]) ? "Amend" : "Encode";
             this.btnApprove.Text = this.maindr["Status"].ToString() == "Approved" ? "Unapprove" : "Approve";
             #endregion
@@ -138,7 +138,7 @@ namespace Sci.Production.Quality
         {
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Scalecell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResulCell = PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResulCell = PublicPrg.Prgs.CellResult.GetGridCell();
             DataGridViewGeneratorTextColumnSettings InspectorCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region Scale
@@ -334,7 +334,7 @@ namespace Sci.Production.Quality
             return base.OnSaveBefore();
         }
 
-        private void btnEncode_Click(object sender, EventArgs e)
+        private void BtnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
             DataTable gridTb = (DataTable)this.gridbs.DataSource;
@@ -586,7 +586,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             this.OnRequery();
         }
 
-        private void btnApprove_Click(object sender, EventArgs e)
+        private void BtnApprove_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
 
@@ -664,7 +664,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             this.delete.Visible = false;
         }
 
-        private void button_enable()
+        private void Button_enable()
         {
             if (this.maindr == null)
             {
@@ -697,7 +697,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             }
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             this.ToExcel(false);
         }
@@ -790,7 +790,7 @@ select Roll,Dyelot,TicketYds,Scale,Result
             return true;
         }
 
-        private void btnPrintFormatReport_Click(object sender, EventArgs e)
+        private void BtnPrintFormatReport_Click(object sender, EventArgs e)
         {
             DataTable dt_title;
             DataTable dt_Exp;

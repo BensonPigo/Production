@@ -12,10 +12,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P23_FabricSticker : Win.Subs.Base
     {
-        private object strSubTransferID;
+        private readonly object strSubTransferID;
 
+        /// <inheritdoc/>
         public P23_FabricSticker(object strSubTransferID)
         {
             this.InitializeComponent();
@@ -23,6 +25,7 @@ namespace Sci.Production.Warehouse
             this.grid1.IsEditingReadOnly = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -36,7 +39,7 @@ namespace Sci.Production.Warehouse
                 .Text("BulkSeq", header: "Bulk" + Environment.NewLine + "Seq", iseditingreadonly: true)
                 .Text("Roll", header: "Roll", iseditingreadonly: true)
                 .Text("Dyelot", header: "Dyelot", iseditingreadonly: true)
-                .Text("FromLocation", header: "From Location",  iseditingreadonly: true, width: Widths.AnsiChars(18));
+                .Text("FromLocation", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(18));
 
             for (int i = 0; i < this.grid1.Columns.Count; i++)
             {
@@ -45,24 +48,27 @@ namespace Sci.Production.Warehouse
             #endregion
 
             #region Set Grid Datas
-            List<SqlParameter> listSqlParameters = new List<SqlParameter>();
-            listSqlParameters.Add(new SqlParameter("@ID", this.strSubTransferID));
+            List<SqlParameter> listSqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", this.strSubTransferID),
+            };
 
             string strQuerySql = @"
-select Sel = 0
-       , RowNo = Row_Number() over (order by std.FromPOID, std.ToSeq1, std.ToSeq2)
-       , InventorySPNo = std.FromPOID
-	   , InventorySeq = Concat (std.FromSeq1, '-', std.FromSeq2)
-	   , BulkSPNo = std.ToPOID
-	   , BulkSeq = Concat (std.ToSeq1, '-', std.ToSeq2)
-	   , Roll = std.FromRoll
-	   , Dyelot = std.FromDyelot
-	   , ToFactory = std.ToFactoryID
-       , Refno = isnull (psd.Refno, '')
-	   , Color = isnull (dbo.GetColorMultipleID (o.BrandID, psd.ColorID), '')
-	   , StockUnit = isnull (dbo.GetStockUnitBySPSeq (std.FromPOID, std.FromSeq1, std.FromSeq2), '')
-	   , Qty = std.Qty
-	   , [FromLocation]= dbo.Getlocation (fi.ukey)
+select
+    Sel = 0
+    , RowNo = Row_Number() over (order by std.FromPOID, std.ToSeq1, std.ToSeq2)
+    , InventorySPNo = std.FromPOID
+    , InventorySeq = Concat (std.FromSeq1, '-', std.FromSeq2)
+    , BulkSPNo = std.ToPOID
+    , BulkSeq = Concat (std.ToSeq1, '-', std.ToSeq2)
+    , Roll = std.FromRoll
+    , Dyelot = std.FromDyelot
+    , ToFactory = std.ToFactoryID
+    , Refno = isnull (psd.Refno, '')
+    , Color =  IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,SuppColor, isnull(dbo.GetColorMultipleID (o.BrandID, psd.ColorID), ''))
+    , StockUnit = isnull (dbo.GetStockUnitBySPSeq (std.FromPOID, std.FromSeq1, std.FromSeq2), '')
+    , Qty = std.Qty
+    , [FromLocation]= dbo.Getlocation (fi.ukey)
 from SubTransfer_Detail std
 left join Orders o on std.FromPOID = o.ID
 left join Po_Supp_Detail psd on std.FromPOID = psd.ID
@@ -74,11 +80,11 @@ left join FtyInventory FI on std.FromPoid = fi.poid
                              and std.fromRoll = fi.roll 
                              and std.fromStocktype = fi.stocktype
                              and std.fromDyelot = fi.Dyelot
+left join Fabric on Fabric.SCIRefno = psd.SCIRefno
 where std.ID = @ID
 order by RowNo";
 
-            DataTable dtResult;
-            DualResult result = DBProxy.Current.Select(string.Empty, strQuerySql, listSqlParameters, out dtResult);
+            DualResult result = DBProxy.Current.Select(string.Empty, strQuerySql, listSqlParameters, out DataTable dtResult);
             this.listControlBindingSource.DataSource = dtResult;
 
             if (result == false)
@@ -88,13 +94,13 @@ order by RowNo";
             #endregion
         }
 
-        private void btnPrint_Click(object sender, EventArgs e)
+        private void BtnPrint_Click(object sender, EventArgs e)
         {
             DualResult result;
             DataTable dtPrint = (DataTable)this.listControlBindingSource.DataSource;
             if (dtPrint != null
                 && dtPrint.AsEnumerable().Any(row => Convert.ToBoolean(row["Sel"])))
-                {
+            {
                 #region Print
                 dtPrint = dtPrint.AsEnumerable().Where(row => Convert.ToBoolean(row["Sel"])).CopyToDataTable();
 
@@ -129,17 +135,17 @@ order by NewRowNo";
                     FromLocation = row["FromLocation"].ToString().Trim(),
                 }).ToList();
 
-                ReportDefinition report = new ReportDefinition();
-                report.ReportDataSource = listData;
+                ReportDefinition report = new ReportDefinition
+                {
+                    ReportDataSource = listData,
+                };
 
                 // 指定是哪個 RDLC
-                Type ReportResourceNamespace = typeof(P23_PrintData);
-                Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-                string ReportResourceName = "P23_FabricSticker_Print.rdlc";
+                Type reportResourceNamespace = typeof(P23_PrintData);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P23_FabricSticker_Print.rdlc";
 
-                IReportResource reportresource;
-
-                if ((result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)) == false)
+                if ((result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)) == false)
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;
@@ -148,8 +154,10 @@ order by NewRowNo";
                 report.ReportResource = reportresource;
 
                 // 開啟 report view
-                var frm = new Win.Subs.ReportView(report);
-                frm.MdiParent = this.MdiParent;
+                var frm = new Win.Subs.ReportView(report)
+                {
+                    MdiParent = this.MdiParent,
+                };
                 frm.Show();
                 #endregion
             }

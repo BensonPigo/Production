@@ -14,8 +14,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P08_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
+        private DataRow dr_master;
+        private DataTable dt_detail;
 
         public P08_Import(DataRow master, DataTable detail)
         {
@@ -32,8 +32,8 @@ namespace Sci.Production.Warehouse
 
             #region Location 右鍵開窗
 
-            DataGridViewGeneratorTextColumnSettings Location_Setting = new DataGridViewGeneratorTextColumnSettings();
-            Location_Setting.EditingMouseDown += (s, e) =>
+            DataGridViewGeneratorTextColumnSettings location_Setting = new DataGridViewGeneratorTextColumnSettings();
+            location_Setting.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
@@ -50,7 +50,7 @@ namespace Sci.Production.Warehouse
                 }
             };
 
-            Location_Setting.CellValidating += (s, e) =>
+            location_Setting.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
@@ -119,7 +119,7 @@ WHERE   StockType='{0}'
                 .Text("Roll", header: "Roll",  iseditingreadonly: false).Get(out cbb_Roll)
                 .Text("Dyelot", header: "Dyelot",  iseditingreadonly: false).Get(out cbb_Dyelot)
                 .Numeric("StockQty", header: "Receiving Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
-                .Text("Location", header: "Location", settings: Location_Setting, iseditingreadonly: false)
+                .Text("Location", header: "Location", settings: location_Setting, iseditingreadonly: false)
             ;
             cbb_Roll.MaxLength = 8;
             cbb_Dyelot.MaxLength = 8;
@@ -142,8 +142,8 @@ WHERE   StockType='{0}'
             List<SqlParameter> paras = new List<SqlParameter>();
             paras.Add(new SqlParameter("@SP", this.txtSP.Text));
             string poid = MyUtility.GetValue.Lookup("SELECT  POID FROM Orders WHERE ID = @SP", paras);
-            string Seq1 = this.txtSeq1.Text;
-            string Seq2 = this.txtSeq2.Text;
+            string seq1 = this.txtSeq1.Text;
+            string seq2 = this.txtSeq2.Text;
 
             // 這邊必須和P08表身一致
             string cmd = $@"
@@ -193,14 +193,14 @@ where p.id ='{poid}'
 AND left(p.seq1,1) != '7'
 and p.Junk = 0
 ";
-            if (!MyUtility.Check.Empty(Seq1))
+            if (!MyUtility.Check.Empty(seq1))
             {
-                cmd += $"AND p.Seq1 = '{Seq1}'" + Environment.NewLine;
+                cmd += $"AND p.Seq1 = '{seq1}'" + Environment.NewLine;
             }
 
-            if (!MyUtility.Check.Empty(Seq2))
+            if (!MyUtility.Check.Empty(seq2))
             {
-                cmd += $"AND p.Seq2 = '{Seq2}'" + Environment.NewLine;
+                cmd += $"AND p.Seq2 = '{seq2}'" + Environment.NewLine;
             }
 
             DataTable dt;

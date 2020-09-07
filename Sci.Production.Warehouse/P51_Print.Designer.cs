@@ -53,7 +53,7 @@
             this.radioPanel1.Size = new System.Drawing.Size(425, 128);
             this.radioPanel1.TabIndex = 94;
             this.radioPanel1.Value = "Backward Socktaking Form";
-            this.radioPanel1.ValueChanged += new System.EventHandler(this.radioGroup1_ValueChanged);
+            this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioGroup1_ValueChanged);
             // 
             // radioBackwardSocktakingLi
             // 

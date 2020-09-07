@@ -116,16 +116,16 @@ order by PoId,Seq1,Seq2
                  .Numeric("variance", header: "Variance", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
                  .EditText("Description", header: "Description", width: Widths.AnsiChars(40))
                  ;
-            this.grid_Filter();
+            this.Grid_Filter();
             this.ChangeColor();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void grid_Filter()
+        private void Grid_Filter()
         {
             string filter = string.Empty;
 
@@ -176,9 +176,9 @@ order by PoId,Seq1,Seq2
             }
         }
 
-        private void chkRcvdQty_CheckedChanged(object sender, EventArgs e)
+        private void ChkRcvdQty_CheckedChanged(object sender, EventArgs e)
         {
-            this.grid_Filter();
+            this.Grid_Filter();
             this.ChangeColor();
         }
     }

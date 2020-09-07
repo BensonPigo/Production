@@ -8,7 +8,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P02_Cartondetail : Win.Forms.Base
     {
-        string Export_DetailUkey;
+        private string Export_DetailUkey;
 
         public P02_Cartondetail(string export_DetailUkey)
         {
@@ -31,11 +31,11 @@ left join Supp s WITH (NOLOCK) on s.id = ed.SuppID
 where Export_DetailUkey = '{this.Export_DetailUkey}'
 order by edc.poid,edc.seq1,edc.seq2,edc.Carton";
             DataTable dt;
-            DualResult Result;
-            Result = DBProxy.Current.Select(null, sqlcmd, out dt);
-            if (!Result)
+            DualResult result;
+            result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (!result)
             {
-                this.ShowErr(Result);
+                this.ShowErr(result);
                 return;
             }
 
@@ -55,7 +55,7 @@ order by edc.poid,edc.seq1,edc.seq2,edc.Carton";
             this.grid1.AutoResizeColumns();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

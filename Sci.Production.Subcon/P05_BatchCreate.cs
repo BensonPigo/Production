@@ -14,6 +14,7 @@ using System.Transactions;
 using MsExcel = Microsoft.Office.Interop.Excel;
 using System.Reflection;
 using Sci.Production.PublicPrg;
+using Sci.Win.UI;
 
 namespace Sci.Production.Subcon
 {
@@ -33,6 +34,7 @@ namespace Sci.Production.Subcon
         private string sp_b;
         private string sp_e;
         private string artworktype;
+        private P05 p05;
 
         /// <summary>
         /// P05_BatchCreate
@@ -122,7 +124,23 @@ namespace Sci.Production.Subcon
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            this.p05 = (P05)this.ParentIForm;
             #region -- Grid 設定 --
+            DataGridViewGeneratorNumericColumnSettings tsReqQty = new DataGridViewGeneratorNumericColumnSettings();
+
+            tsReqQty.CellMouseDoubleClick += (s, e) =>
+            {
+                DataTable dtMsg = ((DataTable)this.listControlBindingSource1.DataSource).Clone();
+                dtMsg.ImportRow(this.gridBatchCreateFromSubProcessData.GetDataRow(e.RowIndex));
+                MsgGridForm msgGridForm = new MsgGridForm(dtMsg, "Buy Back Qty", "Buy Back Qty", "orderID,OrderQty,BuyBackArtworkReq");
+                msgGridForm.grid1.Columns[0].HeaderText = "SP";
+                msgGridForm.grid1.Columns[1].HeaderText = "Order\r\nQty";
+                msgGridForm.grid1.Columns[2].HeaderText = "Buy Back\r\nQty";
+                msgGridForm.grid1.AutoResizeColumns();
+                msgGridForm.grid1.Columns[0].Width = 120;
+                msgGridForm.ShowDialog();
+            };
+
             this.gridBatchCreateFromSubProcessData.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridBatchCreateFromSubProcessData.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridBatchCreateFromSubProcessData)
@@ -131,7 +149,7 @@ namespace Sci.Production.Subcon
                 .Text("orderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14))
                 .Numeric("OrderQty", header: "Order Qty", iseditingreadonly: true)
                 .Numeric("AccReqQty", header: "Accu. Req. Qty", iseditingreadonly: true)
-                .Numeric("ReqQty", header: "Req. Qty", iseditable: true)
+                .Numeric("ReqQty", header: "Req. Qty", iseditable: true, settings: tsReqQty)
                 .Date("sewinline", header: "Sew. Inline", iseditingreadonly: true)
                 .Date("SciDelivery", header: "SCI Delivery", iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -565,7 +583,7 @@ where f.IsProduceFty=1
 and oa.ArtworkTypeID = '{this.txtartworktype_ftyArtworkType.Text}'
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
+and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1 or o.KeepPanels=1)
 and sao.LocalSuppId is not null
 {sqlWhere}
 
@@ -693,6 +711,8 @@ group by  LocalSuppID
 
 ) a
 
+{this.p05.SqlGetBuyBackDeduction(this.txtartworktype_ftyArtworkType.Text)}
+
 select  [Selected] = 0
         , fr.LocalSuppID
         , fr.FTYGroup
@@ -701,7 +721,7 @@ select  [Selected] = 0
         , fr.SizeCode
         , fr.OrderQty
         , [AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) 
-        , ReqQty = iif(fr.OrderQty  - (ReqQty.value + PoQty.value) < 0, 0, fr.OrderQty  - (ReqQty.value + PoQty.value))
+        , ReqQty = iif(fr.OrderQty  - (ReqQty.value + PoQty.value + isnull(tbbd.BuyBackArtworkReq, 0)) < 0, 0, fr.OrderQty  - (ReqQty.value + PoQty.value + isnull(tbbd.BuyBackArtworkReq, 0)))
 		, fr.SewInLIne
 		, fr.SciDelivery
 		, fr.ArtworkID
@@ -713,7 +733,15 @@ select  [Selected] = 0
 		, fr.POID
         , fr.ExceedQty
         , fr.ArtworkTypeID
+        , [BuyBackArtworkReq] = isnull(tbbd.BuyBackArtworkReq, 0)
 from #FinalArtworkReq fr
+left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = fr.OrderID       and
+                                        tbbd.Article = fr.Article       and
+                                        tbbd.SizeCode = fr.SizeCode     and
+                                        tbbd.PatternCode = fr.PatternCode   and
+                                        tbbd.PatternDesc = fr.PatternDesc   and
+                                        tbbd.ArtworkID = fr.ArtworkID and
+										tbbd.LocalSuppID = fr.LocalSuppID
 outer apply (
         select value = ISNULL(sum(ReqQty),0)
         from ArtworkReq_Detail AD

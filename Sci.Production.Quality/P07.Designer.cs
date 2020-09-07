@@ -429,7 +429,7 @@
             this.btnFind.TabIndex = 115;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // comboOvenWashBoth
             // 
@@ -454,7 +454,7 @@
             this.btnBatchUpdateNA.TabIndex = 117;
             this.btnBatchUpdateNA.Text = "Batch update N/A";
             this.btnBatchUpdateNA.UseVisualStyleBackColor = true;
-            this.btnBatchUpdateNA.Click += new System.EventHandler(this.btnBatchUpdateNA_Click);
+            this.btnBatchUpdateNA.Click += new System.EventHandler(this.BtnBatchUpdateNA_Click);
             // 
             // editRemark
             // 

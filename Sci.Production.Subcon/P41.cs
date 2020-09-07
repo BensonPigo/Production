@@ -213,6 +213,7 @@ bd.BundleNo
                     "CASE WHEN bd.Patterncode = 'ALLPARTS' THEN bdap.PatternDesc ELSE bd.PatternDesc END --basic from 「Extend All Parts」 is checked or not"
                     :
                     "bd.PatternDesc")}
+
 ,[SubProcessID]= SubProcess.SubProcessID
 ,[DefaultSubProcess]=DefaultSubProcess.SubProcessID
 ,bd.BundleGroup

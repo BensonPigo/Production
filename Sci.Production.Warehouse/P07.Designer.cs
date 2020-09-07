@@ -321,7 +321,7 @@
             this.txtInvoiceNo.Name = "txtInvoiceNo";
             this.txtInvoiceNo.Size = new System.Drawing.Size(120, 23);
             this.txtInvoiceNo.TabIndex = 0;
-            this.txtInvoiceNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtInvoiceNo_Validating);
+            this.txtInvoiceNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtInvoiceNo_Validating);
             // 
             // displayWKNO
             // 
@@ -398,7 +398,7 @@
             this.btnModifyRollDyelot.TabIndex = 9;
             this.btnModifyRollDyelot.Text = "Modify Roll & Dyelot";
             this.btnModifyRollDyelot.UseVisualStyleBackColor = true;
-            this.btnModifyRollDyelot.Click += new System.EventHandler(this.btModifyRollDyelot_Click);
+            this.btnModifyRollDyelot.Click += new System.EventHandler(this.BtModifyRollDyelot_Click);
             // 
             // btnDownloadSample
             // 
@@ -410,7 +410,7 @@
             this.btnDownloadSample.TabIndex = 12;
             this.btnDownloadSample.Text = "Download Sample File";
             this.btnDownloadSample.UseVisualStyleBackColor = true;
-            this.btnDownloadSample.Click += new System.EventHandler(this.btDownloadSample_Click);
+            this.btnDownloadSample.Click += new System.EventHandler(this.BtDownloadSample_Click);
             // 
             // btnPrintSticker
             // 
@@ -422,7 +422,7 @@
             this.btnPrintSticker.TabIndex = 10;
             this.btnPrintSticker.Text = "Print Fabric Sticker for SMS";
             this.btnPrintSticker.UseVisualStyleBackColor = true;
-            this.btnPrintSticker.Click += new System.EventHandler(this.btPrintSticker_Click);
+            this.btnPrintSticker.Click += new System.EventHandler(this.BtPrintSticker_Click);
             // 
             // btnAccumulatedQty
             // 
@@ -434,7 +434,7 @@
             this.btnAccumulatedQty.TabIndex = 8;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
-            this.btnAccumulatedQty.Click += new System.EventHandler(this.btAccumulated_Click);
+            this.btnAccumulatedQty.Click += new System.EventHandler(this.BtAccumulated_Click);
             // 
             // btnImportFromExcel
             // 
@@ -446,7 +446,7 @@
             this.btnImportFromExcel.TabIndex = 18;
             this.btnImportFromExcel.Text = "Import From Excel";
             this.btnImportFromExcel.UseVisualStyleBackColor = true;
-            this.btnImportFromExcel.Click += new System.EventHandler(this.btImportFromExcel_Click);
+            this.btnImportFromExcel.Click += new System.EventHandler(this.BtImportFromExcel_Click);
             // 
             // btnUpdateWeight
             // 
@@ -457,7 +457,7 @@
             this.btnUpdateWeight.TabIndex = 11;
             this.btnUpdateWeight.Text = "Update Weight";
             this.btnUpdateWeight.UseVisualStyleBackColor = true;
-            this.btnUpdateWeight.Click += new System.EventHandler(this.btUpdateWeight_Click);
+            this.btnUpdateWeight.Click += new System.EventHandler(this.BtUpdateWeight_Click);
             // 
             // shapeContainer1
             // 
@@ -497,7 +497,7 @@
             this.btnFind.TabIndex = 15;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtFind_Click);
             // 
             // txtLocateForSP
             // 
@@ -540,7 +540,7 @@
             this.comboTypeFilter.OldText = "";
             this.comboTypeFilter.Size = new System.Drawing.Size(100, 24);
             this.comboTypeFilter.TabIndex = 16;
-            this.comboTypeFilter.SelectedIndexChanged += new System.EventHandler(this.comboTypeFilter_SelectedIndexChanged);
+            this.comboTypeFilter.SelectedIndexChanged += new System.EventHandler(this.ComboTypeFilter_SelectedIndexChanged);
             // 
             // btnDeleteAll
             // 
@@ -551,7 +551,7 @@
             this.btnDeleteAll.TabIndex = 17;
             this.btnDeleteAll.Text = "Delete all";
             this.btnDeleteAll.UseVisualStyleBackColor = true;
-            this.btnDeleteAll.Click += new System.EventHandler(this.btDeleteAllDetail_Click);
+            this.btnDeleteAll.Click += new System.EventHandler(this.BtDeleteAllDetail_Click);
             // 
             // check3rdCountry
             // 

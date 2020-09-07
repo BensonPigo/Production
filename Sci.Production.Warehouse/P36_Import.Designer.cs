@@ -60,7 +60,7 @@
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnImport
             // 
@@ -72,7 +72,7 @@
             this.btnImport.TabIndex = 1;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // btnFindNow
             // 
@@ -84,7 +84,7 @@
             this.btnFindNow.TabIndex = 2;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
             // 
             // txtSP
             // 
@@ -127,7 +127,7 @@
             this.displayLocation.Name = "displayLocation";
             this.displayLocation.Size = new System.Drawing.Size(432, 23);
             this.displayLocation.TabIndex = 9;
-            this.displayLocation.MouseDown += new System.Windows.Forms.MouseEventHandler(this.displayLocation_MouseDown);
+            this.displayLocation.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DisplayLocation_MouseDown);
             // 
             // btnUpdateAll
             // 
@@ -139,7 +139,7 @@
             this.btnUpdateAll.TabIndex = 0;
             this.btnUpdateAll.Text = "Update All";
             this.btnUpdateAll.UseVisualStyleBackColor = true;
-            this.btnUpdateAll.Click += new System.EventHandler(this.btnUpdateAll_Click);
+            this.btnUpdateAll.Click += new System.EventHandler(this.BtnUpdateAll_Click);
             // 
             // labelLocation
             // 

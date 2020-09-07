@@ -12,18 +12,18 @@ namespace Sci.Production.Warehouse
     public partial class R14 : Win.Tems.PrintForm
     {
         // string reason, factory, stocktype, fabrictype, ordertype;
-        string factory;
+        private string factory;
 
         // string reason, factory, stocktype, fabrictype, ordertype;
-        string fabrictype;
+        private string fabrictype;
 
         // string reason, factory, stocktype, fabrictype, ordertype;
-        string ordertype;
-        int ordertypeindex;
-        DateTime? eta1;
-        DateTime? eta2;
-        DataTable printData;
-        StringBuilder condition = new StringBuilder();
+        private string ordertype;
+        private int ordertypeindex;
+        private DateTime? eta1;
+        private DateTime? eta2;
+        private DataTable printData;
+        private StringBuilder condition = new StringBuilder();
 
         public R14(ToolStripMenuItem menuitem)
             : base(menuitem)

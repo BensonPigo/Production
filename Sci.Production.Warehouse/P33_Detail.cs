@@ -10,7 +10,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P33_Detail : Win.Subs.Input8A
     {
-        public DataTable dtIssueBreakDown { get; set; }
+        public DataTable DtIssueBreakDown { get; set; }
 
         public bool combo;
         public bool isSave;
@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
             var frm = new P33_Detail_Detail(this.CurrentDetailData, (DataTable)this.gridbs.DataSource, this.CurrentDetailData["AccuIssued"].ToString(), this.CurrentDetailData["Use Qty By Stock Unit"].ToString());
             frm.P33_Detail = this;
             frm.ShowDialog(this);
-            this.sum_checkedqty();
+            this.Sum_checkedqty();
 
             // base.OnSubDetailInsert(index);
             // CurrentSubDetailData["Issue_SummaryUkey"] = 0;
@@ -134,7 +134,7 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
 
                 row["Qty"] = Convert.ToInt32(e.FormattedValue);
                 subDT.EndInit();
-                this.sum_checkedqty();
+                this.Sum_checkedqty();
             };
             this.Helper.Controls.Grid.Generator(this.grid)
             .Text("seq1", header: "Seq1", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -176,10 +176,10 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
             return base.OnUndo();
         }
 
-        private void btnAutoPick_Click(object sender, EventArgs e)
+        private void BtnAutoPick_Click(object sender, EventArgs e)
         {
-            decimal AccuIssued = MyUtility.Check.Empty(this.CurrentDetailData["AccuIssued"]) ? 0 : Convert.ToDecimal(this.CurrentDetailData["AccuIssued"]);
-            List<DataRow> issuedList = PublicPrg.Prgs.Thread_AutoPick(this.CurrentDetailData, AccuIssued);
+            decimal accuIssued = MyUtility.Check.Empty(this.CurrentDetailData["AccuIssued"]) ? 0 : Convert.ToDecimal(this.CurrentDetailData["AccuIssued"]);
+            List<DataRow> issuedList = PublicPrg.Prgs.Thread_AutoPick(this.CurrentDetailData, accuIssued);
 
             if (issuedList == null)
             {
@@ -201,15 +201,15 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
                 subDT.ImportRow(dr2);
             }
 
-            this.sum_checkedqty();
+            this.Sum_checkedqty();
         }
 
-        private void sum_checkedqty()
+        private void Sum_checkedqty()
         {
             this.grid.EndEdit();
             DataTable subDT = (DataTable)this.gridbs.DataSource;
-            object SumIssueQTY = subDT.Compute("Sum(Qty)", string.Empty);
-            this.numIssueQty.Text = SumIssueQTY.ToString();
+            object sumIssueQTY = subDT.Compute("Sum(Qty)", string.Empty);
+            this.numIssueQty.Text = sumIssueQTY.ToString();
 
             // this.numVariance.Value = this.numBalanceQty.Value - this.numIssueQty.Value;
             this.CurrentDetailData["IssueQty"] = MyUtility.Check.Empty(subDT.Compute("Sum(Qty)", string.Empty)) ? 0 : (decimal)subDT.Compute("Sum(Qty)", string.Empty);
@@ -248,14 +248,14 @@ AND Seq1 = '{seq1}' AND Seq2 = '{seq2}'
             #endregion
         }
 
-        private void save_Click(object sender, EventArgs e)
+        private void Save_Click(object sender, EventArgs e)
         {
             this.isSave = true;
         }
 
-        private void delete_Click(object sender, EventArgs e)
+        private void Delete_Click(object sender, EventArgs e)
         {
-            this.sum_checkedqty();
+            this.Sum_checkedqty();
         }
     }
 }

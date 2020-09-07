@@ -12,32 +12,32 @@ namespace Sci.Production.Warehouse
 {
     public partial class R03 : Win.Tems.PrintForm
     {
-        string season;
-        string mdivision;
-        string orderby;
-        string spno1;
-        string spno2;
-        string fabrictype;
-        string refno1;
-        string refno2;
-        string style;
-        string country;
-        string supp;
-        string factory;
-        string wkNo1;
-        string wkNo2;
-        string brand;
-        string IncludeJunk;
-        string ExcludeMaterial;
-        DateTime? sciDelivery1;
-        DateTime? sciDelivery2;
-        DateTime? suppDelivery1;
-        DateTime? suppDelivery2;
-        DateTime? eta1;
-        DateTime? eta2;
-        DateTime? ata1;
-        DateTime? ata2;
-        DataTable printData;
+        private string season;
+        private string mdivision;
+        private string orderby;
+        private string spno1;
+        private string spno2;
+        private string fabrictype;
+        private string refno1;
+        private string refno2;
+        private string style;
+        private string country;
+        private string supp;
+        private string factory;
+        private string wkNo1;
+        private string wkNo2;
+        private string brand;
+        private string IncludeJunk;
+        private string ExcludeMaterial;
+        private DateTime? sciDelivery1;
+        private DateTime? sciDelivery2;
+        private DateTime? suppDelivery1;
+        private DateTime? suppDelivery2;
+        private DateTime? eta1;
+        private DateTime? eta2;
+        private DateTime? ata1;
+        private DateTime? ata2;
+        private DataTable printData;
 
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)

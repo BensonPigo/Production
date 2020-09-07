@@ -163,7 +163,7 @@ where 1=1
             this.HideWaitMessage();
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             this.Find();
         }

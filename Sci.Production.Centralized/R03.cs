@@ -74,7 +74,7 @@ namespace Sci.Production.Centralized
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
-            this.Text = PrivUtils.getVersion(this.Text);
+            this.Text = PrivUtils.GetVersion(this.Text);
             DualResult result;
             base.OnFormLoaded();
             this.comboDropDownListCategory.SelectedIndex = 0;
@@ -624,7 +624,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
         {
             string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
             DualResult result = Ict.Result.True;
-            string strPath = PrivUtils.getPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
+            string strPath = PrivUtils.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
             this.temfile = strPath + @"\Centralized-R03.Prod. Efficiency Analysis Report.xltx";
 
             try
@@ -655,8 +655,8 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 1.   By Factory
 
@@ -677,8 +677,8 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 2.   By Brand
 
@@ -699,8 +699,8 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 3.   By Brand-Factory
 
@@ -721,8 +721,8 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 4.   By Style
 
@@ -743,8 +743,8 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 5.   By CD
 
@@ -765,8 +765,8 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 6.   By Factory Line
 
@@ -787,8 +787,8 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 7.   By Brand-Factory-CD
 
@@ -809,8 +809,8 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 8.   By PO Combo
 
@@ -831,8 +831,8 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 9.   By Program
 

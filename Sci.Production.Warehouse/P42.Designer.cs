@@ -94,7 +94,7 @@
             this.btnFind.TabIndex = 7;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // btnQuery
             // 
@@ -104,7 +104,7 @@
             this.btnQuery.TabIndex = 5;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // txtLocateForSP
             // 
@@ -133,7 +133,7 @@
             this.checkEmptyMtlETA.TabIndex = 4;
             this.checkEmptyMtlETA.Text = "Filter empty Mtl. ETA";
             this.checkEmptyMtlETA.UseVisualStyleBackColor = true;
-            this.checkEmptyMtlETA.CheckedChanged += new System.EventHandler(this.checkEmptyMtlETA_CheckedChanged);
+            this.checkEmptyMtlETA.CheckedChanged += new System.EventHandler(this.CheckEmptyMtlETA_CheckedChanged);
             // 
             // checkEmptyEachCons
             // 
@@ -145,7 +145,7 @@
             this.checkEmptyEachCons.TabIndex = 3;
             this.checkEmptyEachCons.Text = "Filter empty Each Cons.";
             this.checkEmptyEachCons.UseVisualStyleBackColor = true;
-            this.checkEmptyEachCons.CheckedChanged += new System.EventHandler(this.checkEmptyEachCons_CheckedChanged);
+            this.checkEmptyEachCons.CheckedChanged += new System.EventHandler(this.CheckEmptyEachCons_CheckedChanged);
             // 
             // dateBuyerDelivery
             // 
@@ -253,7 +253,7 @@
             this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnSave
             // 
@@ -264,7 +264,7 @@
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // pictureBox2
             // 
@@ -276,7 +276,7 @@
             this.pictureBox2.TabIndex = 6;
             this.pictureBox2.TabStop = false;
             this.pictureBox2.WaitOnLoad = true;
-            this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
+            this.pictureBox2.Click += new System.EventHandler(this.PictureBox2_Click);
             // 
             // pictureBox1
             // 
@@ -288,7 +288,7 @@
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.WaitOnLoad = true;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click);
             // 
             // dateOffline
             // 

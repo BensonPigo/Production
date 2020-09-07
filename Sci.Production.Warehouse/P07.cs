@@ -30,7 +30,7 @@ namespace Sci.Production.Warehouse
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Dyelot;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ttlqty;
 
-        string UserID = Env.User.UserID;
+        private string UserID = Env.User.UserID;
         private bool isSetZero = false;
 
 
@@ -168,8 +168,8 @@ namespace Sci.Production.Warehouse
                 // listRowErrMsg.Add("<Roll> length can't be more than 8 Characters.");
 
                 // Dyelot varchar(8)
-                byte[] DyelotTemp = Encoding.Default.GetBytes(row["Dyelot"].ToString());
-                if (DyelotTemp.Length > 8)
+                byte[] dyelotTemp = Encoding.Default.GetBytes(row["Dyelot"].ToString());
+                if (dyelotTemp.Length > 8)
                 {
                     if (!errormsgDir[errorkey].Contains("<Dyelot> length can't be more than 8 Characters."))
                     {
@@ -359,26 +359,26 @@ where p.junk = 1
             }
             #endregion
 
-            DateTime ArrivePortDate;
-            DateTime WhseArrival;
-            DateTime ETA;
+            DateTime arrivePortDate;
+            DateTime whseArrival;
+            DateTime eTA;
             bool chk;
             string msg;
 
             if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value) && !MyUtility.Check.Empty(this.CurrentMaintain["WhseArrival"]))
             {
-                ArrivePortDate = DateTime.Parse(this.dateArrivePortDate.Text); // port
-                WhseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString()); // warehouse
+                arrivePortDate = DateTime.Parse(this.dateArrivePortDate.Text); // port
+                whseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString()); // warehouse
 
                 // 到倉日不可早於到港日
-                if (!(chk = Prgs.CheckArrivedWhseDateWithArrivedPortDate(ArrivePortDate, WhseArrival, out msg)))
+                if (!(chk = Prgs.CheckArrivedWhseDateWithArrivedPortDate(arrivePortDate, whseArrival, out msg)))
                 {
                     MyUtility.Msg.WarningBox(msg);
                     this.dateArriveWHDate.Focus();
                     return false;
                 }
 
-                if (DateTime.Compare(WhseArrival, ArrivePortDate.AddDays(20)) > 0)
+                if (DateTime.Compare(whseArrival, arrivePortDate.AddDays(20)) > 0)
                 {
                     MyUtility.Msg.WarningBox("Arrive Warehouse date can't be later than arrive port 20 days!!");
                     this.dateArriveWHDate.Focus();
@@ -388,12 +388,12 @@ where p.junk = 1
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain["WhseArrival"]) && !MyUtility.Check.Empty(this.CurrentMaintain["eta"]))
             {
-                ETA = DateTime.Parse(this.CurrentMaintain["eta"].ToString()); // eta
-                WhseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString()); // warehouse+
+                eTA = DateTime.Parse(this.CurrentMaintain["eta"].ToString()); // eta
+                whseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString()); // warehouse+
 
                 // 到倉日如果早於ETA 3天，則提示窗請USER再確認是否存檔。
                 // 到倉日如果晚於ETA 15天，則提示窗請USER再確認是否存檔。
-                if (!(chk = Prgs.CheckArrivedWhseDateWithEta(ETA, WhseArrival, out msg)))
+                if (!(chk = Prgs.CheckArrivedWhseDateWithEta(eTA, whseArrival, out msg)))
                 {
                     DialogResult dResult = MyUtility.Msg.QuestionBox(msg);
                     if (dResult == DialogResult.No)
@@ -604,8 +604,8 @@ where   #tmp.poid = dbo.po_supp.id
             this.Change_record();
         }
 
-        DataGridViewColumn Col_ActualQty;
-        DataGridViewColumn Col_Location;
+        private DataGridViewColumn Col_ActualQty;
+        private DataGridViewColumn Col_Location;
 
         protected override void OnDetailGridSetup()
         {
@@ -786,7 +786,7 @@ Order By e.Seq1, e.Seq2, e.Refno", this.CurrentDetailData["poid"], this.CurrentM
                     // CurrentDetailData["Actualqty"] = 0m;
                     if ((decimal)this.CurrentDetailData["shipqty"] > 0)
                     {
-                        this.ship_qty_valid((decimal)this.CurrentDetailData["shipqty"]);
+                        this.Ship_qty_valid((decimal)this.CurrentDetailData["shipqty"]);
                     }
 
                     this.CurrentDetailData.EndEdit();
@@ -912,7 +912,7 @@ select  StockUnit = dbo.GetStockUnitBySPSeq ('{0}', '{1}', '{2}')"
 
                             if ((decimal)this.CurrentDetailData["shipqty"] > 0)
                             {
-                                this.ship_qty_valid((decimal)this.CurrentDetailData["shipqty"]);
+                                this.Ship_qty_valid((decimal)this.CurrentDetailData["shipqty"]);
                             }
                         }
                     }
@@ -1014,7 +1014,7 @@ WHERE   StockType='{0}'
                     return;
                 }
 
-                this.ship_qty_valid((decimal)e.FormattedValue);
+                this.Ship_qty_valid((decimal)e.FormattedValue);
             };
 
             #endregion Ship Qty Valid
@@ -1473,7 +1473,7 @@ WHERE   StockType='{0}'
             }
         }
 
-        private void ship_qty_valid(decimal ship_qty)
+        private void Ship_qty_valid(decimal ship_qty)
         {
             if (this.CurrentDetailData == null)
             {
@@ -1679,7 +1679,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                 }
             }
 
-            int MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system")) ? 1 : 0;
+            int mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system")) ? 1 : 0;
             var data_Fty_2T = (from m in newDt.AsEnumerable()
                                select new
                                {
@@ -1692,7 +1692,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                                    roll = m.Field<string>("roll"),
                                    dyelot = m.Field<string>("dyelot"),
                                }).ToList();
-            upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true, MtlAutoLock);
+            upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true, mtlAutoLock);
             #endregion 更新庫存數量  ftyinventory
 
             #region 更新BarCode  Ftyinventory
@@ -1702,11 +1702,11 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                 DataTable dtCnt = (DataTable)this.detailgridbs.DataSource;
 
                 // distinct CombineBarcode,並排除CombineBarcode = null
-                DataRow[] DistCnt1 = dtCnt.DefaultView.ToTable(true, "CombineBarcode", "FabricType").Select("FabricType = 'F' and CombineBarcode is not null");
-                DataRow[] Count2 = dtCnt.Select("FabricType = 'F' and CombineBarcode is null");
-                if (DistCnt1.Length + Count2.Length > 0)
+                DataRow[] distCnt1 = dtCnt.DefaultView.ToTable(true, "CombineBarcode", "FabricType").Select("FabricType = 'F' and CombineBarcode is not null");
+                DataRow[] count2 = dtCnt.Select("FabricType = 'F' and CombineBarcode is null");
+                if (distCnt1.Length + count2.Length > 0)
                 {
-                    barcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", DistCnt1.Length + Count2.Length);
+                    barcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", distCnt1.Length + count2.Length);
                     int cnt = 0;
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "CombineBarcode";
                     foreach (DataRow drDis in this.DetailDatas)
@@ -1796,11 +1796,11 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
 
             #region 更新FIR,AIR資料
 
-            List<SqlParameter> Fir_Air_Proce = new List<SqlParameter>();
-            Fir_Air_Proce.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"]));
-            Fir_Air_Proce.Add(new SqlParameter("@LoginID", this.UserID));
+            List<SqlParameter> fir_Air_Proce = new List<SqlParameter>();
+            fir_Air_Proce.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"]));
+            fir_Air_Proce.Add(new SqlParameter("@LoginID", this.UserID));
 
-            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", Fir_Air_Proce)))
+            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", fir_Air_Proce)))
             {
                 Exception ex = result.GetException();
                 MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
@@ -1808,10 +1808,10 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
             }
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 try
@@ -1825,7 +1825,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -1835,7 +1835,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -1848,7 +1848,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
                         upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, string.Empty, upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -1859,7 +1859,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
                         upd_MD_8T = Prgs.UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn);
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -1875,7 +1875,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
                     // }
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
@@ -1884,25 +1884,25 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
                     {
                         if (!(result3 = DBProxy.Current.Execute(null, sqlcmd4)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(sqlcmd4, result);
                             return;
                         }
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
                 finally
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                 }
             }
 
@@ -2058,8 +2058,8 @@ set whsearrival = null
     , editdate = GETDATE()
 where id = '{1}'
 END", Env.User.UserID, this.CurrentMaintain["exportid"], this.CurrentMaintain["id"]);
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -2075,7 +2075,7 @@ END", Env.User.UserID, this.CurrentMaintain["exportid"], this.CurrentMaintain["i
                         upd_MD_2F = Prgs.UpdateMPoDetail(2, data_MD_2F, false);
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2F, string.Empty, upd_MD_2F, out resulttb, "#TmpSource")))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -2086,7 +2086,7 @@ END", Env.User.UserID, this.CurrentMaintain["exportid"], this.CurrentMaintain["i
                         upd_MD_8F = Prgs.UpdateMPoDetail(8, data_MD_8F, false);
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F, string.Empty, upd_MD_8F, out resulttb, "#TmpSource")))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -2096,7 +2096,7 @@ END", Env.User.UserID, this.CurrentMaintain["exportid"], this.CurrentMaintain["i
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F, string.Empty, upd_Fty_2F, out resulttb, "#TmpSource")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -2104,7 +2104,7 @@ END", Env.User.UserID, this.CurrentMaintain["exportid"], this.CurrentMaintain["i
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
@@ -2113,26 +2113,26 @@ END", Env.User.UserID, this.CurrentMaintain["exportid"], this.CurrentMaintain["i
                     {
                         if (!(result3 = DBProxy.Current.Execute(null, sqlcmd4)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(sqlcmd4, result);
                             return;
                         }
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             // AutoWHFabric WebAPI for Gensong
             this.SentToGensong_AutoWHFabric();
@@ -2197,6 +2197,7 @@ and r.id = '{this.CurrentMaintain["id"]}'
                 {
                     this.ShowErr(drResult);
                 }
+
                 Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
@@ -2280,7 +2281,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
         }
 
         // invoice# valid
-        private void txtInvoiceNo_Validating(object sender, CancelEventArgs e)
+        private void TxtInvoiceNo_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
             DataTable dt;
@@ -2399,12 +2400,13 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                     this.CurrentMaintain["third"] = 1;
                     this.dateETA.Enabled = true;
                 }
+
                 this.Change_record();
             }
         }
 
         // delete all
-        private void btDeleteAllDetail_Click(object sender, EventArgs e)
+        private void BtDeleteAllDetail_Click(object sender, EventArgs e)
         {
             // ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
             for (int i = 0; i < ((DataTable)this.detailgridbs.DataSource).Rows.Count;)
@@ -2421,7 +2423,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         }
 
         // Accumulated Qty
-        private void btAccumulated_Click(object sender, EventArgs e)
+        private void BtAccumulated_Click(object sender, EventArgs e)
         {
             var frm = new P07_AccumulatedQty(this.CurrentMaintain);
             frm.P07 = this;
@@ -2429,7 +2431,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         }
 
         // Filter
-        private void comboTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (this.comboTypeFilter.SelectedIndex)
             {
@@ -2445,7 +2447,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             }
         }
 
-        private void btModifyRollDyelot_Click(object sender, EventArgs e)
+        private void BtModifyRollDyelot_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain["Status"].ToString().ToUpper() != "CONFIRMED")
             {
@@ -2467,7 +2469,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             this.RenewData();
         }
 
-        private void btFind_Click(object sender, EventArgs e)
+        private void BtFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -2504,7 +2506,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             }
         }
 
-        private void btImportFromExcel_Click(object sender, EventArgs e)
+        private void BtImportFromExcel_Click(object sender, EventArgs e)
         {
             if (this.txtInvoiceNo.Text == string.Empty)
             {
@@ -2519,7 +2521,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             this.Change_record();
         }
 
-        private void btDownloadSample_Click(object sender, EventArgs e)
+        private void BtDownloadSample_Click(object sender, EventArgs e)
         {
             // 呼叫執行檔絕對路徑
             DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
@@ -2554,7 +2556,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             return true;
         }
 
-        private void btPrintSticker_Click(object sender, EventArgs e)
+        private void BtPrintSticker_Click(object sender, EventArgs e)
         {
             P07_Sticker s = new P07_Sticker(this.CurrentDataRow);
             s.ShowDialog();
@@ -2581,7 +2583,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             DualResult result = null;
 
-            using (TransactionScope _TransactionScope = new TransactionScope())
+            using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
                 {
@@ -2591,24 +2593,24 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
 
                         if (dr.RowState == DataRowState.Deleted)
                         {
-                            string Roll = dr["Roll", DataRowVersion.Original].ToString();
-                            string Dyelot = dr["Dyelot", DataRowVersion.Original].ToString();
+                            string roll = dr["Roll", DataRowVersion.Original].ToString();
+                            string dyelot = dr["Dyelot", DataRowVersion.Original].ToString();
 
                             // 判斷FabricType = F，才能刪除FIR_Shadebone
                             string sqlCmd = $@"
                                             SELECT  r.*,p.FabricType
                                             FROM Receiving_Detail r
                                             INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
-                                            WHERE r.ID='{this.CurrentMaintain["ID"]}' AND Roll='{Roll}' AND Dyelot='{Dyelot}'  AND p.FabricType='F'
+                                            WHERE r.ID='{this.CurrentMaintain["ID"]}' AND Roll='{roll}' AND Dyelot='{dyelot}'  AND p.FabricType='F'
                                             ";
                             DataTable tmpdt;
                             DBProxy.Current.Select(null, sqlCmd, out tmpdt);
 
                             if (tmpdt.Rows.Count > 0)
                             {
-                                string FIR_ID = MyUtility.GetValue.Lookup($"select TOP 1 f.id from dbo.Receiving_Detail r INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2 WHERE r.id = '{this.CurrentMaintain["ID"]}' AND r.Roll='{Roll}' AND r.Dyelot='{Dyelot}'");
+                                string fIR_ID = MyUtility.GetValue.Lookup($"select TOP 1 f.id from dbo.Receiving_Detail r INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2 WHERE r.id = '{this.CurrentMaintain["ID"]}' AND r.Roll='{roll}' AND r.Dyelot='{dyelot}'");
 
-                                result = DBProxy.Current.Execute(null, $"DELETE FROM FIR_Shadebone WHERE ID ={FIR_ID} AND Roll='{Roll}' AND Dyelot='{Dyelot}'");
+                                result = DBProxy.Current.Execute(null, $"DELETE FROM FIR_Shadebone WHERE ID ={fIR_ID} AND Roll='{roll}' AND Dyelot='{dyelot}'");
 
                                 if (!result)
                                 {
@@ -2625,12 +2627,12 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                     result = base.ClickSave();
                     if (result)
                     {
-                        _TransactionScope.Complete();
+                        transactionScope.Complete();
                     }
                 }
                 catch (Exception ex)
                 {
-                    _TransactionScope.Dispose();
+                    transactionScope.Dispose();
                     this.ShowErr(ex);
                 }
             }
@@ -2708,9 +2710,9 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 if (fabricType.ToUpper() == "F")
                 {
                     // 判斷 在 FtyInventory 是否存在
-                    bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+                    bool chkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
 
-                    if (!ChkFtyInventory)
+                    if (!chkFtyInventory)
                     {
                         listMsg.Add($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
                     }
@@ -2720,13 +2722,14 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
 
             if (listMsg.Count > 0)
             {
-                DialogResult Dr = MyUtility.Msg.WarningBox(listMsg.JoinToString(string.Empty).TrimStart());
+                DialogResult dr = MyUtility.Msg.WarningBox(listMsg.JoinToString(string.Empty).TrimStart());
                 return false;
             }
+
             return true;
         }
 
-        private void btUpdateWeight_Click(object sender, EventArgs e)
+        private void BtUpdateWeight_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain["Status"].ToString().ToUpper() != "CONFIRMED")
             {

@@ -407,7 +407,7 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
                     }
 
                     // 更新MDivisionPoDetail
-                    this.updMDivisionPoDetail();
+                    this.UpdMDivisionPoDetail();
 
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
@@ -497,7 +497,7 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
                     }
 
                     // 更新MDivisionPoDetail
-                    this.updMDivisionPoDetail();
+                    this.UpdMDivisionPoDetail();
 
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
@@ -506,7 +506,7 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             var frm = new P43_Import(this.CurrentMaintain, dt);
@@ -515,7 +515,7 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
             dt.DefaultView.Sort = "poid,seq,Roll";
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -533,7 +533,7 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
             }
         }
 
-        private void updMDivisionPoDetail()
+        private void UpdMDivisionPoDetail()
         {
             DataTable datacheck;
             DualResult result;

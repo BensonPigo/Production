@@ -21,12 +21,12 @@ namespace Sci.Production.Warehouse
         private DataTable dtExcel;
         private DataRow DataRow;
 
-        public P10_Print(DataRow dr, string CutNo, DataRow dataRow)
+        public P10_Print(DataRow dr, string cutNo, DataRow dataRow)
         {
             this.InitializeComponent();
             this.Text = "P10 " + dr["ID"].ToString();
             this.drPrint = dr;
-            this.strCutNo = CutNo;
+            this.strCutNo = cutNo;
             this.DataRow = dataRow;
 
             #region 依狀態顯示Print按鈕功能
@@ -169,11 +169,11 @@ order by psd.Refno,isd.POID,isd.Roll
                 }
 
                 string id = this.drPrint["ID"].ToString();
-                string Remark = this.drPrint["Remark"].ToString();
+                string remark = this.drPrint["Remark"].ToString();
                 string cutplanID = this.drPrint["cutplanID"].ToString();
                 string issuedate = ((DateTime)MyUtility.Convert.GetDate(this.drPrint["issuedate"])).ToShortDateString();
                 string cutno = this.strCutNo;
-                string FactoryID = this.drPrint["FactoryID"].ToString();
+                string factoryID = this.drPrint["FactoryID"].ToString();
 
                 #region  抓表頭資料
                 List<SqlParameter> pars = new List<SqlParameter>();
@@ -188,15 +188,15 @@ where id = @MDivision", pars, out dt);
                     this.ShowErr(result);
                 }
 
-                string RptTitle = dt.Rows[0]["NameEn"].ToString();
+                string rptTitle = dt.Rows[0]["NameEn"].ToString();
                 ReportDefinition report = new ReportDefinition();
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutplanID", cutplanID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutno", cutno));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", "Factory: " + FactoryID));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", "Factory: " + factoryID));
                 pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", id));
                 DataTable aa;
@@ -338,12 +338,12 @@ where t.id= @ID";
                 #region  指定是哪個 RDLC
 
                 // DualResult result;
-                Type ReportResourceNamespace = typeof(P10_PrintData);
-                Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-                string ReportResourceName = "P10_Print.rdlc";
+                Type reportResourceNamespace = typeof(P10_PrintData);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P10_Print.rdlc";
 
                 IReportResource reportresource;
-                if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+                if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
                 {
                     return false;
                 }

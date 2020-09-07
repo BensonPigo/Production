@@ -12,13 +12,13 @@ namespace Sci.Production.Warehouse
 {
     public partial class R13 : Win.Tems.PrintForm
     {
-        string reason;
-        string mdivision;
-        string factory;
-        string stocktype;
-        DateTime? issueDate1;
-        DateTime? issueDate2;
-        DataTable printData;
+        private string reason;
+        private string mdivision;
+        private string factory;
+        private string stocktype;
+        private DateTime? issueDate1;
+        private DateTime? issueDate2;
+        private DataTable printData;
 
         public R13(ToolStripMenuItem menuitem)
             : base(menuitem)

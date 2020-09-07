@@ -75,7 +75,7 @@
             this.radioPerDateBrand.TabIndex = 5;
             this.radioPerDateBrand.Text = "Per Date (Brand)";
             this.radioPerDateBrand.UseVisualStyleBackColor = true;
-            this.radioPerDateBrand.CheckedChanged += new System.EventHandler(this.radioPerDateBrand_CheckedChanged);
+            this.radioPerDateBrand.CheckedChanged += new System.EventHandler(this.RadioPerDateBrand_CheckedChanged);
             // 
             // radioPerDateFactory
             // 
@@ -87,7 +87,7 @@
             this.radioPerDateFactory.TabIndex = 4;
             this.radioPerDateFactory.Text = "Per Date (Factory)";
             this.radioPerDateFactory.UseVisualStyleBackColor = true;
-            this.radioPerDateFactory.CheckedChanged += new System.EventHandler(this.radioPerDateFactory_CheckedChanged);
+            this.radioPerDateFactory.CheckedChanged += new System.EventHandler(this.RadioPerDateFactory_CheckedChanged);
             // 
             // radioPerBrand
             // 
@@ -101,7 +101,7 @@
             this.radioPerBrand.TabStop = true;
             this.radioPerBrand.Text = "Per Brand";
             this.radioPerBrand.UseVisualStyleBackColor = true;
-            this.radioPerBrand.CheckedChanged += new System.EventHandler(this.radioPerBrand_CheckedChanged);
+            this.radioPerBrand.CheckedChanged += new System.EventHandler(this.RadioPerBrand_CheckedChanged);
             // 
             // dateAuditDate
             // 

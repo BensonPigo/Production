@@ -15,8 +15,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P19_Print : Win.Tems.PrintForm
     {
-        DataRow mainCurrentMaintain;
-        DataTable dtResult;
+        private DataRow mainCurrentMaintain;
+        private DataTable dtResult;
 
         public P19_Print(DataRow drMain)
         {
@@ -25,12 +25,12 @@ namespace Sci.Production.Warehouse
             this.mainCurrentMaintain = drMain;
         }
 
-        private void radioTransferOutReport_CheckedChanged(object sender, EventArgs e)
+        private void RadioTransferOutReport_CheckedChanged(object sender, EventArgs e)
         {
             this.PrintButtonStatusChange();
         }
 
-        private void radioP18ExcelImport_CheckedChanged(object sender, EventArgs e)
+        private void RadioP18ExcelImport_CheckedChanged(object sender, EventArgs e)
         {
             this.PrintButtonStatusChange();
         }
@@ -177,7 +177,7 @@ where ID = '{this.mainCurrentMaintain["ID"]}'
 
             DataRow row = this.mainCurrentMaintain;
             string id = row["ID"].ToString();
-            string Remark = row["Remark"].ToString().Trim().Replace("\r", " ").Replace("\n", " ");
+            string remark = row["Remark"].ToString().Trim().Replace("\r", " ").Replace("\n", " ");
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
             // 抓M的EN NAME
@@ -185,11 +185,11 @@ where ID = '{this.mainCurrentMaintain["ID"]}'
             DBProxy.Current.Select(
                 string.Empty,
                 string.Format(@"select NameEN from MDivision where ID='{0}'", Env.User.Keyword), out dtNAME);
-            string RptTitle = dtNAME.Rows[0]["NameEN"].ToString();
+            string rptTitle = dtNAME.Rows[0]["NameEN"].ToString();
 
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
 
             // 傳 list 資料
@@ -201,8 +201,8 @@ where ID = '{this.mainCurrentMaintain["ID"]}'
                     Roll = row1["Roll"].ToString().Trim(),
                     Dyelot = row1["Dyelot"].ToString().Trim(),
                     DESC = row1["DESC"].ToString().Trim(),
-                    stocktype = row1["stocktype"].ToString().Trim(),
-                    unit = row1["unit"].ToString().Trim(),
+                    Stocktype = row1["stocktype"].ToString().Trim(),
+                    Unit = row1["unit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
                     Location = row1["Location"].ToString().Trim(),
                     Total = row1["Total"].ToString().Trim(),
@@ -212,12 +212,12 @@ where ID = '{this.mainCurrentMaintain["ID"]}'
 
             // 指定是哪個 RDLC
             #region  指定是哪個 RDLC
-            Type ReportResourceNamespace = typeof(P19_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P19_Print.rdlc";
+            Type reportResourceNamespace = typeof(P19_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P19_Print.rdlc";
 
             IReportResource reportresource;
-            DualResult result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource);
+            DualResult result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource);
             if (!result)
             {
                 // this.ShowException(result);

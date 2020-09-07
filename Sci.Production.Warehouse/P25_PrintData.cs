@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P25_PrintData
+    internal class P25_PrintData
     {
         public string SP { get; set; }
 
@@ -18,9 +18,9 @@
 
         public string ActQty { get; set; }
 
-        public string oLocation { get; set; }
+        public string OLocation { get; set; }
 
-        public string groupby
+        public string Groupby
         {
             get { return this.SP + this.SEQ; }
         }

@@ -11,8 +11,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P07_UpdateWeight : Win.Subs.Base
     {
-        DataRow dr;
-        DataTable selectDataTable1;
+        private DataRow dr;
+        private DataTable selectDataTable1;
 
       // List<DataRow> datas;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
@@ -79,12 +79,12 @@ namespace Sci.Production.Warehouse
             this.gridUpdateAct.Columns["weight"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             bool rtn;
             this.gridUpdateAct.ValidateControl();

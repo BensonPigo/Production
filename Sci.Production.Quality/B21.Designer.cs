@@ -65,7 +65,7 @@
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelDefectType);
             this.detailcont.Size = new System.Drawing.Size(831, 403);
-            this.detailcont.MouseDown += new System.Windows.Forms.MouseEventHandler(this.detailcont_MouseDown);
+            this.detailcont.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Detailcont_MouseDown);
             // 
             // detailbtm
             // 
@@ -126,8 +126,8 @@
             this.txtDefectcode.Name = "txtDefectcode";
             this.txtDefectcode.Size = new System.Drawing.Size(135, 23);
             this.txtDefectcode.TabIndex = 0;
-            this.txtDefectcode.Validating += new System.ComponentModel.CancelEventHandler(this.txtDefectcode_Validating);
-            this.txtDefectcode.Validated += new System.EventHandler(this.txtDefectcode_Validated);
+            this.txtDefectcode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtDefectcode_Validating);
+            this.txtDefectcode.Validated += new System.EventHandler(this.TxtDefectcode_Validated);
             // 
             // txtDefectType
             // 
@@ -152,7 +152,7 @@
             this.editDescription.Name = "editDescription";
             this.editDescription.Size = new System.Drawing.Size(460, 94);
             this.editDescription.TabIndex = 2;
-            this.editDescription.Leave += new System.EventHandler(this.editDescription_Leave);
+            this.editDescription.Leave += new System.EventHandler(this.EditDescription_Leave);
             // 
             // editLocalDesc
             // 

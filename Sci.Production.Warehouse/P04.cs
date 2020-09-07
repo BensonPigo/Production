@@ -13,8 +13,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P04 : Win.Tems.QueryForm
     {
-        DataTable dataTable;
-        string SPNo;
+        private DataTable dataTable;
+        private string SPNo;
 
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -24,18 +24,18 @@ namespace Sci.Production.Warehouse
         }
 
         // Form to Form W/H.P01
-        public P04(string P01SPNo, ToolStripMenuItem menuitem)
+        public P04(string p01SPNo, ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.EditMode = true;
-            this.SPNo = P01SPNo;
+            this.SPNo = p01SPNo;
             this.txtSPNo.Text = this.SPNo.Trim();
-            this.event_Query();
+            this.Event_Query();
         }
 
         // PPIC_P01 Called
-        public static void Call(string PPIC_SPNo)
+        public static void Call(string pPIC_SPNo)
         {
             foreach (Form form in Application.OpenForms)
             {
@@ -43,13 +43,13 @@ namespace Sci.Production.Warehouse
                 {
                     form.Activate();
                     P04 activateForm = (P04)form;
-                    activateForm.setTxtSPNo(PPIC_SPNo);
-                    activateForm.event_Query();
+                    activateForm.SetTxtSPNo(pPIC_SPNo);
+                    activateForm.Event_Query();
                     return;
                 }
             }
 
-            ToolStripMenuItem P04MenuItem = null;
+            ToolStripMenuItem p04MenuItem = null;
             foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
@@ -60,7 +60,7 @@ namespace Sci.Production.Warehouse
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P04. Material Status (Local)"))
                             {
-                                P04MenuItem = (ToolStripMenuItem)subMenuItem;
+                                p04MenuItem = (ToolStripMenuItem)subMenuItem;
                                 break;
                             }
                         }
@@ -68,17 +68,17 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            P04 callform = new P04(PPIC_SPNo, P04MenuItem);
+            P04 callform = new P04(pPIC_SPNo, p04MenuItem);
             callform.Show();
         }
 
         // 隨著 P01上下筆SP#切換資料
-        public void P04Data(string P01SPNo)
+        public void P04Data(string p01SPNo)
         {
             this.EditMode = true;
-            this.SPNo = P01SPNo;
+            this.SPNo = p01SPNo;
             this.txtSPNo.Text = this.SPNo.Trim();
-            this.event_Query();
+            this.Event_Query();
         }
 
         protected override void OnFormLoaded()
@@ -127,9 +127,9 @@ namespace Sci.Production.Warehouse
             #endregion
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
-            this.event_Query();
+            this.Event_Query();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -139,7 +139,7 @@ namespace Sci.Production.Warehouse
                 switch (keyData)
                 {
                     case Keys.Enter:
-                        this.event_Query();
+                        this.Event_Query();
                         break;
                 }
             }
@@ -147,7 +147,7 @@ namespace Sci.Production.Warehouse
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        public void event_Query()
+        public void Event_Query()
         {
             #region check SP#
             if (this.txtSPNo.Text.Empty())
@@ -212,7 +212,7 @@ drop table #tmp
             this.HideWaitMessage();
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             if (this.dataTable != null && this.dataTable.Rows.Count > 0)
             {
@@ -237,18 +237,18 @@ drop table #tmp
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnNewSearch_Click(object sender, EventArgs e)
+        private void BtnNewSearch_Click(object sender, EventArgs e)
         {
             this.txtSPNo.ResetText();
             this.txtSPNo.Select();
         }
 
-        public void setTxtSPNo(string spNo)
+        public void SetTxtSPNo(string spNo)
         {
             this.txtSPNo.Text = spNo;
         }

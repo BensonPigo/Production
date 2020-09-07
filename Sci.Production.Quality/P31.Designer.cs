@@ -576,7 +576,7 @@
             this.chkForThird.TabIndex = 3;
             this.chkForThird.Text = "For 3rd party inspection";
             this.chkForThird.UseVisualStyleBackColor = true;
-            this.chkForThird.CheckedChanged += new System.EventHandler(this.chkForThird_CheckedChanged);
+            this.chkForThird.CheckedChanged += new System.EventHandler(this.ChkForThird_CheckedChanged);
             // 
             // disPO
             // 
@@ -751,7 +751,7 @@
             this.btnH.TabIndex = 43;
             this.btnH.Text = "H";
             this.btnH.UseVisualStyleBackColor = true;
-            this.btnH.Click += new System.EventHandler(this.btnH_Click);
+            this.btnH.Click += new System.EventHandler(this.BtnH_Click);
             // 
             // ByCarton
             // 
@@ -771,7 +771,7 @@
             this.btnCreateInsRecord.TabIndex = 45;
             this.btnCreateInsRecord.Text = "Create Inspection record";
             this.btnCreateInsRecord.UseVisualStyleBackColor = true;
-            this.btnCreateInsRecord.Click += new System.EventHandler(this.btnCreateInsRecord_Click);
+            this.btnCreateInsRecord.Click += new System.EventHandler(this.BtnCreateInsRecord_Click);
             // 
             // btnByRecord
             // 
@@ -781,7 +781,7 @@
             this.btnByRecord.TabIndex = 46;
             this.btnByRecord.Text = "By Record";
             this.btnByRecord.UseVisualStyleBackColor = true;
-            this.btnByRecord.Click += new System.EventHandler(this.btnByRecord_Click);
+            this.btnByRecord.Click += new System.EventHandler(this.BtnByRecord_Click);
             // 
             // txtSpSeq
             // 

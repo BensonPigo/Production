@@ -18,9 +18,9 @@ namespace Sci.Production.Quality
 {
     public partial class P03_Crocking : Win.Subs.Input4
     {
-        private string loginID = Env.User.UserID;
+        private readonly string loginID = Env.User.UserID;
         private DataRow maindr;
-        private string ID;
+        private readonly string ID;
 
         public P03_Crocking(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, id, keyvalue2, keyvalue3)
@@ -33,13 +33,13 @@ namespace Sci.Production.Quality
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
-            this.button_enable();
+            this.Button_enable();
         }
 
         protected override DualResult OnRequery()
         {
-            this.mainDBQuery();
-            this.button_enable();
+            this.MainDBQuery();
+            this.Button_enable();
 
             // 表頭 資料設定
             this.save.Enabled = !MyUtility.Convert.GetBool(this.maindr["CrockingEncode"]);
@@ -347,7 +347,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     dr["Resultdry"] = "Pass";
                 }
 
-                this.resultchange();
+                this.Resultchange();
             };
             Resultwet.CellMouseDoubleClick += (s, e) =>
             {
@@ -367,7 +367,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     dr["Resultwet"] = "Pass";
                 }
 
-                this.resultchange();
+                this.Resultchange();
             };
             #endregion
 
@@ -631,7 +631,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             return true;
         }
 
-        private void resultchange()
+        private void Resultchange()
         {
             if (MyUtility.Convert.GetString(this.CurrentData["ResultDry"]).EqualString("Pass") && MyUtility.Convert.GetString(this.CurrentData["ResultWet"]).EqualString("Pass"))
             {
@@ -831,7 +831,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             return upResult;
         }
 
-        private void btnEncode_Click(object sender, EventArgs e)
+        private void BtnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
             if (MyUtility.Check.Empty(this.CurrentData) && !MyUtility.Convert.GetBool(this.maindr["nonCrocking"]))
@@ -939,7 +939,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             this.OnRequery();
         }
 
-        private void button_enable()
+        private void Button_enable()
         {
             if (this.maindr == null)
             {
@@ -953,7 +953,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             this.txtsupplierSupp.TextBox1.ReadOnly = true;
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
             string[] columnNames = new string[] { "Roll", "Dyelot", "DryScale", "WetScale", "Result", "InspDate", "Inspector", "Remark", "Last update" };
@@ -1022,7 +1022,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
         }
 
         // maindr where id,poid重新query
-        private void mainDBQuery()
+        private void MainDBQuery()
         {
             string cmd = @"select a.id,a.poid,(a.SEQ1+a.SEQ2) as seq,a.SEQ1,a.SEQ2,a.Receivingid,Refno,a.SCIRefno,
                 b.CrockingEncode,b.HeatEncode,b.WashEncode,
@@ -1048,7 +1048,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             }
         }
 
-        private void btntoPDF_Click(object sender, EventArgs e)
+        private void BtntoPDF_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Data Loading...");
             DataTable dtt = (DataTable)this.gridbs.DataSource;

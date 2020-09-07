@@ -69,7 +69,7 @@ order by b.POID,c.seq1,c.seq2,c.Cutno
                  ;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

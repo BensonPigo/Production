@@ -70,7 +70,7 @@
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnImport
             // 
@@ -82,7 +82,7 @@
             this.btnImport.TabIndex = 0;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // btnFindNow
             // 
@@ -94,7 +94,7 @@
             this.btnFindNow.TabIndex = 3;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
             // 
             // txtToSP
             // 
@@ -105,7 +105,7 @@
             this.txtToSP.Name = "txtToSP";
             this.txtToSP.Size = new System.Drawing.Size(122, 23);
             this.txtToSP.TabIndex = 0;
-            this.txtToSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtToSP_Validating);
+            this.txtToSP.Validating += new System.ComponentModel.CancelEventHandler(this.TxtToSP_Validating);
             // 
             // labelToSP
             // 
@@ -301,8 +301,8 @@
             this.gridImport.Size = new System.Drawing.Size(1008, 322);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
-            this.gridImport.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gridImport_ColumnHeaderMouseClick);
-            this.gridImport.Validated += new System.EventHandler(this.gridImport_Validated);
+            this.gridImport.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridImport_ColumnHeaderMouseClick);
+            this.gridImport.Validated += new System.EventHandler(this.GridImport_Validated);
             // 
             // chkNoLock
             // 
@@ -316,7 +316,7 @@
             this.chkNoLock.TabIndex = 15;
             this.chkNoLock.Text = "only show no lock material";
             this.chkNoLock.UseVisualStyleBackColor = true;
-            this.chkNoLock.CheckedChanged += new System.EventHandler(this.chkNoLock_CheckedChanged);
+            this.chkNoLock.CheckedChanged += new System.EventHandler(this.ChkNoLock_CheckedChanged);
             // 
             // P31_Import
             // 

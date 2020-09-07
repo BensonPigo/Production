@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P07_PrintData
+    internal class P07_PrintData
     {
         public string POID { get; set; }
 
@@ -12,7 +12,7 @@
 
         public string ShipQty { get; set; }
 
-        public string pounit { get; set; }
+        public string Pounit { get; set; }
 
         public string GW { get; set; }
 

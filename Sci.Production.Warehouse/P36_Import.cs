@@ -14,9 +14,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P36_Import : Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtScrap;
 
         public P36_Import(DataRow master, DataTable detail)
@@ -27,7 +27,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtSP.Text.TrimEnd();
@@ -42,9 +42,9 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
                 #region -- SQL Command --
-                bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+                bool mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
                 string where = string.Empty;
-                if (!MtlAutoLock)
+                if (!mtlAutoLock)
                 {
                     where = " AND c.lock = 0 ";
                 }
@@ -270,13 +270,13 @@ WHERE   StockType='{0}'
         }
 
         // Close
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
@@ -324,7 +324,7 @@ WHERE   StockType='{0}'
         }
 
         // Update All
-        private void btnUpdateAll_Click(object sender, EventArgs e)
+        private void BtnUpdateAll_Click(object sender, EventArgs e)
         {
             // grid1.ValidateControl();
             this.listControlBindingSource1.EndEdit();
@@ -342,7 +342,7 @@ WHERE   StockType='{0}'
             }
         }
 
-        private void displayLocation_MouseDown(object sender, MouseEventArgs e)
+        private void DisplayLocation_MouseDown(object sender, MouseEventArgs e)
         {
             #region Location 右鍵開窗
 

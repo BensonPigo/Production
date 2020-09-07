@@ -53,7 +53,7 @@ namespace Sci.Production.Warehouse
                 if (strNewSP.Empty())
                 {
                     this.CurrentDetailData["POID"] = string.Empty;
-                    this.gridRowDataReSet(this.CurrentDetailData);
+                    this.GridRowDataReSet(this.CurrentDetailData);
                     return;
                 }
                 #endregion
@@ -71,13 +71,13 @@ where   Linv.OrderID = '{0}'
                     if (!strOldSP.EqualString(strNewSP))
                     {
                         this.CurrentDetailData["POID"] = strNewSP;
-                        this.gridRowDataReSet(this.CurrentDetailData);
+                        this.GridRowDataReSet(this.CurrentDetailData);
                     }
                 }
                 else
                 {
                     e.Cancel = true;
-                    this.gridRowDataReSet(this.CurrentDetailData);
+                    this.GridRowDataReSet(this.CurrentDetailData);
                     MyUtility.Msg.WarningBox(string.Format("SP# : {0} not found.", strNewSP));
                 }
                 #endregion
@@ -210,7 +210,7 @@ Where   LInv.OrderID = '{1}'
         /// 清空一列資料
         /// </summary>
         /// <param name="dataRow">需要清空的資料列</param>
-        private void gridRowDataReSet(DataRow dataRow)
+        private void GridRowDataReSet(DataRow dataRow)
         {
             dataRow["Refno"] = string.Empty;
             dataRow["Color"] = string.Empty;
@@ -251,7 +251,7 @@ order by STLD.POID, STLD.Refno, STLD.Color
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        private void comboBoxStockType_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBoxStockType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!this.EditMode || this.detailgrid.Rows.Count == 0)
             {
@@ -490,9 +490,9 @@ where stockQty.value + StockTackingAdjust.value < 0
                 return;
             }
             #endregion
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 string strAdjustID = string.Empty;
@@ -510,7 +510,7 @@ when matched then
                 result = MyUtility.Tool.ProcessWithDatatable(dtDetailGrid, null, strUpdateStockQty, out dtUpdateStockQty);
                 if (!result)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     MyUtility.Msg.WarningBox(result.Description);
                     return;
                 }
@@ -524,7 +524,7 @@ when matched then
                     strAdjustID = MyUtility.GetValue.GetID(Env.User.Keyword + strLBLC, "AdjustLocal", (DateTime)this.CurrentMaintain["Issuedate"], 2, "ID", null);
                     if (MyUtility.Check.Empty(strAdjustID))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Get document ID fail!!");
                         return;
                     }
@@ -547,7 +547,7 @@ values
                     result = DBProxy.Current.Execute(null, strInsertAdjustLocal);
                     if (!result)
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.WarningBox(result.Description, "Insert Adjust Title");
                         return;
                     }
@@ -571,7 +571,7 @@ outer apply (
                     result = MyUtility.Tool.ProcessWithDatatable(dtDetailGrid, null, strInsertAdjustLocalDetail, out dtInsertAdjustLocalDetail);
                     if (!result)
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.WarningBox(result.Description, "Insert Adjust Detail");
                         return;
                     }
@@ -592,13 +592,13 @@ where STL.ID = '{0}'", this.CurrentMaintain["ID"],
                 result = DBProxy.Current.Execute(null, strUpdateStatus);
                 if (!result)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     MyUtility.Msg.WarningBox(result.Description, "Update Status");
                     return;
                 }
                 #endregion
-                _transactionscope.Complete();
-                _transactionscope.Dispose();
+                transactionscope.Complete();
+                transactionscope.Dispose();
             }
 
             base.ClickConfirm();
@@ -612,7 +612,7 @@ where STL.ID = '{0}'", this.CurrentMaintain["ID"],
             return false;
         }
 
-        private void buttonGenerate_Click(object sender, EventArgs e)
+        private void ButtonGenerate_Click(object sender, EventArgs e)
         {
             #region checkStockType
             if (this.CurrentMaintain["StockType"].Empty())
@@ -622,11 +622,11 @@ where STL.ID = '{0}'", this.CurrentMaintain["ID"],
             #endregion
             var frm = new P52_Import(this.CurrentMaintain["StockType"]);
             frm.ShowDialog();
-            if (frm.getBoolImport())
+            if (frm.GetBoolImport())
             {
                 this.ShowWaitMessage("Import data...");
                 #region Import Data
-                DataTable dtResultImportData = frm.getResultImportDatas();
+                DataTable dtResultImportData = frm.GetResultImportDatas();
                 if (dtResultImportData != null && dtResultImportData.Rows.Count > 0)
                 {
                     DataTable dtDetailGrid = (DataTable)((BindingSource)this.detailgrid.DataSource).DataSource;

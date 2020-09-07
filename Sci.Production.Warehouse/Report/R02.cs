@@ -10,11 +10,11 @@ namespace Sci.Production.Warehouse
 {
     public partial class R02 : Win.Tems.PrintForm
     {
-        DataTable dt;
-        DateTime? strIssueDate1;
-        DateTime? strIssueDate2;
-        string strM;
-        string strFactory;
+        private DataTable dt;
+        private DateTime? strIssueDate1;
+        private DateTime? strIssueDate2;
+        private string strM;
+        private string strFactory;
 
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)

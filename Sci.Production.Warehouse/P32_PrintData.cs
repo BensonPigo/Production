@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P32_PrintData
+    internal class P32_PrintData
     {
         public string StockSEQ { get; set; }
 

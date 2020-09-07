@@ -66,7 +66,7 @@ namespace Sci.Production.Warehouse
         }
 
         // PPIC_P15 Called
-        public static void Call(string PPIC_id, Form MdiParent)
+        public static void Call(string pPIC_id, Form mdiParent)
         {
             foreach (Form form in Application.OpenForms)
             {
@@ -78,7 +78,7 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            ToolStripMenuItem P16MenuItem = null;
+            ToolStripMenuItem p16MenuItem = null;
             foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
@@ -95,7 +95,7 @@ namespace Sci.Production.Warehouse
                                     {
                                         if (((ToolStripMenuItem)endMenuItem).Text.EqualString("P16. Issue Fabric Lacking  && Replacement"))
                                         {
-                                            P16MenuItem = (ToolStripMenuItem)endMenuItem;
+                                            p16MenuItem = (ToolStripMenuItem)endMenuItem;
                                             break;
                                         }
                                     }
@@ -106,8 +106,8 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            P16 call = new P16(P16MenuItem, PPIC_id, "PPIC.P16");
-            call.MdiParent = MdiParent;
+            P16 call = new P16(p16MenuItem, pPIC_id, "PPIC.P16");
+            call.MdiParent = mdiParent;
             call.Show();
         }
 
@@ -117,7 +117,7 @@ namespace Sci.Production.Warehouse
             #region 新增Batch Shipment Finished按鈕
             Win.UI.Button btnUnFinish = new Win.UI.Button();
             btnUnFinish.Text = "UnFinish";
-            btnUnFinish.Click += new EventHandler(this.unfinish);
+            btnUnFinish.Click += new EventHandler(this.Unfinish);
             this.browsetop.Controls.Add(btnUnFinish);
             btnUnFinish.Size = new Size(180, 30); // 預設是(80,30)
             btnUnFinish.Visible = true;
@@ -431,8 +431,8 @@ where dbo.Lack_Detail.id = '{1}'
       and dbo.Lack_Detail.seq2 = t.Seq2", this.CurrentMaintain["id"], this.CurrentMaintain["requestid"]));
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -459,7 +459,7 @@ where dbo.Lack_Detail.id = '{1}'
                         if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B, out resulttb,
                             "#TmpSource")))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -467,7 +467,7 @@ where dbo.Lack_Detail.id = '{1}'
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(
                             (DataTable)this.detailgridbs.DataSource, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -475,26 +475,26 @@ where dbo.Lack_Detail.id = '{1}'
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
                     if (!(result3 = DBProxy.Current.Execute(null, sqlupd4.ToString())))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd4.ToString(), result3);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -607,8 +607,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             sqlupd4.Append(string.Format(@"update dbo.Lack_Detail  set IssueQty = DEFAULT where dbo.Lack_Detail.id = '{0}' ", this.CurrentMaintain["requestid"]));
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -648,14 +648,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                         if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B, out resulttb,
                             "#TmpSource")))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
 
                         if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -663,26 +663,26 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
                     if (!(result3 = DBProxy.Current.Execute(null, sqlupd4.ToString())))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd4.ToString(), result3);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -735,6 +735,7 @@ and ik.id = '{CurrentMaintain["ID"]}'
                 {
                     ShowErr(drResult);
                 }
+
                 Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
@@ -814,14 +815,14 @@ Where a.id = '{0}'", masterID);
         }
 
         // Delete empty qty
-        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
+        private void BtnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
             ((DataTable)this.detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["requestid"]))
             {
@@ -836,7 +837,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Accumulated Qty
-        private void btnAccumulatedQty_Click(object sender, EventArgs e)
+        private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new P16_AccumulatedQty(this.CurrentMaintain);
             frm.P16 = this;
@@ -844,14 +845,14 @@ Where a.id = '{0}'", masterID);
         }
 
         // Unfinish
-        private void unfinish(object sender, EventArgs e)
+        private void Unfinish(object sender, EventArgs e)
         {
             var frm = new P15_Unfinish(P15_Unfinish.TypeFabric, "P16_Unfinish");
             frm.ShowDialog(this);
         }
 
         // Locate for (find)
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -870,7 +871,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Request ID
-        private void txtRequestNo_Validating(object sender, CancelEventArgs e)
+        private void TxtRequestNo_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
             if (!MyUtility.Check.Seek(
@@ -920,8 +921,8 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'",
 
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
-            string Requestno = row["requestid"].ToString();
-            string Remark = row["Remark"].ToString();
+            string requestno = row["requestid"].ToString();
+            string remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -937,17 +938,17 @@ where id = @MDivision", pars, out dt);
                 this.ShowErr(result);
             }
 
-            string RptTitle = dt.Rows[0]["NameEN"].ToString();
+            string rptTitle = dt.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new ReportParameter("ID", id));
-            report.ReportParameters.Add(new ReportParameter("Request", Requestno));
-            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("Request", requestno));
+            report.ReportParameters.Add(new ReportParameter("Remark", remark));
             report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
             report.ReportParameters.Add(new ReportParameter("Dept", this.displayDept.Text));
 
             DataTable dtApv;
-            DualResult ApvResult = DBProxy.Current.Select(
+            DualResult apvResult = DBProxy.Current.Select(
                 string.Empty,
                 @"select    
             b.ApvDate
@@ -956,9 +957,9 @@ where id = @MDivision", pars, out dt);
             on b.id = a.requestid
             where b.id = a.requestid
             and a.id = @ID", pars, out dtApv);
-            if (!ApvResult)
+            if (!apvResult)
             {
-                this.ShowErr(ApvResult);
+                this.ShowErr(apvResult);
             }
 
             if (dtApv == null || dtApv.Rows.Count == 0)
@@ -967,8 +968,8 @@ where id = @MDivision", pars, out dt);
                 return false;
             }
 
-            string ApvDate = MyUtility.Check.Empty(dtApv.Rows[0]["ApvDate"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(dtApv.Rows[0]["ApvDate"])).ToString("yyyy/MM/dd HH:mm:ss");
-            report.ReportParameters.Add(new ReportParameter("ApvDate", ApvDate));
+            string apvDate = MyUtility.Check.Empty(dtApv.Rows[0]["ApvDate"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(dtApv.Rows[0]["ApvDate"])).ToString("yyyy/MM/dd HH:mm:ss");
+            report.ReportParameters.Add(new ReportParameter("ApvDate", apvDate));
 
             string confirmDate = MyUtility.Convert.GetDate(this.CurrentMaintain["ApvDate"]).HasValue ? MyUtility.Convert.GetDate(this.CurrentMaintain["ApvDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss") : string.Empty;
             report.ReportParameters.Add(new ReportParameter("ConfirmDate", confirmDate));
@@ -1028,12 +1029,12 @@ where a.id= @ID", pars, out dtDetail);
 
             // 指定是哪個 RDLC
             // DualResult result;
-            Type ReportResourceNamespace = typeof(P16_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P16_Print.rdlc";
+            Type reportResourceNamespace = typeof(P16_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P16_Print.rdlc";
 
             IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 // this.ShowException(result);
                 return false;

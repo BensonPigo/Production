@@ -318,7 +318,7 @@ o.MTLExport,
 o.KPILETA,
 o.MTLETA,
 [Artwork] = o.StyleID+'('  +oa.Artwork + ')',
-o.InspDate,
+InspDate = InspctDate.Val,
 o.Category,
 o.SCIDelivery,
 o.BuyerDelivery,
@@ -337,6 +337,11 @@ OUTER APPLY(
 	INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
 	where wd2.OrderID =o.ID
 )FirststCuttingOutputDate
+OUTER APPLY(
+	select [Val]=MAX(CFAFinalInspectDate)
+	from Order_QtyShip oq
+	WHERE ID = o.id
+)InspctDate
 where exists( select 1 from @APSList where APSNo = s.APSNo)
 
 --填入資料串連欄位 by APSNo

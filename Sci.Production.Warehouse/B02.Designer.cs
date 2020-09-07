@@ -152,7 +152,7 @@
             this.btnBatchCreate.TabIndex = 2;
             this.btnBatchCreate.Text = "Batch Create";
             this.btnBatchCreate.UseVisualStyleBackColor = true;
-            this.btnBatchCreate.Click += new System.EventHandler(this.btnBatchCreate_Click);
+            this.btnBatchCreate.Click += new System.EventHandler(this.BtnBatchCreate_Click);
             // 
             // B02
             // 

@@ -140,12 +140,12 @@ and o.MDivisionID='{Env.User.Keyword}' and f.POID = '{this.poID}'
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnRetransferToScrap_Click(object sender, EventArgs e)
+        private void BtnRetransferToScrap_Click(object sender, EventArgs e)
         {
             var selectedBulk = this.dtBulk.AsEnumerable().Where(s => (int)s["select"] == 1).ToList();
 
@@ -172,7 +172,7 @@ and o.MDivisionID='{Env.User.Keyword}' and f.POID = '{this.poID}'
             this.Query();
         }
 
-        private void gridBulk_Sorted(object sender, EventArgs e)
+        private void GridBulk_Sorted(object sender, EventArgs e)
         {
             this.ChangeGridStyle();
         }

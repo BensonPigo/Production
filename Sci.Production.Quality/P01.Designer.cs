@@ -458,7 +458,7 @@
             this.btnFind.TabIndex = 3;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // displayContinuity
             // 
@@ -647,35 +647,35 @@
             this.modifyPhysicalInspectionToolStripMenuItem.Name = "modifyPhysicalInspectionToolStripMenuItem";
             this.modifyPhysicalInspectionToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.modifyPhysicalInspectionToolStripMenuItem.Text = "Modify Physical Inspection";
-            this.modifyPhysicalInspectionToolStripMenuItem.Click += new System.EventHandler(this.modifyPhysicalInspectionToolStripMenuItem_Click);
+            this.modifyPhysicalInspectionToolStripMenuItem.Click += new System.EventHandler(this.ModifyPhysicalInspectionToolStripMenuItem_Click);
             // 
             // modifyWeightTestToolStripMenuItem
             // 
             this.modifyWeightTestToolStripMenuItem.Name = "modifyWeightTestToolStripMenuItem";
             this.modifyWeightTestToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.modifyWeightTestToolStripMenuItem.Text = "Modify Weight Test";
-            this.modifyWeightTestToolStripMenuItem.Click += new System.EventHandler(this.modifyWeightTestToolStripMenuItem_Click);
+            this.modifyWeightTestToolStripMenuItem.Click += new System.EventHandler(this.ModifyWeightTestToolStripMenuItem_Click);
             // 
             // modifyShadeBondTestToolStripMenuItem
             // 
             this.modifyShadeBondTestToolStripMenuItem.Name = "modifyShadeBondTestToolStripMenuItem";
             this.modifyShadeBondTestToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.modifyShadeBondTestToolStripMenuItem.Text = "Modify ShadeBand Test";
-            this.modifyShadeBondTestToolStripMenuItem.Click += new System.EventHandler(this.modifyShadeBondTestToolStripMenuItem_Click);
+            this.modifyShadeBondTestToolStripMenuItem.Click += new System.EventHandler(this.ModifyShadeBondTestToolStripMenuItem_Click);
             // 
             // modifyContinuityTestToolStripMenuItem
             // 
             this.modifyContinuityTestToolStripMenuItem.Name = "modifyContinuityTestToolStripMenuItem";
             this.modifyContinuityTestToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.modifyContinuityTestToolStripMenuItem.Text = "Modify Continuity Test";
-            this.modifyContinuityTestToolStripMenuItem.Click += new System.EventHandler(this.modifyContinuityTestToolStripMenuItem_Click);
+            this.modifyContinuityTestToolStripMenuItem.Click += new System.EventHandler(this.ModifyContinuityTestToolStripMenuItem_Click);
             // 
             // modifyOdorTestToolStripMenuItem
             // 
             this.modifyOdorTestToolStripMenuItem.Name = "modifyOdorTestToolStripMenuItem";
             this.modifyOdorTestToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.modifyOdorTestToolStripMenuItem.Text = "Modify OdorTest";
-            this.modifyOdorTestToolStripMenuItem.Click += new System.EventHandler(this.modifyOdorTestToolStripMenuItem_Click);
+            this.modifyOdorTestToolStripMenuItem.Click += new System.EventHandler(this.ModifyOdorTestToolStripMenuItem_Click);
             // 
             // displayOdor
             // 

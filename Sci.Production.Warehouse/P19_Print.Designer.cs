@@ -60,7 +60,7 @@
             this.radioTransferOutReport.TabStop = true;
             this.radioTransferOutReport.Text = "Transfer Out Report";
             this.radioTransferOutReport.UseVisualStyleBackColor = true;
-            this.radioTransferOutReport.CheckedChanged += new System.EventHandler(this.radioTransferOutReport_CheckedChanged);
+            this.radioTransferOutReport.CheckedChanged += new System.EventHandler(this.RadioTransferOutReport_CheckedChanged);
             // 
             // radioP18ExcelImport
             // 
@@ -73,7 +73,7 @@
             this.radioP18ExcelImport.TabStop = true;
             this.radioP18ExcelImport.Text = "For W/H P18 Transfer In Import format(Excel)";
             this.radioP18ExcelImport.UseVisualStyleBackColor = true;
-            this.radioP18ExcelImport.CheckedChanged += new System.EventHandler(this.radioP18ExcelImport_CheckedChanged);
+            this.radioP18ExcelImport.CheckedChanged += new System.EventHandler(this.RadioP18ExcelImport_CheckedChanged);
             // 
             // P19_Print
             // 

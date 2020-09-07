@@ -241,7 +241,7 @@ and Factory.IsProduceFty=1
             }
 
             // 該單Approved / Junk都不允許調整資料
-            if (!Prgs.checkP02Status(this.masterData["ID"].ToString()))
+            if (!Prgs.CheckP02Status(this.masterData["ID"].ToString()))
             {
                 return;
             }

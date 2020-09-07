@@ -30,6 +30,8 @@
 	[IDD]				Date   NULL,
 	[IDDEditName]             VARCHAR (10)   CONSTRAINT [DF_Order_QtyShip_IDDEditName] DEFAULT ('') NULL,
     [IDDEditDate]             DATETIME       NULL,
+    [CFAIs3rdInspectHandle] VARCHAR(10) NOT NULL CONSTRAINT [DF_Order_QtyShip_CFAIs3rdInspectHandle] DEFAULT(''),
+    [CFAFinalInspectHandle] Varchar(10) NOT NULL CONSTRAINT [DF_Order_QtyShip_CFAFinalInspectHandle] DEFAULT(''), 
     CONSTRAINT [PK_Order_QtyShip] PRIMARY KEY CLUSTERED ([Id] ASC, [Seq] ASC)
 );
 

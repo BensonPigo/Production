@@ -8,7 +8,7 @@ namespace Sci.Production.Quality
 {
     public partial class B10 : Win.Tems.Input1
     {
-        Hashtable ht = new Hashtable();
+        readonly Hashtable ht = new Hashtable();
 
         public B10(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -91,7 +91,7 @@ namespace Sci.Production.Quality
             return base.ClickEditBefore();
         }
 
-        private void radioPanel1_ValueChanged(object sender, EventArgs e)
+        private void RadioPanel1_ValueChanged(object sender, EventArgs e)
         {
             this.txtFormula.Text = this.radioPanel1.Value == "1" ? this.ht["Formula1"].ToString() : this.ht["Formula2"].ToString();
         }

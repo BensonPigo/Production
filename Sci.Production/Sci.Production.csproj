@@ -275,6 +275,9 @@
     <None Include="XLT\Centralized_R05.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Centralized_R06.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Centralized_R10_OutputSummaryWithFOBReport%28Summary_Detail%29.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

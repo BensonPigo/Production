@@ -958,7 +958,7 @@ and p1.Type <> 'S'
                 }
             }
 
-            if (!Prgs.CheckExistsOrder_QtyShip_Detail(ShipPlanID: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            if (!Prgs.CheckExistsOrder_QtyShip_Detail(shipPlanID: MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
             {
                 return;
             }

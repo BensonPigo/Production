@@ -7,7 +7,7 @@ namespace Sci.Production.Quality
 {
     public partial class B09 : Win.Tems.Input1
     {
-        private string destination_path; // 放圖檔的路徑
+        private readonly string destination_path; // 放圖檔的路徑
         private bool attach_flag = false;
 
         public B09(ToolStripMenuItem menuitem)
@@ -71,7 +71,7 @@ namespace Sci.Production.Quality
             this.txtID.SetReadOnly(true);
         }
 
-        private void btnAttach_Click(object sender, EventArgs e)
+        private void BtnAttach_Click(object sender, EventArgs e)
         {
             // 呼叫File 選擇視窗
             OpenFileDialog file = new OpenFileDialog();
@@ -87,7 +87,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void BtnDelete_Click(object sender, EventArgs e)
         {
             DialogResult deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the <Signature Picture>?", buttons: MessageBoxButtons.YesNo);
             if (deleteResult1 == DialogResult.Yes)

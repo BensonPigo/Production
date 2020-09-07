@@ -154,12 +154,12 @@ order by p2.ID,p2.CTNStartNo";
             this.HideWaitMessage();
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             this.Find();
         }
 
-        private void btnImportFromBarcode_Click(object sender, EventArgs e)
+        private void BtnImportFromBarcode_Click(object sender, EventArgs e)
         {
             // 設定只能選txt檔
             this.openFileDialog1.Filter = "txt files (*.txt)|*.txt";
@@ -451,7 +451,7 @@ order by p2.ID,p2.CTNStartNo
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             // 檢查是否有勾選資料
             this.grid.ValidateControl();
@@ -659,12 +659,12 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Env.User.Keyword}','{dr["OrderID"
             this.HideWaitMessage();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnUpdateAll_Click(object sender, EventArgs e)
+        private void BtnUpdateAll_Click(object sender, EventArgs e)
         {
             this.grid.ValidateControl();
             string txtReturnTo = this.comboDropDownList1.SelectedValue.ToString();

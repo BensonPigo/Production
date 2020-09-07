@@ -159,7 +159,7 @@ where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a",
             }
 
             // 該單Approved / Junk都不允許調整資料
-            if (!Prgs.checkP02Status(this.masterData["ID"].ToString()))
+            if (!Prgs.CheckP02Status(this.masterData["ID"].ToString()))
             {
                 return;
             }

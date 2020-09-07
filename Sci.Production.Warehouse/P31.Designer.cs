@@ -248,7 +248,7 @@
             this.btnImport.TabStop = false;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // shapeContainer1
             // 
@@ -279,7 +279,7 @@
             this.btnFind.TabStop = false;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // txtLocateForSP
             // 
@@ -309,7 +309,7 @@
             this.btnClearQtyIsEmpty.TabStop = false;
             this.btnClearQtyIsEmpty.Text = "Clear Qty is empty";
             this.btnClearQtyIsEmpty.UseVisualStyleBackColor = true;
-            this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.btnClearQtyIsEmpty_Click);
+            this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.BtnClearQtyIsEmpty_Click);
             // 
             // labelRemark
             // 
@@ -341,7 +341,7 @@
             this.btnAccumulatedQty.TabStop = false;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
-            this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
+            this.btnAccumulatedQty.Click += new System.EventHandler(this.BtnAccumulatedQty_Click);
             // 
             // dateEstReturnDate
             // 

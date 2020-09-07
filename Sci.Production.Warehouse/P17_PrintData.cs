@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P17_PrintData
+    internal class P17_PrintData
     {
         public string SP { get; set; }
 

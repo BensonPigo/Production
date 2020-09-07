@@ -60,7 +60,7 @@
             this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnImport
             // 
@@ -72,7 +72,7 @@
             this.btnImport.TabIndex = 2;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // groupBox2
             // 
@@ -146,7 +146,7 @@
             this.gridlack.Size = new System.Drawing.Size(1008, 225);
             this.gridlack.TabIndex = 1;
             this.gridlack.TabStop = false;
-            this.gridlack.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_RowEnter);
+            this.gridlack.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid1_RowEnter);
             // 
             // gridLack_Detail
             // 

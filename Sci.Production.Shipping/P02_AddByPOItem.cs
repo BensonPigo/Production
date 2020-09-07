@@ -329,7 +329,7 @@ and pld.OrderID = '{this.txtSPNo.Text}'
             }
 
             // 該單Approved / Junk都不允許調整資料
-            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            if (!Prgs.CheckP02Status(this.CurrentData["ID"].ToString()))
             {
                 return false;
             }
@@ -409,7 +409,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             }
 
             // 該單Approved / Junk都不允許調整資料
-            if (!Prgs.checkP02Status(this.CurrentData["ID"].ToString()))
+            if (!Prgs.CheckP02Status(this.CurrentData["ID"].ToString()))
             {
                 return false;
             }

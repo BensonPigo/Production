@@ -8,7 +8,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_Scrap : Win.Subs.Base
     {
-        DataRow dr;
+        private DataRow dr;
 
         public P03_Scrap(DataRow data)
         {
@@ -185,7 +185,7 @@ for xml path('')),1,1,'')
                  ;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

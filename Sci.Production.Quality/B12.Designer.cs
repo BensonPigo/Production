@@ -32,8 +32,8 @@
             this.lbDefectCode = new Sci.Win.UI.Label();
             this.editDescription = new Sci.Win.UI.EditBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
-            this.txtArtworkTypeID = new Sci.Win.UI.TextBox();
-            this.lbArtworkTypeID = new Sci.Win.UI.Label();
+            this.txtSubProcessID = new Sci.Win.UI.TextBox();
+            this.lbSubProcessID = new Sci.Win.UI.Label();
             this.labelDescription = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -53,8 +53,8 @@
             this.detailcont.Controls.Add(this.lbDefectCode);
             this.detailcont.Controls.Add(this.editDescription);
             this.detailcont.Controls.Add(this.checkJunk);
-            this.detailcont.Controls.Add(this.txtArtworkTypeID);
-            this.detailcont.Controls.Add(this.lbArtworkTypeID);
+            this.detailcont.Controls.Add(this.txtSubProcessID);
+            this.detailcont.Controls.Add(this.lbSubProcessID);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Size = new System.Drawing.Size(829, 357);
             // 
@@ -125,24 +125,24 @@
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // txtArtworkTypeID
+            // txtSubProcessID
             // 
-            this.txtArtworkTypeID.BackColor = System.Drawing.Color.White;
-            this.txtArtworkTypeID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ArtworkTypeID", true));
-            this.txtArtworkTypeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtArtworkTypeID.Location = new System.Drawing.Point(128, 34);
-            this.txtArtworkTypeID.MaxLength = 20;
-            this.txtArtworkTypeID.Name = "txtArtworkTypeID";
-            this.txtArtworkTypeID.Size = new System.Drawing.Size(292, 23);
-            this.txtArtworkTypeID.TabIndex = 8;
+            this.txtSubProcessID.BackColor = System.Drawing.Color.White;
+            this.txtSubProcessID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubProcessID", true));
+            this.txtSubProcessID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSubProcessID.Location = new System.Drawing.Point(128, 34);
+            this.txtSubProcessID.MaxLength = 10;
+            this.txtSubProcessID.Name = "txtSubProcessID";
+            this.txtSubProcessID.Size = new System.Drawing.Size(292, 23);
+            this.txtSubProcessID.TabIndex = 8;
             // 
-            // lbArtworkTypeID
+            // lbSubProcessID
             // 
-            this.lbArtworkTypeID.Location = new System.Drawing.Point(36, 34);
-            this.lbArtworkTypeID.Name = "lbArtworkTypeID";
-            this.lbArtworkTypeID.Size = new System.Drawing.Size(89, 23);
-            this.lbArtworkTypeID.TabIndex = 10;
-            this.lbArtworkTypeID.Text = "ArtworkType";
+            this.lbSubProcessID.Location = new System.Drawing.Point(36, 34);
+            this.lbSubProcessID.Name = "lbSubProcessID";
+            this.lbSubProcessID.Size = new System.Drawing.Size(89, 23);
+            this.lbSubProcessID.TabIndex = 10;
+            this.lbSubProcessID.Text = "SubProcess";
             // 
             // labelDescription
             // 
@@ -186,8 +186,8 @@
         private Win.UI.Label lbDefectCode;
         private Win.UI.EditBox editDescription;
         private Win.UI.CheckBox checkJunk;
-        private Win.UI.TextBox txtArtworkTypeID;
-        private Win.UI.Label lbArtworkTypeID;
+        private Win.UI.TextBox txtSubProcessID;
+        private Win.UI.Label lbSubProcessID;
         private Win.UI.Label labelDescription;
     }
 }

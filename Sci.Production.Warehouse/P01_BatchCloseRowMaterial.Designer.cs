@@ -70,7 +70,7 @@
             this.btnCancel.TabIndex = 5;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnBatchCloseRMTL
             // 
@@ -82,7 +82,7 @@
             this.btnBatchCloseRMTL.TabIndex = 4;
             this.btnBatchCloseRMTL.Text = "Batch Close R/MTL";
             this.btnBatchCloseRMTL.UseVisualStyleBackColor = true;
-            this.btnBatchCloseRMTL.Click += new System.EventHandler(this.btnBatchCloseRMTL_Click);
+            this.btnBatchCloseRMTL.Click += new System.EventHandler(this.BtnBatchCloseRMTL_Click);
             // 
             // btnFindNow
             // 
@@ -94,7 +94,7 @@
             this.btnFindNow.TabIndex = 8;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
             // 
             // txtSPNoStart
             // 
@@ -125,7 +125,7 @@
             this.btnToEexcel.TabIndex = 3;
             this.btnToEexcel.Text = "To Excel";
             this.btnToEexcel.UseVisualStyleBackColor = true;
-            this.btnToEexcel.Click += new System.EventHandler(this.btnToEexcel_Click);
+            this.btnToEexcel.Click += new System.EventHandler(this.BtnToEexcel_Click);
             // 
             // groupBox1
             // 

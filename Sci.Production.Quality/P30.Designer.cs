@@ -456,7 +456,7 @@
             this.btnFinished.TabIndex = 4;
             this.btnFinished.Text = "Finished";
             this.btnFinished.UseVisualStyleBackColor = true;
-            this.btnFinished.Click += new System.EventHandler(this.btnFinished_Click);
+            this.btnFinished.Click += new System.EventHandler(this.BtnFinished_Click);
             // 
             // dateMDFinished
             // 
@@ -562,7 +562,7 @@
             this.btnAccessoryInspectionList.TabIndex = 100;
             this.btnAccessoryInspectionList.Text = "Accessory inspection list";
             this.btnAccessoryInspectionList.UseVisualStyleBackColor = true;
-            this.btnAccessoryInspectionList.Click += new System.EventHandler(this.btnAccessoryInspectionList_Click);
+            this.btnAccessoryInspectionList.Click += new System.EventHandler(this.BtnAccessoryInspectionList_Click);
             // 
             // btnFabricInspectionList
             // 
@@ -572,7 +572,7 @@
             this.btnFabricInspectionList.TabIndex = 99;
             this.btnFabricInspectionList.Text = "Fabric inspection list";
             this.btnFabricInspectionList.UseVisualStyleBackColor = true;
-            this.btnFabricInspectionList.Click += new System.EventHandler(this.btnFabricInspectionList_Click);
+            this.btnFabricInspectionList.Click += new System.EventHandler(this.BtnFabricInspectionList_Click);
             // 
             // P30
             // 

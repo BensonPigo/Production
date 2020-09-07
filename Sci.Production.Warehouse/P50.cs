@@ -275,14 +275,14 @@ Where a.id = '{0}'", masterID);
         }
 
         // Import
-        private void btngenerate_Click(object sender, EventArgs e)
+        private void Btngenerate_Click(object sender, EventArgs e)
         {
             var frm = new P50_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
 
-        private void comboStockType_Validating(object sender, CancelEventArgs e)
+        private void ComboStockType_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(this.comboStockType.SelectedValue) && this.comboStockType.SelectedValue != this.comboStockType.OldValue)
             {

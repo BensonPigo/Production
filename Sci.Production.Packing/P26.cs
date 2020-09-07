@@ -427,6 +427,7 @@ namespace Sci.Production.Packing
                     zz.Size_Qty_List = sizeObjects;
                     list.Add(zz);
                 }
+
                 /*
                 // 根據ZPL的標題文字、座標，找到這張ZPL，屬於哪一種Type
                 foreach (var type in this.ZplTypes)
@@ -1200,6 +1201,7 @@ WHERE p.Type ='B'
 
                 }
             }
+
             return upateModel_List;
         }
 
@@ -1294,6 +1296,7 @@ AND ShipQty={ShipQty} ", out dt);
                         upateModel_List.Add(model);
                     }
                 }
+
                 return upateModel_List;
             }
             #endregion
@@ -2156,6 +2159,7 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
                 {
                     dr["Result"] = "Fail";
                 }
+
                 this.ShowErr(ex);
                 return false;
             }

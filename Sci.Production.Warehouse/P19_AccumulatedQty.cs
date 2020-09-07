@@ -109,7 +109,7 @@ group by PoId,Seq1,Seq2,Qty,stockunit;
                  ;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

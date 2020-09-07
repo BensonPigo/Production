@@ -96,11 +96,11 @@ AND o.Category IN('B', 'S', 'G')",
                 return;
             }
 
-            bool isSameM = MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID=@ID AND MDivisionID = '{Env.User.Keyword}'", paras);
+            bool isSameM = MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID=@ID AND FtyGroup = '{Env.User.Factory}'", paras);
 
             if (!isSameM)
             {
-                MyUtility.Msg.InfoBox("MDivisionID is different!!");
+                MyUtility.Msg.InfoBox("Factory is different!!");
                 e.Cancel = true;
                 return;
             }

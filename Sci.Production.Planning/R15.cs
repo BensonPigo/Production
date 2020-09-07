@@ -342,16 +342,41 @@ namespace Sci.Production.Planning
 	                       , O.SMR             , O.MRHandle   , O.MCHandle        , O.OrigBuyerDelivery , O.DoxType       , O.TotalCTN
 	                       , O.FtyCTN          , O.ClogCTN    , O.VasShas         , O.TissuePaper       , O.MTLExport     , O.SewLine
 	                       , O.ShipModeList    , O.PlanDate   , O.FirstProduction , O.Finished          , O.FtyGroup      , O.OrderTypeID
-	                       , O.SpecialMark     , O.GFR        , O.SampleReason    , O.InspDate          , O.MnorderApv    , O.FtyKPI
-                           , O.KPIChangeReason , O.StyleUkey  , O.POID            , OrdersBuyerDelivery = o.BuyerDelivery
-                           , InspResult = case when o.InspResult = 'P' then 'Pass' when o.InspResult = 'F' then 'Fail' end
-                           , InspHandle = o.InspHandle +'-'+ Pass1.Name
+	                       , O.SpecialMark     , O.GFR        , O.SampleReason    , InspDate = QtyShip_InspectDate.Val     
+		                   , O.MnorderApv      , O.FtyKPI	   , O.KPIChangeReason , O.StyleUkey		 , O.POID          , OrdersBuyerDelivery = o.BuyerDelivery
+                           , InspResult = QtyShip_Result.Val
+                           , InspHandle = QtyShip_Handle.Val
                            , O.Junk,CFACTN=isnull(o.CFACTN,0)
                            , InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
                     into #cte 
                     from dbo.Orders o WITH (NOLOCK) 
                     inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
                     left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle
+                    OUTER APPLY(
+	                    SELECT [Val]=STUFF((
+		                    SELECT  DISTINCT ','+ Cast(CFAFinalInspectDate as varchar)
+		                    from Order_QtyShip oqs
+		                    WHERE ID = o.id
+		                    FOR XML PATH('')
+	                    ),1,1,'')
+                    )QtyShip_InspectDate
+                    OUTER APPLY(
+	                    SELECT [Val]=STUFF((
+		                    SELECT  DISTINCT ','+ CFAFinalInspectResult 
+		                    from Order_QtyShip oqs
+		                    WHERE ID = o.id AND CFAFinalInspectResult <> '' AND CFAFinalInspectResult IS NOT NULL
+		                    FOR XML PATH('')
+	                    ),1,1,'')
+                    )QtyShip_Result
+                    OUTER APPLY(
+	                    SELECT [Val]=STUFF((
+		                    SELECT  DISTINCT ','+ CFAFinalInspectHandle +'-'+ p.Name
+		                    from Order_QtyShip oqs
+		                    LEFT JOIN Pass1 p WITH (NOLOCK) ON oqs.CFAFinalInspectHandle = p.ID
+		                    WHERE oqs.ID = o.id AND CFAFinalInspectHandle <> '' AND CFAFinalInspectHandle IS NOT NULL
+		                    FOR XML PATH('')
+	                    ),1,1,'')
+                    )QtyShip_Handle
                     WHERE 1=1 {whereIncludeCancelOrder} "));
             #endregion
 
@@ -945,18 +970,42 @@ select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate       
 	   , O.SMR             , O.MRHandle   , O.MCHandle        , O.OrigBuyerDelivery , O.DoxType       , O.TotalCTN
 	   , O.FtyCTN          , O.ClogCTN    , O.VasShas         , O.TissuePaper       , O.MTLExport     , O.SewLine
 	   , O.ShipModeList    , O.PlanDate   , O.FirstProduction , O.Finished          , O.FtyGroup      , O.OrderTypeID
-	   , O.SpecialMark     , O.GFR        , O.SampleReason    , O.InspDate          , O.MnorderApv    , O.FtyKPI
-       , O.KPIChangeReason , O.StyleUkey  , O.POID            , OrdersBuyerDelivery = o.BuyerDelivery
-       , InspResult = case when o.InspResult = 'P' then 'Pass' when o.InspResult = 'F' then 'Fail' end
-       , InspHandle = o.InspHandle +'-'+ Pass1.Name
+	   , O.SpecialMark     , O.GFR        , O.SampleReason    , InspDate = QtyShip_InspectDate.Val     
+       , O.MnorderApv      , O.FtyKPI	   , O.KPIChangeReason , O.StyleUkey		 , O.POID          , OrdersBuyerDelivery = o.BuyerDelivery
+       , InspResult = QtyShip_Result.Val
+       , InspHandle = QtyShip_Handle.Val
        , O.Junk,CFACTN=isnull(o.CFACTN,0)
 	   , oq.Article,oq.SizeCode
        , InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
-left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle
 left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
+OUTER APPLY(
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ','+ Cast(CFAFinalInspectDate as varchar)
+		from Order_QtyShip oqs
+		WHERE ID = o.id
+		FOR XML PATH('')
+	),1,1,'')
+)QtyShip_InspectDate
+OUTER APPLY(
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ','+ CFAFinalInspectResult 
+		from Order_QtyShip oqs
+		WHERE ID = o.id AND CFAFinalInspectResult <> '' AND CFAFinalInspectResult IS NOT NULL
+		FOR XML PATH('')
+	),1,1,'')
+)QtyShip_Result
+OUTER APPLY(
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ','+ CFAFinalInspectHandle +'-'+ p.Name
+		from Order_QtyShip oqs
+		LEFT JOIN Pass1 p WITH (NOLOCK) ON oqs.CFAFinalInspectHandle = p.ID
+		WHERE oqs.ID = o.id AND CFAFinalInspectHandle <> '' AND CFAFinalInspectHandle IS NOT NULL
+		FOR XML PATH('')
+	),1,1,'')
+)QtyShip_Handle
 WHERE 1=1 {whereIncludeCancelOrder} "));
             #endregion
 

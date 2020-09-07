@@ -87,7 +87,7 @@
             this.btnPrint.TabIndex = 5;
             this.btnPrint.Text = "Print";
             this.btnPrint.UseVisualStyleBackColor = true;
-            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
+            this.btnPrint.Click += new System.EventHandler(this.BtnPrint_Click);
             // 
             // labelStockType
             // 
@@ -112,7 +112,7 @@
             this.comboStockType.OldText = "";
             this.comboStockType.Size = new System.Drawing.Size(100, 24);
             this.comboStockType.TabIndex = 3;
-            this.comboStockType.SelectedIndexChanged += new System.EventHandler(this.comboStockType_SelectedIndexChanged);
+            this.comboStockType.SelectedIndexChanged += new System.EventHandler(this.ComboStockType_SelectedIndexChanged);
             // 
             // btnClose
             // 
@@ -124,11 +124,11 @@
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // bindingSource1
             // 
-            this.bindingSource1.PositionChanged += new System.EventHandler(this.bindingSource1_PositionChanged);
+            this.bindingSource1.PositionChanged += new System.EventHandler(this.BindingSource1_PositionChanged);
             // 
             // panel3
             // 
@@ -314,7 +314,7 @@
             this.gridFtyinventory.Size = new System.Drawing.Size(430, 440);
             this.gridFtyinventory.TabIndex = 1;
             this.gridFtyinventory.TabStop = false;
-            this.gridFtyinventory.SelectionChanged += new System.EventHandler(this.gridFtyinventory_SelectionChanged);
+            this.gridFtyinventory.SelectionChanged += new System.EventHandler(this.GridFtyinventory_SelectionChanged);
             // 
             // gridTrans
             // 

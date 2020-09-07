@@ -372,6 +372,7 @@ declare @TTLZ nvarchar(max) =
 ,iif(ArtworkType_CPU = '', '', concat(',[TTL_',ArtworkType_CPU,']=Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty),',iif(Unit='QTY','4','3'),')'))
 )from #atall for xml path(''))" : " ")}
 
+
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
 {(this.chk_Include_Artwork.Checked ?
@@ -386,6 +387,7 @@ from
 PIVOT(min(ptq) for ArtworkType_Unit in('+@columnsName+N'))as pt
 where orderid is not null
 --group by orderid" : " ")}
+
 '
 +N'
 select * from(

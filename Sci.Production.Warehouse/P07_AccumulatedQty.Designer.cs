@@ -51,7 +51,7 @@
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // gridAccumulatedQty
             // 
@@ -110,7 +110,7 @@
             this.chkRcvdQty.Text = "only show Rcvd. Qty > 0 data, which does not contain other material received data" +
     "";
             this.chkRcvdQty.UseVisualStyleBackColor = true;
-            this.chkRcvdQty.CheckedChanged += new System.EventHandler(this.chkRcvdQty_CheckedChanged);
+            this.chkRcvdQty.CheckedChanged += new System.EventHandler(this.ChkRcvdQty_CheckedChanged);
             // 
             // P07_AccumulatedQty
             // 

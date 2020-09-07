@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace Sci.Production.PublicPrg
 {
+    /// <summary>
+    /// Prgs
+    /// </summary>
     public static partial class Prgs
     {
         /// <summary>
@@ -70,17 +73,19 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// BundleCardCheckSubprocess(string[] ann, string patterncode,DataTable artTb, out bool lallpart)
         /// </summary>
-        /// <param name="ann"></param>
-        /// <param name="patterncode"></param>
-        /// <param name="artTb"></param>
-        /// <param name="lallpartas"></param>
+        /// <param name="ann">ann</param>
+        /// <param name="patterncode">patterncode</param>
+        /// <param name="artTb">artTb</param>
+        /// <param name="lallpart">lallpartas</param>
         /// <returns>string</returns>
         public static string BundleCardCheckSubprocess(string[] ann, string patterncode, DataTable artTb, out bool lallpart)
         {
             // artTb 是給前Form 使用同Garment List 的PatternCode 與Subrpocess
             string art = string.Empty;
             lallpart = true; // 是不是All part
-            for (int i = 0; i < ann.Length; i++) // 寫入判斷是否存在Subprocess
+
+            // 寫入判斷是否存在Subprocess
+            for (int i = 0; i < ann.Length; i++)
             {
                 string[] ann2 = ann[i].ToString().Split(' '); // 剖析Annotation
                 if (ann2.Length > 0)
@@ -127,7 +132,9 @@ namespace Sci.Production.PublicPrg
                         if (art.IndexOf(ann[i]) == -1)
                         {
                             DataRow[] existdr = artTb.Select(string.Format("PatternCode ='{0}' and Subprocessid ='{1}'", patterncode, ann[i]));
-                            if (existdr.Length == 0) // 表示無在ArtTable 內
+
+                            // 表示無在ArtTable內
+                            if (existdr.Length == 0)
                             {
                                 DataRow ndr_art = artTb.NewRow();
                                 ndr_art["PatternCode"] = patterncode;
@@ -156,11 +163,11 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// 均分數量 EX:10均分4份→3,3,2,2
         /// </summary>
-        /// <param name="dr"></param>
-        /// <param name="columnName"></param>
-        /// <param name="TotalNumeric"></param>
-        /// <param name="deleteZero"></param>
-        public static void AverageNumeric(DataRow[] dr, string columnName = "Qty", int TotalNumeric = 0, bool deleteZero = false)
+        /// <param name="dr">dr</param>
+        /// <param name="columnName">Qty</param>
+        /// <param name="totalNumeric">0</param>
+        /// <param name="deleteZero">false</param>
+        public static void AverageNumeric(DataRow[] dr, string columnName = "Qty", int totalNumeric = 0, bool deleteZero = false)
         {
             if (dr.Count() == 0)
             {
@@ -168,8 +175,8 @@ namespace Sci.Production.PublicPrg
             }
 
             int rowCount = dr.Count();
-            int eachqty = TotalNumeric / rowCount;
-            int modqty = TotalNumeric % rowCount; // 剩餘數
+            int eachqty = totalNumeric / rowCount;
+            int modqty = totalNumeric % rowCount; // 剩餘數
 
             if (modqty == 0)
             {
@@ -219,35 +226,42 @@ namespace Sci.Production.PublicPrg
             }
         }
 
-        public static List<Day> GetDays(int leadtime, DateTime date_where, List<string> FtyFroup)
+        /// <summary>
+        /// Get Days
+        /// </summary>
+        /// <param name="leadtime">int</param>
+        /// <param name="date_where">DateTime</param>
+        /// <param name="ftyFroup">List<string></param>
+        /// <returns>List<Day></returns>
+        public static List<Day> GetDays(int leadtime, DateTime date_where, List<string> ftyFroup)
         {
             DateTime start = date_where.AddDays(-leadtime).Date;
 
-            List<Day> DayList = new List<Day>();
+            List<Day> dayList = new List<Day>();
 
             string sqlcmd = $@"
 SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
 FROM Holiday WITH(NOLOCK)
 WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
 AND HolidayDate <= '{date_where.ToString("yyyy/MM/dd")}'
-AND FactoryID IN ('{FtyFroup.JoinToString("','")}')
+AND FactoryID IN ('{ftyFroup.JoinToString("','")}')
 ";
             DataTable dt2;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt2);
 
             // 開始組合時間軸
-            for (int Day = 0; Day <= leadtime; Day++)
+            for (int day1 = 0; day1 <= leadtime; day1++)
             {
                 Day day = new Day();
-                day.Date = date_where.AddDays(-Day).Date;
+                day.Date = date_where.AddDays(-day1).Date;
 
                 // 是否行事曆設定假日
-                bool IsHoliday = dt2.AsEnumerable().Where(o => MyUtility.Convert.GetDate(o["HolidayDate"]) == day.Date).Any();
+                bool isHoliday = dt2.AsEnumerable().Where(o => MyUtility.Convert.GetDate(o["HolidayDate"]) == day.Date).Any();
 
                 // 是行事曆設定假日 or 星期天
-                if (IsHoliday || day.Date.DayOfWeek == DayOfWeek.Sunday)
+                if (isHoliday || day.Date.DayOfWeek == DayOfWeek.Sunday)
                 {
-                    IsHoliday = true;
+                    isHoliday = true;
 
                     // 為避免假日推移的影響，讓時間軸不夠長，因此每遇到一次假日，就要加長一次時間軸
                     leadtime++;
@@ -258,66 +272,73 @@ SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
 FROM Holiday WITH(NOLOCK)
 WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
 AND HolidayDate <= '{date_where.ToString("yyyy/MM/dd")}'
-AND FactoryID IN ('{FtyFroup.JoinToString("','")}')
+AND FactoryID IN ('{ftyFroup.JoinToString("','")}')
 ";
                     DBProxy.Current.Select(null, sqlcmd, out dt2);
                 }
 
-                day.IsHoliday = IsHoliday;
-                DayList.Add(day);
+                day.IsHoliday = isHoliday;
+                dayList.Add(day);
             }
 
-            return DayList;
+            return dayList;
         }
 
-        public static List<Day> GetRangeHoliday(DateTime date1, DateTime date2, List<string> FtyFroup)
+        /// <summary>
+        /// GetRangeHoliday
+        /// </summary>
+        /// <param name="date1">DateTime date1</param>
+        /// <param name="date2">DateTime date2</param>
+        /// <param name="ftyFroup">FtyFroup</param>
+        /// <returns>List<Day></returns>
+        public static List<Day> GetRangeHoliday(DateTime date1, DateTime date2, List<string> ftyFroup)
         {
-            List<Day> DayList = new List<Day>();
+            List<Day> dayList = new List<Day>();
 
             string sqlcmd = $@"
 SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
 FROM Holiday WITH(NOLOCK)
 WHERE HolidayDate >= '{date1.ToString("yyyy/MM/dd")}'
 AND HolidayDate <= '{date2.ToString("yyyy/MM/dd")}'
-AND FactoryID IN ('{FtyFroup.JoinToString("','")}')
+AND FactoryID IN ('{ftyFroup.JoinToString("','")}')
 ";
             DataTable dt2;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt2);
 
             int days = (int)(date2.Date - date1.Date).TotalDays;
-            for (int Day = 0; Day <= days; Day++)
+            for (int day1 = 0; day1 <= days; day1++)
             {
                 Day day = new Day();
-                day.Date = date2.AddDays(-Day).Date;
+                day.Date = date2.AddDays(-day1).Date;
 
                 // 是否行事曆設定假日
-                bool IsHoliday = dt2.AsEnumerable().Where(o => MyUtility.Convert.GetDate(o["HolidayDate"]) == day.Date).Any();
+                bool isHoliday = dt2.AsEnumerable().Where(o => MyUtility.Convert.GetDate(o["HolidayDate"]) == day.Date).Any();
 
                 // 是行事曆設定假日 or 星期天
-                if (IsHoliday || day.Date.DayOfWeek == DayOfWeek.Sunday)
+                if (isHoliday || day.Date.DayOfWeek == DayOfWeek.Sunday)
                 {
-                    IsHoliday = true;
+                    isHoliday = true;
                 }
 
-                day.IsHoliday = IsHoliday;
-                DayList.Add(day);
+                day.IsHoliday = isHoliday;
+                dayList.Add(day);
             }
 
-            return DayList;
+            return dayList;
         }
 
         /// <summary>
         /// 取得 by APSNo & 每日 的標準數
         /// </summary>
-        /// <param name="OrderIDs"></param>
-        /// <returns></returns>
-        public static List<DailyStdQty> GetStdQty(List<string> OrderIDs)
+        /// <param name="orderIDs">List<string> OrderID</param>
+        /// <returns>List DailyStdQty</returns>
+        public static List<DailyStdQty> GetStdQty(List<string> orderIDs)
         {
             string sqlcmd = $@"
 SELECT s.OrderID,s.ComboType,x.*
 FROM SewingSchedule  s
 outer apply(select * from [dbo].[getDailystdq](s.APSNo))x
-WHERE OrderID IN ('{OrderIDs.JoinToString("','")}')
+WHERE OrderID IN ('{orderIDs.JoinToString("','")}')
 and x.APSNo is not null
 ";
             DataTable tmpDt;
@@ -327,7 +348,7 @@ and x.APSNo is not null
                 MyUtility.Msg.WarningBox(result.ToString());
             }
 
-            List<DailyStdQty> APSNoDailyStdQty = tmpDt.AsEnumerable().Select(s => new DailyStdQty
+            List<DailyStdQty> aPSNoDailyStdQty = tmpDt.AsEnumerable().Select(s => new DailyStdQty
             {
                 OrderID = MyUtility.Convert.GetString(s["OrderID"]),
                 APSNo = MyUtility.Convert.GetString(s["APSNo"]),
@@ -335,10 +356,16 @@ and x.APSNo is not null
                 StdQty = MyUtility.Convert.GetInt(s["StdQ"]),
             }).ToList();
 
-            return APSNoDailyStdQty;
+            return aPSNoDailyStdQty;
         }
 
         #region
+
+        /// <summary>
+        /// Get Cutting TapeData
+        /// </summary>
+        /// <param name="cuttingID">cuttingID</param>
+        /// <returns>DataTable</returns>
         public static DataTable GetCuttingTapeData(string cuttingID)
         {
             DataTable[] dt;
@@ -461,25 +488,25 @@ order by o.SewInLine
             #region 排序完後處理Type of Cutting Node **用Marker Name前5碼做群組分類, 取最後一筆字串
             DataTable dtf3 = dtf2.Clone();
             int i = 0;
-            string Marker5_Group = string.Empty;
+            string marker5_Group = string.Empty;
             foreach (DataRow row1 in dtf2.Rows)
             {
                 string curr_Marker5_Group = MyUtility.Convert.GetString(row1["MarkerName"]).Substring(0, 5);
-                if (curr_Marker5_Group != Marker5_Group && i > 0)
+                if (curr_Marker5_Group != marker5_Group && i > 0)
                 {
                     DataRow newrow = dtf3.NewRow();
                     newrow["TypeofCuttingNode"] = MyUtility.Convert.GetString(row1["TypeofCuttingNode_Group"]);
                     dtf3.Rows.Add(newrow);
                 }
 
-                Marker5_Group = MyUtility.Convert.GetString(row1["MarkerName"]).Substring(0, 5);
+                marker5_Group = MyUtility.Convert.GetString(row1["MarkerName"]).Substring(0, 5);
 
                 dtf3.ImportRow(row1);
                 i++;
             }
 
             DataRow newrowLast = dtf3.NewRow();
-            newrowLast["TypeofCuttingNode"] = Marker5_Group;
+            newrowLast["TypeofCuttingNode"] = marker5_Group;
             dtf3.Rows.Add(newrowLast);
             dtf3.Columns.Remove("TypeofCuttingNode_Group");
             #endregion
@@ -499,11 +526,11 @@ order by o.SewInLine
         /// <summary>
         /// 取得Cutting成套的數量
         /// </summary>
-        /// <param name="OrderID"></param>
-        /// <returns></returns>
-        public static List<GarmentQty> GetCutPlanQty(List<string> OrderIDs)
+        /// <param name="orderIDs">List<string> orderIDs</param>
+        /// <returns>List<GarmentQty></returns>
+        public static List<GarmentQty> GetCutPlanQty(List<string> orderIDs)
         {
-            DataTable HeadDt;
+            DataTable headDt;
             DataTable tmpDt;
             DualResult result;
 
@@ -522,15 +549,15 @@ inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = o.POID and occ.Article
 inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0
 inner join Order_EachCons_Color oec WITH (NOLOCK) on oec.Order_EachConsUkey = oe.Ukey and oec.ColorID = occ.ColorID
 inner join Order_EachCons_Color_Article oeca WITH (NOLOCK) on oeca.Order_EachCons_ColorUkey = oec.Ukey and oeca.Article = oq.Article
-AND o.id IN ('{OrderIDs.JoinToString("','")}')
+AND o.id IN ('{orderIDs.JoinToString("','")}')
 AND (exists(select 1 from Order_EachCons_Article oea where  oea.Id = o.POID and oea.Article = oq.Article )
 	or not exists (select 1 from Order_EachCons_Article oea where  oea.Id = o.POID)
 )
 --AND o.id='20032468LL004'
 ";
 
-            result = DBProxy.Current.Select(null, tmpCmd, out HeadDt);
-            var headList = HeadDt.AsEnumerable()
+            result = DBProxy.Current.Select(null, tmpCmd, out headDt);
+            var headList = headDt.AsEnumerable()
                 .Select(s => new
                 {
                     OrderID = MyUtility.Convert.GetString(s["OrderID"]),
@@ -557,7 +584,7 @@ INNER JOIN Cutplan_Detail CD WITH(NOLOCK) ON CD.WorkorderUkey = WO.Ukey
 OUTER APPLY (
 	SELECT TOP 1 EstCutDate FROM Cutplan WHERE ID = CD.ID
 )EstCutDate
-WHERE WOD.OrderID IN ('{OrderIDs.JoinToString("','")}')
+WHERE WOD.OrderID IN ('{orderIDs.JoinToString("','")}')
 AND (SELECT EstCutDate FROM Cutplan WHERE ID = CD.ID AND Status='Confirmed') IS NOT NULL
 --AND WOD.OrderID='20032468LL004'
 
@@ -587,7 +614,7 @@ ORDER BY WOD.OrderID
             // 取出Cutting資料的Key：OrderID + EstCutDate | 回傳的資料 OrderID, EstCutDate, Qty(累計成衣件數)
             var keys = cutList.Select(o => new { o.OrderID, o.EstCutDate }).Distinct().OrderBy(o => o.OrderID).ThenBy(o => o.EstCutDate).ToList();
 
-            List<GarmentQty> GarmentQtys = new List<GarmentQty>();
+            List<GarmentQty> garmentQtys = new List<GarmentQty>();
 
             // 組成 by OrderID, EstCutDate
             foreach (var key in keys)
@@ -602,7 +629,7 @@ ORDER BY WOD.OrderID
 
                 // 處理已有Size
                 var sizeList = preEstCutDate.Select(s => s.SizeCode).Distinct().ToList();
-                int Qty = 0;
+                int qty = 0;
 
                 foreach (var sizeCode in sizeList)
                 {
@@ -633,29 +660,29 @@ ORDER BY WOD.OrderID
                             .Select(s => new { s.Key.FabricPanelCode, sumQty = s.Sum(sum => sum.Qty) }).Min(m => m.sumQty);
 
                         // 到此日期的成衣數 - 先前數, 所有 Size 加總
-                        Qty += minSizeQty - p_minSizeQty;
+                        qty += minSizeQty - p_minSizeQty;
                     }
                 }
 
-                if (Qty > 0)
+                if (qty > 0)
                 {
                     GarmentQty gar = new GarmentQty();
                     gar.OrderID = key.OrderID;
                     gar.EstCutDate = key.EstCutDate;
-                    gar.Qty = Qty;
-                    GarmentQtys.Add(gar);
+                    gar.Qty = qty;
+                    garmentQtys.Add(gar);
                 }
             }
 
-            return GarmentQtys;
+            return garmentQtys;
         }
 
         /// <summary>
         /// 取得 by FabricPanelCode 每日的 Cut Plan Qty
         /// </summary>
-        /// <param name="OrderIDs"></param>
-        /// <returns></returns>
-        public static List<FabricPanelCodeCutPlanQty> GetSPFabricPanelCodeList(List<string> OrderIDs)
+        /// <param name="orderIDs">List<string> orderIDs</param>
+        /// <returns>List<FabricPanelCodeCutPlanQty></returns>
+        public static List<FabricPanelCodeCutPlanQty> GetSPFabricPanelCodeList(List<string> orderIDs)
         {
             // by FabricPanelCode 沒有成套問題, 直接每天相同的 FabricPanelCode 加總即可
             DataTable tmpDt;
@@ -672,7 +699,7 @@ INNER JOIN order_Eachcons cons ON occ.id = cons.id AND cons.FabricCombo = occ.Pa
 inner join Order_EachCons_Color oec WITH (NOLOCK) on oec.Order_EachConsUkey = cons.Ukey and oec.ColorID = occ.ColorID
 inner join Order_EachCons_Color_Article oeca WITH (NOLOCK) on oeca.Order_EachCons_ColorUkey = oec.Ukey and oeca.Article = oq.Article
 WHERE occ.FabricCode !='' AND occ.FabricCode IS NOT NULL
-AND o.id IN ('{OrderIDs.JoinToString("','")}')
+AND o.id IN ('{orderIDs.JoinToString("','")}')
 order by o.ID,cons.FabricPanelCode
 ";
             #endregion
@@ -683,21 +710,21 @@ order by o.ID,cons.FabricPanelCode
                 MyUtility.Msg.WarningBox(result.ToString());
             }
 
-            List<FabricPanelCodeCutPlanQty> FabricPanelCodeCutPlanQty = tmpDt.AsEnumerable().Select(s => new FabricPanelCodeCutPlanQty
+            List<FabricPanelCodeCutPlanQty> fabricPanelCodeCutPlanQty = tmpDt.AsEnumerable().Select(s => new FabricPanelCodeCutPlanQty
             {
                 OrderID = MyUtility.Convert.GetString(s["OrderID"]),
                 FabricPanelCode = MyUtility.Convert.GetString(s["FabricPanelCode"]),
             }).ToList();
 
-            return FabricPanelCodeCutPlanQty;
+            return fabricPanelCodeCutPlanQty;
         }
 
         /// <summary>
         /// 取得 by FabricPanelCode 每日的 Cut Plan Qty
         /// </summary>
-        /// <param name="OrderIDs"></param>
-        /// <returns></returns>
-        public static List<FabricPanelCodeCutPlanQty> GetCutPlanQty_byFabricPanelCode(List<string> OrderIDs)
+        /// <param name="orderIDs">List<string> orderIDs</param>
+        /// <returns>List<FabricPanelCodeCutPlanQty></returns>
+        public static List<FabricPanelCodeCutPlanQty> GetCutPlanQty_byFabricPanelCode(List<string> orderIDs)
         {
             // by FabricPanelCode 沒有成套問題, 直接每天相同的 FabricPanelCode 加總即可
             DataTable tmpDt;
@@ -714,7 +741,7 @@ INNER JOIN Cutplan_Detail CD WITH(NOLOCK) ON CD.WorkorderUkey = WO.Ukey
 OUTER APPLY (
 	SELECT TOP 1 EstCutDate FROM Cutplan WHERE ID = CD.ID
 )EstCutDate
-WHERE WOD.OrderID IN ('{OrderIDs.JoinToString("','")}')
+WHERE WOD.OrderID IN ('{orderIDs.JoinToString("','")}')
 AND (SELECT EstCutDate FROM Cutplan WHERE ID = CD.ID AND Status='Confirmed') IS NOT NULL
 --AND WOD.OrderID='20032468LL004'
 GROUP BY WOD.OrderID
@@ -730,7 +757,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 MyUtility.Msg.WarningBox(result.ToString());
             }
 
-            List<FabricPanelCodeCutPlanQty> FabricPanelCodeCutPlanQty = tmpDt.AsEnumerable().Select(s => new FabricPanelCodeCutPlanQty
+            List<FabricPanelCodeCutPlanQty> fabricPanelCodeCutPlanQty = tmpDt.AsEnumerable().Select(s => new FabricPanelCodeCutPlanQty
             {
                 OrderID = MyUtility.Convert.GetString(s["OrderID"]),
                 EstCutDate = (DateTime)s["EstCutDate"],
@@ -738,46 +765,51 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 Qty = MyUtility.Convert.GetInt(s["Qty"]),
             }).ToList();
 
-            return FabricPanelCodeCutPlanQty;
+            return fabricPanelCodeCutPlanQty;
         }
 
         /// <summary>
         /// 取得所有In/Off Line資料 (成套數量內部自行處理)
         /// </summary>
         /// <param name="dt_SewingSchedule">SewingSchedule的Datatable</param>
-        /// <param name="Days">處理過的時間軸，可見Cutting R01報表搜尋"處理報表上橫向日期的時間軸 (扣除Lead Time)" </param>
-        /// <returns></returns>
-        public static List<InOffLineList> GetInOffLineList(DataTable dt_SewingSchedule, List<Day> Days, DateTime? startdate = null, DateTime? Enddate = null, DateTime? ori_startdate = null, DateTime? ori_Enddate = null, System.ComponentModel.BackgroundWorker bw = null)
+        /// <param name="days">處理過的時間軸，可見Cutting R01報表搜尋"處理報表上橫向日期的時間軸 (扣除Lead Time)" </param>
+        /// <param name="startdate">start Date</param>
+        /// <param name="enddate">end date</param>
+        /// <param name="ori_startdate">original start date</param>
+        /// <param name="ori_Enddate">original End date</param>
+        /// <param name="bw">Background Worker</param>
+        /// <returns>List<InOffLineList> allData </returns>
+        public static List<InOffLineList> GetInOffLineList(DataTable dt_SewingSchedule, List<Day> days, DateTime? startdate = null, DateTime? enddate = null, DateTime? ori_startdate = null, DateTime? ori_Enddate = null, System.ComponentModel.BackgroundWorker bw = null)
         {
             if (startdate == null)
             {
-                startdate = Days.Min(m => m.Date.Date).Date;
+                startdate = days.Min(m => m.Date.Date).Date;
             }
 
-            if (Enddate == null)
+            if (enddate == null)
             {
-                Enddate = Days.Max(m => m.Date.Date).Date;
+                enddate = days.Max(m => m.Date.Date).Date;
             }
 
             decimal processInt = 10; // 給進度條顯示值
             decimal pc = 10;
             List<DataTable> resultList = new List<DataTable>();
 
-            List<InOffLineList> AllDataTmp = new List<InOffLineList>();
-            List<InOffLineList> AllData = new List<InOffLineList>();
+            List<InOffLineList> allDataTmp = new List<InOffLineList>();
+            List<InOffLineList> allData = new List<InOffLineList>();
 
             List<string> allOrder = dt_SewingSchedule.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
             #region LeadTimeList
             string annotationStr;
-            List<LeadTime> LeadTimeList = GetLeadTimeList(allOrder, out annotationStr);
-            if (LeadTimeList == null)
+            List<LeadTime> leadTimeList = GetLeadTimeList(allOrder, out annotationStr);
+            if (leadTimeList == null)
             {
                 return null; // 表示Lead Time有缺
             }
             #endregion
 
-            List<DailyStdQty> StdQtyList = GetStdQty(allOrder);
+            List<DailyStdQty> stdQtyList = GetStdQty(allOrder);
             if (bw != null)
             {
                 if (bw.CancellationPending == true)
@@ -788,7 +820,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 bw.ReportProgress((int)processInt);
             } // 10%
 
-            List<GarmentQty> GarmentList = GetCutPlanQty(allOrder);
+            List<GarmentQty> garmentList = GetCutPlanQty(allOrder);
             processInt = processInt + 5;
             if (bw != null)
             {
@@ -806,61 +838,63 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             }
 
             // 處理不同 OrderID
-            foreach (string OrderID in allOrder)
+            foreach (string orderID in allOrder)
             {
-                if (OrderID == "20042084GG002")
+                if (orderID == "20042084GG002")
                 {
                 }
 
                 // 此OrderID的SewingSchedule資料
-                var sameOrderId = dt_SewingSchedule.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID);
+                var sameOrderId = dt_SewingSchedule.AsEnumerable().Where(o => o["OrderID"].ToString() == orderID);
 
                 // 這筆訂單的起始與結束時間
-                DateTime Start = sameOrderId.Min(o => Convert.ToDateTime(o["Inline"]));
-                DateTime End = sameOrderId.Max(o => Convert.ToDateTime(o["offline"]));
+                DateTime start = sameOrderId.Min(o => Convert.ToDateTime(o["Inline"]));
+                DateTime end = sameOrderId.Max(o => Convert.ToDateTime(o["offline"]));
 
                 InOffLineList nOnj = new InOffLineList();
 
                 // SP#
-                nOnj.OrderID = OrderID;
+                nOnj.OrderID = orderID;
                 nOnj.InOffLines = new List<InOffLine>();
 
                 // 所有Order ID、以及相對應 要扣去的Lead Time(天)
-                int LeadTime = LeadTimeList.Where(o => o.OrderID == OrderID).FirstOrDefault().LeadTimeDay;
+                int leadTime = leadTimeList.Where(o => o.OrderID == orderID).FirstOrDefault().LeadTimeDay;
 
                 foreach (DataRow dr in sameOrderId)
                 {
-                    string ApsNO = dr["APSNo"].ToString();
-                    int AlloQty = MyUtility.Convert.GetInt(dr["AlloQty"]); // 此 SewingSchedule 的上限
+                    string apsNO = dr["APSNo"].ToString();
+                    int alloQty = MyUtility.Convert.GetInt(dr["AlloQty"]); // 此 SewingSchedule 的上限
 
                     // 這筆 SewingSchedule 日期範圍
-                    for (DateTime APSday = Convert.ToDateTime(dr["Inline"]).Date; APSday <= Convert.ToDateTime(dr["Offline"]).Date; APSday = APSday.AddDays(1))
+                    for (DateTime aPSday = Convert.ToDateTime(dr["Inline"]).Date; aPSday <= Convert.ToDateTime(dr["Offline"]).Date; aPSday = aPSday.AddDays(1))
                     {
                         // 原始日期，不在初始篩選範圍內
-                        if (ori_startdate != null && ori_Enddate != null && (ori_startdate > APSday || ori_Enddate < APSday))
+                        if (ori_startdate != null && ori_Enddate != null && (ori_startdate > aPSday || ori_Enddate < aPSday))
                         {
                             continue;
                         }
 
                         // 原始日期不存在當日標準數
-                        if (!StdQtyList.Where(w => w.OrderID == OrderID && w.APSNo == ApsNO && w.Date == APSday).Any())
+                        if (!stdQtyList.Where(w => w.OrderID == orderID && w.APSNo == apsNO && w.Date == aPSday).Any())
                         {
                             continue;
                         }
 
-                        DateTime Pdate = APSday; // 紀錄推算後的日期
+                        DateTime pdate = aPSday; // 紀錄推算後的日期
                         #region 原始日 - LeadTime 之間有多少天 Holiday  PS:時間軸 Days 傳入時範圍是剛好的
-                        if (!Days.Where(w => w.Date == APSday && w.IsHoliday).Any()) // 假日不推算
+
+                        // 假日不推算
+                        if (!days.Where(w => w.Date == aPSday && w.IsHoliday).Any())
                         {
-                            int HolidayCount = Days.Where(w => w.Date >= APSday.AddDays(-LeadTime) && w.Date <= APSday && w.IsHoliday).Count();
-                            if (HolidayCount > 0)
+                            int holidayCount = days.Where(w => w.Date >= aPSday.AddDays(-leadTime) && w.Date <= aPSday && w.IsHoliday).Count();
+                            if (holidayCount > 0)
                             {
-                                for (int i = HolidayCount; true;)
+                                for (int i = holidayCount; true;)
                                 {
-                                    int newCount = Days.Where(w => w.Date >= APSday.Date.AddDays(-i - LeadTime) && w.Date <= APSday && w.IsHoliday).Count();
-                                    if (newCount > HolidayCount)
+                                    int newCount = days.Where(w => w.Date >= aPSday.Date.AddDays(-i - leadTime) && w.Date <= aPSday && w.IsHoliday).Count();
+                                    if (newCount > holidayCount)
                                     {
-                                        HolidayCount = newCount;
+                                        holidayCount = newCount;
                                     }
                                     else
                                     {
@@ -869,50 +903,50 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                 }
                             }
 
-                            Pdate = APSday.AddDays(-HolidayCount - LeadTime);
+                            pdate = aPSday.AddDays(-holidayCount - leadTime);
                         }
                         #endregion
 
                         // 推算後的日期，不在最終顯示範圍
-                        if (startdate > Pdate || Enddate < Pdate)
+                        if (startdate > pdate || enddate < pdate)
                         {
                             continue;
                         }
 
                         // 如果這 OrderID & 這天(用推算後比較) 已經紀錄在 nOnj, 則跳過這天, 因下方標準數,裁減數是以(天)計算成套,故同天不用重複算
-                        if (nOnj.InOffLines.Where(w => w.DateWithLeadTime == Pdate).Any())
+                        if (nOnj.InOffLines.Where(w => w.DateWithLeadTime == pdate).Any())
                         {
                             continue;
                         }
 
                         // 若這筆 ApsNO(排程), 在前一圈(日)已經到達上限, 則直接換下筆 ApsNO(排程)
                         // 此處取得累計標準數, 不可用nOnj紀錄的數值, 因上個判斷同orderid同天不會做紀錄
-                        int AccStdQtybyApsNO = StdQtyList.Where(w => w.OrderID == OrderID && w.APSNo == ApsNO && w.Date < APSday).Sum(s => s.StdQty);
-                        if (AccStdQtybyApsNO >= AlloQty)
+                        int accStdQtybyApsNO = stdQtyList.Where(w => w.OrderID == orderID && w.APSNo == apsNO && w.Date < aPSday).Sum(s => s.StdQty);
+                        if (accStdQtybyApsNO >= alloQty)
                         {
                             break;
                         }
 
                         // 當天成套
-                        int StdQty = GetStdQtyByDate(OrderID, APSday);
+                        int stdQty = GetStdQtyByDate(orderID, aPSday);
 
                         // 當天之前(包含當天)成套數
-                        int AccuStdQty = GetAccuStdQtyByDate(OrderID, APSday);
+                        int accuStdQty = GetAccuStdQtyByDate(orderID, aPSday);
 
                         // 取裁剪數量
-                        int Cutqty = GarmentList.Where(o => o.OrderID == OrderID && o.EstCutDate == Pdate).Select(s => s.Qty).FirstOrDefault();
+                        int cutqty = garmentList.Where(o => o.OrderID == orderID && o.EstCutDate == pdate).Select(s => s.Qty).FirstOrDefault();
 
                         // 累計裁剪量 = 先前累計裁剪量 + 當天裁剪量，因此是 <=
-                        int accuCutQty = GarmentList.Where(o => o.OrderID == OrderID && o.EstCutDate <= Pdate).Sum(o => o.Qty);
+                        int accuCutQty = garmentList.Where(o => o.OrderID == orderID && o.EstCutDate <= pdate).Sum(o => o.Qty);
 
                         InOffLine nLineObj = new InOffLine()
                         {
-                            DateWithLeadTime = Pdate,
-                            ApsNO = ApsNO,
-                            CutQty = Cutqty,
+                            DateWithLeadTime = pdate,
+                            ApsNO = apsNO,
+                            CutQty = cutqty,
                             AccuCutQty = accuCutQty,
-                            StdQty = StdQty,
-                            AccuStdQty = AccuStdQty,
+                            StdQty = stdQty,
+                            AccuStdQty = accuStdQty,
                         };
 
                         nOnj.InOffLines.Add(nLineObj);
@@ -921,7 +955,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
                 if (nOnj.InOffLines.Any())
                 {
-                    AllDataTmp.Add(nOnj);
+                    allDataTmp.Add(nOnj);
                 }
 
                 if (bw != null)
@@ -937,16 +971,16 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             }
 
             #region 相同日期GROUP BY
-            foreach (var BySP in AllDataTmp)
+            foreach (var bySP in allDataTmp)
             {
-                if (BySP.OrderID == "20040358GG")
+                if (bySP.OrderID == "20040358GG")
                 {
                 }
 
                 InOffLineList n = new InOffLineList();
-                n.OrderID = BySP.OrderID;
+                n.OrderID = bySP.OrderID;
                 n.InOffLines = new List<InOffLine>();
-                var groupData = BySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime, o.CutQty, o.StdQty, o.AccuCutQty, o.AccuStdQty })
+                var groupData = bySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime, o.CutQty, o.StdQty, o.AccuCutQty, o.AccuStdQty })
                                 .Select(x => new InOffLine
                                 {
                                     DateWithLeadTime = x.Key.DateWithLeadTime,
@@ -957,23 +991,34 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                 }).OrderBy(o => o.DateWithLeadTime).ToList();
 
                 n.InOffLines = groupData;
-                AllData.Add(n);
+                allData.Add(n);
             }
             #endregion
 
-            return AllData;
+            return allData;
         }
 
-        public static List<InOffLineList_byFabricPanelCode> GetInOffLineList_byFabricPanelCode(DataTable dt_SewingSchedule, List<Day> Days, DateTime? startdate = null, DateTime? Enddate = null, DateTime? ori_startdate = null, DateTime? ori_Enddate = null, System.ComponentModel.BackgroundWorker bw = null)
+        /// <summary>
+        /// Get In Off LineList by FabricPanelCode
+        /// </summary>
+        /// <param name="dt_SewingSchedule">dataTable SewingSchedule</param>
+        /// <param name="days">list days</param>
+        /// <param name="startdate">start date</param>
+        /// <param name="enddate">end date</param>
+        /// <param name="ori_startdate">original start date</param>
+        /// <param name="ori_Enddate">original End Date</param>
+        /// <param name="bw">Background Worker</param>
+        /// <returns>allData</returns>
+        public static List<InOffLineList_byFabricPanelCode> GetInOffLineList_byFabricPanelCode(DataTable dt_SewingSchedule, List<Day> days, DateTime? startdate = null, DateTime? enddate = null, DateTime? ori_startdate = null, DateTime? ori_Enddate = null, System.ComponentModel.BackgroundWorker bw = null)
         {
             if (startdate == null)
             {
-                startdate = Days.Min(m => m.Date.Date).Date;
+                startdate = days.Min(m => m.Date.Date).Date;
             }
 
-            if (Enddate == null)
+            if (enddate == null)
             {
-                Enddate = Days.Max(m => m.Date.Date).Date;
+                enddate = days.Max(m => m.Date.Date).Date;
             }
 
             decimal processInt = 10; // 給進度條顯示值
@@ -981,21 +1026,21 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
             List<DataTable> resultList = new List<DataTable>();
 
-            List<InOffLineList_byFabricPanelCode> AllDataTmp = new List<InOffLineList_byFabricPanelCode>();
-            List<InOffLineList_byFabricPanelCode> AllData = new List<InOffLineList_byFabricPanelCode>();
+            List<InOffLineList_byFabricPanelCode> allDataTmp = new List<InOffLineList_byFabricPanelCode>();
+            List<InOffLineList_byFabricPanelCode> allData = new List<InOffLineList_byFabricPanelCode>();
 
             List<string> allOrder = dt_SewingSchedule.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
             #region LeadTimeList
             string annotationStr;
-            List<LeadTime> LeadTimeList = GetLeadTimeList(allOrder, out annotationStr);
-            if (LeadTimeList == null)
+            List<LeadTime> leadTimeList = GetLeadTimeList(allOrder, out annotationStr);
+            if (leadTimeList == null)
             {
                 return null; // 表示Lead Time有缺
             }
             #endregion
 
-            List<DailyStdQty> StdQtyList = GetStdQty(allOrder);
+            List<DailyStdQty> stdQtyList = GetStdQty(allOrder);
             if (bw != null)
             {
                 if (bw.CancellationPending == true)
@@ -1006,9 +1051,9 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 bw.ReportProgress((int)processInt);
             } // 10%
 
-            List<FabricPanelCodeCutPlanQty> SPFabricPanelCodeList = GetSPFabricPanelCodeList(allOrder); // 基底用來跑主迴圈 SP + FabricPanelCode
+            List<FabricPanelCodeCutPlanQty> sPFabricPanelCodeList = GetSPFabricPanelCodeList(allOrder); // 基底用來跑主迴圈 SP + FabricPanelCode
 
-            List<FabricPanelCodeCutPlanQty> CutPlanQtyList = GetCutPlanQty_byFabricPanelCode(allOrder);
+            List<FabricPanelCodeCutPlanQty> cutPlanQtyList = GetCutPlanQty_byFabricPanelCode(allOrder);
             processInt = processInt + 5;
             if (bw != null)
             {
@@ -1020,66 +1065,68 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 bw.ReportProgress((int)processInt);
             } // 15%
 
-            if (SPFabricPanelCodeList.Count > 0)
+            if (sPFabricPanelCodeList.Count > 0)
             {
-                pc = (decimal)70 / SPFabricPanelCodeList.Count; // 此迴圈佔 70% → 85%
+                pc = (decimal)70 / sPFabricPanelCodeList.Count; // 此迴圈佔 70% → 85%
             }
 
             // 處理不同 OrderID, FabricPanelCode
-            foreach (var item in SPFabricPanelCodeList)
+            foreach (var item in sPFabricPanelCodeList)
             {
-                string OrderID = item.OrderID;
-                string FabricPanelCode = item.FabricPanelCode;
+                string orderID = item.OrderID;
+                string fabricPanelCode = item.FabricPanelCode;
 
-                var sameOrderId = dt_SewingSchedule.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID);
+                var sameOrderId = dt_SewingSchedule.AsEnumerable().Where(o => o["OrderID"].ToString() == orderID);
 
                 // 這筆訂單的起始與結束時間
-                DateTime Start = sameOrderId.Min(o => Convert.ToDateTime(o["Inline"]));
-                DateTime End = sameOrderId.Max(o => Convert.ToDateTime(o["offline"]));
+                DateTime start = sameOrderId.Min(o => Convert.ToDateTime(o["Inline"]));
+                DateTime end = sameOrderId.Max(o => Convert.ToDateTime(o["offline"]));
 
                 InOffLineList_byFabricPanelCode nOnj = new InOffLineList_byFabricPanelCode();
 
                 // SP#
-                nOnj.OrderID = OrderID;
-                nOnj.FabricPanelCode = FabricPanelCode;
+                nOnj.OrderID = orderID;
+                nOnj.FabricPanelCode = fabricPanelCode;
                 nOnj.InOffLines = new List<InOffLine>();
 
                 // 所有Order ID、以及相對應 要扣去的Lead Time
-                int LeadTime = LeadTimeList.Where(o => o.OrderID == OrderID).FirstOrDefault().LeadTimeDay;
+                int leadTime = leadTimeList.Where(o => o.OrderID == orderID).FirstOrDefault().LeadTimeDay;
 
                 foreach (DataRow dr in sameOrderId)
                 {
-                    string ApsNO = dr["APSNo"].ToString();
-                    int AlloQty = MyUtility.Convert.GetInt(dr["AlloQty"]); // 此 SewingSchedule 的上限
+                    string apsNO = dr["APSNo"].ToString();
+                    int alloQty = MyUtility.Convert.GetInt(dr["AlloQty"]); // 此 SewingSchedule 的上限
 
                     // 這筆 SewingSchedule 日期範圍
-                    for (DateTime APSday = Convert.ToDateTime(dr["Inline"]).Date; APSday <= Convert.ToDateTime(dr["Offline"]).Date; APSday = APSday.AddDays(1))
+                    for (DateTime aPSday = Convert.ToDateTime(dr["Inline"]).Date; aPSday <= Convert.ToDateTime(dr["Offline"]).Date; aPSday = aPSday.AddDays(1))
                     {
                         // 原始日期，不在初始篩選範圍內
-                        if (ori_startdate != null && ori_Enddate != null && (ori_startdate > APSday || ori_Enddate < APSday))
+                        if (ori_startdate != null && ori_Enddate != null && (ori_startdate > aPSday || ori_Enddate < aPSday))
                         {
                             continue;
                         }
 
                         // 原始日期不存在當日標準數
-                        if (!StdQtyList.Where(w => w.OrderID == OrderID && w.APSNo == ApsNO && w.Date == APSday).Any())
+                        if (!stdQtyList.Where(w => w.OrderID == orderID && w.APSNo == apsNO && w.Date == aPSday).Any())
                         {
                             continue;
                         }
 
-                        DateTime Pdate = APSday; // 紀錄推算後的日期
+                        DateTime pdate = aPSday; // 紀錄推算後的日期
                         #region 原始日 - LeadTime 之間有多少天 Holiday  PS:時間軸 Days 傳入時範圍是剛好的
-                        if (!Days.Where(w => w.Date == APSday && w.IsHoliday).Any()) // 假日不推算
+
+                        // 假日不推算
+                        if (!days.Where(w => w.Date == aPSday && w.IsHoliday).Any())
                         {
-                            int HolidayCount = Days.Where(w => w.Date >= APSday.AddDays(-LeadTime) && w.Date <= APSday && w.IsHoliday).Count();
-                            if (HolidayCount > 0)
+                            int holidayCount = days.Where(w => w.Date >= aPSday.AddDays(-leadTime) && w.Date <= aPSday && w.IsHoliday).Count();
+                            if (holidayCount > 0)
                             {
-                                for (int i = HolidayCount; true;)
+                                for (int i = holidayCount; true;)
                                 {
-                                    int newCount = Days.Where(w => w.Date >= APSday.Date.AddDays(-i - LeadTime) && w.Date <= APSday && w.IsHoliday).Count();
-                                    if (newCount > HolidayCount)
+                                    int newCount = days.Where(w => w.Date >= aPSday.Date.AddDays(-i - leadTime) && w.Date <= aPSday && w.IsHoliday).Count();
+                                    if (newCount > holidayCount)
                                     {
-                                        HolidayCount = newCount;
+                                        holidayCount = newCount;
                                     }
                                     else
                                     {
@@ -1088,50 +1135,50 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                 }
                             }
 
-                            Pdate = APSday.AddDays(-HolidayCount - LeadTime);
+                            pdate = aPSday.AddDays(-holidayCount - leadTime);
                         }
                         #endregion
 
                         // 推算後的日期，不在最終顯示範圍
-                        if (startdate > Pdate || Enddate < Pdate)
+                        if (startdate > pdate || enddate < pdate)
                         {
                             continue;
                         }
 
                         // 如果這 OrderID & FabricPanelCode & 這天(用推算後比較) 已經紀錄在 nOnj, 則跳過這天, 因下方標準數,裁減數是以(天)計算成套,故同天不用重複算
-                        if (nOnj.InOffLines.Where(w => w.DateWithLeadTime == Pdate).Any())
+                        if (nOnj.InOffLines.Where(w => w.DateWithLeadTime == pdate).Any())
                         {
                             continue;
                         }
 
                         // 若這筆 ApsNO(排程), 在前一圈(日)已經到達上限, 則直接換下筆 ApsNO(排程)
                         // 此處取得累計標準數, 不可用nOnj紀錄的數值, 因上個判斷同orderid同天不會做紀錄
-                        int AccStdQtybyApsNO = StdQtyList.Where(w => w.OrderID == OrderID && w.APSNo == ApsNO && w.Date < APSday).Sum(s => s.StdQty);
-                        if (AccStdQtybyApsNO >= AlloQty)
+                        int accStdQtybyApsNO = stdQtyList.Where(w => w.OrderID == orderID && w.APSNo == apsNO && w.Date < aPSday).Sum(s => s.StdQty);
+                        if (accStdQtybyApsNO >= alloQty)
                         {
                             break;
                         }
 
                         // 當天成套
-                        int StdQty = GetStdQtyByDate(OrderID, APSday);
+                        int stdQty = GetStdQtyByDate(orderID, aPSday);
 
                         // 當天之前(包含當天)成套數
-                        int AccuStdQty = GetAccuStdQtyByDate(OrderID, APSday);
+                        int accuStdQty = GetAccuStdQtyByDate(orderID, aPSday);
 
                         // 取裁剪數量
-                        int Cutqty = CutPlanQtyList.Where(o => o.OrderID == OrderID && o.FabricPanelCode == FabricPanelCode && o.EstCutDate == Pdate).Select(s => s.Qty).FirstOrDefault();
+                        int cutqty = cutPlanQtyList.Where(o => o.OrderID == orderID && o.FabricPanelCode == fabricPanelCode && o.EstCutDate == pdate).Select(s => s.Qty).FirstOrDefault();
 
                         // 累計裁剪量 = 先前累計裁剪量 + 當天裁剪量，因此是 <= day.Date.Date
-                        int accuCutQty = CutPlanQtyList.Where(o => o.OrderID == OrderID && o.FabricPanelCode == FabricPanelCode && o.EstCutDate <= Pdate).Sum(o => o.Qty);
+                        int accuCutQty = cutPlanQtyList.Where(o => o.OrderID == orderID && o.FabricPanelCode == fabricPanelCode && o.EstCutDate <= pdate).Sum(o => o.Qty);
 
                         InOffLine nLineObj = new InOffLine()
                         {
-                            DateWithLeadTime = Pdate,
-                            ApsNO = ApsNO,
-                            CutQty = Cutqty,
+                            DateWithLeadTime = pdate,
+                            ApsNO = apsNO,
+                            CutQty = cutqty,
                             AccuCutQty = accuCutQty,
-                            StdQty = StdQty,
-                            AccuStdQty = AccuStdQty,
+                            StdQty = stdQty,
+                            AccuStdQty = accuStdQty,
                         };
 
                         nOnj.InOffLines.Add(nLineObj);
@@ -1140,7 +1187,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
                 if (nOnj.InOffLines.Any())
                 {
-                    AllDataTmp.Add(nOnj);
+                    allDataTmp.Add(nOnj);
                 }
 
                 if (bw != null)
@@ -1156,13 +1203,13 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             }
 
             #region 相同日期GROUP BY
-            foreach (var BySP in AllDataTmp)
+            foreach (var bySP in allDataTmp)
             {
                 InOffLineList_byFabricPanelCode n = new InOffLineList_byFabricPanelCode();
-                n.OrderID = BySP.OrderID;
-                n.FabricPanelCode = BySP.FabricPanelCode;
+                n.OrderID = bySP.OrderID;
+                n.FabricPanelCode = bySP.FabricPanelCode;
                 n.InOffLines = new List<InOffLine>();
-                var groupData = BySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime, o.CutQty, o.StdQty, o.AccuCutQty, o.AccuStdQty })
+                var groupData = bySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime, o.CutQty, o.StdQty, o.AccuCutQty, o.AccuStdQty })
                                 .Select(x => new InOffLine
                                 {
                                     DateWithLeadTime = x.Key.DateWithLeadTime,
@@ -1173,25 +1220,25 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                 }).OrderBy(o => o.DateWithLeadTime).ToList();
 
                 n.InOffLines = groupData;
-                AllData.Add(n);
+                allData.Add(n);
             }
             #endregion
-            return AllData;
+            return allData;
         }
 
         /// <summary>
         /// Cutting WIP 資料表 (所有In/Off Line資料在內部自行取得) Index 0 為Summary、1 為Detail
         /// </summary>
         /// <param name="dt">SewingSchedule的Datatable</param>
-        /// <param name="Days">處理過的時間軸，可見Cutting R01報表搜尋"處理報表上橫向日期的時間軸 (扣除Lead Time)" </param>
-        /// <returns></returns>
-        public static List<DataTable> GetCutting_WIP_DataTable(DataTable dt, List<Day> Days)
+        /// <param name="days">處理過的時間軸，可見Cutting R01報表搜尋"處理報表上橫向日期的時間軸 (扣除Lead Time)" </param>
+        /// <returns>resultList</returns>
+        public static List<DataTable> GetCutting_WIP_DataTable(DataTable dt, List<Day> days)
         {
             List<DataTable> resultList = new List<DataTable>();
 
-            List<InOffLineList> AllData = new List<InOffLineList>();
+            List<InOffLineList> allData = new List<InOffLineList>();
 
-            AllData = GetInOffLineList(dt, Days);
+            allData = GetInOffLineList(dt, days);
 
             DataTable detailDt = new DataTable();
             DataTable summaryDt = new DataTable();
@@ -1202,7 +1249,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
             // 日期Column
             int idx = 3;
-            foreach (var day in Days)
+            foreach (var day in days)
             {
                 string strDate = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
                 detailDt.ColumnsStringAdd(strDate);
@@ -1210,12 +1257,12 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 idx++;
             }
 
-            if (AllData == null)
+            if (allData == null)
             {
                 return null;
             }
 
-            int orderCount = AllData.Count;
+            int orderCount = allData.Count;
 
             for (int i = 0; i <= orderCount - 1; i++)
             {
@@ -1244,18 +1291,18 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
             // 開始寫入Row
             int index = 0;
-            foreach (var BySP in AllData)
+            foreach (var bySP in allData)
             {
-                foreach (var item in BySP.InOffLines)
+                foreach (var item in bySP.InOffLines)
                 {
-                    foreach (var day in Days)
+                    foreach (var day in days)
                     {
                         string strDate = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
-                        detailDt.Rows[index * 4]["SP"] = BySP.OrderID;
-                        detailDt.Rows[(index * 4) + 1]["SP"] = BySP.OrderID;
-                        detailDt.Rows[(index * 4) + 2]["SP"] = BySP.OrderID;
-                        detailDt.Rows[(index * 4) + 3]["SP"] = BySP.OrderID;
+                        detailDt.Rows[index * 4]["SP"] = bySP.OrderID;
+                        detailDt.Rows[(index * 4) + 1]["SP"] = bySP.OrderID;
+                        detailDt.Rows[(index * 4) + 2]["SP"] = bySP.OrderID;
+                        detailDt.Rows[(index * 4) + 3]["SP"] = bySP.OrderID;
 
                         if (item.DateWithLeadTime == day.Date)
                         {
@@ -1278,44 +1325,44 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             }
 
             index = 0;
-            foreach (var BySP in AllData)
+            foreach (var bySP in allData)
             {
-                foreach (var item in BySP.InOffLines)
+                foreach (var item in bySP.InOffLines)
                 {
-                    int DayIndex = 0;
-                    foreach (var day in Days)
+                    int dayIndex = 0;
+                    foreach (var day in days)
                     {
                         string strDate = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
-                        summaryDt.Rows[index]["SP"] = BySP.OrderID;
+                        summaryDt.Rows[index]["SP"] = bySP.OrderID;
 
                         if (item.DateWithLeadTime == day.Date)
                         {
-                            int CutQty = item.CutQty;
-                            int StdQty = item.StdQty;
-                            int AccuCutQty = item.AccuCutQty;
-                            int AccuStdQty = item.AccuStdQty;
+                            int cutQty = item.CutQty;
+                            int stdQty = item.StdQty;
+                            int accuCutQty = item.AccuCutQty;
+                            int accuStdQty = item.AccuStdQty;
                             decimal cellValue = 0;
-                            if (AccuCutQty <= AccuStdQty)
+                            if (accuCutQty <= accuStdQty)
                             {
-                                cellValue = StdQty == 0 ? 0 : (AccuCutQty - AccuStdQty) / StdQty;
+                                cellValue = stdQty == 0 ? 0 : (accuCutQty - accuStdQty) / stdQty;
                             }
-                            else if (StdQty > 0 && ((AccuCutQty - AccuStdQty) / StdQty) <= 1)
+                            else if (stdQty > 0 && ((accuCutQty - accuStdQty) / stdQty) <= 1)
                             {
                                 Day nextDay = new Day();
 
                                 // /以隔天為起點，開始找下一個非假日，
-                                for (int i = DayIndex + 1; i <= Days.Count - 1; i++)
+                                for (int i = dayIndex + 1; i <= days.Count - 1; i++)
                                 {
                                     // 取得下一個不是假日的日期
-                                    if (!Days[i].IsHoliday)
+                                    if (!days[i].IsHoliday)
                                     {
-                                        nextDay.Date = Days[i].Date;
+                                        nextDay.Date = days[i].Date;
                                         break;
                                     }
                                 }
 
-                                var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nextDay.Date);
+                                var findData_nextDay = bySP.InOffLines.Where(o => o.DateWithLeadTime == nextDay.Date);
                                 bool hasNextDayData = findData_nextDay.Any();
 
                                 // 若沒有下一天的資料，則全部視作0 （下一天不一定是明天日期）
@@ -1325,36 +1372,36 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                 }
                                 else
                                 {
-                                    int NextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
-                                    cellValue = NextDayStdQty == 0 ? 0 : (AccuCutQty - AccuStdQty) / NextDayStdQty;
+                                    int nextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
+                                    cellValue = nextDayStdQty == 0 ? 0 : (accuCutQty - accuStdQty) / nextDayStdQty;
                                 }
                             }
                             else
                             {
                                 Day nextDay = new Day();
                                 Day nexNextDay = new Day();
-                                bool HasNextDay = false;
-                                bool HasNexNextDay = false;
+                                bool hasNextDay = false;
+                                bool hasNexNextDay = false;
 
                                 // /以隔天為起點，開始找下一個非假日
-                                for (int i = DayIndex + 1; i <= Days.Count - 1; i++)
+                                for (int i = dayIndex + 1; i <= days.Count - 1; i++)
                                 {
                                     // 取得下一個不是假日的日期
-                                    if (!Days[i].IsHoliday)
+                                    if (!days[i].IsHoliday)
                                     {
-                                        nextDay.Date = Days[i].Date;
-                                        HasNextDay = true;
+                                        nextDay.Date = days[i].Date;
+                                        hasNextDay = true;
                                     }
 
-                                    if (HasNextDay)
+                                    if (hasNextDay)
                                     {
                                         // 再以這個非假日為起點，找到下一個非假日
-                                        for (int y = i + 1; y <= Days.Count - 1; y++)
+                                        for (int y = i + 1; y <= days.Count - 1; y++)
                                         {
-                                            if (!Days[y].IsHoliday)
+                                            if (!days[y].IsHoliday)
                                             {
-                                                nexNextDay.Date = Days[y].Date;
-                                                HasNexNextDay = true;
+                                                nexNextDay.Date = days[y].Date;
+                                                hasNexNextDay = true;
 
                                                 // 找完就迴圈掰掰
                                                 break;
@@ -1362,14 +1409,14 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                         }
                                     }
 
-                                    if (HasNexNextDay)
+                                    if (hasNexNextDay)
                                     {
                                         break;
                                     }
                                 }
 
-                                var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nextDay.Date);
-                                var findData_nextNextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nexNextDay.Date);
+                                var findData_nextDay = bySP.InOffLines.Where(o => o.DateWithLeadTime == nextDay.Date);
+                                var findData_nextNextDay = bySP.InOffLines.Where(o => o.DateWithLeadTime == nexNextDay.Date);
                                 bool hasNextDayData = findData_nextDay.Any();
                                 bool hasNextNextDayData = findData_nextNextDay.Any();
 
@@ -1381,10 +1428,10 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                 else
                                 {
                                     // 沒意外應該只有一筆，不過還是用SUM
-                                    int NextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
-                                    int NextNextDayStdQty = findData_nextNextDay.Sum(o => o.StdQty);
+                                    int nextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
+                                    int nextNextDayStdQty = findData_nextNextDay.Sum(o => o.StdQty);
 
-                                    cellValue = NextNextDayStdQty == 0 ? 0 : 1 + ((AccuCutQty - AccuStdQty - NextDayStdQty) / NextNextDayStdQty);
+                                    cellValue = nextNextDayStdQty == 0 ? 0 : 1 + ((accuCutQty - accuStdQty - nextDayStdQty) / nextNextDayStdQty);
                                 }
                             }
 
@@ -1395,7 +1442,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                             summaryDt.Rows[index][strDate] = DBNull.Value;
                         }
 
-                        DayIndex++;
+                        dayIndex++;
                     }
                 }
 
@@ -1411,10 +1458,10 @@ order by WOD.OrderID,EstCutDate.EstCutDate
         /// <summary>
         /// Cutting WIP 資料表 (所有In/Off Line資料由外部傳入) Index 0 為Summary、1 為Detail
         /// </summary>
-        /// <param name="Days">處理過的時間軸，可見Cutting R01報表搜尋"處理報表上橫向日期的時間軸 (扣除Lead Time)" </param>
-        /// <param name="AllData">In/Off Line資料</param>
-        /// <returns></returns>
-        public static List<DataTable> GetCutting_WIP_DataTable(List<Day> Days, List<InOffLineList> AllData)
+        /// <param name="days">處理過的時間軸，可見Cutting R01報表搜尋"處理報表上橫向日期的時間軸 (扣除Lead Time)" </param>
+        /// <param name="allData">In/Off Line資料</param>
+        /// <returns>allData</returns>
+        public static List<DataTable> GetCutting_WIP_DataTable(List<Day> days, List<InOffLineList> allData)
         {
             List<DataTable> resultList = new List<DataTable>();
 
@@ -1427,7 +1474,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
             // 日期Column
             int idx = 3;
-            foreach (var day in Days)
+            foreach (var day in days)
             {
                 string strDate = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
                 detailDt.ColumnsStringAdd(strDate);
@@ -1435,12 +1482,12 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 idx++;
             }
 
-            if (AllData == null)
+            if (allData == null)
             {
                 return null;
             }
 
-            int orderCount = AllData.Count;
+            int orderCount = allData.Count;
 
             for (int i = 0; i <= orderCount - 1; i++)
             {
@@ -1469,22 +1516,22 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
             // 開始寫入Row
             int index = 0;
-            foreach (var BySP in AllData.OrderBy(o => o.OrderID).ToList())
+            foreach (var bySP in allData.OrderBy(o => o.OrderID).ToList())
             {
-                if (BySP.OrderID == "20031214AB")
+                if (bySP.OrderID == "20031214AB")
                 {
                 }
 
-                foreach (var item in BySP.InOffLines)
+                foreach (var item in bySP.InOffLines)
                 {
-                    foreach (var day in Days)
+                    foreach (var day in days)
                     {
                         string strDate = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
-                        detailDt.Rows[index * 4]["SP"] = BySP.OrderID;
-                        detailDt.Rows[(index * 4) + 1]["SP"] = BySP.OrderID;
-                        detailDt.Rows[(index * 4) + 2]["SP"] = BySP.OrderID;
-                        detailDt.Rows[(index * 4) + 3]["SP"] = BySP.OrderID;
+                        detailDt.Rows[index * 4]["SP"] = bySP.OrderID;
+                        detailDt.Rows[(index * 4) + 1]["SP"] = bySP.OrderID;
+                        detailDt.Rows[(index * 4) + 2]["SP"] = bySP.OrderID;
+                        detailDt.Rows[(index * 4) + 3]["SP"] = bySP.OrderID;
 
                         if (item.DateWithLeadTime == day.Date)
                         {
@@ -1507,21 +1554,21 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             }
 
             index = 0;
-            foreach (var BySP in AllData)
+            foreach (var bySP in allData)
             {
-                if (BySP.OrderID == "MAILO20030015")
+                if (bySP.OrderID == "MAILO20030015")
                 {
                 }
 
-                foreach (var item in BySP.InOffLines)
+                foreach (var item in bySP.InOffLines)
                 {
                     // 紀錄時間軸上的Index
-                    int DayIndex = 0;
-                    foreach (var day in Days)
+                    int dayIndex = 0;
+                    foreach (var day in days)
                     {
                         string strDate = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
-                        summaryDt.Rows[index]["SP"] = BySP.OrderID;
+                        summaryDt.Rows[index]["SP"] = bySP.OrderID;
 
                         if (item.DateWithLeadTime == day.Date)
                         {
@@ -1529,37 +1576,37 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                             {
                                 if (!day.IsHoliday)
                                 {
-                                    decimal CutQty = item.CutQty;
-                                    decimal StdQty = item.StdQty;
-                                    decimal AccuCutQty = item.AccuCutQty;
-                                    decimal AccuStdQty = item.AccuStdQty;
+                                    decimal cutQty = item.CutQty;
+                                    decimal stdQty = item.StdQty;
+                                    decimal accuCutQty = item.AccuCutQty;
+                                    decimal accuStdQty = item.AccuStdQty;
                                     decimal cellValue = 0;
 
                                     #region 準備下一天 嚇嚇一天需要資料 （下一天不一定是明天日期）
                                     Day nextDay = new Day();
                                     Day nexNextDay = new Day();
-                                    bool HasNextDay = false;
-                                    bool HasNexNextDay = false;
+                                    bool hasNextDay = false;
+                                    bool hasNexNextDay = false;
 
                                     // /以隔天為起點，開始找下一個非假日
-                                    for (int i = DayIndex + 1; i <= Days.Count - 1; i++)
+                                    for (int i = dayIndex + 1; i <= days.Count - 1; i++)
                                     {
                                         // 取得下一個不是假日的日期
-                                        if (!Days[i].IsHoliday)
+                                        if (!days[i].IsHoliday)
                                         {
-                                            nextDay.Date = Days[i].Date;
-                                            HasNextDay = true;
+                                            nextDay.Date = days[i].Date;
+                                            hasNextDay = true;
                                         }
 
-                                        if (HasNextDay)
+                                        if (hasNextDay)
                                         {
                                             // 再以這個非假日為起點，找到下一個非假日
-                                            for (int y = i + 1; y <= Days.Count - 1; y++)
+                                            for (int y = i + 1; y <= days.Count - 1; y++)
                                             {
-                                                if (!Days[y].IsHoliday)
+                                                if (!days[y].IsHoliday)
                                                 {
-                                                    nexNextDay.Date = Days[y].Date;
-                                                    HasNexNextDay = true;
+                                                    nexNextDay.Date = days[y].Date;
+                                                    hasNexNextDay = true;
 
                                                     // 找完就迴圈掰掰
                                                     break;
@@ -1567,42 +1614,42 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                             }
                                         }
 
-                                        if (HasNexNextDay)
+                                        if (hasNexNextDay)
                                         {
                                             break;
                                         }
                                     }
 
-                                    var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nextDay.Date);
-                                    var findData_nextNextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nexNextDay.Date);
+                                    var findData_nextDay = bySP.InOffLines.Where(o => o.DateWithLeadTime == nextDay.Date);
+                                    var findData_nextNextDay = bySP.InOffLines.Where(o => o.DateWithLeadTime == nexNextDay.Date);
                                     bool hasNextDayData = findData_nextDay.Any();
                                     bool hasNextNextDayData = findData_nextNextDay.Any();
-                                    int NextDayStdQty = 0;
+                                    int nextDayStdQty = 0;
                                     if (hasNextDayData)
                                     {
-                                        NextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
+                                        nextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
                                     }
                                     #endregion
 
-                                    if (AccuCutQty <= AccuStdQty)
+                                    if (accuCutQty <= accuStdQty)
                                     {
-                                        cellValue = StdQty == 0 ? 0 : (AccuCutQty - AccuStdQty) / StdQty;
+                                        cellValue = stdQty == 0 ? 0 : (accuCutQty - accuStdQty) / stdQty;
                                     }
-                                    else if (StdQty == 0 || NextDayStdQty == 0 || ((AccuCutQty - AccuStdQty) / NextDayStdQty) <= 1)
+                                    else if (stdQty == 0 || nextDayStdQty == 0 || ((accuCutQty - accuStdQty) / nextDayStdQty) <= 1)
                                     {
                                         // 若沒有下一天的資料，則全部視作0 （下一天不一定是明天日期）
-                                        cellValue = NextDayStdQty == 0 ? 0 : (AccuCutQty - AccuStdQty) / NextDayStdQty;
+                                        cellValue = nextDayStdQty == 0 ? 0 : (accuCutQty - accuStdQty) / nextDayStdQty;
                                     }
                                     else
                                     {
-                                        int NextNextDayStdQty = 0;
+                                        int nextNextDayStdQty = 0;
                                         if (hasNextNextDayData)
                                         {
-                                            NextNextDayStdQty = findData_nextNextDay.Sum(o => o.StdQty);
+                                            nextNextDayStdQty = findData_nextNextDay.Sum(o => o.StdQty);
                                         }
 
                                         // 沒意外應該只有一筆，不過還是用SUM
-                                        cellValue = NextNextDayStdQty == 0 ? 1 : 1 + ((AccuCutQty - AccuStdQty - NextDayStdQty) / NextNextDayStdQty);
+                                        cellValue = nextNextDayStdQty == 0 ? 1 : 1 + ((accuCutQty - accuStdQty - nextDayStdQty) / nextNextDayStdQty);
                                     }
 
                                     summaryDt.Rows[index][strDate] = cellValue;
@@ -1622,7 +1669,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                             // summaryDt.Rows[(index)][strDate] = DBNull.Value;
                         }
 
-                        DayIndex++;
+                        dayIndex++;
                     }
                 }
 
@@ -1638,10 +1685,10 @@ order by WOD.OrderID,EstCutDate.EstCutDate
         /// <summary>
         /// Cutting WIP 資料表 (所有In/Off Line資料由外部傳入) Index 0 為Summary、1 為Detail
         /// </summary>
-        /// <param name="Days">處理過的時間軸，可見Cutting R01報表搜尋"處理報表上橫向日期的時間軸 (扣除Lead Time)" </param>
-        /// <param name="AllData">In/Off Line資料</param>
-        /// <returns></returns>
-        public static List<DataTable> GetCutting_WIP_DataTable(List<Day> Days, List<InOffLineList_byFabricPanelCode> AllData)
+        /// <param name="days">處理過的時間軸，可見Cutting R01報表搜尋"處理報表上橫向日期的時間軸 (扣除Lead Time)" </param>
+        /// <param name="allData">In/Off Line資料</param>
+        /// <returns>result List</returns>
+        public static List<DataTable> GetCutting_WIP_DataTable(List<Day> days, List<InOffLineList_byFabricPanelCode> allData)
         {
             List<DataTable> resultList = new List<DataTable>();
 
@@ -1656,7 +1703,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
             // 日期Column
             int idx = 3;
-            foreach (var day in Days)
+            foreach (var day in days)
             {
                 string strDate = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
                 detailDt.ColumnsStringAdd(strDate);
@@ -1664,12 +1711,12 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 idx++;
             }
 
-            if (AllData == null)
+            if (allData == null)
             {
                 return null;
             }
 
-            int orderCount = AllData.Count;
+            int orderCount = allData.Count;
 
             for (int i = 0; i <= orderCount - 1; i++)
             {
@@ -1698,27 +1745,27 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
             // 開始寫入Row
             int index = 0;
-            foreach (var BySP in AllData)
+            foreach (var bySP in allData)
             {
-                if (BySP.OrderID == "20031214AB")
+                if (bySP.OrderID == "20031214AB")
                 {
                 }
 
-                foreach (var item in BySP.InOffLines)
+                foreach (var item in bySP.InOffLines)
                 {
-                    foreach (var day in Days)
+                    foreach (var day in days)
                     {
                         string strDate = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
-                        detailDt.Rows[index * 4]["SP"] = BySP.OrderID;
-                        detailDt.Rows[(index * 4) + 1]["SP"] = BySP.OrderID;
-                        detailDt.Rows[(index * 4) + 2]["SP"] = BySP.OrderID;
-                        detailDt.Rows[(index * 4) + 3]["SP"] = BySP.OrderID;
+                        detailDt.Rows[index * 4]["SP"] = bySP.OrderID;
+                        detailDt.Rows[(index * 4) + 1]["SP"] = bySP.OrderID;
+                        detailDt.Rows[(index * 4) + 2]["SP"] = bySP.OrderID;
+                        detailDt.Rows[(index * 4) + 3]["SP"] = bySP.OrderID;
 
-                        detailDt.Rows[index * 4]["Fab. Panel Code"] = BySP.FabricPanelCode;
-                        detailDt.Rows[(index * 4) + 1]["Fab. Panel Code"] = BySP.FabricPanelCode;
-                        detailDt.Rows[(index * 4) + 2]["Fab. Panel Code"] = BySP.FabricPanelCode;
-                        detailDt.Rows[(index * 4) + 3]["Fab. Panel Code"] = BySP.FabricPanelCode;
+                        detailDt.Rows[index * 4]["Fab. Panel Code"] = bySP.FabricPanelCode;
+                        detailDt.Rows[(index * 4) + 1]["Fab. Panel Code"] = bySP.FabricPanelCode;
+                        detailDt.Rows[(index * 4) + 2]["Fab. Panel Code"] = bySP.FabricPanelCode;
+                        detailDt.Rows[(index * 4) + 3]["Fab. Panel Code"] = bySP.FabricPanelCode;
 
                         if (item.DateWithLeadTime == day.Date)
                         {
@@ -1741,58 +1788,58 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             }
 
             index = 0;
-            foreach (var BySP in AllData)
+            foreach (var bySP in allData)
             {
-                if (BySP.OrderID == "20080032AB001")
+                if (bySP.OrderID == "20080032AB001")
                 {
                 }
 
-                foreach (var item in BySP.InOffLines)
+                foreach (var item in bySP.InOffLines)
                 {
                     // 紀錄時間軸上的Index
-                    int DayIndex = 0;
-                    foreach (var day in Days)
+                    int dayIndex = 0;
+                    foreach (var day in days)
                     {
                         string strDate = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
-                        summaryDt.Rows[index]["SP"] = BySP.OrderID;
-                        summaryDt.Rows[index]["Fab. Panel Code"] = BySP.FabricPanelCode;
+                        summaryDt.Rows[index]["SP"] = bySP.OrderID;
+                        summaryDt.Rows[index]["Fab. Panel Code"] = bySP.FabricPanelCode;
 
                         if (item.DateWithLeadTime == day.Date)
                         {
                             if (!day.IsHoliday)
                             {
-                                decimal CutQty = item.CutQty;
-                                decimal StdQty = item.StdQty;
-                                decimal AccuCutQty = item.AccuCutQty;
-                                decimal AccuStdQty = item.AccuStdQty;
+                                decimal cutQty = item.CutQty;
+                                decimal stdQty = item.StdQty;
+                                decimal accuCutQty = item.AccuCutQty;
+                                decimal accuStdQty = item.AccuStdQty;
                                 decimal cellValue = 0;
 
                                 #region 準備下一天 嚇嚇一天需要資料 （下一天不一定是明天日期）
                                 Day nextDay = new Day();
                                 Day nexNextDay = new Day();
-                                bool HasNextDay = false;
-                                bool HasNexNextDay = false;
+                                bool hasNextDay = false;
+                                bool hasNexNextDay = false;
 
                                 // /以隔天為起點，開始找下一個非假日
-                                for (int i = DayIndex + 1; i <= Days.Count - 1; i++)
+                                for (int i = dayIndex + 1; i <= days.Count - 1; i++)
                                 {
                                     // 取得下一個不是假日的日期
-                                    if (!Days[i].IsHoliday)
+                                    if (!days[i].IsHoliday)
                                     {
-                                        nextDay.Date = Days[i].Date;
-                                        HasNextDay = true;
+                                        nextDay.Date = days[i].Date;
+                                        hasNextDay = true;
                                     }
 
-                                    if (HasNextDay)
+                                    if (hasNextDay)
                                     {
                                         // 再以這個非假日為起點，找到下一個非假日
-                                        for (int y = i + 1; y <= Days.Count - 1; y++)
+                                        for (int y = i + 1; y <= days.Count - 1; y++)
                                         {
-                                            if (!Days[y].IsHoliday)
+                                            if (!days[y].IsHoliday)
                                             {
-                                                nexNextDay.Date = Days[y].Date;
-                                                HasNexNextDay = true;
+                                                nexNextDay.Date = days[y].Date;
+                                                hasNexNextDay = true;
 
                                                 // 找完就迴圈掰掰
                                                 break;
@@ -1800,42 +1847,42 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                         }
                                     }
 
-                                    if (HasNexNextDay)
+                                    if (hasNexNextDay)
                                     {
                                         break;
                                     }
                                 }
 
-                                var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nextDay.Date);
-                                var findData_nextNextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nexNextDay.Date);
+                                var findData_nextDay = bySP.InOffLines.Where(o => o.DateWithLeadTime == nextDay.Date);
+                                var findData_nextNextDay = bySP.InOffLines.Where(o => o.DateWithLeadTime == nexNextDay.Date);
                                 bool hasNextDayData = findData_nextDay.Any();
                                 bool hasNextNextDayData = findData_nextNextDay.Any();
-                                int NextDayStdQty = 0;
+                                int nextDayStdQty = 0;
                                 if (hasNextDayData)
                                 {
-                                    NextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
+                                    nextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
                                 }
                                 #endregion
 
-                                if (AccuCutQty <= AccuStdQty)
+                                if (accuCutQty <= accuStdQty)
                                 {
-                                    cellValue = StdQty == 0 ? 0 : (AccuCutQty - AccuStdQty) / StdQty;
+                                    cellValue = stdQty == 0 ? 0 : (accuCutQty - accuStdQty) / stdQty;
                                 }
-                                else if (StdQty == 0 || NextDayStdQty == 0 || ((AccuCutQty - AccuStdQty) / NextDayStdQty) <= 1)
+                                else if (stdQty == 0 || nextDayStdQty == 0 || ((accuCutQty - accuStdQty) / nextDayStdQty) <= 1)
                                 {
                                     // 若沒有下一天的資料，則全部視作0 （下一天不一定是明天日期）
-                                    cellValue = NextDayStdQty == 0 ? 0 : (AccuCutQty - AccuStdQty) / NextDayStdQty;
+                                    cellValue = nextDayStdQty == 0 ? 0 : (accuCutQty - accuStdQty) / nextDayStdQty;
                                 }
                                 else
                                 {
-                                    int NextNextDayStdQty = 0;
+                                    int nextNextDayStdQty = 0;
                                     if (hasNextNextDayData)
                                     {
-                                        NextNextDayStdQty = findData_nextNextDay.Sum(o => o.StdQty);
+                                        nextNextDayStdQty = findData_nextNextDay.Sum(o => o.StdQty);
                                     }
 
                                     // 沒意外應該只有一筆，不過還是用SUM
-                                    cellValue = NextNextDayStdQty == 0 ? 1 : 1 + ((AccuCutQty - AccuStdQty - NextDayStdQty) / NextNextDayStdQty);
+                                    cellValue = nextNextDayStdQty == 0 ? 1 : 1 + ((accuCutQty - accuStdQty - nextDayStdQty) / nextNextDayStdQty);
                                 }
 
                                 summaryDt.Rows[index][strDate] = cellValue;
@@ -1850,7 +1897,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                             // summaryDt.Rows[(index)][strDate] = DBNull.Value;
                         }
 
-                        DayIndex++;
+                        dayIndex++;
                     }
                 }
 
@@ -1863,13 +1910,19 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             return resultList;
         }
 
-        public static List<LeadTime> GetLeadTimeList(List<string> OrderIDs, out string annotationStr)
+        /// <summary>
+        /// Get Lead Time List
+        /// </summary>
+        /// <param name="orderIDs">orders ID</param>
+        /// <param name="annotationStr">annotation Str</param>
+        /// <returns>leadTimeList</returns>
+        public static List<LeadTime> GetLeadTimeList(List<string> orderIDs, out string annotationStr)
         {
-            List<LeadTime> LeadTimeList = new List<LeadTime>();
+            List<LeadTime> leadTimeList = new List<LeadTime>();
 
-            DataTable PoID_dt;
-            DataTable GarmentTb;
-            DataTable LeadTime_dt;
+            DataTable poID_dt;
+            DataTable garmentTb;
+            DataTable leadTime_dt;
             DualResult result;
             annotationStr = string.Empty;
 
@@ -1879,7 +1932,7 @@ INTO #OrderList
 FROM SewingSchedule s WITH(NOLOCK)
 INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
 WHERE o.LocalOrder = 0
-AND OrderID in ('{string.Join("','", OrderIDs)}')
+AND OrderID in ('{string.Join("','", orderIDs)}')
 ";
 
             cmd += $@"
@@ -1889,30 +1942,30 @@ INNER JOIN Orders b ON a.OrderID= b.ID
 
 drop table #OrderList
 ";
-            result = DBProxy.Current.Select(null, cmd, out PoID_dt);
+            result = DBProxy.Current.Select(null, cmd, out poID_dt);
             if (!result)
             {
                 return null;
             }
 
-            List<string> Msg = new List<string>();
+            List<string> msg = new List<string>();
 
-            foreach (DataRow dr in PoID_dt.Rows)
+            foreach (DataRow dr in poID_dt.Rows)
             {
-                string POID = dr["POID"].ToString();
-                string OrderID = dr["OrderID"].ToString();
-                string MDivisionID = dr["MDivisionID"].ToString();
-                string FactoryID = dr["FactoryID"].ToString();
+                string pOID = dr["POID"].ToString();
+                string orderID = dr["OrderID"].ToString();
+                string mDivisionID = dr["MDivisionID"].ToString();
+                string factoryID = dr["FactoryID"].ToString();
 
-                GetGarmentListTable(string.Empty, POID, string.Empty, out GarmentTb);
+                GetGarmentListTable(string.Empty, pOID, string.Empty, out garmentTb);
 
-                List<string> AnnotationList = GarmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
+                List<string> annotationList = garmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
 
-                List<string> AnnotationList_Final = new List<string>();
+                List<string> annotationList_Final = new List<string>();
 
-                foreach (var Annotation in AnnotationList)
+                foreach (var annotation in annotationList)
                 {
-                    foreach (var item in Annotation.Split('+'))
+                    foreach (var item in annotation.Split('+'))
                     {
                         string input = string.Empty;
                         for (int i = 0; i <= item.Length - 1; i++)
@@ -1925,15 +1978,15 @@ drop table #OrderList
                             }
                         }
 
-                        if (!AnnotationList_Final.Contains(input) && MyUtility.Check.Seek($"SELECT 1 FROM Subprocess WHERE ID='{input}' "))
+                        if (!annotationList_Final.Contains(input) && MyUtility.Check.Seek($"SELECT 1 FROM Subprocess WHERE ID='{input}' "))
                         {
-                            AnnotationList_Final.Add(input);
+                            annotationList_Final.Add(input);
                         }
                     }
                 }
 
-                string AnnotationStr = AnnotationList_Final.OrderBy(o => o.ToString()).JoinToString("+");
-                annotationStr = AnnotationStr;
+                string annotationStr1 = annotationList_Final.OrderBy(o => o.ToString()).JoinToString("+");
+                annotationStr = annotationStr1;
 
                 string chk_LeadTime = $@"
 SELECT DISTINCT SD.ID
@@ -1951,38 +2004,44 @@ OUTER APPLY(
 	)
 	,1,1,'')
 )Subprocess
-WHERE Subprocess.IDs = '{AnnotationStr}'
-and s.MDivisionID = '{MDivisionID}'
-and s.FactoryID = '{FactoryID}'
+WHERE Subprocess.IDs = '{annotationStr1}'
+and s.MDivisionID = '{mDivisionID}'
+and s.FactoryID = '{factoryID}'
 ";
-                result = DBProxy.Current.Select(null, chk_LeadTime, out LeadTime_dt);
+                result = DBProxy.Current.Select(null, chk_LeadTime, out leadTime_dt);
                 if (!result)
                 {
                     return null;
                 }
 
                 // 收集需要顯示訊息的Subprocess ID
-                if (LeadTime_dt.Rows.Count == 0 && AnnotationStr != string.Empty)
+                if (leadTime_dt.Rows.Count == 0 && annotationStr1 != string.Empty)
                 {
-                    Msg.Add(MDivisionID + ";" + FactoryID + ";" + AnnotationStr);
+                    msg.Add(mDivisionID + ";" + factoryID + ";" + annotationStr1);
                 }
                 else
                 {
                     // 記錄下加工段的Lead Time
                     LeadTime o = new LeadTime()
                     {
-                        OrderID = OrderID,
-                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]), // 加工段為空，LeadTimeDay = 0
-                        Subprocess = AnnotationStr,
+                        OrderID = orderID,
+                        LeadTimeDay = MyUtility.Check.Empty(annotationStr1) ? 0 : Convert.ToInt32(leadTime_dt.Rows[0]["LeadTime"]), // 加工段為空，LeadTimeDay = 0
+                        Subprocess = annotationStr1,
                     };
-                    LeadTimeList.Add(o);
+                    leadTimeList.Add(o);
                 }
             }
 
-            return LeadTimeList;
+            return leadTimeList;
         }
 
-        public static int GetStdQtyByDate(string OrderID, DateTime SewingDate)
+        /// <summary>
+        /// Get StdQty By Date
+        /// </summary>
+        /// <param name="orderID">orderID</param>
+        /// <param name="sewingDate">sewingDate</param>
+        /// <returns>int</returns>
+        public static int GetStdQtyByDate(string orderID, DateTime sewingDate)
         {
             string sqlcmd = $@"
 SELECT s.ComboType, x.APSNo,x.Date
@@ -1992,20 +2051,20 @@ SELECT s.ComboType, x.APSNo,x.Date
 into #currBase
 FROM SewingSchedule  s
 outer apply(select * from [dbo].[getDailystdq](s.APSNo))x
-WHERE OrderID='{OrderID}'
+WHERE OrderID='{orderID}'
 
 ---- 該日期之前
 SELECT ComboType, [StdQ]=SUM(StdQ)
 INTO #beforeTmp
 FROM #currBase
-where Date < '{SewingDate.ToString("yyyy/MM/dd")}'
+where Date < '{sewingDate.ToString("yyyy/MM/dd")}'
 GROUP BY ComboType
 
 ---- 該日期當天
 SELECT ComboType, [StdQ]=SUM(StdQ)
 INTO #today
 FROM #currBase
-where Date = '{SewingDate.ToString("yyyy/MM/dd")}'
+where Date = '{sewingDate.ToString("yyyy/MM/dd")}'
 GROUP BY ComboType
 
 ---- 計算之前剩下的裁片數
@@ -2017,7 +2076,7 @@ FROM (
 	FROM Orders o
 	INNER JOIN Style_Location s ON o.StyleUkey = s.StyleUkey
 	LEFT JOIN #beforeTmp u ON u.ComboType = s.Location
-	WHERE o.ID='{OrderID}'
+	WHERE o.ID='{orderID}'
 )a
 
 
@@ -2043,17 +2102,23 @@ SELECT MIN( ISNULL(u.StdQ,0))
 FROM Orders o
 INNER JOIN Style_Location s ON o.StyleUkey = s.StyleUkey
 LEFT JOIN #sum u ON u.ComboType = s.Location
-WHERE o.ID='{OrderID}'
+WHERE o.ID='{orderID}'
 
 
 DROP TABLE #today,#beforeTmp,#before,#sum,#tmp,#currBase
 ";
-            string StdQty = MyUtility.GetValue.Lookup(sqlcmd);
-            int rtn = MyUtility.Check.Empty(StdQty) ? 0 : Convert.ToInt32(StdQty);
+            string stdQty = MyUtility.GetValue.Lookup(sqlcmd);
+            int rtn = MyUtility.Check.Empty(stdQty) ? 0 : Convert.ToInt32(stdQty);
             return rtn;
         }
 
-        public static int GetAccuStdQtyByDate(string OrderID, DateTime beforeSewingDate)
+        /// <summary>
+        /// Get Accu StdQty By Date
+        /// </summary>
+        /// <param name="orderID">order ID</param>
+        /// <param name="beforeSewingDate">before SewingDate</param>
+        /// <returns>accuStdQty</returns>
+        public static int GetAccuStdQtyByDate(string orderID, DateTime beforeSewingDate)
         {
             string sqlcmd = $@"
 SELECT s.OrderID,s.ComboType, x.APSNo,x.Date
@@ -2063,12 +2128,12 @@ SELECT s.OrderID,s.ComboType, x.APSNo,x.Date
 into #currBase
 FROM SewingSchedule  s
 outer apply(select * from [dbo].[getDailystdq](s.APSNo))x
-WHERE OrderID='{OrderID}'
+WHERE OrderID='{orderID}'
 
 SELECT ComboType, [StdQ]=SUM(StdQ)
 INTO #beforeTmp
 FROM #currBase
-WHERE OrderID='{OrderID}' and Date <= '{beforeSewingDate.ToString("yyyy/MM/dd")}'
+WHERE OrderID='{orderID}' and Date <= '{beforeSewingDate.ToString("yyyy/MM/dd")}'
 group by ComboType
 
 ---- 取裁片數最少的 = 成套件數
@@ -2076,12 +2141,12 @@ SELECT MIN( ISNULL(u.StdQ,0))
 FROM Orders o with(nolock)
 INNER JOIN Style_Location s with(nolock) ON o.StyleUkey = s.StyleUkey
 LEFT JOIN #beforeTmp u ON u.ComboType = s.Location
-WHERE o.ID='{OrderID}'
+WHERE o.ID='{orderID}'
 
 DROP TABLE #beforeTmp
 ";
-            string AccuStdQty = MyUtility.GetValue.Lookup(sqlcmd);
-            int rtn = MyUtility.Check.Empty(AccuStdQty) ? 0 : Convert.ToInt32(AccuStdQty);
+            string accuStdQty = MyUtility.GetValue.Lookup(sqlcmd);
+            int rtn = MyUtility.Check.Empty(accuStdQty) ? 0 : Convert.ToInt32(accuStdQty);
             return rtn;
         }
 
@@ -2092,10 +2157,19 @@ DROP TABLE #beforeTmp
         /// </summary>
         public class GarmentQty
         {
+            /// <summary>
+            /// OrderID
+            /// </summary>
             public string OrderID { get; set; }
 
+            /// <summary>
+            /// EstCutDate
+            /// </summary>
             public DateTime EstCutDate { get; set; }
 
+            /// <summary>
+            /// Qty
+            /// </summary>
             public int Qty { get; set; }
         }
 
@@ -2104,52 +2178,25 @@ DROP TABLE #beforeTmp
         /// </summary>
         public class FabricPanelCodeCutPlanQty
         {
+            /// <summary>
+            /// OrderID
+            /// </summary>
             public string OrderID { get; set; }
 
+            /// <summary>
+            /// EstCutDate
+            /// </summary>
             public DateTime EstCutDate { get; set; }
 
+            /// <summary>
+            /// FabricPanelCode
+            /// </summary>
             public string FabricPanelCode { get; set; }
 
+            /// <summary>
+            /// Qty
+            /// </summary>
             public int Qty { get; set; }
-        }
-
-        /// <summary>
-        /// 存放SQL撈出來資料用
-        /// </summary>
-        public class GarmentQty_Detail
-        {
-            public DateTime EstCutDate { get; set; }
-
-            public string OrderID { get; set; }
-
-            public string Article { get; set; }
-
-            public string SizeCode { get; set; }
-
-            public string FabricCombo { get; set; }
-
-            public string FabricPanelCode { get; set; }
-
-            public int Qty { get; set; }
-        }
-
-        /// <summary>
-        /// 剩餘
-        /// </summary>
-        public class LostInfo
-        {
-            // public DateTime EstCutDate { get; set; }
-            public string OrderID { get; set; }
-
-            public string Article { get; set; }
-
-            public string SizeCode { get; set; }
-
-            public string FabricCombo { get; set; }
-
-            public string FabricPanelCode { get; set; }
-
-            public int LostQty { get; set; }
         }
 
         /// <summary>
@@ -2196,9 +2243,14 @@ DROP TABLE #beforeTmp
         /// </summary>
         public class Day
         {
-            // public string FactoryID { get; set; }
+            /// <summary>
+            /// Date
+            /// </summary>
             public DateTime Date { get; set; }
 
+            /// <summary>
+            /// IsHoliday
+            /// </summary>
             public bool IsHoliday { get; set; }
         }
 
@@ -2207,84 +2259,148 @@ DROP TABLE #beforeTmp
         /// </summary>
         public class LeadTime
         {
+            /// <summary>
+            /// OrderID
+            /// </summary>
             public string OrderID { get; set; }
 
+            /// <summary>
+            /// LeadTimeDay
+            /// </summary>
             public int LeadTimeDay { get; set; }
 
+            /// <summary>
+            /// Subprocess
+            /// </summary>
             public string Subprocess { get; set; }
         }
 
+        /// <summary>
+        /// In Off Line List
+        /// </summary>
         public class InOffLineList
         {
+            /// <summary>
+            /// OrderID
+            /// </summary>
             public string OrderID { get; set; }
 
+            /// <summary>
+            /// IsDateMove
+            /// </summary>
             public bool IsDateMove { get; set; }
 
+            /// <summary>
+            /// InOffLines
+            /// </summary>
             public List<InOffLine> InOffLines { get; set; }
         }
 
+        /// <summary>
+        /// In Off LineList by Fabric PanelCode
+        /// </summary>
         public class InOffLineList_byFabricPanelCode
         {
+            /// <summary>
+            /// OrderID
+            /// </summary>
             public string OrderID { get; set; }
 
+            /// <summary>
+            /// FabricPanelCode
+            /// </summary>
             public string FabricPanelCode { get; set; }
 
+            /// <summary>
+            /// IsDateMove
+            /// </summary>
             public bool IsDateMove { get; set; }
 
+            /// <summary>
+            /// InOffLines
+            /// </summary>
             public List<InOffLine> InOffLines { get; set; }
         }
 
-        public class MoveDate
-        {
-            public string OrderID { get; set; }
-
-            public int UKey { get; set; }
-
-            public DateTime Ori_DateWithLeadTime { get; set; }
-
-            public int MoveCount { get; set; }
-        }
-
+        /// <summary>
+        /// In Off Line
+        /// </summary>
         public class InOffLine
         {
+            /// <summary>
+            /// UKey
+            /// </summary>
             public int? UKey { get; set; }
 
+            /// <summary>
+            /// ApsNO
+            /// </summary>
             public string ApsNO { get; set; }
 
+            /// <summary>
+            /// CutQty
+            /// </summary>
             public int CutQty { get; set; }
 
+            /// <summary>
+            /// AccuCutQty
+            /// </summary>
             public int AccuCutQty { get; set; }
 
+            /// <summary>
+            /// StdQty
+            /// </summary>
             public int StdQty { get; set; }
 
+            /// <summary>
+            /// AccuStdQty
+            /// </summary>
             public int AccuStdQty { get; set; }
 
+            /// <summary>
+            /// DateWithLeadTime
+            /// </summary>
             public DateTime DateWithLeadTime { get; set; }
 
+            /// <summary>
+            /// WIP
+            /// </summary>
             public decimal WIP { get; set; }
 
-            public bool overAlloQty { get; set; }
+            /// <summary>
+            /// overAlloQty
+            /// </summary>
+            public bool OverAlloQty { get; set; }
         }
 
-        public class OriPushDayCount
-        {
-            public string OrderID { get; set; }
-
-            public DateTime OriDateWithLeadTime { get; set; }
-
-            public int OriCount { get; set; }
-        }
-
+        /// <summary>
+        /// Daily Std Qty
+        /// </summary>
         public class DailyStdQty
         {
+            /// <summary>
+            /// OrderID
+            /// </summary>
             public string OrderID { get; set; }
 
+            /// <summary>
+            /// ComboType
+            /// </summary>
             public string ComboType { get; set; }
 
+            /// <summary>
+            /// APSNo
+            /// </summary>
             public string APSNo { get; set; }
 
+            /// <summary>
+            /// Date
+            /// </summary>
             public DateTime Date { get; set; }
 
+            /// <summary>
+            /// StdQty
+            /// </summary>
             public int StdQty { get; set; }
         }
         #endregion

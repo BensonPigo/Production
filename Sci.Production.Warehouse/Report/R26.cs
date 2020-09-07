@@ -13,17 +13,17 @@ namespace Sci.Production.Warehouse
 {
     public partial class R26 : Win.Tems.PrintForm
     {
-        DataTable dt;
-        DateTime? ConfirmedDate1;
-        DateTime? ConfirmedDate2;
-        string CfmUser;
-        string M;
-        string Factory;
-        string Brand;
-        string WK;
-        string SP1;
-        string SP2;
-        bool WHP21only;
+        private DataTable dt;
+        private DateTime? ConfirmedDate1;
+        private DateTime? ConfirmedDate2;
+        private string CfmUser;
+        private string M;
+        private string Factory;
+        private string Brand;
+        private string WK;
+        private string SP1;
+        private string SP2;
+        private bool WHP21only;
 
         public R26(ToolStripMenuItem menuitem)
             : base(menuitem)

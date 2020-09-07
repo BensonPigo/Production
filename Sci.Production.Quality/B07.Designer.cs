@@ -153,7 +153,7 @@
             this.radioOption1.Text = "Option1";
             this.radioOption1.UseVisualStyleBackColor = true;
             this.radioOption1.Value = "1";
-            this.radioOption1.CheckedChanged += new System.EventHandler(this.radioOption1_CheckedChanged);
+            this.radioOption1.CheckedChanged += new System.EventHandler(this.RadioOption1_CheckedChanged);
             // 
             // radioOption2
             // 

@@ -91,7 +91,7 @@
             // 
             // delete
             // 
-            this.delete.Click += new System.EventHandler(this.delete_Click);
+            this.delete.Click += new System.EventHandler(this.Delete_Click);
             // 
             // next
             // 
@@ -407,7 +407,7 @@
             this.btnAutoPick.TabIndex = 97;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
-            this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
+            this.btnAutoPick.Click += new System.EventHandler(this.BtnAutoPick_Click);
             // 
             // displaySCIRefno
             // 

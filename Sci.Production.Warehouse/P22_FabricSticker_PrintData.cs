@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    class P22_FabricSticker_PrintData
+    internal class P22_FabricSticker_PrintData
     {
         public int RowNo { get; set; }
 

@@ -107,8 +107,8 @@ namespace Sci.Production.Warehouse
 
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
-            string Remark = row["Remark"].ToString();
-            string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string remark = row["Remark"].ToString();
+            string cDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -127,15 +127,15 @@ namespace Sci.Production.Warehouse
                 this.ShowErr(result1);
             }
 
-            string RptTitle = dt1.Rows[0]["nameEN"].ToString();
+            string rptTitle = dt1.Rows[0]["nameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new ReportParameter("ID", id));
-            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new ReportParameter("CDate", CDate));
+            report.ReportParameters.Add(new ReportParameter("Remark", remark));
+            report.ReportParameters.Add(new ReportParameter("CDate", cDate));
 
             DataTable dtRefund;
-            string RefundResult;
+            string refundResult;
             DBProxy.Current.Select(
                 string.Empty,
                 @"Select R.whsereasonid,W.Description
@@ -145,17 +145,17 @@ namespace Sci.Production.Warehouse
 		    WHERE R.id = @ID", pars, out dtRefund);
             if (dtRefund.Rows.Count == 0)
             {
-                RefundResult = string.Empty;
+                refundResult = string.Empty;
             }
             else
             {
-                RefundResult = dtRefund.Rows[0]["Description"].ToString();
+                refundResult = dtRefund.Rows[0]["Description"].ToString();
             }
 
-            report.ReportParameters.Add(new ReportParameter("RefundResult", RefundResult));
+            report.ReportParameters.Add(new ReportParameter("RefundResult", refundResult));
 
             DataTable dtAction;
-            string ActionResult;
+            string actionResult;
             DBProxy.Current.Select(
                 string.Empty,
                 @"Select  R.whsereasonid,[desc] = W.Description   
@@ -164,14 +164,14 @@ namespace Sci.Production.Warehouse
 		        WHERE R.id = @ID", pars, out dtAction);
             if (dtAction.Rows.Count == 0)
             {
-                ActionResult = string.Empty;
+                actionResult = string.Empty;
             }
             else
             {
-                ActionResult = dtAction.Rows[0]["desc"].ToString();
+                actionResult = dtAction.Rows[0]["desc"].ToString();
             }
 
-            report.ReportParameters.Add(new ReportParameter("ActionResult", ActionResult));
+            report.ReportParameters.Add(new ReportParameter("ActionResult", actionResult));
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -236,12 +236,12 @@ where R.id= @ID";
 
             // 指定是哪個 RDLC
             // DualResult result;
-            Type ReportResourceNamespace = typeof(P37_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P37_Print.rdlc";
+            Type reportResourceNamespace = typeof(P37_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P37_Print.rdlc";
 
             IReportResource reportresource;
-            if (!(result1 = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(result1 = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 // this.ShowException(result);
                 return false;
@@ -366,8 +366,8 @@ where R.id= @ID";
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
-            DataGridViewGeneratorNumericColumnSettings SupportNegative = new DataGridViewGeneratorNumericColumnSettings();
-            SupportNegative.IsSupportNegative = true;
+            DataGridViewGeneratorNumericColumnSettings supportNegative = new DataGridViewGeneratorNumericColumnSettings();
+            supportNegative.IsSupportNegative = true;
             DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
             ns.CellFormatting = (s, e) =>
             {
@@ -394,7 +394,7 @@ where R.id= @ID";
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
             .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
             .Text("StockType", header: "StockType", iseditingreadonly: true, settings: ns) // 5
-            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: SupportNegative) // 6
+            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: supportNegative) // 6
             .Text("Location", header: "Location", iseditingreadonly: true) // 7
             ;
             #endregion 欄位設定
@@ -568,11 +568,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             #endregion 更新表頭狀態資料
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
 
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 try
@@ -586,7 +586,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -607,7 +607,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, string.Empty, upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -617,7 +617,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -626,19 +626,19 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -794,11 +794,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             #endregion 更新表頭狀態資料
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
 
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 try
@@ -812,7 +812,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F, string.Empty, upd_Fty_2F, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
@@ -833,7 +833,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2F, string.Empty, upd_MD_2F, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -843,7 +843,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F, string.Empty, upd_MD_8F, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -852,19 +852,19 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -907,14 +907,14 @@ Where a.id = '{0}'", masterID);
         }
 
         // Delete empty qty
-        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
+        private void BtnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
             ((DataTable)this.detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
         }
 
         // Import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             var frm = new P37_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
@@ -922,7 +922,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Accumulated Qty
-        private void btnAccumulatedQty_Click(object sender, EventArgs e)
+        private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new P37_AccumulatedQty(this.CurrentMaintain);
             frm.P37 = this;
@@ -930,7 +930,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Locate for (find)
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
             {
@@ -948,7 +948,7 @@ Where a.id = '{0}'", masterID);
             }
         }
 
-        private void txtwhseReasonRefundReason_Validated(object sender, EventArgs e)
+        private void TxtwhseReasonRefundReason_Validated(object sender, EventArgs e)
         {
             this.txtwhseRefundAction.TextBox1.Text = string.Empty;
             this.txtwhseRefundAction.DisplayBox1.Text = string.Empty;

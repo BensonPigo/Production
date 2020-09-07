@@ -1,6 +1,5 @@
 ﻿using Sci.Data;
 using Sci.Win.Tools;
-using System.Data;
 using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
@@ -24,17 +23,17 @@ namespace Sci.Production.Centralized
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.txtArtworkType.ReadOnly = true;
+            this.txtSubProcess.ReadOnly = true;
             this.txtDefectCode.ReadOnly = true;
         }
 
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["ArtworkTypeID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SubProcessID"]))
             {
-                this.txtArtworkType.Focus();
-                MyUtility.Msg.WarningBox("< ArtworkType > can not be empty!");
+                this.txtSubProcess.Focus();
+                MyUtility.Msg.WarningBox("< SubProcess > can not be empty!");
                 return false;
             }
 
@@ -46,24 +45,24 @@ namespace Sci.Production.Centralized
             }
 
             if (this.IsDetailInserting &&
-                MyUtility.Check.Seek($"select 1 from SubProDefectCode where ArtworkTypeID='{this.CurrentMaintain["ArtworkTypeID"]}' and DefectCode = '{this.CurrentMaintain["DefectCode"]}'"))
+                MyUtility.Check.Seek($"select 1 from SubProDefectCode where SubProcessID='{this.CurrentMaintain["SubProcessID"]}' and DefectCode = '{this.CurrentMaintain["DefectCode"]}'"))
             {
-                MyUtility.Msg.WarningBox("ArtworkType, DefectCode  can not duplicate!");
+                MyUtility.Msg.WarningBox("SubProcess, DefectCode  can not duplicate!");
             }
 
             return base.ClickSaveBefore();
         }
 
-        private void TxtArtworkType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtSubProcess_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlcmd = $@"
-select a.ID, a.Remark
-from ArtworkType a with(nolock)
-where a.IsSubprocessInspection = 1
-and a.Junk = 0
+select s.ID, a.Remark
+from SubProcess s with(nolock)
+left join ArtworkType a on a.Id = s.ArtworkTypeId
+where s.IsSubprocessInspection = 1
+and s.Junk = 0
 ";
-
-            SelectItem item = new SelectItem(sqlcmd, "20,4,20", this.txtArtworkType.Text, false, ",")
+            SelectItem item = new SelectItem(sqlcmd, "20,4,20", this.txtSubProcess.Text, false, ",")
             {
                 Size = new System.Drawing.Size(635, 510),
             };
@@ -73,7 +72,7 @@ and a.Junk = 0
                 return;
             }
 
-            this.txtArtworkType.Text = item.GetSelectedString();
+            this.txtSubProcess.Text = item.GetSelectedString();
         }
     }
 }

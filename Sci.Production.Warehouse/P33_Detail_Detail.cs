@@ -11,23 +11,23 @@ namespace Sci.Production.Warehouse
     public partial class P33_Detail_Detail : Win.Subs.Base
     {
         public Win.Subs.Base P33_Detail;
-        DataRow dr_master;
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_master;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public decimal _AccuIssued = 0;
         public decimal _RequestQty = 0;
         protected DataTable dtFtyinventory;
 
-        public P33_Detail_Detail(DataRow master, DataTable detail, string AccuIssued, string RequestQty)
+        public P33_Detail_Detail(DataRow master, DataTable detail, string accuIssued, string requestQty)
         {
             this.InitializeComponent();
             this.dr_master = master;
             this.dt_detail = detail;
-            this._AccuIssued = MyUtility.Check.Empty(AccuIssued) ? 0 : Convert.ToDecimal(AccuIssued);
-            this._RequestQty = MyUtility.Check.Empty(RequestQty) ? 0 : Convert.ToDecimal(RequestQty);
+            this._AccuIssued = MyUtility.Check.Empty(accuIssued) ? 0 : Convert.ToDecimal(accuIssued);
+            this._RequestQty = MyUtility.Check.Empty(requestQty) ? 0 : Convert.ToDecimal(requestQty);
         }
 
-        private void sum_checkedqty()
+        private void Sum_checkedqty()
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -118,7 +118,7 @@ AND (a.stocktype = 'B' OR a.stocktype IS NULL)
 
                     this.gridSeq.GetDataRow(this.gridSeq.GetSelectedRowIndex())["Qty"] = e.FormattedValue;
                     this.gridSeq.GetDataRow(this.gridSeq.GetSelectedRowIndex())["selected"] = true;
-                    this.sum_checkedqty();
+                    this.Sum_checkedqty();
                 }
             };
 
@@ -137,7 +137,7 @@ AND (a.stocktype = 'B' OR a.stocktype IS NULL)
                     }
 
                     dr.EndEdit();
-                    this.sum_checkedqty();
+                    this.Sum_checkedqty();
                 }
             };
 
@@ -154,12 +154,12 @@ AND (a.stocktype = 'B' OR a.stocktype IS NULL)
             this.gridSeq.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridSeq.ValidateControl();
 

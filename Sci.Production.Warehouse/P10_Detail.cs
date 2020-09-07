@@ -10,8 +10,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P10_Detail : Win.Subs.Input8A
     {
-        int Type = 0;
-        string RequestID;
+        private int Type = 0;
+        private string RequestID;
 
         public P10_Detail(int type = 0, string requestID = "")
         {
@@ -31,7 +31,7 @@ namespace Sci.Production.Warehouse
             var frm = new P10_Detail_Detail(this.CurrentDetailData, (DataTable)this.gridbs.DataSource, this.Type);
             frm.P10_Detail = this;
             frm.ShowDialog(this);
-            this.sum_checkedqty();
+            this.Sum_checkedqty();
         }
 
         protected override void OnAttached()
@@ -113,27 +113,27 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
             this.numRequestQty.Text = this.CurrentDetailData["requestqty"].ToString();
             this.numAccuIssue.Text = this.CurrentDetailData["accu_issue"].ToString();
 
-            string STRrequestqty = this.CurrentDetailData["requestqty"].ToString();
-            string STRaccu_issue = this.CurrentDetailData["accu_issue"].ToString();
-            decimal DECrequestqty;
-            decimal DECaccu_issue;
-            if (!decimal.TryParse(STRrequestqty, out DECrequestqty))
+            string sTRrequestqty = this.CurrentDetailData["requestqty"].ToString();
+            string sTRaccu_issue = this.CurrentDetailData["accu_issue"].ToString();
+            decimal dECrequestqty;
+            decimal dECaccu_issue;
+            if (!decimal.TryParse(sTRrequestqty, out dECrequestqty))
             {
-                DECrequestqty = 0;
+                dECrequestqty = 0;
             }
 
-            if (!decimal.TryParse(STRaccu_issue, out DECaccu_issue))
+            if (!decimal.TryParse(sTRaccu_issue, out dECaccu_issue))
             {
-                DECaccu_issue = 0;
+                dECaccu_issue = 0;
             }
 
-            this.numBalanceQty.Value = DECrequestqty - DECaccu_issue;
+            this.numBalanceQty.Value = dECrequestqty - dECaccu_issue;
             this.numIssueQty.Text = this.CurrentDetailData["qty"].ToString();
-            string STRqty = this.CurrentDetailData["qty"].ToString();
-            decimal DECqty;
-            if (!decimal.TryParse(STRqty, out DECqty))
+            string sTRqty = this.CurrentDetailData["qty"].ToString();
+            decimal dECqty;
+            if (!decimal.TryParse(sTRqty, out dECqty))
             {
-                DECqty = 0;
+                dECqty = 0;
             }
 
             this.numVariance.Value = this.numBalanceQty.Value - this.numIssueQty.Value;
@@ -144,7 +144,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
-                    this.sum_checkedqty();
+                    this.Sum_checkedqty();
                 };
             this.Helper.Controls.Grid.Generator(this.grid)
 
@@ -190,7 +190,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
             return base.OnSaveBefore();
         }
 
-        private void btnAutoPick_Click(object sender, EventArgs e)
+        private void BtnAutoPick_Click(object sender, EventArgs e)
         {
             IList<DataRow> issued;
             if (this.Type == 0)
@@ -222,21 +222,21 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
                 subDT.ImportRow(dr2);
             }
 
-            this.sum_checkedqty();
+            this.Sum_checkedqty();
         }
 
-        private void sum_checkedqty()
+        private void Sum_checkedqty()
         {
             this.grid.EndEdit();
             DataTable subDT = (DataTable)this.gridbs.DataSource;
-            object SumIssueQTY = subDT.Compute("Sum(qty)", string.Empty);
-            this.numIssueQty.Text = SumIssueQTY.ToString();
+            object sumIssueQTY = subDT.Compute("Sum(qty)", string.Empty);
+            this.numIssueQty.Text = sumIssueQTY.ToString();
             this.numVariance.Value = this.numBalanceQty.Value - this.numIssueQty.Value;
         }
 
-        private void delete_Click(object sender, EventArgs e)
+        private void Delete_Click(object sender, EventArgs e)
         {
-            this.sum_checkedqty();
+            this.Sum_checkedqty();
         }
     }
 }

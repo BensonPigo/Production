@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lbArtworkTypeID = new Sci.Win.UI.Label();
+            this.lbSubProcessID = new Sci.Win.UI.Label();
             this.labelDescription = new Sci.Win.UI.Label();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.editDescription = new Sci.Win.UI.EditBox();
             this.lbDefectCode = new Sci.Win.UI.Label();
             this.txtDefectCode = new Sci.Win.UI.TextBox();
-            this.txtArtworkType = new Sci.Win.UI.TextBox();
+            this.txtSubProcess = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,12 +49,12 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtArtworkType);
+            this.detailcont.Controls.Add(this.txtSubProcess);
             this.detailcont.Controls.Add(this.txtDefectCode);
             this.detailcont.Controls.Add(this.lbDefectCode);
             this.detailcont.Controls.Add(this.editDescription);
             this.detailcont.Controls.Add(this.checkJunk);
-            this.detailcont.Controls.Add(this.lbArtworkTypeID);
+            this.detailcont.Controls.Add(this.lbSubProcessID);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Size = new System.Drawing.Size(829, 357);
             // 
@@ -83,13 +83,13 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // lbArtworkTypeID
+            // lbSubProcessID
             // 
-            this.lbArtworkTypeID.Location = new System.Drawing.Point(36, 33);
-            this.lbArtworkTypeID.Name = "lbArtworkTypeID";
-            this.lbArtworkTypeID.Size = new System.Drawing.Size(89, 23);
-            this.lbArtworkTypeID.TabIndex = 4;
-            this.lbArtworkTypeID.Text = "ArtworkType";
+            this.lbSubProcessID.Location = new System.Drawing.Point(36, 33);
+            this.lbSubProcessID.Name = "lbSubProcessID";
+            this.lbSubProcessID.Size = new System.Drawing.Size(89, 23);
+            this.lbSubProcessID.TabIndex = 4;
+            this.lbSubProcessID.Text = "SubProcess";
             // 
             // labelDescription
             // 
@@ -141,16 +141,17 @@
             this.txtDefectCode.Size = new System.Drawing.Size(665, 23);
             this.txtDefectCode.TabIndex = 7;
             // 
-            // txtArtworkType
+            // txtSubProcess
             // 
-            this.txtArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ArtworkTypeID", true));
-            this.txtArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtArtworkType.Location = new System.Drawing.Point(128, 33);
-            this.txtArtworkType.Name = "txtArtworkType";
-            this.txtArtworkType.Size = new System.Drawing.Size(292, 23);
-            this.txtArtworkType.TabIndex = 9;
-            this.txtArtworkType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtArtworkType_PopUp);
+            this.txtSubProcess.BackColor = System.Drawing.Color.White;
+            this.txtSubProcess.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubProcessID", true));
+            this.txtSubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSubProcess.Location = new System.Drawing.Point(128, 33);
+            this.txtSubProcess.MaxLength = 10;
+            this.txtSubProcess.Name = "txtSubProcess";
+            this.txtSubProcess.Size = new System.Drawing.Size(292, 23);
+            this.txtSubProcess.TabIndex = 9;
+            this.txtSubProcess.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSubProcess_PopUp);
             // 
             // QA_B12
             // 
@@ -180,11 +181,11 @@
         #endregion
 
         private Win.UI.CheckBox checkJunk;
-        private Win.UI.Label lbArtworkTypeID;
+        private Win.UI.Label lbSubProcessID;
         private Win.UI.Label labelDescription;
         private Win.UI.EditBox editDescription;
         private Win.UI.TextBox txtDefectCode;
         private Win.UI.Label lbDefectCode;
-        private Win.UI.TextBox txtArtworkType;
+        private Win.UI.TextBox txtSubProcess;
     }
 }

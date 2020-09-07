@@ -15,8 +15,8 @@ namespace Sci.Production.Quality
 {
     public partial class P10 : Win.Tems.Input6
     {
-        private string loginID = Env.User.UserID;
-        private string Factory = Env.User.Keyword;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string Factory = Env.User.Keyword;
         private int ReportNoCount = 0;
         ToolStripMenuItem edit;
 
@@ -87,7 +87,7 @@ where sd.id='{0}' order by sd.No
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        private void btnSend(object sender, EventArgs e)
+        private void BtnSend(object sender, EventArgs e)
         {
             if (this.EditMode == true)
             {
@@ -124,7 +124,7 @@ where sd.id='{0}' order by sd.No
             email.ShowDialog(this);
         }
 
-        private void btnReceive(object sender, EventArgs e)
+        private void BtnReceive(object sender, EventArgs e)
         {
             if (this.EditMode == true)
             {
@@ -310,7 +310,7 @@ where sd.id='{0}' order by sd.No
                 }
 
                 this.CurrentDetailData.EndEdit();
-                this.update_detailgrid_CellValidated(e.RowIndex);
+                this.Update_detailgrid_CellValidated(e.RowIndex);
             };
             #endregion
 
@@ -323,17 +323,17 @@ where sd.id='{0}' order by sd.No
             .Text("Technician", header: "Technician", width: Widths.AnsiChars(10), settings: inspectorCell)
             .Text("TechnicianName", header: "Technician Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Remark", header: "Comments", width: Widths.AnsiChars(10), settings: CommentsCell)
-            .Button("Send", null, header: "Send", width: Widths.AnsiChars(5), onclick: this.btnSend)
+            .Button("Send", null, header: "Send", width: Widths.AnsiChars(5), onclick: this.BtnSend)
             .Text("Sender", header: "Sender", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("SendDate", header: "Send Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Button("Receive", null, header: "Receive", width: Widths.AnsiChars(5), onclick: this.btnReceive)
+            .Button("Receive", null, header: "Receive", width: Widths.AnsiChars(5), onclick: this.BtnReceive)
             .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Date("ReceivedDate", header: "Receive Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MRName", header: "MR Name", width: Widths.AnsiChars(25), iseditingreadonly: true) // addName + addDate
             .Text("LastEditName", header: "Last Edit Name", width: Widths.AnsiChars(25), iseditingreadonly: true); // editName + editDate
         }
 
-        void update_detailgrid_CellValidated(int RowIndex)
+        void Update_detailgrid_CellValidated(int RowIndex)
         {
             this.detailgrid.InvalidateRow(RowIndex);
         }

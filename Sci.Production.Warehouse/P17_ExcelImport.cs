@@ -10,32 +10,33 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
     public partial class P17_ExcelImport : Win.Subs.Base
     {
-        DataTable grid2Data = new DataTable();
-        DataTable detailData;
-        DataRow master;
+        private DataTable grid2Data = new DataTable();
+        private DataTable detailData;
+        private DataRow master;
 
-        public P17_ExcelImport(DataRow _master, DataTable DetailData)
+        public P17_ExcelImport(DataRow _master, DataTable detailData)
         {
             this.InitializeComponent();
-            this.detailData = DetailData;
+            this.detailData = detailData;
             this.master = _master;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable ExcelFile = new DataTable();
-            ExcelFile.Columns.Add("Filename", typeof(string));
-            ExcelFile.Columns.Add("Status", typeof(string));
-            ExcelFile.Columns.Add("Count", typeof(string));
-            ExcelFile.Columns.Add("FullFileName", typeof(string));
+            DataTable excelFile = new DataTable();
+            excelFile.Columns.Add("Filename", typeof(string));
+            excelFile.Columns.Add("Status", typeof(string));
+            excelFile.Columns.Add("Count", typeof(string));
+            excelFile.Columns.Add("FullFileName", typeof(string));
 
-            this.listControlBindingSource1.DataSource = ExcelFile;
+            this.listControlBindingSource1.DataSource = excelFile;
             this.gridAttachFile.DataSource = this.listControlBindingSource1;
             this.gridAttachFile.IsEditingReadOnly = true;
             this.Helper.Controls.Grid.Generator(this.gridAttachFile)
@@ -72,6 +73,7 @@ namespace Sci.Production.Warehouse
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false)
                 .Numeric("qty", header: "Return Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                .Text("Location", header: "Bulk Location", iseditingreadonly: false)
                 .EditText("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100), iseditingreadonly: true);
 
             for (int i = 0; i < this.gridPoid.ColumnCount; i++)
@@ -82,7 +84,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Add Excel
-        private void btnAddExcel_Click(object sender, EventArgs e)
+        private void BtnAddExcel_Click(object sender, EventArgs e)
         {
             this.openFileDialog1.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls";
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK) // 開窗且有選擇檔案
@@ -97,7 +99,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Remove Excel
-        private void btnRemoveExcel_Click(object sender, EventArgs e)
+        private void BtnRemoveExcel_Click(object sender, EventArgs e)
         {
             if (this.listControlBindingSource1.Position != -1)
             {
@@ -106,7 +108,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Check & Import
-        private void btnCheckImport_Click(object sender, EventArgs e)
+        private void BtnCheckImport_Click(object sender, EventArgs e)
         {
             #region -- 判斷第一個Grid是否有資料 --
             if (this.listControlBindingSource1.Count <= 0)
@@ -176,32 +178,32 @@ namespace Sci.Production.Warehouse
                 // 檢查Excel格式
                 Excel.Range range = worksheet.Range[string.Format("A{0}:AE{0}", 2)];
                 object[,] objCellArray = range.Value;
-                string[] ItemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty" };
-                int[] ItemPosition = new int[ItemCheck.Length];
-                string[] ExcelItem = new string[intColumnsCount + 1];
+                string[] itemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty" };
+                int[] itemPosition = new int[itemCheck.Length];
+                string[] excelItem = new string[intColumnsCount + 1];
 
                 for (int y = 1; y <= intColumnsCount; y++)
                 {
-                    ExcelItem[y] = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, y], "C").ToString();
+                    excelItem[y] = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, y], "C").ToString();
                 }
 
                 StringBuilder columnName = new StringBuilder();
 
                 // 確認Excel各Item是否存在，並儲存所在位置
-                for (int x = 0; x < ItemCheck.Length; x++)
+                for (int x = 0; x < itemCheck.Length; x++)
                 {
                     for (int y = 1; y <= intColumnsCount; y++)
                     {
-                        if (ExcelItem[y] == ItemCheck[x])
+                        if (excelItem[y] == itemCheck[x])
                         {
-                            ItemPosition[x] = y;
+                            itemPosition[x] = y;
                             break;
                         }
                     }
 
-                    if (MyUtility.Check.Empty(ItemPosition[x]))
+                    if (MyUtility.Check.Empty(itemPosition[x]))
                     {
-                        columnName.Append("< " + ItemCheck[x].ToString() + " >, ");
+                        columnName.Append("< " + itemCheck[x].ToString() + " >, ");
                     }
                 }
 
@@ -216,6 +218,8 @@ namespace Sci.Production.Warehouse
                 int intRowsStart = 3;
                 int intRowsRead = intRowsStart - 1;
 
+                bool isLocationExists = false;
+
                 while (intRowsRead < intRowsCount)
                 {
                     intRowsRead++;
@@ -224,16 +228,30 @@ namespace Sci.Production.Warehouse
                     Dictionary<string, bool> listNewRowErrMsg = new Dictionary<string, bool>();
 
                     DataRow newRow = this.grid2Data.NewRow();
-                    string seq1 = (objCellArray[1, ItemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]].ToString().Trim(), "C").ToString();
-                    string seq2 = (objCellArray[1, ItemPosition[2]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]].ToString().Trim(), "C").ToString();
+                    string seq1 = (objCellArray[1, itemPosition[1]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[1]].ToString().Trim(), "C").ToString();
+                    string seq2 = (objCellArray[1, itemPosition[2]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[2]].ToString().Trim(), "C").ToString();
 
-                    newRow["poid"] = (objCellArray[1, ItemPosition[0]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[0]].ToString().Trim(), "C");
+                    // Location處理
+                    string oriLocation = (objCellArray[1, itemPosition[6]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[6]].ToString().Trim(), "C").ToString();
+                    string locations = oriLocation.Split(',').ToList().Where(o => !MyUtility.Check.Empty(o)).Distinct().JoinToString(",");
+                    string notLocationExistsList = locations.Split(',').ToList().Where(o => !Prgs.CheckLocationExists("B", o)).JoinToString(",");
+
+                    if (MyUtility.Check.Empty(notLocationExistsList))
+                    {
+                        isLocationExists = true;
+                    }
+                    else
+                    {
+                        isLocationExists = false;
+                    }
+
+                    newRow["poid"] = (objCellArray[1, itemPosition[0]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[0]].ToString().Trim(), "C");
                     newRow["seq"] = seq1 + " " + seq2;
                     newRow["seq1"] = seq1;
                     newRow["seq2"] = seq2;
-                    newRow["Roll"] = (objCellArray[1, ItemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]].ToString().Trim(), "C");
-                    newRow["Dyelot"] = (objCellArray[1, ItemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]].ToString().Trim(), "C").ToString();
-                    newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "N");
+                    newRow["Roll"] = (objCellArray[1, itemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[3]].ToString().Trim(), "C");
+                    newRow["Dyelot"] = (objCellArray[1, itemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[4]].ToString().Trim(), "C").ToString();
+                    newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[5]], "N");
                     newRow["CanWriteIn"] = true;
                     #region check Columns length
                     List<string> listColumnLengthErrMsg = new List<string>();
@@ -268,6 +286,12 @@ namespace Sci.Production.Warehouse
                         listColumnLengthErrMsg.Add("<Dyelot> length can't be more than 8 Characters.");
                     }
 
+                    // Bulk Location varchar(8)
+                    if (Encoding.Default.GetBytes(newRow["Location"].ToString()).Length > 200)
+                    {
+                        listColumnLengthErrMsg.Add("<Bulk Location> length can't be more than 200 Characters.");
+                    }
+
                     // Qty  numeric (11, 2)
                     if (MyUtility.Convert.GetInt(newRow["qty"].ToString()) <= 0)
                     {
@@ -297,13 +321,14 @@ namespace Sci.Production.Warehouse
                     sqlpar.Add(new SqlParameter("@Seq2", newRow["seq2"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@Roll", newRow["roll"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@Dyelot", newRow["dyelot"].ToString().Trim()));
+                    sqlpar.Add(new SqlParameter("@Location", newRow["Location"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@MDivisionID", Env.User.Keyword));
                     DataRow dr2;
                     string sql = @"
 select fi.*
 	,[Description] = dbo.getmtldesc(fi.POID,fi.seq1, fi.seq2, 2, 0)
 	,[StockUnit] = dbo.GetStockUnitBySPSeq(fi.POID, fi.seq1, fi.seq2)
-	,[Location] = dbo.Getlocation(fi.ukey)
+	,[Location] = @Location
 from ftyinventory fi
 inner join Orders o on fi.POID = o.id
 inner join Factory f on o.FtyGroup = f.id
@@ -315,23 +340,46 @@ and fi.Roll = @Roll
 and fi.Dyelot = @Dyelot
 and f.MDivisionID = @MDivisionID ";
                     bool result = MyUtility.Check.Seek(sql, sqlpar, out dr2);
-                    if (result)
+                    if (result && isLocationExists)
                     {
                         newRow["Description"] = dr2["Description"];
                         newRow["StockUnit"] = dr2["StockUnit"];
                         newRow["Location"] = dr2["Location"];
                         newRow["ftyinventoryukey"] = dr2["Ukey"];
+                        newRow["Location"] = dr2["Location"];
                     }
                     else
                     {
-                        listNewRowErrMsg.Add(
-                            string.Format(
-                            "SP#:{0}-Seq1:{1}-Seq2:{2}-Roll:{3}-Dyelot:{4} is not found!!",
-                            newRow["poid"],
-                            newRow["seq1"],
-                            newRow["seq2"],
-                            newRow["roll"],
-                            newRow["dyelot"]), false);
+                        if (!result && isLocationExists)
+                        {
+                            listNewRowErrMsg.Add(
+                                string.Format(
+                                "SP#:{0}-Seq1:{1}-Seq2:{2}-Roll:{3}-Dyelot:{4}-Location:{5} is not found!!",
+                                newRow["poid"],
+                                newRow["seq1"],
+                                newRow["seq2"],
+                                newRow["roll"],
+                                newRow["dyelot"],
+                                newRow["Location"]), false);
+                        } 
+                        else if (isLocationExists)
+                        {
+                            listNewRowErrMsg.Add(
+                                string.Format(
+                                "SP#:{0}-Seq1:{1}-Seq2:{2}-Roll:{3}-Dyelot:{4} is not found!!",
+                                newRow["poid"],
+                                newRow["seq1"],
+                                newRow["seq2"],
+                                newRow["roll"],
+                                newRow["dyelot"]), false);
+                        }
+                        else
+                        {
+                            listNewRowErrMsg.Add(
+                                string.Format(
+                                "Location:{0} is not found!!",
+                                newRow["Location"]), false);
+                        }
                     }
 
                     #endregion
@@ -357,7 +405,8 @@ and f.MDivisionID = @MDivisionID ";
                     this.grid2Data.Rows.Add(newRow);
                 }
 
-                dr["Status"] = (intRowsCount - 1 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
+                // -2 是要扣掉標題的Row數
+                dr["Status"] = (intRowsCount - 2 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
                 dr["Count"] = count;
 
                 Marshal.ReleaseComObject(worksheet);
@@ -381,7 +430,7 @@ and f.MDivisionID = @MDivisionID ";
         }
 
         // Write in
-        private void btnWriteIn_Click(object sender, EventArgs e)
+        private void BtnWriteIn_Click(object sender, EventArgs e)
         {
             var tmpPacking = ((DataTable)this.listControlBindingSource2.DataSource).AsEnumerable();
 
@@ -433,10 +482,20 @@ and f.MDivisionID = @MDivisionID ";
                     DataRow[] checkRow = this.detailData.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["poid"].EqualString(dr2["poid"])
                                                                                 && row["seq1"].EqualString(dr2["seq1"]) && row["seq2"].EqualString(dr2["seq2"])
                                                                                 && row["roll"].EqualString(dr2["roll"]) && row["Dyelot"].EqualString(dr2["Dyelot"])).ToArray();
+
+                    // 若沒有相同則寫入，有相同則更新
                     if (checkRow.Length == 0)
                     {
                         dr2["id"] = this.master["id"];
                         this.detailData.ImportRow(dr2);
+                    }
+                    else
+                    {
+                        foreach (var item in checkRow)
+                        {
+                            item["Qty"] = dr2["Qty"];
+                            item["Location"] = dr2["Location"];
+                        }
                     }
                 }
             }

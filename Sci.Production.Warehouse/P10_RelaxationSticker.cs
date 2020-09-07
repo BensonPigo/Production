@@ -119,13 +119,13 @@ order by NewRowNo";
                 };
 
                 // 指定是哪個 RDLC
-                Type ReportResourceNamespace = typeof(P10_RelaxationSticker_Data);
-                Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-                string ReportResourceName = "P10_RelaxationSticker_Print.rdlc";
+                Type reportResourceNamespace = typeof(P10_RelaxationSticker_Data);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P10_RelaxationSticker_Print.rdlc";
 
                 IReportResource reportresource;
 
-                if ((result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)) == false)
+                if ((result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)) == false)
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;

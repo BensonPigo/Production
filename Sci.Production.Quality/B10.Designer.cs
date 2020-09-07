@@ -80,7 +80,7 @@
             this.radioPanel1.ReadOnly = true;
             this.radioPanel1.Size = new System.Drawing.Size(189, 48);
             this.radioPanel1.TabIndex = 8;
-            this.radioPanel1.ValueChanged += new System.EventHandler(this.radioPanel1_ValueChanged);
+            this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioPanel1_ValueChanged);
             // 
             // radioOption1
             // 

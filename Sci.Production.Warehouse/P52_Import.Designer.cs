@@ -88,7 +88,7 @@
             this.buttonFindNow.TabIndex = 7;
             this.buttonFindNow.Text = "Find Now";
             this.buttonFindNow.UseVisualStyleBackColor = true;
-            this.buttonFindNow.Click += new System.EventHandler(this.buttonFindNow_Click);
+            this.buttonFindNow.Click += new System.EventHandler(this.ButtonFindNow_Click);
             // 
             // textBoxSPNumEnd
             // 
@@ -126,7 +126,7 @@
             this.textBoxLocation.Name = "textBoxLocation";
             this.textBoxLocation.Size = new System.Drawing.Size(100, 23);
             this.textBoxLocation.TabIndex = 5;
-            this.textBoxLocation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBoxLocation_PopUp);
+            this.textBoxLocation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TextBoxLocation_PopUp);
             // 
             // textBoxUnitPriceEnd
             // 
@@ -267,7 +267,7 @@
             this.buttonImport.TabIndex = 2;
             this.buttonImport.Text = "Import";
             this.buttonImport.UseVisualStyleBackColor = true;
-            this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
+            this.buttonImport.Click += new System.EventHandler(this.ButtonImport_Click);
             // 
             // buttonCancel
             // 
@@ -278,7 +278,7 @@
             this.buttonCancel.TabIndex = 3;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
-            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+            this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
             // 
             // P52_Import
             // 

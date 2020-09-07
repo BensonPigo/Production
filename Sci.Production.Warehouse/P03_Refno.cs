@@ -9,8 +9,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_Refno : Win.Subs.Base
     {
-        DataRow dr;
-        DataTable selectDataTable1;
+        private DataRow dr;
+        private DataTable selectDataTable1;
         protected Win.UI.ContextMenuStrip myCMS = new Win.UI.ContextMenuStrip();
 
         public P03_Refno(DataRow data)
@@ -215,12 +215,12 @@ drop table #tmp
                  ;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Excel Processing...");
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -239,7 +239,7 @@ where id = '{0}'", Env.User.Keyword));
             this.HideWaitMessage();
         }
 
-        private void combo_SelectedIndexChanged(object sender, EventArgs e)
+        private void Combo_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.cmbFactory.SelectedValue == null || this.comboSize.SelectedValue == null || this.comboColor.SelectedValue == null)
             {
