@@ -235,14 +235,13 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 if (suppID == "N/A")
                 {
                     dr["SuppID"] = "N/A";
-                    dr["SuppName"] = string.Empty;
                     dr["IsLocalSupp"] = false;
                 }
                 else
                 {
                     string sqlGetSupplier = this.GetSupplierSql(suppID);
                     DataRow findRow;
-                    bool isExistsSupp = MyUtility.Check.Seek(sqlGetSupplier, out findRow);                    
+                    bool isExistsSupp = MyUtility.Check.Seek(sqlGetSupplier, out findRow);
                     if (!isExistsSupp)
                     {
                         e.Cancel = true;
@@ -251,7 +250,6 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                     }
 
                     dr["SuppID"] = suppID;
-                    string suppName = MyUtility.GetValue.Lookup($"select NameEN from Supp where id='{suppID}'");
 
                     dr["IsLocalSupp"] = MyUtility.Convert.GetString(findRow["Is Local Supp"]) == "Y" ? true : false;
                 }
@@ -567,7 +565,7 @@ UNION
 SELECT DISTINCT [SuppID]= a.LocalSuppID ,[Supp Name]=LocalSupp.Name,[Is Local Supp ]='Y'
 FROM ArtworkPO a
 LEFT JOIN LocalSupp ON a.LocalSuppID = LocalSupp.ID
-WHERE a.Status IN ('Closed','Approced') {whereSuppID_subcon}
+WHERE a.Status IN ('Closed','Approved') {whereSuppID_subcon}
 ";
 
             return sqlGetSupplier;
