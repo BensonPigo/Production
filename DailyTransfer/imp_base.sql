@@ -3012,7 +3012,8 @@ when matched then
 	t.InOutRule  = s.InOutRule ,
 	t.FullName  = s.FullName ,
 	t.IsLackingAndReplacement  = s.IsLackingAndReplacement,
-	t.IsBoundedProcess  = s.IsBoundedProcess 
+	t.IsBoundedProcess  = s.IsBoundedProcess ,
+	t.IsSubprocessInspection  = s.IsSubprocessInspection 
 
 when not matched by target then
 	insert(ID
@@ -3031,6 +3032,7 @@ when not matched by target then
 	,FullName
 	,IsLackingAndReplacement
 	,IsBoundedProcess
+	,IsSubprocessInspection
 	)
 	values(s.ID,
 	s.ArtworkTypeId,
@@ -3047,7 +3049,8 @@ when not matched by target then
 	s.InOutRule,
 	s.FullName,
 	s.IsLackingAndReplacement,
-	s.IsBoundedProcess)
+	s.IsBoundedProcess,
+	s.IsSubprocessInspection)
 when not matched by source then 
 	delete;	
 
