@@ -34,7 +34,7 @@ namespace Sci.Production.Sewing
                  .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("BuybackQty", header: "Buyback\r\nQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("CancelQty", header: "Cancel\r\nQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Numeric("QAQty", header: "Ori Sewing Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Numeric("OriSewingQty", header: "Ori Sewing Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("TransferInQty", header: "Transfer-In\r\nQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("TransferOutQty", header: "Transfer-Out\r\nQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("SewingQty", header: "Sewing\r\nQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -75,6 +75,70 @@ where o.POID in (select o2.POID from orders o2 where o2.id=@SP)
 and o.FtyGroup = '{Env.User.Factory}'
 order by o.ID
 
+select distinct o.ID, oq.Article, oq.SizeCode, oq.Qty, ComboType = iif(ol.Location is null, sl.Location, ol.Location)
+into #tmp
+from Orders o
+inner join Order_Qty oq on oq.ID = o.ID
+left join Order_Location ol on ol.OrderId = o.ID
+left join Style_Location sl on sl.StyleUkey = o.StyleUkey
+where o.ID = @SP
+and o.FtyGroup = '{Env.User.Factory}'
+
+select OrderID = t.ID, t.ComboType, t.Article,t.SizeCode,
+	buybackQty.buybackQty,
+	CancelQty.CancelQty,
+	TransferInQty = isnull(t_in.TransferInQty, 0),
+	TransferOutQty = isnull(t_out.TransferOutQty, 0),
+	SewingQty = isnull(s.SewingQty, 0),
+	OriSewingQty = isnull(s.SewingQty, 0) + isnull(t_out.TransferOutQty, 0) - isnull(t_in.TransferInQty, 0)
+from #tmp t
+outer apply (
+	select buybackQty = sum(obbq.Qty)
+	from Order_BuyBack_Qty obbq
+	where obbq.OrderIDFrom = t.ID
+	and obbq.Article = t.Article
+	and obbq.SizeCode = t.SizeCode
+) buybackQty
+outer apply (
+	select CancelQty = sum(oq.Qty)
+	from orders ord
+	inner join order_qty oq on ord.id = oq.ID
+	where ord.ID = t.ID
+	and ord.Junk =1
+	and oq.Article = t.Article
+	and oq.SizeCode = t.SizeCode
+) CancelQty
+outer apply (
+	select TransferInQty = SUM(TransferQty)
+	from SewingOutputTransfer_Detail sotd
+	inner join SewingOutputTransfer sot on sot.ID = sotd.ID
+	where sot.Status = 'Confirmed'
+	and sotd.ToOrderID = t.ID
+	and sotd.ToComboType = t.ComboType
+	and sotd.ToArticle = t.Article
+	and sotd.ToSizeCode = t.SizeCode
+) t_in
+outer apply (
+	select TransferOutQty = SUM(TransferQty)
+	from SewingOutputTransfer_Detail sotd
+	inner join SewingOutputTransfer sot on sot.ID = sotd.ID
+	where sot.Status = 'Confirmed'
+	and sotd.FromOrderID = t.ID
+	and sotd.FromComboType = t.ComboType
+	and sotd.Article = t.Article
+	and sotd.SizeCode = t.SizeCode
+) t_out
+outer apply(
+	select SewingQty = sum(sodd.QAQty)
+	from SewingOutput_Detail_Detail sodd
+	where sodd.OrderId = t.ID
+	and sodd.ComboType = t.ComboType
+	and sodd.Article = t.Article
+	and sodd.SizeCode = t.SizeCode
+)s
+
+drop table #tmp
+
 select
 	Transfer_Type = 'In' 
 	, FromToOrderID = sotd.FromOrderID
@@ -87,7 +151,6 @@ select
 	, ComboType = sotd.ToComboType
 	, Article = sotd.ToArticle
 	, SizeCode = sotd.ToSizeCode
-into #tmp
 from SewingOutputTransfer sot
 inner join SewingOutputTransfer_Detail sotd on sot.id=sotd.id
 outer apply (
@@ -95,8 +158,8 @@ outer apply (
 	from Order_BuyBack_Qty obbq
 	where obbq.OrderIDFrom = sotd.FromOrderID
 	and obbq.id = sotd.ToOrderID
-	and obbq.Article = sotd.Article
-	and obbq.SizeCode =sotd.SizeCode
+	and obbq.Article = sotd.ToArticle
+	and obbq.SizeCode =sotd.ToSizeCode
 ) buybackQty_in
 outer apply (
 	select CancelQty = sum(oq.Qty)
@@ -109,7 +172,6 @@ outer apply (
 ) CancelQty_in
 where 1=1
 and sot.Status ='Confirmed'
-and sot.FactoryID = '{Env.User.Factory}'
 and sotd.ToOrderID in (select distinct o3.id from Orders o2 inner join Orders o3 on o3.POID = o2.POID where o2.id=@SP)
 
 union all
@@ -131,100 +193,25 @@ inner join SewingOutputTransfer_Detail sotd on sot.id=sotd.id
 outer apply (
 	select buybackQty = sum(obbq.Qty)
 	from Order_BuyBack_Qty obbq
-	where obbq.OrderIDFrom = sotd.ToOrderID
-	and obbq.id = sotd.FromOrderID
-	and obbq.Article = sotd.Article
-	and obbq.SizeCode = sotd.SizeCode
+	where obbq.OrderIDFrom = sotd.FromOrderID
+	and obbq.id = sotd.ToOrderID
+	and obbq.Article = sotd.ToArticle
+	and obbq.SizeCode = sotd.ToSizeCode
 ) buybackQty_Out
 outer apply (
 	select CancelQty = sum(oq.Qty)
 	from orders ord
 	inner join order_qty oq on ord.id=oq.ID
 	where 1=1
-	and ord.ID =sotd.ToOrderID
+	and ord.ID =sotd.FromOrderID
 	and ord.Junk =1
 	and oq.Article = sotd.Article
 	and oq.SizeCode =sotd.SizeCode
 ) CancelQty_Out
 where 1=1
 and sot.Status ='Confirmed'
-and sot.FactoryID = '{Env.User.Factory}'
 and sotd.FromOrderID in (select distinct o3.id from Orders o2 inner join Orders o3 on o3.POID = o2.POID where o2.id=@SP)
 order by Transfer_Type, FromOrderID
-
-select d.*, QAQty = isnull(g.QAQty, 0) + d.TransferOutQty - d.TransferInQty , SewingQty = isnull(g.QAQty, 0)
-into #tmp2
-from(
-	select t.OrderID, t.ComboType, t.Article, t.SizeCode, TransferInQty = SUM(TransferInQty) , TransferOutQty = SUM(TransferOutQty)
-	from #tmp t
-	group by  t.OrderID, t.ComboType, t.Article, t.SizeCode
-)d
-left join(
-	select sodd.OrderId, sodd.ComboType, sodd.Article, sodd.SizeCode, QAQty = SUM(sodd.QAQty)
-	from orders o with(nolock)
-	inner join SewingOutput_Detail_Detail sodd with(nolock) on o.id = sodd.OrderId
-	where o.POID in (select o2.POID from orders o2 where o2.id=@SP)
-    --and o.FtyGroup = 'MAI'
-	group by sodd.OrderId, sodd.ComboType, sodd.Article, sodd.SizeCode, o.Junk
-)g on d.OrderID = g.OrderId and d.ComboType = g.ComboType and d.Article = g.Article and d.SizeCode = g.SizeCode
-
-union
-select x.OrderId, x.ComboType, x.Article, x.SizeCode, TransferInQty = isnull(TransferInQty.TransferInQty, 0), TransferOutQty = isnull(TransferOutQty.TransferOutQty, 0),
-	QAQty = x.QAQty + isnull(TransferOutQty.TransferOutQty, 0) - isnull(TransferInQty.TransferInQty, 0), x.SewingQty
-from(
-	select
-		sodd.OrderId
-		, sodd.ComboType
-		, sodd.Article
-		, sodd.SizeCode
-		, QAQty = isnull(sum(sodd.QAQty), 0)
-		, SewingQty = isnull(sum(sodd.QAQty), 0)
-	from SewingOutput_Detail_Detail sodd
-	where sodd.OrderId in (select distinct o3.id from Orders o2 inner join Orders o3 on o3.POID = o2.POID where o2.id=@SP)	group by sodd.OrderId, sodd.ComboType, sodd.Article, sodd.SizeCode)x
-outer apply (
-	select TransferInQty = sum(sotd.TransferQty)
-	from SewingOutputTransfer_Detail sotd
-	inner join SewingOutputTransfer sot on sotd.id=sot.ID
-	where sot.Status ='Confirmed'
-	and sotd.ToOrderID = x.OrderId
-	and sotd.ToComboType  = x.ComboType
-	and sotd.ToArticle  = x.Article
-	and sotd.ToSizeCode  = x.SizeCode
-) TransferInQty
-outer apply (
-	select TransferOutQty = sum(sotd.TransferQty)
-	from SewingOutputTransfer_Detail sotd
-	inner join SewingOutputTransfer sot on sotd.id=sot.ID
-	where sot.Status ='Confirmed'
-	and sotd.FromOrderID = x.OrderId
-	and sotd.FromComboType = x.ComboType
-	and sotd.Article = x.Article
-	and sotd.SizeCode  = x.SizeCode
-) TransferOutQty
-
-select t.*, buybackQty = ISNULL(buybackQty, 0), CancelQty = ISNULL(CancelQty, 0)
-from #tmp2 t
-outer apply (
-	select buybackQty = sum(obbq.Qty)
-	from Order_BuyBack_Qty obbq
-	where obbq.id = t.OrderId
-	and obbq.Article = t.Article
-	and obbq.SizeCode =t.SizeCode
-) buybackQty
-outer apply (
-	select CancelQty = sum(oq.Qty)
-	from orders o
-	inner join order_qty oq on o.id=oq.ID
-	where 1=1
-	and o.ID =t.OrderId
-	and o.Junk =1
-	and oq.Article = t.Article
-	and oq.SizeCode =t.SizeCode
-) CancelQty
-
-select* from #tmp
-
-drop table #tmp,#tmp2
 ";
             if (!SQL.Selects(string.Empty, sqlcmd, out this.ds, sqls))
             {
