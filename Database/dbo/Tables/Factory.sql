@@ -46,6 +46,7 @@
     [LastDownloadAPSDate] DATETIME NULL, 
     [FtyZone] VARCHAR(8) NULL, 
     [Foundry] BIT NULL DEFAULT ((0)), 
+    [ProduceM] VARCHAR(8) NULL DEFAULT (''), 
     CONSTRAINT [PK_Factory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -213,3 +214,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠排�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Factory', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'實際生產工廠的 MDivision',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Factory',
+    @level2type = N'COLUMN',
+    @level2name = N'ProduceM'
