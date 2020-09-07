@@ -1,13 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ProductionDB", "ProductionDB.sqlproj", "{C49ACBBA-9650-48F0-8B2D-DE8D798C7F43}"
-EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Powerbi", "..\Powerbi\Powerbi.sqlproj", "{7713883D-8812-42EA-A24B-FE367559D6CC}"
-EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ProductionTPE", "..\ProductionTPE\ProductionTPE.sqlproj", "{034330C4-89E1-433B-9C1D-A04416FC58CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +17,6 @@ Global
 		{C49ACBBA-9650-48F0-8B2D-DE8D798C7F43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C49ACBBA-9650-48F0-8B2D-DE8D798C7F43}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C49ACBBA-9650-48F0-8B2D-DE8D798C7F43}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{7713883D-8812-42EA-A24B-FE367559D6CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7713883D-8812-42EA-A24B-FE367559D6CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7713883D-8812-42EA-A24B-FE367559D6CC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{7713883D-8812-42EA-A24B-FE367559D6CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7713883D-8812-42EA-A24B-FE367559D6CC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7713883D-8812-42EA-A24B-FE367559D6CC}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{034330C4-89E1-433B-9C1D-A04416FC58CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{034330C4-89E1-433B-9C1D-A04416FC58CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{034330C4-89E1-433B-9C1D-A04416FC58CB}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{034330C4-89E1-433B-9C1D-A04416FC58CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{034330C4-89E1-433B-9C1D-A04416FC58CB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{034330C4-89E1-433B-9C1D-A04416FC58CB}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -14,6 +14,7 @@
     [InOutRule]               TINYINT      DEFAULT ((0)) NOT NULL,
     [FullName]                VARCHAR (15) NULL,
     [IsLackingAndReplacement] BIT          DEFAULT ((0)) NOT NULL,
+    [IsSubprocessInspection] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_SubProcess] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 

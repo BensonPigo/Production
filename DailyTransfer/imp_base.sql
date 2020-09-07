@@ -3012,7 +3012,8 @@ when matched then
 	t.InOutRule  = s.InOutRule ,
 	t.FullName  = s.FullName ,
 	t.IsLackingAndReplacement  = s.IsLackingAndReplacement,
-	t.IsBoundedProcess  = s.IsBoundedProcess 
+	t.IsBoundedProcess  = s.IsBoundedProcess ,
+	t.IsSubprocessInspection  = s.IsSubprocessInspection 
 
 when not matched by target then
 	insert(ID
@@ -3031,6 +3032,7 @@ when not matched by target then
 	,FullName
 	,IsLackingAndReplacement
 	,IsBoundedProcess
+	,IsSubprocessInspection
 	)
 	values(s.ID,
 	s.ArtworkTypeId,
@@ -3047,7 +3049,8 @@ when not matched by target then
 	s.InOutRule,
 	s.FullName,
 	s.IsLackingAndReplacement,
-	s.IsBoundedProcess)
+	s.IsBoundedProcess,
+	s.IsSubprocessInspection)
 when not matched by source then 
 	delete;	
 
@@ -3786,12 +3789,12 @@ update tar set
 ,tar.EditDate	   = S.EditDate
 from Trade_To_Pms.dbo.SubProDefectCode S
 inner join Production.dbo.SubProDefectCode tar 
-	on tar.ArtworkTypeID	 = S.ArtworkTypeID	
+	on tar.SubProcessID	 = S.SubProcessID	
 	and tar.DefectCode	 = S.DefectCode	
 	
 INSERT INTO SubProDefectCode
 (
-	[ArtworkTypeID]
+	[SubProcessID]
 	,[DefectCode]
 	,[Junk]
 	,[Description]
@@ -3801,7 +3804,7 @@ INSERT INTO SubProDefectCode
 	,[Editname]
 )
 SELECT
-	[ArtworkTypeID]
+	[SubProcessID]
 	,[DefectCode]
 	,[Junk]
 	,[Description]
@@ -3813,7 +3816,7 @@ from Trade_To_Pms.dbo.SubProDefectCode S
 where not exists(
 	select 1
 	from Production.dbo.SubProDefectCode tar
-	where tar.ArtworkTypeID	 = S.ArtworkTypeID	
+	where tar.SubProcessID	 = S.SubProcessID	
 	and tar.DefectCode	 = S.DefectCode	)
 	
 DELETE S
@@ -3821,7 +3824,7 @@ from Production.dbo.SubProDefectCode S
 where not exists(
 	select 1
 	from Trade_To_Pms.dbo.SubProDefectCode tar
-	where tar.ArtworkTypeID	 = S.ArtworkTypeID	
+	where tar.SubProcessID	 = S.SubProcessID	
 	and tar.DefectCode	 = S.DefectCode	)
 END
 

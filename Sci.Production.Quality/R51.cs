@@ -26,7 +26,7 @@ namespace Sci.Production.Quality
             this.comboMDivision1.SetDefalutIndex();
             this.comboFactory1.SetDataSource();
             MyUtility.Tool.SetupCombox(this.comboShift, 1, 1, ",Day,Night");
-            DualResult result = DBProxy.Current.Select(null, "select ArtworkTypeID = '' union all select distinct ArtworkTypeID from SubProDefectCode", out DataTable dt);
+            DualResult result = DBProxy.Current.Select(null, "select SubProcessID = '' union all select distinct SubProcessID from SubProDefectCode", out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -73,9 +73,9 @@ namespace Sci.Production.Quality
 
             if (!this.comboSubprocess.Text.Empty())
             {
-                sqlwhere1.Append("\r\nand SR.ArtworkTypeID= @ArtworkTypeID");
-                sqlwhere2.Append("\r\nand SR.ArtworkTypeID= @ArtworkTypeID");
-                this.Parameters.Add(new SqlParameter("@ArtworkTypeID", this.comboSubprocess.Text));
+                sqlwhere1.Append("\r\nand SR.SubProcessID= @SubProcessID");
+                sqlwhere2.Append("\r\nand SR.SubProcessID= @SubProcessID");
+                this.Parameters.Add(new SqlParameter("@SubProcessID", this.comboSubprocess.Text));
             }
 
             if (!this.comboMDivision1.Text.Empty())
@@ -105,7 +105,7 @@ namespace Sci.Production.Quality
 select
 	SR.AddDate,
 	[RFT] = iif(isnull(BD.Qty, 0) = 0, 0, round((isnull(BD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BD.Qty as float),2)),
-	SR.ArtworkTypeID,
+	SR.SubProcessID,
 	SR.BundleNo,
 	B.OrderID,
 	BD.BundleGroup,
@@ -118,7 +118,13 @@ select
 	DefectCode.DefectCode,
 	DefectQty.DefectQty,
 	Inspector = dbo.getPass1(SR.AddName),
-	SR.Remark
+	SR.Remark,
+    AddDate2 = SR.AddDate,
+    SR.RepairedDatetime,
+	RepairedTime = iif(RepairedDatetime is null,null,
+		concat(IIF(ttlMINUTE > 1440, ttlMINUTE / 1440, 0), ' ',
+			IIF(ttlMINUTE_D > 60, ttlMINUTE_D / 60, 0), ':',
+			isnull(ttlMINUTE_D_HR, 0)))
 into #tmp
 from SubProInsRecord SR 
 Left join Bundle_Detail BD on SR.BundleNo=BD.BundleNo
@@ -142,6 +148,9 @@ outer apply(
 		for XML path('')
 	),1,1,'')
 )DefectQty
+outer apply(select ttlMINUTE = DATEDIFF(MINUTE, SR.AddDate, RepairedDatetime))ttlMINUTE
+outer apply(select ttlMINUTE_D = IIF(ttlMINUTE > 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
+outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D > 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
 Where 1=1
 ");
             this.Sqlcmd.Append(sqlwhere1);
@@ -151,7 +160,7 @@ UNION
 select
 	SR.AddDate,
 	[RFT] = iif(isnull(BRD.Qty, 0) = 0, 0, round((isnull(BRD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BRD.Qty as float),2)),
-	SR.ArtworkTypeID,
+	SR.SubProcessID,
 	SR.BundleNo,
 	BR.OrderID,
 	BRD.BundleGroup,
@@ -164,7 +173,13 @@ select
 	DefectCode.DefectCode,
 	DefectQty.DefectQty,
 	Inspector = dbo.getPass1(SR.AddName),
-	SR.Remark
+	SR.Remark,
+    AddDate2 = SR.AddDate,
+    SR.RepairedDatetime,
+	RepairedTime = iif(RepairedDatetime is null,null,
+		concat(IIF(ttlMINUTE > 1440, ttlMINUTE / 1440, 0), ' ',
+			IIF(ttlMINUTE_D > 60, ttlMINUTE_D / 60, 0), ':',
+			isnull(ttlMINUTE_D_HR, 0)))
 from SubProInsRecord SR 
 Left join BundleReplacement_Detail BRD on SR.BundleNo=BRD.BundleNo
 Left join BundleReplacement BR on BRD.ID=BR.ID
@@ -187,6 +202,9 @@ outer apply(
 		for XML path('')
 	),1,1,'')
 )DefectQty
+outer apply(select ttlMINUTE = DATEDIFF(MINUTE, SR.AddDate, RepairedDatetime))ttlMINUTE
+outer apply(select ttlMINUTE_D = IIF(ttlMINUTE > 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
+outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D > 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
 Where 1=1
 ");
             this.Sqlcmd.Append(sqlwhere2);
