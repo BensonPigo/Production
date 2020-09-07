@@ -190,8 +190,22 @@ WHERE 1=1
                 return;
             }
 
-            List<string> orderids = selecteds.Select(o => MyUtility.Convert.GetString(o["ID"])).ToList();
+            bool result = PPIC_B10_BatchUpdate(selecteds);
+            if (result)
+            {
+                this.Query();
+            }
+        }
 
+        private void BtnUploadFromMercury_Click(object sender, EventArgs e)
+        {
+            B10__UploadFromMercury form = new B10__UploadFromMercury();
+            form.ShowDialog();
+        }
+
+        /// <inheritdoc/>
+        public static bool PPIC_B10_BatchUpdate(DataRow[] selecteds)
+        {
             StringBuilder builder = new StringBuilder();
             List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -214,19 +228,14 @@ WHERE ID='{item["ID"]}'
 
             if (!r)
             {
-                this.ShowErr(r);
+                MyUtility.Msg.WarningBox(r.GetException().Message);
+                return false;
             }
             else
             {
                 MyUtility.Msg.InfoBox("Success!!");
-                this.Query();
+                return true;
             }
-        }
-
-        private void BtnUploadFromMercury_Click(object sender, EventArgs e)
-        {
-            B10__UploadFromMercury form = new B10__UploadFromMercury();
-            form.ShowDialog();
         }
     }
 }

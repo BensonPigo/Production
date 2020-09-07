@@ -79,7 +79,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(680, 71);
+            this.gridicon.Location = new System.Drawing.Point(580, 71);
             // 
             // detailgridcont
             // 
@@ -112,7 +112,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(792, 474);
+            this.browse.Size = new System.Drawing.Size(792, 428);
             // 
             // tabs
             // 

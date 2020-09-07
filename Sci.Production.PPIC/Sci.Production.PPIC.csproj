@@ -769,6 +769,9 @@
     <EmbeddedResource Include="B10.resx">
       <DependentUpon>B10.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B10_ UploadFromMercury.resx">
+      <DependentUpon>B10_ UploadFromMercury.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>

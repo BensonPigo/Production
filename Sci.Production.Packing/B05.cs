@@ -17,6 +17,7 @@ namespace Sci.Production.Packing
 {
     public partial class B05 : Sci.Win.Tems.Input1
     {
+        /// <inheritdoc/>
         public B05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -71,6 +72,18 @@ WHERE Type ='PMS_ShipMarkCategory'
                 this.checkIsSSCC.ReadOnly = true;
                 this.checkIsSSCC.IsSupportEditMode = false;
             }
+
+            if (this.EditMode)
+            {
+                this.btnTemplateUpload.Enabled = false;
+            }
+            else
+            {
+                this.btnTemplateUpload.Enabled = true;
+            }
+
+            bool hasDetail = MyUtility.Check.Seek($"SELECT 1 FROM ShippingMarkType_Detail WHERE ShippingMarkTypeUkey = '{this.CurrentMaintain["Ukey"]}'");
+            this.btnTemplateUpload.ForeColor = hasDetail ? Color.Blue : Color.Black;
         }
 
         /// <inheritdoc/>
@@ -178,6 +191,7 @@ Please check to continue process.");
             this.Reload();
         }
 
+        /// <inheritdoc/>
         public void Reload()
         {
             if (this.CurrentDataRow != null)
@@ -233,14 +247,40 @@ Please check to continue process.");
 
         private void ComboCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!this.EditMode || this.comboCategory.SelectedValue.ToString() != "PIC")
+            if (this.EditMode)
             {
-                this.checkIsSSCC.ReadOnly = true;
+                this.CurrentMaintain["Category"] = this.comboCategory.SelectedValue.ToString();
+                if (this.comboCategory.SelectedValue.ToString() == "PIC")
+                {
+                    this.checkIsSSCC.ReadOnly = false;
+                    this.chkIsTemplate.ReadOnly = false;
+                }
+
+                if (this.comboCategory.SelectedValue.ToString() == "HTML")
+                {
+                    this.checkIsSSCC.ReadOnly = true;
+                    this.chkIsTemplate.ReadOnly = true;
+                    this.CurrentMaintain["FromTemplete"] = true;
+                }
             }
             else
             {
-                this.checkIsSSCC.ReadOnly = false;
+                this.checkIsSSCC.ReadOnly = true;
+                this.chkIsTemplate.ReadOnly = true;
             }
+
+            if (this.IsDetailInserting)
+            {
+                this.CurrentMaintain["ID"] = string.Empty;
+                this.CurrentMaintain["BrandID"] = string.Empty;
+                this.CurrentMaintain["IsSSCC"] = false;
+            }
+        }
+
+        /// <inheritdoc/>
+        private void BtnTemplateUpload_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -17,6 +17,7 @@ namespace Sci.Production.Basic
     /// </summary>
     public partial class B11 : Sci.Win.Tems.Input1
     {
+        private string oldStampComb;
         private string oldStickerComb;
         private string oldStickerCombMix;
 
@@ -86,6 +87,17 @@ AND Category = 'PIC'
 AND Junk = 0
 ");
             this.oldStickerCombMix = this.txtStickerCombMix.Text;
+
+            this.txtStampComb.Text = MyUtility.GetValue.Lookup($@"
+
+SELECT ID
+FROM ShippingMarkCombination
+WHERE BrandID = '{this.CurrentMaintain["BrandID"]}'
+AND Ukey = '{this.CurrentMaintain["StampCombinationUkey"]}'
+AND Category = 'HTML'
+AND Junk = 0
+");
+            this.oldStampComb = this.txtStampComb.Text;
         }
 
         private void BtnShippingMark_Click(object sender, EventArgs e)
@@ -250,6 +262,82 @@ AND ID = '{item.GetSelectedString()}'
             IList<DataRow> selectedData = item.GetSelecteds();
             this.txtStickerCombMix.Text = item.GetSelectedString();
             this.CurrentMaintain["StickerCombinationUkey_MixPack"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(cmd));
+        }
+
+        private void TxtStampComb_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string cmd = $@"
+SELECT  [Shipping Stamp Combination ID]=ID
+FROM ShippingMarkCombination
+WHERE BrandID='{this.CurrentMaintain["BrandID"]}'
+AND Category='HTML'
+AND Junk=0";
+            DataTable dt;
+            DBProxy.Current.Select(null, cmd, out dt);
+            SelectItem item = new SelectItem(cmd, "Shipping Stamp Combination ID", "10", string.Empty, "Shipping Stamp Combination ID");
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            cmd = $@"
+SELECT  Ukey
+FROM ShippingMarkCombination
+WHERE BrandID='{this.CurrentMaintain["BrandID"]}'
+AND Category='HTML'
+AND Junk=0
+AND ID = '{item.GetSelectedString()}'
+";
+            IList<DataRow> selectedData = item.GetSelecteds();
+            this.txtStampComb.Text = item.GetSelectedString();
+            this.CurrentMaintain["StampCombinationUkey"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(cmd));
+        }
+
+        private void TxtStampComb_Validating(object sender, CancelEventArgs e)
+        {
+            string newStampComb = this.txtStampComb.Text;
+
+            if (this.oldStampComb != newStampComb)
+            {
+                if (MyUtility.Check.Empty(newStampComb))
+                {
+                    this.CurrentMaintain["StampCombinationUkey"] = DBNull.Value;
+                    this.txtStampComb.Text = string.Empty;
+                    return;
+                }
+
+                string cmd = $@"
+SELECT  [Shipping Stamp Combination ID]=ID ,Ukey 
+FROM ShippingMarkCombination
+WHERE BrandID='{this.CurrentMaintain["BrandID"]}'
+AND ID = @ID
+AND Category='HTML'
+AND Junk=0";
+                List<SqlParameter> paras = new List<SqlParameter>();
+                paras.Add(new SqlParameter("@ID", newStampComb));
+
+                DataTable dt;
+                DualResult r = DBProxy.Current.Select(null, cmd, paras, out dt);
+
+                if (!r)
+                {
+                    this.ShowErr(r);
+                    return;
+                }
+
+                if (dt.Rows.Count == 0)
+                {
+                    this.CurrentMaintain["StampCombinationUkey"] = DBNull.Value;
+                    this.txtStampComb.Text = string.Empty;
+                    MyUtility.Msg.WarningBox("Data not found !!");
+                }
+                else
+                {
+                    this.CurrentMaintain["StampCombinationUkey"] = MyUtility.Convert.GetInt(dt.Rows[0]["Ukey"]);
+                    this.txtStampComb.Text = newStampComb;
+                }
+            }
         }
     }
 }
