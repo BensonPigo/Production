@@ -68,6 +68,27 @@ namespace Sci.Production.Automation
             SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
+        public void SentFinishingProcess(string listDM300)
+        {
+            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            {
+                return;
+            }
+
+            string apiThread = "SentLocalItemToFinishingProcesses";
+            string suppAPIThread = "api/SunriseFinishingProcesses/SentDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            Dictionary<string, object> dataTable = new Dictionary<string, object>();
+
+            var structureID = listDM300.Split(',').Select(s => new { DM300 = s });
+
+            string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure("FinishingProcess", structureID));
+
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
         private object CreateSunriseStructure(string tableName, object structureID)
         {
             Dictionary<string, object> resultObj = new Dictionary<string, object>

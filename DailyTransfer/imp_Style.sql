@@ -135,6 +135,7 @@ where c.LocalStyle=1
 and a.Ukey=c.Ukey
 ---------------------------------------------------------------------------------------------
 -------------------------- INSERT STYLE BY以上兩種比對條件都找不到的時候 INSERT
+delete Production.dbo.AutomationStyle
 RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style(
 ID
@@ -195,6 +196,10 @@ ID
 ,Picture1
 ,Picture2
 )
+output	inserted.ID,
+		inserted.SeasonID,
+		inserted.BrandID
+into AutomationStyle(ID, SeasonID, BrandID)
 select 
  b.ID
 ,b.Ukey
