@@ -37,16 +37,17 @@ namespace Sci.Production.Centralized
             {
                 this.btnThreadRatio.ForeColor = DefaultForeColor;
             }
+
             this.Init();
         }
 
         private void Init()
         {
-            string sqlCmd = string.Format("select IsDesignatedArea from [ProductionTPE].[dbo].[MachineType] where id = '{0}'", this.CurrentMaintain["ID"].ToString());
+            string sqlCmd = string.Format("select IsDesignatedArea from [ProductionTPE].[dbo].[MachineTypeTPE] where id = '{0}'", this.CurrentMaintain["ID"].ToString());
             DualResult result = DBProxy.Current.Select(this.ConnectionName, sqlCmd, out DataTable dt);
             if (result && dt.Rows.Count > 0)
             {
-                this.chkIsDesignatedArea.Checked = dt.Rows[0]["IsDesignatedArea"].Equals("1");
+                this.chkIsDesignatedArea.Checked = MyUtility.Convert.GetBool(dt.Rows[0]["IsDesignatedArea"]);
             }
         }
 
@@ -56,13 +57,13 @@ namespace Sci.Production.Centralized
             DualResult result = new DualResult(false);
             string sqlCmd = string.Format(
                 @"
-if exists (select 1 from [ProductionTPE].[dbo].[MachineType] where id = '{0}')
+if exists (select 1 from [ProductionTPE].[dbo].[MachineTypeTPE] where id = '{0}')
 begin
-	update [ProductionTPE].[dbo].[MachineType] set IsDesignatedArea = '{1}' where id = '{0}'
+	update [ProductionTPE].[dbo].[MachineTypeTPE] set IsDesignatedArea = '{1}' where id = '{0}'
 end
 else
 begin
-	insert into [ProductionTPE].[dbo].[MachineType]([ID], [IsDesignatedArea])
+	insert into [ProductionTPE].[dbo].[MachineTypeTPE]([ID], [IsDesignatedArea])
 	values('{0}', '{1}')
 end",
                 this.CurrentMaintain["ID"].ToString(),

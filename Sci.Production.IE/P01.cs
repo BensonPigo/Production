@@ -129,11 +129,22 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.Template
       ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
 	  ,o.MasterPlusGroup
+      ,[IsShow] = isnull(show.val, 1)
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
+outer apply (
+	select [val] = atf.IsShowinIEP01
+	from Operation o2 WITH (NOLOCK)
+	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
+	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
+	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{1}'
+	where o.ID = o2.ID
+)show
 where td.ID = '{0}'
-order by td.Seq", masterID);
+order by td.Seq",
+                masterID,
+                Env.User.Factory);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -252,6 +263,19 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             }
 
             this.numTotalSMV.Value = Convert.ToInt32(MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty)));
+            this.HideRows();
+        }
+
+        private void HideRows()
+        {
+            for (int i = 0; i < this.detailgrid.Rows.Count; i++)
+            {
+                DataRow row = this.detailgrid.GetDataRow(i);
+                if (!MyUtility.Convert.GetBool(row["IsShow"]))
+                {
+                    this.detailgrid.Rows[i].Visible = false;
+                }
+            }
         }
 
         /// <summary>
@@ -673,9 +697,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                 .Text("Template", header: "Template", width: Widths.AnsiChars(8), settings: template)
                 .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
-                .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true)
-                .Numeric("SeamLength", header: "Seam length", integer_places: 7, decimal_places: 2, iseditingreadonly: true)
-                .Numeric("ttlSeamLength", header: "ttlSeamLength", integer_places: 10, decimal_places: 2, iseditingreadonly: true);
+                .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true);
         }
 
         private void ChangeToEmptyData(DataRow dr)

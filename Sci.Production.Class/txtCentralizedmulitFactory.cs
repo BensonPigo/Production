@@ -27,6 +27,27 @@ namespace Sci.Production.Class
         }
 
         /// <summary>
+        /// IsProduceFty
+        /// </summary>
+        [Category("Custom Properties")]
+        [Description("是否ProduceFty")]
+        public bool IsProduceFty { get; set; } = false;
+
+        /// <summary>
+        /// IsJunk
+        /// </summary>
+        [Category("Custom Properties")]
+        [Description("是否Junk")]
+        public bool IsJunk { get; set; } = false;
+
+        /// <summary>
+        /// Is Add Condition Junk
+        /// </summary>
+        [Category("Custom Properties")]
+        [Description("是否增加Junk條件")]
+        public bool IsAddConditionJunk { get; set; } = false;
+
+        /// <summary>
         /// MDivision ID
         /// </summary>
         [Category("Custom Properties")]
@@ -62,6 +83,23 @@ namespace Sci.Production.Class
             {
                 List<string> mList = this.MObjectName.Text.Split(',').ToList();
                 whereM = " where MDivisionID in ('" + string.Join("','", mList) + "')";
+            }
+
+            if (this.IsProduceFty)
+            {
+                whereM = whereM.Empty() ? "where IsProduceFty = 1 " : whereM + " and IsProduceFty = 1 ";
+            }
+
+            if (this.IsAddConditionJunk)
+            {
+                if (this.IsJunk)
+                {
+                    whereM += " and Junk = 1 ";
+                }
+                else
+                {
+                    whereM += " and Junk = 0 ";
+                }
             }
 
             // 將所有工廠的資料合併起來
