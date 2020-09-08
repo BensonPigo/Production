@@ -986,7 +986,7 @@
     <None Include="XLT\Sewing_R07.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Sewing_R08_Factory_Yearly_CMP_Report.xltx">
+    <None Include="XLT\Sewing_R08_Factory_CMP_Report.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Sewing_R10.xltx">

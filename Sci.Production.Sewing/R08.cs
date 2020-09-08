@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
-using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Sewing
@@ -47,15 +47,14 @@ namespace Sci.Production.Sewing
         {
             this.InitializeComponent();
             this.label10.Text = "** The value in this report are all excluded subcon-out,\r\n unless the column with \"included subcon-out\".";
-            DataTable factory, mDivision;
             DBProxy.Current.Select(
                 null,
                 string.Format(@"select '' as FtyGroup 
 union all
 select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
-                out factory);
+                out DataTable factory);
 
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out DataTable mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Sewing Line,CPU/Sewer/HR");
@@ -64,25 +63,13 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             this.comboM.Text = Env.User.Keyword;
         }
 
-        // Date
-        private void DateDateStart_Validated(object sender, EventArgs e)
-        {
-            if (MyUtility.Check.Empty(this.dateDateStart.Value))
-            {
-                this.dateDateEnd.Value = null;
-            }
-            else
-            {
-                this.dateDateStart.Value = Convert.ToDateTime(this.dateDateStart.Value).GetFirstDayOfMonth();
-                this.dateDateEnd.Value = Convert.ToDateTime(this.dateDateStart.Value).AddMonths(11).GetLastDayOfMonth();
-            }
-        }
-
         private string SelectSewingLine(string line)
         {
             string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}", MyUtility.Check.Empty(this.comboFactory.Text) ? string.Empty : string.Format(" where FactoryID = '{0}'", this.comboFactory.Text));
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "3", line, false, ",");
-            item.Width = 300;
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "3", line, false, ",")
+            {
+                Width = 300,
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -109,7 +96,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(this.dateDateStart.Value))
+            if (MyUtility.Check.Empty(this.dateDateStart.Value) || MyUtility.Check.Empty(this.dateDateEnd.Value))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
@@ -728,7 +715,7 @@ where f.Junk = 0",
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Env.Cfg.XltPathDir + "\\Sewing_R08_Factory_Yearly_CMP_Report.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Sewing_R08_Factory_CMP_Report.xltx";
             Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -739,7 +726,7 @@ where f.Junk = 0",
             Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 1] = string.Format("{0}", this.factoryName);
-            worksheet.Cells[3, 1] = $"All Factory Yearly CMP Report, Date:{Convert.ToDateTime(this.dateDateStart.Value).ToString("yyyy/MM")}-{Convert.ToDateTime(this.dateDateEnd.Value).ToString("yyyy/MM")}";
+            worksheet.Cells[3, 1] = $"All Factory CMP Report, Date:{Convert.ToDateTime(this.dateDateStart.Value).ToString("yyyy/MM/dd")}-{Convert.ToDateTime(this.dateDateEnd.Value).ToString("yyyy/MM/dd")}";
 
             worksheet.Cells[4, 3] = "Total CPU Included Subcon-In";
 
@@ -846,7 +833,7 @@ where f.Junk = 0",
             worksheet.Cells[insertRow, 10] = (this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
 
             // CPU Factor
-            insertRow = insertRow + 2;
+            insertRow += 2;
             worksheet.Cells[insertRow, 3] = "Total CPU Included Subcon-In";
             insertRow++;
             if (this.cpuFactor.Rows.Count > 2)
@@ -878,7 +865,7 @@ where f.Junk = 0",
             this.DeleteExcelRow(2, insertRow, excel);
 
             // Subprocess
-            insertRow = insertRow + 2;
+            insertRow += 2;
             int insertRec = 0;
             foreach (DataRow dr in this.subprocessData.Rows)
             {
@@ -901,7 +888,7 @@ where f.Junk = 0",
                 }
             }
 
-            insertRow = insertRow + 3;
+            insertRow += 3;
 
             #region  中國工廠自抓/其它場Pams [Total Work Day]
             if (Env.User.Keyword.EqualString("CM1") ||
@@ -910,8 +897,7 @@ where f.Junk = 0",
             {
                 int ttlWorkDay = 0;
                 string strWorkDay = @"select Distinct OutputDate from #tmp where LastShift <> 'O'";
-                DataTable dtWorkDay;
-                DualResult failResult = MyUtility.Tool.ProcessWithDatatable(this.SewOutPutData, null, strWorkDay, out dtWorkDay);
+                DualResult failResult = MyUtility.Tool.ProcessWithDatatable(this.SewOutPutData, null, strWorkDay, out DataTable dtWorkDay);
                 if (failResult == false)
                 {
                     MyUtility.Msg.WarningBox(failResult.ToString());
@@ -938,7 +924,7 @@ where f.Junk = 0",
 
             // Subcon
             int revenueStartRow = 0;
-            insertRow = insertRow + 2;
+            insertRow += 2;
             int insertSubconIn = 0, insertSubconOut = 0;
             objArray = new object[1, 3];
             if (this.subconData.Rows.Count > 0)
@@ -1017,11 +1003,11 @@ where f.Junk = 0",
                             if (insertSubconIn == 0)
                             {
                                 this.DeleteExcelRow(2, insertRow, excel);
-                                insertRow = insertRow + 3;
+                                insertRow += 3;
                             }
                             else
                             {
-                                insertRow = insertRow + 5;
+                                insertRow += 5;
                             }
                         }
 
@@ -1099,7 +1085,7 @@ where f.Junk = 0",
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName("Sewing_R08_Factory_Yearly_CMP_Report");
+            string strExcelName = Class.MicrosoftFile.GetName("Sewing_R08_Factory_CMP_Report");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

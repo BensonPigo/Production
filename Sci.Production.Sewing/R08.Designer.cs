@@ -99,14 +99,12 @@
             this.dateDateStart.Name = "dateDateStart";
             this.dateDateStart.Size = new System.Drawing.Size(98, 23);
             this.dateDateStart.TabIndex = 0;
-            this.dateDateStart.Validated += new System.EventHandler(this.DateDateStart_Validated);
             // 
             // dateDateEnd
             // 
             this.dateDateEnd.IsSupportEditMode = false;
             this.dateDateEnd.Location = new System.Drawing.Point(222, 12);
             this.dateDateEnd.Name = "dateDateEnd";
-            this.dateDateEnd.ReadOnly = true;
             this.dateDateEnd.Size = new System.Drawing.Size(98, 23);
             this.dateDateEnd.TabIndex = 1;
             // 
@@ -227,7 +225,7 @@
             // 
             // R08
             // 
-            this.ClientSize = new System.Drawing.Size(447, 260);
+            this.ClientSize = new System.Drawing.Size(475, 270);
             this.Controls.Add(this.checkSampleFty);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.labelM);
@@ -248,7 +246,11 @@
             this.DefaultControlForEdit = "dateDateStart";
             this.IsSupportToPrint = false;
             this.Name = "R08";
-            this.Text = "R08. Yearly Production output Report";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
+            this.Text = "R08. Production output Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelDate, 0);
             this.Controls.SetChildIndex(this.labelSewingLine, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
