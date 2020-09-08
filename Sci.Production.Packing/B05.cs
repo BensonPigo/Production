@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -260,7 +261,7 @@ Please check to continue process.");
                 {
                     this.checkIsSSCC.ReadOnly = true;
                     this.chkIsTemplate.ReadOnly = true;
-                    this.CurrentMaintain["FromTemplete"] = true;
+                    this.CurrentMaintain["FromTemplate"] = true;
                 }
             }
             else
@@ -280,7 +281,12 @@ Please check to continue process.");
         /// <inheritdoc/>
         private void BtnTemplateUpload_Click(object sender, EventArgs e)
         {
+            // 檢查是否擁有Packing B05的Canedit 權限
+            bool canCanEdit = Prgs.GetAuthority(Env.User.UserID, "B05. Shipping Mark Type", "CanEdit");
 
+            B05_TemplateUpload form = new B05_TemplateUpload(canCanEdit, MyUtility.Convert.GetString(this.CurrentMaintain["Ukey"]), null, null);
+            form.ShowDialog();
+            this.Reload();
         }
     }
 }

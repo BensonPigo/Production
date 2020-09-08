@@ -211,6 +211,12 @@
     <Compile Include="B05.Designer.cs">
       <DependentUpon>B05.cs</DependentUpon>
     </Compile>
+    <Compile Include="B05_TemplateUpload.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B05_TemplateUpload.Designer.cs">
+      <DependentUpon>B05_TemplateUpload.cs</DependentUpon>
+    </Compile>
     <Compile Include="B06.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -574,6 +580,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B05.resx">
       <DependentUpon>B05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B05_TemplateUpload.resx">
+      <DependentUpon>B05_TemplateUpload.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B06.resx">
       <DependentUpon>B06.cs</DependentUpon>

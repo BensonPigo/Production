@@ -100,6 +100,15 @@ FROM ShippingMarkCombination WITH(NOLOCK)
 WHERE Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
 
 "));
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "HTML")
+            {
+                this.chkIsMixPack.Enabled = false;
+            }
+            else
+            {
+                this.chkIsMixPack.Enabled = true;
+            }
         }
 
         /// <inheritdoc/>
@@ -177,13 +186,13 @@ AND Junk = 1
             };
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("ShippingMarkTypeID", header: "Sticker Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("ShippingMarkTypeID", header: "Mark Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("Seq", header: "Seq", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: true)
                 .CheckBox("IsSSCC", header: "SSCC", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
                 .ComboBox("Side", header: "Side", width: Widths.AnsiChars(10), settings: sideComboCell)
                 .Numeric("FromRight", header: "From Right (mm)", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: false)
                 .Numeric("FromBottom", header: "From Bottom  (mm)", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: false)
-                .ComboBox("StickerSizeID", header: "Sticker Size", width: Widths.AnsiChars(20), settings: stickerSizeCell)
+                .ComboBox("StickerSizeID", header: "Mark Size", width: Widths.AnsiChars(20), settings: stickerSizeCell)
                 .CheckBox("Is2Side", header: "Is 2 Side", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .CheckBox("IsHorizontal", header: "Is Horizontal", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             ;
@@ -496,6 +505,18 @@ WHERE a.Ukey = '{ this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
                 }
 
                 this.CurrentMaintain["BrandID"] = newBrandID;
+            }
+        }
+
+        private void ComboCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.EditMode)
+            {
+                // 刪除表身重新匯入
+                foreach (DataRow del in this.DetailDatas)
+                {
+                    del.Delete();
+                }
             }
         }
     }

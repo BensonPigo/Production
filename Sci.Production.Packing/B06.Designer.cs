@@ -79,7 +79,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(580, 71);
+            this.gridicon.Location = new System.Drawing.Point(380, 71);
             // 
             // detailgridcont
             // 
@@ -154,6 +154,7 @@
             this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(140, 24);
             this.comboCategory.TabIndex = 2;
+            this.comboCategory.SelectedIndexChanged += new System.EventHandler(this.ComboCategory_SelectedIndexChanged);
             // 
             // txtID
             // 

@@ -158,6 +158,7 @@
             this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(125, 24);
             this.comboCategory.TabIndex = 2;
+            this.comboCategory.SelectedIndexChanged += new System.EventHandler(this.ComboCategory_SelectedIndexChanged);
             // 
             // label2
             // 

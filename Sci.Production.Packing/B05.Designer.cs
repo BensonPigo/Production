@@ -161,7 +161,7 @@
             // chkIsTemplate
             // 
             this.chkIsTemplate.AutoSize = true;
-            this.chkIsTemplate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromTemplete", true));
+            this.chkIsTemplate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromTemplate", true));
             this.chkIsTemplate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.chkIsTemplate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkIsTemplate.IsSupportEditMode = false;
