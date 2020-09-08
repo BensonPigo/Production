@@ -1535,12 +1535,12 @@ select  ot.ID
         , isnull(ot.Qty,0) Qty 
         , ot.TMS
         , isnull(ot.Price,0) Price
-		, PoSupp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', (select Abb 
+		, Supp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', (select Abb 
                                                                               from LocalSupp WITH (NOLOCK) 
                                                                               where ID = LocalSuppID)
                                                                            , ot.LocalSuppID)
                                                   , '')
-        , Supp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', ap.Abb, ot.LocalSuppID) , '')
+        , PoSupp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', ap.Abb, ot.LocalSuppID) , '')
         , AUnitRno = a.rno 
         , PUnitRno = a1.rno
         , NRno = a2.rno
@@ -1884,19 +1884,27 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
 
                             if (poSubConCol != 9999)
                             {
-                                objArray[intRowsStart, poSubConCol - 1] = string.Empty;
                                 if (!MyUtility.Check.Empty(sdr["PoSupp"]))
                                 {
                                     objArray[intRowsStart, poSubConCol - 1] = sdr["PoSupp"];
+                                }
+
+                                if (MyUtility.Check.Empty(objArray[intRowsStart, poSubConCol - 1]))
+                                {
+                                    objArray[intRowsStart, poSubConCol - 1] = string.Empty;
                                 }
                             }
 
                             if (subConCol != 9999)
                             {
-                                objArray[intRowsStart, subConCol - 1] = string.Empty;
                                 if (!MyUtility.Check.Empty(sdr["Supp"]))
                                 {
                                     objArray[intRowsStart, subConCol - 1] = sdr["Supp"];
+                                }
+
+                                if (MyUtility.Check.Empty(objArray[intRowsStart, subConCol - 1]))
+                                {
+                                    objArray[intRowsStart, subConCol - 1] = string.Empty;
                                 }
                             }
                         }
