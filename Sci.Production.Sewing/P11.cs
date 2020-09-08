@@ -9,6 +9,8 @@ using System.Linq;
 using System.Transactions;
 using System.Data.SqlClient;
 using Sci.Win.Tools;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Sewing
 {
@@ -840,7 +842,11 @@ HAVING SUM(sdd.QAQty) >= '{this.DetailDatas[i]["TransferQty"]}'
                 this.ShowErr(e);
                 return;
             }
-
+            #region ISP20201344 資料交換 - Sunrise
+            string listUkey = this.DetailDatas.Select(s => s["Ukey"].ToString()).JoinToString(",");
+            Task.Run(() => new Sunrise_FinishingProcesses().SentSewingOutputTransfer(listUkey))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
             MyUtility.Msg.InfoBox("Complete!");
         }
 
