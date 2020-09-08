@@ -205,6 +205,8 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 string suppID = e.FormattedValue.ToString();
                 if (MyUtility.Check.Empty(suppID))
                 {
+                    dr["SuppID"] = string.Empty;
+                    dr["IsLocalSupp"] = false;
                     return;
                 }
 
@@ -215,12 +217,14 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
 
                 if (suppID == "N/A")
                 {
-                    dr["SuppID"] = suppID;
+                    dr["SuppID"] = "N/A";
+                    dr["IsLocalSupp"] = false;
                 }
                 else
                 {
                     string sqlGetSupplier = this.GetSupplierSql(suppID);
-                    bool isExistsSupp = MyUtility.Check.Seek(sqlGetSupplier);
+                    DataRow findRow;
+                    bool isExistsSupp = MyUtility.Check.Seek(sqlGetSupplier, out findRow);
                     if (!isExistsSupp)
                     {
                         e.Cancel = true;
@@ -229,6 +233,8 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                     }
 
                     dr["SuppID"] = suppID;
+
+                    dr["IsLocalSupp"] = MyUtility.Convert.GetString(findRow["Is Local Supp"]) == "Y" ? true : false;
                 }
 
                 dr.EndEdit();
@@ -242,8 +248,8 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 }
 
                 string sqlGetSupplier = this.GetSupplierSql(string.Empty, true);
-                SelectItem selectItem = new SelectItem(sqlGetSupplier, string.Empty, string.Empty);
-
+                SelectItem selectItem = new SelectItem(sqlGetSupplier,"10,50,5", string.Empty, string.Empty);
+                selectItem.Width = 900;
                 DialogResult dialogResult = selectItem.ShowDialog();
                 if (dialogResult != DialogResult.OK)
                 {
@@ -251,6 +257,11 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 }
 
                 this.CurrentDetailData["SuppID"] = selectItem.GetSelectedString();
+
+                var selectRows = selectItem.GetSelecteds();
+                bool isLocal = false;
+                isLocal = MyUtility.Convert.GetString(selectRows[0]["Is Local Supp"]) == "Y" ? true : false;
+                this.CurrentDetailData["IsLocalSupp"] = isLocal;
             };
 
             textRefno.CellValidating = (s, e) =>
@@ -264,6 +275,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 string refno = e.FormattedValue.ToString();
                 if (MyUtility.Check.Empty(refno))
                 {
+                    dr["Refno"] = string.Empty;
                     return;
                 }
 
@@ -327,6 +339,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 if (e.Button == MouseButtons.Left)
                 {
                     this.CurrentDetailData["SuppID"] = @"N/A";
+                    this.CurrentDetailData["IsLocalSupp"] = false;
                     this.CurrentDetailData.EndEdit();
                 }
             };
@@ -432,9 +445,24 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
             string whereRefno = IsRightClick ? string.Empty : $" AND p.Refno='{refno}' ";
             string sqlGetRefno = $@"
 SELECT DISTINCT p.Refno
+,[FabricType]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
+					 WHEN p.FabricType = 'A' THEN 'Accessory' ELSE '' 
+				END 
+,f.Description
 FROM PO_Supp_Detail p
 LEFT JOIN Orders o ON o.POID=p.ID
+LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
 WHERE o.ID='{this.CurrentDetailData["OrderID"]}' {whereRefno}
+UNION
+SELECT DISTINCT p.Refno 
+,[FabricType]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
+					 WHEN p.FabricType = 'A' THEN 'Accessory' ELSE '' 
+				END 
+,f.Description
+FROM PO_Supp_Detail p
+LEFT JOIN Order_Qty_Garment o ON o.OrderIDFrom=p.ID
+LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
+WHERE o.ID = '{this.CurrentDetailData["OrderID"]}' {whereRefno}
 
 ";
 
@@ -444,11 +472,18 @@ WHERE o.ID='{this.CurrentDetailData["OrderID"]}' {whereRefno}
         private string GetSupplierSql(string suppID, bool IsRightClick = false)
         {
             string whereSuppID = IsRightClick ? string.Empty : $"  AND p.SuppID='{suppID}' ";
+            string whereSuppID_subcon = IsRightClick ? string.Empty : $"  AND a.LocalSuppID='{suppID}' ";
             string sqlGetSupplier = $@"
-SELECT DISTINCT p.SuppID
+SELECT DISTINCT p.SuppID ,[Supp Name]=Supp.NameEN,[Is Local Supp]='N'
 FROM PO_Supp p
 LEFT JOIN Orders o ON o.POID=p.ID
+LEFT JOIN Supp ON p.SuppID = Supp.ID
 WHERE o.ID='{this.CurrentDetailData["OrderID"]}' {whereSuppID}
+UNION 
+SELECT DISTINCT [SuppID]= a.LocalSuppID ,[Supp Name]=LocalSupp.Name,[Is Local Supp ]='Y'
+FROM ArtworkPO a
+LEFT JOIN LocalSupp ON a.LocalSuppID = LocalSupp.ID
+WHERE a.Status IN ('Closed','Approved') {whereSuppID_subcon}
 ";
 
             return sqlGetSupplier;
