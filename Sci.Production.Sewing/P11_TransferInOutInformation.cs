@@ -85,8 +85,8 @@ where o.ID in (select distinct o3.id from Orders o2 inner join Orders o3 on o3.P
 and o.FtyGroup = '{Env.User.Factory}'
 
 select OrderID = t.ID, t.ComboType, t.Article,t.SizeCode,
-	buybackQty.buybackQty,
-	CancelQty.CancelQty,
+	buybackQty = isnull(buybackQty.buybackQty, 0),
+	CancelQty = isnull(CancelQty.CancelQty, 0),
 	TransferInQty = isnull(t_in.TransferInQty, 0),
 	TransferOutQty = isnull(t_out.TransferOutQty, 0),
 	SewingQty = isnull(s.SewingQty, 0),
