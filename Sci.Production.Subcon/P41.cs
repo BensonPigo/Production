@@ -1,17 +1,19 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using System.Data.SqlClient;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P41 : Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
         public P41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -23,10 +25,7 @@ namespace Sci.Production.Subcon
             MyUtility.Tool.SetupCombox(this.comboComplete, 1, 1, "All,Y,N");
             this.comboComplete.SelectedIndex = 0;
 
-            DataTable dt;
-            DBProxy.Current.Select(null, @"
-SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFIDProcess=1
-", out dt);
+            DBProxy.Current.Select(null, "SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFIDProcess=1", out DataTable dt);
 
             this.comboSubPorcess.DataSource = dt;
             this.comboSubPorcess.ValueMember = "Value";
@@ -40,12 +39,13 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             this.txtFactory.Text = Env.User.Factory;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            DataGridViewGeneratorTextColumnSettings BundleReplacement = new DataGridViewGeneratorTextColumnSettings();
-            BundleReplacement.CellMouseDoubleClick += (s, e) =>
+            DataGridViewGeneratorTextColumnSettings bundleReplacement = new DataGridViewGeneratorTextColumnSettings();
+            bundleReplacement.CellMouseDoubleClick += (s, e) =>
             {
                 DataRow drSelected = this.grid.GetDataRow(e.RowIndex);
                 if (drSelected == null)
@@ -66,8 +66,7 @@ from dbo.SciMES_BundleInspection bi with(nolock)
 left join dbo.SciMES_BundleDefectReason bdr with(nolock) on bdr.ID = bi.ReasonID and bdr.SubProcessID = bi.SubProcessID
 where bi.BundleNo='{drSelected["BundleNo"]}'
 ";
-                DataTable dt;
-                DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out dt);
+                DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
                 if (!dualResult)
                 {
                     this.ShowErr(dualResult);
@@ -105,7 +104,7 @@ where bi.BundleNo='{drSelected["BundleNo"]}'
             .Text("ReceiveQtyLoading", header: "Receive Qty Loading", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("XXXRFIDIn", header: "RFID In", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("XXXRFIDOut", header: "RFID Out", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("BundleReplacement", header: "Bundle Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: BundleReplacement)
+            .Text("BundleReplacement", header: "Bundle Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: bundleReplacement)
             .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
@@ -113,7 +112,7 @@ where bi.BundleNo='{drSelected["BundleNo"]}'
             #endregion
         }
 
-        private bool validate()
+        private bool BeforeQuery()
         {
             if (this.txtEstCutDate.Value == null && string.IsNullOrEmpty(this.txtSPNo.Text))
             {
@@ -125,11 +124,9 @@ where bi.BundleNo='{drSelected["BundleNo"]}'
 
         private void Query()
         {
-            DataTable dt;
             DualResult result;
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlWhere = new StringBuilder();
-            List<SqlParameter> parameterList = new List<SqlParameter>();
 
             #region WHERE條件
 
@@ -140,7 +137,7 @@ where bi.BundleNo='{drSelected["BundleNo"]}'
 
             if (!string.IsNullOrEmpty(this.txtSPNo.Text))
             {
-                sqlWhere.Append($"AND b.Orderid='{this.txtSPNo.Text}'" + Environment.NewLine);
+                sqlWhere.Append($"AND exists(select 1 from Bundle_Detail_Order with(nolock) where bundleNo = bd.bundleNo and Orderid='{this.txtSPNo.Text}')" + Environment.NewLine);
             }
 
             if (!string.IsNullOrEmpty(this.txtFactory.Text))
@@ -188,43 +185,41 @@ where bi.BundleNo='{drSelected["BundleNo"]}'
 
             // 「Extend All Parts」勾選則true
             // string IsExtendAllParts = this.chkExtendAllParts.Checked ? "true" : "false";
-            string SubProcess = this.comboSubPorcess.Text;
+            string subProcess = this.comboSubPorcess.Text;
             #endregion
 
+            string cutpartName = this.chkExtendAllParts.Checked ?
+                    "CASE WHEN bd.Patterncode = 'ALLPARTS' THEN bdap.PatternDesc ELSE bd.PatternDesc END --basic from 「Extend All Parts」 is checked or not" :
+                    "bd.PatternDesc";
             sqlCmd.Append($@"
 SELECT
-bd.BundleNo
-,b.Orderid
-,b.POID
-,o.FactoryID
-,o.Category
-,o.ProgramID
-,o.StyleID
-,o.SeasonID
-,b.Colorid
-,b.Article
-,bd.SizeCode
-,w.CutCellID
-,b.Sewinglineid
-,b.PatternPanel
-
-,[Cutpart]= bd.Patterncode
-,[CutpartName]= {(this.chkExtendAllParts.Checked ?
-                    "CASE WHEN bd.Patterncode = 'ALLPARTS' THEN bdap.PatternDesc ELSE bd.PatternDesc END --basic from 「Extend All Parts」 is checked or not"
-                    :
-                    "bd.PatternDesc")}
-
-,[SubProcessID]= SubProcess.SubProcessID
-,[DefaultSubProcess]=DefaultSubProcess.SubProcessID
-,bd.BundleGroup
-,bd.Qty
-,[ReceiveQtySorting]= IIF(ReceiveQtySorting.OutGoing != '' OR ReceiveQtySorting.OutGoing IS NOT NULL , 'Complete' ,'Not Complete')
-,[ReceiveQtyLoading]= IIF(ReceiveQtyLoading.InComing != '' OR ReceiveQtyLoading.InComing IS NOT NULL , 'Complete' ,'Not Complete')
-,[XXXRFIDIn]=bio.InComing
-,[XXXRFIDOut]=bio.OutGoing
-, ps.NoBundleCardAfterSubprocess_String
-, nbs.PostSewingSubProcess_String
-,b.CutRef
+    bd.BundleNo
+    ,[OrderID] = dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW))
+    ,b.POID
+    ,o.FactoryID
+    ,o.Category
+    ,o.ProgramID
+    ,o.StyleID
+    ,o.SeasonID
+    ,b.Colorid
+    ,b.Article
+    ,bd.SizeCode
+    ,w.CutCellID
+    ,b.Sewinglineid
+    ,b.PatternPanel
+    ,[Cutpart]= bd.Patterncode
+    ,[CutpartName]= {cutpartName}
+    ,[SubProcessID]= SubProcess.SubProcessID
+    ,[DefaultSubProcess]=DefaultSubProcess.SubProcessID
+    ,bd.BundleGroup
+    ,bd.Qty
+    ,[ReceiveQtySorting]= IIF(ReceiveQtySorting.OutGoing != '' OR ReceiveQtySorting.OutGoing IS NOT NULL , 'Complete' ,'Not Complete')
+    ,[ReceiveQtyLoading]= IIF(ReceiveQtyLoading.InComing != '' OR ReceiveQtyLoading.InComing IS NOT NULL , 'Complete' ,'Not Complete')
+    ,[XXXRFIDIn]=bio.InComing
+    ,[XXXRFIDOut]=bio.OutGoing
+    , ps.NoBundleCardAfterSubprocess_String
+    , nbs.PostSewingSubProcess_String
+    ,b.CutRef
 into #tmpMain
 FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
@@ -234,14 +229,14 @@ inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 LEFT JOIN Workorder w ON W.CutRef=b.CutRef AND w.ID=b.POID
 LEFT JOIN BundleInOut ReceiveQtySorting ON ReceiveQtySorting.BundleNo=bd.BundleNo AND ReceiveQtySorting.RFIDProcessLocationID ='' AND ReceiveQtySorting.SubProcessId='Sorting'
 LEFT JOIN BundleInOut ReceiveQtyLoading ON ReceiveQtyLoading.BundleNo=bd.BundleNo AND ReceiveQtyLoading.RFIDProcessLocationID ='' AND ReceiveQtyLoading.SubProcessId='Loading'
-LEFT JOIN BundleInOut bio ON bio.BundleNo=bd.BundleNo AND bio.RFIDProcessLocationID ='' AND bio.SubProcessId='{SubProcess}'
+LEFT JOIN BundleInOut bio ON bio.BundleNo=bd.BundleNo AND bio.RFIDProcessLocationID ='' AND bio.SubProcessId='{subProcess}'
 OUTER APPLY(
 	--用來判斷，該Bundle ID、Bundle No，是否包含User選定的SubProcess
 	SELECT [Value]=IIF( COUNT(bda.SubProcessID) > 0 , 1 ,0 )
 	FROM Bundle_Detail_Art bda
 	WHERE  bda.BundleNo = bd.BundleNo 
 	AND bda.ID = b.ID   
-	AND bda.SubProcessID ='{SubProcess}'
+	AND bda.SubProcessID ='{subProcess}'
 )HasSubProcess
 
 OUTER APPLY(
@@ -316,34 +311,34 @@ where exists(select 1 from #tmpMain where BundleNo = bi.BundleNo) and isnull(bi.
 
 
 select 
-t.BundleNo
-,t.Orderid
-,t.POID
-,t.FactoryID
-,t.Category
-,t.ProgramID
-,t.StyleID
-,t.SeasonID
-,t.Colorid
-,t.Article
-,t.SizeCode
-,t.CutCellID
-,t.Sewinglineid
-,t.PatternPanel
-,t.Cutpart
-,t.CutpartName
-,t.SubProcessID
-,t.DefaultSubProcess
-,t.BundleGroup
-,t.Qty
-,t.ReceiveQtySorting
-,t.ReceiveQtyLoading
-,t.XXXRFIDIn
-,t.XXXRFIDOut
-,BundleReplacement = BR.RQ
-, t.NoBundleCardAfterSubprocess_String
-, t.PostSewingSubProcess_String
-, CutRef
+    t.BundleNo
+    ,t.Orderid
+    ,t.POID
+    ,t.FactoryID
+    ,t.Category
+    ,t.ProgramID
+    ,t.StyleID
+    ,t.SeasonID
+    ,t.Colorid
+    ,t.Article
+    ,t.SizeCode
+    ,t.CutCellID
+    ,t.Sewinglineid
+    ,t.PatternPanel
+    ,t.Cutpart
+    ,t.CutpartName
+    ,t.SubProcessID
+    ,t.DefaultSubProcess
+    ,t.BundleGroup
+    ,t.Qty
+    ,t.ReceiveQtySorting
+    ,t.ReceiveQtyLoading
+    ,t.XXXRFIDIn
+    ,t.XXXRFIDOut
+    ,BundleReplacement = BR.RQ
+    , t.NoBundleCardAfterSubprocess_String
+    , t.PostSewingSubProcess_String
+    , CutRef
 from #tmpMain t
 outer apply(
     select RQ=stuff((
@@ -359,7 +354,7 @@ drop table #tmpMain,#tmpBundleInspection
 
 ");
 
-            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out dt);
+            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out DataTable dt);
 
             if (!result)
             {
@@ -375,9 +370,9 @@ drop table #tmpMain,#tmpBundleInspection
             this.listControlBindingSource1.DataSource = dt;
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
-            if (!this.validate())
+            if (!this.BeforeQuery())
             {
                 MyUtility.Msg.WarningBox("Est.Cut Date and SP# cannot all empty.");
                 return;
@@ -388,33 +383,6 @@ drop table #tmpMain,#tmpBundleInspection
 
             this.grid.Columns["XXXRFIDIn"].HeaderText = this.comboSubPorcess.Text + " RFID In";
             this.grid.Columns["XXXRFIDOut"].HeaderText = this.comboSubPorcess.Text + " RFID Out";
-
-            // Helper.Controls.Grid.Generator(this.grid)
-            // .Text("BundleNo", header: "Bundle No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("Orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("POID", header: "Master SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("Category", header: "Category", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("ProgramID", header: "Program", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("SeasonID", header: "Season", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("Colorid", header: "Color", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("Article", header: "Article", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("SizeCode", header: "Size", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("CutCellID", header: "Cut Cell", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("Sewinglineid", header: "Inline Line#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("PatternPanel", header: "Comb", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("Cutpart", header: "Cutpart", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("CutpartName", header: "Cutpart Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
-            // .Text("SubProcessID", header: "Artwork", width: Widths.AnsiChars(30), iseditingreadonly: true)
-            // .Text("BundleGroup", header: "Group#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Numeric("Qty", header: "Allocated Qty", width: Widths.AnsiChars(6))
-            // .Text("ReceiveQtySorting", header: "Receive Qty Sorting", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("ReceiveQtyLoading", header: "Receive Qty Sorting", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("XXXRFIDIn", header: this.comboSubPorcess.Text+" RFID In", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // .Text("XXXRFIDOut", header: this.comboSubPorcess.Text + " RFID Out", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            ////.Text("", header: "Fab. Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            // ;
             this.HideWaitMessage();
         }
     }

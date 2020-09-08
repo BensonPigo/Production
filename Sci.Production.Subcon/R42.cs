@@ -9,59 +9,49 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R42 : Win.Tems.PrintForm
     {
-        StringBuilder sqlCmd;
-        string SubProcess;
-        string SP;
-        string M;
-        string Factory;
-        string CutRef1;
-        string CutRef2;
-        string processLocation;
-        DateTime? dateBundle1;
-        DateTime? dateBundle2;
-        DateTime? dateBundleTransDate1;
-        DateTime? dateBundleTransDate2;
+        private StringBuilder sqlCmd;
+        private string SubProcess;
+        private string SP;
+        private string M;
+        private string Factory;
+        private string CutRef1;
+        private string CutRef2;
+        private string processLocation;
+        private DateTime? dateBundle1;
+        private DateTime? dateBundle2;
+        private DateTime? dateBundleTransDate1;
+        private DateTime? dateBundleTransDate2;
 
+        /// <inheritdoc/>
         public R42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboload();
+            this.Comboload();
             this.comboFactory.SetDataSource();
             this.comboRFIDProcessLocation.SetDataSource();
             this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
         // string date = "";
-        private void comboload()
+        private void Comboload()
         {
-            // DataTable dtSubprocessID;
-            DualResult Result;
-
-            // if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess WITH (NOLOCK) where Junk = 0 ",
-            //    out dtSubprocessID))
-            // {
-            //    this.comboSubProcess.DataSource = dtSubprocessID;
-            //    this.comboSubProcess.DisplayMember = "ID";
-            // }
-            // else { ShowErr(Result); }
-            DataTable dtfactory;
-            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtfactory))
+            DualResult result;
+            if (result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out DataTable dtfactory))
             {
                 this.comboM.DataSource = dtfactory;
                 this.comboM.DisplayMember = "ID";
             }
             else
             {
-                this.ShowErr(Result);
+                this.ShowErr(result);
             }
         }
 
-        #region ToExcel3步驟
-
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.dateBundleCDate.Value1) && MyUtility.Check.Empty(this.dateBundleCDate.Value2) &&
@@ -85,11 +75,12 @@ namespace Sci.Production.Subcon
             return base.ValidateInput();
         }
 
-        // 非同步讀取資料
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.sqlCmd = new StringBuilder();
 
+            // 效能: 看起來多餘的寫法, SP#分兩個欄位撈, 存入#tmp再組起來, 直接組起來要花4倍時間
             // 因為BundleTransfer 的table太肥，如果有用到這個條件則修改寫法
             if (this.dateBundleTransDate1 == null && this.dateBundleTransDate2 == null)
             {
@@ -97,94 +88,86 @@ namespace Sci.Production.Subcon
 
                 this.sqlCmd.Append(@"
 Select
-            [Bundle#] = bt.BundleNo,
-            [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
-			[FabricKind] = FabricKind.val,
-            [Cut Ref#] = b.CutRef,
-            [SP#] = b.Orderid,
-            [Master SP#] = b.POID,
-            [M] = b.MDivisionid,
-            [Factory] = o.FtyGroup,
-            [Style] = o.StyleID,
-            [Season] = o.SeasonID,
-            [Brand] = o.BrandID,
-            [Comb] = b.PatternPanel,
-            [Cutno] = b.Cutno,
-            [Article] = b.Article,
-            [Color] = b.ColorId,
-            [Line] = b.SewinglineId,
-			bt.SewingLineID,
-            [Cell] = b.SewingCell,
-            [Pattern] = bd.PatternCode,
-            [PtnDesc] = bd.PatternDesc,
-            [Group] = bd.BundleGroup,
-            [Size] = bd.SizeCode,
-            --[Artwork] = stuff(sub.sub,1,1,''),
-            [Qty] = bd.Qty,
-            [RFID Reader] = bt.RFIDReaderId,
-            [Sub-process] = bt.SubprocessId,
-            [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
-            [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
-            [Type] = case when bt.Type = '1' then 'IN'
-			              when bt.Type = '2' then 'Out'
-			              when bt.Type = '3' then 'In/Out' end,
-            [TagId] = bt.TagId,
-            [TransferDate] = CAST(TransferDate AS DATE),
-            [TransferTime] = TransferDate,
-            bt.LocationID
-            ,b.item
-			,bt.PanelNo
-			,CutCellID
-            --CAST ( bt.TransferDate AS DATE) AS TransferDate
-            from BundleTransfer  bt WITH (NOLOCK)
-            left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
-            left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
-            left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
-            inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
-            outer apply(
-                select sub = 1
-                from Bundle_Detail_Art bda WITH (NOLOCK) 
-                where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.PostSewingSubProcess = 1
-                and bda.SubprocessId = bt.SubprocessId
-            ) as ps
-            outer apply(
-                select sub = 1
-                from Bundle_Detail_Art bda WITH (NOLOCK) 
-                where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.NoBundleCardAfterSubprocess = 1
-                and bda.SubprocessId = bt.SubprocessId
-            ) as nbs 
-            /*outer apply(
-	             select sub= (
-		             Select distinct concat('+', bda.SubprocessId)
-		             from Bundle_Detail_Art bda WITH (NOLOCK) 
-		             where bda.Bundleno = bd.Bundleno
-		             for xml path('')
-	             )
-            ) as sub*/
-			outer apply(
-				SELECT top 1 [val] = DD.id + '-' + DD.NAME 
-				FROM dropdownlist DD 
-				OUTER apply(
-						SELECT OB.kind, 
-							OCC.id, 
-							OCC.article, 
-							OCC.colorid, 
-							OCC.fabricpanelcode, 
-							OCC.patternpanel 
-						FROM order_colorcombo OCC WITH (NOLOCK)
-						INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
-					) LIST 
-					WHERE LIST.id = b.poid 
-					AND LIST.patternpanel = b.patternpanel 
-					AND DD.[type] = 'FabricKind' 
-					AND DD.id = LIST.kind 
-			)FabricKind
-            where 1=1
+    [Bundle#] = bt.BundleNo,
+    [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
+	[FabricKind] = FabricKind.val,
+    [Cut Ref#] = b.CutRef,
+    [SP#] = b.Orderid,
+	sps = (select concat('/',IIF(LEN(OrderID) <= 10, OrderID , substring(OrderID,11,6))) from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID offset 1 rows for xml path('')),
+    [Master SP#] = b.POID,
+    [M] = b.MDivisionid,
+    [Factory] = o.FtyGroup,
+    [Style] = o.StyleID,
+    [Season] = o.SeasonID,
+    [Brand] = o.BrandID,
+    [Comb] = b.PatternPanel,
+    [Cutno] = b.Cutno,
+    [Article] = b.Article,
+    [Color] = b.ColorId,
+    [Line] = b.SewinglineId,
+	bt.SewingLineID,
+    [Cell] = b.SewingCell,
+    [Pattern] = bd.PatternCode,
+    [PtnDesc] = bd.PatternDesc,
+    [Group] = bd.BundleGroup,
+    [Size] = bd.SizeCode,
+    [Qty] = bd.Qty,
+    [RFID Reader] = bt.RFIDReaderId,
+    [Sub-process] = bt.SubprocessId,
+    [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
+    [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
+    [Type] = case when bt.Type = '1' then 'IN'
+			        when bt.Type = '2' then 'Out'
+			        when bt.Type = '3' then 'In/Out' end,
+    [TagId] = bt.TagId,
+    [TransferDate] = CAST(TransferDate AS DATE),
+    [TransferTime] = TransferDate,
+    bt.LocationID
+    ,b.item
+	,bt.PanelNo
+	,CutCellID
+into #tmp
+from BundleTransfer  bt WITH (NOLOCK)
+left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
+left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
+left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
+inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
+outer apply(
+    select sub = 1
+    from Bundle_Detail_Art bda WITH (NOLOCK) 
+    where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.PostSewingSubProcess = 1
+    and bda.SubprocessId = bt.SubprocessId
+) as ps
+outer apply(
+    select sub = 1
+    from Bundle_Detail_Art bda WITH (NOLOCK) 
+    where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.NoBundleCardAfterSubprocess = 1
+    and bda.SubprocessId = bt.SubprocessId
+) as nbs 
+outer apply(
+	SELECT top 1 [val] = DD.id + '-' + DD.NAME 
+	FROM dropdownlist DD 
+	OUTER apply(
+			SELECT OB.kind, 
+				OCC.id, 
+				OCC.article, 
+				OCC.colorid, 
+				OCC.fabricpanelcode, 
+				OCC.patternpanel 
+			FROM order_colorcombo OCC WITH (NOLOCK)
+			INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
+		) LIST 
+		WHERE LIST.id = b.poid 
+		AND LIST.patternpanel = b.patternpanel 
+		AND DD.[type] = 'FabricKind' 
+		AND DD.id = LIST.kind 
+)FabricKind
+where 1=1
             ");
                 #endregion
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(this.SubProcess))
-                {// ();
+                {
                     this.sqlCmd.Append($@" and (bt.SubprocessId in ('{this.SubProcess.Replace(",", "','")}') or '{this.SubProcess}'='')");
                 }
 
@@ -195,7 +178,7 @@ Select
 
                 if (!MyUtility.Check.Empty(this.SP))
                 {
-                    this.sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", this.SP));
+                    this.sqlCmd.Append(string.Format(@" and exists(select 1 from Bundle_Detail_Order with(nolock) where bundleNo = bd.bundleNo and Orderid= '{0}')", this.SP));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundle1))
@@ -242,43 +225,45 @@ Select
 --Replace1
 
 Select 
-            [Bundle#] = bt.BundleNo,
-            [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
-			[FabricKind] = FabricKind.val,
-            [Cut Ref#] = b.CutRef,
-            [SP#] = b.Orderid,
-            [Master SP#] = b.POID,
-            [M] = b.MDivisionid,
-            [Factory] = o.FtyGroup,
-            [Style] = o.StyleID,
-            [Season] = o.SeasonID,
-            [Brand] = o.BrandID,
-            [Comb] = b.PatternPanel,
-            [Cutno] = b.Cutno,
-            [Article] = b.Article,
-            [Color] = b.ColorId,
-            [Line] = b.SewinglineId,
-            bt.SewingLineID,
-            [Cell] = b.SewingCell,
-            [Pattern] = bd.PatternCode,
-            [PtnDesc] = bd.PatternDesc,
-            [Group] = bd.BundleGroup,
-            [Size] = bd.SizeCode,
-            [Qty] = b.Qty,
-            [RFID Reader] = bt.RFIDReaderId,
-            [Sub-process] = bt.SubprocessId,
-            [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
-            [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
-            [Type] = case when bt.Type = '1' then 'IN'
-			              when bt.Type = '2' then 'Out'
-			              when bt.Type = '3' then 'In/Out' end,
-            [TagId] = bt.TagId,
-            [TransferDate] = CAST(bt.TransferDate AS DATE),
-            [TransferTime] = bt.TransferDate,
-            bt.LocationID
-            ,b.item
-			,bt.PanelNo
-			,bt.CutCellID
+    [Bundle#] = bt.BundleNo,
+    [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
+    [FabricKind] = FabricKind.val,
+    [Cut Ref#] = b.CutRef,
+    [SP#] = b.Orderid,
+	sps = (select concat('/',IIF(LEN(OrderID) <= 10, OrderID , substring(OrderID,11,6))) from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID offset 1 rows for xml path('')),
+    [Master SP#] = b.POID,
+    [M] = b.MDivisionid,
+    [Factory] = o.FtyGroup,
+    [Style] = o.StyleID,
+    [Season] = o.SeasonID,
+    [Brand] = o.BrandID,
+    [Comb] = b.PatternPanel,
+    [Cutno] = b.Cutno,
+    [Article] = b.Article,
+    [Color] = b.ColorId,
+    [Line] = b.SewinglineId,
+    bt.SewingLineID,
+    [Cell] = b.SewingCell,
+    [Pattern] = bd.PatternCode,
+    [PtnDesc] = bd.PatternDesc,
+    [Group] = bd.BundleGroup,
+    [Size] = bd.SizeCode,
+    [Qty] = b.Qty,
+    [RFID Reader] = bt.RFIDReaderId,
+    [Sub-process] = bt.SubprocessId,
+    [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
+    [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
+    [Type] = case when bt.Type = '1' then 'IN'
+			        when bt.Type = '2' then 'Out'
+			        when bt.Type = '3' then 'In/Out' end,
+    [TagId] = bt.TagId,
+    [TransferDate] = CAST(bt.TransferDate AS DATE),
+    [TransferTime] = bt.TransferDate,
+    bt.LocationID
+    ,b.item
+    ,bt.PanelNo
+    ,bt.CutCellID
+into #tmp
 from BundleTransfer  bt WITH (NOLOCK, Index(BundleTransferDate))
 inner join Bundle_Detail bd on bd.BundleNo = bt.BundleNo
 left join Bundle b on b.id = bd.id
@@ -317,7 +302,7 @@ outer apply(
 where 1=1
 ");
                 if (!MyUtility.Check.Empty(this.SubProcess))
-                {// ();
+                {
                     this.sqlCmd.Append($@" and (bt.SubprocessId in ('{this.SubProcess.Replace(",", "','")}') or '{this.SubProcess}'='')" + Environment.NewLine);
                 }
 
@@ -344,7 +329,7 @@ where 1=1
 
                 if (!MyUtility.Check.Empty(this.SP))
                 {
-                    this.sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", this.SP));
+                    this.sqlCmd.Append(string.Format(@" and exists(select 1 from Bundle_Detail_Order with(nolock) where bundleNo = bd.bundleNo and Orderid= '{0}')", this.SP));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateBundle1))
@@ -368,11 +353,21 @@ where 1=1
                 }
             }
 
+            this.sqlCmd.Append(@"
+select [Bundle#],[RFIDProcessLocationID],[FabricKind],[Cut Ref#],
+	[SP#] = concat([SP#],sps),
+	[Master SP#],[M],[Factory],[Style],[Season],[Brand],[Comb],[Cutno],[Article],[Color],[Line],SewingLineID,
+	[Cell],[Pattern],[PtnDesc],[Group],[Size],[Qty],[RFID Reader],[Sub-process],[Post Sewing SubProcess],
+	[No Bundle Card After Subprocess],[Type],[TagId],[TransferDate],[TransferTime],LocationID,item,PanelNo,CutCellID
+from #tmp
+
+drop table #tmp
+");
             DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
             return Ict.Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R42_Bundle Transaction detail (RFID).xltx"); // 預先開啟excel app
@@ -388,10 +383,11 @@ where 1=1
             #region 分段抓取資料填入excel
             this.ShowLoadingText($"Data Loading , please wait …");
             DataTable tmpDatas = new DataTable();
-            SqlConnection conn = null;
-            DBProxy.Current.OpenConnection(this.ConnectionName, out conn);
-            var cmd = new SqlCommand(this.sqlCmd.ToString(), conn);
-            cmd.CommandTimeout = 3000;
+            DBProxy.Current.OpenConnection(this.ConnectionName, out SqlConnection conn);
+            var cmd = new SqlCommand(this.sqlCmd.ToString(), conn)
+            {
+                CommandTimeout = 3000,
+            };
             var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             int loadCounts = 0;
             int loadCounts2 = 0;
@@ -463,14 +459,11 @@ where 1=1
             Marshal.ReleaseComObject(objApp);          // 釋放objApp
             Marshal.ReleaseComObject(workbook);
 
-            // printData.Clear();
-            // printData.Dispose();
             strExcelName.OpenFile();
             #endregion
             return true;
         }
 
-        #endregion
         private void DataTableClearAll(DataTable target)
         {
             target.Rows.Clear();

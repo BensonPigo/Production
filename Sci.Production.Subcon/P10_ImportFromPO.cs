@@ -1,14 +1,10 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci;
-using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
@@ -19,7 +15,6 @@ namespace Sci.Production.Subcon
     {
         private DataRow dr_artworkAp;
         private DataTable dt_artworkApDetail;
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         private DataTable dtArtwork;
 
@@ -57,8 +52,8 @@ namespace Sci.Production.Subcon
                 string strSQLCmd = string.Empty;
 
                 strSQLCmd += $@"
-SELECT  bd.QTY 
-	,bdl.Orderid 
+SELECT  BDO.QTY 
+	,BDO.Orderid 
     ,bdl.Article
     ,bd.SizeCode
 	,s.ArtworkTypeId
@@ -69,24 +64,25 @@ SELECT  bd.QTY
 INTO #Bundle
 FROM Bundle_Detail bd WITH (NOLOCK) 
 INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
+INNER JOIN Bundle_Detail_Order BDO on BDO.BundleNo = BD.BundleNo
 INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
 INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
 WHERE s.ArtworkTypeId='{this.dr_artworkAp["artworktypeid"]}' AND bio.RFIDProcessLocationID=''
 ";
                 if (!MyUtility.Check.Empty(sp_b))
                 {
-                    strSQLCmd += $@" AND bdl.Orderid >= @sp1 ";
+                    strSQLCmd += $@" AND BDO.Orderid >= @sp1 ";
                 }
 
                 if (!MyUtility.Check.Empty(sp_e))
                 {
-                    strSQLCmd += $@" AND bdl.Orderid <= @sp2";
+                    strSQLCmd += $@" AND BDO.Orderid <= @sp2";
                 }
 
                 if (!MyUtility.Check.Empty(poid_b) && !MyUtility.Check.Empty(poid_b))
                 {
                     strSQLCmd += $@"
-AND bdl.Orderid IN (
+AND BDO.Orderid IN (
     SELECT DISTINCT OrderID
     FROM ArtworkPO_Detail
     WHERE ID BETWEEN @artworkpoid1 AND  @artworkpoid2
@@ -96,7 +92,7 @@ AND bdl.Orderid IN (
                 else if (!MyUtility.Check.Empty(poid_b))
                 {
                     strSQLCmd += $@"
-AND bdl.Orderid IN (
+AND BDO.Orderid IN (
     SELECT DISTINCT OrderID
     FROM ArtworkPO_Detail
     WHERE ID >= @artworkpoid1 
@@ -106,7 +102,7 @@ AND bdl.Orderid IN (
                 else if (!MyUtility.Check.Empty(poid_e))
                 {
                     strSQLCmd += $@"
-AND bdl.Orderid IN (
+AND BDO.Orderid IN (
     SELECT DISTINCT OrderID
     FROM ArtworkPO_Detail
     WHERE ID <= @artworkpoid2
@@ -118,7 +114,7 @@ AND bdl.Orderid IN (
 
 Select 1 as Selected
         ,b.id as artworkpoid
-        , b.orderid
+        ,b.orderid
         ,b.artworkid
         ,b.stitch
         ,b.patterncode
@@ -217,26 +213,36 @@ DROP TABLE #Bundle
 ";
 
                 #region 準備sql參數資料
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                sp1.ParameterName = "@sp1";
-                sp1.Value = sp_b;
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@sp1",
+                    Value = sp_b,
+                };
 
-                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                sp2.ParameterName = "@sp2";
-                sp2.Value = sp_e;
+                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@sp2",
+                    Value = sp_e,
+                };
 
-                System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                sp3.ParameterName = "@artworkpoid1";
-                sp3.Value = poid_b;
+                System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@artworkpoid1",
+                    Value = poid_b,
+                };
 
-                System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-                sp4.ParameterName = "@artworkpoid2";
-                sp4.Value = poid_e;
-                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                cmds.Add(sp1);
-                cmds.Add(sp2);
-                cmds.Add(sp3);
-                cmds.Add(sp4);
+                System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@artworkpoid2",
+                    Value = poid_e,
+                };
+                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                {
+                    sp1,
+                    sp2,
+                    sp3,
+                    sp4,
+                };
                 #endregion
 
                 Ict.DualResult result;
@@ -292,12 +298,6 @@ DROP TABLE #Bundle
                         return;
                     }
 
-                    // if ((decimal)e.FormattedValue > (decimal)ddr["PoQty"])
-                    // {
-                    //    e.Cancel = true;
-                    //    MyUtility.Msg.WarningBox("<Qty> can not over PO qty!!");
-                    //    return;
-                    // }
                     ddr["Amount"] = (decimal)e.FormattedValue * (decimal)ddr["Price"];
                     ddr["ApQty"] = e.FormattedValue;
                 }
@@ -306,28 +306,28 @@ DROP TABLE #Bundle
             this.gridImportFromPO.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridImportFromPO.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImportFromPO)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("artworkpoid", header: "Artwork PO", iseditingreadonly: true)
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("Article", header: "Article", iseditingreadonly: true)
-                .Text("artworkid", header: "Artwork", iseditingreadonly: true) // 3
+                .Text("artworkid", header: "Artwork", iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", iseditingreadonly: true)
-                .Numeric("Stitch", header: "Stitch", iseditable: true) // 4
+                .Numeric("Stitch", header: "Stitch", iseditable: true)
                 .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)
-                .Numeric("UnitPrice", header: "Unit Price", iseditingreadonly: true, decimal_places: 4, integer_places: 4) // 7
-                .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true, integer_places: 2) // 8
-                .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5) // 9
+                .Numeric("UnitPrice", header: "Unit Price", iseditingreadonly: true, decimal_places: 4, integer_places: 4)
+                .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true, integer_places: 2)
+                .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5)
                 .Numeric("poqty", header: "PO Qty", iseditingreadonly: true)
                 .Numeric("FarmOut", header: "Farm Out", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("FarmIn", header: "Farm In", iseditingreadonly: true)
                 .Numeric("AccumulatedQty", header: "Accu. Paid Qty", iseditingreadonly: true)
                 .Numeric("Balance", header: "Balance", iseditingreadonly: true)
-                .Numeric("ApQty", header: "Qty", settings: ns) // 14
+                .Numeric("ApQty", header: "Qty", settings: ns)
                 .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14)
                 .Numeric("LocalSuppCtn", header: "LocalSuppCtn", width: Widths.AnsiChars(0));
 
-            this.gridImportFromPO.Columns["apqty"].DefaultCellStyle.BackColor = Color.Pink;  // Qty
+            this.gridImportFromPO.Columns["apqty"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridImportFromPO.Columns["LocalSuppCtn"].Visible = false;
         }
 

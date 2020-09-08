@@ -80,7 +80,7 @@
             this.btnClose.TabIndex = 1;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnToExcel
             // 
@@ -90,14 +90,14 @@
             this.btnToExcel.TabIndex = 0;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // bgWorkerUpdateInfo
             // 
             this.bgWorkerUpdateInfo.WorkerReportsProgress = true;
             this.bgWorkerUpdateInfo.WorkerSupportsCancellation = true;
-            this.bgWorkerUpdateInfo.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgWorkerUpdateInfo_DoWork);
-            this.bgWorkerUpdateInfo.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgWorkerUpdateInfo_RunWorkerCompleted);
+            this.bgWorkerUpdateInfo.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BgWorkerUpdateInfo_DoWork);
+            this.bgWorkerUpdateInfo.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BgWorkerUpdateInfo_RunWorkerCompleted);
             // 
             // btnQuery
             // 
@@ -107,7 +107,7 @@
             this.btnQuery.TabIndex = 41;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // txtSize
             // 

@@ -90,7 +90,7 @@
             this.btnImportfromscanner.TabIndex = 6;
             this.btnImportfromscanner.Text = "Import from scanner";
             this.btnImportfromscanner.UseVisualStyleBackColor = true;
-            this.btnImportfromscanner.Click += new System.EventHandler(this.btnImportfromscanner_Click);
+            this.btnImportfromscanner.Click += new System.EventHandler(this.BtnImportfromscanner_Click);
             // 
             // comboSubprocess
             // 
@@ -144,7 +144,7 @@
             this.btnClose.TabIndex = 9;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnCreate
             // 
@@ -156,7 +156,7 @@
             this.btnCreate.TabIndex = 8;
             this.btnCreate.Text = "Create";
             this.btnCreate.UseVisualStyleBackColor = true;
-            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
+            this.btnCreate.Click += new System.EventHandler(this.BtnCreate_Click);
             // 
             // label1
             // 

@@ -89,7 +89,7 @@
             this.btnQuery.TabIndex = 10;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // chkExtendAllParts
             // 
@@ -164,6 +164,7 @@
             this.txtFactory.IsProduceFty = false;
             this.txtFactory.IssupportJunk = false;
             this.txtFactory.Location = new System.Drawing.Point(114, 75);
+            this.txtFactory.MDivision = null;
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(66, 23);
             this.txtFactory.TabIndex = 3;

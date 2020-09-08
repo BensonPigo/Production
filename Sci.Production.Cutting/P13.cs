@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
@@ -94,7 +95,7 @@ select Sel = 0
 	   , Factory =  O.FtyGroup 
 	   , Style = o.StyleID 
 	   , CutRefNo = b.CutRef
-	   , SPNo = b.Orderid
+	    ,[SPNo] = dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where id = b.id order by OrderID for XML RAW))
 	   , Size = b.Sizecode
 	   , Color = b.Colorid
 	   , b.Article
@@ -112,13 +113,12 @@ select Sel = 0
 	   , b.PrintDate
        , b.SewingCell
 from Bundle b
-inner join Orders O with(nolock) on  b.Orderid = o.id  and o.MDivisionID  = b.MDivisionID 
+inner join Orders O with(nolock) on b.Orderid = o.id  and o.MDivisionID  = b.MDivisionID 
 where 1=1
 {where}
 ";
 
-            DataTable resultDt;
-            DualResult result = DBProxy.Current.Select(null, strQuerySQL, out resultDt);
+            DualResult result = DBProxy.Current.Select(null, strQuerySQL, out DataTable resultDt);
             if (result == false)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
@@ -136,16 +136,15 @@ where 1=1
             if (openExcelFile != null)
             {
                 PrintDialog printDialog = new PrintDialog();
-
                 if (printDialog.ShowDialog() == DialogResult.OK)
                 {
                     string printer = printDialog.PrinterSettings.PrinterName;
                     foreach (string workBook in openExcelFile)
                     {
-                        Microsoft.Office.Interop.Excel.Workbook objBook = MyUtility.Excel.ConnectExcel(workBook).ActiveWorkbook;
-                        objBook.PrintOutEx(ActivePrinter: printer);
-                        objBook.Close();
-                        Marshal.FinalReleaseComObject(objBook);
+                        Excel.Workbook workbook = MyUtility.Excel.ConnectExcel(workBook).ActiveWorkbook;
+                        workbook.PrintOutEx(ActivePrinter: printer);
+                        workbook.Close();
+                        Marshal.FinalReleaseComObject(workbook);
 
                         // 刪除暫存檔案
                         System.IO.File.Delete(workBook);
@@ -191,8 +190,6 @@ where 1=1
 
             string strExcelDataSQL = string.Empty;
             string strExtend = string.Empty;
-            DataTable resultDt;
-            DualResult result;
 
             if (this.checkBoxExtendAllParts.Checked == true)
             {
@@ -207,7 +204,7 @@ select distinct [Group]
      , [Parts],[Qty]
 from (
   select b.id [Bundle_ID]
-       , b.Orderid [SP]
+	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
        , b.POID [POID]
        , c.StyleID [Style]
        , b.Sewinglineid [Line]
@@ -245,7 +242,7 @@ from (
 
   union all
   select b.id [Bundle_ID]
-         , b.Orderid [SP]
+	    , SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
          , b.POID [POID]
          , c.StyleID [Style]
          , b.Sewinglineid [Line]
@@ -320,7 +317,7 @@ select distinct [Group]
 	   , [Qty]
 from (
 	select b.id [Bundle_ID]
-			,b.Orderid [SP]
+	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 			,b.POID [POID]
 			,c.StyleID [Style]
 			,b.Sewinglineid [Line]
@@ -358,7 +355,7 @@ from (
 
 	union all
 	select b.id [Bundle_ID]
-		   , b.Orderid [SP]
+	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 		   , b.POID [POID]
 		   , c.StyleID [Style]
 		   , b.Sewinglineid [Line]
@@ -423,7 +420,7 @@ order by x.[Bundle]";
             int printSheetNum = 0;
             List<string> openWorkBook = new List<string>();
             string printExcelName = Class.MicrosoftFile.GetName("Cutting_P13");
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
 
             foreach (DataRow printDr in printDt.Rows)
             {
@@ -435,33 +432,35 @@ order by x.[Bundle]";
                  */
                 if (printSheetNum % 255 == 0 && printSheetNum != 0)
                 {
-                    objApp.Sheets.Move(objApp.Worksheets[1]);
-                    objApp.ActiveWorkbook.SaveAs(printExcelName);
-                    objApp.Quit();
+                    excelApp.Sheets.Move(excelApp.Worksheets[1]);
+                    excelApp.ActiveWorkbook.SaveAs(printExcelName);
+                    excelApp.Quit();
                     openWorkBook.Add(printExcelName);
 
-                    objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx");
+                    excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx");
                     printExcelName = Class.MicrosoftFile.GetName("Cutting_P13");
                 }
 
                 #region 取得每一個 ID 的資料
-                List<SqlParameter> listSqlParameter = new List<SqlParameter>();
-                listSqlParameter.Add(new SqlParameter("@ID", printDr["ID"]));
-                listSqlParameter.Add(new SqlParameter("@extend", strExtend));
+                List<SqlParameter> listSqlParameter = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", printDr["ID"]),
+                    new SqlParameter("@extend", strExtend),
+                };
 
-                result = DBProxy.Current.Select(string.Empty, strExcelDataSQL, listSqlParameter, out resultDt);
-                if (result == false)
+                DualResult result = DBProxy.Current.Select(string.Empty, strExcelDataSQL, listSqlParameter, out DataTable resultDt);
+                if (!result)
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
-                    objApp.Quit();
-                    Marshal.ReleaseComObject(objApp);
+                    excelApp.Quit();
+                    Marshal.ReleaseComObject(excelApp);
                     this.HideWaitMessage();
                     return null;
                 }
                 #endregion
 
                 // 取得工作表
-                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[(printSheetNum % 255) + 1];
+                Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[(printSheetNum % 255) + 1];
 
                 /*
                  * 新增資料前
@@ -472,43 +471,46 @@ order by x.[Bundle]";
                  */
                 if (printSheetNum % 255 != 254 && printSheetNum < printDt.Rows.Count - 1)
                 {
-                    objSheets.Copy(objApp.Sheets[(printSheetNum % 255) + 2]);
+                    worksheet.Copy(excelApp.Sheets[(printSheetNum % 255) + 2]);
                 }
 
-                objSheets.Name = printDr["ID"].ToString();
+                worksheet.Name = printDr["ID"].ToString();
 
                 #region Set WorkSheet
-                objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", printDr["ID"].ToString().Substring(0, 3)));
-                objSheets.Cells[3, 1] = "To Line: " + printDr["LineID"].ToString();
-                objSheets.Cells[3, 3] = "Cell: " + printDr["SewingCell"].ToString();
-                objSheets.Cells[3, 4] = "Comb: " + printDr["PatternPanel"].ToString();
-                objSheets.Cells[3, 5] = "Marker No: " + (printDr["CutRefNo"].ToString() == string.Empty ? string.Empty : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}'", printDr["CutRefNo"].ToString())));
-                objSheets.Cells[3, 7] = "Item: " + printDr["Item"].ToString();
-                objSheets.Cells[3, 9] = "Article/Color: " + printDr["Article"].ToString() + "/ " + printDr["Color"].ToString();
-                objSheets.Cells[3, 11] = "ID: " + printDr["ID"].ToString();
-                objSheets.Cells[4, 1] = "SP#: " + printDr["SPNo"].ToString();
-                objSheets.Cells[4, 4] = "Style#: " + MyUtility.GetValue.Lookup(string.Format("Select Styleid from Orders WITH (NOLOCK) Where id='{0}'", printDr["SPNo"].ToString()));
-                objSheets.Cells[4, 7] = "Cutting#: " + printDr["CutNo"].ToString();
-                objSheets.Cells[4, 9] = "MasterSP#: " + printDr["POID"].ToString();
-                objSheets.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
-                MyUtility.Excel.CopyToXls(resultDt, string.Empty, "Cutting_P10.xltx", 5, false, null, objApp, wSheet: objSheets);      // 將datatable copy to excel
-                objSheets.get_Range("D1:D1").ColumnWidth = 11;
-                objSheets.get_Range("E1:E1").Columns.AutoFit();
-                objSheets.get_Range("G1:H1").ColumnWidth = 9;
-                objSheets.get_Range("I1:L1").ColumnWidth = 15;
+                worksheet.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", printDr["ID"].ToString().Substring(0, 3)));
+                worksheet.Cells[3, 1] = "To Line: " + printDr["LineID"].ToString();
+                worksheet.Cells[3, 3] = "Cell: " + printDr["SewingCell"].ToString();
+                worksheet.Cells[3, 4] = "Comb: " + printDr["PatternPanel"].ToString();
+                string sqlcmd = $"select top 1 MarkerNo from WorkOrder where CutRef='{printDr["CutRefNo"]}'";
+                worksheet.Cells[3, 5] = "Marker No: " + (MyUtility.Check.Empty(printDr["CutRefNo"]) ? string.Empty : MyUtility.GetValue.Lookup(sqlcmd));
+                worksheet.Cells[3, 7] = "Item: " + printDr["Item"].ToString();
+                worksheet.Cells[3, 9] = "Article/Color: " + printDr["Article"].ToString() + "/ " + printDr["Color"].ToString();
+                worksheet.Cells[3, 11] = "ID: " + printDr["ID"].ToString();
+                worksheet.Cells[4, 1] = "Style#: " + MyUtility.GetValue.Lookup($"Select Styleid from Orders WITH (NOLOCK) Where id='{printDr["POID"]}'");
+                worksheet.Cells[4, 5] = "Cutting#: " + printDr["CutNo"].ToString();
+                worksheet.Cells[4, 9] = "MasterSP#: " + printDr["POID"].ToString();
+                worksheet.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
+                sqlcmd = $@"select dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where id = '{printDr["ID"]}' order by OrderID for XML RAW))";
+                worksheet.Cells[5, 1] = "SP#: " + MyUtility.GetValue.Lookup(sqlcmd);
 
-                objSheets.Range[string.Format("A6:L{0}", resultDt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
+                MyUtility.Excel.CopyToXls(resultDt, string.Empty, "Cutting_P10.xltx", 6, false, null, excelApp, wSheet: worksheet);
+                worksheet.get_Range("D1:D1").ColumnWidth = 11;
+                worksheet.get_Range("E1:E1").Columns.AutoFit();
+                worksheet.get_Range("G1:H1").ColumnWidth = 9;
+                worksheet.get_Range("I1:L1").ColumnWidth = 15;
+
+                worksheet.Range[string.Format("A6:L{0}", resultDt.Rows.Count + 6)].Borders.Weight = 2; // 設定全框線
                 #endregion
 
-                Marshal.ReleaseComObject(objSheets);
+                Marshal.ReleaseComObject(worksheet);
                 printSheetNum++;
             }
 
-            objApp.Sheets.Move(objApp.Worksheets[1]);
-            objApp.ActiveWorkbook.SaveAs(printExcelName);
-            objApp.Quit();
+            excelApp.Sheets.Move(excelApp.Worksheets[1]);
+            excelApp.ActiveWorkbook.SaveAs(printExcelName);
+            excelApp.Quit();
             openWorkBook.Add(printExcelName);
-            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(excelApp);
 
             this.HideWaitMessage();
 
@@ -528,8 +530,7 @@ order by x.[Bundle]";
                 return;
             }
 
-            int n = 0;
-            if (!int.TryParse(this.txtCutNo.Text, out n))
+            if (!int.TryParse(this.txtCutNo.Text, out int n))
             {
                 this.txtCutNo.Text = string.Empty;
                 MyUtility.Msg.WarningBox("[Cutno] must enter number");
@@ -538,6 +539,11 @@ order by x.[Bundle]";
             {
                 this.txtCutNo.Text = n.ToString();
             }
+        }
+
+        private void P13_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Dispose();
         }
     }
 }
