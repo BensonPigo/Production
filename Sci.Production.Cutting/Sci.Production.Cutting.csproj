@@ -378,6 +378,19 @@
     <Compile Include="P14.Designer.cs">
       <DependentUpon>P14.cs</DependentUpon>
     </Compile>
+    <Compile Include="P15.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P15.Designer.cs">
+      <DependentUpon>P15.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P15_Datas.cs" />
+    <Compile Include="P15_SelectDistribute.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P15_SelectDistribute.Designer.cs">
+      <DependentUpon>P15_SelectDistribute.cs</DependentUpon>
+    </Compile>
     <Compile Include="P20_Detail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -684,6 +697,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P14.resx">
       <DependentUpon>P14.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P15.resx">
+      <DependentUpon>P15.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P15_SelectDistribute.resx">
+      <DependentUpon>P15_SelectDistribute.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P20_Detail.resx">
       <DependentUpon>P20_Detail.cs</DependentUpon>

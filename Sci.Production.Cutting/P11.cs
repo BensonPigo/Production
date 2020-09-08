@@ -2074,6 +2074,8 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             insert_Bundle.Columns.Add("Insert", typeof(string));
             DataTable insert_Bundle_Detail = new DataTable();
             insert_Bundle_Detail.Columns.Add("Insert", typeof(string));
+            DataTable insert_Bundle_Detail_Order = new DataTable();
+            insert_Bundle_Detail_Order.Columns.Add("Insert", typeof(string));
             DataTable insert_Bundle_Detail_Art = new DataTable();
             insert_Bundle_Detail_Art.Columns.Add("Insert", typeof(string));
             DataTable insert_Bundle_Detail_AllPart = new DataTable();
@@ -2544,6 +2546,13 @@ values
                     DataRow drBundleNo = insert_BundleNo.NewRow();
                     drBundleNo["BundleNo"] = item["Bundleno"];
                     insert_BundleNo.Rows.Add(drBundleNo);
+
+                    DataRow nBundleDetail_Order_dr = insert_Bundle_Detail_Order.NewRow();
+                    nBundleDetail_Order_dr["Insert"] = $@"
+INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty])
+VALUES('{item["ID"]}','{item["Bundleno"]}','{artar["orderid"]}','{item["Qty"]}')
+";
+                    insert_Bundle_Detail_Order.Rows.Add(nBundleDetail_Order_dr);
                 }
 
                 foreach (DataRow item in tmpBundle_Detail_Art.Rows)
@@ -2577,6 +2586,16 @@ values
                 }
 
                 foreach (DataRow dr in insert_Bundle_Detail.Rows)
+                {
+                    if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(dr["Insert"].ToString(), upResult);
+                        return;
+                    }
+                }
+
+                foreach (DataRow dr in insert_Bundle_Detail_Order.Rows)
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
                     {

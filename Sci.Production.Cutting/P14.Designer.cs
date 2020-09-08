@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -43,7 +43,6 @@
             this.txtBundleNo = new Sci.Win.UI.TextBox();
             this.cmdComboType = new Sci.Win.UI.ComboBox();
             this.txtCardNo = new Sci.Win.UI.TextBox();
-            this.disSP = new Sci.Win.UI.DisplayBox();
             this.disCutpart = new Sci.Win.UI.DisplayBox();
             this.disCutNo = new Sci.Win.UI.DisplayBox();
             this.disArticle = new Sci.Win.UI.DisplayBox();
@@ -52,6 +51,7 @@
             this.disBundleQty = new Sci.Win.UI.NumericBox();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid1 = new Sci.Win.UI.Grid();
+            this.disSP = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.SuspendLayout();
@@ -172,15 +172,6 @@
             this.txtCardNo.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtCardNo_KeyPress);
             this.txtCardNo.Validated += new System.EventHandler(this.TxtCardNoBundleNoComboType_Validated);
             // 
-            // disSP
-            // 
-            this.disSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disSP.Location = new System.Drawing.Point(116, 100);
-            this.disSP.Name = "disSP";
-            this.disSP.Size = new System.Drawing.Size(147, 23);
-            this.disSP.TabIndex = 21;
-            // 
             // disCutpart
             // 
             this.disCutpart.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -253,8 +244,8 @@
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
-            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
@@ -268,14 +259,14 @@
             this.grid1.Location = new System.Drawing.Point(17, 158);
             this.grid1.Name = "grid1";
             this.grid1.ReadOnly = true;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid1.RowHeadersVisible = false;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
@@ -287,9 +278,23 @@
             this.grid1.TabIndex = 29;
             this.grid1.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.Grid1_RowsAdded);
             // 
+            // disSP
+            // 
+            this.disSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disSP.IsSupportEditMode = false;
+            this.disSP.Location = new System.Drawing.Point(116, 100);
+            this.disSP.Multiline = true;
+            this.disSP.Name = "disSP";
+            this.disSP.ReadOnly = true;
+            this.disSP.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.disSP.Size = new System.Drawing.Size(147, 23);
+            this.disSP.TabIndex = 30;
+            // 
             // P14
             // 
             this.ClientSize = new System.Drawing.Size(531, 249);
+            this.Controls.Add(this.disSP);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.disBundleQty);
             this.Controls.Add(this.disSize);
@@ -297,7 +302,6 @@
             this.Controls.Add(this.disArticle);
             this.Controls.Add(this.disCutNo);
             this.Controls.Add(this.disCutpart);
-            this.Controls.Add(this.disSP);
             this.Controls.Add(this.txtCardNo);
             this.Controls.Add(this.cmdComboType);
             this.Controls.Add(this.txtBundleNo);
@@ -328,7 +332,6 @@
             this.Controls.SetChildIndex(this.txtBundleNo, 0);
             this.Controls.SetChildIndex(this.cmdComboType, 0);
             this.Controls.SetChildIndex(this.txtCardNo, 0);
-            this.Controls.SetChildIndex(this.disSP, 0);
             this.Controls.SetChildIndex(this.disCutpart, 0);
             this.Controls.SetChildIndex(this.disCutNo, 0);
             this.Controls.SetChildIndex(this.disArticle, 0);
@@ -336,6 +339,7 @@
             this.Controls.SetChildIndex(this.disSize, 0);
             this.Controls.SetChildIndex(this.disBundleQty, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
+            this.Controls.SetChildIndex(this.disSP, 0);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.ResumeLayout(false);
@@ -358,7 +362,6 @@
         private Win.UI.TextBox txtBundleNo;
         private Win.UI.ComboBox cmdComboType;
         private Win.UI.TextBox txtCardNo;
-        private Win.UI.DisplayBox disSP;
         private Win.UI.DisplayBox disCutpart;
         private Win.UI.DisplayBox disCutNo;
         private Win.UI.DisplayBox disArticle;
@@ -367,5 +370,6 @@
         private Win.UI.NumericBox disBundleQty;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Grid grid1;
+        private Win.UI.EditBox disSP;
     }
 }

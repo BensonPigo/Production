@@ -8,26 +8,28 @@ using System.IO;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P26_ImportBarcode : Win.Subs.Base
     {
+        /// <inheritdoc/>
         public P26_ImportBarcode()
         {
             this.InitializeComponent();
 
-            DataTable SubprocessDT;
             string querySql = @"select Id from SubProcess where IsRFIDProcess=1";
-            DBProxy.Current.Select(null, querySql, out SubprocessDT);
-            MyUtility.Tool.SetupCombox(this.comboSubprocess, 1, SubprocessDT);
+            DBProxy.Current.Select(null, querySql, out DataTable subprocessDT);
+            MyUtility.Tool.SetupCombox(this.comboSubprocess, 1, subprocessDT);
             this.comboSubprocess.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Text("BundleGroup", header: "Group#", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Qty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("Orderid", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Orderids", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SubprocessId", header: "Atrwork", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Patterncode", header: "Cutpart ID", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -35,9 +37,9 @@ namespace Sci.Production.Subcon
         }
 
         // 從C:\temp\BUNDLEIN.TXT讀取資料
-        DataTable leftDT;
+        private DataTable leftDT;
 
-        private void btnImportfromscanner_Click(object sender, EventArgs e)
+        private void BtnImportfromscanner_Click(object sender, EventArgs e)
         {
             if (this.leftDT != null)
             {
@@ -46,8 +48,8 @@ namespace Sci.Production.Subcon
             #region 執行從機器載入
             string pcPath = "C:\\";
             string pcPara = "+B115200 +P8 " + pcPath + "temp\\(file)";
-            P23_bhtprtd Bht = new P23_bhtprtd();
-            string msg = Bht.csharpExecProtocol(this.Handle, pcPara, 2, 2);
+            P23_bhtprtd bht = new P23_bhtprtd();
+            string msg = bht.csharpExecProtocol(this.Handle, pcPara, 2, 2);
             this.ShowInfo(msg);
             if (msg.Contains("Error"))
             {
@@ -57,11 +59,10 @@ namespace Sci.Production.Subcon
 
             #region 建立要讀檔的Table結構
             string selectCommand = @"Select BundleNo from Bundle_detail a WITH (NOLOCK) where 1=0";
-            DataTable tmpDataTable;
-            DualResult selectResult;
-            if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out tmpDataTable)))
+            DualResult selectResult = DBProxy.Current.Select(null, selectCommand, out DataTable tmpDataTable);
+            if (!selectResult)
             {
-                MyUtility.Msg.WarningBox("Connection faile.!");
+                this.ShowErr(selectResult);
                 return;
             }
             #endregion
@@ -119,6 +120,7 @@ select distinct
 	,bd.BundleGroup
 	,bd.Qty
 	,b.Orderid
+    ,OrderIDs = dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW))
 	,a.SubprocessId
 	,bd.Patterncode
 	,bd.PatternDesc
@@ -168,7 +170,7 @@ drop table #tmp,#tmp2",
         }
 
         // CREATE
-        private void btnCreate_Click(object sender, EventArgs e)
+        private void BtnCreate_Click(object sender, EventArgs e)
         {
             if (this.grid1.Rows.Count == 0)
             {
@@ -199,19 +201,28 @@ drop table #tmp,#tmp2",
             string insertBundleTrack = string.Format(
                 @"insert into BundleTrack (id,IssueDate,StartProcess,EndProcess,StartSite,EndSite,AddName,AddDate) 
 values('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')",
-                getID, date, sprocess, sprocess, Env.User.Factory, Env.User.Factory, Env.User.UserID, datetime);
+                getID,
+                date,
+                sprocess,
+                sprocess,
+                Env.User.Factory,
+                Env.User.Factory,
+                Env.User.UserID,
+                datetime);
 
             // Detail BundleTrack_detail用ProcessWithDatatable方法整個table新增
             string insertBundleTrackDteail = string.Format(
                 @"insert into BundleTrack_detail select '{0}',t.BundleNo,t.Orderid,'{1}','{2}',0 from #tmp t",
-                getID, datetime, Env.User.UserID);
+                getID,
+                datetime,
+                Env.User.UserID);
 
             // insert BundleTrack
-            DualResult Result;
-            Result = DBProxy.Current.Execute(null, insertBundleTrack);
-            if (!Result)
+            DualResult result;
+            result = DBProxy.Current.Execute(null, insertBundleTrack);
+            if (!result)
             {
-                this.ShowErr(Result);
+                this.ShowErr(result);
                 return;
             }
 
@@ -222,11 +233,10 @@ values('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')",
                 dtmp.ImportRow(row);
             }
 
-            DataTable n;
-            Result = MyUtility.Tool.ProcessWithDatatable(this.leftDT, "BundleNo,Orderid", insertBundleTrackDteail, out n);
-            if (!Result)
+            result = MyUtility.Tool.ProcessWithDatatable(this.leftDT, "BundleNo,Orderid", insertBundleTrackDteail, out DataTable _);
+            if (!result)
             {
-                this.ShowErr(Result);
+                this.ShowErr(result);
                 return;
             }
 
@@ -240,7 +250,7 @@ values('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')",
         }
 
         // Close
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1 = null;
 

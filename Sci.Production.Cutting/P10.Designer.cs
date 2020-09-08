@@ -80,6 +80,7 @@
             this.btnBatchDelete = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.dispFabricKind = new Sci.Win.UI.DisplayBox();
+            this.btnSPs = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -96,6 +97,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnSPs);
             this.masterpanel.Controls.Add(this.dispFabricKind);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.ckIsEXCESS);
@@ -198,6 +200,7 @@
             this.masterpanel.Controls.SetChildIndex(this.ckIsEXCESS, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dispFabricKind, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnSPs, 0);
             // 
             // detailpanel
             // 
@@ -809,6 +812,17 @@
             this.dispFabricKind.Size = new System.Drawing.Size(133, 23);
             this.dispFabricKind.TabIndex = 51;
             // 
+            // btnSPs
+            // 
+            this.btnSPs.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSPs.Location = new System.Drawing.Point(633, 13);
+            this.btnSPs.Name = "btnSPs";
+            this.btnSPs.Size = new System.Drawing.Size(25, 23);
+            this.btnSPs.TabIndex = 52;
+            this.btnSPs.Text = "...";
+            this.btnSPs.UseVisualStyleBackColor = true;
+            this.btnSPs.Click += new System.EventHandler(this.BtnSPs_Click);
+            // 
             // P10
             // 
             this.ClientSize = new System.Drawing.Size(999, 564);
@@ -901,5 +915,6 @@
         private Win.UI.Button btnBatchDelete;
         private Win.UI.DisplayBox dispFabricKind;
         private Win.UI.Label label1;
+        private Win.UI.Button btnSPs;
     }
 }

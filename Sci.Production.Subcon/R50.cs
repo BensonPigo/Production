@@ -2,45 +2,46 @@
 using Sci.Data;
 using System;
 using System.Data;
+using System.Data.SqlClient;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R50 : Win.Tems.PrintForm
     {
+        /// <inheritdoc/>
         public R50(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
-        string FromBundleNO;
-        string ToBundleNO;
-        DateTime? Date1;
-        DateTime? Date2;
+        private string FromBundleNO;
+        private string ToBundleNO;
+        private DateTime? Date1;
+        private DateTime? Date2;
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.Date1 = this.Date.Value1;
             this.Date2 = this.Date.Value2;
             this.FromBundleNO = this.txtFromBundleNo.Text;
             this.ToBundleNO = this.txtToBundleNo.Text;
-
-            // Factory = txtfactory.Text;
             return base.ValidateInput();
         }
 
-        // 非同步讀取資料
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             StringBuilder sql = new StringBuilder();
@@ -48,7 +49,10 @@ namespace Sci.Production.Subcon
             sql.Append(@"
 Select 
 	o.FtyGroup,o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid,bd.Patterncode,bd.PatternDesc,sub.sub,bd.SizeCode,bd.Qty,
-	b.poid,b.Colorid,b.Article,b.Cdate,b.Orderid,b.Item  ,b.AddDate,B.AddName,B.EditDate,b.EditName
+	b.poid,b.Colorid,b.Article,b.Cdate,b.Orderid,b.Item,
+    SPs = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
+    Qtys =stuff((select concat('/',Qty) from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for xml path('')),1,1,''),
+    b.AddDate,B.AddName,B.EditDate,b.EditName
 From Bundle_Detail BD 
 Left join bundle b on (bd.Id = b.ID)
 Left join Orders O on(b.Orderid = O.id)
@@ -101,18 +105,12 @@ Where sub.sub like '%PRT%'
                 sql2.Append(string.Format("And BD.BundleNo <= '{0}'", this.ToBundleNO));
             }
 
-            // if (!MyUtility.Check.Empty(Factory))
-            // {
-            //    sql.Append(string.Format("And O.FtyGroup = '{0}'", Factory));
-            //    sql2.Append(string.Format("And O.FtyGroup = '{0}'", Factory));
-            // }
             sql.Append(" order by o.FtyGroup,o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid");
 
             // 預先開啟excel app
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R50.xltx");
 
-            DataRow dr;
-            MyUtility.Check.Seek(sql2.ToString(), out dr, null);
+            MyUtility.Check.Seek(sql2.ToString(), out DataRow dr, null);
             int ct = MyUtility.Convert.GetInt(dr[0]);
             if (ct == 0)
             {
@@ -121,8 +119,8 @@ Where sub.sub like '%PRT%'
             }
 
             int num = 200000;
-            int Cpage = ct / num;
-            for (int i = 0; i < Cpage; i++)
+            int cpage = ct / num;
+            for (int i = 0; i < cpage; i++)
             {
                 Excel.Worksheet worksheet1 = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
                 Excel.Worksheet worksheetn = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
@@ -131,8 +129,7 @@ Where sub.sub like '%PRT%'
                 Marshal.ReleaseComObject(worksheetn);
             }
 
-            SqlConnection sqlConnection = null;
-            DBProxy.Current.OpenConnection(null, out sqlConnection);
+            DBProxy.Current.OpenConnection(null, out SqlConnection sqlConnection);
             int c = 1;
             using (var cn = new SqlConnection(sqlConnection.ConnectionString))
             using (var cm = cn.CreateCommand())
@@ -174,9 +171,9 @@ Where sub.sub like '%PRT%'
                 }
             }
 
-            if (Cpage > 0)
+            if (cpage > 0)
             {
-                objApp.ActiveWorkbook.Worksheets[Cpage].Columns.AutoFit(); // 這頁需要重新調整欄寬
+                objApp.ActiveWorkbook.Worksheets[cpage].Columns.AutoFit(); // 這頁需要重新調整欄寬
             }
 
             #region Save & Show Excel
