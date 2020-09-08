@@ -1500,12 +1500,12 @@ select  ot.ID
         , isnull(ot.Qty,0) Qty 
         , ot.TMS
         , isnull(ot.Price,0) Price
-		, PoSupp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', (select Abb 
+		, Supp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', (select Abb 
                                                                               from LocalSupp WITH (NOLOCK) 
                                                                               where ID = LocalSuppID)
                                                                            , ot.LocalSuppID)
                                                   , '')
-        , Supp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', ap.Abb, ot.LocalSuppID) , '')
+        , PoSupp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', ap.Abb, ot.LocalSuppID) , '')
         , AUnitRno = a.rno 
         , PUnitRno = a1.rno
         , NRno = a2.rno
