@@ -169,27 +169,10 @@ ad.*,
 asdSub.MtlTypeID,
 asdSub.FabricType,
 o.StyleID
-,[FabricTypeText]=  CASE WHEN detail_RefNo.FabricType = 'F' THEN 'Fabric'
-					 WHEN detail_RefNo.FabricType = 'A' THEN 'Accessory' ELSE '' 
-				END
-,[Description] = detail_RefNo.Description
 from ADIDASComplain_Detail ad with (nolock)
 left join ADIDASComplainDefect asdMain with (nolock) on ad.DefectMainID = asdMain.ID
 left join ADIDASComplainDefect_Detail asdSub with (nolock) on  asdMain.ID = asdSub.ID and ad.DefectSubID = asdSub.SubID
 left join orders o on o.ID=ad.OrderID
-OUTER APPLY(
-	SELECT DISTINCT p.FabricType ,f.Description
-	FROM PO_Supp_Detail p
-	LEFT JOIN Orders o ON o.POID=p.ID
-	LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
-	WHERE o.ID = ad.OrderID AND p.Refno = ad.Refno
-	UNION
-	SELECT DISTINCT p.FabricType ,f.Description
-	FROM PO_Supp_Detail p
-	LEFT JOIN Order_Qty_Garment o ON o.OrderIDFrom=p.ID
-	LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
-	WHERE o.ID = ad.OrderID AND p.Refno = ad.Refno
-)detail_RefNo
 where ad.ID = '{0}'
 order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-' + asdSub.SubName,ad.OrderID
 ", masterID);
@@ -293,8 +276,6 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 if (MyUtility.Check.Empty(refno))
                 {
                     dr["Refno"] = string.Empty;
-                    dr["FabricTypeText"] = string.Empty;
-                    dr["Description"] = string.Empty;
                     return;
                 }
 
@@ -305,8 +286,6 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
 
                 if (refno == "N/A")
                 {
-                    dr["FabricTypeText"] = string.Empty;
-                    dr["Description"] = string.Empty;
                     dr["Refno"] = refno;
                 }
                 else
@@ -320,40 +299,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                         return;
                     }
 
-                    string cmd = $@"
-SELECT DISTINCT 
-[FabricTypeText]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
-					 WHEN p.FabricType = 'A' THEN 'Accessory' ELSE '' 
-				END 
-,f.Description
-FROM PO_Supp_Detail p
-LEFT JOIN Orders o ON o.POID=p.ID
-LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
-WHERE o.ID = '{dr["OrderID"]}' AND p.Refno = '{refno}' 
-UNION
-SELECT DISTINCT 
-[FabricTypeText]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
-					 WHEN p.FabricType = 'A' THEN 'Accessory' ELSE '' 
-				END 
-,f.Description
-FROM PO_Supp_Detail p
-LEFT JOIN Order_Qty_Garment o ON o.OrderIDFrom=p.ID
-LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
-WHERE o.ID = '{dr["OrderID"]}' AND p.Refno = '{refno}' 
-";
-
-                    DataTable dt;
-                    DualResult r = DBProxy.Current.Select(null, cmd, out dt);
-
-                    if (!r)
-                    {
-                        this.ShowErr(r);
-                        return;
-                    }
-
                     dr["Refno"] = refno;
-                    dr["FabricTypeText"] = dt.Rows[0]["FabricTypeText"];
-                    dr["Description"] = dt.Rows[0]["Description"];
                 }
 
                 dr.EndEdit();
@@ -376,40 +322,6 @@ WHERE o.ID = '{dr["OrderID"]}' AND p.Refno = '{refno}'
                 }
 
                 this.CurrentDetailData["Refno"] = selectItem.GetSelectedString();
-
-                string cmd = $@"
-SELECT DISTINCT 
-[FabricTypeText]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
-					 WHEN p.FabricType = 'A' THEN 'Accessory' ELSE '' 
-				END 
-,f.Description
-FROM PO_Supp_Detail p
-LEFT JOIN Orders o ON o.POID=p.ID
-LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
-WHERE o.ID = '{this.CurrentDetailData["OrderID"]}' AND p.Refno = '{selectItem.GetSelectedString()}' 
-UNION
-SELECT DISTINCT 
-[FabricTypeText]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
-					 WHEN p.FabricType = 'A' THEN 'Accessory' ELSE '' 
-				END 
-,f.Description
-FROM PO_Supp_Detail p
-LEFT JOIN Order_Qty_Garment o ON o.OrderIDFrom=p.ID
-LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
-WHERE o.ID = '{this.CurrentDetailData["OrderID"]}' AND p.Refno = '{selectItem.GetSelectedString()}' 
-";
-
-                DataTable dt;
-                DualResult r = DBProxy.Current.Select(null, cmd, out dt);
-
-                if (!r)
-                {
-                    this.ShowErr(r);
-                    return;
-                }
-
-                this.CurrentDetailData["FabricTypeText"] = dt.Rows[0]["FabricTypeText"];
-                this.CurrentDetailData["Description"] = dt.Rows[0]["Description"];
             };
 
             textSuppID.CellMouseDoubleClick = (s, e) =>
@@ -446,8 +358,6 @@ WHERE o.ID = '{this.CurrentDetailData["OrderID"]}' AND p.Refno = '{selectItem.Ge
                 if (e.Button == MouseButtons.Left)
                 {
                     this.CurrentDetailData["Refno"] = @"N/A";
-                    this.CurrentDetailData["FabricTypeText"] = string.Empty;
-                    this.CurrentDetailData["Description"] = string.Empty;
                     this.CurrentDetailData.EndEdit();
                 }
             };
@@ -517,8 +427,6 @@ WHERE o.ID = '{this.CurrentDetailData["OrderID"]}' AND p.Refno = '{selectItem.Ge
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SuppID", header: "Supplier", width: Widths.AnsiChars(6), settings: textSuppID, iseditingreadonly: this.isShowHistory)
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), settings: textRefno, iseditingreadonly: this.isShowHistory)
-                .Text("FabricTypeText", header: "Fabric Type", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("Responsibility", header: "Responsibility", width: Widths.AnsiChars(20), settings: responsibility, iseditingreadonly: this.isShowHistory)
 
                 .CheckBox("IsEM", header: "IsEM");
@@ -537,13 +445,23 @@ WHERE o.ID = '{this.CurrentDetailData["OrderID"]}' AND p.Refno = '{selectItem.Ge
             string whereRefno = IsRightClick ? string.Empty : $" AND p.Refno='{refno}' ";
             string sqlGetRefno = $@"
 SELECT DISTINCT p.Refno
+,[FabricType]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
+					 WHEN p.FabricType = 'A' THEN 'Accessory' ELSE '' 
+				END 
+,f.Description
 FROM PO_Supp_Detail p
 LEFT JOIN Orders o ON o.POID=p.ID
+LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
 WHERE o.ID='{this.CurrentDetailData["OrderID"]}' {whereRefno}
 UNION
 SELECT DISTINCT p.Refno 
+,[FabricType]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
+					 WHEN p.FabricType = 'A' THEN 'Accessory' ELSE '' 
+				END 
+,f.Description
 FROM PO_Supp_Detail p
 LEFT JOIN Order_Qty_Garment o ON o.OrderIDFrom=p.ID
+LEFT JOIN Fabric f ON p.SCIRefno = f.SCIRefno
 WHERE o.ID = '{this.CurrentDetailData["OrderID"]}' {whereRefno}
 
 ";
