@@ -1849,19 +1849,27 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
 
                             if (poSubConCol != 9999)
                             {
-                                objArray[intRowsStart, poSubConCol - 1] = string.Empty;
                                 if (!MyUtility.Check.Empty(sdr["PoSupp"]))
                                 {
                                     objArray[intRowsStart, poSubConCol - 1] = sdr["PoSupp"];
+                                }
+
+                                if (MyUtility.Check.Empty(objArray[intRowsStart, poSubConCol - 1]))
+                                {
+                                    objArray[intRowsStart, poSubConCol - 1] = string.Empty;
                                 }
                             }
 
                             if (subConCol != 9999)
                             {
-                                objArray[intRowsStart, subConCol - 1] = string.Empty;
                                 if (!MyUtility.Check.Empty(sdr["Supp"]))
                                 {
                                     objArray[intRowsStart, subConCol - 1] = sdr["Supp"];
+                                }
+
+                                if (MyUtility.Check.Empty(objArray[intRowsStart, subConCol - 1]))
+                                {
+                                    objArray[intRowsStart, subConCol - 1] = string.Empty;
                                 }
                             }
                         }
