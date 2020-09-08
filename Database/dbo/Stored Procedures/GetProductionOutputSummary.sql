@@ -236,7 +236,7 @@ inner join SewingOutput s with (nolock) on s.ID = sdd.ID
 inner join Orders o with(nolock) on o.ID = sdd.OrderId
 left join Order_Location ol with (nolock) on ol.OrderId = sdd.OrderId and ol.Location = sdd.ComboType
 left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = sdd.ComboType
-where exists(select 1 from @tmpBaseStep1 tbs where tbs.ID = sdd.OrderId)
+where exists(select 1 from @tmpBaseStep1 tbs where tbs.ID = sdd.OrderId) and (@IsByCMPLockDate = 0 or s.OutputDate <= @SewLock)
 group by	sdd.OrderId,
 			s.OutputDate
 
