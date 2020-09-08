@@ -1,57 +1,68 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
 using System;
 using System.Data;
-using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
     /// <inheritdoc/>
-    public partial class P01_BundleCard : Win.Subs.Base
+    public partial class P01_BundleCard : Win.Tems.QueryForm
     {
-        private string cutid;
-        private string M;
+        private readonly string cutid;
+        private readonly string M;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="P01_BundleCard"/> class.
-        /// </summary>
-        /// <param name="cID">Cut ID</param>
-        /// <param name="m">M</param>
+        /// <inheritdoc/>
         public P01_BundleCard(string cID, string m)
         {
             this.InitializeComponent();
             this.cutid = cID;
             this.M = m;
-            this.ReQuery();
+            this.Requery();
             this.GridSetup();
-            this.gridBundleCard.AutoResizeColumns();
         }
 
-        private void ReQuery()
+        private void Requery()
         {
             string sqlcmd = $@"
-Select a.id,b.BundleNo,a.orderid,a.cdate,a.cutref,a.PatternPanel,a.cutno,b.sizecode,b.bundlegroup,b.Qty,b.PrintDate
-from Bundle a WITH (NOLOCK)
-inner join Bundle_Detail b WITH (NOLOCK) on a.id = b.Id
-inner join Orders o WITH (NOLOCK) on a.Orderid = o.ID and a.MDivisionID = o.MDivisionID
-where a.POID = '{this.cutid}' and a.MDivisionID  = '{this.M}'
-order by b.BundleNo
+Select
+	bd.BundleNo,
+	OrderID=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
+	b.Cdate,
+	b.CutRef,
+	b.PatternPanel,
+	b.Cutno,
+	bd.SizeCode,
+	bd.BundleGroup,
+	bd.Qty,
+	bd.PrintDate	
+from Bundle b WITH (NOLOCK)
+inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+inner join Orders o WITH (NOLOCK) on b.Orderid = o.ID and b.MDivisionID = o.MDivisionID
+where b.POID = '{this.cutid}' and b.MDivisionID  = '{this.M}'
+order by bd.BundleNo
 ";
-            DualResult dr = DBProxy.Current.Select(null, sqlcmd, out DataTable gridtb);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable gridtb);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
             this.gridBundleCard.DataSource = gridtb;
         }
 
         private void GridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.gridBundleCard)
-                .Text("bundleno", header: "Bundle No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("orderid", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
-                .Date("cdate", header: "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("cutref", header: "Cut Ref", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("BundleNo", header: "Bundle No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                .Date("Cdate", header: "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("CutRef", header: "Cut Ref", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("PatternPanel", header: "Comb", width: Widths.AnsiChars(1), iseditingreadonly: true)
-                .Numeric("cutno", header: "Cut No.", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("sizecode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Numeric("bundlegroup", header: "Bundle Group", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Numeric("Cutno", header: "Cut No.", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Numeric("BundleGroup", header: "Bundle Group", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .DateTime("PrintDate", header: "PrintDate", width: Widths.AnsiChars(8), iseditingreadonly: true);
         }

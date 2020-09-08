@@ -223,6 +223,7 @@
             this.gridBatchDelete.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.gridBatchDelete.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridBatchDelete.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBatchDelete.DataSource = this.listControlBindingSource1;
             this.gridBatchDelete.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridBatchDelete.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridBatchDelete.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;

@@ -1,24 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using Ict;
+﻿using Ict;
 using Sci.Data;
 using Sci.Win;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R45 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private StringBuilder sqlWhere = new StringBuilder();
-        string SubProcess;
-        string strExcelName;
+        private string SubProcess;
+        private string strExcelName;
 
+        /// <inheritdoc/>
         public R45(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -26,10 +28,7 @@ namespace Sci.Production.Subcon
 
             #region combo box預設值
 
-            DataTable dt;
-            DBProxy.Current.Select(null, @"
-SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFIDProcess=1
-", out dt);
+            DBProxy.Current.Select(null, @"SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFIDProcess=1", out DataTable dt);
 
             this.comboSubPorcess.DataSource = dt;
             this.comboSubPorcess.ValueMember = "Value";
@@ -45,6 +44,7 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             this.txtFactory.Text = Env.User.Factory;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.sqlWhere.Clear();
@@ -76,7 +76,7 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
 
                     if (!string.IsNullOrEmpty(this.txtSPNo.Text))
                     {
-                        this.sqlWhere.Append($"AND b.Orderid='{this.txtSPNo.Text}'" + Environment.NewLine);
+                        this.sqlWhere.Append($"AND bdo.Orderid='{this.txtSPNo.Text}'" + Environment.NewLine);
                     }
 
                     if (!string.IsNullOrEmpty(this.txtCutRef.Text))
@@ -106,47 +106,44 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            DualResult result;
             StringBuilder sqlCmd = new StringBuilder();
-
-            // StringBuilder sqlWhere = new StringBuilder();
-            List<SqlParameter> parameterList = new List<SqlParameter>();
-
-            sqlCmd.Append($@"
-SELECT
-bd.BundleGroup
-,b.Colorid
-,bd.SizeCode
-,b.PatternPanel
-,[Cutpart]= bd.Patterncode
-,[CutpartName]= {(this.chkExtendAllParts.Checked ?
+            string cutpartName = this.chkExtendAllParts.Checked ?
                     "CASE WHEN bd.Patterncode = 'ALLPARTS' THEN bdap.PatternDesc ELSE bd.PatternDesc END --basic from 「Extend All Parts」 is checked or not"
                     :
-                    "bd.PatternDesc")}
+                    "bd.PatternDesc";
+            sqlCmd.Append($@"
+SELECT
+    bd.BundleGroup
+    ,b.Colorid
+    ,bd.SizeCode
+    ,b.PatternPanel
+    ,[Cutpart]= bd.Patterncode
+    ,[CutpartName]= {cutpartName}
+    ,[SubProcessID]= SubProcess.SubProcessID
+    ,w.CutCellID
+    ,bd.Parts
+    ,bdo.Qty
+    ,bd.BundleNo
+    ,[ActualAcc.ReceivedQty]=''
+    ,[IsEXCESS] = case when b.IsEXCESS=1 then 'V' else '' end
+    ,[Remartks]=''
+    ,[WaterbeetleConfirmation]=''
 
-,[SubProcessID]= SubProcess.SubProcessID
-,w.CutCellID
-,bd.Parts
-,bd.Qty
-,bd.BundleNo
-,[ActualAcc.ReceivedQty]=''
-,[IsEXCESS] = case when b.IsEXCESS=1 then 'V' else '' end
-,[Remartks]=''
-,[WaterbeetleConfirmation]=''
-
------Excel上方資訊
-,[ExportedDate]=GETDATE()
-,o.FactoryID
-,b.Orderid
-,o.StyleID
-,b.CutRef
-,b.Sewinglineid
-,[SubProcess]='{this.SubProcess}'
+    -----Excel上方資訊
+    ,[ExportedDate]=GETDATE()
+    ,o.FactoryID
+    ,bdo.OrderID
+    ,o.StyleID
+    ,b.CutRef
+    ,b.Sewinglineid
+    ,[SubProcess]='{this.SubProcess}'
 
 FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
+inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Bundleno = bd.Bundleno
 {(this.chkExtendAllParts.Checked ? "LEFT JOIN Bundle_Detail_AllPart bdap ON bdap.ID=b.ID AND bd.Patterncode ='ALLPARTS'" : string.Empty)}
 INNER JOIN Orders O ON o.ID=b.Orderid
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
@@ -198,18 +195,10 @@ OUTER APPLY(
 )DefaultSubProcess
 WHERE 1=1
 ");
-
-            result = DBProxy.Current.Select(null, sqlCmd.Append(this.sqlWhere).ToString(), out this.printData);
-
-            if (!result)
-            {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
-            }
-
-            return Ict.Result.True;
+            return DBProxy.Current.Select(null, sqlCmd.Append(this.sqlWhere).ToString(), out this.printData);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.printData.Rows.Count <= 0)
@@ -224,23 +213,22 @@ WHERE 1=1
 
             #region 尋出的資料依照SP# + CutRef# 進行分組
 
-            List<DataTable> DataList = new List<DataTable>();
+            List<DataTable> dataList = new List<DataTable>();
 
-            DataTable GroupByList = new DataTable();
-            GroupByList = this.printData.DefaultView.ToTable(true, new string[] { "Orderid", "CutRef" });
+            DataTable groupByList = this.printData.DefaultView.ToTable(true, new string[] { "Orderid", "CutRef" });
 
-            foreach (DataRow dr in GroupByList.Rows)
+            foreach (DataRow dr in groupByList.Rows)
             {
                 DataTable tmp = this.printData.Select($"Orderid='{dr["Orderid"].ToString()}' AND CutRef='{dr["CutRef"].ToString()}'").CopyToDataTable();
 
-                DataList.Add(tmp);
+                dataList.Add(tmp);
             }
 
             #endregion
 
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R45.xltx"); // 預先開啟excel app
 
-            for (int i = 0; i < DataList.Count; i++)
+            for (int i = 0; i < dataList.Count; i++)
             {
                 // 第二筆資料才需要複製Sheet
                 if (i > 0)
@@ -253,9 +241,9 @@ WHERE 1=1
             }
 
             // 每個工作表個別處理
-            for (int i = 0; i < DataList.Count; i++)
+            for (int i = 0; i < dataList.Count; i++)
             {
-                if (DataList[i].Rows.Count == 0)
+                if (dataList[i].Rows.Count == 0)
                 {
                     continue;
                 }
@@ -264,42 +252,42 @@ WHERE 1=1
                 Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];
 
                 // 將datatable copy to excel
-                MyUtility.Excel.CopyToXls(DataList[i], null, "Subcon_R45.xltx", headerRow: 8, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);
+                MyUtility.Excel.CopyToXls(dataList[i], null, "Subcon_R45.xltx", headerRow: 8, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);
 
-                objSheets.Name = DataList[i].Rows[0]["Orderid"].ToString() + "-" + DataList[i].Rows[0]["CutRef"].ToString();
+                objSheets.Name = dataList[i].Rows[0]["Orderid"].ToString() + "-" + dataList[i].Rows[0]["CutRef"].ToString();
 
                 // 上方欄位 固定值
-                List<string> Lines = new List<string>();
+                List<string> lines = new List<string>();
 
-                for (int x = 0;  x <= DataList[i].DefaultView.ToTable(true, new string[] { "Sewinglineid" }).Rows.Count - 1;  x++)
+                for (int x = 0; x <= dataList[i].DefaultView.ToTable(true, new string[] { "Sewinglineid" }).Rows.Count - 1; x++)
                 {
-                    string Line = DataList[i].DefaultView.ToTable(true, new string[] { "Sewinglineid" }).Select()[x]["Sewinglineid"].ToString();
-                    if (!Lines.Contains(Line))
+                    string line = dataList[i].DefaultView.ToTable(true, new string[] { "Sewinglineid" }).Select()[x]["Sewinglineid"].ToString();
+                    if (!lines.Contains(line))
                     {
-                        Lines.Add(Line);
+                        lines.Add(line);
                     }
                 }
 
                 // Exported Date
-                objSheets.Cells[2, 11] = Convert.ToDateTime(DataList[i].Rows[0]["ExportedDate"]).ToShortDateString();
+                objSheets.Cells[2, 11] = Convert.ToDateTime(dataList[i].Rows[0]["ExportedDate"]).ToShortDateString();
 
                 // Factory
-                objSheets.Cells[3, 2] = DataList[i].Rows[0]["FactoryID"].ToString();
+                objSheets.Cells[3, 2] = dataList[i].Rows[0]["FactoryID"].ToString();
 
                 // SP#
-                objSheets.Cells[4, 2] = DataList[i].Rows[0]["Orderid"].ToString();
+                objSheets.Cells[4, 2] = dataList[i].Rows[0]["OrderID"].ToString();
 
                 // Inline Line#
-                objSheets.Cells[4, 7] = string.Join(",", Lines); // DataList[i].Rows[0]["Sewinglineid"].ToString();
+                objSheets.Cells[4, 7] = string.Join(",", lines); // DataList[i].Rows[0]["Sewinglineid"].ToString();
 
                 // Style
-                objSheets.Cells[5, 2] = DataList[i].Rows[0]["StyleID"].ToString();
+                objSheets.Cells[5, 2] = dataList[i].Rows[0]["StyleID"].ToString();
 
                 // SubProcess
-                objSheets.Cells[5, 7] = DataList[i].Rows[0]["SubProcess"].ToString();
+                objSheets.Cells[5, 7] = dataList[i].Rows[0]["SubProcess"].ToString();
 
                 // CutRef
-                objSheets.Cells[6, 2] = DataList[i].Rows[0]["CutRef"].ToString();
+                objSheets.Cells[6, 2] = dataList[i].Rows[0]["CutRef"].ToString();
 
                 if (this.comboSubPorcess.Text.ToUpper() != "LOADING")
                 {
@@ -310,7 +298,7 @@ WHERE 1=1
                     // 如果是LOADING，這一欄不顯示
                     objSheets.Columns["O"].Clear();
 
-                    Excel.Range range2 = objSheets.get_Range((Excel.Range)objSheets.Cells[1, 1], (Excel.Range)objSheets.Cells[1, 12]);
+                    objSheets.get_Range((Excel.Range)objSheets.Cells[1, 1], (Excel.Range)objSheets.Cells[1, 12]);
                     range.Merge();
                 }
 
@@ -328,6 +316,7 @@ WHERE 1=1
                 objSheets.Columns["T"].Clear();
                 objSheets.Columns["U"].Clear();
                 objSheets.Columns["V"].Clear();
+                objSheets.Columns["W"].Clear();
 
                 Marshal.ReleaseComObject(objSheets); // 釋放sheet
             }

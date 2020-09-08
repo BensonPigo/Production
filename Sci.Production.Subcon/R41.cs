@@ -1,7 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
@@ -10,55 +9,55 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R41 : Win.Tems.PrintForm
     {
-        string SubProcess;
-        string SP;
-        string M;
-        string Factory;
-        string CutRef1;
-        string CutRef2;
-        string processLocation;
-        DateTime? dateBundle1;
-        DateTime? dateBundle2;
-        DateTime? dateBundleScanDate1;
-        DateTime? dateBundleScanDate2;
-        DateTime? dateEstCutDate1;
-        DateTime? dateEstCutDate2;
-        DateTime? dateBDelivery1;
-        DateTime? dateBDelivery2;
-        DateTime? dateSewInLine1;
-        DateTime? dateSewInLine2;
+        private string SubProcess;
+        private string SP;
+        private string M;
+        private string Factory;
+        private string CutRef1;
+        private string CutRef2;
+        private string processLocation;
+        private DateTime? dateBundle1;
+        private DateTime? dateBundle2;
+        private DateTime? dateBundleScanDate1;
+        private DateTime? dateBundleScanDate2;
+        private DateTime? dateEstCutDate1;
+        private DateTime? dateEstCutDate2;
+        private DateTime? dateBDelivery1;
+        private DateTime? dateBDelivery2;
+        private DateTime? dateSewInLine1;
+        private DateTime? dateSewInLine2;
 
+        /// <inheritdoc/>
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboload();
+            this.Comboload();
             this.comboFactory.SetDataSource();
             this.comboRFIDProcessLocation.SetDataSource();
             this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
-        private void comboload()
+        private void Comboload()
         {
-            DualResult Result;
-
-            DataTable dtM;
-            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtM))
+            DualResult result;
+            if (result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out DataTable dtM))
             {
                 this.comboM.DataSource = dtM;
                 this.comboM.DisplayMember = "ID";
             }
             else
             {
-                this.ShowErr(Result);
+                this.ShowErr(result);
             }
         }
 
         #region ToExcel3步驟
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.SubProcess = this.txtsubprocess.Text;
@@ -83,32 +82,28 @@ namespace Sci.Production.Subcon
                 MyUtility.Check.Empty(this.dateEstCutDate.Value1) && MyUtility.Check.Empty(this.dateEstCutDate.Value2) &&
                 MyUtility.Check.Empty(this.dateBundleCDate.Value1) && MyUtility.Check.Empty(this.dateBundleCDate.Value2) &&
                 MyUtility.Check.Empty(this.dateBundleScanDate.Value1) && MyUtility.Check.Empty(this.dateBundleScanDate.Value2) &&
-                MyUtility.Check.Empty(this.dateSewInLine.Value1) && MyUtility.Check.Empty(this.dateSewInLine.Value2) &&
-                !this.dateLastSewDate.HasValue)
+                MyUtility.Check.Empty(this.dateSewInLine.Value1) && MyUtility.Check.Empty(this.dateSewInLine.Value2))
             {
-                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Est. Cutting Date][Bundle CDate][Bundle Scan Date],[Sewing Inline],[Last Sew. Date] cannot all empty !!");
+                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Est. Cutting Date][Bundle CDate][Bundle Scan Date],[Sewing Inline] cannot all empty !!");
                 return false;
             }
 
             return base.ValidateInput();
         }
 
-        // 非同步讀取資料
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             return Ict.Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region Append畫面上的條件
             StringBuilder sqlWhere = new StringBuilder();
             StringBuilder sqlWhereFirstQuery = new StringBuilder();
             string joinWorkOrder = string.Empty;
-            string whereExistsLastSewDate = string.Empty;
-            string whereSewDate = string.Empty;
-            List<SqlParameter> listPar = new List<SqlParameter>();
             if (!MyUtility.Check.Empty(this.SubProcess))
             {
                 sqlWhere.Append($@" and s.id in ('{this.SubProcess.Replace(",", "','")}') ");
@@ -128,7 +123,7 @@ namespace Sci.Production.Subcon
 
             if (!MyUtility.Check.Empty(this.SP))
             {
-                sqlWhereFirstQuery.Append(string.Format(@" and b.Orderid = '{0}'", this.SP));
+                sqlWhereFirstQuery.Append(string.Format(@" and BDO.Orderid = '{0}'", this.SP));
             }
 
             if (!MyUtility.Check.Empty(this.dateBundle1))
@@ -213,63 +208,23 @@ namespace Sci.Production.Subcon
             {
                 sqlWhereFirstQuery.Append(@" and w.CutRef <> '' ");
             }
-
-            if (this.dateLastSewDate.HasValue)
-            {
-                whereExistsLastSewDate = $@" and exists(select 1 from View_SewingInfoLocation vsis with (nolock) where vsis.OrderID = o.ID and vsis.LastSewDate between @LastSewDateFrom and @LastSewDateTo)";
-                whereSewDate = " and (tsi.LastSewDate between @LastSewDateFrom and @LastSewDateTo)";
-                listPar.Add(new SqlParameter("@LastSewDateFrom", this.dateLastSewDate.DateBox1.Value));
-                listPar.Add(new SqlParameter("@LastSewDateTo", this.dateLastSewDate.DateBox2.Value));
-            }
             #endregion
 
             #region sqlcmd
             string sqlCmd = string.Empty;
             sqlCmd += $@"
-select distinct bd.BundleNo,
-                bd.Location,
-                b.Article,
-                b.ColorID,
-                bd.SizeCode,
-                bd.Patterncode,
-                b.OrderID
+select distinct bd.BundleNo 
 into #tmp_Workorder
 from Bundle b WITH (NOLOCK)
 {joinWorkOrder}
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id 
+INNER JOIN Bundle_Detail_Order BDO on BDO.BundleNo = BD.BundleNo
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno --and bio.SubProcessId = s.Id
 where 1=1
+
 {sqlWhereFirstQuery} 
-{whereExistsLastSewDate}
-
---取得Last Sew. Date相關資料
-select  vsl.OrderId, vsl.Article, vsl.SizeCode, vsl.Color, vsl.ComboType, vsl.LastSewDate, vsl.SewQty
-into #tmpSewingInfo
-from dbo.View_SewingInfoLocation vsl with (nolock)
-where   exists(select 1 from #tmp_Workorder tw 
-                        where   tw.OrderID = vsl.OrderId and
-                                tw.Article = vsl.Article and
-                                tw.SizeCode = vsl.SizeCode and
-                                tw.ColorID = vsl.Color and
-                                tw.Location = vsl.ComboType)
-
-alter table #tmpSewingInfo alter column ComboType varchar(8)
-
-insert into #tmpSewingInfo(OrderId, Article, SizeCode, Color, ComboType, LastSewDate, SewQty)
-select  OrderId, 
-        Article, 
-        SizeCode, 
-        Color, 
-        'ALLPARTS',
-        [LastSewDate] = max(LastSewDate), 
-        [SewQty] = sum(SewQty)
-from #tmpSewingInfo
-group by    OrderId, Article, SizeCode, Color
-
-
-
 ";
 
             sqlCmd += $@" 
@@ -279,6 +234,7 @@ Select
     [EXCESS] = iif(b.IsEXCESS = 0, '','Y'),
     [Cut Ref#] = isnull(b.CutRef,''),
     [SP#] = b.Orderid,
+	sps = (select concat('/',IIF(LEN(OrderID) <= 10, OrderID , substring(OrderID,11,6))) from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID offset 1 rows for xml path('')),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,
@@ -336,7 +292,6 @@ Select
 	,bio.CutCellID
 	,[SpreadingNo] = wk.SpreadingNo
 	,[FabricKind] = FabricKind.val
-    ,[BundleLocation] = w.Location
 into #result
 from #tmp_Workorder w 
 inner join Bundle_Detail bd WITH (NOLOCK, Index(PK_Bundle_Detail)) on bd.BundleNo = w.BundleNo 
@@ -450,7 +405,7 @@ select
 	r.[EXCESS],
 	r.[FabricKind],
     r.[Cut Ref#] ,
-    r.[SP#],
+    [SP#] = concat(r.[SP#],r.sps),
     r.[Master SP#],
     r.[M],
     r.[Factory],
@@ -505,16 +460,8 @@ select
 	,r.PanelNo
 	,r.CutCellID
     ,r.SpreadingNo
-    ,[LastSewDate] = tsi.LastSewDate
-    ,[SewQty] = tsi.SewQty
 from #result r
 left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
-left join #tmpSewingInfo tsi on tsi.OrderId =   r.[SP#] and 
-                                tsi.Article = r.[Article]     and
-                                tsi.SizeCode  = r.[Size]   and
-                                tsi.Color    =   r.[Color]  and
-                                (tsi.ComboType = r.BundleLocation or tsi.ComboType = r.Pattern)
-where 1 = 1 {whereSewDate}
 order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 
 
 drop table #result
@@ -538,15 +485,11 @@ drop table #tmp_Workorder
             #region 分段抓取資料填入excel
             this.ShowLoadingText($"Data Loading , please wait …");
             DataTable tmpDatas = new DataTable();
-            SqlConnection conn = null;
-            DBProxy.Current.OpenConnection(this.ConnectionName, out conn);
-            var cmd = new SqlCommand(sqlResult, conn);
-            foreach (SqlParameter sqlPar in listPar)
+            DBProxy.Current.OpenConnection(this.ConnectionName, out SqlConnection conn);
+            var cmd = new SqlCommand(sqlResult, conn)
             {
-                cmd.Parameters.Add(sqlPar);
-            }
-
-            cmd.CommandTimeout = 3000;
+                CommandTimeout = 3000,
+            };
             var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             int loadCounts = 0;
             int loadCounts2 = 0;

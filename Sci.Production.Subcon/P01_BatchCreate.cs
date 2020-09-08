@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Ict;
+using Ict.Win;
+using Sci;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Sci;
-using Sci.Data;
-using Ict;
-using Ict.Win;
 using System.Linq;
+using System.Text;
 using System.Transactions;
-using MsExcel = Microsoft.Office.Interop.Excel;
-using System.Reflection;
-using Sci.Production.PublicPrg;
+using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
@@ -22,7 +19,6 @@ namespace Sci.Production.Subcon
     /// </summary>
     public partial class P01_BatchCreate : Sci.Win.Subs.Base
     {
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private string poType;
         private string isArtwork;
         private DataTable dtArtwork;
@@ -113,7 +109,7 @@ namespace Sci.Production.Subcon
                 this.sciDelivery_b == null && this.sciDelivery_e == null &&
                 string.IsNullOrWhiteSpace(this.sp_b) && string.IsNullOrWhiteSpace(this.sp_e))
             {
-                _ = MyUtility.Msg.WarningBox("< Approve Date > or < SCI Delivery > or < SP# > can't be empty!!");
+                MyUtility.Msg.WarningBox("< Approve Date > or < SCI Delivery > or < SP# > can't be empty!!");
                 this.dateApproveDate.Focus1();
                 return;
             }
@@ -127,8 +123,8 @@ namespace Sci.Production.Subcon
             #region 組query sqlcmd
             if (string.IsNullOrWhiteSpace(this.artworktype))
             {
-                _ = MyUtility.Msg.WarningBox("< Artwork Type > can't be empty!!");
-                _ = this.txtartworktype_ftyArtworkType.Focus();
+                MyUtility.Msg.WarningBox("< Artwork Type > can't be empty!!");
+                this.txtartworktype_ftyArtworkType.Focus();
                 return;
             }
 
@@ -136,8 +132,8 @@ namespace Sci.Production.Subcon
 Declare @sp1 varchar(16)= '{this.sp_b}'
 Declare @sp2 varchar(16)= '{this.sp_e}'
 
-SELECT  bd.QTY 
-	,bdl.Orderid 
+SELECT  BDO.QTY 
+	,BDO.Orderid 
     ,bdl.Article
     ,bd.SizeCode
 	,s.ArtworkTypeId
@@ -147,7 +143,8 @@ SELECT  bd.QTY
 	,bd.PatternDesc
 INTO #Bundle
 FROM Bundle_Detail bd WITH (NOLOCK) 
-INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
+INNER JOIN Bundle bdl WITH (NOLOCK) ON bdl.id=bd.id
+INNER JOIN Bundle_Detail_Order BDO WITH (NOLOCK) on BDO.BundleNo = BD.BundleNo
 INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
 INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
 WHERE bio.RFIDProcessLocationID=''
@@ -159,12 +156,12 @@ WHERE bio.RFIDProcessLocationID=''
 
             if (!MyUtility.Check.Empty(this.sp_b))
             {
-                sqlCmd += $@" AND bdl.Orderid >= @sp1 ";
+                sqlCmd += $@" AND BDO.Orderid >= @sp1 ";
             }
 
             if (!MyUtility.Check.Empty(this.sp_e))
             {
-                sqlCmd += $@" AND bdl.Orderid <= @sp2";
+                sqlCmd += $@" AND BDO.Orderid <= @sp2";
             }
 
             if (this.poType == "O")
@@ -189,19 +186,19 @@ WHERE bio.RFIDProcessLocationID=''
                 DualResult resultGetSpecialRecordData = this.GetSpecialRecordData();
                 if (!resultGetSpecialRecordData)
                 {
-                    _ = this.ShowErr(resultGetSpecialRecordData);
+                    this.ShowErr(resultGetSpecialRecordData);
                 }
 
                 if (this.dtArtwork.Rows.Count == 0 && showNoDataMsg)
                 {
-                    _ = MyUtility.Msg.WarningBox("Data not found!!");
+                    MyUtility.Msg.WarningBox("Data not found!!");
                 }
 
                 this.listControlBindingSource1.DataSource = this.dtArtwork;
             }
             else
             {
-                _ = this.ShowErr(sqlCmd, result);
+                this.ShowErr(sqlCmd, result);
             }
         }
 
@@ -212,13 +209,13 @@ WHERE bio.RFIDProcessLocationID=''
             #region -- Grid 設定 --
             this.gridBatchCreateFromSubProcessData.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridBatchCreateFromSubProcessData.DataSource = this.listControlBindingSource1;
-            _ = this.Helper.Controls.Grid.Generator(this.gridBatchCreateFromSubProcessData)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
-                .Text("FTYGroup", header: "Fty", iseditingreadonly: true) // 1
-                .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 2
-                .Text("Styleid", header: "Style", iseditingreadonly: true) // 3
-                .Text("SeasonID", header: "Season", iseditingreadonly: true) // 4
-                .Text("orderTypeId", header: "Order Type", iseditingreadonly: true) // 5
+            this.Helper.Controls.Grid.Generator(this.gridBatchCreateFromSubProcessData)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                .Text("FTYGroup", header: "Fty", iseditingreadonly: true)
+                .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
+                .Text("Styleid", header: "Style", iseditingreadonly: true)
+                .Text("SeasonID", header: "Season", iseditingreadonly: true)
+                .Text("orderTypeId", header: "Order Type", iseditingreadonly: true)
                 .Date("SciDelivery", header: "Sci Delivery", iseditingreadonly: true)
                 .Text("Article", header: "Article", iseditingreadonly: true)
                 .Text("ArtworkTypeID", header: "Artwork Type", iseditingreadonly: true)
@@ -302,29 +299,28 @@ WHERE bio.RFIDProcessLocationID=''
 
             #region -- 表頭資料 query --- LINQ
             var query = from row in dt.AsEnumerable()
-                         where row.Field<int>("Selected").ToString() == "1"
-                         group row by new
-                         {
-                             t1 = row.Field<string>("ftygroup"),
-                             t2 = row.Field<string>("localsuppid"),
-                             t3 = row.Field<string>("artworktypeid"),
-                         }
+                        where row.Field<int>("Selected").ToString() == "1"
+                        group row by new
+                        {
+                            t1 = row.Field<string>("ftygroup"),
+                            t2 = row.Field<string>("localsuppid"),
+                            t3 = row.Field<string>("artworktypeid"),
+                        }
                         into m
-                         select new
-                         {
-                             ftygroup = m.Key.t1,
-                             localsuppid = m.Key.t2,
-                             artworktypeid = m.Key.t3,
-                         };
+                        select new
+                        {
+                            ftygroup = m.Key.t1,
+                            localsuppid = m.Key.t2,
+                            artworktypeid = m.Key.t3,
+                        };
             #endregion
 
             if (query.ToList().Count > 0)
             {
-                ITableSchema tableSchema = null;
                 DualResult result;
 
                 // result = new DualResult(false, "Get Schema(dbo.Artworkpo) Faild!!, Please re-try it later!!",);
-                result = DBProxy.Current.GetTableSchema(null, "Artworkpo", out tableSchema);
+                result = DBProxy.Current.GetTableSchema(null, "Artworkpo", out ITableSchema tableSchema);
                 if (!result)
                 {
                     _ = MyUtility.Msg.WarningBox("Get Schema(dbo.Artworkpo) Faild!!, Please re-try it later!!");
@@ -369,21 +365,21 @@ WHERE bio.RFIDProcessLocationID=''
                                 exact = int.Parse(str);
 
                                 var query3 = from row in dt.AsEnumerable()
-                                              where row.Field<int>("Selected").ToString() == "1"
-                                                     && row.Field<string>("ftygroup").ToString() == q.ftygroup
-                                                    && row.Field<string>("localsuppid").ToString() == q.localsuppid
-                                              group row by new
-                                              {
-                                                  t1 = row.Field<string>("ftygroup"),
-                                                  t2 = row.Field<string>("localsuppid"),
-                                                  t3 = row.Field<string>("artworktypeid"),
-                                              }
+                                             where row.Field<int>("Selected").ToString() == "1"
+                                                    && row.Field<string>("ftygroup").ToString() == q.ftygroup
+                                                   && row.Field<string>("localsuppid").ToString() == q.localsuppid
+                                             group row by new
+                                             {
+                                                 t1 = row.Field<string>("ftygroup"),
+                                                 t2 = row.Field<string>("localsuppid"),
+                                                 t3 = row.Field<string>("artworktypeid"),
+                                             }
                                                 into m
-                                              select new
-                                              {
-                                                  amount = m.Sum(n => n.Field<decimal?>("poqty") * n.Field<decimal?>("unitprice") *
-                                                                            (n.Field<decimal?>("qtygarment") == 0 || n.Field<decimal?>("qtygarment") == null ? 1 : n.Field<decimal?>("qtygarment"))),
-                                              };
+                                             select new
+                                             {
+                                                 amount = m.Sum(n => n.Field<decimal?>("poqty") * n.Field<decimal?>("unitprice") *
+                                                                           (n.Field<decimal?>("qtygarment") == 0 || n.Field<decimal?>("qtygarment") == null ? 1 : n.Field<decimal?>("qtygarment"))),
+                                             };
                                 foreach (var q3 in query3)
                                 {
                                     ttlamt = (decimal)q3.amount;
@@ -397,7 +393,7 @@ WHERE bio.RFIDProcessLocationID=''
                                          where row.Field<int>("Selected").ToString() == "1"
                                                && row.Field<string>("ftygroup").ToString() == q.ftygroup
                                                && row.Field<string>("localsuppid").ToString() == q.localsuppid
-                                group row by new
+                                         group row by new
                                          {
                                              t1 = row.Field<string>("orderid"),
                                              t2 = row.Field<string>("ArtworkTypeID"),
@@ -1028,8 +1024,8 @@ WHERE 	ard.ArtworkPOID = '' and
 Declare @sp1 varchar(16)= '{this.sp_b}'
 Declare @sp2 varchar(16)= '{this.sp_e}'
 
-SELECT  bd.QTY 
-	,bdl.Orderid 
+SELECT  BDO.QTY 
+	,BDO.Orderid 
     ,bdl.Article
     ,bd.SizeCode
 	,s.ArtworkTypeId
@@ -1040,6 +1036,7 @@ SELECT  bd.QTY
 INTO #Bundle
 FROM Bundle_Detail bd WITH (NOLOCK) 
 INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
+INNER JOIN Bundle_Detail_Order BDO on BDO.BundleNo = BD.BundleNo
 INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
 INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
 WHERE bio.RFIDProcessLocationID=''
@@ -1051,12 +1048,12 @@ WHERE bio.RFIDProcessLocationID=''
 
             if (!MyUtility.Check.Empty(this.sp_b))
             {
-                sqlGetSpecialRecordData += $@" AND bdl.Orderid >= @sp1 ";
+                sqlGetSpecialRecordData += $@" AND BDO.Orderid >= @sp1 ";
             }
 
             if (!MyUtility.Check.Empty(this.sp_e))
             {
-                sqlGetSpecialRecordData += $@" AND bdl.Orderid <= @sp2";
+                sqlGetSpecialRecordData += $@" AND BDO.Orderid <= @sp2";
             }
 
             sqlGetSpecialRecordData += $@"

@@ -9,11 +9,13 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P42_SubProcessStatus : Win.Tems.QueryForm
     {
-        DataRow DataRow;
-        int SummarType;
+        private readonly DataRow DataRow;
+        private readonly int SummarType;
 
+        /// <inheritdoc/>
         public P42_SubProcessStatus(DataRow dataRow, int summarType)
         {
             this.InitializeComponent();
@@ -33,6 +35,7 @@ namespace Sci.Production.Subcon
             this.GridSetup();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -84,10 +87,8 @@ namespace Sci.Production.Subcon
 
         private void Query1()
         {
-            string sqlcmd = string.Empty;
-            string where = string.Empty;
-            string where2 = string.Empty;
-
+            string where;
+            string where2;
             if (this.SummarType == 0)
             {
                 where = $@"where oq.id = '{this.DataRow["OrderID"]}'";
@@ -99,7 +100,7 @@ namespace Sci.Production.Subcon
                 where2 = $@"where o.ID = '{this.DataRow["OrderID"]}' and oq.Article ='{this.DataRow["Article"]}' and oq.SizeCode ='{this.DataRow["SizeCode"]}'";
             }
 
-            sqlcmd = $@"
+            string sqlcmd = $@"
 select Orderid = oq.ID,oq.Article,oq.SizeCode,oq.Qty, InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
 into #enn
 from Order_Qty oq  with(nolock)
@@ -170,8 +171,7 @@ drop table #tmp,#tmp2
 ";
             }
 
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -197,14 +197,14 @@ from Bundle b with(nolock)
 inner join orders o with(nolock) on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+INNER JOIN Bundle_Detail_Order BDO WITH (NOLOCK) on BDO.BundleNo = BD.BundleNo
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = bd.bundleno
-where o.ID ='{this.DataRow["OrderID"]}'
+where BDO.OrderID ='{this.DataRow["OrderID"]}'
 union
 select ID from SubProcess s where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
 ";
 
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -275,8 +275,7 @@ drop table #tmpSubProcessID
 
         private void Query3()
         {
-            string where = string.Empty;
-
+            string where;
             if (this.SummarType == 0)
             {
                 where = $@" where oq.ID='{this.DataRow["OrderID"]}' ";
@@ -318,8 +317,7 @@ order by c.ID,c.Article,z.Seq,c.FabricCombo
 
 drop table #tmp
 ";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);

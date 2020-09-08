@@ -15,10 +15,7 @@ namespace Sci.Production.Cutting
     /// <inheritdoc/>
     public partial class P14 : Win.Tems.QueryForm
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="P14"/> class.
-        /// </summary>
-        /// <param name="menuitem">ToolStripMenuItem</param>
+        /// <inheritdoc/>
         public P14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -37,7 +34,6 @@ namespace Sci.Production.Cutting
 
         private void TxtCardNo_KeyPress(object sender, KeyPressEventArgs e)
         {
-            int ikc = e.KeyChar;
             if ((!Regex.IsMatch(e.KeyChar.ToString(), "[0-9]")) && ((int)e.KeyChar) != 8)
             {
                 e.Handled = true;
@@ -52,8 +48,10 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            List<SqlParameter> sqlParameters = new List<SqlParameter>();
-            sqlParameters.Add(new SqlParameter("@BundleNo", this.txtBundleNo.Text));
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@BundleNo", this.txtBundleNo.Text),
+            };
             string sqlchk = $@"select 1 from Bundle_Detail with(nolock) where BundleNo = @BundleNo";
             if (!MyUtility.Check.Seek(sqlchk, sqlParameters))
             {
@@ -64,7 +62,7 @@ namespace Sci.Production.Cutting
 
             #region Datas
             string sqlcmd = $@"
-select  b.Orderid
+select  Orderid=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW))
         , bd.Patterncode
         , b.Cutno
         , b.Colorid
@@ -75,8 +73,7 @@ from Bundle_Detail bd with(nolock)
 inner join Bundle b with(nolock) on b.id = bd.id
 inner join orders o with(nolock) on o.id = b.Orderid and o.MDivisionID  = b.MDivisionID 
 where BundleNo = @BundleNo";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlParameters, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlParameters, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -119,8 +116,7 @@ begin
 end
 drop table #tmp
 ";
-            DataTable combotypeDt;
-            result = DBProxy.Current.Select(null, sqlCombotype, sqlParameters, out combotypeDt);
+            result = DBProxy.Current.Select(null, sqlCombotype, sqlParameters, out DataTable combotypeDt);
             if (!result)
             {
                 this.ShowErr(result);

@@ -46,7 +46,8 @@ SELECT
 	b.SuppID,
 	b.Refno,
 	b.IsEM,
-	Responsibility
+	Responsibility,
+	IsLocalSupp
 	into ADIDASComplain_Detail
 FROM Production.dbo.ADIDASComplain a with (nolock)
 inner join Production.dbo.ADIDASComplain_Detail b with (nolock) on a.ID = b.ID

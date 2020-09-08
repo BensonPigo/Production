@@ -1,7 +1,7 @@
-﻿using System.Data;
-using Ict;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using System.Data;
 
 namespace Sci.Production.PPIC
 {
@@ -10,10 +10,10 @@ namespace Sci.Production.PPIC
     /// </summary>
     public partial class P01_ProductionOutput_LoadingoutputDetail : Win.Subs.Base
     {
-        private string orderID;
-        private string type;
-        private string article;
-        private string sizeCode;
+        private readonly string orderID;
+        private readonly string type;
+        private readonly string article;
+        private readonly string sizeCode;
 
         /// <summary>
         /// P01_ProductionOutput_LoadingoutputDetail
@@ -51,30 +51,40 @@ namespace Sci.Production.PPIC
             string sqlCmd;
             if (this.type == "A")
             {
-                sqlCmd = string.Format(
-                    @"select BIO.InComing, BIO.OutGoing, BIO.BundleNo, B.FabricPanelCode, BD.Patterncode, BD.Qty
+                sqlCmd = $@"
+select BIO.InComing, BIO.OutGoing, BIO.BundleNo, B.FabricPanelCode, BD.Patterncode, BDO.Qty
 from Bundle B
-left join Bundle_Detail BD on BD.Id=B.ID
-left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-where Orderid='{0}' and BIO.SubProcessId='LOADING' and isnull(BIO.RFIDProcessLocationID,'') = ''
-order by BIO.InComing", this.orderID);
+inner join Bundle_Detail BD on BD.Id=B.ID
+inner join Bundle_Detail_Order BDO on BDO.BundleNo = BD.BundleNo
+inner join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+where BDO.Orderid='{this.orderID}'
+and BIO.SubProcessId='LOADING'
+and isnull(BIO.RFIDProcessLocationID,'') = ''
+order by BIO.InComing";
             }
             else
             {
-                sqlCmd = string.Format(
-                    @"select BIO.InComing, BIO.OutGoing, BIO.BundleNo, B.FabricPanelCode, BD.Patterncode, BD.Qty
+                sqlCmd = $@"
+select BIO.InComing, BIO.OutGoing, BIO.BundleNo, B.FabricPanelCode, BD.Patterncode, BDO.Qty
 from Bundle B
-left join Bundle_Detail BD on BD.Id=B.ID
-left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-where Orderid='{0}' and BIO.SubProcessId='LOADING' and isnull(BIO.RFIDProcessLocationID,'') = '' and B.Article='{1}' and BD.Sizecode='{2}' 
-order by BIO.InComing",
-                    this.orderID,
-                    this.article,
-                    this.sizeCode);
+inner join Bundle_Detail BD on BD.Id=B.ID
+inner join Bundle_Detail_Order BDO on BDO.BundleNo = BD.BundleNo
+inner join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+where BDO.Orderid='{this.orderID}'
+and BIO.SubProcessId='LOADING'
+and isnull(BIO.RFIDProcessLocationID,'') = ''
+and B.Article='{this.article}'
+and BD.Sizecode='{this.sizeCode}'
+order by BIO.InComing";
             }
 
-            DataTable gridData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable gridData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
             this.listControlBindingSource1.DataSource = gridData;
         }
     }

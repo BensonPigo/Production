@@ -1,27 +1,25 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using System.Linq;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
     /// <inheritdoc/>
     public partial class P12 : Win.Tems.QueryForm
     {
-        private BindingList<P12_PrintData> Data = new BindingList<P12_PrintData>();
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="P12"/> class.
-        /// </summary>
-        /// <param name="menuitem">ToolStripMenuItem</param>
+        /// <inheritdoc/>
         public P12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -41,14 +39,11 @@ namespace Sci.Production.Cutting
         private DateTime? Est_CutDate;
         private string Cell;
         private string size;
-        private string Sort_by;
-        private string Extend;
         private DualResult result;
         private DataTable dtt;
         private string Addname;
         private DateTime? AddDate;
         private string Cutno;
-        private string Comb;
         private string SpreadingNoID;
 
         private void GridSetup()
@@ -128,15 +123,10 @@ namespace Sci.Production.Cutting
             this.Est_CutDate = this.dateBox1.Value;
             this.Cell = this.txtCell.Text.ToString();
             this.size = this.txtSize.Text.ToString();
-            this.Sort_by = this.comboSortBy.SelectedIndex.ToString();
-            this.Extend = this.checkExtendAllParts.Checked.ToString();
             this.Addname = this.txtuser1.TextBox1.Text;
             this.AddDate = this.dateBundlecreatedDate.Value;
             this.Cutno = this.txtCutno.Text;
-            this.Comb = this.txtComb.Text;
             this.SpreadingNoID = this.txtSpreadingNo1.Text;
-
-            string sqlWhere = string.Empty;
             string sb = string.Empty;
             string declare = string.Empty;
             List<string> sqlWheres = new List<string>
@@ -151,7 +141,7 @@ namespace Sci.Production.Cutting
 
             if (!this.txtSPNoStart.Text.Empty() && !this.txtSPNoEnd.Text.Empty())
             {
-                sqlWheres.Add("b.OrderID  between @SP and @SP1");
+                sqlWheres.Add(@"exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.ID = b.ID and bdo.OrderID between @SP and @SP1)");
             }
 
             if (!this.txtPOID.Text.Empty())
@@ -220,7 +210,7 @@ namespace Sci.Production.Cutting
                 sqlWheres.Add(" WorkOrder.SpreadingNoID=@SpreadingNoID");
             }
 
-            sqlWhere = string.Join(" and ", sqlWheres);
+            string sqlWhere = string.Join(" and ", sqlWheres);
             if (!sqlWhere.Empty())
             {
                 sqlWhere = " where " + sqlWhere;
@@ -231,11 +221,9 @@ namespace Sci.Production.Cutting
                 declare += $@" declare @extend bit = 0 ";
             }
 
-            string sqlcmd = string.Empty;
-
+            string sqlcmd;
             if (this.checkExtendAllParts.Checked)
             {
-                // 有勾[Extend All Parts]
                 #region SQL
 
                 DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
@@ -264,7 +252,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
-    , b.Orderid [SP]
+	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , b.Sewinglineid [Line]
     , b.SewingCell [Cell]
@@ -287,14 +275,17 @@ select
     , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
+    ,brand.ShipCode
     , b.IsEXCESS
     , WorkOrder.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
+    ,b.FabricPanelCode
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
     select SubProcess = 
@@ -346,7 +337,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
-    , b.Orderid [SP]
+	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , b.Sewinglineid [Line]
     , b.SewingCell [Cell]
@@ -369,13 +360,16 @@ select
     , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
+    , brand.ShipCode
     , b.IsEXCESS
     , WorkOrder.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
+    ,b.FabricPanelCode
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
 	select distinct x.PatternCode,x.PatternDesc,x.Parts
@@ -446,7 +440,6 @@ OPTION (RECOMPILE)"
             }
             else
             {
-                // 沒勾[Extend All Parts]
                 #region SQL
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Env.User.Keyword}'
@@ -473,7 +466,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
-    , b.Orderid [SP]
+	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , b.Sewinglineid [Line]
     , b.SewingCell [Cell]
@@ -496,14 +489,17 @@ select
     , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
+    , brand.ShipCode
     , b.IsEXCESS
     , WorkOrder.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
+    ,b.FabricPanelCode
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
     select SubProcess = 
@@ -555,7 +551,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
-    , b.Orderid [SP]
+	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , b.Sewinglineid [Line]
     , b.SewingCell [Cell]
@@ -578,13 +574,16 @@ select
     , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
+    , brand.ShipCode
     , b.IsEXCESS
     , WorkOrder.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
+    ,b.FabricPanelCode
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
     select SubProcess = 
@@ -669,231 +668,230 @@ OPTION (RECOMPILE)"
 
         private void BtnBundleCard_Click(object sender, EventArgs e)
         {
-            #region report
+            this.contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
 
-            bool checkone = false;
-            for (int i = 0; i < this.grid1.Rows.Count; i++)
-            {
-                if (!MyUtility.Check.Empty(this.grid1[0, i].Value)
-                    && (bool)this.grid1[0, i].Value == true)
-                {
-                    checkone = true;
-                }
-            }
+            #region report RDLC 先不刪除 過段不知道要多久的時間, 再來刪除
 
-            if (!checkone)
-            {
-                this.grid1.Focus();
-                MyUtility.Msg.ErrorBox("Grid must be chose one");
-                return;
-            }
+            // bool checkone = false;
+            // for (int i = 0; i < this.grid1.Rows.Count; i++)
+            // {
+            //    if (!MyUtility.Check.Empty(this.grid1[0, i].Value)
+            //        && (bool)this.grid1[0, i].Value == true)
+            //    {
+            //        checkone = true;
+            //    }
+            // }
 
-            DataTable dtSelect;
+            // if (!checkone)
+            // {
+            //    this.grid1.Focus();
+            //    MyUtility.Msg.ErrorBox("Grid must be chose one");
+            //    return;
+            // }
 
-            dtSelect = this.dtt.DefaultView.ToTable()
-                .AsEnumerable()
-                .Where(row => (bool)row["selected"])
-                .CopyToDataTable();
+            // DataTable dtSelect;
 
-            List<P12_PrintData> data = new List<P12_PrintData>();
-            bool changeGroup = true;
-            for (int i = 0; i < dtSelect.Rows.Count;)
-            {
-                string thisGroupCut;
-                if (this.checkChangepagebyCut.Checked)
-                {
-                    thisGroupCut = MyUtility.Convert.GetString(dtSelect.Rows[i]["Comb"]) + MyUtility.Convert.GetString(dtSelect.Rows[i]["Cut"]);
-                }
-                else
-                {
-                    thisGroupCut = "1";
-                }
+            // dtSelect = this.dtt.DefaultView.ToTable()
+            //    .AsEnumerable()
+            //    .Where(row => (bool)row["selected"])
+            //    .CopyToDataTable();
 
-                string tmpCut = "-1";
-                var pdata = new P12_PrintData();
-                data.Add(pdata);
-                int j = 0;
-                for (; j < 3 && i + j < dtSelect.Rows.Count; j++)
-                {
-                    DataRow dr = dtSelect.Rows[i + j];
-                    if (this.checkChangepagebyCut.Checked)
-                    {
-                        tmpCut = MyUtility.Convert.GetString(dr["Comb"]) + MyUtility.Convert.GetString(dr["cut"]);
-                    }
-                    else
-                    {
-                        tmpCut = "1";
-                    }
+            // List<P12_PrintData> data = new List<P12_PrintData>();
+            // bool changeGroup = true;
+            // for (int i = 0; i < dtSelect.Rows.Count;)
+            // {
+            //    string thisGroupCut;
+            //    if (this.checkChangepagebyCut.Checked)
+            //    {
+            //        thisGroupCut = MyUtility.Convert.GetString(dtSelect.Rows[i]["Comb"]) + MyUtility.Convert.GetString(dtSelect.Rows[i]["Cut"]);
+            //    }
+            //    else
+            //    {
+            //        thisGroupCut = "1";
+            //    }
 
-                    if (changeGroup && tmpCut != thisGroupCut)
-                    {
-                        break;
-                    }
+            // string tmpCut = "-1";
+            //    var pdata = new P12_PrintData();
+            //    data.Add(pdata);
+            //    int j = 0;
+            //    for (; j < 3 && i + j < dtSelect.Rows.Count; j++)
+            //    {
+            //        DataRow dr = dtSelect.Rows[i + j];
+            //        if (this.checkChangepagebyCut.Checked)
+            //        {
+            //            tmpCut = MyUtility.Convert.GetString(dr["Comb"]) + MyUtility.Convert.GetString(dr["cut"]);
+            //        }
+            //        else
+            //        {
+            //            tmpCut = "1";
+            //        }
 
-                    if (j == 0)
-                    {
-                        pdata.Group_right = dr["Group"].ToString();
-                        pdata.Group_left = dr["left"].ToString();
-                        pdata.Line = dr["Line"].ToString();
-                        pdata.Cell = dr["Cell"].ToString();
-                        pdata.SP = dr["SP"].ToString();
-                        pdata.Style = dr["Style"].ToString();
-                        pdata.Item = dr["Item"].ToString();
-                        pdata.Body_Cut = dr["Body_Cut"].ToString();
-                        pdata.Parts = dr["Parts"].ToString();
-                        pdata.Color = dr["Color2"].ToString();
-                        pdata.Size = dr["Size"].ToString();
-                        pdata.SizeSpec = dr["SizeSpec"].ToString();
-                        pdata.Desc = dr["Description"].ToString();
-                        pdata.SubProcess = dr["SubProcess"].ToString();
-                        pdata.Qty = dr["Qty"].ToString();
-                        pdata.Barcode = dr["Bundle"].ToString();
-                        pdata.Patterncode = dr["Patterncode"].ToString();
-                        pdata.MarkerNo = dr["MarkerNo"].ToString();
-                        pdata.Season = dr["Seasonid"].ToString();
-                        pdata.Brand = dr["brand"].ToString();
-                        pdata.item = dr["item"].ToString();
-                        pdata.EXCESS1 = dr["IsEXCESS"].ToString();
-                        pdata.CutRef = tmpCut;
-                        pdata.NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)";
-                    }
-                    else if (j == 1)
-                    {
-                        pdata.Group_right2 = dr["Group"].ToString();
-                        pdata.Group_left2 = dr["left"].ToString();
-                        pdata.Line2 = dr["Line"].ToString();
-                        pdata.Cell2 = dr["Cell"].ToString();
-                        pdata.SP2 = dr["SP"].ToString();
-                        pdata.Style2 = dr["Style"].ToString();
-                        pdata.Item2 = dr["Item"].ToString();
-                        pdata.Body_Cut2 = dr["Body_Cut"].ToString();
-                        pdata.Parts2 = dr["Parts"].ToString();
-                        pdata.Color2 = dr["Color2"].ToString();
-                        pdata.Size2 = dr["Size"].ToString();
-                        pdata.SizeSpec2 = dr["SizeSpec"].ToString();
-                        pdata.Desc2 = dr["Description"].ToString();
-                        pdata.SubProcess2 = dr["SubProcess"].ToString();
-                        pdata.Qty2 = dr["Qty"].ToString();
-                        pdata.Barcode2 = dr["Bundle"].ToString();
-                        pdata.Patterncode2 = dr["Patterncode"].ToString();
-                        pdata.MarkerNo2 = dr["MarkerNo"].ToString();
-                        pdata.Season2 = dr["Seasonid"].ToString();
-                        pdata.Brand2 = dr["brand"].ToString();
-                        pdata.item2 = dr["item"].ToString();
-                        pdata.EXCESS2 = dr["IsEXCESS"].ToString();
-                        pdata.CutRef2 = tmpCut;
-                        pdata.NoBundleCardAfterSubprocess2 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)";
-                    }
-                    else
-                    {
-                        pdata.Group_right3 = dr["Group"].ToString();
-                        pdata.Group_left3 = dr["left"].ToString();
-                        pdata.Line3 = dr["Line"].ToString();
-                        pdata.Cell3 = dr["Cell"].ToString();
-                        pdata.SP3 = dr["SP"].ToString();
-                        pdata.Style3 = dr["Style"].ToString();
-                        pdata.Item3 = dr["Item"].ToString();
-                        pdata.Body_Cut3 = dr["Body_Cut"].ToString();
-                        pdata.Parts3 = dr["Parts"].ToString();
-                        pdata.Color3 = dr["Color2"].ToString();
-                        pdata.Size3 = dr["Size"].ToString();
-                        pdata.SizeSpec3 = dr["SizeSpec"].ToString();
-                        pdata.Desc3 = dr["Description"].ToString();
-                        pdata.SubProcess3 = dr["SubProcess"].ToString();
-                        pdata.Qty3 = dr["Qty"].ToString();
-                        pdata.Barcode3 = dr["Bundle"].ToString();
-                        pdata.Patterncode3 = dr["Patterncode"].ToString();
-                        pdata.MarkerNo3 = dr["MarkerNo"].ToString();
-                        pdata.Season3 = dr["Seasonid"].ToString();
-                        pdata.Brand3 = dr["brand"].ToString();
-                        pdata.item3 = dr["item"].ToString();
-                        pdata.EXCESS3 = dr["IsEXCESS"].ToString();
-                        pdata.CutRef3 = tmpCut;
-                        pdata.NoBundleCardAfterSubprocess3 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)";
-                    }
-                }
+            // if (changeGroup && tmpCut != thisGroupCut)
+            //        {
+            //            break;
+            //        }
 
-                if (changeGroup && tmpCut != thisGroupCut)
-                {
-                    i += j;
-                }
-                else
-                {
-                    i += 3;
-                }
-            }
+            // if (j == 0)
+            //        {
+            //            pdata.Group_right = dr["Group"].ToString();
+            //            pdata.Group_left = dr["left"].ToString();
+            //            pdata.Line = dr["Line"].ToString();
+            //            pdata.Cell = dr["Cell"].ToString();
+            //            pdata.SP = dr["SP"].ToString();
+            //            pdata.Style = dr["Style"].ToString();
+            //            pdata.Item = dr["Item"].ToString();
+            //            pdata.Parts = dr["Parts"].ToString();
+            //            pdata.Color = dr["Color2"].ToString();
+            //            pdata.Size = dr["Size"].ToString();
+            //            pdata.SizeSpec = dr["SizeSpec"].ToString();
+            //            pdata.Desc = dr["Description"].ToString();
+            //            pdata.Qty = dr["Qty"].ToString();
+            //            pdata.Barcode = dr["Bundle"].ToString();
+            //            pdata.Patterncode = dr["Patterncode"].ToString();
+            //            pdata.MarkerNo = dr["MarkerNo"].ToString();
+            //            pdata.Season = dr["Seasonid"].ToString();
+            //            pdata.brand = dr["brand"].ToString();
+            //            pdata.item = dr["item"].ToString();
+            //            pdata.EXCESS1 = dr["IsEXCESS"].ToString();
+            //            pdata.CutRef = tmpCut;
+            //            pdata.NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)";
 
-            var res = data;
+            // pdata.SubProcess = dr["SubProcess"].ToString();
+            //            pdata.Body_Cut = dr["Body_Cut"].ToString();
+            //        }
+            //        else if (j == 1)
+            //        {
+            //            pdata.Group_right2 = dr["Group"].ToString();
+            //            pdata.Group_left2 = dr["left"].ToString();
+            //            pdata.Line2 = dr["Line"].ToString();
+            //            pdata.Cell2 = dr["Cell"].ToString();
+            //            pdata.SP2 = dr["SP"].ToString();
+            //            pdata.Style2 = dr["Style"].ToString();
+            //            pdata.Item2 = dr["Item"].ToString();
+            //            pdata.Body_Cut2 = dr["Body_Cut"].ToString();
+            //            pdata.Parts2 = dr["Parts"].ToString();
+            //            pdata.Color2 = dr["Color2"].ToString();
+            //            pdata.Size2 = dr["Size"].ToString();
+            //            pdata.SizeSpec2 = dr["SizeSpec"].ToString();
+            //            pdata.Desc2 = dr["Description"].ToString();
+            //            pdata.SubProcess2 = dr["SubProcess"].ToString();
+            //            pdata.Qty2 = dr["Qty"].ToString();
+            //            pdata.Barcode2 = dr["Bundle"].ToString();
+            //            pdata.Patterncode2 = dr["Patterncode"].ToString();
+            //            pdata.MarkerNo2 = dr["MarkerNo"].ToString();
+            //            pdata.Season2 = dr["Seasonid"].ToString();
+            //            pdata.brand2 = dr["brand"].ToString();
+            //            pdata.item2 = dr["item"].ToString();
+            //            pdata.EXCESS2 = dr["IsEXCESS"].ToString();
+            //            pdata.CutRef2 = tmpCut;
+            //            pdata.NoBundleCardAfterSubprocess2 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)";
+            //        }
+            //        else
+            //        {
+            //            pdata.Group_right3 = dr["Group"].ToString();
+            //            pdata.Group_left3 = dr["left"].ToString();
+            //            pdata.Line3 = dr["Line"].ToString();
+            //            pdata.Cell3 = dr["Cell"].ToString();
+            //            pdata.SP3 = dr["SP"].ToString();
+            //            pdata.Style3 = dr["Style"].ToString();
+            //            pdata.Item3 = dr["Item"].ToString();
+            //            pdata.Body_Cut3 = dr["Body_Cut"].ToString();
+            //            pdata.Parts3 = dr["Parts"].ToString();
+            //            pdata.Color3 = dr["Color2"].ToString();
+            //            pdata.Size3 = dr["Size"].ToString();
+            //            pdata.SizeSpec3 = dr["SizeSpec"].ToString();
+            //            pdata.Desc3 = dr["Description"].ToString();
+            //            pdata.SubProcess3 = dr["SubProcess"].ToString();
+            //            pdata.Qty3 = dr["Qty"].ToString();
+            //            pdata.Barcode3 = dr["Bundle"].ToString();
+            //            pdata.Patterncode3 = dr["Patterncode"].ToString();
+            //            pdata.MarkerNo3 = dr["MarkerNo"].ToString();
+            //            pdata.Season3 = dr["Seasonid"].ToString();
+            //            pdata.brand3 = dr["brand"].ToString();
+            //            pdata.item3 = dr["item"].ToString();
+            //            pdata.EXCESS3 = dr["IsEXCESS"].ToString();
+            //            pdata.CutRef3 = tmpCut;
+            //            pdata.NoBundleCardAfterSubprocess3 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)";
+            //        }
+            //    }
 
-            // 指定是哪個 RDLC
-            Type reportResourceNamespace = typeof(P12_PrintData);
-            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
-            string reportResourceName = "P12_Print.rdlc";
-            IReportResource reportresource;
-            if (!(this.result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
-            {
-                this.ShowException(this.result);
-                return;
-            }
+            // if (changeGroup && tmpCut != thisGroupCut)
+            //    {
+            //        i += j;
+            //    }
+            //    else
+            //    {
+            //        i += 3;
+            //    }
+            // }
 
-            ReportDefinition report = new ReportDefinition
-            {
-                ReportDataSource = res,
-                ReportResource = reportresource,
-            };
+            // var res = data;
 
-            // 開啟 report view
-            var frm = new Win.Subs.ReportView(report);
+            //// 指定是哪個 RDLC
+            // Type reportResourceNamespace = typeof(P12_PrintData);
+            // Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            // string reportResourceName = "P12_Print.rdlc";
+            // if (!(this.result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
+            // {
+            //    this.ShowException(this.result);
+            //    return;
+            // }
+
+            // ReportDefinition report = new ReportDefinition
+            // {
+            //    ReportDataSource = res,
+            //    ReportResource = reportresource,
+            // };
+
+            //// 開啟 report view
+            // var frm = new Win.Subs.ReportView(report);
 
             // 有按才更新列印日期printdate。
-            var res2 = this.dtt.AsEnumerable()
-                .Where(row => (bool)row["selected"])
-            .Select(row1 => new P12_PrintData()
-            {
-                SP = row1["SP"].ToString(),
-                Barcode = row1["Bundle"].ToString(),
-            }).ToList();
-            StringBuilder ups = new StringBuilder();
-            foreach (var item in res2)
-            {
-                ups.Append(string.Format(
-                    @"
-update bd
-set bd.PrintDate = GETDATE()
-from Bundle_Detail bd WITH (NOLOCK)
-where bd.BundleNo = '{0}'",
-                    item.Barcode));
+            //            var res2 = this.dtt.AsEnumerable()
+            //                .Where(row => (bool)row["selected"])
+            //            .Select(row1 => new P12_PrintData()
+            //            {
+            //                SP = row1["SP"].ToString(),
+            //                Barcode = row1["Bundle"].ToString(),
+            //            }).ToList();
+            //            StringBuilder ups = new StringBuilder();
+            //            foreach (var item in res2)
+            //            {
+            //                ups.Append(string.Format(
+            //                    @"
+            // update bd
+            // set bd.PrintDate = GETDATE()
+            // from Bundle_Detail bd WITH (NOLOCK)
+            // where bd.BundleNo = '{0}'",
+            //                    item.Barcode));
 
-                ups.Append(string.Format(
-                    @"
-                            update b
-                            set b.PrintDate = GETDATE()
-                            from Bundle b WITH (NOLOCK)
-                            inner join Bundle_Detail bd WITH (NOLOCK) on b.id=bd.ID
-                            where bd.BundleNo = '{1}'",
-                    item.SP,
-                    item.Barcode));
-            }
+            // ups.Append(string.Format(
+            //                    @"
+            //                            update b
+            //                            set b.PrintDate = GETDATE()
+            //                            from Bundle b WITH (NOLOCK)
+            //                            inner join Bundle_Detail bd WITH (NOLOCK) on b.id=bd.ID
+            //                            where bd.BundleNo = '{1}'",
+            //                    item.SP,
+            //                    item.Barcode));
+            //            }
 
-            frm.viewer.Print += (s, eArgs) =>
-            {
-                var result3 = DBProxy.Current.Execute(null, ups.ToString());
-            };
-            if (this.MdiParent != null)
-            {
-                frm.MdiParent = this.MdiParent;
-            }
+            // frm.viewer.Print += (s, eArgs) =>
+            //            {
+            //                var result3 = DBProxy.Current.Execute(null, ups.ToString());
+            //            };
+            //            if (this.MdiParent != null)
+            //            {
+            //                frm.MdiParent = this.MdiParent;
+            //            }
 
-            frm.Show();
-
-            return;
-
+            // frm.Show();
+            // return;
             #endregion
         }
 
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
-            #region excel
             this.grid1.ValidateControl();
             var r = this.dtt.AsEnumerable().Where(row => (bool)row["selected"]).ToList();
             if (r.Count == 0)
@@ -903,19 +901,169 @@ where bd.BundleNo = '{0}'",
                 return;
             }
 
-            DataTable selects = this.dtt.AsEnumerable()
-                .Where(row => (bool)row["selected"])
-                .CopyToDataTable();
+            DataTable selects = r.CopyToDataTable();
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P12.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(selects, string.Empty, "Cutting_P12.xltx", 1, true, "Bundle,CutRef,POID,SP,Group,Line,SpreadingNoID,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty", objApp);      // 將datatable copy to excel
+            string fileName = "Cutting_P12";
+            string fieldList = "Bundle,CutRef,POID,SP,Group,Line,SpreadingNoID,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(selects, string.Empty, $"{fileName}.xltx", 1, true, fieldList, excelApp);
+            Marshal.ReleaseComObject(excelApp);
             return;
-            #endregion
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void Layout1_Click(object sender, EventArgs e)
+        {
+            this.PrintBarcode(1);
+        }
+
+        private void Layout2_Click(object sender, EventArgs e)
+        {
+            this.PrintBarcode(2);
+        }
+
+        private void PrintBarcode(int layout)
+        {
+            this.grid1.ValidateControl();
+            DataTable dtSelect = this.dtt.DefaultView.ToTable().AsEnumerable().Where(row => (bool)row["selected"]).TryCopyToDataTable(this.dtt);
+            if (dtSelect.Rows.Count == 0)
+            {
+                this.grid1.Focus();
+                MyUtility.Msg.ErrorBox("Grid must be chose one");
+                return;
+            }
+
+            this.ShowWaitMessage("Process Excel!");
+            List<P10_PrintData> data = dtSelect.AsEnumerable().Select(row1 => new P10_PrintData()
+            {
+                Group_right = row1["Group"].ToString(),
+                Group_left = row1["left"].ToString(),
+                Line = row1["Line"].ToString(),
+                Cell = row1["Cell"].ToString(),
+                POID = row1["POID"].ToString(),
+                SP = row1["SP"].ToString(),
+                Style = row1["Style"].ToString(),
+                MarkerNo = row1["MarkerNo"].ToString(),
+                Body_Cut = row1["Body_Cut"].ToString(),
+                Parts = row1["Parts"].ToString(),
+                Color = row1["Color2"].ToString(),
+                Article = row1["Article"].ToString(),
+                Size = row1["Size"].ToString(),
+                SizeSpec = row1["SizeSpec"].ToString(),
+                Desc = row1["Description"].ToString(),
+                Artwork = row1["SubProcess"].ToString(),
+                Quantity = row1["Qty"].ToString(),
+                Barcode = row1["Bundle"].ToString(),
+                Season = row1["Seasonid"].ToString(),
+                Brand = row1["brand"].ToString(),
+                Item = row1["item"].ToString(),
+                EXCESS1 = MyUtility.Convert.GetBool(row1["IsEXCESS"]) ? "EXCESS" : string.Empty,
+                NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(row1["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "X",
+                Replacement1 = string.Empty,
+                ShipCode = MyUtility.Convert.GetString(row1["ShipCode"]),
+                FabricPanelCode = MyUtility.Convert.GetString(row1["FabricPanelCode"]),
+                Comb = MyUtility.Convert.GetString(row1["Comb"]),
+                Cut = MyUtility.Convert.GetString(row1["cut"]),
+                GroupCombCut = 0,
+            }).ToList();
+
+            string fileName = "Cutting_P10_Layout1";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
+            Excel.Workbook workbook = excelApp.ActiveWorkbook;
+
+            if (this.checkChangepagebyCut.Checked)
+            {
+                var x = data.GroupBy(g => new { g.Comb, g.Cut })
+                     .Where(@group => @group.Any())
+                     .OrderBy(@group => @group.Key.Comb ?? string.Empty)
+                     .ThenBy(@group => @group.Key.Cut ?? string.Empty)
+                     .AsEnumerable()
+                     .Select((@group, i) => new
+                     {
+                         Items = @group,
+                         Rank = ++i,
+                     })
+                     .SelectMany(v => v.Items, (s, i) => new
+                     {
+                         Item = i,
+                         DenseRank = s.Rank,
+                     }).ToList();
+
+                int page = x.GroupBy(g => g.DenseRank).Select(s => ((s.Count() - 1) / 9) + 1).Sum();
+                for (int i = 1; i < page; i++)
+                {
+                    Excel.Worksheet worksheet1 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
+                    Excel.Worksheet worksheetn = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[i + 1];
+                    worksheet1.Copy(worksheetn);
+                    Marshal.ReleaseComObject(worksheet1);
+                    Marshal.ReleaseComObject(worksheetn);
+                }
+
+                int pp = 1;
+                x.Select(s => s.DenseRank).Distinct().OrderBy(o => o).ToList().ForEach(denseRank =>
+                {
+                    data.Clear();
+                    x.Where(w => w.DenseRank == denseRank).ToList().ForEach(r =>
+                    {
+                        r.Item.GroupCombCut = r.DenseRank;
+                        data.Add(r.Item);
+                    });
+
+                    for (int s = 1; s <= ((data.Count - 1) / 9) + 1; s++)
+                    {
+                        var writedata = data.Skip((s - 1) * 9).ToList();
+                        Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pp];
+                        P10_Print.ProcessPrint(writedata, worksheet, layout);
+                        pp++;
+                    }
+                });
+            }
+            else
+            {
+                P10_Print.RunPagePrint(data, excelApp, layout);
+            }
+
+            // 有按才更新列印日期printdate。
+            StringBuilder ups = new StringBuilder();
+            foreach (var item in data)
+            {
+                ups.Append($@"
+update bd
+set bd.PrintDate = GETDATE()
+from Bundle_Detail bd WITH (NOLOCK)
+where bd.BundleNo = '{item.Barcode}'
+
+update b
+set b.PrintDate = GETDATE()
+from Bundle b WITH (NOLOCK)
+inner join Bundle_Detail bd WITH (NOLOCK) on b.id=bd.ID
+where bd.BundleNo = '{item.Barcode}'");
+            }
+
+            this.HideWaitMessage();
+            PrintDialog pd = new PrintDialog();
+            if (pd.ShowDialog() == DialogResult.OK)
+            {
+                string printer = pd.PrinterSettings.PrinterName;
+                workbook.PrintOutEx(ActivePrinter: printer);
+                DualResult result = DBProxy.Current.Execute(null, ups.ToString());
+                if (!result)
+                {
+                    this.ShowErr("Update PrintDate Error!", result);
+                    return;
+                }
+            }
+
+            Marshal.ReleaseComObject(excelApp);
+        }
+
+        private void P12_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Dispose();
         }
     }
 }

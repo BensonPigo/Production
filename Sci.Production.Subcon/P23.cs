@@ -1,26 +1,28 @@
-﻿using System.Data;
-using System.Windows.Forms;
-using Ict;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using System.Data;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P23 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public P23(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable queryDT;
             string querySql = @"select '' union select Id from SubProcess where IsRFIDProcess=1";
-            DBProxy.Current.Select(null, querySql, out queryDT);
+            DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.lbl_queryfor.Text = "Sub Process";
             this.queryfors.SelectedIndex = 0;
@@ -40,6 +42,7 @@ namespace Sci.Production.Subcon
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -73,7 +76,6 @@ namespace Sci.Production.Subcon
                 {
                     if (MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from Bundle_Detail WITH (NOLOCK) where BundleNo = '{0}')", e.FormattedValue), null))
                     {
-                        DataTable getdata;
                         string sqlcmd = string.Format(
                             @"
 select B.Orderid, Artwork.value, BD.Patterncode, BD.PatternDesc
@@ -92,7 +94,7 @@ outer apply (
 ) ArtWork
 where BundleNo='{0}'",
                             e.FormattedValue);
-                        DBProxy.Current.Select(null, sqlcmd, out getdata);
+                        DBProxy.Current.Select(null, sqlcmd, out DataTable getdata);
 
                         this.CurrentDetailData["BundleNo"] = e.FormattedValue;
                         this.CurrentDetailData["OrderID"] = getdata.Rows[0]["Orderid"].ToString();
@@ -116,12 +118,13 @@ where BundleNo='{0}'",
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(12), settings: ts1, iseditingreadonly: false)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("OrderIDs", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("SubprocessId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Patterncode", header: "PTN Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("PatternDesc", header: "PTN Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true);
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -131,6 +134,7 @@ select
     BTD.ID
 	,BTD.BundleNo
 	,BTD.orderid
+    ,OrderIDs = dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW))
 	,S.SubprocessId
 	,BD.Patterncode
 	,BD.PatternDesc
@@ -148,6 +152,7 @@ WHERE BTD.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override bool ClickNew()
         {
             var frm = new P23_ImportBarcode();
@@ -156,6 +161,7 @@ WHERE BTD.ID = '{0}'", masterID);
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             string sqlcmd = string.Format(
@@ -186,8 +192,7 @@ OUTER APPLY(
 WHERE BTD.ID = '{0}'
 order by BTD.orderid", this.CurrentMaintain["ID"].ToString());
 
-            DataTable print;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out print);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable print);
             if (!result)
             {
                 this.ShowErr("Query data fail\r\n" + result.ToString());
@@ -223,16 +228,17 @@ order by BTD.orderid", this.CurrentMaintain["ID"].ToString());
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            DataTable Dg = (DataTable)this.detailgridbs.DataSource;
-            for (int i = Dg.Rows.Count; i > 0; i--)
+            DataTable dg = (DataTable)this.detailgridbs.DataSource;
+            for (int i = dg.Rows.Count; i > 0; i--)
             {
-                if (Dg.Rows[i - 1].RowState != DataRowState.Deleted)
+                if (dg.Rows[i - 1].RowState != DataRowState.Deleted)
                 {
-                    if (MyUtility.Check.Empty(Dg.Rows[i - 1]["BundleNo"]))
+                    if (MyUtility.Check.Empty(dg.Rows[i - 1]["BundleNo"]))
                     {
-                        Dg.Rows[i - 1].Delete();
+                        dg.Rows[i - 1].Delete();
                     }
                 }
             }

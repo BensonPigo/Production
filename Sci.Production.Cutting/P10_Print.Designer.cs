@@ -28,44 +28,47 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.checkExtendAllParts = new System.Windows.Forms.CheckBox();
             this.radioBundleChecklist = new System.Windows.Forms.RadioButton();
             this.radioBundleCard = new System.Windows.Forms.RadioButton();
-            this.radioPanel1.SuspendLayout();
+            this.comboLayout = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(445, 12);
+            this.print.Location = new System.Drawing.Point(317, 12);
             this.print.TabIndex = 0;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(445, 48);
+            this.toexcel.Location = new System.Drawing.Point(317, 48);
             this.toexcel.TabIndex = 1;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(445, 84);
+            this.close.Location = new System.Drawing.Point(317, 84);
             this.close.TabIndex = 2;
             // 
-            // radioPanel1
+            // buttonCustomized
             // 
-            this.radioPanel1.Controls.Add(this.checkExtendAllParts);
-            this.radioPanel1.Controls.Add(this.radioBundleChecklist);
-            this.radioPanel1.Controls.Add(this.radioBundleCard);
-            this.radioPanel1.Location = new System.Drawing.Point(12, 11);
-            this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(350, 100);
-            this.radioPanel1.TabIndex = 0;
-            this.radioPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.RadioPanel1_Paint);
+            this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCustomized.Location = new System.Drawing.Point(271, 120);
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkUseCustomized.Location = new System.Drawing.Point(297, 126);
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtVersion.Location = new System.Drawing.Point(297, 124);
             // 
             // checkExtendAllParts
             // 
             this.checkExtendAllParts.AutoSize = true;
             this.checkExtendAllParts.ForeColor = System.Drawing.Color.Red;
-            this.checkExtendAllParts.Location = new System.Drawing.Point(210, 18);
+            this.checkExtendAllParts.Location = new System.Drawing.Point(12, 84);
             this.checkExtendAllParts.Name = "checkExtendAllParts";
             this.checkExtendAllParts.Size = new System.Drawing.Size(126, 21);
             this.checkExtendAllParts.TabIndex = 5;
@@ -75,7 +78,7 @@
             // radioBundleChecklist
             // 
             this.radioBundleChecklist.AutoSize = true;
-            this.radioBundleChecklist.Location = new System.Drawing.Point(28, 57);
+            this.radioBundleChecklist.Location = new System.Drawing.Point(12, 48);
             this.radioBundleChecklist.Name = "radioBundleChecklist";
             this.radioBundleChecklist.Size = new System.Drawing.Size(134, 21);
             this.radioBundleChecklist.TabIndex = 4;
@@ -86,42 +89,58 @@
             // 
             this.radioBundleCard.AutoSize = true;
             this.radioBundleCard.Checked = true;
-            this.radioBundleCard.Location = new System.Drawing.Point(28, 17);
+            this.radioBundleCard.Location = new System.Drawing.Point(12, 12);
             this.radioBundleCard.Name = "radioBundleCard";
             this.radioBundleCard.Size = new System.Drawing.Size(131, 21);
             this.radioBundleCard.TabIndex = 3;
             this.radioBundleCard.TabStop = true;
             this.radioBundleCard.Text = "Bundle Card(A4)";
             this.radioBundleCard.UseVisualStyleBackColor = true;
+            this.radioBundleCard.CheckedChanged += new System.EventHandler(this.RadioBundleCard_CheckedChanged);
+            // 
+            // comboLayout
+            // 
+            this.comboLayout.BackColor = System.Drawing.Color.White;
+            this.comboLayout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboLayout.FormattingEnabled = true;
+            this.comboLayout.IsSupportUnselect = true;
+            this.comboLayout.Location = new System.Drawing.Point(149, 12);
+            this.comboLayout.Name = "comboLayout";
+            this.comboLayout.OldText = "";
+            this.comboLayout.Size = new System.Drawing.Size(121, 24);
+            this.comboLayout.TabIndex = 97;
             // 
             // P10_Print
             // 
-            this.ClientSize = new System.Drawing.Size(537, 162);
-            this.Controls.Add(this.radioPanel1);
+            this.ClientSize = new System.Drawing.Size(409, 178);
+            this.Controls.Add(this.comboLayout);
+            this.Controls.Add(this.checkExtendAllParts);
+            this.Controls.Add(this.radioBundleChecklist);
+            this.Controls.Add(this.radioBundleCard);
             this.DefaultControl = "radioBundleCard";
             this.Name = "P10_Print";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "P10. Print";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.P10_Print_FormClosed);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
-            this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.radioBundleCard, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.radioBundleChecklist, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.radioPanel1.ResumeLayout(false);
-            this.radioPanel1.PerformLayout();
+            this.Controls.SetChildIndex(this.checkExtendAllParts, 0);
+            this.Controls.SetChildIndex(this.comboLayout, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private Win.UI.RadioPanel radioPanel1;
         private System.Windows.Forms.CheckBox checkExtendAllParts;
         private System.Windows.Forms.RadioButton radioBundleChecklist;
         private System.Windows.Forms.RadioButton radioBundleCard;
-
+        private Win.UI.ComboBox comboLayout;
     }
 }

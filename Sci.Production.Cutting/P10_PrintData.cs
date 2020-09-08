@@ -1,338 +1,225 @@
 ﻿namespace Sci.Production.Cutting
 {
-    /// <summary>
-    /// P10 Print Data
-    /// </summary>
+    /// <inheritdoc/>
     internal class P10_PrintData
     {
-        /// <summary>
-        /// Group right
-        /// </summary>
+        /// <inheritdoc/>
         public string Group_right { get; set; }
 
-        /// <summary>
-        /// Group left
-        /// </summary>
+        /// <inheritdoc/>
         public string Group_left { get; set; }
 
-        /// <summary>
-        /// Line
-        /// </summary>
+        /// <inheritdoc/>
         public string Line { get; set; }
 
-        /// <summary>
-        /// Cell
-        /// </summary>
+        /// <inheritdoc/>
         public string Cell { get; set; }
 
-        /// <summary>
-        /// SP
-        /// </summary>
+        /// <inheritdoc/>
+        public string POID { get; set; }
+
+        /// <inheritdoc/>
         public string SP { get; set; }
 
-        /// <summary>
-        /// Style
-        /// </summary>
+        /// <inheritdoc/>
         public string Style { get; set; }
 
-        /// <summary>
-        /// Marker No
-        /// </summary>
+        /// <inheritdoc/>
         public string MarkerNo { get; set; }
 
-        /// <summary>
-        /// Body Cut
-        /// </summary>
+        /// <inheritdoc/>
         public string Body_Cut { get; set; }
 
-        /// <summary>
-        /// Parts
-        /// </summary>
+        /// <inheritdoc/>
         public string Parts { get; set; }
 
-        /// <summary>
-        /// Color
-        /// </summary>
+        /// <inheritdoc/>
         public string Color { get; set; }
 
-        /// <summary>
-        /// Size
-        /// </summary>
+        /// <inheritdoc/>
+        public string Article { get; set; }
+
+        /// <inheritdoc/>
         public string Size { get; set; }
 
-        /// <summary>
-        /// Size Spec
-        /// </summary>
+        /// <inheritdoc/>
         public string SizeSpec { get; set; }
 
-        /// <summary>
-        /// Desc
-        /// </summary>
+        /// <inheritdoc/>
         public string Desc { get; set; }
 
-        /// <summary>
-        /// Artwork
-        /// </summary>
+        /// <inheritdoc/>
         public string Artwork { get; set; }
 
-        /// <summary>
-        /// Quantity
-        /// </summary>
+        /// <inheritdoc/>
         public string Quantity { get; set; }
 
-        /// <summary>
-        /// Barcode
-        /// </summary>
+        /// <inheritdoc/>
         public string Barcode { get; set; }
 
-        /// <summary>
-        /// Season
-        /// </summary>
+        /// <inheritdoc/>
         public string Season { get; set; }
 
-        /// <summary>
-        /// Brand
-        /// </summary>
+        /// <inheritdoc/>
         public string Brand { get; set; }
 
-        /// <summary>
-        /// Item
-        /// </summary>
+        /// <inheritdoc/>
         public string Item { get; set; }
 
-        /// <summary>
-        /// EXCESS
-        /// </summary>
+        /// <inheritdoc/>
         public string EXCESS1 { get; set; }
 
-        /// <summary>
-        /// NoBundleCardAfterSubprocess
-        /// </summary>
+        /// <inheritdoc/>
         public string NoBundleCardAfterSubprocess1 { get; set; }
 
-        /// <summary>
-        /// Replacement
-        /// </summary>
+        /// <inheritdoc/>
         public string Replacement1 { get; set; }
 
-        /// <summary>
-        /// Group right2
-        /// </summary>
+        /// <inheritdoc/>
         public string Group_right2 { get; set; }
 
-        /// <summary>
-        /// Group left2
-        /// </summary>
+        /// <inheritdoc/>
         public string Group_left2 { get; set; }
 
-        /// <summary>
-        /// Line2
-        /// </summary>
+        /// <inheritdoc/>
         public string Line2 { get; set; }
 
-        /// <summary>
-        /// Cell2
-        /// </summary>
+        /// <inheritdoc/>
         public string Cell2 { get; set; }
 
-        /// <summary>
-        /// SP2
-        /// </summary>
+        /// <inheritdoc/>
         public string SP2 { get; set; }
 
-        /// <summary>
-        /// Style2
-        /// </summary>
+        /// <inheritdoc/>
         public string Style2 { get; set; }
 
-        /// <summary>
-        /// MarkerNo2
-        /// </summary>
+        /// <inheritdoc/>
         public string MarkerNo2 { get; set; }
 
-        /// <summary>
-        /// Body_Cut2
-        /// </summary>
+        /// <inheritdoc/>
         public string Body_Cut2 { get; set; }
 
-        /// <summary>
-        /// Parts2
-        /// </summary>
+        /// <inheritdoc/>
         public string Parts2 { get; set; }
 
-        /// <summary>
-        /// Color2
-        /// </summary>
+        /// <inheritdoc/>
         public string Color2 { get; set; }
 
-        /// <summary>
-        /// Size2
-        /// </summary>
+        /// <inheritdoc/>
         public string Size2 { get; set; }
 
-        /// <summary>
-        /// SizeSpec2
-        /// </summary>
+        /// <inheritdoc/>
         public string SizeSpec2 { get; set; }
 
-        /// <summary>
-        /// Desc2
-        /// </summary>
+        /// <inheritdoc/>
         public string Desc2 { get; set; }
 
-        /// <summary>
-        /// Artwork2
-        /// </summary>
+        /// <inheritdoc/>
         public string Artwork2 { get; set; }
 
-        /// <summary>
-        /// Quantity2
-        /// </summary>
+        /// <inheritdoc/>
         public string Quantity2 { get; set; }
 
-        /// <summary>
-        /// Barcode2
-        /// </summary>
+        /// <inheritdoc/>
         public string Barcode2 { get; set; }
 
-        /// <summary>
-        /// Season2
-        /// </summary>
+        /// <inheritdoc/>
         public string Season2 { get; set; }
 
-        /// <summary>
-        /// Brand2
-        /// </summary>
+        /// <inheritdoc/>
         public string Brand2 { get; set; }
 
-        /// <summary>
-        /// Item2
-        /// </summary>
+        /// <inheritdoc/>
         public string Item2 { get; set; }
 
-        /// <summary>
-        /// EXCESS2
-        /// </summary>
+        /// <inheritdoc/>
         public string EXCESS2 { get; set; }
 
-        /// <summary>
-        /// NoBundleCardAfterSubprocess2
-        /// </summary>
+        /// <inheritdoc/>
         public string NoBundleCardAfterSubprocess2 { get; set; }
 
-        /// <summary>
-        /// Replacement2
-        /// </summary>
+        /// <inheritdoc/>
         public string Replacement2 { get; set; }
 
-        /// <summary>
-        /// Group_right3
-        /// </summary>
+        /// <inheritdoc/>
         public string Group_right3 { get; set; }
 
-        /// <summary>
-        /// Group_left3
-        /// </summary>
+        /// <inheritdoc/>
         public string Group_left3 { get; set; }
 
-        /// <summary>
-        /// Line3
-        /// </summary>
+        /// <inheritdoc/>
         public string Line3 { get; set; }
 
-        /// <summary>
-        /// Cell3
-        /// </summary>
+        /// <inheritdoc/>
         public string Cell3 { get; set; }
 
-        /// <summary>
-        /// SP3
-        /// </summary>
+        /// <inheritdoc/>
         public string SP3 { get; set; }
 
-        /// <summary>
-        /// Style3
-        /// </summary>
+        /// <inheritdoc/>
         public string Style3 { get; set; }
 
-        /// <summary>
-        /// MarkerNo3
-        /// </summary>
+        /// <inheritdoc/>
         public string MarkerNo3 { get; set; }
 
-        /// <summary>
-        /// Body_Cut3
-        /// </summary>
+        /// <inheritdoc/>
         public string Body_Cut3 { get; set; }
 
-        /// <summary>
-        /// Parts3
-        /// </summary>
+        /// <inheritdoc/>
         public string Parts3 { get; set; }
 
-        /// <summary>
-        /// Color3
-        /// </summary>
+        /// <inheritdoc/>
         public string Color3 { get; set; }
 
-        /// <summary>
-        /// Size3
-        /// </summary>
+        /// <inheritdoc/>
         public string Size3 { get; set; }
 
-        /// <summary>
-        /// SizeSpec3
-        /// </summary>
+        /// <inheritdoc/>
         public string SizeSpec3 { get; set; }
 
-        /// <summary>
-        /// Desc3
-        /// </summary>
+        /// <inheritdoc/>
         public string Desc3 { get; set; }
 
-        /// <summary>
-        /// Artwork3
-        /// </summary>
+        /// <inheritdoc/>
         public string Artwork3 { get; set; }
 
-        /// <summary>
-        /// Quantity3
-        /// </summary>
+        /// <inheritdoc/>
         public string Quantity3 { get; set; }
 
-        /// <summary>
-        /// Barcode3
-        /// </summary>
+        /// <inheritdoc/>
         public string Barcode3 { get; set; }
 
-        /// <summary>
-        /// Season3
-        /// </summary>
+        /// <inheritdoc/>
         public string Season3 { get; set; }
 
-        /// <summary>
-        /// brand3
-        /// </summary>
+        /// <inheritdoc/>
         public string Brand3 { get; set; }
 
-        /// <summary>
-        /// item3
-        /// </summary>
+        /// <inheritdoc/>
         public string Item3 { get; set; }
 
-        /// <summary>
-        /// EXCESS3
-        /// </summary>
+        /// <inheritdoc/>
         public string EXCESS3 { get; set; }
 
-        /// <summary>
-        /// NoBundleCardAfterSubprocess3
-        /// </summary>
+        /// <inheritdoc/>
         public string NoBundleCardAfterSubprocess3 { get; set; }
 
-        /// <summary>
-        /// Replacement3
-        /// </summary>
+        /// <inheritdoc/>
         public string Replacement3 { get; set; }
+
+        /// <inheritdoc/>
+        public string ShipCode { get; set; }
+
+        /// <inheritdoc/>
+        public string FabricPanelCode { get; set; }
+
+        /// <inheritdoc/>
+        public string Comb { get; set; }
+
+        /// <inheritdoc/>
+        public string Cut { get; set; }
+
+        /// <inheritdoc/>
+        public int GroupCombCut { get; set; }
     }
 }

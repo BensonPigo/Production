@@ -1,40 +1,37 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Windows.Forms;
-using Sci.Data;
 using System.Data.SqlClient;
-using Ict;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R32 : Win.Tems.PrintForm
     {
-        string subProcess;
-        string factory;
-        string spNo;
-        DataTable printData;
+        private string subProcess;
+        private string factory;
+        private string spNo;
+        private DataTable printData;
 
+        /// <inheritdoc/>
         public R32(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             #region set ComboFactory
-            DataTable dtFactory;
-            DBProxy.Current.Select(null, @"
-select FtyGroup = ''
-
-union all
-select distinct FTYGroup 
-from Factory 
-where Junk != 1", out dtFactory);
+            string sqlcmd = "select FtyGroup = '' union all select distinct FTYGroup from Factory where Junk != 1";
+            DBProxy.Current.Select(null, sqlcmd, out DataTable dtFactory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, dtFactory);
             this.comboFactory.Text = Env.User.Factory;
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             #region 判斷必輸條件
@@ -55,27 +52,28 @@ where Junk != 1", out dtFactory);
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
             #region SQL first where
-            List<string> FirstWhere = new List<string>();
+            List<string> firstWhere = new List<string>();
             List<string> finalWhere = new List<string>();
             string joinTmpBase = "LEFT JOIN #Base base ON bd.BundleNo=base.BundleNo";
 
             if (this.dateFarmOutDate.HasValue)
             {
-                FirstWhere.Add($@"  and left(b.ID,2) ='TB'");
+                firstWhere.Add($@"  and left(b.ID,2) ='TB'");
                 if (this.dateFarmOutDate.Value1.Empty() == false)
                 {
-                    FirstWhere.Add(" and b.IssueDate >= @dateFarmOutDateFrom ");
+                    firstWhere.Add(" and b.IssueDate >= @dateFarmOutDateFrom ");
                     finalWhere.Add(" and FarmOut.IssueDate >= @dateFarmOutDateFrom");
                     listSqlPar.Add(new SqlParameter("@dateFarmOutDateFrom", Convert.ToDateTime(this.dateFarmOutDate.DateBox1.Value)));
                 }
 
                 if (this.dateFarmOutDate.Value2.Empty() == false)
                 {
-                    FirstWhere.Add(" and b.IssueDate <= @dateFarmOutDateTo ");
+                    firstWhere.Add(" and b.IssueDate <= @dateFarmOutDateTo ");
                     finalWhere.Add(" and FarmOut.IssueDate <= @dateFarmOutDateTo");
                     listSqlPar.Add(new SqlParameter("@dateFarmOutDateTo", Convert.ToDateTime(this.dateFarmOutDate.DateBox2.Value)));
                 }
@@ -85,38 +83,38 @@ where Junk != 1", out dtFactory);
 
             if (this.dateBundleCdate.HasValue)
             {
-                FirstWhere.Add($@" and exists (select 1 from Bundle bud with (nolock)
+                firstWhere.Add($@" and exists (select 1 from Bundle bud with (nolock)
 							                    inner join Bundle_Detail budd with (nolock) on bud.ID = budd.Id
                                                 where budd.BundleNo = bd.BundleNo ");
                 if (this.dateBundleCdate.Value1.Empty() == false)
                 {
-                    FirstWhere.Add(" and bud.Cdate >= @dateBundleCdateFrom");
+                    firstWhere.Add(" and bud.Cdate >= @dateBundleCdateFrom");
                     finalWhere.Add(" and b.Cdate >= @dateBundleCdateFrom");
                     listSqlPar.Add(new SqlParameter("@dateBundleCdateFrom", Convert.ToDateTime(this.dateBundleCdate.DateBox1.Value)));
                 }
 
                 if (this.dateBundleCdate.Value2.Empty() == false)
                 {
-                    FirstWhere.Add(" and bud.Cdate <= @dateBundleCdateTo");
+                    firstWhere.Add(" and bud.Cdate <= @dateBundleCdateTo");
                     finalWhere.Add(" and b.Cdate <= @dateBundleCdateTo");
                     listSqlPar.Add(new SqlParameter("@dateBundleCdateTo", Convert.ToDateTime(this.dateBundleCdate.DateBox2.Value)));
                 }
 
-                FirstWhere.Add(")");
+                firstWhere.Add(")");
             }
 
             if (this.dateBundleScan.HasValue)
             {
                 if (this.dateBundleScan.Value1.Empty() == false)
                 {
-                    FirstWhere.Add(" and (left(b.ID,2) = 'TB' and b.IssueDate >= @dateBundleScanFrom or left(b.ID,2) = 'TC' and bd.ReceiveDate >= @dateBundleScanFrom)");
+                    firstWhere.Add(" and (left(b.ID,2) = 'TB' and b.IssueDate >= @dateBundleScanFrom or left(b.ID,2) = 'TC' and bd.ReceiveDate >= @dateBundleScanFrom)");
                     finalWhere.Add(" and (FarmOut.IssueDate >= @dateBundleScanFrom or FarmIn.ReceiveDate >= @dateBundleScanFrom)");
                     listSqlPar.Add(new SqlParameter("@dateBundleScanFrom", this.dateBundleScan.DateBox1.Value));
                 }
 
                 if (this.dateBundleScan.Value2.Empty() == false)
                 {
-                    FirstWhere.Add(" and (left(b.ID,2) = 'TB' and b.IssueDate <= @dateBundleScanTo or left(b.ID,2) = 'TC' and bd.ReceiveDate <= @dateBundleScanTo)");
+                    firstWhere.Add(" and (left(b.ID,2) = 'TB' and b.IssueDate <= @dateBundleScanTo or left(b.ID,2) = 'TC' and bd.ReceiveDate <= @dateBundleScanTo)");
                     finalWhere.Add(" and (FarmOut.IssueDate <= @dateBundleScanTo or FarmIn.ReceiveDate <= @dateBundleScanTo)");
                     listSqlPar.Add(new SqlParameter("@dateBundleScanTo", this.dateBundleScan.DateBox2.Value.Value.AddDays(1).AddSeconds(-1)));
                 }
@@ -139,7 +137,7 @@ where Junk != 1", out dtFactory);
 
             if (!MyUtility.Check.Empty(this.spNo))
             {
-                FirstWhere.Add($@" and bd.orderid = '{this.spNo}'");
+                firstWhere.Add($@" and bd.orderid = '{this.spNo}'");
                 finalWhere.Add($@" and o.ID = '{this.spNo}'");
             }
 
@@ -177,7 +175,7 @@ insert into #Base
 SELECT DISTINCT bd.BundleNo ,b.StartProcess 
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
-WHERE   1 = 1 {FirstWhere.JoinToString("\r\n")}  
+WHERE   1 = 1 {firstWhere.JoinToString("\r\n")}  
 
 --再回頭，找全DB裡面相同BundleNo、StartProcess的Out和In資料，連同相關欄位一起找出來，lastEditDate 用於排序
 
@@ -204,7 +202,7 @@ WHERE   left(b.ID,2) = 'TC'
 SELECT  isnull(base.BundleNo,bd.BundleNo) BundleNo
 		,[EXCESS] = iif(b.IsEXCESS = 0,'','Y')
 		,b.CutRef
-		,b.Orderid
+		,[OrderID] = dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where BundleNo = isnull(base.BundleNo,bd.BundleNo) order by OrderID for XML RAW))
 		,b.POID
 		,b.MDivisionid
 		,o.FtyGroup
@@ -235,8 +233,8 @@ SELECT  isnull(base.BundleNo,bd.BundleNo) BundleNo
 		,[Subcon] = FarmOut.EndSite + '-' + ls.Abb 
 		, '' remark 
 from Bundle b
-LEFT JOIN Orders o ON o.ID=b.Orderid
 inner JOIN Bundle_Detail bd ON b.ID = bd.Id
+LEFT JOIN Orders o ON o.ID=b.Orderid
 {joinTmpBase}
 OUTER APPLY(
 	SELECT	[EstCutDate] = MAX(w.EstCutDate),
@@ -289,6 +287,7 @@ Drop Table #FarmOutList,#FarmInList,#Base
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region check printData

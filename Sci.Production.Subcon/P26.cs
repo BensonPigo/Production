@@ -6,21 +6,23 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P26 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public P26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             this.lbl_queryfor.Text = "Sub Process";
-            DataTable queryDT;
             string querySql = @"select '' union select Id from SubProcess where IsRFIDProcess=1";
-            DBProxy.Current.Select(null, querySql, out queryDT);
+            DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
             this.queryfors.SelectedIndexChanged += (s, e) =>
@@ -39,6 +41,7 @@ namespace Sci.Production.Subcon
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -53,6 +56,7 @@ namespace Sci.Production.Subcon
                 .DateTime("ReceiveDate", header: "Recv. Date", width: Widths.AnsiChars(20));
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -61,6 +65,7 @@ namespace Sci.Production.Subcon
 select 
 	BTD.BundleNo
 	,BTD.orderid
+    ,OrderIDs = dbo.GetSinglelineSP((select distinct OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW))
 	,S.SubprocessId
 	,BD.Patterncode
 	,BD.PatternDesc
@@ -80,6 +85,7 @@ WHERE BTD.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override bool ClickNew()
         {
             var frm = new P26_ImportBarcode();
