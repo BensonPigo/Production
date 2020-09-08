@@ -81,7 +81,7 @@ from Orders o
 inner join Order_Qty oq on oq.ID = o.ID
 left join Order_Location ol on ol.OrderId = o.ID
 left join Style_Location sl on sl.StyleUkey = o.StyleUkey
-where o.ID = @SP
+where o.ID = in (select distinct o3.id from Orders o2 inner join Orders o3 on o3.POID = o2.POID where o2.id=@SP)
 and o.FtyGroup = '{Env.User.Factory}'
 
 select OrderID = t.ID, t.ComboType, t.Article,t.SizeCode,
