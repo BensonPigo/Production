@@ -214,7 +214,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!stocktype.Value</Value>
+                                                <Value>=Fields!Stocktype.Value</Value>
                                                 <Style />
                                               </TextRun>
                                             </TextRuns>
@@ -245,7 +245,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!unit.Value</Value>
+                                                <Value>=Fields!Unit.Value</Value>
                                                 <Style />
                                               </TextRun>
                                             </TextRuns>
@@ -1521,16 +1521,16 @@
           <DataField>SEQ</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="stocktype">
-          <DataField>stocktype</DataField>
+        <Field Name="Stocktype">
+          <DataField>Stocktype</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Total">
           <DataField>Total</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="unit">
-          <DataField>unit</DataField>
+        <Field Name="Unit">
+          <DataField>Unit</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

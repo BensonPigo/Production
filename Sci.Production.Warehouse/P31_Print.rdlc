@@ -164,7 +164,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!unit.Value</Value>
+                                                    <Value>=Fields!Unit.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -1451,8 +1451,8 @@
           <DataField>Total</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="unit">
-          <DataField>unit</DataField>
+        <Field Name="Unit">
+          <DataField>Unit</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

@@ -1680,8 +1680,8 @@
           <DataField>DYELOT</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="groupby">
-          <DataField>groupby</DataField>
+        <Field Name="Groupby">
+          <DataField>Groupby</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="INVENTORYLOCATION">

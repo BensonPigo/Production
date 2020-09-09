@@ -128,7 +128,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!pounit.Value</Value>
+                                                    <Value>=Fields!Pounit.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -1362,8 +1362,8 @@
           <DataField>POID</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="pounit">
-          <DataField>pounit</DataField>
+        <Field Name="Pounit">
+          <DataField>Pounit</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Remark">
