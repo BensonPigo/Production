@@ -764,5 +764,13 @@ where  ar.ArtworkTypeID = '{this.dr_artworkpo["artworktypeid"]}' and ar.Status =
                 this.gridBatchImport.Rows[index].Cells["unitprice"].Style.BackColor = Color.Pink; // Unit Price
             }
         }
+
+        private void GridBatchImport_Sorted(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow dr in this.gridBatchImport.Rows)
+            {
+                this.DetalGridCellEditChange(dr.Index);
+            }
+        }
     }
 }

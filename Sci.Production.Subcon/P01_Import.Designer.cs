@@ -38,6 +38,8 @@
             this.labelNoQuoteHintColor = new Sci.Win.UI.Label();
             this.labelNoQuoteHint = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.lblIrregularQtyReason = new Sci.Win.UI.Label();
+            this.txtIrregularQtyReason = new Sci.Production.Class.TxtSubconReason();
             this.label8 = new System.Windows.Forms.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateApproveDate = new Sci.Win.UI.DateRange();
@@ -47,8 +49,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridBatchImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.lblIrregularQtyReason = new Sci.Win.UI.Label();
-            this.txtIrregularQtyReason = new Sci.Production.Class.TxtSubconReason();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -162,6 +162,25 @@
             this.groupBox1.Size = new System.Drawing.Size(951, 87);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // lblIrregularQtyReason
+            // 
+            this.lblIrregularQtyReason.Location = new System.Drawing.Point(417, 48);
+            this.lblIrregularQtyReason.Name = "lblIrregularQtyReason";
+            this.lblIrregularQtyReason.Size = new System.Drawing.Size(136, 23);
+            this.lblIrregularQtyReason.TabIndex = 20;
+            this.lblIrregularQtyReason.Text = "Irregular Qty Reason";
+            // 
+            // txtIrregularQtyReason
+            // 
+            this.txtIrregularQtyReason.DisplayBox1Binding = "";
+            this.txtIrregularQtyReason.Location = new System.Drawing.Point(556, 46);
+            this.txtIrregularQtyReason.MutiSelect = true;
+            this.txtIrregularQtyReason.Name = "txtIrregularQtyReason";
+            this.txtIrregularQtyReason.Size = new System.Drawing.Size(393, 27);
+            this.txtIrregularQtyReason.TabIndex = 19;
+            this.txtIrregularQtyReason.TextBox1Binding = "";
+            this.txtIrregularQtyReason.Type = "SQ";
             // 
             // label8
             // 
@@ -278,25 +297,7 @@
             this.gridBatchImport.Size = new System.Drawing.Size(951, 390);
             this.gridBatchImport.TabIndex = 0;
             this.gridBatchImport.TabStop = false;
-            // 
-            // lblIrregularQtyReason
-            // 
-            this.lblIrregularQtyReason.Location = new System.Drawing.Point(417, 48);
-            this.lblIrregularQtyReason.Name = "lblIrregularQtyReason";
-            this.lblIrregularQtyReason.Size = new System.Drawing.Size(136, 23);
-            this.lblIrregularQtyReason.TabIndex = 20;
-            this.lblIrregularQtyReason.Text = "Irregular Qty Reason";
-            // 
-            // txtIrregularQtyReason
-            // 
-            this.txtIrregularQtyReason.DisplayBox1Binding = "";
-            this.txtIrregularQtyReason.Location = new System.Drawing.Point(556, 46);
-            this.txtIrregularQtyReason.MutiSelect = true;
-            this.txtIrregularQtyReason.Name = "txtIrregularQtyReason";
-            this.txtIrregularQtyReason.Size = new System.Drawing.Size(393, 27);
-            this.txtIrregularQtyReason.TabIndex = 19;
-            this.txtIrregularQtyReason.TextBox1Binding = "";
-            this.txtIrregularQtyReason.Type = "SQ";
+            this.gridBatchImport.Sorted += new System.EventHandler(this.GridBatchImport_Sorted);
             // 
             // P01_Import
             // 
