@@ -421,7 +421,9 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
             string tmpcurrentReq = string.Empty;
 
             strSQLCmd = $@"
-select  [LocalSuppId] = isnull(sao.LocalSuppId, '')
+--因為Planning B03(Style_Artwork)會有同一個Artwork多筆報價關係，所以這邊distinct避免資料發散
+select  distinct
+        [LocalSuppId] = isnull(sao.LocalSuppId, '')
 		, [orderID] = o.ID
         , oa.Article
         , oa.SizeCode
