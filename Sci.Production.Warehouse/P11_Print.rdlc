@@ -858,14 +858,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="size1">
+                    <Textbox Name="Size1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!size1.Value</Value>
+                              <Value>=Fields!Size1.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -876,7 +876,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>size1</rd:DefaultName>
+                      <rd:DefaultName>Size1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -892,14 +892,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="size2">
+                    <Textbox Name="Size2">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!size2.Value</Value>
+                              <Value>=Fields!Size2.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -910,7 +910,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>size2</rd:DefaultName>
+                      <rd:DefaultName>Size2</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -926,14 +926,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="size3">
+                    <Textbox Name="Size3">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!size3.Value</Value>
+                              <Value>=Fields!Size3.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -944,7 +944,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>size3</rd:DefaultName>
+                      <rd:DefaultName>Size3</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -960,14 +960,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="size4">
+                    <Textbox Name="Size4">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!size4.Value</Value>
+                              <Value>=Fields!Size4.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -978,7 +978,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>size4</rd:DefaultName>
+                      <rd:DefaultName>Size4</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -994,14 +994,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="size5">
+                    <Textbox Name="Size5">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!size5.Value</Value>
+                              <Value>=Fields!Size5.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -1012,7 +1012,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>size5</rd:DefaultName>
+                      <rd:DefaultName>Size5</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1028,14 +1028,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="size6">
+                    <Textbox Name="Size6">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!size6.Value</Value>
+                              <Value>=Fields!Size6.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -1046,7 +1046,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>size6</rd:DefaultName>
+                      <rd:DefaultName>Size6</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1062,14 +1062,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="size7">
+                    <Textbox Name="Size7">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!size7.Value</Value>
+                              <Value>=Fields!Size7.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -1080,7 +1080,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>size7</rd:DefaultName>
+                      <rd:DefaultName>Size7</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1096,14 +1096,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="size8">
+                    <Textbox Name="Size8">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!size8.Value</Value>
+                              <Value>=Fields!Size8.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -1114,7 +1114,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>size8</rd:DefaultName>
+                      <rd:DefaultName>Size8</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1130,14 +1130,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="size9">
+                    <Textbox Name="Size9">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!size9.Value</Value>
+                              <Value>=Fields!Size9.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -1148,7 +1148,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>size9</rd:DefaultName>
+                      <rd:DefaultName>Size9</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1164,14 +1164,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="size10">
+                    <Textbox Name="Size10">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!size10.Value</Value>
+                              <Value>=Fields!Size10.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -1182,7 +1182,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>size10</rd:DefaultName>
+                      <rd:DefaultName>Size10</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1232,7 +1232,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <RepeatColumnHeaders>true</RepeatColumnHeaders>
-        <DataSetName>P11_PrintData</DataSetName>
+        <DataSetName>DataSet1</DataSetName>
         <Top>0.32287cm</Top>
         <Left>0.21506cm</Left>
         <Height>1.8cm</Height>
@@ -2089,7 +2089,6 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox39</rd:DefaultName>
-          <Top>0cm</Top>
           <Left>0.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
@@ -2125,7 +2124,6 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox40</rd:DefaultName>
-          <Top>0cm</Top>
           <Left>7.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
@@ -2163,7 +2161,6 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox41</rd:DefaultName>
-          <Top>0cm</Top>
           <Left>14.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
@@ -2201,7 +2198,6 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox42</rd:DefaultName>
-          <Top>0cm</Top>
           <Left>21.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
@@ -2244,18 +2240,18 @@
   </Page>
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
-    <DataSource Name="SciProductionWarehouse1">
+    <DataSource Name="SciProductionWarehouse">
       <ConnectionProperties>
         <DataProvider>System.Data.DataSet</DataProvider>
         <ConnectString>/* Local Connection */</ConnectString>
       </ConnectionProperties>
-      <rd:DataSourceID>3be33f4a-5239-43b9-9780-523f7fff3573</rd:DataSourceID>
+      <rd:DataSourceID>428f0ff3-baf0-4040-9f3a-b72d9391368b</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="P11_PrintData">
+    <DataSet Name="DataSet1">
       <Query>
-        <DataSourceName>SciProductionWarehouse1</DataSourceName>
+        <DataSourceName>SciProductionWarehouse</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -2275,44 +2271,44 @@
           <DataField>SEQ</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size1">
-          <DataField>size1</DataField>
+        <Field Name="Size1">
+          <DataField>Size1</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size10">
-          <DataField>size10</DataField>
+        <Field Name="Size10">
+          <DataField>Size10</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size2">
-          <DataField>size2</DataField>
+        <Field Name="Size2">
+          <DataField>Size2</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size3">
-          <DataField>size3</DataField>
+        <Field Name="Size3">
+          <DataField>Size3</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size4">
-          <DataField>size4</DataField>
+        <Field Name="Size4">
+          <DataField>Size4</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size5">
-          <DataField>size5</DataField>
+        <Field Name="Size5">
+          <DataField>Size5</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size6">
-          <DataField>size6</DataField>
+        <Field Name="Size6">
+          <DataField>Size6</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size7">
-          <DataField>size7</DataField>
+        <Field Name="Size7">
+          <DataField>Size7</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size8">
-          <DataField>size8</DataField>
+        <Field Name="Size8">
+          <DataField>Size8</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="size9">
-          <DataField>size9</DataField>
+        <Field Name="Size9">
+          <DataField>Size9</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="TransferQTY">
