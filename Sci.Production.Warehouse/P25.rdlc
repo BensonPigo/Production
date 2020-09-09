@@ -194,7 +194,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!oLocation.Value</Value>
+                                                    <Value>=Fields!OLocation.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -338,14 +338,14 @@
         <TablixRowHierarchy>
           <TablixMembers>
             <TablixMember>
-              <Group Name="groupby">
+              <Group Name="Groupby">
                 <GroupExpressions>
-                  <GroupExpression>=Fields!groupby.Value</GroupExpression>
+                  <GroupExpression>=Fields!Groupby.Value</GroupExpression>
                 </GroupExpressions>
               </Group>
               <SortExpressions>
                 <SortExpression>
-                  <Value>=Fields!groupby.Value</Value>
+                  <Value>=Fields!Groupby.Value</Value>
                 </SortExpression>
               </SortExpressions>
               <TablixMembers>
@@ -1094,12 +1094,12 @@
           <DataField>DYELOT</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="groupby">
-          <DataField>groupby</DataField>
+        <Field Name="Groupby">
+          <DataField>Groupby</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="oLocation">
-          <DataField>oLocation</DataField>
+        <Field Name="OLocation">
+          <DataField>OLocation</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Roll">
