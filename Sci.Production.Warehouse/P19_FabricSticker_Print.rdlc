@@ -533,14 +533,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="location">
+                    <Textbox Name="Location">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!location.Value</Value>
+                              <Value>=Fields!Location.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -549,7 +549,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>location</rd:DefaultName>
+                      <rd:DefaultName>Location</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1477,14 +1477,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="location1">
+                    <Textbox Name="Location1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!location.Value</Value>
+                              <Value>=Fields!Location.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -1493,7 +1493,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>location1</rd:DefaultName>
+                      <rd:DefaultName>Location1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1931,8 +1931,8 @@
           <DataField>Dyelot</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="location">
-          <DataField>location</DataField>
+        <Field Name="Location">
+          <DataField>Location</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Qty">
