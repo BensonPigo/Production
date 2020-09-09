@@ -2412,128 +2412,47 @@ drop table  #tmpContract
 
                 if (this.OnRoadMaterial.Rows.Count > 0)
                 {
-                    this.ShowWaitMessage("Starting EXCEL...OnRoadMaterial List");
-                    filename = "Shipping_R40_OnRoadMaterial.xltx";
-                    Excel.Application excelOnRoadMaterial = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-                    Utility.Report.ExcelCOM comOnRoadMaterial = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelOnRoadMaterial);
-                    comOnRoadMaterial.ColumnsAutoFit = true;
-                    comOnRoadMaterial.WriteTable(this.OnRoadMaterial, 3);
-
-                    Excel.Worksheet worksheetOnRoadMaterial = excelOnRoadMaterial.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    worksheetOnRoadMaterial.Cells[1, 1] = "On Road Material-" + this.contract + "(" + ftys + ")";
-                    this.SaveExcelwithName(excelOnRoadMaterial, "On Road Material");
+                    this.CreateExcel("Shipping_R40_OnRoadMaterial.xltx", this.OnRoadMaterial, "On Road Material", ftys);
                 }
 
                 if (this.WHDetail.Rows.Count > 0)
                 {
-                    this.ShowWaitMessage("Starting EXCEL...WHouse Qty Detail");
-                    filename = "Shipping_R40_WHQtyDetail.xltx";
-                    Excel.Application excelWHDetail = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-                    Utility.Report.ExcelCOM comWHDetail = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelWHDetail);
-                    comWHDetail.ColumnsAutoFit = true;
-                    comWHDetail.WriteTable(this.WHDetail, 3);
-
-                    Excel.Worksheet worksheetWHDetail = excelWHDetail.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    worksheetWHDetail.Cells[1, 1] = "WHouse Qty Detail-" + this.contract + "(" + ftys + ")";
-                    this.SaveExcelwithName(excelWHDetail, "WHouse Qty Detail");
+                    this.CreateExcel("Shipping_R40_WHQtyDetail.xltx", this.WHDetail, "WHouse Qty Detail", ftys);
                 }
 
                 if (this.WIPDetail.Rows.Count > 0)
                 {
-                    this.ShowWaitMessage("Starting EXCEL...WIP Qty Detail");
-                    filename = "Shipping_R40_WIPQtyDetail.xltx";
-                    Excel.Application excelWIP = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-                    Utility.Report.ExcelCOM comWIP = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelWIP);
-                    comWIP.ColumnsAutoFit = true;
-                    comWIP.WriteTable(this.WIPDetail, 3);
-
-                    Excel.Worksheet worksheetWIP = excelWIP.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    worksheetWIP.Cells[1, 1] = "WIP Qty Detail-" + this.contract + "(" + ftys + ")";
-                    this.SaveExcelwithName(excelWIP, "WIP Qty Detail");
+                    this.CreateExcel("Shipping_R40_WIPQtyDetail.xltx", this.WIPDetail, "WIP Qty Detail", ftys);
                 }
 
                 if (this.ProdDetail.Rows.Count > 0)
                 {
-                    this.ShowWaitMessage("Starting EXCEL...Prod. Qty Detail");
-                    filename = "Shipping_R40_ProdQtyDetail.xltx";
-                    Excel.Application excelProdDetail = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-                    Utility.Report.ExcelCOM comProdDetail = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelProdDetail);
-                    comProdDetail.ColumnsAutoFit = true;
-                    comProdDetail.WriteTable(this.ProdDetail, 3);
-
-                    Excel.Worksheet worksheetProdDetail = excelProdDetail.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    worksheetProdDetail.Cells[1, 1] = "Prod. Qty Detail-" + this.contract + "(" + ftys + ")";
-                    this.SaveExcelwithName(excelProdDetail, "Prod. Qty Detail");
+                    this.CreateExcel("Shipping_R40_ProdQtyDetail.xltx", this.ProdDetail, "Prod. Qty Detail", ftys);
                 }
 
                 if (this.ScrapDetail.Rows.Count > 0)
                 {
-                    this.ShowWaitMessage("Starting EXCEL...Scrap Qty Detail");
-                    filename = "Shipping_R40_ScrapQtyDetail.xltx";
-                    Excel.Application excelScrapDetail = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-                    Utility.Report.ExcelCOM comScrapDetail = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelScrapDetail);
-                    comScrapDetail.ColumnsAutoFit = true;
-                    comScrapDetail.WriteTable(this.ScrapDetail, 3);
-
-                    Excel.Worksheet worksheetScrapDetail = excelScrapDetail.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    worksheetScrapDetail.Cells[1, 1] = "Scrap Qty Detail-" + this.contract + "(" + ftys + ")";
-                    this.SaveExcelwithName(excelScrapDetail, "Scrap Qty Detail");
+                    this.CreateExcel("Shipping_R40_ScrapQtyDetail.xltx", this.ScrapDetail, "Scrap Qty Detail", ftys);
                 }
 
                 if (this.OnRoadProduction.Rows.Count > 0)
                 {
-                    this.ShowWaitMessage("Starting EXCEL...OnRoadProduction List");
-                    filename = "Shipping_R40_OnRoadProduction.xltx";
-                    Excel.Application excelOnRoadProduction = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-                    Utility.Report.ExcelCOM comOnRoadProduction = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelOnRoadProduction);
-                    comOnRoadProduction.ColumnsAutoFit = true;
-                    comOnRoadProduction.WriteTable(this.OnRoadProduction, 3);
-
-                    Excel.Worksheet worksheetOnRoadProduction = excelOnRoadProduction.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    worksheetOnRoadProduction.Cells[1, 1] = "On Road Production-" + this.contract + "(" + ftys + ")";
-                    this.SaveExcelwithName(excelOnRoadProduction, "On Road Production");
+                    this.CreateExcel("Shipping_R40_OnRoadProduction.xltx", this.OnRoadProduction, "On Road Production", ftys);
                 }
 
                 if (this.Outstanding.Rows.Count > 0)
                 {
-                    this.ShowWaitMessage("Starting EXCEL...Outstanding");
-                    filename = "Shipping_R40_OutStanding.xltx";
-                    Excel.Application excelOutstanding = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-                    Utility.Report.ExcelCOM comOutstanding = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelOutstanding);
-                    comOutstanding.ColumnsAutoFit = true;
-                    comOutstanding.WriteTable(this.Outstanding, 3);
-
-                    Excel.Worksheet worksheetOutstanding = excelOutstanding.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    worksheetOutstanding.Cells[1, 1] = "OutStanding-" + this.contract + "(" + ftys + ")";
-                    this.SaveExcelwithName(excelOutstanding, "OutStanding");
+                    this.CreateExcel("Shipping_R40_OutStanding.xltx", this.Outstanding, "OutStanding", ftys);
                 }
 
                 if (this.WarehouseNotClose.Rows.Count > 0)
                 {
-                    this.ShowWaitMessage("Starting EXCEL...Warehouse Not Close List");
-                    filename = "Shipping_R40_WHNotClose.xltx";
-                    Excel.Application excelWHNotClose = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-                    Utility.Report.ExcelCOM comWHNotClose = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelWHNotClose);
-                    comWHNotClose.ColumnsAutoFit = true;
-                    comWHNotClose.WriteTable(this.WarehouseNotClose, 3);
-
-                    Excel.Worksheet worksheetWHNotClose = excelWHNotClose.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    worksheetWHNotClose.Cells[1, 1] = "Warehouse Not Close-" + this.contract + "(" + ftys + ")";
-                    this.SaveExcelwithName(excelWHNotClose, "Warehouse Not Close");
+                    this.CreateExcel("Shipping_R40_WHNotClose.xltx", this.WarehouseNotClose, "Warehouse Not Close", ftys);
                 }
 
                 if (this.AlreadySewingOutput.Rows.Count > 0)
                 {
-                    this.ShowWaitMessage("Starting EXCEL...Already SewingOutput List");
-                    filename = "Shipping_R40_AlreadySewingOutput.xltx";
-                    Excel.Application excelAlreadySewing = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-                    Utility.Report.ExcelCOM comAlreadySewing = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelAlreadySewing);
-                    comAlreadySewing.ColumnsAutoFit = true;
-                    comAlreadySewing.WriteTable(this.AlreadySewingOutput, 3);
-
-                    Excel.Worksheet worksheetAlreadySewing = excelAlreadySewing.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    worksheetAlreadySewing.Cells[1, 1] = "Already SewingOutput-" + this.contract + "(" + ftys + ")";
-                    this.SaveExcelwithName(excelAlreadySewing, "Already SewingOutput");
+                    this.CreateExcel("Shipping_R40_AlreadySewingOutput.xltx", this.AlreadySewingOutput, "Already SewingOutput", ftys);
                 }
             }
             else
@@ -2551,6 +2470,76 @@ drop table  #tmpContract
 
             this.HideWaitMessage();
             return true;
+        }
+
+        private void CreateExcel(string filename, DataTable dt, string strExcelMsg, string ftys)
+        {
+            int excelMaxRow = 1000000;
+            DataTable tmpDatas = new DataTable();
+            int eachCopy = 100000;
+            int loadCounts = 0;
+            int loadCounts2 = 0;
+            int sheet = 1;
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+            Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[1];
+            Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[2];
+            worksheet1.Copy(worksheetn);
+
+            tmpDatas = dt.Clone();
+            foreach (DataRow dr in dt.Rows)
+            {
+                tmpDatas.ImportRow(dr);
+                loadCounts++;
+                loadCounts2++;
+
+                // 每一萬筆資料匯進到Excel
+                if (loadCounts % eachCopy == 0)
+                {
+                    this.ShowLoadingText($@"Starting EXCEL...{strExcelMsg} List" + Environment.NewLine + $"Data Loading – {loadCounts} , please wait …");
+
+                    // 將datatable copy to excel
+                    MyUtility.Excel.CopyToXls(tmpDatas, string.Empty, filename, 1 + loadCounts2 - (eachCopy - 1), false, null, excel, wSheet: excel.Sheets[sheet]);
+                    this.DataTableClearAll(tmpDatas);
+                    tmpDatas = dt.Clone();
+
+                    if (loadCounts % excelMaxRow == 0)
+                    {
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetA = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[sheet + 1];
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetB = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[sheet + 2];
+                        worksheetA.Copy(worksheetB);
+                        sheet++;
+                        loadCounts2 = 0;
+                    }
+                }
+            }
+
+            if (loadCounts > 0)
+            {
+                MyUtility.Excel.CopyToXls(tmpDatas, string.Empty, filename, 1 + loadCounts2 - (loadCounts2 % eachCopy) + 1, false, null, excel, wSheet: excel.Sheets[sheet]);
+                this.DataTableClearAll(tmpDatas);
+            }
+
+            excel.DisplayAlerts = false;
+            for (int i = 1; i <= sheet; i++)
+            {
+                excel.Sheets[i].Cells[1, 1] = $"{strExcelMsg}-" + this.contract + "(" + ftys + ")";
+            }
+
+            ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[sheet + 1]).Delete();
+            ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[1]).Select();
+            excel.DisplayAlerts = true;
+            this.HideLoadingText();
+            this.SaveExcelwithName(excel, strExcelMsg);
+        }
+
+        private void DataTableClearAll(DataTable target)
+        {
+            target.Rows.Clear();
+            target.Constraints.Clear();
+            target.Columns.Clear();
+            target.ExtendedProperties.Clear();
+            target.ChildRelations.Clear();
+            target.ParentRelations.Clear();
         }
 
         private void SaveExcelwithName(Excel.Application excelapp, string filename)
