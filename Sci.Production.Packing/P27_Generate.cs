@@ -448,8 +448,8 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
                     job.JobData = jobdata;
 
                     // FileName目前固定，不同的是路徑
-                    string fileName = "page_1.html";
-                    string htmlFilePath = shippingMarkPath + oneCarton.PackingListID + @"\" + oneCarton.SCICtnNo + @"\Stamp\" + oneCarton.ShippingMarkTypeUkey.ToString() + @"\HTML_pages\";
+                    string fileName = "HTML.html";
+                    string htmlFilePath = shippingMarkPath + oneCarton.PackingListID + @"\" + oneCarton.SCICtnNo + @"\Stamp\" + oneCarton.ShippingMarkTypeUkey.ToString() + @"\";
 
                     oneCarton.FilePath = htmlFilePath;
                     oneCarton.FileName = fileName;
