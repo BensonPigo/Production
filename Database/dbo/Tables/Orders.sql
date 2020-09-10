@@ -169,6 +169,7 @@
     [IsBuyBackCrossArticle] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossArticle] DEFAULT (0), 
     [IsBuyBackCrossSizeCode] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossSizeCode] DEFAULT (0), 
     [KpiEachConsCheck] DATE NULL, 
+	[NonRevenue] bit NOT NULL CONSTRAINT [DF_Orders_NonRevenue] DEFAULT ((0)),
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -843,3 +844,14 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Orders',
     @level2type = N'COLUMN',
     @level2name = N'KpiEachConsCheck'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'排除此訂單生產成本，1:排除，0不排除',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'Orders',
+	@level2type = N'COLUMN',
+	@level2name = N'NonRevenue'
+GO

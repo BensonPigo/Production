@@ -1716,5 +1716,30 @@ and p.Type in ('L', 'B')
                 }
             }
         }
+
+        private void TxtProgram_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string cmd = $@"
+select id as [Local Supplier Code]
+, abb as [Abbreviation]
+, Name as [Local Supplier Name]
+, (case when IsFactory =1 then 'Y' else 'N' end) as [Is Factory]
+, (case when IsSubcon =1 then 'Y' else 'N' end) as [Is Subcon Supplier]
+from LocalSupp ls
+where 1=1
+and (IsFactory =1 or IsSubcon =1)
+and ls.ID <> '{Env.User.Factory}'
+order by id";
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(cmd, "5,10,15,10,10", this.txtProgram.Text);
+
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.CurrentMaintain["CustCDID"] = item.GetSelectedString();
+        }
     }
 }
