@@ -1793,7 +1793,7 @@ where b.POID = '{poid}'
             int dallparts = selList.Where(w2 => w2.Tone > 0).GroupBy(g => new { g.Dup, g.Tone }).Select(s => new { s.Key.Dup, s.Key.Tone, ct = s.Count() - 1 }).Sum(s => s.ct);
 
             // 總建 BundleNo 數量
-            int num_BundleNo = selpatternList.Count() - dallparts;
+            int num_BundleNo = patternList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden)).Count() - dallparts;
 
             // 批次取得 BundleN.ID, BundleNo
             List<string> id_list = MyUtility.GetValue.GetBatchID(this.keyWord + "BC", "Bundle", batchNumber: num_Bundle, sequenceMode: 2);
