@@ -2025,6 +2025,7 @@
             this.txtProgram.Size = new System.Drawing.Size(110, 21);
             this.txtProgram.TabIndex = 0;
             this.txtProgram.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtProgram_PopUp);
+            this.txtProgram.Validating += new System.ComponentModel.CancelEventHandler(this.TxtProgram_Validating);
             // 
             // txtPONo
             // 
@@ -3373,10 +3374,10 @@
             this.chkNonRevenue.AutoSize = true;
             this.chkNonRevenue.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NonRevenue", true));
             this.chkNonRevenue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.chkNonRevenue.IsSupportEditMode = false;
+            //this.chkNonRevenue.IsSupportEditMode = false;
             this.chkNonRevenue.Location = new System.Drawing.Point(457, 4);
             this.chkNonRevenue.Name = "chkNonRevenue";
-            this.chkNonRevenue.ReadOnly = true;
+            //this.chkNonRevenue.ReadOnly = true;
             this.chkNonRevenue.Size = new System.Drawing.Size(101, 19);
             this.chkNonRevenue.TabIndex = 240;
             this.chkNonRevenue.Text = "Non Revenue";

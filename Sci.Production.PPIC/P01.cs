@@ -1739,7 +1739,55 @@ order by id";
                 return;
             }
 
-            this.CurrentMaintain["CustCDID"] = item.GetSelectedString();
+            this.CurrentMaintain["ProgramID"] = MyUtility.Convert.GetString(item.GetSelecteds()[0]["Abbreviation"]);
+            this.txtProgram.Text = MyUtility.Convert.GetString(item.GetSelecteds()[0]["Abbreviation"]);
+
+            this.chkNonRevenue.Checked = false; // !(MyUtility.Convert.GetString(item.GetSelecteds()[0]["Is Factory"]) == "Y" || MyUtility.Convert.GetString(item.GetSelecteds()[0]["Is Subcon Supplier"]) == "Y");
+            this.CurrentMaintain["NonRevenue"] = this.chkNonRevenue.Checked;
+        }
+
+        private void TxtProgram_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.EditMode)
+            {
+                if (MyUtility.Check.Empty(this.txtProgram.Text))
+                {
+                    this.CurrentMaintain["ProgramID"] = string.Empty;
+                    this.CurrentMaintain["NonRevenue"] = false;
+                    return;
+                }
+
+                List<SqlParameter> parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@abb", this.txtProgram.Text),
+                };
+
+                string cmd = $@"
+select id as [Local Supplier Code]
+, abb as [Abbreviation]
+, Name as [Local Supplier Name]
+, (case when IsFactory =1 then 'Y' else 'N' end) as [Is Factory]
+, (case when IsSubcon =1 then 'Y' else 'N' end) as [Is Subcon Supplier]
+from LocalSupp ls
+where 1=1
+and (IsFactory =1 or IsSubcon =1)
+and ls.ID <> '{Env.User.Factory}'
+AND abb = @abb
+order by id";
+
+                if (MyUtility.Check.Seek(cmd, parameters))
+                {
+                    this.CurrentMaintain["NonRevenue"] = false;
+                }
+                else
+                {
+                    this.CurrentMaintain["NonRevenue"] = true;
+                }
+
+                //this.CurrentMaintain["ProgramID"] = this.txtProgram.Text;
+                //this.CurrentMaintain["NonRevenue"] = this.chkNonRevenue.Checked;
+            }
+
         }
     }
 }
