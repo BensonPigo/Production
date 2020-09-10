@@ -565,7 +565,7 @@ where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID
                 if (dr.RowState == DataRowState.Deleted)
                 {
                     qty_cmd1 += $@"
-Delete from [Bundle_Detail_Order] where BundleNo ='{dr["BundleNo"]}';";
+Delete from [Bundle_Detail_Order] where BundleNo ='{dr["BundleNo", DataRowVersion.Original]}';";
                 }
 
                 if (dr.RowState == DataRowState.Added)
