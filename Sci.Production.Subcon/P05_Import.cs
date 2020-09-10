@@ -421,11 +421,13 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
             string tmpcurrentReq = string.Empty;
 
             strSQLCmd = $@"
-select  [LocalSuppId] = isnull(sao.LocalSuppId, '')
+--因為Planning B03(Style_Artwork)會有同一個Artwork多筆報價關係，所以這邊distinct避免資料發散
+select  distinct
+        [LocalSuppId] = isnull(sao.LocalSuppId, '')
 		, [orderID] = o.ID
-        , oa.Article
-        , oa.SizeCode
-        , OrderQty = oa.poqty
+        , oq.Article
+        , oq.SizeCode
+        , OrderQty = oq.Qty
 		, o.SewInLIne
 		, o.SciDelivery
 		, [ArtworkID] = oa.ArtworkID
@@ -439,9 +441,10 @@ select  [LocalSuppId] = isnull(sao.LocalSuppId, '')
         , ExceedQty = 0
 into #baseArtworkReq
 from  orders o WITH (NOLOCK) 
-inner join dbo.View_Order_Artworks oa on oa.ID = o.ID
+inner join Order_Qty oq with (nolock) on o.ID = oq.ID
+left join dbo.Order_Artwork oa on oa.ID = o.ID and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
 left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and 
-                                        vsa.Article = oa.Article and 
+                                        vsa.Article = oq.Article and 
                                         vsa.ArtworkID = oa.ArtworkID and
 										vsa.ArtworkName = oa.ArtworkName and 
                                         vsa.ArtworkTypeID = oa.ArtworkTypeID and 
@@ -449,10 +452,9 @@ left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and
 										vsa.PatternDesc = oa.PatternDesc 
 left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.LocalSuppId = '{this.dr_artworkReq["LocalSuppId"]}' and
-                                                    (sao.SizeCode = oa.SizeCode or sao.SizeCode = '') 
+                                                    (sao.SizeCode = oq.SizeCode or sao.SizeCode = '') 
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 where f.IsProduceFty=1
-and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
 and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1 or o.KeepPanels=1)
@@ -531,7 +533,7 @@ select  [LocalSuppId] = isnull(LocalSuppId.val,'')
 		,orderID
         ,Article
         ,[SizeCode] = ''
-        ,[OrderQty] = sum(OrderQty)
+        ,[OrderQty] = OrderQty.val
 		,SewInLIne
 		,SciDelivery
 		,ArtworkID
@@ -553,6 +555,11 @@ outer apply (select top 1 val = LocalSuppId
 					t1.ArtworkID = t.ArtworkID and
 					t1.LocalSuppId <> ''
 			 ) LocalSuppId
+outer apply(select val = isnull(sum(oq.Qty),0)
+            from Order_Qty oq with (nolock)
+            where   oq.ID = t.orderID and
+                    oq.Article = t.Article
+            )   OrderQty
 group by     LocalSuppId.val
 		    ,orderID
             ,Article
@@ -567,12 +574,13 @@ group by     LocalSuppId.val
 		    ,POID
             ,id
             ,ExceedQty
+            ,OrderQty.val
 union all
 select  [LocalSuppId] = isnull(LocalSuppId.val,'')
 		,orderID
         ,[Article] = ''
         ,SizeCode
-        ,[OrderQty] = sum(OrderQty)
+        ,[OrderQty] = OrderQty.val
 		,SewInLIne
 		,SciDelivery
 		,ArtworkID
@@ -594,6 +602,11 @@ outer apply (select top 1 val = LocalSuppId
 					t1.ArtworkID = t.ArtworkID and
 					t1.LocalSuppId <> ''
 			 ) LocalSuppId
+outer apply(select val = isnull(sum(oq.Qty),0)
+            from Order_Qty oq with (nolock)
+            where   oq.ID = t.orderID and
+                    oq.SizeCode = t.SizeCode
+            )   OrderQty
 group by     LocalSuppId.val
 		    ,orderID
             ,SizeCode
@@ -608,12 +621,13 @@ group by     LocalSuppId.val
 		    ,POID
             ,id
             ,ExceedQty
+            ,OrderQty.val
 union all
 select  [LocalSuppId] = isnull(LocalSuppId.val,'')
 		,orderID
         ,[Article] = ''
         ,[SizeCode] = ''
-        ,[OrderQty] = sum(OrderQty)
+        ,[OrderQty] = OrderQty.val
 		,SewInLIne
 		,SciDelivery
 		,ArtworkID
@@ -634,6 +648,10 @@ outer apply (select top 1 val = LocalSuppId
 					t1.ArtworkID = t.ArtworkID and
 					t1.LocalSuppId <> ''
 			 ) LocalSuppId
+outer apply(select val = isnull(sum(oq.Qty),0)
+            from Order_Qty oq with (nolock)
+            where   oq.ID = t.orderID
+            )   OrderQty
 group by     LocalSuppId.val
 		    ,orderID
 		    ,SewInLIne
@@ -647,6 +665,7 @@ group by     LocalSuppId.val
 		    ,POID
             ,id
             ,ExceedQty
+            ,OrderQty.val
 ) a
 
 {this.p05.SqlGetBuyBackDeduction(this.dr_artworkReq["artworktypeid"].ToString())}

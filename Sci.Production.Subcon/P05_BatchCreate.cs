@@ -613,7 +613,7 @@ select    LocalSuppID
 		, orderID
         , [Article] = ''
         , SizeCode
-        , [OrderQty] = sum(OrderQty)
+        , [OrderQty] = OrderQty.val
 		, SewInLIne
 		, SciDelivery
 		, ArtworkID
@@ -625,7 +625,12 @@ select    LocalSuppID
 		, POID
         , ExceedQty
         , ArtworkTypeID
-from #baseArtworkReq
+from #baseArtworkReq t
+outer apply(select val = isnull(sum(oq.Qty),0)
+            from Order_Qty oq with (nolock)
+            where   oq.ID = t.orderID and
+                    oq.Article = t.Article
+            )   OrderQty
 group by  LocalSuppID
         , FTYGroup
 		, orderID
@@ -641,13 +646,14 @@ group by  LocalSuppID
 		, POID
         , ExceedQty
         , ArtworkTypeID
+        , OrderQty.val
 union all
 select    LocalSuppID
         , FTYGroup
 		, orderID
         , Article
         , [SizeCode] = ''
-        , [OrderQty] = sum(OrderQty)
+        , [OrderQty] = OrderQty.val
 		, SewInLIne
 		, SciDelivery
 		, ArtworkID
@@ -659,7 +665,12 @@ select    LocalSuppID
 		, POID
         , ExceedQty
         , ArtworkTypeID
-from #baseArtworkReq
+from #baseArtworkReq t
+outer apply(select val = isnull(sum(oq.Qty),0)
+            from Order_Qty oq with (nolock)
+            where   oq.ID = t.orderID and
+                    oq.SizeCode = t.SizeCode
+            )   OrderQty
 group by  LocalSuppID
         , FTYGroup
 		, orderID
@@ -675,13 +686,14 @@ group by  LocalSuppID
 		, POID
         , ExceedQty
         , ArtworkTypeID
+        , OrderQty.val
 union all
 select    LocalSuppID
         , FTYGroup
 		, orderID
         , [Article] = ''
         , [SizeCode] = ''
-        , [OrderQty] = sum(OrderQty)
+        , [OrderQty] = OrderQty.val
 		, SewInLIne
 		, SciDelivery
 		, ArtworkID
@@ -693,7 +705,11 @@ select    LocalSuppID
 		, POID
         , ExceedQty
         , ArtworkTypeID
-from #baseArtworkReq
+from #baseArtworkReq t
+outer apply(select val = isnull(sum(oq.Qty),0)
+            from Order_Qty oq with (nolock)
+            where   oq.ID = t.orderID
+            )   OrderQty
 group by  LocalSuppID
         , FTYGroup
 		, orderID
@@ -708,6 +724,7 @@ group by  LocalSuppID
 		, POID
         , ExceedQty
         , ArtworkTypeID
+        , OrderQty.val
 
 ) a
 
