@@ -139,6 +139,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DllInvoke.cs" />
     <Compile Include="ExcelExtension.cs" />
     <Compile Include="ExcelPrg.cs" />
     <Compile Include="BundleRFCard.cs" />

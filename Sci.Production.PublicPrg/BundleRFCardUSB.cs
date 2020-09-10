@@ -7,19 +7,68 @@ namespace Sci.Production.Prg
     /// </summary>
     public class BundleRFCardUSB
     {
+        private delegate bool DelUsbPortOpen();
+
+        private delegate bool DelUsbPortClose();
+
+        private delegate ushort DelExeCmd(byte[] cmd, byte[] tDat, ushort tLen, byte[] rDat, ushort[] rLen, ushort tmV);
+
+        private delegate ushort DelImageExeCmd(byte[] tDat, int tLen, byte[] rDat, ushort[] rLen, ushort tmV);
+
+        private readonly DllInvoke dll;
+        private readonly DelUsbPortOpen funcUsbPortOpen;
+        private readonly DelUsbPortClose funcUsbPortClose;
+        private readonly DelExeCmd funcExeCmd;
+        private readonly DelImageExeCmd funcImageExeCmd;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BundleRFCardUSB"/> class.
+        /// </summary>
+        public BundleRFCardUSB()
+        {
+            // 設定dll黨名稱
+            this.dll = new DllInvoke(".\\KytDll.dll");
+
+            // 設定dll檔內的function名稱 ExecProtocol
+            this.funcUsbPortOpen = (DelUsbPortOpen)this.dll.Invoke("UsbPortOpen", typeof(DelUsbPortOpen));
+            this.funcUsbPortClose = (DelUsbPortClose)this.dll.Invoke("UsbPortClose", typeof(DelUsbPortClose));
+            this.funcExeCmd = (DelExeCmd)this.dll.Invoke("ExeCmd", typeof(DelExeCmd));
+            this.funcImageExeCmd = (DelImageExeCmd)this.dll.Invoke("ImageExeCmd", typeof(DelImageExeCmd));
+        }
+
         /// <summary>
         /// Open the USB port to communicate with the terminal.
         /// </summary>
         /// <returns>Normal: 1, Error : 0</returns>
-        [DllImport("KytDll.dll")]
-        public static extern bool UsbPortOpen();
+        public bool UsbPortOpen()
+        {
+            if (this.funcUsbPortOpen != null)
+            {
+                // 真正執行dll的function的地方
+                return this.funcUsbPortOpen();
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// Close the USB port to communicate with the terminal.
         /// </summary>
         /// <returns>Normal: 1, Error : 0</returns>
-        [DllImport("KytDll.dll")]
-        public static extern bool UsbPortClose();
+        public bool UsbPortClose()
+        {
+            if (this.funcUsbPortClose != null)
+            {
+                // 真正執行dll的function的地方
+                return this.funcUsbPortClose();
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         // [DllImport("KytDll.dll")]
         //       public static extern UInt32 SendCmd(byte[] IDCode, byte[] TData, uint Length);
@@ -56,8 +105,18 @@ namespace Sci.Production.Prg
         ///    * As these value is maximum time, the actual answer is more fast
         /// </param>
         /// <returns>2byte Error(0x0000 is good code). refer the Spec</returns>
-        [DllImport("KytDll.dll")]
-        public static extern ushort ExeCmd(byte[] cmd, byte[] tDat, ushort tLen, byte[] rDat, ushort[] rLen, ushort tmV);
+        public ushort ExeCmd(byte[] cmd, byte[] tDat, ushort tLen, byte[] rDat, ushort[] rLen, ushort tmV)
+        {
+            if (this.funcUsbPortClose != null)
+            {
+                // 真正執行dll的function的地方
+                return this.funcExeCmd(cmd, tDat, tLen, rDat, rLen, tmV);
+            }
+            else
+            {
+                return 0x99;
+            }
+        }
 
         /// <summary>
         /// This command is for Image print command only(P48,P49 commands).
@@ -78,7 +137,17 @@ namespace Sci.Production.Prg
         ///    * As these value is maximum time, the actual answer is more fast.
         /// </param>
         /// <returns>2byte Error(0x0000 is good code). refer the Spec.</returns>
-        [DllImport("KytDll.dll")]
-        public static extern ushort ImageExeCmd(byte[] tDat, int tLen, byte[] rDat, ushort[] rLen, ushort tmV);
+        public ushort ImageExeCmd(byte[] tDat, int tLen, byte[] rDat, ushort[] rLen, ushort tmV)
+        {
+            if (this.funcImageExeCmd != null)
+            {
+                // 真正執行dll的function的地方
+                return this.funcImageExeCmd(tDat, tLen, rDat, rLen, tmV);
+            }
+            else
+            {
+                return 0x99;
+            }
+        }
     }
 }

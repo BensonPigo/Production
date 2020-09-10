@@ -310,29 +310,29 @@ from
         public static DualResult BundleRFCardPrint(DataTable dt)
         {
             DualResult result = new DualResult(false);
-
+            BundleRFCardUSB bundleRFCard = new BundleRFCardUSB();
             try
             {
-                if (BundleRFCardUSB.UsbPortOpen())
+                if (bundleRFCard.UsbPortOpen())
                 {
                     foreach (DataRow dr in dt.Rows)
                     {
                         // C31
-                        result = CardFromStacker();
+                        result = CardFromStacker(bundleRFCard);
                         if (!result)
                         {
                             throw new Exception(string.Join("Card Get From Stacker Error :", Environment.NewLine, result.ToString()));
                         }
 
                         // P21 All of the Card Erase. (For SNP company)
-                        result = CardErase();
+                        result = CardErase(bundleRFCard);
                         if (!result)
                         {
                             throw new Exception(string.Join("Card Erase Error :", Environment.NewLine, result.ToString()));
                         }
 
                         // P42 Sram Reset
-                        result = CardSramReset();
+                        result = CardSramReset(bundleRFCard);
                         if (!result)
                         {
                             throw new Exception(string.Join("Card Sram Reset Error :", Environment.NewLine, result.ToString()));
@@ -346,14 +346,14 @@ from
                             throw new Exception(string.Join("Get SettingText Error :", Environment.NewLine, result.ToString()));
                         }
 
-                        result = CardSettingTextTOSram(settings);
+                        result = CardSettingTextTOSram(bundleRFCard, settings);
                         if (!result)
                         {
                             throw new Exception(string.Join("Card SettingText TO Sram Error :", Environment.NewLine, result.ToString()));
                         }
 
                         // P41
-                        result = CardPrint();
+                        result = CardPrint(bundleRFCard);
                         if (!result)
                         {
                             throw new Exception(string.Join("Card Print Error :", Environment.NewLine, result.ToString()));
@@ -361,7 +361,7 @@ from
 
                         // F30
                         string cardUID = string.Empty;
-                        result = CardRFUiD();
+                        result = CardRFUiD(bundleRFCard);
                         if (result)
                         {
                             cardUID = result.Description;
@@ -379,7 +379,7 @@ from
                         }
 
                         // C34
-                        result = CardCapture();
+                        result = CardCapture(bundleRFCard);
                         if (!result)
                         {
                             throw new Exception(string.Join("Card Capture Error :", Environment.NewLine, result.ToString()));
@@ -399,7 +399,7 @@ from
             }
             finally
             {
-                BundleRFCardUSB.UsbPortClose();
+                bundleRFCard.UsbPortClose();
             }
 
             return result;
@@ -425,22 +425,23 @@ from
                     throw new Exception("No Data");
                 }
 
+                BundleRFCardUSB bundleRFCard = new BundleRFCardUSB();
                 dr = dt.Rows[0];
                 switch (type)
                 {
                     case BundleType.Open:
-                        bool isopen = BundleRFCardUSB.UsbPortOpen();
+                        bool isopen = bundleRFCard.UsbPortOpen();
                         result = new DualResult(isopen, isopen ? string.Empty : "Printer(CHP_1800) usb port not open");
                         break;
                     case BundleType.Close:
-                        bool isClose = BundleRFCardUSB.UsbPortClose();
+                        bool isClose = bundleRFCard.UsbPortClose();
                         result = new DualResult(isClose, isClose ? string.Empty : "Printer(CHP_1800) usb port not Close");
                         break;
                     case BundleType.C31:
-                        result = CardFromStacker();
+                        result = CardFromStacker(bundleRFCard);
                         break;
                     case BundleType.F30:
-                        result = CardRFUiD();
+                        result = CardRFUiD(bundleRFCard);
 
                         MyUtility.Msg.InfoBox("BundleID" + dr["BundleID"].ToString() + ",BundleNo" + dr["BundleNo"].ToString() + ",RFUiD" + result.Description);
                         break;
@@ -451,21 +452,21 @@ from
                         break;
                     case BundleType.P48:
                         fileName = dr["BundleNo"].ToString() + ".png";
-                        result = CardSetPrintData(fileName);
+                        result = CardSetPrintData(bundleRFCard, fileName);
                         break;
                     case BundleType.P41:
-                        result = CardPrint();
+                        result = CardPrint(bundleRFCard);
                         break;
                     case BundleType.P49:
                         path = Directory.GetCurrentDirectory() + @"\data";
                         fileName = dr["BundleNo"].ToString() + ".png";
-                        result = CardSetAndPrint(path, fileName);
+                        result = CardSetAndPrint(bundleRFCard, path, fileName);
                         break;
                     case BundleType.C34:
-                        result = CardCapture();
+                        result = CardCapture(bundleRFCard);
                         break;
                     case BundleType.WDB:
-                        result = CardRFUiD();
+                        result = CardRFUiD(bundleRFCard);
                         if (!result)
                         {
                             throw new Exception(string.Join("Card Get RF UID Error :", Environment.NewLine, result.ToString()));
@@ -476,7 +477,7 @@ from
                         result = UpdateBundleDetailRFUID(dr["BundleID"].ToString(), dr["BundleNo"].ToString(), result.Description);
                         break;
                     case BundleType.P21:
-                        result = CardErase();
+                        result = CardErase(bundleRFCard);
                         break;
                     case BundleType.P35:
                         List<string> settings = new List<string>();
@@ -486,7 +487,7 @@ from
                             throw new Exception(string.Join("Get SettingText Error :", Environment.NewLine, result.ToString()));
                         }
 
-                        result = CardSettingTextTOSram(settings);
+                        result = CardSettingTextTOSram(bundleRFCard, settings);
                         if (!result)
                         {
                             throw new Exception(string.Join("Card SettingText TO Sram Error :", Environment.NewLine, result.ToString()));
@@ -494,7 +495,7 @@ from
 
                         break;
                     case BundleType.P42:
-                        result = CardSramReset();
+                        result = CardSramReset(bundleRFCard);
                         if (!result)
                         {
                             throw new Exception(string.Join("Card Sram Reset Error :", Environment.NewLine, result.ToString()));
@@ -518,7 +519,7 @@ from
         /// [C16] The card is check by existent location.
         /// </summary>
         /// <returns>DualResult</returns>
-        private static DualResult CardPositionCheck()
+        private static DualResult CardPositionCheck(BundleRFCardUSB bundleRFCard)
         {
             DualResult result = new DualResult(false);
             byte[] gbacmd = new byte[3];
@@ -531,7 +532,7 @@ from
             gbacmd[1] = 0x31;
             gbacmd[2] = 0x36;
 
-            res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+            res = bundleRFCard.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
 
             string errcode = string.Format("0x{0:x4}", res);
 
@@ -552,7 +553,7 @@ from
         /// [C31] It is to take a card from Stacker and to move it to Card Reader / Writer Module.
         /// </summary>
         /// <returns>DualResult</returns>
-        private static DualResult CardFromStacker()
+        private static DualResult CardFromStacker(BundleRFCardUSB bundleRFCard)
         {
             DualResult result = new DualResult(false);
             byte[] gbacmd = new byte[3];
@@ -571,7 +572,7 @@ from
 
             tLen = 2;
 
-            res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+            res = bundleRFCard.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
             errcode = string.Format("0x{0:x4}", res);
             if (res != 0x0000)
             {
@@ -589,7 +590,7 @@ from
         /// [F30] RF card detect in antenna area.
         /// </summary>
         /// <returns>DualResult</returns>
-        private static DualResult CardRFUiD()
+        private static DualResult CardRFUiD(BundleRFCardUSB bundleRFCard)
         {
             DualResult result = new DualResult(false);
             byte[] gbacmd = new byte[3];
@@ -605,7 +606,7 @@ from
             gbacmd[1] = 0x33;
             gbacmd[2] = 0x30;
 
-            res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+            res = bundleRFCard.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
             errcode = string.Format("0x{0:x4}", res);
 
             if (rDat[0] == 0x00)
@@ -702,7 +703,7 @@ from
         /// </summary>
         /// <param name="fileName">檔名</param>
         /// <returns>DualResult</returns>
-        private static DualResult CardSetPrintData(string fileName)
+        private static DualResult CardSetPrintData(BundleRFCardUSB bundleRFCard, string fileName)
         {
             DualResult result = new DualResult(false);
             byte[] gbacmd = new byte[3];
@@ -734,7 +735,7 @@ from
             tLen = MakeDll.Func.S_MakeDataForComSendYLen("P48");
             dataSendBufY = MakeDll.Func.S_MakeDataForComSendY("P48");
 
-            res = BundleRFCardUSB.ImageExeCmd(dataSendBufY, tLen, rDat, rLen, 15000);
+            res = bundleRFCard.ImageExeCmd(dataSendBufY, tLen, rDat, rLen, 15000);
             errcode = string.Format("0x{0:x4}", res);
             if (res != 0x0000)
             {
@@ -752,7 +753,7 @@ from
         /// P41 Print
         /// </summary>
         /// <returns>DualResult</returns>
-        private static DualResult CardPrint()
+        private static DualResult CardPrint(BundleRFCardUSB bundleRFCard)
         {
             DualResult result = new DualResult(false);
             byte[] gbacmd = new byte[3];
@@ -766,7 +767,7 @@ from
             gbacmd[1] = 0x34;
             gbacmd[2] = 0x31;
 
-            res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+            res = bundleRFCard.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
             errcode = string.Format("0x{0:x4}", res);
             if (res != 0x0000)
             {
@@ -786,7 +787,7 @@ from
         /// <param name="path">路徑</param>
         /// <param name="fileName">檔名</param>
         /// <returns>DualResult</returns>
-        private static DualResult CardSetAndPrint(string path, string fileName)
+        private static DualResult CardSetAndPrint(BundleRFCardUSB bundleRFCard, string path, string fileName)
         {
             DualResult result = new DualResult(false);
             byte[] gbacmd = new byte[3];
@@ -816,7 +817,7 @@ from
             tLen = MakeDll.Func.S_MakeDataForComSendYLen("P49");
             dataSendBufY = MakeDll.Func.S_MakeDataForComSendY("P49");
 
-            res = BundleRFCardUSB.ImageExeCmd(dataSendBufY, tLen, rDat, rLen, 15000);
+            res = bundleRFCard.ImageExeCmd(dataSendBufY, tLen, rDat, rLen, 15000);
             errcode = string.Format("0x{0:x4}", res);
             if (res != 0x0000)
             {
@@ -834,7 +835,7 @@ from
         /// [C34] It takes card to Bin Box (Capture)
         /// </summary>
         /// <returns>DualResult</returns>
-        private static DualResult CardCapture()
+        private static DualResult CardCapture(BundleRFCardUSB bundleRFCard)
         {
             DualResult result = new DualResult(false);
             byte[] gbacmd = new byte[3];
@@ -848,7 +849,7 @@ from
             gbacmd[1] = 0x33;
             gbacmd[2] = 0x34;
 
-            res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+            res = bundleRFCard.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
             errcode = string.Format("0x{0:x4}", res);
             if (res != 0x0000)
             {
@@ -866,7 +867,7 @@ from
         /// [P21] All of the Card Erase. (For SNP company)
         /// </summary>
         /// <returns>DualResult</returns>
-        private static DualResult CardErase()
+        private static DualResult CardErase(BundleRFCardUSB bundleRFCard)
         {
             DualResult result = new DualResult(false);
             byte[] gbacmd = new byte[3];
@@ -881,7 +882,7 @@ from
             gbacmd[1] = 0x32;
             gbacmd[2] = 0x31;
 
-            res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+            res = bundleRFCard.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
             errcode = string.Format("0x{0:x4}", res);
             if (rDat[0] == 0x00)
             {
@@ -899,7 +900,7 @@ from
         /// [P35] Setting the Text data to the Sram.(position free)
         /// </summary>
         /// <returns>DualResult</returns>
-        private static DualResult CardSettingTextTOSram(List<string> settings)
+        private static DualResult CardSettingTextTOSram(BundleRFCardUSB bundleRFCard, List<string> settings)
         {
             DualResult result = new DualResult(true);
             byte[] gbacmd = new byte[3];
@@ -981,7 +982,7 @@ from
 
                 tLen = Convert.ToUInt16(6 + str.Length);
 
-                res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+                res = bundleRFCard.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
                 errcode = string.Format("0x{0:x4}", res);
                 if (res != 0x0000)
                 {
@@ -1003,7 +1004,7 @@ from
         /// [P42] Sram Reset
         /// </summary>
         /// <returns>DualResult</returns>
-        private static DualResult CardSramReset()
+        private static DualResult CardSramReset(BundleRFCardUSB bundleRFCard)
         {
             DualResult result = new DualResult(false);
             byte[] gbacmd = new byte[3];
@@ -1018,7 +1019,7 @@ from
             gbacmd[1] = 0x34;
             gbacmd[2] = 0x32;
 
-            res = BundleRFCardUSB.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+            res = bundleRFCard.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
             errcode = string.Format("0x{0:x4}", res);
             if (rDat[0] == 0x00)
             {
