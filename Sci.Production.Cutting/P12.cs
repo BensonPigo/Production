@@ -954,7 +954,7 @@ OPTION (RECOMPILE)"
                 Article = row1["Article"].ToString(),
                 Size = row1["Size"].ToString(),
                 SizeSpec = row1["SizeSpec"].ToString(),
-                Desc = row1["Description"].ToString(),
+                Desc = row1["Patterncode"].ToString() + row1["Description"].ToString(),
                 Artwork = row1["SubProcess"].ToString(),
                 Quantity = row1["Qty"].ToString(),
                 Barcode = row1["Bundle"].ToString(),
