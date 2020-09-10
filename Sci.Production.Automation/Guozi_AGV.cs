@@ -115,19 +115,46 @@ outer apply( select [Value] = spd.Seq
             from orders o  with (nolock)
             inner join SubProcessSeq_Detail spd with (nolock) on o.StyleUkey = spd.StyleUkey and spd.SubProcessID = bda.SubProcessID
             where o.ID = '{bundle.OrderID}') Seq
-where bda.BundleNo = '{bundle.BundleNo}'";
-                DualResult result = DBProxy.Current.Select(null, sqlGetData, out DataTable dtBundle_SubProcess);
+where bda.BundleNo = '{bundle.BundleNo}'
+
+select  Ukey,
+        BundleNo,
+        OrderID,
+        Qty
+from    Bundle_Detail_Order with (nolock)
+where   BundleNo = '{bundle.BundleNo}'
+
+";
+                DualResult result = DBProxy.Current.Select(null, sqlGetData, out DataTable[] dtResults);
+
                 if (!result)
                 {
                     this.automationErrMsg.SetErrInfo(result);
                     SaveAutomationErrMsg(this.automationErrMsg);
                 }
 
-                bundle.Bundle_SubProcess = dtBundle_SubProcess;
+                bundle.Bundle_SubProcess = dtResults[0];
+                bundle.Bundle_Order = dtResults[1];
             }
 
             dynamic bodyObject = new ExpandoObject();
-            bodyObject.Bundle = impListBundle;
+            bodyObject.Bundle = impListBundle.Select(s => new
+            {
+                s.Bundle_SubProcess,
+                s.Bundle_Order,
+                s.ID,
+                s.BundleNo,
+                s.CutRef,
+                s.Article,
+                s.PatternPanel,
+                s.FabricPanelCode,
+                s.PatternCode,
+                s.PatternDesc,
+                s.BundleGroup,
+                s.SizeCode,
+                s.SewingLineID,
+                s.AddDate,
+            });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle"));
 
@@ -398,6 +425,34 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         }
 
         /// <summary>
+        /// SentDeleteBundle_Detail_Order
+        /// </summary>
+        /// <param name="dtBundle_Detail_Order">dtSewingSchedule</param>
+        public void SentDeleteBundle_Detail_Order(DataTable dtBundle_Detail_Order)
+        {
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
+            {
+                return;
+            }
+
+            string apiThread = "SentDeleteBundle_Detail_OrderFromAGV";
+            string suppAPIThread = "api/GuoziAGV/SentDeleteDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject.Bundle_Order = dtBundle_Detail_Order.AsEnumerable()
+                .Select(s => new
+                {
+                    Ukey = (long)s["Ukey"],
+                });
+
+            string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle_Order"));
+
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
         /// SentDeleteSewingSchedule
         /// </summary>
         /// <param name="dtSewingSchedule">dtSewingSchedule</param>
@@ -451,6 +506,11 @@ where bda.BundleNo = '{bundle.BundleNo}'";
             /// Bundle SubProcess
             /// </summary>
             public DataTable Bundle_SubProcess { get; set; }
+
+            /// <summary>
+            /// Bundle_Detail_Order
+            /// </summary>
+            public DataTable Bundle_Order { get; set; }
 
             /// <summary>
             /// Bundle ID
