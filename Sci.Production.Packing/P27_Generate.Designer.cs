@@ -225,7 +225,6 @@
             this.grid.ShowCellToolTips = false;
             this.grid.Size = new System.Drawing.Size(836, 445);
             this.grid.TabIndex = 0;
-            this.grid.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.Grid_ColumnHeaderMouseClick);
             // 
             // P27_Generate
             // 

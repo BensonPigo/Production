@@ -201,29 +201,6 @@ DROP TABLE #base
             return true;
         }
 
-        private void Grid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            //if (MyUtility.Check.Empty(this.grid.DataSource))
-            //{
-            //    return;
-            //}
-
-            //DataTable dt = (DataTable)this.grid.DataSource;
-
-            //foreach (DataRow item in dt.Rows)
-            //{
-            //    if (MyUtility.Convert.GetInt(item["CTNQty"]) != MyUtility.Convert.GetInt(item["CompleteCtn"]))
-            //    {
-            //        bool old = MyUtility.Convert.GetBool(item["Selected"]);
-            //        item["Selected"] = !old;
-            //    }
-            //    else
-            //    {
-            //        item["Selected"] = false;
-            //    }
-            //}
-        }
-
         private void BtnGenerate_Click(object sender, EventArgs e)
         {
             DataTable dataTable;
@@ -372,77 +349,84 @@ WHERE td.TemplateName <> ''
             }
         }
 
+        // 取得範本欄位對應DB的值
         private List<P27_Template> GetTemplateFieldValue(List<P27_Template> p27_Templates)
         {
-            // DISTINCT 出有多少種範本，避免開啟太多次
-            List<string> templatePaths = p27_Templates.Select(o => o.TemplatePath).Distinct().ToList();
-
-            // 總箱數
-            int cartonCount = p27_Templates.Count;
-
-            foreach (var templatePath in templatePaths)
+            try
             {
-                // 取得使用相同範本的箱子
-                List<P27_Template> sameTemplateDatas = p27_Templates.Where(o => o.TemplatePath == templatePath).ToList();
+                // DISTINCT 出有多少種範本，避免開啟太多次
+                List<string> templatePaths = p27_Templates.Select(o => o.TemplatePath).Distinct().ToList();
 
-                // 開啟範本
-                Repository repository = new Repository(templatePath, false, true)
+                foreach (var templatePath in templatePaths)
                 {
-                    AutoSave = false,
-                };
+                    // 取得使用相同範本的箱子
+                    List<P27_Template> sameTemplateDatas = p27_Templates.Where(o => o.TemplatePath == templatePath).ToList();
 
-                DataField field = repository.GlobalProject.FirstDataField;
-                List<string> templateFields = new List<string>();
+                    // 開啟範本
+                    Repository repository = new Repository(templatePath, false, true)
+                    {
+                        AutoSave = false,
+                    };
 
-                // 取得範本所有設定的欄位
-                while (field != null)
-                {
-                    templateFields.Add(field.Name);
+                    DataField field = repository.GlobalProject.FirstDataField;
+                    List<string> templateFields = new List<string>();
 
-                    field = field.Next;
-                }
+                    // 取得範本所有設定的欄位
+                    while (field != null)
+                    {
+                        templateFields.Add(field.Name);
 
-                // 範本用完關閉
-                //repository.Dispose();
+                        field = field.Next;
+                    }
 
-                // 以每一箱的資訊，取得這一箱標籤範本所設定的欄位，及其對應的值
-                foreach (P27_Template sameTemplateData in sameTemplateDatas)
-                {
-                    DataTable dt;
-                    string cmd = $@"
+                    // 範本用完關閉
+                    repository.Dispose();
+
+                    // 以每一箱的資訊，取得這一箱標籤範本所設定的欄位，及其對應的值
+                    foreach (P27_Template sameTemplateData in sameTemplateDatas)
+                    {
+                        DataTable dt;
+                        string cmd = $@"
 SELECt * 
 FROM dbo.[Get_ShippingMarkTemplate_DefineColumn]('{sameTemplateData.PackingListID}' ,'{sameTemplateData.OrderID}' ,'{sameTemplateData.SCICtnNo}' ,'{sameTemplateData.CTNStartNo}' ,'{sameTemplateData.Refno}' )
 WHERE ID IN ('{templateFields.JoinToString("','")}')
 ";
-                    DBProxy.Current.Select(null, cmd, out dt);
-                    List<DefineColumn> defineColumns = new List<DefineColumn>();
+                        DBProxy.Current.Select(null, cmd, out dt);
+                        List<DefineColumn> defineColumns = new List<DefineColumn>();
 
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        DefineColumn col = new DefineColumn()
+                        foreach (DataRow dr in dt.Rows)
                         {
-                            ColumnName = MyUtility.Convert.GetString(dr["ID"]),
-                            Value = MyUtility.Convert.GetString(dr["Value"]),
-                        };
-                        sameTemplateData.DefineColumns.Add(col);
+                            DefineColumn col = new DefineColumn()
+                            {
+                                ColumnName = MyUtility.Convert.GetString(dr["ID"]),
+                                Value = MyUtility.Convert.GetString(dr["Value"]),
+                            };
+                            sameTemplateData.DefineColumns.Add(col);
+                        }
                     }
                 }
+
+                // 取得欄位沒資料的Packing List ID
+                var hasEmptyDatas = p27_Templates.Where(o => o.DefineColumns.Where(x => MyUtility.Check.Empty(x.Value)).Any()).Select(o => o.PackingListID).Distinct().ToList();
+
+                if (hasEmptyDatas.Any())
+                {
+                    MyUtility.Msg.WarningBox("Please check below packing list shipping mark information in PMS." + Environment.NewLine + hasEmptyDatas.JoinToString(Environment.NewLine));
+                    return null;
+                }
+                else
+                {
+                    return p27_Templates;
+                }
             }
-
-            // 取得欄位沒資料的Packing List ID
-            var hasEmptyDatas = p27_Templates.Where(o => o.DefineColumns.Where(x => MyUtility.Check.Empty(x.Value)).Any()).Select(o => o.PackingListID).Distinct().ToList();
-
-            if (hasEmptyDatas.Any())
+            catch (Exception ex)
             {
-                MyUtility.Msg.WarningBox("Please check below packing list shipping mark information in PMS." + Environment.NewLine + hasEmptyDatas.JoinToString(Environment.NewLine));
+                this.ShowErr(ex);
                 return null;
-            }
-            else
-            {
-                return p27_Templates;
             }
         }
 
+        // 產出HTML檔
         private List<P27_Template> TransferFile(List<P27_Template> p27_Templates)
         {
             string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from System");
@@ -490,6 +474,7 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
             return p27_Templates;
         }
 
+        // DB寫入Packing P27資料
         private bool UpdateDatabese(List<P27_Template> p27_Templates)
         {
             string headInsert = string.Empty;
