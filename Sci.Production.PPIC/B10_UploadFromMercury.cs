@@ -14,10 +14,10 @@ using Excel = Microsoft.Office.Interop.Excel;
 namespace Sci.Production.PPIC
 {
     /// <inheritdoc/>
-    public partial class B10__UploadFromMercury : Win.Tems.QueryForm
+    public partial class B10_UploadFromMercury : Win.Tems.QueryForm
     {
         /// <inheritdoc/>
-        public B10__UploadFromMercury()
+        public B10_UploadFromMercury()
         {
             this.InitializeComponent();
         }
@@ -277,20 +277,6 @@ namespace Sci.Production.PPIC
                     item["Selected"] = false;
                 }
             }
-
-            //for (int index = 0; index < dt.Rows.Count; index++)
-            //{
-            //    if (!MyUtility.Check.Empty(dt.Rows[index]["ID"]))
-            //    {
-            //        bool old = MyUtility.Convert.GetBool(dt.Rows[index]["Selected"]);
-            //        dt.Rows[index]["Selected"] = !old;
-            //    }
-            //    else
-            //    {
-            //        dt.Rows[index]["Selected"] = 0;
-            //    }
-
-            //}
         }
     }
 }

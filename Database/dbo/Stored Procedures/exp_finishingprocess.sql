@@ -242,6 +242,61 @@ BEGIN
 	EXECUTE sp_addextendedproperty N'MS_Description', N'圖片二進位制資料', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'Image'
 END
 
+IF OBJECT_ID(N'ShippingMarkStamp_Detail') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[ShippingMarkStamp_Detail](
+		[PackingListID] [varchar](15) NOT NULL,
+		[SCICtnNo] [varchar](15) NOT NULL,
+		[ShippingMarkTypeUkey] [bigint] NOT NULL,
+		[FilePath] [varchar](150) NOT NULL,
+		[FileName] [varchar](30) NOT NULL,
+		[Image] [varbinary](max) NULL,
+		[Side] [varchar](5) NOT NULL,
+		[Seq] [int] NOT NULL,
+		[FromRight] [numeric](8, 2) NOT NULL,
+		[FromBottom] [numeric](8, 2) NOT NULL,
+		[Width] [int] NOT NULL,
+		[Length] [int] NOT NULL,
+		[CmdTime] [dateTime] NOT NULL,
+		GenSongUpdated bit NOT NULL,
+		Junk bit NOT NULL,
+ CONSTRAINT [PK_ShippingMarkStamp_Detail] PRIMARY KEY CLUSTERED 
+(
+	[SCICtnNo] ASC,	
+	[PackingListID] ASC,	
+	[ShippingMarkTypeUkey] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+
+	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_ShippingMarkTypeUkey]  DEFAULT ((0)) FOR [ShippingMarkTypeUkey]
+	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_FilePath]  DEFAULT ('') FOR [FilePath]
+	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_FileName]  DEFAULT ('') FOR [FileName]
+	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_Side]  DEFAULT ('') FOR [Side]
+	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_Seq]  DEFAULT ((0)) FOR [Seq]
+	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_FromRight]  DEFAULT ((0)) FOR [FromRight]
+	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_FromBottom]  DEFAULT ((0)) FOR [FromBottom]
+	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_Width]  DEFAULT ((0)) FOR [Width]
+	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_Length]  DEFAULT ((0)) FOR [Length]
+	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_GenSongUpdated]  DEFAULT ((0)) FOR [GenSongUpdated]
+	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_Junk]  DEFAULT ((0)) FOR [Junk]
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裝箱清單' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'PackingListID'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SCI箱號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'SCICtnNo'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Shipping Mark 種類' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'ShippingMarkTypeUkey'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'HTML 位置' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'FilePath'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'HTML 名稱' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'FileName'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'BMP圖片二進位制資料' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'Image'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'貼碼面, 上下左右前後' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'Side'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'序號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'Seq'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'離右邊的位置(mm)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'FromRight'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'離下面的位置(mm)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'FromBottom'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'標籤寬度' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'Width'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'標籤長度' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'Length'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SCI寫入/更新此筆資料時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'CmdTime'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'GenSong是否已轉製' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'GenSongUpdated'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'判斷資料是否需要移除' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'Junk'
+END
+
 IF OBJECT_ID(N'StickerSize') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[StickerSize](
@@ -497,7 +552,7 @@ WHERE NOT EXISTS(
 )
 AND t.Junk = 0
 
---05. 轉出區間 當AddDate or EditDate =今天
+--05-1. ShippingMarkPic_Detail轉出區間 當AddDate or EditDate =今天
 MERGE ShippingMarkPic_Detail AS T
 USING(
 	SELECT 
@@ -560,6 +615,62 @@ WHERE NOT EXISTS(
 )
 AND Junk = 0
 
+
+--05-2. ShippingMarkStamp_Detail轉出區間 當AddDate or EditDate =今天
+MERGE ShippingMarkStamp_Detail AS T
+USING(
+	SELECT 
+	 s1.SCICtnNo--*PK
+	,s1.Side
+	,s1.Seq
+	,s1.[FilePath]
+	,s1.[FileName]
+	,[CmdTime] = GetDate()
+	,[GenSongUpdated] = 0
+	,s1.Image
+	,s1.ShippingMarkTypeUkey--*PK
+	,s2.PackingListID--*PK
+	,s1.FromRight
+	,s1.FromBottom
+	,s1.Width
+	,s1.Length
+	FROM Production.dbo.ShippingMarkStamp_Detail s1
+	inner join Production.dbo.ShippingMarkStamp s2 on s2.PackingListID = s1.PackingListID
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+) as S
+on t.SCICtnNo = s.SCICtnNo and t.PackingListID =s.PackingListID  and t.ShippingMarkTypeUkey=s.ShippingMarkTypeUkey
+WHEN MATCHED THEN
+UPDATE SET
+	 t.Side=s.Side
+	,t.Seq = s.Seq
+	,t.FilePath = s.FilePath
+	,t.FileName = s.FileName
+	,t.CmdTime = s.CmdTime
+	,t.GenSongUpdated = 0
+	,t.Image = s.Image	
+	,t.FromRight=s.FromRight
+	,t.FromBottom=s.FromBottom
+	,t.Width=s.Width
+	,t.Length=s.Length
+WHEN NOT MATCHED BY TARGET THEN
+INSERT
+(PackingListID	,SCICtnNo	,ShippingMarkTypeUkey	,FilePath	,FileName	,Image	,Side	,Seq
+           ,FromRight	,FromBottom	,Width	,Length	,CmdTime	,GenSongUpdated)
+VALUES
+(s.PackingListID	,s.SCICtnNo	,s.ShippingMarkTypeUkey	,s.FilePath	,s.FileName	,s.Image	,s.Side		,s.Seq
+           ,s.FromRight	,s.FromBottom	,s.Width	,s.Length	,s.CmdTime	,s.GenSongUpdated);
+
+UPDATE fps
+SET Junk = 1 , GenSongUpdated = 0 ,CmdTime = GetDate()
+FROM ShippingMarkStamp_Detail fps
+WHERE NOT EXISTS(
+	SELECT	 1
+	FROM Production.dbo.ShippingMarkStamp_Detail s1
+	inner join Production.dbo.ShippingMarkStamp s2 on s2.PackingListID = s1.PackingListID
+	WHERE s1.SCICtnNo = fps.SCICtnNo AND s1.ShippingMarkTypeUkey = fps.ShippingMarkTypeUkey AND s2.PackingListID = fps.PackingListID
+)
+AND Junk = 0
+
 --06. 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天
 select * 
 into #tmpPackingList
@@ -597,7 +708,7 @@ on t.id=s.ID
 where ( CONVERT(date, t.AddDate) > CONVERT(date, DATEADD(MONTH,-3, GETDATE()))
 	or (CONVERT(date, t.EditDate) > CONVERT(date, DATEADD(MONTH,-3, GETDATE()))))
 
---07. 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天
+--07-1. PackingList_Detail (PIC) 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天，更新 PicSetting
 MERGE PackingList_Detail AS T
 USING(
 	SELECT pd.ID, pd.SCICtnNo, pd.CustCTN, p.PulloutDate, pd.OrderID, pd.OrderShipmodeSeq
@@ -677,55 +788,77 @@ WHEN NOT MATCHED BY SOURCE
 	UPDATE SET
 	t.Junk = 1	;
 		
-----寫入HTMLSetting
--- 如果FPS.dbo.PackingList.Junk=1， 則update FPS.dbo.PackingList_Detail
-update t
-set t.Junk= 1
-,t.SunriseUpdated = 0
-,t.GenSongUpdated = 0
-from PackingList_Detail t 
-inner join PackingList s on t.ID=s.id
-where s.junk=1
-
-		-------------------------------------------------------------HTMLSetting Update-------------------------------------------------------------
-		----搜尋出Packing B02有設定的
-		SELECT DISTINCT 
-				pd.SCICtnNo
-				,pd.OrderID
-				,pd.OrderShipmodeSeq
-				,pd.Article
-				,pd.SizeCode
-				,s.FileName
-		INTO #HasSetting_HTMLSetting
-		FROM [Production].[dbo].PackingList p 
-		INNER JOIN [FPS].[dbo].PackingList_Detail pd ON p.id=pd.ID
-		LEFT  JOIN [FPS].[dbo].ShippingMark s ON p.BrandID=s.BrandID AND pd.CtnRefno=s.CTNRefno
-		WHERE s.Category='HTML'
-
-		----有設定的：FileName有值=1，空白=0
-		UPDATE pd
-		SET pd.HTMLSetting = IIF(t.FileName = '' ,0 , 1)
-		FROM [FPS].[dbo].PackingList_Detail pd
-		INNER JOIN #HasSetting_HTMLSetting t ON    pd.SCICtnNo =t.SCICtnNo
-							AND pd.OrderID=t.OrderID
-							AND pd.OrderShipmodeSeq=t.OrderShipmodeSeq
-							AND pd.Article=t.Article
-							AND pd.SizeCode=t.SizeCode
-							
-		----沒設定的：=1		
-		UPDATE pd
-		SET pd.HTMLSetting = 1
-		FROM [FPS].[dbo].PackingList_Detail pd
-		WHERE NOT EXISTS (SELECT 1 FROM #HasSetting_HTMLSetting t
-							WHERE pd.SCICtnNo =t.SCICtnNo
-												AND pd.OrderID=t.OrderID
-												AND pd.OrderShipmodeSeq=t.OrderShipmodeSeq
-												AND pd.Article=t.Article
-												AND pd.SizeCode=t.SizeCode
-						)
-
-		DROP TABLE #HasSetting_HTMLSetting,#tmpPackingList
-		-------------------------------------------------------------HTMLSetting Update-------------------------------------------------------------
+--07-2. PackingList_Detail (HTML) 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天，更新 HTMLSetting
+MERGE PackingList_Detail AS T
+USING(
+	SELECT pd.ID, pd.SCICtnNo, pd.CustCTN, p.PulloutDate, pd.OrderID, pd.OrderShipmodeSeq
+	,pd.Article, pd.SizeCode, pd.ShipQty, pd.Barcode, pd.GW, [CtnRefno] = pd.RefNo
+	,LocalItem.CtnLength, LocalItem.CtnWidth, LocalItem.CtnHeight
+	,LocalItem.CtnUnit
+	,[Junk] = iif(fpsPacking.ID is not null,1,0)
+	,[CmdTime] = GetDate()
+	,[SunriseUpdated] = 0
+	,[GenSongUpdated] = 0
+	,[PackingCTN] = pd.id + pd.CTNStartNo
+	,[IsMixPacking]= 0
+	,[HTMLSetting] = [FPS].[dbo].CheckShippingMarkHTMLSetting(p.ID,pd.SCICtnNo,pd.RefNO, p.CustCDID,p.BrandID)
+	FROM Production.dbo.PackingList p
+	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
+	left join  Production.dbo.ShipPlan sp on sp.id=p.ShipPlanID
+	LEFT JOIN Production.dbo.ShippingMarkStamp stamp ON stamp.PackingListID = p.ID
+	OUTER APPLY(
+		SELECT fp2.id
+		FROM FPS.dbo.PackingList fp1
+		inner join FPS.dbo.PackingList_Detail fp2 on fp1.id=fp2.id
+		where fp1.id = p.id
+		and fp1.junk=1 and fp2.SunriseUpdated = 0 and fp2.GenSongUpdated = 0
+	) fpsPacking
+	outer apply(
+		select * 
+		from  Production.dbo.LocalItem l
+		where l.RefNo=pd.RefNo
+	) LocalItem	
+	where (convert(date,p.AddDate) = @cDate or convert(date,p.EditDate) = @cDate
+		or convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate
+		or convert(date,stamp.AddDate) = @cDate or convert(date,stamp.EditDate) = @cDate
+	)
+) as S
+on T.SCICtnNo = S.SCICtnNo and T.Article = s.Article and T.SizeCode = s.Sizecode
+AND T.OrderID = S.OrderID AND T.OrderShipmodeSeq = S.OrderShipmodeSeq
+WHEN MATCHED THEN
+UPDATE SET
+	t.ID = s.id,
+	t.CustCTN = iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN),
+	t.PulloutDate = s.PulloutDate,
+	t.ShipQty = s.ShipQty,
+	t.Barcode = s.Barcode,
+	t.GW = s.GW,
+	t.CtnRefno = s.CtnRefno,
+	t.CtnLength = s.CtnLength,
+	t.CtnWidth = s.CtnWidth,
+	t.CtnHeight = s.CtnHeight,
+	t.CtnUnit = s.CtnUnit,
+	t.junk = s.junk,
+	t.CmdTime = s.CmdTime,
+	t.SunriseUpdated = s.SunriseUpdated,
+	t.GenSongUpdated = s.GenSongUpdated,
+	t.PackingCTN = s.PackingCTN,
+	t.IsMixPacking = s.IsMixPacking,
+	t.HTMLSetting = s.HTMLSetting
+WHEN NOT MATCHED BY TARGET THEN
+INSERT(  ID, SCICtnNo, CustCTN
+, PulloutDate, OrderID, OrderShipmodeSeq, Article, SizeCode, ShipQty, Barcode, GW,
+	CtnRefno, CtnLength, CtnWidth, CtnHeight, CtnUnit, Junk, CmdTime, SunriseUpdated, GenSongUpdated, PackingCTN, IsMixPacking, HTMLSetting) 
+VALUES(
+s.ID, s.SCICtnNo, 
+iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
+, s.PulloutDate, s.OrderID, s.OrderShipmodeSeq, s.Article, s.SizeCode
+		, s.ShipQty, s.Barcode, s.GW, s.CtnRefno, s.CtnLength, s.CtnWidth, s.CtnHeight, s.CtnUnit
+	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN ,s.IsMixPacking ,s.HTMLSetting)
+WHEN NOT MATCHED BY SOURCE 
+	AND exists(	select 1 from #tmpPackingList where id = t.id) THEN
+	UPDATE SET
+	t.Junk = 1	;
 
 --08. 轉出區間 [Production].[dbo]. [ClogReturn].AddDate=今天
 MERGE ClogReturn AS T

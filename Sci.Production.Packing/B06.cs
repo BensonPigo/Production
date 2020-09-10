@@ -387,7 +387,7 @@ AND Ukey <> {this.CurrentMaintain["UKey"]}
                         string otherBrand = repeat_Data.Rows[0]["BrandID"].ToString();
                         string otherIDd = repeat_Data.Rows[0]["ID"].ToString();
 
-                        DialogResult diaR = MyUtility.Msg.WarningBox($@"Sticker : Brand {otherBrand} IsMixPack (True/False) Shipping Mark Combination {otherIDd}, already ticked ‘Is Default’, system will auto untick ‘Is Default’ for Shipping Mark Combination {this.CurrentMaintain["ID"]}.
+                        DialogResult diaR = MyUtility.Msg.WarningBox($@"Sticker : Brand {otherBrand} IsMixPack ({(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "True" : "False")}) Shipping Mark Combination {otherIDd}, already ticked ‘Is Default’, system will auto untick ‘Is Default’ for Shipping Mark Combination {this.CurrentMaintain["ID"]}.
 Please check to continue process.");
 
                         if (diaR == DialogResult.OK)
@@ -412,7 +412,7 @@ Please check to continue process.");
                     // 同一品牌中，『混尺碼 / 單尺碼』各至少要有一組貼標 Shipping Mark Combination 為預設
                     if (repeat_Data.Rows.Count == 0)
                     {
-                        MyUtility.Msg.InfoBox($"Sticker : Brand {this.CurrentMaintain["BrandID"]} IsMixPack (True/False) not yet set default, system will auto tick 'Is Default' for this Shipping Mark Combination.");
+                        MyUtility.Msg.InfoBox($"Sticker : Brand {this.CurrentMaintain["BrandID"]} IsMixPack ({(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "True" : "False")}) not yet set default, system will auto tick 'Is Default' for this Shipping Mark Combination.");
                         this.CurrentMaintain["IsDefault"] = true;
                     }
                 }

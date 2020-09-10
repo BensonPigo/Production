@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.PPIC
 {
-    partial class B10__UploadFromMercury
+    partial class B10_UploadFromMercury
     {
         /// <summary>
         /// Required designer variable.
@@ -159,7 +159,7 @@
             // 
             this.openFileDialog2.FileName = "openFileDialog2";
             // 
-            // B10__UploadFromMercury
+            // B10_UploadFromMercury
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -169,9 +169,9 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.Name = "B10__UploadFromMercury";
+            this.Name = "B10_UploadFromMercury";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "B10__UploadFromMercury";
+            this.Text = "B10_UploadFromMercury";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
             this.Controls.SetChildIndex(this.panel3, 0);

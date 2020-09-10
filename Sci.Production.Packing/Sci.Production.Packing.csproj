@@ -173,6 +173,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TECIT.TFORMer, Version=8.0.0.0, Culture=neutral, PublicKeyToken=1b5f4306b234b83d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\TECIT.TFORMer.dll</HintPath>
+    </Reference>
     <Reference Include="zxing, Version=0.16.5.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
       <HintPath>..\packages\ZXing.Net.0.16.5\lib\net45\zxing.dll</HintPath>
     </Reference>
@@ -192,12 +196,6 @@
     </Compile>
     <Compile Include="B03.Designer.cs">
       <DependentUpon>B03.cs</DependentUpon>
-    </Compile>
-    <Compile Include="B02.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="B02.Designer.cs">
-      <DependentUpon>B02.cs</DependentUpon>
     </Compile>
     <Compile Include="B04.cs">
       <SubType>Form</SubType>
@@ -527,6 +525,18 @@
     <Compile Include="P26_AssignPackingList.Designer.cs">
       <DependentUpon>P26_AssignPackingList.cs</DependentUpon>
     </Compile>
+    <Compile Include="P27.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P27.Designer.cs">
+      <DependentUpon>P27.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P27_Generate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P27_Generate.Designer.cs">
+      <DependentUpon>P27_Generate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Packing.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -571,9 +581,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B03.resx">
       <DependentUpon>B03.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="B02.resx">
-      <DependentUpon>B02.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B04.resx">
       <DependentUpon>B04.cs</DependentUpon>
@@ -744,6 +751,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P26_AssignPackingList.resx">
       <DependentUpon>P26_AssignPackingList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P27.resx">
+      <DependentUpon>P27.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P27_Generate.resx">
+      <DependentUpon>P27_Generate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>

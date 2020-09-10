@@ -90,7 +90,7 @@ AND Junk = 1
             };
             this.Helper.Controls.Grid.Generator(this.grid)
                 .ComboBox("StickerSizeID", header: "Mark Size", width: Widths.AnsiChars(20), settings: col_StickerSize)
-                .Text("TemplateName", header: "Template Name", width: Widths.AnsiChars(60))
+                .Text("TemplateName", header: "Template Name", width: Widths.AnsiChars(60),iseditingreadonly:true)
                 .Button("Upload", null, header: "Upload", width: Widths.AnsiChars(5), onclick: this.BtnUpload)
             ;
 
@@ -116,6 +116,12 @@ AND Junk = 1
             }
 
             return base.OnSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult OnSavePost()
+        {
+            return base.OnSavePost();
         }
 
         private void BtnUpload(object sender, EventArgs e)
@@ -153,6 +159,7 @@ AND Junk = 1
                     string sourcePath = file.FileName;
                     string toPath = targetPath + file.SafeFileName;
 
+                    // 複製範本至指定路徑
                     System.IO.File.Copy(sourcePath, toPath, true);
 
                     this.CurrentData["TemplateName"] = fileName;

@@ -109,6 +109,24 @@ WHERE Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
             {
                 this.chkIsMixPack.Enabled = true;
             }
+
+            if (this.IsDetailInserting)
+            {
+                this.comboCategory.ReadOnly = false;
+            }
+            else
+            {
+                this.comboCategory.ReadOnly = true;
+            }
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain))
+            {
+                this.ChangeVisible(MyUtility.Convert.GetString(this.CurrentMaintain["Category"]));
+            }
+            else
+            {
+                this.ChangeVisible("PIC");
+            }
         }
 
         /// <inheritdoc/>
@@ -250,17 +268,29 @@ AND CTNRefno='{this.CurrentMaintain["CTNRefno"]}'
 AND Ukey <> {this.CurrentMaintain["Ukey"]}
 ";
 
-            if (MyUtility.Check.Seek(cmd))
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "PIC")
             {
-                MyUtility.Msg.WarningBox($"Brand {this.CurrentMaintain["BrandID"]}, Category {this.comboCategory.Text}, Combination {this.txtStickerComb.Text}, CTN Refon {this.CurrentMaintain["CTNRefno"]} already exists.");
-                return false;
+                if (MyUtility.Check.Seek(cmd))
+                {
+                    MyUtility.Msg.WarningBox($"Sticker : Brand {this.CurrentMaintain["BrandID"]}, Category {this.comboCategory.Text}, Combination {this.txtStickerComb.Text}, CTN Refon {this.CurrentMaintain["CTNRefno"]} already exists.");
+                    return false;
+                }
+            }
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "HTML")
+            {
+                if (MyUtility.Check.Seek(cmd))
+                {
+                    MyUtility.Msg.WarningBox($"Stamp : Brand {this.CurrentMaintain["BrandID"]}, Category {this.comboCategory.Text}, Combination {this.txtStickerComb.Text}, CTN Refon {this.CurrentMaintain["CTNRefno"]} already exists.");
+                    return false;
+                }
             }
 
             foreach (DataRow row in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(row["StickerSizeID"]))
                 {
-                    MyUtility.Msg.WarningBox("Sticker Size cannot be empty.");
+                    MyUtility.Msg.WarningBox("Mark Size cannot be empty.");
                     return false;
                 }
             }
@@ -335,7 +365,7 @@ AND Junk=0";
 SELECT  Ukey ,IsMixPack
 FROM ShippingMarkCombination
 WHERE BrandID='{this.CurrentMaintain["BrandID"]}'
-AND Category='PIC'
+AND Category='{this.CurrentMaintain["Category"]}'
 AND Junk=0
 AND ID = '{item.GetSelectedString()}'
 ";
@@ -437,7 +467,7 @@ SELECT c.ID,b.Seq,c.IsSSCC ,a.IsMixPack ,c.Ukey
 FROM ShippingMarkCombination a
 INNER JOIN ShippingMarkCombination_Detail b ON a.Ukey = b.ShippingMarkCombinationUkey
 INNER JOIN ShippingMarkType c ON b.ShippingMarkTypeUkey = c.Ukey
-WHERE a.Ukey = '{ this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
+WHERE a.Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
 ";
 
             DataTable dt;
@@ -508,15 +538,38 @@ WHERE a.Ukey = '{ this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
             }
         }
 
-        private void ComboCategory_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboCategory_SelectionChangeCommitted(object sender, EventArgs e)
         {
+            this.CurrentMaintain["Category"] = this.comboCategory.SelectedValue;
             if (this.EditMode)
             {
+                this.CurrentMaintain["ShippingMarkCombinationUkey"] = DBNull.Value;
+                this.txtStickerComb.Text = string.Empty;
+
                 // 刪除表身重新匯入
                 foreach (DataRow del in this.DetailDatas)
                 {
                     del.Delete();
                 }
+            }
+
+            this.ChangeVisible(MyUtility.Convert.GetString(this.CurrentMaintain["Category"]));
+        }
+
+        private void ChangeVisible(string category)
+        {
+            if (category == "HTML")
+            {
+                this.detailgrid.Columns["IsSSCC"].Visible = false;
+                this.detailgrid.Columns["Is2Side"].Visible = false;
+                this.detailgrid.Columns["IsHorizontal"].Visible = false;
+            }
+
+            if (category == "PIC")
+            {
+                this.detailgrid.Columns["IsSSCC"].Visible = true;
+                this.detailgrid.Columns["Is2Side"].Visible = true;
+                this.detailgrid.Columns["IsHorizontal"].Visible = true;
             }
         }
     }

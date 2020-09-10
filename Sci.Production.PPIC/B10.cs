@@ -131,14 +131,14 @@ WHERE 1=1
             {
                 cmd += $@"AND BuyerDelivery BETWEEN @BuyerDelivery_s AND @BuyerDelivery_e" + Environment.NewLine;
                 parameters.Add(new SqlParameter("@BuyerDelivery_s", this.BuyerDelivery_s.Value));
-                parameters.Add(new SqlParameter("@BuyerDelivery_e", this.BuyerDelivery_e.Value));
+                parameters.Add(new SqlParameter("@BuyerDelivery_e", this.BuyerDelivery_e.Value.AddDays(1).AddSeconds(-1)));
             }
 
             if (this.SCIDelivery_s.HasValue && this.SCIDelivery_e.HasValue)
             {
-                cmd += $@"AND BuyerDelivery BETWEEN @SCIDelivery_s AND @SCIDelivery_e" + Environment.NewLine;
-                parameters.Add(new SqlParameter("@SCIDelivery", this.SCIDelivery_s.Value));
-                parameters.Add(new SqlParameter("@SCIDelivery", this.SCIDelivery_e.Value));
+                cmd += $@"AND SCIDelivery BETWEEN @SCIDelivery_s AND @SCIDelivery_e" + Environment.NewLine;
+                parameters.Add(new SqlParameter("@SCIDelivery_s", this.SCIDelivery_s.Value));
+                parameters.Add(new SqlParameter("@SCIDelivery_e", this.SCIDelivery_e.Value.AddDays(1).AddSeconds(-1)));
             }
 
             if (!this.IncludeCancel)
@@ -199,7 +199,7 @@ WHERE 1=1
 
         private void BtnUploadFromMercury_Click(object sender, EventArgs e)
         {
-            B10__UploadFromMercury form = new B10__UploadFromMercury();
+            B10_UploadFromMercury form = new B10_UploadFromMercury();
             form.ShowDialog();
         }
 
