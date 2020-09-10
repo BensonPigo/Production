@@ -7,6 +7,7 @@ using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Linq;
 using System;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
@@ -2395,11 +2396,12 @@ drop table  #tmpContract
             this.SetCount(this.Summary.Rows.Count + (this.liguidationonly ? 0 : this.OnRoadMaterial.Rows.Count + this.WHDetail.Rows.Count + this.WIPDetail.Rows.Count + this.ProdDetail.Rows.Count + this.ScrapDetail.Rows.Count + this.OnRoadProduction.Rows.Count + this.Outstanding.Rows.Count));
 
             this.ShowWaitMessage("Starting EXCEL...");
-            this.ShowWaitMessage("Starting EXCEL...Summary");
+
             string filename = string.Empty;
             string ftys = string.Join(",", this.FactoryList);
             if (!this.liguidationonly)
             {
+                this.ShowLoadingText("Starting EXCEL...Summary");
                 filename = "Shipping_R40_Summary.xltx";
                 Excel.Application excelSummary = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
                 Utility.Report.ExcelCOM comSummary = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelSummary);
@@ -2409,6 +2411,7 @@ drop table  #tmpContract
                 Excel.Worksheet worksheetSummary = excelSummary.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 worksheetSummary.Cells[1, 1] = "Summary-" + this.contract + "(" + ftys + ")";
                 this.SaveExcelwithName(excelSummary, "Summary");
+                this.HideLoadingText();
 
                 if (this.OnRoadMaterial.Rows.Count > 0)
                 {
@@ -2457,6 +2460,7 @@ drop table  #tmpContract
             }
             else
             {
+                this.ShowLoadingText("Starting EXCEL...Summary");
                 filename = "Shipping_R40_Summary(Only Liquidation).xltx";
                 Excel.Application excelSummary = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
                 Utility.Report.ExcelCOM comSummary = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelSummary);
@@ -2466,9 +2470,13 @@ drop table  #tmpContract
                 Excel.Worksheet worksheetSummary = excelSummary.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 worksheetSummary.Cells[1, 1] = "Summary-" + this.contract + "(" + ftys + ")";
                 this.SaveExcelwithName(excelSummary, "Summary");
+                this.HideLoadingText();
             }
 
             this.HideWaitMessage();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
             return true;
         }
 
@@ -2476,60 +2484,75 @@ drop table  #tmpContract
         {
             int excelMaxRow = 1000000;
             DataTable tmpDatas = new DataTable();
-            int eachCopy = 100000;
+            int eachCopy = 10000;
             int loadCounts = 0;
             int loadCounts2 = 0;
             int sheet = 1;
-            Excel.Application excel = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-            Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[1];
-            Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[2];
-            worksheet1.Copy(worksheetn);
+            this.ShowLoadingText($@"Starting EXCEL...{strExcelMsg} List");
 
-            tmpDatas = dt.Clone();
-            foreach (DataRow dr in dt.Rows)
+            if (dt.Rows.Count > excelMaxRow)
             {
-                tmpDatas.ImportRow(dr);
-                loadCounts++;
-                loadCounts2++;
+                Excel.Application excel = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[1];
+                Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[2];
+                worksheet1.Copy(worksheetn);
+                excel.DisplayAlerts = false;
+                tmpDatas = dt.Clone();
 
-                // 每一萬筆資料匯進到Excel
-                if (loadCounts % eachCopy == 0)
+                foreach (DataRow dr in dt.Rows)
                 {
-                    this.ShowLoadingText($@"Starting EXCEL...{strExcelMsg} List" + Environment.NewLine + $"Data Loading – {loadCounts} , please wait …");
+                    tmpDatas.ImportRow(dr);
+                    loadCounts++;
+                    loadCounts2++;
 
-                    // 將datatable copy to excel
-                    MyUtility.Excel.CopyToXls(tmpDatas, string.Empty, filename, 1 + loadCounts2 - (eachCopy - 1), false, null, excel, wSheet: excel.Sheets[sheet]);
-                    this.DataTableClearAll(tmpDatas);
-                    tmpDatas = dt.Clone();
-
-                    if (loadCounts % excelMaxRow == 0)
+                    // 每一萬筆資料匯進到Excel
+                    if (loadCounts % eachCopy == 0)
                     {
-                        Microsoft.Office.Interop.Excel.Worksheet worksheetA = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[sheet + 1];
-                        Microsoft.Office.Interop.Excel.Worksheet worksheetB = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[sheet + 2];
-                        worksheetA.Copy(worksheetB);
-                        sheet++;
-                        loadCounts2 = 0;
+                        this.ShowLoadingText($"Data Loading – {loadCounts} , please wait …");
+
+                        // 將datatable copy to excel
+                        MyUtility.Excel.CopyToXls(tmpDatas, string.Empty, filename, 1 + loadCounts2 - (eachCopy - 1), false, null, excel, wSheet: excel.Sheets[sheet]);
+                        this.DataTableClearAll(tmpDatas);
+                        tmpDatas = dt.Clone();
+
+                        if (loadCounts % excelMaxRow == 0)
+                        {
+                            Microsoft.Office.Interop.Excel.Worksheet worksheetA = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[sheet + 1];
+                            Microsoft.Office.Interop.Excel.Worksheet worksheetB = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[sheet + 2];
+                            worksheetA.Copy(worksheetB);
+                            sheet++;
+                            loadCounts2 = 0;
+                        }
                     }
                 }
-            }
 
-            if (loadCounts > 0)
+                if (loadCounts > 0)
+                {
+                    MyUtility.Excel.CopyToXls(tmpDatas, string.Empty, filename, 1 + loadCounts2 - (loadCounts2 % eachCopy) + 1, false, null, excel, wSheet: excel.Sheets[sheet]);
+                    this.DataTableClearAll(tmpDatas);
+                }
+
+                for (int i = 1; i <= sheet; i++)
+                {
+                    excel.Sheets[i].Cells[1, 1] = $"{strExcelMsg}-" + this.contract + "(" + ftys + ")";
+                }
+
+                ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[sheet + 1]).Delete();
+                ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[1]).Select();
+                this.HideLoadingText();
+                this.SaveExcelwithName(excel, strExcelMsg);
+            }
+            else
             {
-                MyUtility.Excel.CopyToXls(tmpDatas, string.Empty, filename, 1 + loadCounts2 - (loadCounts2 % eachCopy) + 1, false, null, excel, wSheet: excel.Sheets[sheet]);
-                this.DataTableClearAll(tmpDatas);
-            }
+                Excel.Application excelDetail = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
+                Utility.Report.ExcelCOM comDetail = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelDetail);
+                comDetail.ColumnsAutoFit = true;
+                comDetail.WriteTable(dt, 3);
 
-            excel.DisplayAlerts = false;
-            for (int i = 1; i <= sheet; i++)
-            {
-                excel.Sheets[i].Cells[1, 1] = $"{strExcelMsg}-" + this.contract + "(" + ftys + ")";
+                Excel.Worksheet worksheetScrapDetail = excelDetail.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                worksheetScrapDetail.Cells[1, 1] = $"{strExcelMsg}-" + this.contract + "(" + ftys + ")";
+                this.SaveExcelwithName(excelDetail, strExcelMsg);
             }
-
-            ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[sheet + 1]).Delete();
-            ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[1]).Select();
-            excel.DisplayAlerts = true;
-            this.HideLoadingText();
-            this.SaveExcelwithName(excel, strExcelMsg);
         }
 
         private void DataTableClearAll(DataTable target)
@@ -2549,6 +2572,8 @@ drop table  #tmpContract
             workbook.SaveAs(strExcelName);
             workbook.Close();
             excelapp.Quit();
+            Marshal.ReleaseComObject(excelapp);          // 釋放objApp
+            Marshal.ReleaseComObject(workbook);
             strExcelName.OpenFile();
         }
 
