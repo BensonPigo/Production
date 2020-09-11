@@ -759,7 +759,7 @@ order by x.[Bundle]");
 
             data.ForEach(r =>
             {
-                string no = GetNo(r.POID, allNoDatas);
+                string no = GetNo(r.Barcode, allNoDatas);
                 string contian;
                 if (layout == 1)
                 {
