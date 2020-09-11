@@ -182,6 +182,7 @@ BEGIN
 	 Outer Apply (Select production.dbo.GetCeiling(tmpQty2.NetQty + tmpQty2.LossQty, tmpTtlEachCons.UnitRound, tmpTtlEachCons.RoundStep) as Qty) as tmpTtlQty
 	 --2018/07/11 [IST20180936] 當Category = 'M' or 'T'不算loss
 	 Outer Apply (Select production.dbo.GetCeiling(tmpQty2.NetQty, tmpTtlEachCons.UnitRound, tmpTtlEachCons.RoundStep) as Qty) as tmpTtlQty2
+	 order by tmpTtlEachCons.Refno + CHAR(10) + tmpTtlEachCons.[Description] , tmpTtlEachCons.ColorName
 
 	Drop Table #tmpCuttingList
 	--*/
