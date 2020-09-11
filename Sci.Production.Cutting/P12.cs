@@ -1003,6 +1003,20 @@ OPTION (RECOMPILE)"
                     Marshal.ReleaseComObject(worksheetn);
                 }
 
+                // 先批次取得 BundleNo, No 資料, by POID, FabricPanelCode, Article, Size
+                DataTable allNoDatas = null;
+                data.Select(s => new { s.POID, s.FabricPanelCode, s.Article, s.Size }).Distinct().ToList().ForEach(r =>
+                {
+                    if (allNoDatas == null)
+                    {
+                        allNoDatas = P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
+                    }
+                    else
+                    {
+                        allNoDatas.Merge(P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
+                    }
+                });
+
                 int pp = 1;
                 x.Select(s => s.DenseRank).Distinct().OrderBy(o => o).ToList().ForEach(denseRank =>
                 {
@@ -1015,9 +1029,9 @@ OPTION (RECOMPILE)"
 
                     for (int s = 1; s <= ((data.Count - 1) / 9) + 1; s++)
                     {
-                        var writedata = data.Skip((s - 1) * 9).ToList();
+                        var writedata = data.Skip((s - 1) * 9).Take(9).ToList();
                         Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pp];
-                        P10_Print.ProcessPrint(writedata, worksheet, layout);
+                        P10_Print.ProcessPrint(writedata, worksheet, layout, allNoDatas);
                         pp++;
                     }
                 });
