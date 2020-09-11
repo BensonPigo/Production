@@ -1719,6 +1719,11 @@ and p.Type in ('L', 'B')
 
         private void TxtProgram_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
+            if (!this.EditMode || !MyUtility.Convert.GetBool(this.CurrentMaintain["LocalOrder"]))
+            {
+                return;
+            }
+
             string cmd = $@"
 select id as [Local Supplier Code]
 , abb as [Abbreviation]
@@ -1742,14 +1747,18 @@ order by id";
             this.CurrentMaintain["ProgramID"] = MyUtility.Convert.GetString(item.GetSelecteds()[0]["Abbreviation"]);
             this.txtProgram.Text = MyUtility.Convert.GetString(item.GetSelecteds()[0]["Abbreviation"]);
 
-            this.chkNonRevenue.Checked = false; // !(MyUtility.Convert.GetString(item.GetSelecteds()[0]["Is Factory"]) == "Y" || MyUtility.Convert.GetString(item.GetSelecteds()[0]["Is Subcon Supplier"]) == "Y");
-            this.CurrentMaintain["NonRevenue"] = this.chkNonRevenue.Checked;
+            this.CurrentMaintain["NonRevenue"] = false;
         }
 
         private void TxtProgram_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode)
             {
+                if (!MyUtility.Convert.GetBool(this.CurrentMaintain["LocalOrder"]))
+                {
+                    return;
+                }
+
                 if (MyUtility.Check.Empty(this.txtProgram.Text))
                 {
                     this.CurrentMaintain["ProgramID"] = string.Empty;
@@ -1775,6 +1784,7 @@ and ls.ID <> '{Env.User.Factory}'
 AND abb = @abb
 order by id";
 
+                this.CurrentMaintain["ProgramID"] = this.txtProgram.Text;
                 if (MyUtility.Check.Seek(cmd, parameters))
                 {
                     this.CurrentMaintain["NonRevenue"] = false;
@@ -1784,8 +1794,6 @@ order by id";
                     this.CurrentMaintain["NonRevenue"] = true;
                 }
 
-                //this.CurrentMaintain["ProgramID"] = this.txtProgram.Text;
-                //this.CurrentMaintain["NonRevenue"] = this.chkNonRevenue.Checked;
             }
 
         }
