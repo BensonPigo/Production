@@ -328,7 +328,7 @@ where   ss.FactoryID = '{0}'
         and ss.OrderFinished = 0
 		and o.Category != 'G'
         and not exists (select 1 from Orders exludeOrder with (nolock) 
-                            where ((exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0) or 
+                            where ((exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0 AND exludeOrder.Category='B') or 
                                   (exludeOrder.IsBuyBack = 1 and exludeOrder.BuyBackReason = 'Garment')) and
                                   exludeOrder.ID = o.ID
                         )",
@@ -400,7 +400,7 @@ where   o.FtyGroup = @factoryid
 		and o.Category NOT IN ('G','A')
         and f.IsProduceFty = 1
         and not exists (select 1 from Orders exludeOrder with (nolock) 
-                            where ((exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0) or 
+                            where ((exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0 AND exludeOrder.Category='B') or 
                                   (exludeOrder.IsBuyBack = 1 and exludeOrder.BuyBackReason = 'Garment')) and
                                   exludeOrder.ID = o.ID
                         )";
@@ -1832,7 +1832,7 @@ left join SewingOutputTransfer_detail sotd with (nolock) on  sotd.FromOrderID = 
                                                              sotd.FromComboType = t.Combotype
 where exists( select 1 from Orders o with (nolock) 
                         where o.ID = t.OrderID and 
-                              o.junk = 1 and o.NeedProduction = 1)
+                              o.junk = 1 and o.NeedProduction = 1 AND o.Category='B')
 group by    t.OrderID,
             t.Article,
             t.SizeCode,
