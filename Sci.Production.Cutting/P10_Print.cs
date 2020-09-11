@@ -728,21 +728,6 @@ order by x.[Bundle]");
                 Marshal.ReleaseComObject(worksheetn);
             }
 
-            for (int pi = 1; pi <= page; pi++)
-            {
-                var writedata = data.Skip((pi - 1) * 9).ToList();
-                Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pi];
-                ProcessPrint(writedata, worksheet, layout);
-            }
-        }
-
-        /// <inheritdoc/>
-        internal static void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, int layout)
-        {
-            int i = 0;
-            int col_ref = 0;
-            int row_ref = 0;
-
             // 先批次取得 BundleNo, No 資料, by POID, FabricPanelCode, Article, Size
             DataTable allNoDatas = null;
             data.Select(s => new { s.POID, s.FabricPanelCode, s.Article, s.Size }).Distinct().ToList().ForEach(r =>
@@ -756,6 +741,21 @@ order by x.[Bundle]");
                     allNoDatas.Merge(GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
                 }
             });
+
+            for (int pi = 1; pi <= page; pi++)
+            {
+                var writedata = data.Skip((pi - 1) * 9).Take(9).ToList();
+                Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pi];
+                ProcessPrint(writedata, worksheet, layout, allNoDatas);
+            }
+        }
+
+        /// <inheritdoc/>
+        internal static void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, int layout, DataTable allNoDatas)
+        {
+            int i = 0;
+            int col_ref = 0;
+            int row_ref = 0;
 
             data.ForEach(r =>
             {
