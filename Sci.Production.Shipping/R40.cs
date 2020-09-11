@@ -2553,6 +2553,8 @@ drop table  #tmpContract
                 worksheetScrapDetail.Cells[1, 1] = $"{strExcelMsg}-" + this.contract + "(" + ftys + ")";
                 this.SaveExcelwithName(excelDetail, strExcelMsg);
             }
+
+            this.DataTableClearAll(dt);
         }
 
         private void DataTableClearAll(DataTable target)
