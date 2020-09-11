@@ -12,11 +12,15 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class P11 : Win.Tems.Input6
     {
-        // = P01手動拆表身數量操作(多天OutputDate)
-        // 要被拆的表身(From)   拆出去(To)
-        // Form不能AutoCreate   To只能Category (B,S)
+        /// <summary>
+        /// = P01手動拆表身數量操作(多天OutputDate)
+        /// 要被拆的表身(From)   拆出去(To)
+        /// Form不能AutoCreate   To只能Category (B,S)
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P11(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -24,6 +28,7 @@ namespace Sci.Production.Sewing
             this.DefaultFilter = $"FactoryID = '{Env.User.Factory}'";
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
@@ -118,6 +123,7 @@ where sotd.ID = '{masterID}'
         private DataGridViewGeneratorTextColumnSettings ToArticle = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings ToSizeCode = new DataGridViewGeneratorTextColumnSettings();
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             this.ColumnEvent();
@@ -598,6 +604,7 @@ end
             };
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -606,6 +613,7 @@ end
             this.CurrentMaintain["Status"] = "New";
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
@@ -617,6 +625,7 @@ end
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed")
@@ -628,6 +637,7 @@ end
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (this.DetailDatas.Count == 0)
@@ -802,6 +812,7 @@ HAVING SUM(sdd.QAQty) >= '{this.DetailDatas[i]["TransferQty"]}'
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             this.OnRefreshClick();
@@ -1571,6 +1582,12 @@ and SizeCode = @S
                     detailDt.Rows[i].Delete();
                 }
             }
+        }
+
+        private void BtnTransferInOutInformation_Click(object sender, EventArgs e)
+        {
+            P11_TransferInOutInformation frm = new P11_TransferInOutInformation();
+            frm.ShowDialog(this);
         }
     }
 }
