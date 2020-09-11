@@ -108,7 +108,7 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
             else
             {
                 sqlCmd = $@"
-	select wd.OrderID,co.cDate,wd.SizeCode,wd.Article,wp.PatternPanel,wd.WorkOrderUkey,
+	select wd.OrderID,[cDate] = max(co.cDate),wd.SizeCode,wd.Article,wp.PatternPanel,wd.WorkOrderUkey,
 		cutqty= iif(isnull(sum(cod.Layer*ws.Qty), 0)>wd.Qty,wd.Qty,isnull(sum(cod.Layer*ws.Qty), 0)),
 		co.MDivisionid,
 		TotalCutQty=isnull(sum(cod.Layer*ws.Qty),0),cod.CutRef,wo.FabricPanelCode,wo.Cutno
@@ -121,7 +121,7 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
 	left join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
 	inner join orders o WITH (NOLOCK) on o.id = wd.OrderID
 	where o.poid=(select poid from orders o with(nolock) where id = '{this.id}')
-	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,wd.Qty,wd.WorkOrderUkey,cod.CutRef,co.cDate,wo.FabricPanelCode,wo.Cutno
+	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,wd.Qty,wd.WorkOrderUkey,cod.CutRef,wo.FabricPanelCode,wo.Cutno
 	------------------
 	select * ,AccuCutQty=sum(cutqty) over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
 		,Rowid=ROW_NUMBER() over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
@@ -134,13 +134,23 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
 	------------------
 	select *,cQty=iif(TotalCutQty < AccuCutQty and TotalCutQty > Lagaccu,TotalCutQty-Lagaccu,cutqty)
 	into #tmp2_1
-	from #Lagtmp where TotalCutQty>= AccuCutQty or (TotalCutQty < AccuCutQty and TotalCutQty > Lagaccu)
+	from #Lagtmp 
 	------------------mp2_A
-	select  [OrderID] = isnull(OrderID, '----'),[cDate] = isnull(Format(cDate, 'yyyy/MM/dd') , '----'),[CutRef] = isnull(CutRef, '----'),SizeCode,Article,PatternPanel,MDivisionid,
-	        [cutqty] = iif(Cutno is null, '----', cast(sum(cQty) as varchar)),FabricPanelCode,[Cutno] = isnull(cast(Cutno as varchar), '----')
+	select  [OrderID] = isnull(OrderID, '----'),
+            [cDate] = iif(isCuttingOutputComplete.val = 0, '',isnull(Format(cDate, 'yyyy/MM/dd') , '----')),
+            [CutRef] = isnull(CutRef, '----'),
+            SizeCode,
+            Article,
+            PatternPanel,
+            MDivisionid,
+	        [cutqty] = case when isCuttingOutputComplete.val = 0 then '0'
+                            when Cutno is null then '----'
+                            else  cast(sum(cQty) as varchar) end,
+            FabricPanelCode,[Cutno] = isnull(cast(Cutno as varchar), '----')
     from #tmp2_1
+    outer apply (select val = iif(TotalCutQty>= AccuCutQty or (TotalCutQty < AccuCutQty and TotalCutQty > Lagaccu), 1, 0)) isCuttingOutputComplete
 	where orderid = '{this.id}' and SizeCode = '{this.sizeCode}' and Article ='{this.article}'
-	group by OrderID,CutRef,SizeCode,Article,PatternPanel,MDivisionid,cDate,FabricPanelCode,Cutno
+	group by OrderID,CutRef,SizeCode,Article,PatternPanel,MDivisionid,cDate,FabricPanelCode,Cutno,isCuttingOutputComplete.val
     order by PatternPanel,FabricPanelCode,cDate,CutRef,Cutno
 
 	drop table #CutQtytmp1,#CutQtytmp2,#Lagtmp,#tmp2_1
