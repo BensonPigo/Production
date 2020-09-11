@@ -728,23 +728,38 @@ order by x.[Bundle]");
                 Marshal.ReleaseComObject(worksheetn);
             }
 
+            // 先批次取得 BundleNo, No 資料, by POID, FabricPanelCode, Article, Size
+            DataTable allNoDatas = null;
+            data.Select(s => new { s.POID, s.FabricPanelCode, s.Article, s.Size }).Distinct().ToList().ForEach(r =>
+            {
+                if (allNoDatas == null)
+                {
+                    allNoDatas = GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
+                }
+                else
+                {
+                    allNoDatas.Merge(GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
+                }
+            });
+
             for (int pi = 1; pi <= page; pi++)
             {
-                var writedata = data.Skip((pi - 1) * 9).ToList();
+                var writedata = data.Skip((pi - 1) * 9).Take(9).ToList();
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pi];
-                ProcessPrint(writedata, worksheet, layout);
+                ProcessPrint(writedata, worksheet, layout, allNoDatas);
             }
         }
 
         /// <inheritdoc/>
-        internal static void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, int layout)
+        internal static void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, int layout, DataTable allNoDatas)
         {
             int i = 0;
             int col_ref = 0;
             int row_ref = 0;
+
             data.ForEach(r =>
             {
-                string no = GetNo(r.POID, r.FabricPanelCode, r.Article, r.Size, r.Barcode);
+                string no = GetNo(r.Barcode, allNoDatas);
                 string contian;
                 if (layout == 1)
                 {
@@ -800,7 +815,26 @@ Qty: {r.Quantity}     Item: {r.Item}";
         }
 
         /// <inheritdoc/>
-        public static string GetNo(string poid, string fabricPanelCode, string article, string size, string bundleNo)
+        public static string GetNo(string bundleNo, DataTable dt = null, string poid = null, string fabricPanelCode = null, string article = null, string size = null)
+        {
+            if (dt == null)
+            {
+                dt = GetNoDatas(poid, fabricPanelCode, article, size);
+            }
+
+            DataRow[] drs = dt.Select($"BundleNo = '{bundleNo}'");
+            if (drs.Length == 0)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return drs[0]["No"].ToString();
+            }
+        }
+
+        /// <inheritdoc/>
+        public static DataTable GetNoDatas(string poid, string fabricPanelCode, string article, string size)
         {
             string sqlcmd = $@"
 SELECT bd.id, bd.BundleGroup, bd.BundleNo,bd.Patterncode, bd.Qty, IsPair, maxQty=MAX(bd.Qty) over(partition by b.id, BundleGroup)
@@ -843,13 +877,13 @@ select t5.*,
 into #tmp6
 from #tmp5 t5
 
-select CONCAT(startNo,'~',lastno)
+select BundleNo,No = CONCAT(startNo,'~',lastno)
 from #tmp6
-where BundleNo =  '{bundleNo}'
 
 drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
 ";
-            return MyUtility.GetValue.Lookup(sqlcmd);
+            DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            return dt;
         }
 
         private void RadioBundleCard_CheckedChanged(object sender, EventArgs e)
