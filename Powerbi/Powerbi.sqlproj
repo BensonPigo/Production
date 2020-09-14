@@ -96,7 +96,7 @@
     <Build Include="dbo\Tables\P_SewingLineSchedule.sql" />
     <Build Include="dbo\Tables\SewingLineScheduleBI.sql" />
     <Build Include="dbo\Tables\ForecastLoadingBI.sql" />
-    <Build Include="dbo\Tables\ForecastLoadingBI_Factory_Tms.sql" />
+    <Build Include="dbo\Tables\ForecastLoadingBI_Summary.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportOustandingPO.sql" />
     <Build Include="dbo\Tables\P_OustandingPO.sql" />
     <Build Include="dbo\Tables\P_TransRegion.sql" />
@@ -114,6 +114,7 @@
     <Build Include="dbo\Functions\P_GetTPEPass1_ExtNo.sql" />
     <Build Include="dbo\Functions\P_GetPoPriceByArticleSize.sql" />
     <Build Include="dbo\Functions\GetSuppPaymentTerm.sql" />
+    <Build Include="dbo\Tables\ForecastLoadingBI_Summary_Buyer.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
