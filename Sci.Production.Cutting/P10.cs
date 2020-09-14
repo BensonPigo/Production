@@ -1285,6 +1285,9 @@ AND DD.id = LIST.kind ";
             string deleteBundleDetailQty = string.Format(
                     @"
 select Ukey from Bundle_Detail_Art with (nolock) where id = '{0}'
+
+select Ukey from Bundle_Detail_qty with (nolock) where id = '{0}'
+
 delete bundle where id = '{0}';
 delete Bundle_Detail where id = '{0}';
 delete Bundle_Detail_Art where id = '{0}';
@@ -1293,7 +1296,7 @@ delete Bundle_Detail_qty where id = '{0}';
 delete Bundle_Detail_Order where id = '{0}';
 ", id);
 
-            DualResult result = DBProxy.Current.Select(null, deleteBundleDetailQty, out DataTable dtBundle_Detail_Art);
+            DualResult result = DBProxy.Current.Select(null, deleteBundleDetailQty, out DataTable[] dtDeleteResults);
 
             if (!result)
             {
@@ -1301,7 +1304,16 @@ delete Bundle_Detail_Order where id = '{0}';
             }
 
             Task.Run(() => new Guozi_AGV().SentDeleteBundle((DataTable)this.detailgridbs.DataSource));
-            Task.Run(() => new Guozi_AGV().SentDeleteBundle_SubProcess(dtBundle_Detail_Art));
+            if (dtDeleteResults[0].Rows.Count > 0)
+            {
+                Task.Run(() => new Guozi_AGV().SentDeleteBundle_SubProcess(dtDeleteResults[0]));
+            }
+
+            if (dtDeleteResults[1].Rows.Count > 0)
+            {
+                Task.Run(() => new Guozi_AGV().SentDeleteBundle_Detail_Order(dtDeleteResults[1]));
+            }
+
             return base.ClickDeletePost();
         }
 

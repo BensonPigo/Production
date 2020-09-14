@@ -121,15 +121,21 @@ SELECT
 	,FC.WeaveTypeID
 	,R.WhseArrival
 	,F.ArriveQty
-	,[ReleaseQty]=SUM(FIT.OutQty) 
-	,[LastReleaseDate]=LastReleaseDate.Date
+	,[ReleaseQty] = FIT.OutQty
+	,[LastReleaseDate]= max(LastReleaseDate.Date)
 from FIR F 
 inner join Receiving_Detail RD on F.ReceivingID=RD.ID and F.POID=RD.PoId and RD.Seq1=F.Seq1 and RD.Seq2=F.Seq2 
 inner join Receiving R on RD.ID=R.ID
 Left join Orders O on F.POID=O.ID
 Left join PO_Supp_Detail PSD on PSD.ID=F.POID and PSD.Seq1=F.Seq1 and PSD.Seq2=F.Seq2
-Left join FtyInventory FIT on FIT.POID=RD.POID and FIT.Seq1=RD.Seq1 and FIT.Seq2=RD.Seq2 and FIT.Roll=RD.Roll and FIT.Dyelot=RD.Dyelot and FIT.StockType=RD.StockType
 Left join Fabric FC on PSD.SCIRefno=FC.SCIRefno
+outer apply (
+	select OutQty = sum(OutQty)
+	from FtyInventory FIT
+	where FIT.POID = RD.POID
+	and FIT.Seq1 = RD.Seq1 
+	and FIT.Seq2 = RD.Seq2
+)FIT
 OUTER APPLY(
     SELECT [Date] = Max(EditDate)
     FROM (
@@ -157,7 +163,7 @@ OUTER APPLY(
 
 WHERE {whereList.JoinToString(" AND ")}
 
-Group by F.POID,RD.Seq1,RD.Seq2,O.StyleID,PSD.Refno,PSD.ColorID,FC.WeaveTypeID,R.WhseArrival,F.ArriveQty,LastReleaseDate.Date,o.BrandID
+Group by F.POID,RD.Seq1,RD.Seq2,O.StyleID,PSD.Refno,PSD.ColorID,FC.WeaveTypeID,R.WhseArrival,F.ArriveQty,FIT.OutQty,o.BrandID
 
 UNION---------------
 
@@ -171,15 +177,21 @@ select
 	,FC.WeaveTypeID
 	,t.IssueDate
 	,F.ArriveQty
-	,sum(FIT.OutQty) 
-	,[LastReleaseDate]=LastReleaseDate.Date
+	,[OutQty] = FIT.OutQty
+	,[LastReleaseDate]= Max(LastReleaseDate.Date)
 from FIR F 
 inner join TransferIn_Detail TD on F.ReceivingID=TD.ID and F.POID=TD.PoId and TD.Seq1=F.Seq1 and TD.Seq2=F.Seq2 
 inner join TransferIn T on TD.ID=T.ID
 Left join Orders O on F.POID=O.ID
 Left join PO_Supp_Detail PSD on PSD.ID=F.POID and PSD.Seq1=F.Seq1 and PSD.Seq2=F.Seq2
-Left join FtyInventory FIT on FIT.POID=TD.POID and FIT.Seq1=TD.Seq1 and FIT.Seq2=TD.Seq2 and FIT.Roll=TD.Roll and FIT.Dyelot=TD.Dyelot and FIT.StockType=TD.StockType
 Left join Fabric FC on PSD.SCIRefno=FC.SCIRefno
+OUTER APPLY(
+	select OutQty = sum(OutQty)
+	from FtyInventory FIT
+	where FIT.POID = TD.POID
+	and FIT.Seq1 = TD.Seq1
+	and FIT.Seq2 = TD.Seq2
+) FIT
 OUTER APPLY(
     SELECT [Date] = Max(EditDate)
     FROM (
@@ -207,7 +219,7 @@ OUTER APPLY(
 
 WHERE {whereList_2.JoinToString(" AND ")}
 
-Group by F.POID,TD.Seq1,TD.Seq2,o.BrandID,O.StyleID,PSD.Refno,PSD.ColorID,FC.WeaveTypeID,t.IssueDate,F.ArriveQty,LastReleaseDate.Date
+Group by F.POID,TD.Seq1,TD.Seq2,o.BrandID,O.StyleID,PSD.Refno,PSD.ColorID,FC.WeaveTypeID,t.IssueDate,F.ArriveQty,FIT.OutQty
 ";
 
             DualResult result = DBProxy.Current.Select(null, cmd.ToString(), paras, out this.printData);
