@@ -1305,13 +1305,6 @@ left join #tmp_SEWOUTPUT s on s.OrderId = t.OrderID and s.Article = t.Article an
 
 drop table #tmp_first_cut_date, #tmp_SEWOUTPUT
 
-select sod.OrderID ,Max(so.OutputDate) LastSewnDate
-into #imp_LastSewnDate
-from SewingOutput so WITH (NOLOCK) 
-inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
-inner join #cte t on sod.OrderID = t.OrderID 
-group by sod.OrderID 
-
 {qtyBySetPerSubprocess}
 
 select t.MDivisionID
@@ -1401,7 +1394,7 @@ select t.MDivisionID
        , #cte2.sewing_output
        , [Balance] = t.qty + t.FOCQty - #cte2.sewing_output 
        , #cte2.firstSewingDate              
-	   , [Last Sewn Date] = l.LastSewnDate
+	   , [Last Sewn Date] = vsis.LastSewDate
        , #cte2.AVG_QAQTY
        , [Est_offline] = DATEADD(DAY
                                  , iif(isnull(#cte2.AVG_QAQTY, 0) = 0, 0
@@ -1450,7 +1443,7 @@ select t.MDivisionID
 from #cte t 
 left join #cte2 on #cte2.OrderID = t.OrderID and #cte2.Article = t.Article and #cte2.SizeCode = t.SizeCode
 left join Country with (Nolock) on Country.id= t.Dest
-left join #imp_LastSewnDate l on t.OrderID = l.OrderID"));
+left join View_SewingInfoArticleSize vsis on t.OrderID = vsis.OrderID and t.Article = vsis.Article and t.SizeCode = vsis.SizeCode"));
             if (this.isArtwork)
             {
                 sqlCmd.Append(string.Format(@"  left join #tmscost_pvt on #tmscost_pvt.orderid = t.orderid "));
@@ -1578,7 +1571,7 @@ outer apply(
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}, t.Article, t.SizeCode" + Environment.NewLine, this.orderby));
-            sqlCmd.Append(" drop table #cte, #cte2, #tmp_PackingList_Detail, #imp_LastSewnDate;" + Environment.NewLine);
+            sqlCmd.Append(" drop table #cte, #cte2, #tmp_PackingList_Detail;" + Environment.NewLine);
             foreach (string subprocess in subprocessIDs)
             {
                 string whereSubprocess = subprocess;
