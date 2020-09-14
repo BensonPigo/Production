@@ -174,7 +174,7 @@ BEGIN
 	, iif(f2.Type = 'S', 'Sample', f2.ProduceM) as MDivisionID2
 	, f2.Zone as Zone2
 	, Factory.CountryID
-	, f2.CountryID as CountryID2
+	, iif(exists(select ID from MDivision where ID = f2.ProduceM), f2.CountryID, null) as CountryID2
 	, Style.CPU, cTms, cCPU
 	, Style_TmsCost.ArtworkTypeID 
 	, Style_TmsCost.TMS as ArtworkTypeTMS 
