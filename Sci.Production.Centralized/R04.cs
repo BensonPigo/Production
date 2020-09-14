@@ -122,8 +122,8 @@ select s.id
 	,[MockupSeason] = isnull(mo.SeasonID,'')	
     ,[Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id,sd.ComboType),100)/100
 	,System.StdTMS
-	,[InspectQty] = isnull(r.InspectQty,0)
-	,[RejectQty] = isnull(r.RejectQty,0)
+	, [ori_QAQty] = sd.QAQty
+	, [ori_InlineQty] = sd.InlineQty
     ,[BuyerDelivery] = format(o.BuyerDelivery,'yyyy/MM/dd')
     ,[OrderQty] = o.Qty
     ,s.SubconOutFty
@@ -140,13 +140,6 @@ left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join Factory f WITH (NOLOCK) on o.FactoryID = f.id
 left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
---left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType 
-outer apply
-(
-    select top 1 InspectQty,RejectQty 
-    from Rft r WITH (NOLOCK) 
-    where r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
-) r
 outer apply
 (
 	select [SewingReasonDesc]=stuff((
@@ -267,8 +260,8 @@ select distinct OutputDate
 	,MockupSeason
 	,Rate
 	,StdTMS
-	,InspectQty
-	,RejectQty
+	, ori_QAQty
+	, ori_InlineQty
     ,BuyerDelivery
     ,SciDelivery
     ,OrderQty
@@ -417,7 +410,7 @@ select * from(
 		,TotalCPU = ROUND(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty,3)
 		,CPUSewer = IIF(ROUND(ActManPower*WorkHour,2)>0,(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(ActManPower*WorkHour,2),0)
 		,EFF = ROUND(IIF(ROUND(ActManPower*WorkHour,2)>0,((IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(ActManPower*WorkHour,2)*3600/StdTMS))*100,0),1)
-		,RFT = IIF(InspectQty>0,ROUND((InspectQty-RejectQty)/InspectQty*100,2),0)
+		,RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
 		,CumulateDate
 		,DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
 		,InlineQty");

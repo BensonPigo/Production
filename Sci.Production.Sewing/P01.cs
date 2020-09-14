@@ -1086,41 +1086,6 @@ and SunriseNid = 0
             }
 
             dr.EndEdit();
-            /*
-            // sql參數
-            SqlParameter sp1 = new SqlParameter("@orderid", MyUtility.Convert.GetString(dr["OrderID"]));
-            SqlParameter sp2 = new SqlParameter("@cdate", MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]));
-            SqlParameter sp3 = new SqlParameter("@sewinglineid", MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
-            SqlParameter sp4 = new SqlParameter("@shift", MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]));
-            SqlParameter sp5 = new SqlParameter("@team", MyUtility.Convert.GetString(this.CurrentMaintain["Team"]));
-
-            IList<SqlParameter> cmds = new List<SqlParameter>();
-            cmds.Add(sp1);
-            cmds.Add(sp2);
-            cmds.Add(sp3);
-            cmds.Add(sp4);
-            cmds.Add(sp5);
-
-            string sqlCmd = @"select iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%') as RFT
-from RFT WITH (NOLOCK) 
-where OrderID = @orderid
-and CDate = @cdate
-and SewinglineID = @sewinglineid
-and Shift = @shift
-and Team = @team";
-
-            DataTable rFTData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out rFTData);
-            if (result && rFTData.Rows.Count > 0)
-            {
-                dr["RFT"] = rFTData.Rows[0]["RFT"];
-            }
-            else
-            {
-                dr["RFT"] = "0.00%";
-            }
-
-            dr.EndEdit();*/
         }
 
         // 刪除SubDetail資料
