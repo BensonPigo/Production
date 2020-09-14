@@ -1394,7 +1394,7 @@ select t.MDivisionID
        , #cte2.sewing_output
        , [Balance] = t.qty + t.FOCQty - #cte2.sewing_output 
        , #cte2.firstSewingDate              
-	   , [Last Sewn Date] = vsis.LastSewnDate
+	   , [Last Sewn Date] = vsis.LastSewDate
        , #cte2.AVG_QAQTY
        , [Est_offline] = DATEADD(DAY
                                  , iif(isnull(#cte2.AVG_QAQTY, 0) = 0, 0
@@ -1571,7 +1571,7 @@ outer apply(
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}, t.Article, t.SizeCode" + Environment.NewLine, this.orderby));
-            sqlCmd.Append(" drop table #cte, #cte2, #tmp_PackingList_Detail, #imp_LastSewnDate;" + Environment.NewLine);
+            sqlCmd.Append(" drop table #cte, #cte2, #tmp_PackingList_Detail;" + Environment.NewLine);
             foreach (string subprocess in subprocessIDs)
             {
                 string whereSubprocess = subprocess;
