@@ -23,8 +23,8 @@ AND t.Formula<> s.Formula
 ;
 IF EXISTS (SELECT 1 FROM #Formula_Change_Table)
 BEGIN
-	INSERT INTO dbo.PartFormula_History
-	SELECT * FROM #Formula_Change_Table
+	INSERT INTO dbo.PartFormula_History ([PartID],[OldFormula],[NewFormula],[AddName],[AddDate])
+	SELECT [PartID],[OldFormula],[NewFormula],[AddName],[AddDate] FROM #Formula_Change_Table
 END
 ;
 DROP TABLE #Formula_Change_Table
