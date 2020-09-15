@@ -196,7 +196,7 @@ where 1=1 "));
 
             if (this.exclude_NonRevenue)
             {
-                sqlCmd.Append($@" and o.NonRevenue = 1 " + Environment.NewLine);
+                sqlCmd.Append($@" and o.NonRevenue = 0 " + Environment.NewLine);
             }
 
             if (!MyUtility.Check.Empty(this.shift))

@@ -252,7 +252,7 @@ where s.OutputDate between '{0}' and '{1}' and (o.CateGory NOT IN ('G','A') or s
 
             if (this.chkExcludeNonRevenue.Checked)
             {
-                sqlCmd.Append(" and o.NonRevenue = 1");
+                sqlCmd.Append(" and o.NonRevenue = 0");
             }
 
             sqlCmd.Append(@"
