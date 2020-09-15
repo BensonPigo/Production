@@ -246,28 +246,26 @@ where 1=1
 {whereExistsLastSewDate}
 
 --取得Last Sew. Date相關資料
-select  vsl.OrderId, vsl.Article, vsl.SizeCode, vsl.Color, vsl.ComboType, vsl.LastSewDate, vsl.SewQty
+select  vsl.OrderId, vsl.Article, vsl.SizeCode, vsl.ComboType, vsl.LastSewDate, vsl.SewQty
 into #tmpSewingInfo
 from dbo.View_SewingInfoLocation vsl with (nolock)
 where   exists(select 1 from #tmp_Workorder tw 
                         where   tw.OrderID = vsl.OrderId and
                                 tw.Article = vsl.Article and
                                 tw.SizeCode = vsl.SizeCode and
-                                tw.ColorID = vsl.Color and
                                 tw.Location = vsl.ComboType)
 
 alter table #tmpSewingInfo alter column ComboType varchar(8)
 
-insert into #tmpSewingInfo(OrderId, Article, SizeCode, Color, ComboType, LastSewDate, SewQty)
+insert into #tmpSewingInfo(OrderId, Article, SizeCode, ComboType, LastSewDate, SewQty)
 select  OrderId, 
         Article, 
-        SizeCode, 
-        Color, 
+        SizeCode,
         'ALLPARTS',
         [LastSewDate] = max(LastSewDate), 
         [SewQty] = sum(SewQty)
 from #tmpSewingInfo
-group by    OrderId, Article, SizeCode, Color
+group by OrderId, Article, SizeCode
 
 
 
@@ -514,7 +512,6 @@ left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M
 left join #tmpSewingInfo tsi on tsi.OrderId =   r.[SP#] and 
                                 tsi.Article = r.[Article]     and
                                 tsi.SizeCode  = r.[Size]   and
-                                tsi.Color    =   r.[Color]  and
                                 (tsi.ComboType = r.BundleLocation or tsi.ComboType = r.Pattern)
 where 1 = 1 {whereSewDate}
 order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 
