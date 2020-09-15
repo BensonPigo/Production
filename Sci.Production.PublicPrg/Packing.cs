@@ -696,18 +696,20 @@ WHERE EXISTS(
 GROUP BY i.orderid ,iq.Article ,iq.SizeCode ,i.OrderShipmodeSeq
 ";
             string sqlA = sqlCmd + $@"
-select distinct msg = concat(oqd.ID, ' (', oqd.Seq, ')')
+select distinct msg = concat(p.OrderID, ' (', p.OrderShipmodeSeq, ')',' - ', p.Article,' - ',p.SizeCode,' - Ship Qty:',sum(isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0)),' - Order Qty : ',SUM(isnull(oqd.Qty,0)))
 from #tmpPacking p
 left join #tmpOrderShip oqd with(nolock) on oqd.id = p.OrderID and oqd.Seq = p.OrderShipmodeSeq and p.Article = oqd.Article and p.SizeCode = oqd.SizeCode
 lEFT JOIN #TPEAdjust t ON t.OrderID= oqd.id AND t.OrderShipmodeSeq = oqd.Seq AND t.Article=oqd.Article AND t.SizeCode=oqd.SizeCode  ----出貨數必須加上台北端財務可能調整出貨數量，因此必須納入考量(若是減少則是負數，因此用加法即可)
 where isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0) > isnull(oqd.Qty,0)
+GROUP BY p.OrderID,p.OrderShipmodeSeq,p.Article,p.SizeCode
 ";
             string sqlB = sqlCmd + $@"
-select distinct msg = concat(oqd.ID, ' (', oqd.Seq, ')')
+select distinct msg = concat(p.OrderID, ' (', p.OrderShipmodeSeq, ')',' - ', p.Article,' - ',p.SizeCode,' - Ship Qty:',sum(isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0)),' - Order Qty : ',SUM(isnull(oqd.Qty,0)))
 from #tmpOrderShip oqd
 left join #tmpPacking p with(nolock) on oqd.id = p.OrderID and oqd.Seq = p.OrderShipmodeSeq and p.Article = oqd.Article and p.SizeCode = oqd.SizeCode
 lEFT JOIN #TPEAdjust t ON t.OrderID= oqd.id AND t.OrderShipmodeSeq = oqd.Seq AND t.Article=oqd.Article AND t.SizeCode=oqd.SizeCode  ----出貨數必須加上台北端財務可能調整出貨數量，因此必須納入考量(若是減少則是負數，因此用加法即可)
 where isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0) < isnull(oqd.Qty,0)
+GROUP BY p.OrderID,p.OrderShipmodeSeq,p.Article,p.SizeCode
 ";
 
             DataTable dt;
