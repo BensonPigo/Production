@@ -39,6 +39,9 @@
             this.txtPort1 = new Sci.Production.Class.TxtPort();
             this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.txtBrand = new Sci.Production.Class.Txtbrand();
+            this.chkJunk = new Sci.Win.UI.CheckBox();
+            this.chkIsSeaPort = new Sci.Win.UI.CheckBox();
+            this.chkIsAirPort = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,10 +52,13 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(792, 388);
+            this.detail.Size = new System.Drawing.Size(882, 388);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIsAirPort);
+            this.detailcont.Controls.Add(this.chkIsSeaPort);
+            this.detailcont.Controls.Add(this.chkJunk);
             this.detailcont.Controls.Add(this.txtPort1);
             this.detailcont.Controls.Add(this.editBoxRemark);
             this.detailcont.Controls.Add(this.txtContinent);
@@ -64,12 +70,12 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(792, 350);
+            this.detailcont.Size = new System.Drawing.Size(882, 350);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 350);
-            this.detailbtm.Size = new System.Drawing.Size(792, 38);
+            this.detailbtm.Size = new System.Drawing.Size(882, 38);
             // 
             // browse
             // 
@@ -77,7 +83,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(800, 417);
+            this.tabs.Size = new System.Drawing.Size(890, 417);
             // 
             // label1
             // 
@@ -181,11 +187,45 @@
             this.txtBrand.Size = new System.Drawing.Size(66, 23);
             this.txtBrand.TabIndex = 5;
             // 
+            // chkJunk
+            // 
+            this.chkJunk.AutoSize = true;
+            this.chkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkJunk.Location = new System.Drawing.Point(618, 20);
+            this.chkJunk.Name = "chkJunk";
+            this.chkJunk.Size = new System.Drawing.Size(57, 21);
+            this.chkJunk.TabIndex = 13;
+            this.chkJunk.Text = "Junk";
+            this.chkJunk.UseVisualStyleBackColor = true;
+            // 
+            // chkIsSeaPort
+            // 
+            this.chkIsSeaPort.AutoSize = true;
+            this.chkIsSeaPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsSeaPort.Location = new System.Drawing.Point(618, 47);
+            this.chkIsSeaPort.Name = "chkIsSeaPort";
+            this.chkIsSeaPort.Size = new System.Drawing.Size(96, 21);
+            this.chkIsSeaPort.TabIndex = 14;
+            this.chkIsSeaPort.Text = "Is Sea Port";
+            this.chkIsSeaPort.UseVisualStyleBackColor = true;
+            // 
+            // chkIsAirPort
+            // 
+            this.chkIsAirPort.AutoSize = true;
+            this.chkIsAirPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsAirPort.Location = new System.Drawing.Point(618, 74);
+            this.chkIsAirPort.Name = "chkIsAirPort";
+            this.chkIsAirPort.Size = new System.Drawing.Size(88, 21);
+            this.chkIsAirPort.TabIndex = 15;
+            this.chkIsAirPort.Text = "Is Air Port";
+            this.chkIsAirPort.UseVisualStyleBackColor = true;
+            // 
             // B07
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(890, 450);
             this.IsDeleteOnBrowse = false;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
@@ -223,5 +263,8 @@
         private Win.UI.TextBox txtContinent;
         private Win.UI.DisplayBox displayContinent;
         private Class.TxtPort txtPort1;
+        private Win.UI.CheckBox chkJunk;
+        private Win.UI.CheckBox chkIsAirPort;
+        private Win.UI.CheckBox chkIsSeaPort;
     }
 }
