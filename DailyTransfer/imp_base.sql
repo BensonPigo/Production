@@ -2063,6 +2063,9 @@ SET
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
       ,a.Junk	      =b.Junk	
+      ,a.Name	      =b.Name	
+      ,a.AirPort	  =b.AirPort	
+      ,a.SeaPort	  =b.SeaPort
 
 from Production.dbo.Port as a inner join Trade_To_Pms.dbo.Port as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
@@ -2075,6 +2078,9 @@ ID
       ,EditName
       ,EditDate
       ,Junk
+      ,Name
+      ,AirPort
+      ,SeaPort
 
 )
 select 
@@ -2086,6 +2092,9 @@ ID
       ,EditName
       ,EditDate
       ,Junk
+      ,Name
+      ,AirPort
+      ,SeaPort
 from Trade_To_Pms.dbo.Port as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Port as a WITH (NOLOCK) where a.id = b.id)
 
@@ -3827,6 +3836,67 @@ where not exists(
 	from Trade_To_Pms.dbo.SubProDefectCode tar
 	where tar.SubProcessID	 = S.SubProcessID	
 	and tar.DefectCode	 = S.DefectCode	)
+
+-----PortByBrandShipmode -----
+update tar set
+ tar.Remark		= S.Remark 
+,tar.Junk		= S.Junk 
+,tar.AddDate	= S.AddDate
+,tar.AddName	= S.AddName
+,tar.EditDate 	= S.EditDate 
+,tar.EditName	= S.EditName
+from Trade_To_Pms.dbo.PortByBrandShipmode  S
+inner join Production.dbo.PortByBrandShipmode  tar 	on tar.PortID = S.PortID and tar.BrandID = S.BrandID
+
+INSERT INTO FtyStdRate_EMB(
+	 Region
+	,SeasonID
+	,StartRange
+	,EndRange
+	,BasedStitches
+	,BasedPay
+	,AddedStitches
+	,AddedPay
+	,ThreadRatio
+	,Ratio
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+)
+SELECT 
+	 Region
+	,SeasonID
+	,StartRange
+	,EndRange
+	,BasedStitches
+	,BasedPay
+	,AddedStitches
+	,AddedPay
+	,ThreadRatio
+	,Ratio
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+from Trade_To_Pms.dbo.FtyStdRate_EMB S
+where not exists(
+	select 1
+	from Production.dbo.FtyStdRate_EMB tar
+	where tar.Region = S.Region
+	and tar.SeasonID = S.SeasonID
+	and tar.StartRange = S.StartRange)
+
+DELETE S
+from Production.dbo.FtyStdRate_EMB S
+where not exists(
+	select 1
+	from Trade_To_Pms.dbo.FtyStdRate_EMB tar
+	where tar.Region = S.Region
+	and tar.SeasonID = S.SeasonID
+	and tar.StartRange = S.StartRange)
+
+
 END
 
 
