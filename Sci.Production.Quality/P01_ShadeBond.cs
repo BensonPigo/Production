@@ -846,7 +846,7 @@ select Roll,Dyelot,TicketYds,Scale,Result
 
 SELECT sum(Packages) 
 FROM Export
-WHERE MainExportID='{this.maindr["ExportID"]}'
+WHERE ID='{this.maindr["ExportID"]}'
 "));
             string colorName = MyUtility.GetValue.Lookup($"SELECT Name FROM Color WHERE ID = '{this.displayColor.Text}' AND BrandId  ='{brandID}' ");
 

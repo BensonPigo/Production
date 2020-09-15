@@ -48,6 +48,8 @@
             this.txtInvNo = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.lbPackages = new Sci.Win.UI.Label();
+            this.numericPackages = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -64,6 +66,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numericPackages);
+            this.masterpanel.Controls.Add(this.lbPackages);
             this.masterpanel.Controls.Add(this.txtInvNo);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnImport);
@@ -102,6 +106,8 @@
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtInvNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbPackages, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numericPackages, 0);
             // 
             // detailpanel
             // 
@@ -366,6 +372,35 @@
             this.shapeContainer2.TabIndex = 54;
             this.shapeContainer2.TabStop = false;
             // 
+            // lbPackages
+            // 
+            this.lbPackages.Location = new System.Drawing.Point(516, 45);
+            this.lbPackages.Name = "lbPackages";
+            this.lbPackages.Size = new System.Drawing.Size(108, 23);
+            this.lbPackages.TabIndex = 70;
+            this.lbPackages.Text = "Packages";
+            // 
+            // numericPackages
+            // 
+            this.numericPackages.BackColor = System.Drawing.Color.White;
+            this.numericPackages.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Packages", true));
+            this.numericPackages.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericPackages.Location = new System.Drawing.Point(627, 45);
+            this.numericPackages.MaxLength = 5;
+            this.numericPackages.Name = "numericPackages";
+            this.numericPackages.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericPackages.Size = new System.Drawing.Size(100, 23);
+            this.numericPackages.TabIndex = 71;
+            this.numericPackages.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P18
             // 
             this.ApvChkValue = "New";
@@ -430,5 +465,7 @@
         private Win.UI.TextBox txtInvNo;
         private Win.UI.Label label1;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
+        private Win.UI.NumericBox numericPackages;
+        private Win.UI.Label lbPackages;
     }
 }
