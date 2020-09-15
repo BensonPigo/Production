@@ -190,7 +190,7 @@ Te2.InvoiceNo)
 
 INSERT INTO Production.dbo.Export_ShipAdvice_Container
         (Ukey,Export_Detail_Ukey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate)
-SELECT *
+SELECT Ukey,Export_Detail_Ukey,ContainerType,ContainerNo,AddName,AddDate,EditName,EditDate
 FROM Trade_To_Pms.dbo.Export_ShipAdvice_Container s
 WHERE NOT EXISTS (SELECT 1 FROM Production.dbo.Export_ShipAdvice_Container WHERE Ukey = s.Ukey)
 
