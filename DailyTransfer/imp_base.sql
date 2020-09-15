@@ -2066,7 +2066,6 @@ SET
       ,a.Name	      =b.Name	
       ,a.AirPort	  =b.AirPort	
       ,a.SeaPort	  =b.SeaPort
-
 from Production.dbo.Port as a inner join Trade_To_Pms.dbo.Port as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Port(
@@ -2083,8 +2082,7 @@ ID
       ,SeaPort
 
 )
-select 
-ID
+select ID
       ,CountryID
       ,Remark
       ,AddName
@@ -3838,63 +3836,48 @@ where not exists(
 	and tar.DefectCode	 = S.DefectCode	)
 
 -----PortByBrandShipmode -----
-update tar set
- tar.Remark		= S.Remark 
-,tar.Junk		= S.Junk 
-,tar.AddDate	= S.AddDate
-,tar.AddName	= S.AddName
-,tar.EditDate 	= S.EditDate 
-,tar.EditName	= S.EditName
-from Trade_To_Pms.dbo.PortByBrandShipmode  S
-inner join Production.dbo.PortByBrandShipmode  tar 	on tar.PortID = S.PortID and tar.BrandID = S.BrandID
+update t SET
+	   t.Remark = s.Remark
+      ,t.Junk = s.Junk
+      ,t.AddDate = s.AddDate
+      ,t.AddName = s.AddName
+      ,t.EditDate = s.EditDate
+      ,t.EditName = s.EditName
+from Trade_To_Pms.dbo.PortByBrandShipmode  s
+inner join Production.dbo.PortByBrandShipmode t on t.PortID = S.PortID and t.BrandID = S.BrandID
 
-INSERT INTO FtyStdRate_EMB(
-	 Region
-	,SeasonID
-	,StartRange
-	,EndRange
-	,BasedStitches
-	,BasedPay
-	,AddedStitches
-	,AddedPay
-	,ThreadRatio
-	,Ratio
-	,AddName
-	,AddDate
-	,EditName
-	,EditDate
+
+INSERT INTO Production.dbo.PortByBrandShipmode
+           (PortID
+           ,BrandID
+           ,Remark
+           ,Junk
+           ,AddDate
+           ,AddName
+           ,EditDate
+           ,EditName)
+SELECT PortID
+      ,BrandID
+      ,Remark
+      ,Junk
+      ,AddDate
+      ,AddName
+      ,EditDate
+      ,EditName
+FROM Trade_To_Pms.dbo.PortByBrandShipmode  s
+WHERE NOT EXISTS(
+	SELECT 1
+	FROM Production.dbo.PortByBrandShipmode t
+	WHERE t.PortID = S.PortID and t.BrandID = S.BrandID
 )
-SELECT 
-	 Region
-	,SeasonID
-	,StartRange
-	,EndRange
-	,BasedStitches
-	,BasedPay
-	,AddedStitches
-	,AddedPay
-	,ThreadRatio
-	,Ratio
-	,AddName
-	,AddDate
-	,EditName
-	,EditDate
-from Trade_To_Pms.dbo.FtyStdRate_EMB S
-where not exists(
-	select 1
-	from Production.dbo.FtyStdRate_EMB tar
-	where tar.Region = S.Region
-	and tar.SeasonID = S.SeasonID
-	and tar.StartRange = S.StartRange)
 
-DELETE S
-from Production.dbo.FtyStdRate_EMB S
-where not exists(
-	select 1
-	from Trade_To_Pms.dbo.FtyStdRate_EMB tar
-	where tar.Region = S.Region
-	and tar.SeasonID = S.SeasonID
-	and tar.StartRange = S.StartRange)
+DELETE s
+from Production.dbo.PortByBrandShipmode s
+WHERE NOT EXISTS(
+	SELECT 1
+	FROM Trade_To_Pms.dbo.PortByBrandShipmode t
+	WHERE t.PortID = S.PortID and t.BrandID = S.BrandID
+)
 
 
 END
