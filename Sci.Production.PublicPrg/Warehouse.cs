@@ -322,9 +322,10 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) , qty, dyelot = isnull(dyelot, '')
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
 into #tmpS1
 from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
 
 select s.*,psdseq1=psd.seq1
 into #tmpS11
@@ -384,9 +385,10 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))), qty, dyelot = isnull(dyelot, '')
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
 into #tmpS1
 from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
 
 merge dbo.FtyInventory as target
 using #tmpS1 as s
@@ -414,9 +416,10 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct  poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))), qty, dyelot = isnull(dyelot, '')
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
 into #tmpS1
 from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
 
 merge dbo.FtyInventory as target
 using #tmpS1 as s
@@ -463,9 +466,10 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))), qty, dyelot = isnull(dyelot, '')
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
 into #tmpS1
 from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
 
 merge dbo.FtyInventory as target
 using #tmpS1 as s
