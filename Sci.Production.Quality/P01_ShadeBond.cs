@@ -871,13 +871,26 @@ select Roll,Dyelot,TicketYds,Scale,Result
             dt.Columns.Add(new DataColumn("Seq", typeof(string)));
 
             int packages = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"
-select [Packages] = sum(e.Packages)
-from Export e with (nolock) 
-where e.Blno in (
-    select distinct e2.BLNO
-    from Export e2 with (nolock) 
-    where e2.ID = '{this.maindr["ExportID"]}'
-)
+ select top 1 Packages
+ from
+ (
+	 select e.Packages
+	 from Receiving r with (nolock) 
+	 outer apply (
+		select [Packages] = sum(e.Packages)
+		from Export e with (nolock) 
+			where e.Blno in (
+			select distinct e2.BLNO
+			from Export e2 with (nolock) 
+			where e2.ID = r.ExportId
+		 )
+	 )e
+	 where id = '{this.maindr["ReceivingID"]}'
+	 union
+	 select t.Packages
+	 from TransferIn t with (nolock) 
+	 where id = '{this.maindr["ReceivingID"]}'
+ )a
 "));
             string colorName = MyUtility.GetValue.Lookup($"SELECT Name FROM Color WHERE ID = '{this.displayColor.Text}' AND BrandId  ='{brandID}' ");
 
