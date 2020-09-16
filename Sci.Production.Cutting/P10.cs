@@ -1050,6 +1050,10 @@ where bdo.OrderID = '{orderid}'
             string sqlcmd = $@"update Bundle set PrintDate = '{dtn}' where ID = '{this.CurrentMaintain["ID"]}';
                   update Bundle_Detail set PrintDate = '{dtn}' where ID = '{this.CurrentMaintain["ID"]}';";
             DBProxy.Current.Execute(null, sqlcmd);
+            string topID = this.CurrentMaintain["ID"].ToString();
+            this.ReloadDatas();
+            int newDataIdx = this.gridbs.Find("ID", topID);
+            this.gridbs.Position = newDataIdx;
             return true;
         }
 
