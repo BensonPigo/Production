@@ -12,22 +12,27 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R08 : Win.Tems.PrintForm
     {
-        DataTable[] printData;
+        private DataTable[] printData;
         private string Excelfile;
-        string sp1;
-        string sp2;
-        string uid;
-        string brand;
-        string refno1;
-        string refno2;
-        DateTime? InspectionDate1;
-        DateTime? InspectionDate2;
-        private readonly Color green = Color.FromArgb(153, 204, 0);
-        private readonly Color blue = Color.FromArgb(101, 215, 255);
-        private readonly Color zero = Color.FromArgb(250, 191, 143);
+        private string sp1;
+        private string sp2;
+        private string uid;
+        private string brand;
+        private string refno1;
+        private string refno2;
+        private DateTime? InspectionDate1;
+        private DateTime? InspectionDate2;
+        private Color green = Color.FromArgb(153, 204, 0);
+        private Color blue = Color.FromArgb(101, 215, 255);
+        private Color zero = Color.FromArgb(250, 191, 143);
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R08"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -35,7 +40,7 @@ namespace Sci.Production.Quality
             this.txtbrand.MultiSelect = true;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.InspectionDate1 = this.dateInspectionDate.Value1;
@@ -55,14 +60,15 @@ namespace Sci.Production.Quality
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region 畫面上的條件
             StringBuilder sqlCmdW = new StringBuilder();
             sqlCmdW.Append(string.Format(
                 " and FP.InspDate between '{0}' and '{1}'",
-                ((DateTime)this.InspectionDate1).ToString("d"), ((DateTime)this.InspectionDate2).ToString("d")));
+                ((DateTime)this.InspectionDate1).ToString("d"),
+                ((DateTime)this.InspectionDate2).ToString("d")));
             if (!MyUtility.Check.Empty(this.uid))
             {
                 string strUserid = string.Empty;
@@ -129,8 +135,10 @@ SELECT [Inspected Date] = FP.InspDate
 	   ,[Color]=dbo.GetColorMultipleID(o.BrandID,p.ColorID)
        ,[Arrived YDS] = RD.StockQty
        ,[Actual YDS] = FP.ActualYds
-       ,[Shortage YDS] = isnull(isd.Qty, 0)
+       ,[LthOfDiff] = FP.ActualYds - FP.TicketYds
 	   ,[TransactionID] = FP.TransactionID
+	   ,[Shortage YDS] = isnull(isd.Qty, 0)
+	   ,[QCIssueTransactionID] = isd.Id
        ,[Full Width] = ww.width
        ,[Actual Width] = FP.ActualWidth
        ,[Speed] = IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
@@ -209,7 +217,7 @@ order by [inspected date]
             return Ict.Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -237,8 +245,8 @@ order by [inspected date]
                 objApp.Visible = true;
 #endif
 
-                int RowAdd = 0;
-                int ColumnAdd = 2;
+                int rowAdd = 0;
+                int columnAdd = 2;
                 string rgStr = string.Empty;
 
                 //// 插入日期
@@ -265,71 +273,71 @@ order by [inspected date]
                     foreach (DataRow dr in this.printData[1].Rows)
                     {
                         // QC ID
-                        wksheet.Cells[2, ColumnAdd] = dr["Inspector"].ToString();
-                        rgStr = string.Format($"{MyExcelPrg.GetExcelColumnName(ColumnAdd)}2:{MyExcelPrg.GetExcelColumnName(ColumnAdd + 1)}2");
+                        wksheet.Cells[2, columnAdd] = dr["Inspector"].ToString();
+                        rgStr = string.Format($"{MyExcelPrg.GetExcelColumnName(columnAdd)}2:{MyExcelPrg.GetExcelColumnName(columnAdd + 1)}2");
                         Excel.Range merge = wksheet.get_Range(rgStr);
                         merge.Interior.Color = this.green;
                         merge.Merge();
                         merge.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
                         // QC Name
-                        wksheet.Cells[3, ColumnAdd] = dr["QCName"].ToString();
-                        rgStr = string.Format($"{MyExcelPrg.GetExcelColumnName(ColumnAdd)}3:{MyExcelPrg.GetExcelColumnName(ColumnAdd + 1)}3");
+                        wksheet.Cells[3, columnAdd] = dr["QCName"].ToString();
+                        rgStr = string.Format($"{MyExcelPrg.GetExcelColumnName(columnAdd)}3:{MyExcelPrg.GetExcelColumnName(columnAdd + 1)}3");
                         merge = wksheet.get_Range(rgStr);
                         merge.Interior.Color = this.blue;
                         merge.Merge();
                         merge.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
                         // Header
-                        wksheet.Cells[4, ColumnAdd] = "Roll";
-                        wksheet.Cells[4, ColumnAdd + 1] = "Yard";
+                        wksheet.Cells[4, columnAdd] = "Roll";
+                        wksheet.Cells[4, columnAdd + 1] = "Yard";
 
                         // Loop天數的次數
-                        RowAdd = 5;
+                        rowAdd = 5;
                         int cnt = 0;
                         for (int i = 0; i < this.printData[2].Rows.Count; i++)
                         {
                             DataRow[] selected = this.printData[0].Select($@"inspector='{dr["Inspector"]}' and [inspected date]='{((DateTime)this.printData[2].Rows[i]["inspected date"]).ToString("yyyy-MM-dd")}'");
                             if (selected.Length > 0)
                             {
-                                wksheet.Cells[RowAdd, ColumnAdd] = selected[0].ItemArray[3];
-                                wksheet.Cells[RowAdd, ColumnAdd + 1] = selected[0].ItemArray[4];
+                                wksheet.Cells[rowAdd, columnAdd] = selected[0].ItemArray[3];
+                                wksheet.Cells[rowAdd, columnAdd + 1] = selected[0].ItemArray[4];
                                 cnt++;
                             }
                             else
                             {
-                                wksheet.Cells[RowAdd, ColumnAdd] = 0;
-                                wksheet.Cells[RowAdd, ColumnAdd].Interior.Color = this.zero;
-                                wksheet.Cells[RowAdd, ColumnAdd + 1] = 0;
-                                wksheet.Cells[RowAdd, ColumnAdd + 1].Interior.Color = this.zero;
+                                wksheet.Cells[rowAdd, columnAdd] = 0;
+                                wksheet.Cells[rowAdd, columnAdd].Interior.Color = this.zero;
+                                wksheet.Cells[rowAdd, columnAdd + 1] = 0;
+                                wksheet.Cells[rowAdd, columnAdd + 1].Interior.Color = this.zero;
                             }
 
-                            RowAdd++;
+                            rowAdd++;
                         }
 
                         // Totoal
-                        wksheet.Cells[RowAdd, ColumnAdd] = $"=SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})";
-                        wksheet.Cells[RowAdd, ColumnAdd + 1] = $"=SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd + 1)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd + 1)}{RowAdd - 1})";
+                        wksheet.Cells[rowAdd, columnAdd] = $"=SUM({MyExcelPrg.GetExcelColumnName(columnAdd)}5:{MyExcelPrg.GetExcelColumnName(columnAdd)}{rowAdd - 1})";
+                        wksheet.Cells[rowAdd, columnAdd + 1] = $"=SUM({MyExcelPrg.GetExcelColumnName(columnAdd + 1)}5:{MyExcelPrg.GetExcelColumnName(columnAdd + 1)}{rowAdd - 1})";
 
                         // Avg
-                        wksheet.Cells[RowAdd + 1, ColumnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})/{cnt},1)";
-                        wksheet.Cells[RowAdd + 1, ColumnAdd + 1] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd + 1)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd + 1)}{RowAdd - 1})/{cnt},1)";
+                        wksheet.Cells[rowAdd + 1, columnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(columnAdd)}5:{MyExcelPrg.GetExcelColumnName(columnAdd)}{rowAdd - 1})/{cnt},1)";
+                        wksheet.Cells[rowAdd + 1, columnAdd + 1] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(columnAdd + 1)}5:{MyExcelPrg.GetExcelColumnName(columnAdd + 1)}{rowAdd - 1})/{cnt},1)";
 
-                        ColumnAdd += 2;
+                        columnAdd += 2;
                     }
 
                     // 加入Total Header
-                    wksheet.Cells[2, ColumnAdd] = "Daily output";
-                    rgStr = string.Format($"{MyExcelPrg.GetExcelColumnName(ColumnAdd)}2:{MyExcelPrg.GetExcelColumnName(ColumnAdd + 3)}2");
+                    wksheet.Cells[2, columnAdd] = "Daily output";
+                    rgStr = string.Format($"{MyExcelPrg.GetExcelColumnName(columnAdd)}2:{MyExcelPrg.GetExcelColumnName(columnAdd + 3)}2");
                     Excel.Range mergerge = wksheet.get_Range(rgStr);
                     mergerge.Interior.Color = this.green;
                     mergerge.Merge();
                     mergerge.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
                     // Woven
-                    wksheet.Cells[3, ColumnAdd] = "Woven";
-                    wksheet.Cells[3, ColumnAdd].Interior.Color = this.green;
-                    wksheet.Cells[4, ColumnAdd] = "Yard";
+                    wksheet.Cells[3, columnAdd] = "Woven";
+                    wksheet.Cells[3, columnAdd].Interior.Color = this.green;
+                    wksheet.Cells[4, columnAdd] = "Yard";
 
                     // Loop天數的次數
                     int cntWoven = 0;
@@ -338,31 +346,31 @@ order by [inspected date]
                         DataRow[] selected = this.printData[3].Select($@"[inspected date]='{((DateTime)this.printData[2].Rows[i]["inspected date"]).ToString("yyyy-MM-dd")}'");
                         if (selected.Length > 0)
                         {
-                            wksheet.Cells[5 + i, ColumnAdd] = selected[0].ItemArray[1];
+                            wksheet.Cells[5 + i, columnAdd] = selected[0].ItemArray[1];
                             cntWoven++;
                         }
                         else
                         {
-                            wksheet.Cells[5 + i, ColumnAdd] = 0;
-                            wksheet.Cells[5 + i, ColumnAdd].Interior.Color = this.zero;
+                            wksheet.Cells[5 + i, columnAdd] = 0;
+                            wksheet.Cells[5 + i, columnAdd].Interior.Color = this.zero;
                         }
                     }
 
                     // Totoal
-                    wksheet.Cells[daydiff + 5, ColumnAdd] = $"=SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})";
+                    wksheet.Cells[daydiff + 5, columnAdd] = $"=SUM({MyExcelPrg.GetExcelColumnName(columnAdd)}5:{MyExcelPrg.GetExcelColumnName(columnAdd)}{rowAdd - 1})";
 
                     // Avg
-                    wksheet.Cells[daydiff + 6, ColumnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})/{cntWoven},1)";
+                    wksheet.Cells[daydiff + 6, columnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(columnAdd)}5:{MyExcelPrg.GetExcelColumnName(columnAdd)}{rowAdd - 1})/{cntWoven},1)";
 
                     // Knit
-                    ColumnAdd++;
-                    wksheet.Cells[3, ColumnAdd] = "Knit";
-                    wksheet.Cells[3, ColumnAdd].Interior.Color = this.green;
-                    wksheet.Cells[4, ColumnAdd] = "Yard";
+                    columnAdd++;
+                    wksheet.Cells[3, columnAdd] = "Knit";
+                    wksheet.Cells[3, columnAdd].Interior.Color = this.green;
+                    wksheet.Cells[4, columnAdd] = "Yard";
 
                     for (int i = 0; i < this.printData[4].Rows.Count; i++)
                     {
-                        wksheet.Cells[5 + i, ColumnAdd] = this.printData[4].Rows[i]["Actual YDS"];
+                        wksheet.Cells[5 + i, columnAdd] = this.printData[4].Rows[i]["Actual YDS"];
                     }
 
                     // Loop天數的次數
@@ -372,26 +380,26 @@ order by [inspected date]
                         DataRow[] selected = this.printData[4].Select($@"[inspected date]='{((DateTime)this.printData[2].Rows[i]["inspected date"]).ToString("yyyy-MM-dd")}'");
                         if (selected.Length > 0)
                         {
-                            wksheet.Cells[5 + i, ColumnAdd] = selected[0].ItemArray[1];
+                            wksheet.Cells[5 + i, columnAdd] = selected[0].ItemArray[1];
                             cntKnit++;
                         }
                         else
                         {
-                            wksheet.Cells[5 + i, ColumnAdd] = 0;
-                            wksheet.Cells[5 + i, ColumnAdd].Interior.Color = this.zero;
+                            wksheet.Cells[5 + i, columnAdd] = 0;
+                            wksheet.Cells[5 + i, columnAdd].Interior.Color = this.zero;
                         }
                     }
 
                     // Totoal
-                    wksheet.Cells[daydiff + 5, ColumnAdd] = $"=SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})";
+                    wksheet.Cells[daydiff + 5, columnAdd] = $"=SUM({MyExcelPrg.GetExcelColumnName(columnAdd)}5:{MyExcelPrg.GetExcelColumnName(columnAdd)}{rowAdd - 1})";
 
                     // Avg
-                    wksheet.Cells[daydiff + 6, ColumnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})/{cntKnit},1)";
+                    wksheet.Cells[daydiff + 6, columnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(columnAdd)}5:{MyExcelPrg.GetExcelColumnName(columnAdd)}{rowAdd - 1})/{cntKnit},1)";
 
                     // Total
-                    ColumnAdd++;
-                    wksheet.Cells[3, ColumnAdd] = "Total";
-                    rgStr = string.Format($"{MyExcelPrg.GetExcelColumnName(ColumnAdd)}3:{MyExcelPrg.GetExcelColumnName(ColumnAdd + 1)}3");
+                    columnAdd++;
+                    wksheet.Cells[3, columnAdd] = "Total";
+                    rgStr = string.Format($"{MyExcelPrg.GetExcelColumnName(columnAdd)}3:{MyExcelPrg.GetExcelColumnName(columnAdd + 1)}3");
                     mergerge = wksheet.get_Range(rgStr);
                     mergerge.Interior.Color = this.green;
                     mergerge.Merge();
@@ -399,45 +407,45 @@ order by [inspected date]
 
                     for (int i = 0; i < this.printData[2].Rows.Count; i++)
                     {
-                        wksheet.Cells[5 + i, ColumnAdd] = this.printData[2].Rows[i]["Roll"];
-                        wksheet.Cells[5 + i, ColumnAdd + 1] = this.printData[2].Rows[i]["Actual YDS"];
+                        wksheet.Cells[5 + i, columnAdd] = this.printData[2].Rows[i]["Roll"];
+                        wksheet.Cells[5 + i, columnAdd + 1] = this.printData[2].Rows[i]["Actual YDS"];
                     }
 
-                    wksheet.Cells[4, ColumnAdd] = "Roll";
+                    wksheet.Cells[4, columnAdd] = "Roll";
 
                     // Sum
-                    wksheet.Cells[daydiff + 5, ColumnAdd] = $"=SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})";
+                    wksheet.Cells[daydiff + 5, columnAdd] = $"=SUM({MyExcelPrg.GetExcelColumnName(columnAdd)}5:{MyExcelPrg.GetExcelColumnName(columnAdd)}{rowAdd - 1})";
 
                     // Avg
-                    wksheet.Cells[daydiff + 6, ColumnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})/{daydiff},1)";
+                    wksheet.Cells[daydiff + 6, columnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(columnAdd)}5:{MyExcelPrg.GetExcelColumnName(columnAdd)}{rowAdd - 1})/{daydiff},1)";
 
-                    ColumnAdd++;
-                    wksheet.Cells[4, ColumnAdd] = "Yard";
+                    columnAdd++;
+                    wksheet.Cells[4, columnAdd] = "Yard";
 
                     // Sum
-                    wksheet.Cells[daydiff + 5, ColumnAdd] = $"=SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})";
-                    wksheet.Cells[daydiff + 5, ColumnAdd].Font.Color = Color.Red;
+                    wksheet.Cells[daydiff + 5, columnAdd] = $"=SUM({MyExcelPrg.GetExcelColumnName(columnAdd)}5:{MyExcelPrg.GetExcelColumnName(columnAdd)}{rowAdd - 1})";
+                    wksheet.Cells[daydiff + 5, columnAdd].Font.Color = Color.Red;
 
                     // Avg
-                    wksheet.Cells[daydiff + 6, ColumnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})/{daydiff},1)";
-                    wksheet.Cells[daydiff + 6, ColumnAdd].Font.Color = Color.FromArgb(0, 112, 192);
+                    wksheet.Cells[daydiff + 6, columnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(columnAdd)}5:{MyExcelPrg.GetExcelColumnName(columnAdd)}{rowAdd - 1})/{daydiff},1)";
+                    wksheet.Cells[daydiff + 6, columnAdd].Font.Color = Color.FromArgb(0, 112, 192);
 
                     // Remark
-                    ColumnAdd++;
-                    wksheet.Cells[2, ColumnAdd] = "Remark";
-                    rgStr = string.Format($"{MyExcelPrg.GetExcelColumnName(ColumnAdd)}2:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}4");
+                    columnAdd++;
+                    wksheet.Cells[2, columnAdd] = "Remark";
+                    rgStr = string.Format($"{MyExcelPrg.GetExcelColumnName(columnAdd)}2:{MyExcelPrg.GetExcelColumnName(columnAdd)}4");
                     mergerge = wksheet.get_Range(rgStr);
                     mergerge.Interior.Color = this.green;
                     mergerge.Merge();
                     mergerge.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
                     // Daily Output Format
-                    rgStr = string.Format($"{MyExcelPrg.GetExcelColumnName(ColumnAdd - 4)}2:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd + 1}");
+                    rgStr = string.Format($"{MyExcelPrg.GetExcelColumnName(columnAdd - 4)}2:{MyExcelPrg.GetExcelColumnName(columnAdd)}{rowAdd + 1}");
                     mergerge = wksheet.get_Range(rgStr);
                     mergerge.Font.Bold = true;
 
                     // Total,Ave Format
-                    rgStr = string.Format($"A{RowAdd}:{MyExcelPrg.GetExcelColumnName(ColumnAdd - 1)}{RowAdd + 1}");
+                    rgStr = string.Format($"A{rowAdd}:{MyExcelPrg.GetExcelColumnName(columnAdd - 1)}{rowAdd + 1}");
                     mergerge = wksheet.get_Range(rgStr);
                     mergerge.Font.Bold = true;
                     mergerge.Interior.Color = Color.FromArgb(192, 192, 192);
@@ -445,9 +453,9 @@ order by [inspected date]
                     wksheet.Cells[daydiff + 6, 1] = "Average";
 
                     // 畫線
-                    wksheet.get_Range($"A2:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd + 1}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    wksheet.get_Range($"A2:{MyExcelPrg.GetExcelColumnName(columnAdd)}{rowAdd + 1}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-                    rgStr = $"A1:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}1";
+                    rgStr = $"A1:{MyExcelPrg.GetExcelColumnName(columnAdd)}1";
                     mergerge = wksheet.get_Range(rgStr);
                     mergerge.Merge();
                     mergerge.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
