@@ -224,6 +224,10 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
 
             DualResult result;
             sqlcmd = $@"
+alter table #tmp alter column OrderID varchar(13)
+alter table #tmp alter column ArtworkID varchar(20)
+alter table #tmp alter column PatternCode varchar(20)
+alter table #tmp alter column PatternDesc varchar(40)
 
 select  t.OrderID,
         [Article] = '',
