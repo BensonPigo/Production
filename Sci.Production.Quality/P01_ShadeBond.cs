@@ -16,14 +16,23 @@ using System.Linq;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P01_ShadeBond : Win.Subs.Input4
     {
         private readonly DataRow maindr;
         private readonly string loginID = Env.User.UserID;
         private readonly string keyWord = Env.User.Keyword;
-        string excelFile;
-        readonly string ID;
+        private string excelFile;
+        private string ID;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P01_ShadeBond"/> class.
+        /// </summary>
+        /// <param name="canedit">Can Edit</param>
+        /// <param name="keyvalue1">ID</param>
+        /// <param name="keyvalue2">keyvalue2</param>
+        /// <param name="keyvalue3">keyvalue3</param>
+        /// <param name="mainDr">Main DataRow</param>
         public P01_ShadeBond(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
@@ -32,12 +41,14 @@ namespace Sci.Production.Quality
             this.ID = keyvalue1;
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
             this.Button_enable();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery()
         {
             #region Encode/Approve Enable
@@ -77,9 +88,9 @@ namespace Sci.Production.Quality
                 this.txtsupplier.TextBox1.Text = string.Empty;
             }
 
-            string Receiving_cmd = string.Format("select b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", this.maindr["id"]);
+            string receiving_cmd = string.Format("select b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", this.maindr["id"]);
             DataRow rec_dr;
-            if (MyUtility.Check.Seek(Receiving_cmd, out rec_dr))
+            if (MyUtility.Check.Seek(receiving_cmd, out rec_dr))
             {
                 this.displayRefno.Text = rec_dr["Refno"].ToString();
             }
@@ -115,6 +126,7 @@ namespace Sci.Production.Quality
             return base.OnRequery();
         }
 
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -134,15 +146,16 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings Scalecell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResulCell = PublicPrg.Prgs.CellResult.GetGridCell();
-            DataGridViewGeneratorTextColumnSettings InspectorCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings rollcell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings scalecell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings resulCell = PublicPrg.Prgs.CellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings inspectorCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region Scale
-            Scalecell.CellValidating += (s, e) =>
+            scalecell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Scale"].ToString();
@@ -180,7 +193,7 @@ namespace Sci.Production.Quality
                 }
             };
 
-            Scalecell.EditingMouseDown += (s, e) =>
+            scalecell.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode == false)
                 {
@@ -214,7 +227,7 @@ namespace Sci.Production.Quality
             #endregion
 
             #region Result
-            ResulCell.CellValidating += (s, e) =>
+            resulCell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Result"].ToString();
@@ -256,7 +269,7 @@ namespace Sci.Production.Quality
 
             #region Inspector
 
-            InspectorCell.CellValidating += (s, e) =>
+            inspectorCell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Inspector"].ToString();
@@ -284,13 +297,13 @@ namespace Sci.Production.Quality
 
             this.Helper.Controls.Grid.Generator(this.grid)
             .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: true)
-            .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: Rollcell)
+            .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
-            .Text("Scale", header: "Scale", width: Widths.AnsiChars(5), settings: Scalecell)
-            .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: ResulCell)
+            .Text("Scale", header: "Scale", width: Widths.AnsiChars(5), settings: scalecell)
+            .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: resulCell)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
-            .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name", settings: InspectorCell)
+            .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name", settings: inspectorCell)
             .Text("Name", header: "Name", width: Widths.AnsiChars(20))
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20));
 
@@ -310,9 +323,10 @@ namespace Sci.Production.Quality
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnInsert()
         {
-            DataTable Dt = (DataTable)this.gridbs.DataSource;
+            DataTable dt = (DataTable)this.gridbs.DataSource;
             base.OnInsert();
 
             DataRow selectDr = ((DataRowView)this.grid.GetSelecteds(SelectedSort.Index)[0]).Row;
@@ -327,6 +341,7 @@ namespace Sci.Production.Quality
             selectDr["scale"] = string.Empty;
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             DataTable gridTb = (DataTable)this.gridbs.DataSource;
@@ -349,9 +364,9 @@ namespace Sci.Production.Quality
             // 改為判斷 Result欄位是否全部 = ''
             if (this.btnEncode.Text == "Encode")
             {
-                int ResultEmptyCount = gridTb.Select("Result = ''").Count();
+                int resultEmptyCount = gridTb.Select("Result = ''").Count();
 
-                if (gridTb.Rows.Count == ResultEmptyCount)
+                if (gridTb.Rows.Count == resultEmptyCount)
                 {
                     MyUtility.Msg.WarningBox("Must inspection one fabric !!! ");
                     return;
@@ -360,31 +375,31 @@ namespace Sci.Production.Quality
 
             #region 判斷 Scale,Result,Inspdate,Inspector 不可為空(如果全為空則不用檢查)
 
-            DataRow[] AllEmpty_drArray = gridTb.Select("Scale='' AND Result='' AND Inspdate IS NULL AND Inspector=''");
+            DataRow[] allEmpty_drArray = gridTb.Select("Scale='' AND Result='' AND Inspdate IS NULL AND Inspector=''");
 
-            DataRow[] Total_drArray = gridTb.Select("Scale='' OR Result='' OR Inspdate IS NULL OR Inspector=''");
+            DataRow[] total_drArray = gridTb.Select("Scale='' OR Result='' OR Inspdate IS NULL OR Inspector=''");
 
-            DataRow[] Scale_drArray = gridTb.Select("Scale=''");
-            DataRow[] Result_drArray = gridTb.Select("Result=''");
-            DataRow[] Inspdate_drArray = gridTb.Select("Inspdate IS NULL");
-            DataRow[] Inspector_drArray = gridTb.Select("Inspector=''");
+            DataRow[] scale_drArray = gridTb.Select("Scale=''");
+            DataRow[] result_drArray = gridTb.Select("Result=''");
+            DataRow[] inspdate_drArray = gridTb.Select("Inspdate IS NULL");
+            DataRow[] inspector_drArray = gridTb.Select("Inspector=''");
 
-            if (Total_drArray.Length != 0)
+            if (total_drArray.Length != 0)
             {
                 string errorMsg = string.Empty;
 
-                foreach (DataRow row in Total_drArray)
+                foreach (DataRow row in total_drArray)
                 {
                     string singleRow = string.Empty;
                     List<string> colAry = new List<string>();
 
-                    string Roll = row["Roll"].ToString();
-                    string Dyelot = row["Dyelot"].ToString();
+                    string roll = row["Roll"].ToString();
+                    string dyelot = row["Dyelot"].ToString();
 
-                    bool IsAllEmpty = AllEmpty_drArray.Where(o => o["Roll"].ToString() == Roll && o["Dyelot"].ToString() == Dyelot).Count() > 0;
+                    bool isAllEmpty = allEmpty_drArray.Where(o => o["Roll"].ToString() == roll && o["Dyelot"].ToString() == dyelot).Count() > 0;
 
                     // 如果全為空則不用檢查
-                    if (IsAllEmpty)
+                    if (isAllEmpty)
                     {
                         continue;
                     }
@@ -398,28 +413,28 @@ namespace Sci.Production.Quality
                      */
 
                     // 判斷是哪個欄位空
-                    bool IsScaleEmpty = Scale_drArray.Where(o => o["Roll"].ToString() == Roll && o["Dyelot"].ToString() == Dyelot).Count() > 0;
-                    bool IsResultEmpty = Result_drArray.Where(o => o["Roll"].ToString() == Roll && o["Dyelot"].ToString() == Dyelot).Count() > 0;
-                    bool IsInspdateEmpty = Inspdate_drArray.Where(o => o["Roll"].ToString() == Roll && o["Dyelot"].ToString() == Dyelot).Count() > 0;
-                    bool IsInspectorEmpty = Inspector_drArray.Where(o => o["Roll"].ToString() == Roll && o["Dyelot"].ToString() == Dyelot).Count() > 0;
-                    singleRow = string.Format("Roll:{0},Dyelot: {1} ,", Roll, Dyelot);
+                    bool isScaleEmpty = scale_drArray.Where(o => o["Roll"].ToString() == roll && o["Dyelot"].ToString() == dyelot).Count() > 0;
+                    bool isResultEmpty = result_drArray.Where(o => o["Roll"].ToString() == roll && o["Dyelot"].ToString() == dyelot).Count() > 0;
+                    bool isInspdateEmpty = inspdate_drArray.Where(o => o["Roll"].ToString() == roll && o["Dyelot"].ToString() == dyelot).Count() > 0;
+                    bool isInspectorEmpty = inspector_drArray.Where(o => o["Roll"].ToString() == roll && o["Dyelot"].ToString() == dyelot).Count() > 0;
+                    singleRow = string.Format("Roll:{0},Dyelot: {1} ,", roll, dyelot);
 
-                    if (IsScaleEmpty)
+                    if (isScaleEmpty)
                     {
                         colAry.Add("Scale");
                     }
 
-                    if (IsResultEmpty)
+                    if (isResultEmpty)
                     {
                         colAry.Add("Result");
                     }
 
-                    if (IsInspdateEmpty)
+                    if (isInspdateEmpty)
                     {
                         colAry.Add("Inspdate");
                     }
 
-                    if (IsInspectorEmpty)
+                    if (isInspectorEmpty)
                     {
                         colAry.Add("Inspector");
                     }
@@ -438,9 +453,11 @@ namespace Sci.Production.Quality
 
             #endregion
 
-            if (!MyUtility.Convert.GetBool(this.maindr["shadebondEncode"])) // Encode
+            // Encode
+            if (!MyUtility.Convert.GetBool(this.maindr["shadebondEncode"]))
             {
-                if (!MyUtility.Convert.GetBool(this.maindr["nonshadebond"])) // 只要沒勾選就要判斷，有勾選就可直接Encode
+                // 只要沒勾選就要判斷，有勾選就可直接Encode
+                if (!MyUtility.Convert.GetBool(this.maindr["nonshadebond"]))
                 {
                     if (MyUtility.GetValue.Lookup("WeaveTypeID", this.maindr["SCIRefno"].ToString(), "Fabric", "SciRefno") == "KNIT")
                     {
@@ -458,7 +475,11 @@ a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'
 and not exists 
 (Select distinct dyelot from FIR_ShadeBone b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)
 ",
-                        this.maindr["receivingid"], this.maindr["id"], this.maindr["POID"], this.maindr["seq1"], this.maindr["seq2"]);
+                        this.maindr["receivingid"],
+                        this.maindr["id"],
+                        this.maindr["POID"],
+                        this.maindr["seq1"],
+                        this.maindr["seq2"]);
 
                         DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);
                         if (dResult)
@@ -478,9 +499,9 @@ and not exists
                     }
                 }
 
-                DataRow[] ResultAry = gridTb.Select("Result = 'Fail'");
+                DataRow[] resultAry = gridTb.Select("Result = 'Fail'");
                 string result = "Pass";
-                if (ResultAry.Length > 0)
+                if (resultAry.Length > 0)
                 {
                     result = "Fail";
                 }
@@ -531,7 +552,9 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 this.maindr["Result"] = returnstr[0];
                 this.maindr["Status"] = returnstr[1];
             }
-            else // Amend
+
+            // Amend
+            else
             {
                 #region  寫入虛擬欄位
                 this.maindr["shadebond"] = string.Empty;
@@ -553,31 +576,31 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
                     // 更新PO.FIRInspPercent和AIRInspPercent
                     if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{this.maindr["POID"].ToString()}'; ")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -616,24 +639,24 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -656,6 +679,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             this.OnRequery();
         }
 
+        /// <inheritdoc/>
         protected override void OnUIConvertToMaintain()
         {
             base.OnUIConvertToMaintain();
@@ -707,11 +731,12 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             #region Excel Grid Value
             DataTable dt;
             DualResult xresult;
-            if (xresult = DBProxy.Current.Select("Production", string.Format(
+            string sql = string.Format(
                 @"
 select Roll,Dyelot,TicketYds,Scale,Result
 ,[Inspdate]=convert(varchar,Inspdate, 111) 
-,Inspector,Remark from FIR_Shadebone WITH (NOLOCK) where id='{0}' AND Result!= '' ", this.ID), out dt))
+,Inspector,Remark from FIR_Shadebone WITH (NOLOCK) where id='{0}' AND Result!= '' ", this.ID);
+            if (xresult = DBProxy.Current.Select("Production", sql, out dt))
             {
                 if (dt.Rows.Count <= 0)
                 {
@@ -722,21 +747,21 @@ select Roll,Dyelot,TicketYds,Scale,Result
             #endregion
             #region Excel 表頭值
             DataTable dt1;
-            string SeasonID = string.Empty;
-            string ContinuityEncode = string.Empty;
+            string seasonID = string.Empty;
+            string continuityEncode = string.Empty;
+            sql = string.Format("select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Shadebone a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", this.ID);
             DualResult xresult1;
-            if (xresult1 = DBProxy.Current.Select("Production", string.Format(
-            "select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Shadebone a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", this.ID), out dt1))
+            if (xresult1 = DBProxy.Current.Select("Production", sql, out dt1))
             {
                 if (dt1.Rows.Count == 0)
                 {
-                    SeasonID = string.Empty;
-                    ContinuityEncode = string.Empty;
+                    seasonID = string.Empty;
+                    continuityEncode = string.Empty;
                 }
                 else
                 {
-                    SeasonID = dt1.Rows[0]["SeasonID"].ToString();
-                    ContinuityEncode = dt1.Rows[0]["ContinuityEncode"].ToString();
+                    seasonID = dt1.Rows[0]["SeasonID"].ToString();
+                    continuityEncode = dt1.Rows[0]["ContinuityEncode"].ToString();
                 }
             }
             #endregion
@@ -748,12 +773,12 @@ select Roll,Dyelot,TicketYds,Scale,Result
             objSheets.Cells[2, 4] = this.displaySEQ.Text.ToString();
             objSheets.Cells[2, 6] = this.displayColor.Text.ToString();
             objSheets.Cells[2, 8] = this.displayStyle.Text.ToString();
-            objSheets.Cells[2, 10] = SeasonID;
+            objSheets.Cells[2, 10] = seasonID;
 
-            string MCHandle = MyUtility.GetValue.Lookup($"SELECT MCHandle FROM Orders WHERE ID='{this.displaySP.Text.ToString()}'");
-            objSheets.Cells[3, 2] = MyUtility.GetValue.Lookup($"SELECT dbo.getPass1_ExtNo('{MCHandle}')");
+            string mCHandle = MyUtility.GetValue.Lookup($"SELECT MCHandle FROM Orders WHERE ID='{this.displaySP.Text.ToString()}'");
+            objSheets.Cells[3, 2] = MyUtility.GetValue.Lookup($"SELECT dbo.getPass1_ExtNo('{mCHandle}')");
 
-            objSheets.Cells[3, 4] = ContinuityEncode;
+            objSheets.Cells[3, 4] = continuityEncode;
             objSheets.Cells[3, 6] = this.displayResult.Text.ToString();
             objSheets.Cells[3, 8] = this.dateLastInspectionDate.Value.HasValue ? this.dateLastInspectionDate.Value.Value.ToString("yyyy/MM/dd") : string.Empty;
             objSheets.Cells[3, 10] = this.displayBrand.Text.ToString();
@@ -796,12 +821,15 @@ select Roll,Dyelot,TicketYds,Scale,Result
             DataTable dt_Exp;
             DualResult result;
             string btnName = ((Button)sender).Name;
+
             // 抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", Env.User.Factory));
             result = DBProxy.Current.Select(
                 string.Empty,
-                @"select NameEN from Factory WITH (NOLOCK) where id=@ID ", pars, out dt_title);
+                @"select NameEN from Factory WITH (NOLOCK) where id=@ID ",
+                pars,
+                out dt_title);
             if (!result)
             {
                 this.ShowErr(result);
@@ -817,16 +845,16 @@ select Roll,Dyelot,TicketYds,Scale,Result
             }
 
             // 變數區
-            string Title = dt_title.Rows.Count == 0 ? string.Empty : dt_title.Rows[0]["NameEN"].ToString();
+            string title = dt_title.Rows.Count == 0 ? string.Empty : dt_title.Rows[0]["NameEN"].ToString();
             string suppid = this.txtsupplier.TextBox1.Text + " - " + this.txtsupplier.DisplayBox1.Text;
-            string Invno = dt_Exp.Rows.Count == 0 ? string.Empty : dt_Exp.Rows[0]["ID"].ToString();
+            string invno = dt_Exp.Rows.Count == 0 ? string.Empty : dt_Exp.Rows[0]["ID"].ToString();
 
-            string brandID = MyUtility.GetValue.Lookup($"SELECT BrandID FROM Orders WHERE ID = '{this.displaySP.Text}'");// "Ref#" + this.displayRefno.Text + " , " + this.displaySCIRefno1.Text;
+            string brandID = MyUtility.GetValue.Lookup($"SELECT BrandID FROM Orders WHERE ID = '{this.displaySP.Text}'"); // "Ref#" + this.displayRefno.Text + " , " + this.displaySCIRefno1.Text;
 
             ReportDefinition report = new ReportDefinition();
 
             // @變數
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title", Title));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title", title));
 
             DataTable dt = new DataTable();
             DataRow dr;
@@ -843,10 +871,13 @@ select Roll,Dyelot,TicketYds,Scale,Result
             dt.Columns.Add(new DataColumn("Seq", typeof(string)));
 
             int packages = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"
-
-SELECT sum(Packages) 
-FROM Export
-WHERE ID='{this.maindr["ExportID"]}'
+select [Packages] = sum(e.Packages)
+from Export e with (nolock) 
+where e.Blno in (
+    select distinct e2.BLNO
+    from Export e2 with (nolock) 
+    where e2.ID = '{this.maindr["ExportID"]}'
+)
 "));
             string colorName = MyUtility.GetValue.Lookup($"SELECT Name FROM Color WHERE ID = '{this.displayColor.Text}' AND BrandId  ='{brandID}' ");
 
@@ -857,11 +888,11 @@ WHERE ID='{this.maindr["ExportID"]}'
             dr["Color"] = colorName;
             dr["BrandID"] = brandID;
             dr["Supp"] = suppid;
-            dr["Invo"] = Invno;
+            dr["Invo"] = invno;
             dr["ETA"] = dt_Exp.Rows.Count == 0 ? string.Empty : DateTime.Parse(dt_Exp.Rows[0]["ETA"].ToString()).ToString("yyyy-MM-dd").ToString();
             dr["Refno"] = MyUtility.GetValue.Lookup($"SELECT Refno FROM PO_Supp_Detail WHERE ID='{this.maindr["POID"]}' AND Seq1='{this.maindr["Seq1"]}' AND Seq2='{this.maindr["Seq2"]}'");
             dr["Packages"] = packages.ToString();
-            dr["Seq"] = $"{ this.maindr["Seq1"]} - {this.maindr["Seq2"]}";
+            dr["Seq"] = $"{this.maindr["Seq1"]} - {this.maindr["Seq2"]}";
             dt.Rows.Add(dr);
 
             List<P01_ShadeBond_Data> data = dt.AsEnumerable()
@@ -882,17 +913,17 @@ WHERE ID='{this.maindr["ExportID"]}'
 
             report.ReportDataSource = data;
 
-            Type ReportResourceNamespace = typeof(P01_ShadeBond_Data);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            Type reportResourceNamespace = typeof(P01_ShadeBond_Data);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
 
-            string ReportResourceName = "P01_ShadeBond_Print.rdlc";
+            string reportResourceName = "P01_ShadeBond_Print.rdlc";
             if (btnName == "btnPrintFormatReport8")
             {
-                ReportResourceName = "P01_ShadeBond_Print_8.rdlc";
+                reportResourceName = "P01_ShadeBond_Print_8.rdlc";
             }
 
             IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 return;
             }

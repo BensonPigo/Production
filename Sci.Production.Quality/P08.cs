@@ -200,7 +200,7 @@ namespace Sci.Production.Quality
             if (dt != null || dt.Rows.Count > 0)
             {
                 int cnt = MyUtility.Convert.GetInt(dt.Compute("count(select)", "select = 1")); // + (isCheck ? 1 : -1);
-                cnt = cnt == 0 ? 0 : (cnt / 4) + 1;
+                cnt = cnt == 0 ? 0 : (cnt % 4) == 0 ? cnt / 4 : (cnt / 4) + 1;
                 this.numericTotalPage.Value = cnt;
             }
         }
@@ -413,14 +413,18 @@ left join Color c with (nolock) on psd.ColorID = c.ID and psd.BrandId = c.BrandI
 outer apply (
     select [Packages] = sum(e.Packages)
     from Export e with (nolock) 
-    where r.ExportId = e.ID
+    where e.Blno in (
+        select distinct e2.BLNO
+        from Export e2 with (nolock) 
+        where r.ExportId = e2.ID
+    )
 )e
 {sqlWhere}
 UNION all
 select 
 	[select] = cast(0 as bit)
 	, [ExportID] = ''
-	, [Packages] = 0
+	, [Packages] = t.Packages
 	, [ArriveDate] = t.IssueDate
 	, f.POID
     , [SEQ] = CONCAT(f.SEQ1, ' ', f.SEQ2)
