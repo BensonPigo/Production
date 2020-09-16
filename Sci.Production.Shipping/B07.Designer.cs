@@ -79,7 +79,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(792, 388);
+            this.browse.Size = new System.Drawing.Size(882, 388);
             // 
             // tabs
             // 
@@ -162,6 +162,7 @@
             // 
             // txtPort1
             // 
+            this.txtPort1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PortID", true));
             this.txtPort1.Location = new System.Drawing.Point(133, 65);
             this.txtPort1.Name = "txtPort1";
             this.txtPort1.Size = new System.Drawing.Size(462, 22);

@@ -31,17 +31,19 @@
             this.chkIsAirPort = new Sci.Win.UI.CheckBox();
             this.chkIsSeaPort = new Sci.Win.UI.CheckBox();
             this.chkJunk = new Sci.Win.UI.CheckBox();
-            this.txtPort1 = new Sci.Production.Class.TxtPort();
             this.editBoxRemark = new Sci.Win.UI.EditBox();
             this.txtContinent = new Sci.Win.UI.TextBox();
             this.displayContinent = new Sci.Win.UI.DisplayBox();
-            this.txtcountry = new Sci.Production.Class.Txtcountry();
-            this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.label5 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
+            this.txtPort = new Sci.Production.Class.TxtPort();
+            this.txtcountry = new Sci.Production.Class.Txtcountry();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
+            this.btnImport = new Sci.Win.UI.Button();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -52,14 +54,14 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(882, 388);
+            this.detail.Size = new System.Drawing.Size(974, 388);
             // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.chkIsAirPort);
             this.detailcont.Controls.Add(this.chkIsSeaPort);
             this.detailcont.Controls.Add(this.chkJunk);
-            this.detailcont.Controls.Add(this.txtPort1);
+            this.detailcont.Controls.Add(this.txtPort);
             this.detailcont.Controls.Add(this.editBoxRemark);
             this.detailcont.Controls.Add(this.txtContinent);
             this.detailcont.Controls.Add(this.displayContinent);
@@ -70,27 +72,29 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(882, 350);
+            this.detailcont.Size = new System.Drawing.Size(974, 350);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 350);
-            this.detailbtm.Size = new System.Drawing.Size(882, 38);
+            this.detailbtm.Size = new System.Drawing.Size(974, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(882, 388);
+            this.browse.Size = new System.Drawing.Size(974, 388);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(890, 417);
+            this.tabs.Size = new System.Drawing.Size(982, 417);
             // 
             // chkIsAirPort
             // 
             this.chkIsAirPort.AutoSize = true;
-            this.chkIsAirPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsAirPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsAirPort.IsSupportEditMode = false;
             this.chkIsAirPort.Location = new System.Drawing.Point(630, 89);
             this.chkIsAirPort.Name = "chkIsAirPort";
+            this.chkIsAirPort.ReadOnly = true;
             this.chkIsAirPort.Size = new System.Drawing.Size(88, 21);
             this.chkIsAirPort.TabIndex = 29;
             this.chkIsAirPort.Text = "Is Air Port";
@@ -99,9 +103,11 @@
             // chkIsSeaPort
             // 
             this.chkIsSeaPort.AutoSize = true;
-            this.chkIsSeaPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsSeaPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsSeaPort.IsSupportEditMode = false;
             this.chkIsSeaPort.Location = new System.Drawing.Point(630, 62);
             this.chkIsSeaPort.Name = "chkIsSeaPort";
+            this.chkIsSeaPort.ReadOnly = true;
             this.chkIsSeaPort.Size = new System.Drawing.Size(96, 21);
             this.chkIsSeaPort.TabIndex = 28;
             this.chkIsSeaPort.Text = "Is Sea Port";
@@ -119,24 +125,14 @@
             this.chkJunk.Text = "Junk";
             this.chkJunk.UseVisualStyleBackColor = true;
             // 
-            // txtPort1
-            // 
-            this.txtPort1.Location = new System.Drawing.Point(145, 80);
-            this.txtPort1.Name = "txtPort1";
-            this.txtPort1.Size = new System.Drawing.Size(462, 22);
-            this.txtPort1.TabIndex = 26;
-            this.txtPort1.TextBox1Binding = "";
-            // 
             // editBoxRemark
             // 
-            this.editBoxRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editBoxRemark.BackColor = System.Drawing.Color.White;
             this.editBoxRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
-            this.editBoxRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editBoxRemark.IsSupportEditMode = false;
+            this.editBoxRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.editBoxRemark.Location = new System.Drawing.Point(145, 223);
             this.editBoxRemark.Multiline = true;
             this.editBoxRemark.Name = "editBoxRemark";
-            this.editBoxRemark.ReadOnly = true;
             this.editBoxRemark.Size = new System.Drawing.Size(361, 93);
             this.editBoxRemark.TabIndex = 25;
             // 
@@ -161,25 +157,6 @@
             this.displayContinent.Name = "displayContinent";
             this.displayContinent.Size = new System.Drawing.Size(292, 23);
             this.displayContinent.TabIndex = 23;
-            // 
-            // txtcountry
-            // 
-            this.txtcountry.DisplayBox1Binding = "";
-            this.txtcountry.Location = new System.Drawing.Point(145, 125);
-            this.txtcountry.Name = "txtcountry";
-            this.txtcountry.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry.TabIndex = 22;
-            this.txtcountry.TextBox1Binding = "";
-            // 
-            // txtBrand
-            // 
-            this.txtBrand.BackColor = System.Drawing.Color.White;
-            this.txtBrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand.Location = new System.Drawing.Point(145, 35);
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.Size = new System.Drawing.Size(66, 23);
-            this.txtBrand.TabIndex = 21;
             // 
             // label5
             // 
@@ -221,23 +198,66 @@
             this.label1.TabIndex = 16;
             this.label1.Text = "Brand";
             // 
+            // txtPort
+            // 
+            this.txtPort.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PortID", true));
+            this.txtPort.Location = new System.Drawing.Point(145, 80);
+            this.txtPort.Name = "txtPort";
+            this.txtPort.Size = new System.Drawing.Size(462, 22);
+            this.txtPort.TabIndex = 26;
+            this.txtPort.TextBox1Binding = "";
+            this.txtPort.Leave += new System.EventHandler(this.TxtPort_Leave);
+            // 
+            // txtcountry
+            // 
+            this.txtcountry.DisplayBox1Binding = "";
+            this.txtcountry.Location = new System.Drawing.Point(145, 125);
+            this.txtcountry.Name = "txtcountry";
+            this.txtcountry.Size = new System.Drawing.Size(232, 22);
+            this.txtcountry.TabIndex = 22;
+            this.txtcountry.TextBox1Binding = "";
+            // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(145, 35);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(66, 23);
+            this.txtBrand.TabIndex = 21;
+            // 
+            // btnImport
+            // 
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Location = new System.Drawing.Point(824, 3);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(146, 30);
+            this.btnImport.TabIndex = 2;
+            this.btnImport.Text = "Import from Excel";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.FileName = "openFileDialog1";
+            // 
             // Shipping_B07
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(890, 450);
+            this.ClientSize = new System.Drawing.Size(982, 450);
             this.ConnectionName = "ProductionTPE";
-            this.IsDeleteOnBrowse = false;
+            this.Controls.Add(this.btnImport);
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
-            this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
-            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "Shipping_B07";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "Shipping_B07";
             this.WorkAlias = "PortByBrandShipmode";
+            this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnImport, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -256,7 +276,7 @@
         private Win.UI.CheckBox chkIsAirPort;
         private Win.UI.CheckBox chkIsSeaPort;
         private Win.UI.CheckBox chkJunk;
-        private Class.TxtPort txtPort1;
+        private Class.TxtPort txtPort;
         private Win.UI.EditBox editBoxRemark;
         private Win.UI.TextBox txtContinent;
         private Win.UI.DisplayBox displayContinent;
@@ -267,5 +287,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Win.UI.Button btnImport;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }

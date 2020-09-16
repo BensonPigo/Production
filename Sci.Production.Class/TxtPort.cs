@@ -1,8 +1,10 @@
-﻿using Sci.Win.UI;
+﻿using Sci.Data;
+using Sci.Win.UI;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Sci.Production.Class
@@ -41,13 +43,19 @@ namespace Sci.Production.Class
 SELECT p.ID,[PortName]=p.Name,p.CountryID,[Country Name]=c.NameEN 
     ,[AirPort]=IIF(p.AirPort=1,'Y','') 
     ,[SeaPort]=IIF(p.SeaPort=1,'Y','') 
-FROM [dbo].Port p 
+FROM Port p 
 INNER JOIN Country c ON p.CountryID = c.ID 
 WHERE p.Junk = 0 
 ORDER BY p.ID";
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20,10,10,20,5,5", this.TextBox1.Text, false, ",");
-            item.Size = new System.Drawing.Size(888, 666);
+            DataTable source;
+            DBProxy.Current.Select("Production", sql, out source);
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(source, "ID,PortName,CountryID,Country Name,AirPort,SeaPort", "20,10,10,20,5,5", this.TextBox1.Text)
+            {
+                Size = new System.Drawing.Size(888, 666),
+            };
+
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -58,6 +66,9 @@ ORDER BY p.ID";
 
             this.TextBox1.Text = MyUtility.Convert.GetString(dr["ID"]);
             this.DisplayBox1.Text = MyUtility.Convert.GetString(dr["PortName"]);
+
+            this.Validate();
+            this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
         }
 
         /// <inheritdoc/>
@@ -68,9 +79,10 @@ ORDER BY p.ID";
             if (!string.IsNullOrWhiteSpace(nPortID) && nPortID != this.TextBox1.OldValue)
             {
                 string cmd = $"SELECT Name FROM Port WHERE ID=@ID AND Junk=0";
+
                 List<SqlParameter> parameters = new List<SqlParameter>() { new SqlParameter("@ID", nPortID) };
 
-                if (!MyUtility.Check.Seek(cmd, parameters))
+                if (!MyUtility.Check.Seek(cmd, parameters, "Production"))
                 {
                     this.TextBox1.Text = string.Empty;
                     this.DisplayBox1.Text = string.Empty;
@@ -83,7 +95,13 @@ ORDER BY p.ID";
                 }
             }
 
-            // this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+            if (MyUtility.Check.Empty(nPortID))
+            {
+                this.TextBox1.Text = string.Empty;
+                this.DisplayBox1.Text = string.Empty;
+            }
+
+            this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
         }
     }
 }

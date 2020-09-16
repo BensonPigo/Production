@@ -1,7 +1,7 @@
 ﻿	CREATE TABLE [dbo].PortByBrandShipmode(
 		PortID varchar(20) NOT NULL,
 		BrandID varchar(80) NOT NULL,
-		Remark nvarchar(max) NOT NULL,
+		Remark nvarchar(max) NOT NULL CONSTRAINT [DF_PortByBrandShipmode_Remark] DEFAULT (''),
 		Junk Bit NOT NULL CONSTRAINT [DF_PortByBrandShipmode_Junk] DEFAULT (0),
 		AddDate Datetime NULL,
 		AddName varchar(10) NOT NULL CONSTRAINT [DF_PortByBrandShipmode_AddName] DEFAULT (''),
