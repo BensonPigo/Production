@@ -113,7 +113,7 @@ select
 	DefectQty.DefectQty,
 	CR.InspectQty,
 	CR.RejectQty,
-	Inspector = dbo.getPass1(CR.AddName),
+	Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = CR.AddName),
 	CR.Remark,
     CR.AddDate,
     CR.RepairedDatetime,
