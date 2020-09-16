@@ -60,8 +60,19 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         private void GridSetup()
         {
+            DataGridViewGeneratorCheckBoxColumnSettings col_Select = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings cellShadebandDocLocationID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings cellShadeBand = new DataGridViewGeneratorTextColumnSettings();
+
+            col_Select.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.gridReceiving.GetDataRow(e.RowIndex);
+                bool isCheck = MyUtility.Convert.GetBool(e.FormattedValue);
+                dr["select"] = isCheck;
+                dr.EndEdit();
+                this.CalPrintPage();
+            };
+
             cellShadebandDocLocationID.CellMouseDoubleClick += (s, e) =>
             {
                 this.GridShadebandDocLocationIDCellPop(e.RowIndex, null);
@@ -111,10 +122,16 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridReceiving.GetDataRow(e.RowIndex);
                 this.SelectModify(dr);
+
+                DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                if (e.RowIndex == dt.Rows.Count - 1)
+                {
+                    this.CalPrintPage();
+                }
             };
 
             this.Helper.Controls.Grid.Generator(this.gridReceiving)
-                 .CheckBox("select", header: string.Empty, trueValue: 1, falseValue: 0)
+                 .CheckBox("select", header: string.Empty, trueValue: 1, falseValue: 0, settings: col_Select)
                  .Text("ExportID", header: "WK#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Numeric("Packages", header: "Packages", width: Widths.AnsiChars(3), decimal_places: 0, iseditingreadonly: true)
                  .Date("ArriveDate", header: "Arrive W/H \r\n Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -170,6 +187,21 @@ namespace Sci.Production.Quality
                 !Equals(dr["Remark"], dr["oldRemark"]))
             {
                 dr["select"] = 1;
+                dr.EndEdit();
+            }
+        }
+
+        /// <summary>
+        /// 計算列印頁數 4筆一頁
+        /// </summary>
+        private void CalPrintPage()
+        {
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (dt != null || dt.Rows.Count > 0)
+            {
+                int cnt = MyUtility.Convert.GetInt(dt.Compute("count(select)", "select = 1")); // + (isCheck ? 1 : -1);
+                cnt = cnt == 0 ? 0 : (cnt % 4) == 0 ? cnt / 4 : (cnt / 4) + 1;
+                this.numericTotalPage.Value = cnt;
             }
         }
 
@@ -252,8 +284,8 @@ namespace Sci.Production.Quality
         /// </summary>
         private void Query()
         {
-            string sqlWhere = "where fb.WeaveTypeID in ('KNIT','WOVEN') " + Environment.NewLine;
-            string sqlWhere2 = "where fb.WeaveTypeID in ('KNIT','WOVEN') " + Environment.NewLine;
+            string sqlWhere = "where fb.WeaveTypeID in ('KNIT','WOVEN') and o.category in ('B','M','T') " + Environment.NewLine;
+            string sqlWhere2 = "where fb.WeaveTypeID in ('KNIT','WOVEN') and o.category in ('B','M','T') " + Environment.NewLine;
 
             if (!MyUtility.Check.Empty(this.txtRecivingID.Text))
             {
@@ -376,18 +408,23 @@ inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = ps
 inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
 inner join FIR f with (nolock) on r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2
 inner join FIR_Shadebone fs with (nolock) on f.id = fs.ID and rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
+inner join Orders o with (nolock) on o.ID = rd.PoId
 left join Color c with (nolock) on psd.ColorID = c.ID and psd.BrandId = c.BrandID
 outer apply (
     select [Packages] = sum(e.Packages)
     from Export e with (nolock) 
-    where r.ExportId = e.MainExportID
+    where e.Blno in (
+        select distinct e2.BLNO
+        from Export e2 with (nolock) 
+        where r.ExportId = e2.ID
+    )
 )e
 {sqlWhere}
 UNION all
 select 
 	[select] = cast(0 as bit)
 	, [ExportID] = ''
-	, [Packages] = 0
+	, [Packages] = t.Packages
 	, [ArriveDate] = t.IssueDate
 	, f.POID
     , [SEQ] = CONCAT(f.SEQ1, ' ', f.SEQ2)
@@ -415,8 +452,9 @@ FROM TransferIn t with (nolock)
 INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
 INNER JOIN PO_Supp_Detail psd with (nolock) on td.PoId = psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
 INNER JOIN Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
-inner join FIR f with (nolock) on t.id = f.ReceivingID and td.PoId = F.POID and td.Seq1 = F.SEQ1 and td.Seq2 = F.SEQ2
-inner join FIR_Shadebone fs with (nolock) on f.id = fs.ID and td.Roll = fs.Roll and td.Dyelot = fs.Dyelot
+INNER JOIN FIR f with (nolock) on t.id = f.ReceivingID and td.PoId = F.POID and td.Seq1 = F.SEQ1 and td.Seq2 = F.SEQ2
+INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID and td.Roll = fs.Roll and td.Dyelot = fs.Dyelot
+INNER JOIN Orders o with (nolock) on o.ID = td.PoId
 left join Color c with (nolock) on psd.ColorID = c.ID and psd.BrandId = c.BrandID
 {sqlWhere2}
 ";
