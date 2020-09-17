@@ -837,12 +837,20 @@ Qty: {r.Quantity}     Item: {r.Item}";
         public static DataTable GetNoDatas(string poid, string fabricPanelCode, string article, string size)
         {
             string sqlcmd = $@"
-SELECT bd.id, bd.BundleGroup, bd.BundleNo,bd.Patterncode, bd.Qty, IsPair, maxQty=MAX(bd.Qty) over(partition by b.id, BundleGroup)
-into #tmp
+SELECT bd.id, bd.BundleGroup, bd.BundleNo,bd.Patterncode, bd.Qty, IsPair
+into #beforetmp
 FROM BUNDLE_DETAIL bd with(nolock)
 INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
 WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
 ORDER BY BundleGroup,bd.BundleNo
+
+--maxQty 為每組綁包的總數,在相同 ID, BundleGroup 加總數
+--分子 Bundle_Detail_qty 在P15寫入,每組綁包都會寫入一筆, 但是沒有直接關係分別是哪一組綁包的
+--直接除有幾個 BundleGroup, 是因P15寫入規則, 每組綁包資訊必須一樣才會合併在同一張單
+select *,
+	maxQty=(Select sum(Qty) from Bundle_Detail_qty bdq WITH (NOLOCK) Where bdq.id = bt.id)/(select count(distinct BundleGroup) from #beforetmp where id = bt.id)
+into #tmp
+from #beforetmp bt
 
 --同Patterncode下有數量不同
 --IsPair 兩個為一組
