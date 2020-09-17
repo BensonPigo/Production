@@ -11,7 +11,7 @@ AS
 BEGIN
 	--根據條件撈基本資料
 select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,s.FactoryID
-	,sd.OrderId,sd.ComboType,ActManPower = IIF(sd.QAQty=0, s.Manpower, s.Manpower * sd.QAQty),sd.WorkHour	
+	,sd.OrderId,sd.ComboType,ActManPower = IIF(sd.QAQty=0, s.Manpower, s.Manpower * sd.QAQty),sd.WorkHour,sd.QAQty,sd.InlineQty
 	, [ori_QAQty] = sd.QAQty
 	, [ori_InlineQty] = sd.InlineQty
 	,o.LocalOrder,o.CustPONo,OrderCategory = isnull(o.Category,''),OrderType = isnull(o.OrderTypeID,''), CASE WHEN ot.IsDevSample =1 THEN 'Y' ELSE 'N' END AS IsDevSample
@@ -63,8 +63,8 @@ select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionI
 	,OrderBrandID ,OrderCdCodeID ,OrderProgram ,OrderCPU ,OrderCPUFactor ,OrderStyle ,OrderSeason
 	,MockupBrandID,MockupCDCodeID,MockupProgram,MockupCPU,MockupCPUFactor,MockupStyle,MockupSeason
 	,Rate,StdTMS
-	,ori_QAQty
-	,ori_InlineQty
+	,ori_QAQty = sum(ori_QAQty)over(partition by id,OrderId,ComboType)
+	,ori_InlineQty = sum(ori_InlineQty)over(partition by id,OrderId,ComboType)
     ,BuyerDelivery
 	,SciDelivery
     ,OrderQty

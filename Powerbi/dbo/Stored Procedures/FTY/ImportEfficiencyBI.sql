@@ -111,8 +111,8 @@ select distinct ID
 	,OrderBrandID ,OrderCdCodeID ,OrderProgram ,OrderCPU ,OrderCPUFactor ,OrderStyle ,OrderSeason
 	,MockupBrandID,MockupCDCodeID,MockupProgram,MockupCPU,MockupCPUFactor,MockupStyle,MockupSeason
 	,Rate,StdTMS
-	,ori_QAQty
-	,ori_InlineQty
+	,ori_QAQty = sum(ori_QAQty)over(partition by id,OrderId,ComboType)
+	,ori_InlineQty = sum(ori_InlineQty)over(partition by id,OrderId,ComboType)
     ,BuyerDelivery
     ,SciDelivery
     ,OrderQty

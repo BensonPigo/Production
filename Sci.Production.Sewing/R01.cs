@@ -184,8 +184,8 @@ select OutputDate
 	   , MockupSeason
 	   , Rate
 	   , StdTMS
-	   , ori_QAQty
-	   , ori_InlineQty
+	   , ori_QAQty = sum(ori_QAQty) 
+	   , ori_InlineQty = sum(ori_InlineQty) 
        , SubconInType
 into #tmpSewingGroup
 from #tmpSewingDetail
@@ -193,8 +193,7 @@ group by OutputDate, Category, Shift, SewingLineID, Team, OrderId
 		 , ComboType, OrderCategory, LocalOrder, OrderCdCodeID
 		 , MockupCDCodeID, FactoryID, OrderCPU, OrderCPUFactor
 		 , MockupCPU, MockupCPUFactor, OrderStyle, MockupStyle
-		 , OrderSeason, MockupSeason, Rate, StdTMS, ori_QAQty
-		 , ori_InlineQty, SubconInType,ActManPower
+		 , OrderSeason, MockupSeason, Rate, StdTMS, SubconInType,ActManPower
 ----↓計算累計天數 function table太慢直接寫在這
 select distinct scOutputDate = s.OutputDate 
 	   , style = IIF(t.Category <> 'M', OrderStyle, MockupStyle)
