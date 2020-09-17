@@ -255,7 +255,7 @@ namespace Sci.Production.Warehouse
                             break;
                     }
 
-                    newRow["poid"] = (objCellArray[1, itemPosition[0]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[0]].ToString().Trim(), "C");
+                    newRow["poid"] = (objCellArray[1, itemPosition[0]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[0]].ToString().ToUpper().Trim(), "C");
                     newRow["seq"] = seq1 + " " + seq2;
                     newRow["seq1"] = seq1;
                     newRow["seq2"] = seq2;
