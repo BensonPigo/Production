@@ -73,6 +73,8 @@
 		[Sew_Qty] [numeric](6, 0),
 		[Shortage] [numeric](6, 0),
 		[Project] [varchar](5),
-		[CustDate] [date]
+		[CustDate] [date], 
+		[KPI L/ETA] DATE NULL, 
+		[LastProductionDate] DATE NULL
 ) ON [PRIMARY]
 GO

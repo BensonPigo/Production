@@ -53,12 +53,6 @@ BEGIN
 	If Exists(Select * From POWERBIReportData.sys.tables Where Name = 'ForecastLoadingBI_Summary') TRUNCATE Table ForecastLoadingBI_Summary;
 	If Exists(Select * From POWERBIReportData.sys.tables Where Name = 'ForecastLoadingBI_Summary_Buyer') TRUNCATE Table ForecastLoadingBI_Summary_Buyer;
 
-	if not exists(select * from syscolumns where id=OBJECT_ID('ForecastLoadingBI_Summary') and name='Half key')
-	begin
-		ALTER TABLE dbo.ForecastLoadingBI_Summary 
-		ADD	[Half key] [varchar](8)
-	end
-
 ------------------------------T_OrderList ->  ForecastLoadingBI------------------------------
 select ID
 into #ArtworkTypeList
@@ -342,7 +336,10 @@ Select
 	[Sew_Qty] = isnull(Production.dbo.getMinCompleteSewQty(Orders.ID,null,null) ,0),
 	[Shortage] = iif(Orders.GMTComplete = 'S', Orders.Qty - GetPulloutData.Qty, 0),
 	[Project] = Orders.ProjectID,
-	[CustDate] = Orders.CRDDate
+	[CustDate] = Orders.CRDDate,
+	[KPI L/ETA] = GetSci.MinLETA,
+	--[SCHD L/ETA(Master SP)] = Ship_Order.Max_ScheETA,
+	[LastProductionDate] = Orders.LastProductionDate
 From Production.dbo.Orders 
 LEFT JOIN Production.dbo.Factory ON Orders.FactoryID =Factory.ID 
 LEFT JOIN Production.dbo.Dropdownlist ON Orders.Category =Dropdownlist.ID and Dropdownlist.Type='Category'
@@ -359,6 +356,7 @@ outer apply(
 OUTER APPLY(
 	SELECT [Val]= Production.dbo.GetSewingQtybyRate(Orders.ID,null,null)
 )SewingQtybyRate
+outer apply Production.dbo.GetSCI(Orders.POID, Orders.Category) as GetSci
 inner JOIN #atSource atSource on atSource.ID = Orders.ID
 WHERE orders.Category IN ('B', 'S')
 and (Orders.SciDelivery between @Date_S and @Date_E or Orders.BuyerDelivery between @YearMonth_S and @YearEnd)
@@ -453,7 +451,10 @@ Select
 	[Sew_Qty] = 0,
 	[Shortage] = 0,
 	[Project] = Forecast.ProjectID,
-	[CustDate] = NULL
+	[CustDate] = NULL,
+	[KPI L/ETA] = NULL,
+	--[SCHD L/ETA(Master SP)] = NULL,
+	[LastProductionDate] = NULL
 From #tmp_Forecast  as Forecast
 LEFT JOIN Production.dbo.Style ON Forecast.BrandID=Style.BrandID and Forecast.StyleID =Style.ID and  Forecast.SeasonID = Style.SeasonID
 LEFT JOIN Production.dbo.Factory ON Forecast.FactoryID =Factory.ID 
@@ -557,7 +558,10 @@ Select
 	[Sew_Qty] = isnull(Production.dbo.getMinCompleteSewQty(FactoryOrder.ID,null,null) ,0),
 	[Shortage] = 0,
 	[Project] = '',
-	[CustDate] = NULL
+	[CustDate] = NULL,
+	[KPI L/ETA] = NULL,
+	--[SCHD L/ETA(Master SP)] = NULL,
+	[LastProductionDate] = NULL
 From #tmp_FactoryOrder FactoryOrder
 LEFT JOIN Production.dbo.Style ON FactoryOrder.BrandID=Style.BrandID and FactoryOrder.StyleID =Style.ID and  FactoryOrder.SeasonID = Style.SeasonID
 LEFT JOIN Production.dbo.Factory ON FactoryOrder.FactoryID = Factory.ID
