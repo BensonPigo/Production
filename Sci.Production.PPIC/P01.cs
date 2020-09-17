@@ -1734,6 +1734,7 @@ from LocalSupp ls
 where 1=1
 and (IsFactory =1 or IsSubcon =1)
 and ls.ID <> '{Env.User.Factory}'
+and ls.abb <> '{Env.User.Factory}'
 order by id";
 
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(cmd, "5,10,15,10,10", this.txtProgram.Text);
@@ -1781,6 +1782,7 @@ from LocalSupp ls
 where 1=1
 and (IsFactory =1 or IsSubcon =1)
 and ls.ID <> '{Env.User.Factory}'
+and ls.abb <> '{Env.User.Factory}'
 AND abb = @abb
 order by id";
 
