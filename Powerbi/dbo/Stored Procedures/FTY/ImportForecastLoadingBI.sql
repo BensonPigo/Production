@@ -468,7 +468,7 @@ outer apply (select cast(0 as numeric(16,4)) Price) as Price
 --outer apply (select Rate from Production.dbo.GetCurrencyRate('FX', Forecast.CurrencyID, 'USD', Forecast.AddDate)) as Rate
 WHERE Forecast.ForecastCategory IN ('B', 'S')
 --and Forecast.BuyerDelivery between @Date_S and @Date_E
-and Forecast.BuyerDelivery between @YearMonth_S and @Date_E and (Style.Ukey is null OR Style.Junk = 0)
+and Forecast.BuyerDelivery between @YearMonth_S and @Date_E and (Style.Ukey is null OR Style.Junk = 0) and Factory.IsProduceFty = 1
 
 UNION ALL
 
