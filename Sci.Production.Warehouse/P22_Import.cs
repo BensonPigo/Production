@@ -123,23 +123,37 @@ and fi.StockType = 'B'
 {2}
 order by cte.poid,cte.seq1,cte.seq2 ;
 
-select 0 AS selected,'' as id,o.FactoryID FromFactoryID,fi.POID FromPOID,fi.seq1 Fromseq1,fi.seq2 Fromseq2,concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.seq2) as fromseq
+select 0 AS selected,'' as id,o.FactoryID FromFactoryID
+,fi.POID FromPOID
+,fi.seq1 Fromseq1
+,fi.seq2 Fromseq2
+,concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.seq2) as fromseq
 ,fi.roll FromRoll,fi.dyelot FromDyelot,fi.stocktype FromStockType,fi.Ukey as fromftyinventoryukey 
 ,fi.InQty,fi.OutQty,fi.AdjustQty
 ,fi.InQty - fi.OutQty + fi.AdjustQty as balanceQty
 ,0.00 as qty
 ,cte.StockUnit
-,isnull((select inqty from dbo.FtyInventory t WITH (NOLOCK) 
-	where t.POID = fi.POID and t.seq1 = fi.seq1 and t.seq2 = fi.seq2 and t.StockType = 'I' 
-	and t.Roll = fi.Roll and t.Dyelot = fi.Dyelot),0) as accu_qty
+,isnull((
+            select inqty 
+            from dbo.FtyInventory t WITH (NOLOCK) 
+            where t.POID = fi.POID and t.seq1 = fi.seq1 and t.seq2 = fi.seq2 and t.StockType = 'I' 
+	            and t.Roll = fi.Roll and t.Dyelot = fi.Dyelot
+        ),0) as accu_qty
 ,dbo.Getlocation(fi.ukey) as [Location]
-,rtrim(fi.poid) ToPOID,rtrim(fi.seq1) ToSeq1, fi.seq2 ToSeq2 , cte.ToFactoryID
+,rtrim(cte.poid) ToPOID
+,rtrim(cte.seq1) ToSeq1
+, cte.seq2 ToSeq2 
+, cte.ToFactoryID
 ,fi.roll ToRoll,fi.dyelot ToDyelot,'I' as [ToStockType]
 ,stuff((select ',' + t1.MtlLocationID from (select MtlLocationid from dbo.FtyInventory_Detail f WITH (NOLOCK)  inner join MtlLocation m WITH (NOLOCK) on f.MtlLocationID=m.ID  where f.Ukey = fi.Ukey and m.StockType='I' and m.Junk !='1')t1 for xml path('')), 1, 1, '') as [ToLocation]
 ,GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by cte.ToFactoryID,fi.POID,fi.seq1,fi.seq2,fi.dyelot)
 ,dbo.getMtlDesc(fi.poid, fi.seq1, fi.seq2, 2, 0) as [description]
 from #tmp cte 
-inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = cte.poid and fi.seq1 = cte.seq1 and fi.seq2 = cte.SEQ2 and fi.StockType = 'B'
+inner join dbo.FtyInventory fi WITH (NOLOCK) on 
+                                                fi.POID = cte.poid 
+                                                and fi.seq1 = cte.seq1 
+                                                and fi.seq2 = cte.SEQ2 
+                                                and fi.StockType = 'B'
 left join dbo.orders o WITH (NOLOCK) on fi.poid=o.id 
 {2}
 Order by GroupQty desc,fromdyelot,balanceQty desc
