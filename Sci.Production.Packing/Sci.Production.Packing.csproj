@@ -175,7 +175,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="TECIT.TFORMer, Version=8.0.0.0, Culture=neutral, PublicKeyToken=1b5f4306b234b83d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\_Dll\TECIT.TFORMer.dll</HintPath>
+      <HintPath>..\Sci.Production\TECIT.TFORMer.dll</HintPath>
     </Reference>
     <Reference Include="zxing, Version=0.16.5.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
       <HintPath>..\packages\ZXing.Net.0.16.5\lib\net45\zxing.dll</HintPath>

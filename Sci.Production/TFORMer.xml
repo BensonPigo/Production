@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TFORMer major="1" minor="0">
+  <!-- (c) 1998-2013 TEC-IT Datenverarbeitung GmbH                                -->
+  <!-- htpp://www.tec-it.com                                                      -->
+  <!-- support@tec-it.com                                                         -->
+
+  <!-- This TFORMer configuration file contains standard settings for the         -->
+  <!-- output methods. Edit this file if you want to change specific output       -->
+  <!-- options or if you need to add custom media sizes.                          -->
+  <!-- Note: In previous versions the term <Form> was used instead of <Media>     -->
+
+
+  <!-- COMMON Options - Configure settings that apply to all printers             -->
+  <COMMON>
+
+  <!-- ErrorHandling                                                              -->
+  <!-- Decides what TFORMer does if a barcode, image or expression error occurs   -->
+  <!-- during printing. All 3 attributes accept the following arguments:          -->
+  <!-- * abort          Abort printing if an error occurs                         -->
+  <!-- * ignore         Ignore the error and continue printing                    -->
+  <!-- * print          Print error information instead of the component that     -->
+  <!--                  caused the error                                          -->
+    <ErrorHandling barcode-error="print" image-error="print" 
+                   expression-error="print" unicode-font-error="print"/>
+
+  <!-- URLPictures                                                                -->
+  <!-- Specifies how TFORMer handles requests for downloading pictures via URL.   -->
+  <!-- URLPictures are supported on Windows systems only.                         -->
+  <!-- enabled             "0|1" enable/disable downloading of images             -->
+  <!-- size-max            the maximum bytes per picture allowed. "0" = unlimited -->
+  <!-- timeout             the download time in [ms] allowed per picture.         -->
+  <!--                     "0" = no timeout                                       -->
+    <URLPictures enabled="1" size-max="0" timeout="0" />
+
+  <!-- Hyphenation                                                             	  -->
+  <!-- soft-hyphens        characters which should be treated as soft hyphens     -->
+  <!--                     (additional to &shy; and &#173;)                       -->
+  <!--                     A soft hyphen marks a point at which a word may be     -->
+  <!--                     divided. If the word is divided, then a hyphen is      -->
+  <!--                     displayed at the end of the line, otherwise the hyphen -->
+  <!--                     is not displayed.                                      -->
+  <!--                     Sample: "%&#174;" to add 2 additional softhyphens      -->
+  <!-- hyphen              value which should be used to render visible           -->
+  <!--                     soft hyphens                                           -->
+	<Hyphenation soft-hyphens="" hyphen="-" />
+
+  </COMMON>
+
+  <!-- PDF OPTIONS - Configure settings for PDF output                            -->
+  <!-- media               Default media size, must be listed in <DefinedMedia>   -->
+  <!-- orientation         Default orientation "landscape|portrait"               -->
+  <!-- compression         Enable/disable zip compression of the PDF "1|0"        -->
+  <!-- margin-top          Additional top margin of the page in 1/1000mm          -->
+  <!-- margin-left         Additional left margin of the page in 1/1000mm         -->
+  <!-- margin-right        Additional right margin of the page in 1/1000mm        -->
+  <!-- margin-bottom       Additional bottom margin of the page in 1/1000mm       -->
+  <!-- embed-fonts         Embed all TrueType fonts in the document "0|1"         -->
+  <!-- embed-subset-fonts  Embed all TrueType fonts as subset "0|1"               -->
+  <!--                     This will usually result in smaller PDF files.         -->
+  <!-- embed-type3-fonts   Embed all fonts as type3 fonts which are some times    -->
+  <!--                     smaller, but might look bad on screen. "0|1"           -->
+  <!-- colormode           color|grayscale|blackwhite                             -->
+  <!-- simulate-font-styles if 1 TFORMer will simulate bold fonts for fonts       -->
+  <!--                      that are not available as bold on this system.        -->
+  <PDF media="A4" orientation="portrait" compression="1" margin-top="0" margin-left="0" 
+       margin-right="0" margin-bottom="0" embed-fonts="1" embed-subset-fonts="0" 
+       embed-type3-fonts="1" colormode="color" simulate-font-styles="1" >     
+
+  <!-- compression-method  "jpeg|zip|auto":                                       -->
+  <!--                     - "jpeg"  all images will be jpeg compressed           -->
+  <!--                     - "zip"   all images are zip compressed                -->
+  <!--                     - "auto"  use jpeg compression for jpegs, else zip     -->    
+  <!-- jpeg-quality        jpeg quality setting for jpeg compression (0-100)      -->
+    <Images compression-method="auto" jpeg-quality="80">      
+
+  <!-- Images can be downsampled if they are higher than the specified resolution -->
+  <!-- enabled             "0|1" enable/disable downsampling of images            -->
+  <!-- dpi                 all images are downsampled to this resolution          -->
+      <Downsample enabled="1" dpi="300" />
+    </Images>    
+  </PDF>  
+
+  <!-- POSTSCRIPT OPTIONS: Configure settings for PostScript output               -->
+  <!-- media               Default media size, must be listed in <DefinedMedia>   -->
+  <!-- orientation         Default orientation "landscape|portrait"               -->
+  <!-- colormode           color|grayscale|blackwhite                             -->
+  <!-- duplex              Selects duplex or double-sided printing for printers   -->
+  <!--                     capable of duplex printing.                            -->
+  <!--                     "default|simplex|vertical|horizontal":                 -->
+  <!--                     - "default"    use printer settings                    -->
+  <!--                     - "simplex"    normal (nonduplex) printing             -->
+  <!--                     - "vertical"   double-sided printing using a           -->
+  <!--                                    vertical page turn                      -->
+  <!--                     - "horizontal" double-sided printing using a           -->
+  <!--                                    horizontal page turn                    -->
+  <!-- Header              Path to the PostScript header file                     -->
+  <!-- Footer              Path to the PostScript footer file                     -->  
+  <POSTSCRIPT media="A4" orientation="portrait" colormode="color" duplex="default" >
+      <Header filename="header.ps" />
+      <Footer filename="footer.ps" />
+
+  <!-- compression-method  "nocomp|jpeg|flate|rle|auto":                          -->
+  <!--                     - "nocomp"no compression                               -->
+  <!--                     - "jpeg"  non monochrome images will be jpeg compressed-->
+  <!--                               monochrome images will use flate or rle      -->
+  <!--                               compression                                  -->
+  <!--                     - "flate" all images will be flate compressed          -->
+  <!--                     - "rle"   all images will be run length encoded        -->
+  <!--                     - "auto"  depends on jpeg-enabled and flate-enabled    -->
+  <!--                               uses jpeg compression for jpeg files         -->
+  <!--                               flate or rle for others                      -->    
+  <!-- jpeg-quality        jpeg quality setting for jpeg compression (0-100)      -->
+  <!-- jpeg-enabled        enables jpeg compression for auto compression mode     -->
+  <!-- flate-enabled       enables flate compression for auto compression mode    -->
+  <!--                     requires Postscript Language Level 3 support           -->
+    <Images compression-method="auto" jpeg-quality="75" jpeg-enabled="1" flate-enabled="0" >
+  <!-- Images can be downsampled if they are higher than the specified resolution -->
+  <!-- enabled             "0|1" enable/disable downsampling of images            -->
+  <!-- dpi                 all images are downsampled to this resolution          -->
+      <Downsample enabled="1" dpi="300" />
+    </Images>  
+  </POSTSCRIPT>
+
+  <!-- HTML OPTIONS:       Configure settings for HTML output                     -->
+  <!-- media               Default media size, must be listed in <DefinedMedia>   -->
+  <!-- orientation         Default orientation "landscape|portrait"               -->
+  <!-- 96dpi - this should be used as default resolution for Microsoft Windows    -->
+  <!-- 108dpi - seems to work on Linux machines quite good (depends on X settings)-->
+  <!-- 72dpi - might be a good choice if your target audience is on MAC OS        -->
+  <!--                                                                            -->
+  <!-- barcode-opt-resolution         print barcodes in optimal resolution        -->
+  <!--                                This will create readable barcodes which    -->
+  <!--                                might look different as in design mode.     -->
+  <!-- always-print-barcodes          will print barcodes even if they will be    -->
+  <!--                                not readable. This is ONLY useful for       -->
+  <!--                                preview purposes.                           -->
+  <HTML media="A4" orientation="portrait" resolution="96" barcode-opt-resolution="0"
+    always-print-barcodes="1" />
+
+  <!-- IMAGE OPTIONS:       Configure settings for image output                   -->
+  <!-- media                Default media size, must be listed in <DefinedMedia>  -->
+  <!-- orientation          Default orientation "landscape|portrait"              -->
+  <!-- resolution           The output resolution in dpi.                         -->
+  <!-- anti-aliasing        1 = enabled                                           -->
+  <!--                      0 = disabled                                          -->
+  <!--                      Anti-aliasing improves the quality of the output      -->
+  <!--                      in lower resolutions or for on screen display.        -->
+  <!-- jpeg-quality         jpeg quality setting for jpeg compression (0-100)     -->
+  <!-- tiff-compression     Compression of generated tiff images.                 -->
+  <!--                      A few compression schemes are only allowed for b&w    -->
+  <!--                      or color output. Suggested values that should always  -->
+  <!--                      work are: nocomp, lzw or jpeg                         -->
+  <!--                      Valid values:                                         -->
+  <!--                      nocomp, lzw, packbits, ccitt3, ccitt4, ccittfax, jpeg -->
+  <!-- colormode            color|grayscale|blackwhite                            -->
+  <!-- dither-mode          Specifies how images are converted to black&white     -->  
+  <!--                      Applies only if colormode="blackwhite"                -->  
+  <!--                      0 = Use scatter dithering (simulates grayscale)       -->  
+  <!--                      1 = Use ordered dithering (simulates grayscale)       -->  
+  <!--                      2 = Use threshold dithering (results in b&w only)     -->  
+  <IMAGE media="A4" orientation="portrait" resolution="200" anti-aliasing="1" 
+    jpeg-quality="80" tiff-compression="nocomp" colormode="color" dither-mode="0" />
+
+  <!-- ZEBRA OPTIONS:       Configure options for Zebra/ZPL output                -->
+  <!-- media                Default media size, must be listed in <DefinedMedia>  -->
+  <!-- orientation          Default orientation "landscape|portrait"              -->
+  <!-- compression          Image compression for graphics embedded in ZPL        -->
+  <!--                      'none' = no compression, data is hex encoded          -->
+  <!--                      'rle'  = data is run-length-encoded                   -->  
+  <!--                      'png'  = data is png and base64 encoded               -->  
+  <!-- don't dither text    Text will always be drawn black, no dithering occurs  -->  
+  <!--                      This leads to improved text quality                   -->  
+  <!-- dither-mode          Specifies how images are converted to black&white     -->  
+  <!--                      0 = Use scatter dithering (simulates grayscale)       -->  
+  <!--                      1 = Use ordered dithering (simulates grayscale)       -->  
+  <!--                      2 = Use threshold dithering (results in b&w only)     -->  
+  <!-- scaling              Resolution mode of the Zebra printer device           -->
+  <!--                      0 = normal resolution (^JMA  Command)                 -->
+  <!--                      1 = half resolution, doubled output size (^JMB Cmd)   -->
+  <!-- resolution           resolution of the printer in dpi                      -->
+  <!-- lt                   metric value for ^LT (label top) command              -->
+  <!--                      Default unit is mm, if required you can specify other -->
+  <!--                      units like in, cm, m, mil, etc. (Default: 0 mm)       -->
+  <!--                      provide an empty value to omit the command            -->
+  <!-- ls                   metric value for ^LS (label shift) command            -->
+  <!--                      Default unit is mm, if required you can specify other -->
+  <!--                      units like in, cm, m, mil, etc. (Default: 0 mm)       -->  
+  <!--                      provide an empty value to omit the command            -->
+  <!-- Header               custom ZPL code that is printed before each print-job -->
+  <!-- Footer               custom ZPL code that is printed after each print-job  -->
+  <ZEBRA media="A4" orientation="portrait" compression="rle" scaling="0" 
+    dont-dither-text="1" dither-mode="0" resolution="203" lt="0 mm" ls="0 mm" >
+    <Header>^MMT</Header>
+    <Footer></Footer>
+  </ZEBRA>
+  
+  <!-- Settings for Barcode Printing on Windows Printers                          -->
+  <WINGDI> 
+    <!-- drawing-mode       Specifies the method for printing barcodes on GDI     -->
+    <!--                    0 = Default method                                    -->
+    <!--                    1 = Compatibility mode                                -->
+    <!--                        Use the GDI rectangle functions to draw bars.     -->
+    <!--                        May result in sub-optimal output quality,         -->
+    <!--                        but is compatible to all printers.                -->
+    <!--                    2 = Quality mode                                      -->
+    <!--                        Best quality. Supported by most printers.         -->
+    <!--                    3 = Dual                                              -->
+    <!--                        A combination of 1 and 2                          -->
+    <TBARCODE drawing-mode="1" />
+  </WINGDI>
+
+  <!-- DEFINED MEDIA SIZES                                                        -->
+  <!-- Add YOUR CUSTOM MEDIA-SIZES to the list and use them in TFORMer            -->
+  <!-- Use them by specifying the name of the media as output tray name           -->
+  <!-- (enter the custom name directly into the tray option in TFORMer Designer)  -->
+  <!-- All measurements are specified in 1/1000 millimeters                       -->
+   <DefinedMedia>
+    <Media name="A0"          width="841000"  height="1189000" />
+    <Media name="A1"           width="594000"  height="841000"  />
+    <Media name="A2"           width="420000"  height="594000"  />
+    <Media name="A3"           width="297000"  height="420000"  />
+    <Media name="A4"           width="210000"  height="297000"  />
+    <Media name="A5"           width="148000"  height="210000"  />
+    <Media name="A6"           width="105000"  height="148000"  />
+    <Media name="A7"           width="74000"   height="105000"  />
+    <Media name="A8"           width="52000"   height="74000"   />
+    <Media name="A9"           width="37000"   height="52000"   />
+    <Media name="A10"          width="26000"   height="37000"   />
+    <Media name="B0"           width="1000000" height="1414000" />
+    <Media name="B1"           width="707000"  height="1000000" />
+    <Media name="B2"           width="500000"  height="707000"  />
+    <Media name="B3"           width="353000"  height="500000"  />
+    <Media name="B4"           width="250000"  height="353000"  />
+    <Media name="B5"           width="176000"  height="250000"  />
+    <Media name="B6"           width="125000"  height="176000"  />
+    <Media name="B7"           width="88000"   height="125000"  />
+    <Media name="B8"           width="62000"   height="88000"   />
+    <Media name="B9"           width="44000"   height="62000"   />
+    <Media name="B10"          width="31000"   height="44000"   />
+    <Media name="C0"           width="917000"  height="1297000" />
+    <Media name="C1"           width="648000"  height="917000"  />
+    <Media name="C2"           width="458000"  height="648000"  />
+    <Media name="C3"           width="324000"  height="458000"  />
+    <Media name="C4"           width="229000"  height="324000"  />
+    <Media name="C5"           width="162000"  height="229000"  />
+    <Media name="C6"           width="114000"  height="162000"  />
+    <Media name="C7"           width="81000"   height="114000"  />
+    <Media name="C8"           width="57000"   height="81000"   />
+    <Media name="C9"           width="40000"   height="57000"   />
+    <Media name="C10"          width="28000"   height="40000"   />
+    <Media name="D0"           width="771000"  height="1091000" />
+    <Media name="D1"           width="545000"  height="771000"  />
+    <Media name="D2"           width="385000"  height="545000"  />
+    <Media name="D3"           width="272000"  height="385000"  />
+    <Media name="D4"           width="192000"  height="272000"  />
+    <Media name="D5"           width="136000"  height="192000"  />
+    <Media name="D6"           width="96000"   height="136000"  />
+    <Media name="D7"           width="68000"   height="96000"   />
+    <Media name="E0"           width="800000"  height="1120000" />
+    <Media name="E1"           width="560000"  height="800000"  />
+    <Media name="E2"           width="400000"  height="560000"  />
+    <Media name="E3"           width="280000"  height="400000"  />
+    <Media name="E4"           width="200000"  height="280000"  />
+    <Media name="E5"           width="140000"  height="200000"  />
+    <Media name="E6"           width="100000"  height="140000"  />
+    <Media name="E7"           width="70000"   height="100000"  />
+    <Media name="B0JIS"        width="1030000" height="1456000" />
+    <Media name="B1JIS"        width="728000"  height="1030000" />
+    <Media name="B2JIS"        width="515000"  height="728000"  />
+    <Media name="B3JIS"        width="364000"  height="515000"  />
+    <Media name="B4JIS"        width="257000"  height="364000"  />
+    <Media name="B5JIS"        width="128000"  height="257000"  />
+    <Media name="B6JIS"        width="128000"  height="182000"  />
+    <Media name="B7JIS"        width="91000"   height="128000"  />
+    <Media name="B8JIS"        width="64000"   height="91000"   />
+    <Media name="B9JIS"        width="45000"   height="64000"   />
+    <Media name="B10JIS"       width="32000"   height="45000"   />
+    <Media name="Invoice"      width="140000"  height="216000"  />
+    <Media name="Executive"    width="191000"  height="254000"  />
+    <Media name="Legal"        width="215900"  height="355600"  />
+    <Media name="JuniorLegal"  width="203200"  height="127000"  />
+    <Media name="Letter"       width="215900"  height="279400"  />
+    <Media name="Ledger"       width="431800"  height="279400"  />
+    <Media name="Tabloid"      width="279400"  height="431800"  />
+    <Media name="Broadsheet"   width="432000"  height="559000"  />
+    <Media name="Screen"       width="297000"  height="210000"  />
+    <Media name="Custom"       width="210000"  height="297000"  />
+    <Media name="Comm10"       width="105000"  height="241000"  />
+    <Media name="DL"           width="110000"  height="220000"  />
+    <Media name="Folio"        width="210000"  height="330200"  />
+    <Media name="P1"           width="560000"  height="860000"  />
+    <Media name="P2"           width="430000"  height="560000"  />
+    <Media name="P3"           width="280000"  height="430000"  />
+    <Media name="P4"           width="215000"  height="280000"  />
+    <Media name="P5"           width="140000"  height="215000"  />
+    <Media name="P6"           width="107000"  height="140000"  />
+    <!-- add custom forms below this point -->
+  </DefinedMedia>
+</TFORMer>
