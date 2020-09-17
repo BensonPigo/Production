@@ -56,7 +56,7 @@ else
 declare @DateInfoName2 varchar(30) ='SewingOutput2';
 declare @DateStart2 date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName2);
 declare @DateEnd2 date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName2);
-set @Remark = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
+set @Remark = (select Remark from Production.dbo.DateInfo where name = @DateInfoName2);
 
 --2.取得預設值
 if @DateStart2 is Null
@@ -65,11 +65,11 @@ if @DateEnd2 is Null
 	set @DateEnd2 = CONVERT(DATE, GETDATE())	
 
 --3.更新Pms_To_Trade.dbo.dateInfo
-if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
-	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart2,DateEnd = @DateEnd2, Remark=@Remark where Name = @DateInfoName 
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName2 )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart2,DateEnd = @DateEnd2, Remark=@Remark where Name = @DateInfoName2 
 else
 	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
-	values (@DateInfoName,@DateStart2,@DateEnd2,@Remark);
+	values (@DateInfoName2,@DateStart2,@DateEnd2,@Remark);
 ------------------------------------------------------------------------------------------------------
 
 --SewingOutput
