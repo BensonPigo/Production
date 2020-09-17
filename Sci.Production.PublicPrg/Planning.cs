@@ -411,13 +411,13 @@ OUTER APPLY(
     AND SizeCode = st3.SizeCode AND PatternPanel = st3.PatternPanel   AND FabricPanelCode = st3.FabricPanelCode
 )RealCont
 
-select st4.Orderid,st4.PatternPanel,st4.Article,st4.Patterncode,st4.SizeCode, AddDate = bun.AddDate, IsPair = bunD.IsPair
+select bdo.Orderid,bdo.BundleNo,bunD.Patterncode,bunD.Sizecode,bunD.IsPair,bun.PatternPanel,bun.Article, bun.AddDate
 into #QtyBySetPerCutpart5{subprocessIDtmp}
-from #QtyBySetPerCutpart4{subprocessIDtmp} st4
-inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Orderid = st4.Orderid 
-inner join Bundle_Detail bunD WITH (NOLOCK) on bunD.BundleNo = bdo.BundleNo and bunD.Patterncode = st4.Patterncode and bunD.Sizecode = st4.SizeCode
-inner join Bundle bun WITH (NOLOCK) on bunD.Id = bun.ID and bun.PatternPanel = st4.PatternPanel and bun.Article = st4.Article  
-inner join Orders o WITH (NOLOCK) ON bdo.Orderid = o.id and bun.MDivisionid=o.MDivisionID 
+from(select st4.Orderid from #QtyBySetPerCutpart4{subprocessIDtmp} st4 group by st4.Orderid) x
+inner join Bundle_Detail_Order bdo on bdo.Orderid = x.Orderid
+inner join Bundle_Detail bunD WITH (NOLOCK) on bunD.BundleNo = bdo.BundleNo
+inner join Bundle bun WITH (NOLOCK) on bun.id = bunD.id
+inner join Orders o WITH (NOLOCK) ON x.Orderid = o.id and bun.MDivisionid=o.MDivisionID 
 
 select st4.*, [IsPair]=ISNULL(TopIsPair.IsPair,0)
 into #BundleInOutDetail{subprocessIDtmp}
