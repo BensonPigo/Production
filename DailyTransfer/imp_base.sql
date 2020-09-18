@@ -3275,9 +3275,9 @@ and not exists(
 
 
 --------SeasonSCI---------------
-truncate table SeasonSCI
-insert into SeasonSCI
-select * from Trade_To_Pms.dbo.SeasonSCI
+truncate table production.dbo.SeasonSCI
+insert into production.dbo.SeasonSCI([ID],[Month],[AddName],[AddDate],[EditName],[EditDate],[Junk])
+select [ID],[Month],[AddName],[AddDate],[EditName],[EditDate],[Junk] from Trade_To_Pms.dbo.SeasonSCI
 
 
 ------FirstSaleCostSetting---------------
