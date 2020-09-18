@@ -142,14 +142,18 @@ select
 	,[SewingOutputQty] = isnull(dbo.getMinCompleteSewQty(o.ID, obq.Article, obq.SizeCode),0)
 	,obq.Qty    
 	,FromSPOrderQty.Qty 
-	,[From SP# Sewing Qty] = isnull(dbo.[getMinCompleteSewQty](ob.OrderIDFrom, obq.Article, obq.SizeCode),0) 
-	,[Transferred Qty] = isnull(dbo.[getMinCompleteSewTransferQty](ob.OrderIDFrom,o.ID, obq.Article, obq.SizeCode),0)
+	,[From SP# Sewing Qty] = isnull(dbo.[getMinCompleteSewQty](ob.OrderIDFrom, obq.ArticleFrom, obq.SizeCodeFrom),0) 
+	,[Transferred Qty] = isnull(dbo.[getMinCompleteSewTransferQty](ob.OrderIDFrom,o.ID, obq.ArticleFrom, obq.SizeCodeFrom),0)
 from Order_BuyBack ob
 inner join Orders o on ob.ID = o.ID
 inner join Order_BuyBack_Qty obq on obq.ID = ob.ID and obq.OrderIDFrom = ob.OrderIDFrom
-left join Order_Qty oq on oq.ID=o.ID and oq.Article = obq.Article and oq.SizeCode = obq.SizeCode
+left join Order_Qty oq on oq.ID=o.ID and oq.Article = obq.ArticleFrom and oq.SizeCode = obq.SizeCodeFrom 
 outer apply (
- select oq.Qty from order_qty ori where ori.id=ob.OrderIDFrom and ori.Article = obq.Article and ori.SizeCode = obq.SizeCode
+ select ori.Qty 
+ from order_qty ori 
+ where ori.id=ob.OrderIDFrom 
+ and ori.Article = obq.Article
+ and ori.SizeCode = obq.SizeCode
 ) FromSPOrderQty
 outer apply (
  select ori.junk,ori.needproduction,ori.keeppanels from orders ori where ori.id=ob.OrderIDFrom
