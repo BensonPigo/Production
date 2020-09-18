@@ -33,8 +33,8 @@ Begin
 		[ID] ASC
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 	) ON [PRIMARY]
-	EXECUTE sp_addextendedproperty N'MS_Description', N'Fty2Clog : 入MiniLoad倉後 & 退回的箱子再次入倉
-CFA2Clog : Clog 入庫 - 從 CFA 收回紙箱
+	EXECUTE sp_addextendedproperty N'MS_Description', N'FtyToClog : 入MiniLoad倉後 & 退回的箱子再次入倉
+CFAToClog : Clog 入庫 - 從 CFA 收回紙箱
 UpdLocation : Clog 儲位調整', N'SCHEMA', N'dbo', N'TABLE', N'TransferLocation', N'COLUMN', N'Type';
 
 	END
@@ -231,7 +231,7 @@ Begin
 			from #tmpTransferLocation t
 			inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 			where pd.ReceiveDate is null
-			and t.Type = 'Fty2Clog'
+			and t.Type = 'FtyToClog'
 		END
 
 		-- Clog P02 log 
@@ -251,7 +251,7 @@ Begin
 			from #tmpTransferLocation t
 			inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 			where pd.ReceiveDate is null
-			and t.Type = 'Fty2Clog'
+			and t.Type = 'FtyToClog'
 		End
 
 		-- Clog P02 
@@ -265,7 +265,7 @@ Begin
 			from Production.dbo.PackingList_Detail pd
 			inner join #tmpTransferLocation s on pd.SCICtnNo=s.SCICtnNo
 			where pd.ReceiveDate is null
-			and s.Type = 'Fty2Clog'
+			and s.Type = 'FtyToClog'
 		End
 
 		-- Clog P08 log
@@ -283,7 +283,7 @@ Begin
 			from #tmpTransferLocation t
 			inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 			where pd.CFAReturnClogDate is not null
-			and t.Type = 'CFA2Clog'
+			and t.Type = 'CFAToClog'
 		End
 
 		-- Clog P08 
@@ -298,7 +298,7 @@ Begin
 			from Production.dbo.PackingList_Detail pd
 			inner join #tmpTransferLocation s on pd.SCICtnNo=s.SCICtnNo
 			where pd.CFAReturnClogDate is not null
-			and s.Type = 'CFA2Clog'
+			and s.Type = 'CFAToClog'
 		End
 	End
 
