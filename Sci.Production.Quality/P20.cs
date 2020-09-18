@@ -215,8 +215,12 @@ select B.StyleID
                 {
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
 
-                    string item_cmd = @"  select distinct  b.GarmentDefectCodeID,a.GarmentDefectTypeID,a.Description from GarmentDefectCode a WITH (NOLOCK) inner join Rft_Detail b WITH (NOLOCK) on a.id=b.GarmentDefectCodeID
- order by GarmentDefectCodeID,GarmentDefectTypeID
+                    string item_cmd = @"
+select distinct  b.GarmentDefectCodeID,a.GarmentDefectTypeID,a.Description 
+from GarmentDefectCode a WITH (NOLOCK) 
+inner join Rft_Detail b WITH (NOLOCK) on a.id=b.GarmentDefectCodeID
+where a.Junk = 0 and a.IsCFA = 0
+order by GarmentDefectCodeID,GarmentDefectTypeID
 ";
 
                     SelectItem item = new SelectItem(item_cmd, "10,10,25", dr["GarmentDefectCodeID"].ToString());
@@ -257,8 +261,12 @@ select B.StyleID
                 {
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
 
-                    string item_cmd = @"  select distinct  b.GarmentDefectCodeID,a.GarmentDefectTypeID,a.Description from GarmentDefectCode a WITH (NOLOCK) inner join Rft_Detail b WITH (NOLOCK) on a.id=b.GarmentDefectCodeID
- order by GarmentDefectCodeID,GarmentDefectTypeID
+                    string item_cmd = @"
+select distinct  b.GarmentDefectCodeID,a.GarmentDefectTypeID,a.Description 
+from GarmentDefectCode a WITH (NOLOCK) 
+inner join Rft_Detail b WITH (NOLOCK) on a.id=b.GarmentDefectCodeID
+where a.Junk = 0 and a.IsCFA = 0
+order by GarmentDefectCodeID,GarmentDefectTypeID
 ";
 
                     SelectItem item = new SelectItem(item_cmd, "10", dr["GarmentDefectCodeID"].ToString());
