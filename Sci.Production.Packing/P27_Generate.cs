@@ -451,7 +451,7 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
                     string fileName = "HTML.html";
                     string htmlFilePath = shippingMarkPath + oneCarton.PackingListID + @"\" + oneCarton.SCICtnNo + @"\Stamp\" + oneCarton.ShippingMarkTypeUkey.ToString() + @"\";
 
-                    oneCarton.FilePath = htmlFilePath + @"HTML_Page\";
+                    oneCarton.FilePath = htmlFilePath + @"HTML_Pages\";
                     oneCarton.FileName = "page_1.html";
 
                     if (!System.IO.Directory.Exists(htmlFilePath))
