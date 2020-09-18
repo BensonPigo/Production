@@ -84,13 +84,12 @@ namespace Sci.Production.Centralized
             int intColumnsCount = worksheet.UsedRange.Columns.Count;
 
             // 必要欄位
-            List<string> mustColumn = new List<string>() { "Brand", "Continent", "Country", "Port Name", "Port Code", "Air Port", "Sea Port", "Junk" };
+            List<string> mustColumn = new List<string>() { "Brand", "Continent", "Country", "Port Code", "Air Port", "Sea Port", "Junk" };
 
             // 紀錄必要欄位橫向的欄位位置
             int idx_Brand = 0;
             int idx_Continent = 0;
             int idx_Country = 0;
-            int idx_Port_Name = 0;
             int idx_Port_Code = 0;
             int idx_Air_Port = 0;
             int idx_Sea_Port = 0;
@@ -113,10 +112,6 @@ namespace Sci.Production.Centralized
                     case "Country":
                         idx_Country = x;
                         mustColumn.Remove("Country");
-                        break;
-                    case "Port Name":
-                        idx_Port_Name = x;
-                        mustColumn.Remove("Port Name");
                         break;
                     case "Port Code":
                         idx_Port_Code = x;
@@ -171,9 +166,6 @@ namespace Sci.Production.Centralized
                 // Country
                 var pCountry = worksheet.Cells[intRowsReading, idx_Country].Value;
 
-                // Port_Name
-                var pPort_Name = worksheet.Cells[intRowsReading, idx_Port_Name].Value;
-
                 // Port_Code
                 var pPort_Code = worksheet.Cells[intRowsReading, idx_Port_Code].Value;
 
@@ -206,7 +198,6 @@ namespace Sci.Production.Centralized
                     new SqlParameter("@Brand", pBrand),
                     new SqlParameter("@Continent", pContinent),
                     new SqlParameter("@Country", pCountry),
-                    new SqlParameter("@Port_Name", pPort_Name),
                     new SqlParameter("@Port_Code", pPort_Code),
                     new SqlParameter("@Air_Port", pAir_Port),
                     new SqlParameter("@Sea_Port", pSea_Port),
@@ -216,7 +207,7 @@ namespace Sci.Production.Centralized
                 #region 驗證是否存在
 
                 bool isBrandExists = MyUtility.Check.Seek("SELECT 1 FROM Brand WHERE ID=@Brand", parameters, "Production");
-                bool isPortExists = MyUtility.Check.Seek("SELECT 1 FROM Port WHERE ID=@Port_Code AND Name=@Port_Name", parameters, "Production");
+                bool isPortExists = MyUtility.Check.Seek("SELECT 1 FROM Port WHERE ID=@Port_Code ", parameters, "Production");
                 bool isCountryExists = MyUtility.Check.Seek("SELECT 1 FROM Country WHERE ID=@Country", parameters, "Production");
                 bool isContinentExists = MyUtility.Check.Seek("SELECT 1 FROM DropDownList WHERE Type='Continent' AND ID = @Continent", parameters, "Production");
 

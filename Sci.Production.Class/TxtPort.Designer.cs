@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.TextBox1 = new Sci.Win.UI.TextBox();
-            this.DisplayBox1 = new Sci.Win.UI.DisplayBox();
             this.SuspendLayout();
             // 
             // textBox1
@@ -41,17 +40,9 @@
             this.TextBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TextBox1_PopUp);
             this.TextBox1.Validating += new System.ComponentModel.CancelEventHandler(this.TextBox1_Validating);
             // 
-            // displayBox1
-            // 
-            this.DisplayBox1.Location = new System.Drawing.Point(191, 0);
-            this.DisplayBox1.Name = "displayBox1";
-            this.DisplayBox1.Size = new System.Drawing.Size(265, 22);
-            this.DisplayBox1.TabIndex = 1;
-            // 
             // txtcountry
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.Controls.Add(this.DisplayBox1);
             this.Controls.Add(this.TextBox1);
             this.Name = "txtPort";
             this.Size = new System.Drawing.Size(450, 22);
