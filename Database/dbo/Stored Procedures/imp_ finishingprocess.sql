@@ -27,12 +27,15 @@ Begin
 		[Pallet] [varchar](10) NULL,
 		[Time] [datetime] NOT NULL,
 		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
+		[Type] [varchar](15) NOT NULL DEFAULT (''),
 	 CONSTRAINT [PK_TransferLocation] PRIMARY KEY CLUSTERED 
 	(
 		[ID] ASC
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 	) ON [PRIMARY]
-
+	EXECUTE sp_addextendedproperty N'MS_Description', N'FtyToClog : 入MiniLoad倉後 & 退回的箱子再次入倉
+CFAToClog : Clog 入庫 - 從 CFA 收回紙箱
+UpdLocation : Clog 儲位調整', N'SCHEMA', N'dbo', N'TABLE', N'TransferLocation', N'COLUMN', N'Type';
 
 	END
 
@@ -57,12 +60,13 @@ Begin
 	IF OBJECT_ID(N'CompleteClogReturn') IS NULL
 	BEGIN
 		CREATE TABLE [dbo].[CompleteClogReturn](
+		[ID] [bigint] not null,
+		[SCICtnNo] varchar(15) NOT NULL DEFAULT (('')),
 		[Time] [datetime] NOT NULL,
 		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
-		[SCICtnNo] varchar(15) NOT NULL DEFAULT (('')),
 	 CONSTRAINT [PK_CompleteClogReturn] PRIMARY KEY CLUSTERED 
 	(
-		[SCICtnNo] ASC
+		[ID] ASC
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 	) ON [PRIMARY]
 	
@@ -72,12 +76,13 @@ Begin
 	IF OBJECT_ID(N'CompleteTransferToCFA') IS NULL
 	BEGIN
 		CREATE TABLE [dbo].[CompleteTransferToCFA](
+		[ID] [bigint] not null,
+		[SCICtnNo] varchar(15) NOT NULL DEFAULT (('')),
 		[Time] [datetime] NOT NULL,
 		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
-		[SCICtnNo] varchar(15) NOT NULL DEFAULT (('')),
 	 CONSTRAINT [PK_CompleteTransferToCFA] PRIMARY KEY CLUSTERED 
 	(
-		[SCICtnNo] ASC
+		[ID] ASC
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 	) ON [PRIMARY]
 
@@ -125,12 +130,13 @@ Begin
 	IF OBJECT_ID(N'CompleteCFAReceive') IS NULL
 	BEGIN
 		CREATE TABLE [dbo].[CompleteCFAReceive](
+		[ID] [bigint] NOT NULL,
 		[SCICtnNo] [varchar](15) NOT NULL,
 		[Time] [datetime] NULL,
 		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
 	 CONSTRAINT [PK_CompleteCFAReceive] PRIMARY KEY CLUSTERED 
 	(
-		[SCICtnNo] ASC
+		[ID] ASC
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 	) ON [PRIMARY]
 	;	
@@ -142,12 +148,13 @@ Begin
 	IF OBJECT_ID(N'CompleteCFAReturn') IS NULL
 	BEGIN
 		CREATE TABLE [dbo].CompleteCFAReturn(
+		[ID] [bigint] NOT NULL,
 		[SCICtnNo] [varchar](15) NOT NULL,
 		[Time] [datetime] NULL,
 		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
 	 CONSTRAINT [PK_CompleteCFAReturn] PRIMARY KEY CLUSTERED 
 	(
-		[SCICtnNo] ASC
+		[ID] ASC
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 	) ON [PRIMARY]
 	;	
@@ -224,6 +231,7 @@ Begin
 			from #tmpTransferLocation t
 			inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 			where pd.ReceiveDate is null
+			and t.Type = 'FtyToClog'
 		END
 
 		-- Clog P02 log 
@@ -243,6 +251,7 @@ Begin
 			from #tmpTransferLocation t
 			inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 			where pd.ReceiveDate is null
+			and t.Type = 'FtyToClog'
 		End
 
 		-- Clog P02 
@@ -256,6 +265,7 @@ Begin
 			from Production.dbo.PackingList_Detail pd
 			inner join #tmpTransferLocation s on pd.SCICtnNo=s.SCICtnNo
 			where pd.ReceiveDate is null
+			and s.Type = 'FtyToClog'
 		End
 
 		-- Clog P08 log
@@ -273,6 +283,7 @@ Begin
 			from #tmpTransferLocation t
 			inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
 			where pd.CFAReturnClogDate is not null
+			and t.Type = 'CFAToClog'
 		End
 
 		-- Clog P08 
@@ -287,6 +298,7 @@ Begin
 			from Production.dbo.PackingList_Detail pd
 			inner join #tmpTransferLocation s on pd.SCICtnNo=s.SCICtnNo
 			where pd.CFAReturnClogDate is not null
+			and s.Type = 'CFAToClog'
 		End
 	End
 
