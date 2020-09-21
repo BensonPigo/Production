@@ -248,7 +248,7 @@ Select
     [PtnDesc] = bd.PatternDesc,
     [Group] = bd.BundleGroup,
     [Size] = bd.SizeCode,
-    [Qty] = b.Qty,
+    [Qty] = bd.Qty,
     [RFID Reader] = bt.RFIDReaderId,
     [Sub-process] = bt.SubprocessId,
     [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),

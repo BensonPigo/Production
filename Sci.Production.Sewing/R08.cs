@@ -130,7 +130,8 @@ select  s.OutputDate
 		, s.Category
 		, s.Shift
 		, s.SewingLineID
-		, [ActManPower] = IIF(sd.QAQty = 0, s.Manpower, s.Manpower * sd.QAQty)
+		--, [ActManPower] = IIF(sd.QAQty = 0, s.Manpower, s.Manpower * sd.QAQty)
+		, [ActManPower] = s.Manpower
 		, s.Team
 		, sd.OrderId
 		, sd.ComboType
@@ -194,7 +195,7 @@ where s.OutputDate between '{0}' and '{1}' and (o.CateGory NOT IN ('G','A') or s
 select OutputDate,Category
 	   , Shift
 	   , SewingLineID
-	   , ActManPower1 = Sum(ActManPower)
+	   , ActManPower1 = ActManPower
 	   , Team
 	   , OrderId
 	   , ComboType
@@ -223,10 +224,11 @@ group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType
 		 , OrderCategory, LocalOrder, FactoryID, OrderProgram, MockupProgram
 		 , OrderCPU, OrderCPUFactor, MockupCPU, MockupCPUFactor, OrderStyle
 		 , MockupStyle, Rate, StdTMS,SubconInType,isnull(SubconOutFty,'')
+        ,ActManPower
 
 select t.*
 	   , isnull(w.Holiday, 0) as Holiday
-	   , IIF(isnull(QAQty, 0) = 0, ActManPower1, (ActManPower1 / QAQty)) as ActManPower
+       , ActManPower1 as ActManPower
 INTO #tmp1stFilter
 from #tmpSewingGroup t
 left join WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID 

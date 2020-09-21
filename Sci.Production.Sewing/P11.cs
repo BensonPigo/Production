@@ -9,6 +9,8 @@ using System.Linq;
 using System.Transactions;
 using System.Data.SqlClient;
 using Sci.Win.Tools;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Sewing
 {
@@ -394,7 +396,7 @@ and o.FtyGroup = @FtyGroup
 and f.IsProduceFty = 1
 and o.Category in ('B','S')
 and not exists (select 1 from Orders exludeOrder with (nolock) 
-                            where (exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0) and
+                            where (exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0 AND exludeOrder.Category='B') and
                                   exludeOrder.ID = o.ID
                         )
 ";
@@ -851,7 +853,11 @@ HAVING SUM(sdd.QAQty) >= '{this.DetailDatas[i]["TransferQty"]}'
                 this.ShowErr(e);
                 return;
             }
-
+            #region ISP20201344 資料交換 - Sunrise
+            string listUkey = this.DetailDatas.Select(s => s["Ukey"].ToString()).JoinToString(",");
+            Task.Run(() => new Sunrise_FinishingProcesses().SentSewingOutputTransfer(listUkey))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
             MyUtility.Msg.InfoBox("Complete!");
         }
 

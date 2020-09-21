@@ -120,6 +120,7 @@ BEGIN
 			 , Max(Order_BOF.ConsPC) as ConsPC
 			 , Sum(tmpQty.Qty) as Qty
 			 , Sum(tmpQty49.Qty49) as Qty49
+			 , Seq = DENSE_RANK() OVER(ORDER BY  Order_EachCons.CuttingPiece, Order_EachCons.FabricPanelCode)
 		  From #tmpCuttingList
 		 Inner Join dbo.Orders
 			On Orders.ID = #tmpCuttingList.CuttingSP
@@ -151,7 +152,7 @@ BEGIN
 		 Group by Order_BOF.FabricCode, Order_BOF.SCIRefno, Order_BOF.Refno
 			 , Order_EachCons_Color.ColorID, Color.Name, Fabric.UsageUnit, Fabric_Supp.POUnit, Fabric.Description
 			 , Fabric.Width, Fabric.Weight, Supp.CountryID, Order_BOF.LossType, Order_BOF.LossPercent
-			 , Unit.UnitRound, Unit.RoundStep, Unit.UsageRound
+			 , Unit.UnitRound, Unit.RoundStep, Unit.UsageRound, Order_EachCons.CuttingPiece, Order_EachCons.FabricPanelCode
 	)
 	Select [REF# FABRIC] = tmpTtlEachCons.Refno + CHAR(10) + tmpTtlEachCons.[Description]
 		 , [COLOR] = tmpTtlEachCons.ColorName
@@ -182,7 +183,7 @@ BEGIN
 	 Outer Apply (Select production.dbo.GetCeiling(tmpQty2.NetQty + tmpQty2.LossQty, tmpTtlEachCons.UnitRound, tmpTtlEachCons.RoundStep) as Qty) as tmpTtlQty
 	 --2018/07/11 [IST20180936] 當Category = 'M' or 'T'不算loss
 	 Outer Apply (Select production.dbo.GetCeiling(tmpQty2.NetQty, tmpTtlEachCons.UnitRound, tmpTtlEachCons.RoundStep) as Qty) as tmpTtlQty2
-	 order by tmpTtlEachCons.Refno + CHAR(10) + tmpTtlEachCons.[Description] , tmpTtlEachCons.ColorName
+	 order by Seq
 
 	Drop Table #tmpCuttingList
 	--*/

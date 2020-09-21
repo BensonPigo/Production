@@ -83,7 +83,7 @@ else
 								FOR XML PATH('')),1,1,'') 
 		if(@orderList is not null and @orderList <> '')
 		begin
-			exec dbo.SentOrdersToFinishingProcesses @orderList,'Orders,Order_QtyShip,Order_SizeCode'
+			exec dbo.SentOrdersToFinishingProcesses @orderList,'Orders,Order_QtyShip,Order_SizeCode,Order_Qty'
 		end
 		
 

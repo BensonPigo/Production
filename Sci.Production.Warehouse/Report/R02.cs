@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R02 : Win.Tems.PrintForm
     {
         private DataTable dt;
@@ -16,6 +17,7 @@ namespace Sci.Production.Warehouse
         private string strM;
         private string strFactory;
 
+        /// <inheritdoc/>
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -23,6 +25,7 @@ namespace Sci.Production.Warehouse
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.strIssueDate1 = this.dateIssueDate.Value1;
@@ -39,6 +42,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.SetCount(this.dt.Rows.Count);
@@ -50,27 +54,16 @@ namespace Sci.Production.Warehouse
 
             try
             {
-                // return MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R02.xltx", 1,true);
                 Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R02.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_R02.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
                 this.ShowWaitMessage("Excel Processing...");
-                Excel.Worksheet worksheet = objApp.Sheets[1];
-                for (int i = 1; i <= this.dt.Rows.Count; i++)
-                {
-                    string str = worksheet.Cells[i + 1, 9].Value;
-                    if (!MyUtility.Check.Empty(str))
-                    {
-                        worksheet.Cells[i + 1, 9] = str.Trim();
-                    }
-                }
 
                 #region Save & Show Excel
                 string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R02");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
-                Marshal.ReleaseComObject(worksheet);
 
                 strExcelName.OpenFile();
                 #endregion
@@ -83,9 +76,9 @@ namespace Sci.Production.Warehouse
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            // return base.OnAsyncDataLoad(e);
             DualResult result = Ict.Result.True;
 
             try
@@ -124,12 +117,14 @@ select 	a.MDivisionID
 						 from po_supp_detail WITH (NOLOCK) 
 						 where id= b.FromPOID and seq1 = b.FromSeq1 and seq2 = b.FromSeq2)
 						,'')
-		,description = dbo.getmtldesc(b.FromPOID,b.FromSeq1,b.FromSeq2,2,0)
+		,description = RTRIM(LTRIM( dbo.getmtldesc(b.FromPOID,b.FromSeq1,b.FromSeq2,2,0) )) 
+		,[Junk]=IIF(Orders.Junk=1,'Y','N')
+		,Orders.OrderTypeID
 from dbo.SubTransfer a WITH (NOLOCK) 
 inner join dbo.SubTransfer_Detail b WITH (NOLOCK) on a.id = b.id
 inner join dbo.Orders on b.fromPoid = Orders.ID
 where a.Status = 'Confirmed' and a.type='D' {0}
-group by a.MDivisionID, Orders.FactoryID, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2
+group by a.MDivisionID, Orders.FactoryID, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2, Orders.Junk, Orders.OrderTypeID
 order by a.MDivisionID, Orders.FactoryID, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2
 ", sqlFilter);
                 result = DBProxy.Current.Select(null, sqlcmd, out this.dt);

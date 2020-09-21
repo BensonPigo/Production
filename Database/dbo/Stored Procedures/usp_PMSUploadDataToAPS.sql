@@ -96,7 +96,7 @@ Select
 ,o.NeedProduction
 ,o.IsBuyBack
 ,o.BuyBackReason
-,[sDELF] = case when o.Junk = 1 and o.NeedProduction = 0 then ''Y''
+,[sDELF] = case   when o.Junk = 1 and o.NeedProduction = 0 and o.Category = ''B'' then ''Y''
 				  when o.Junk = 0 and o.IsBuyBack = 1 and o.BuyBackReason = ''Garment'' then ''Y''
 				  else ''N''
 				  end
