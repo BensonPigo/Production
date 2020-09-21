@@ -30,6 +30,15 @@ BEGIN
   DROP TABLE Order_Location
 END
 
+IF OBJECT_ID(N'SewingOutputTransfer') IS NOT NULL
+BEGIN
+  DROP TABLE SewingOutputTransfer
+END
+
+IF OBJECT_ID(N'SewingOutputTransfer_Detail') IS NOT NULL
+BEGIN
+  DROP TABLE SewingOutputTransfer_Detail
+END
 ------------------------------------------------------------------------------------------------------
 --***資料交換的條件限制***
 --1. 優先取得Production.dbo.DateInfo
