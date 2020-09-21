@@ -233,6 +233,7 @@ From(
 		Left join Production.dbo.Style	on FactoryOrder.BrandID=Style.BrandID and FactoryOrder.StyleID =Style.ID and  FactoryOrder.SeasonID = Style.SeasonID
 		Left join Production.dbo.Style_TmsCost tmsCost on tmsCost.StyleUKey = Style.Ukey
 		inner join #UseArtworkType at on at.id = tmsCost.ArtworkTypeID
+		inner join Production.dbo.Factory f on FactoryOrder.ProgramID=f.ID and f.IsProduceFty=1
 		Outer Apply (select 1 as CpuRate ) getCPURate
 		WHERE FactoryOrder.Junk = 0 and FactoryOrder.Qty > 0 and FactoryOrder.SubconInType = '2' and (FactoryOrder.SCIDelivery between @Date_S and @Date_E or FactoryOrder.BuyerDelivery between @YearMonth_S and @YearEnd)
 	) as a
