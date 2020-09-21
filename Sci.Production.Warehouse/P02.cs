@@ -155,6 +155,7 @@ select  FactoryID = iif(ed.potype='M'
         , Preshrink = iif(f.Preshrink = 1, 'V' ,'')
         , ed.Carton
 		, o.OrderTypeID
+		,[TPERemark] = psd.Remark
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
@@ -246,7 +247,8 @@ where ed.ID = '{0}'", masterID);
                 .Text("FormXType", header: "FormX Type", width: Widths.AnsiChars(8))
                 .Date("FormXReceived", header: "FoemX Rcvd")
                 .Date("FormXDraftCFM", header: "FormX Sent")
-                .EditText("FormXINV", header: "FormX Invoice No.");
+                .EditText("FormXINV", header: "FormX Invoice No.")
+                .EditText("TPERemark", header: "TPE Remark", iseditingreadonly: true);
         }
 
         protected override bool ClickSaveBefore()
@@ -256,6 +258,12 @@ where ed.ID = '{0}'", masterID);
             DateTime eTA;
             bool chk;
             string msg;
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["PortArrival"]) || MyUtility.Check.Empty(this.CurrentMaintain["WhseArrival"]))
+            {
+                MyUtility.Msg.WarningBox("<Arrive Warehouse> and <Arrive port date> can't be empty!!");
+                return false;
+            }
 
             // Arrive Port Date 不可晚於 Arrive W/H Date
             if (!MyUtility.Check.Empty(this.CurrentMaintain["PortArrival"]) && !MyUtility.Check.Empty(this.CurrentMaintain["WhseArrival"]))
