@@ -441,40 +441,30 @@ select	Orderid
 		, PatternPanel
 		, FabricPanelCode
 		, PatternCode
-		, InQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
+		, InQty = Case when PostSewingSubProcess_SL = 1 Then Qty
 							when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then Qty--不判斷InComing,直接計算數量
 					   else iif(I_Judge.v = 1, Qty, 0)
 					   End
-					 ) / IsPair.M
-
-		, OutQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
+		, OutQty = Case when PostSewingSubProcess_SL = 1 Then Qty
 							 when NoBundleCardAfterSubprocess=1 and InOutRule = 3 Then Qty--不判斷OutGoing,直接計算數量
 						else iif(O_Judge.v = 1, Qty, 0)
-						End 
-					  ) / IsPair.M
-
-		, OriInQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
+						End
+		, OriInQty = Case when PostSewingSubProcess_SL = 1 Then Qty
 							   when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then Qty--不判斷InComing,直接計算數量
 						  else iif(I_Judge.v = 1, Qty, 0)
-						  End
-					 ) --原始裁片數總和
-
-		, OriOutQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
+						  End--原始裁片數總和
+		, OriOutQty = Case when PostSewingSubProcess_SL = 1 Then Qty
 							    when NoBundleCardAfterSubprocess=1 and InOutRule = 3 Then Qty--不判斷OutGoing,直接計算數量
 						   else iif(O_Judge.v = 1, Qty, 0)
-						   End 
-					  ) --原始裁片數總和
-
-		, FinishedQty = sum(case when PostSewingSubProcess_SL = 1 Then Qty
+						   End--原始裁片數總和
+		, FinishedQty = case when PostSewingSubProcess_SL = 1 Then Qty
 								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 1 Then Qty-- 不判斷InComing
 								 when InOutRule = 1 then iif(I_Judge.v = 1,Qty,0)
 								 when InOutRule = 2 then iif(O_Judge.v = 1,Qty,0)
 								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 3 Then iif(I_Judge.v = 1,Qty,0)-- 忽略OutGoing, 只判斷InComing									
 								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 4 Then iif(O_Judge.v = 1,Qty,0)-- 忽略InComing, 只判斷OutGoing
 								 else iif(O_Judge.v = 1 and I_Judge.v = 1 ,Qty,0)
-							end) 
-						/ IsPair.M
-
+							end
         , InStartDate,InEndDate,OutStartDate,OutEndDate
 into #BundleInOutQty{subprocessIDtmp}
 from #BundleInOutDetail{subprocessIDtmp} bt
@@ -484,9 +474,6 @@ outer  apply(
 )x
 outer apply(select v = iif(InComing is not null and (x.InStartDate is null or x.InStartDate <= InComing) and (x.InEndDate is null or InComing <= x.InEndDate),1,0))I_Judge
 outer apply(select v = iif(OutGoing is not null and (x.OutStartDate is null or x.OutStartDate <= OutGoing) and (x.OutEndDate is null or OutGoing <= x.OutEndDate),1,0))O_Judge
-outer apply(select M = iif(IsPair=1,IIF(m=1,2,m),1) )IsPair--此處判斷後才放入group by 欄位中 
-group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair.m
-    , InStartDate,InEndDate,OutStartDate,OutEndDate
 ";
 
                 if (isNeedCombinBundleGroup)
