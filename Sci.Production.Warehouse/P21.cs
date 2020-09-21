@@ -361,10 +361,10 @@ SELECT
 ,td.StockType
 ,[Location]=Location.MtlLocationID 
 ,[OldLocation] = Location.MtlLocationID 
-,[Weight]=0
-,ActualWeight=td.Weight
-,[OldActualWeight] = td.Weight
-,[Differential] = 0,
+,[Weight]=td.Weight
+,ActualWeight=td.ActualWeight
+,[OldActualWeight] = td.ActualWeight
+,[Differential] = td.ActualWeight - td.Weight,
 [FtyInventoryUkey] = fi.Ukey,
 [FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty,
 td.Seq1,

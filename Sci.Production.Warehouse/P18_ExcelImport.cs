@@ -59,6 +59,7 @@ namespace Sci.Production.Warehouse
             this.grid2Data.Columns.Add("Description", typeof(string));
             this.grid2Data.Columns.Add("fabrictype", typeof(string));
             this.grid2Data.Columns.Add("Weight", typeof(decimal));
+            this.grid2Data.Columns.Add("ActualWeight", typeof(decimal));
             this.grid2Data.Columns.Add("qty", typeof(decimal));
             this.grid2Data.Columns.Add("OriQty", typeof(decimal));
             this.grid2Data.Columns.Add("stocktype", typeof(string));
@@ -262,6 +263,7 @@ namespace Sci.Production.Warehouse
                     newRow["Roll"] = (objCellArray[1, itemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[3]].ToString().Trim(), "C");
                     newRow["Dyelot"] = (objCellArray[1, itemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[4]].ToString().Trim(), "C").ToString();
                     newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[5]], "N");
+                    newRow["ActualWeight"] = 0;
                     newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[6]], "N");
                     newRow["stocktype"] = stockType;
                     newRow["location"] = (objCellArray[1, itemPosition[8]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[8]].ToString().Replace("'", string.Empty).Trim(), "C");
