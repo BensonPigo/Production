@@ -30,6 +30,15 @@ BEGIN
   DROP TABLE Order_Location
 END
 
+IF OBJECT_ID(N'SewingOutputTransfer') IS NOT NULL
+BEGIN
+  DROP TABLE SewingOutputTransfer
+END
+
+IF OBJECT_ID(N'SewingOutputTransfer_Detail') IS NOT NULL
+BEGIN
+  DROP TABLE SewingOutputTransfer_Detail
+END
 ------------------------------------------------------------------------------------------------------
 --***資料交換的條件限制***
 --1. 優先取得Production.dbo.DateInfo
@@ -96,4 +105,38 @@ select ol.*
 into Order_Location
 from Production.dbo.Order_Location ol
 where exists(select 1 from Pms_To_Trade.dbo.SewingOutput_Detail where OrderId = ol.OrderId)
+
+------------------------------------------------------------------------------------------------------
+--***資料交換的條件限制***
+--1. 優先取得Production.dbo.DateInfo
+declare @DateInfoName3 varchar(30) ='SewingOutputTransfer';
+declare @DateStart3 date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName3);
+declare @DateEnd3 date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName3);
+set @Remark = (select Remark from Production.dbo.DateInfo where name = @DateInfoName3);
+
+--2.取得預設值
+if @DateStart3 is Null
+	set @DateStart3= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
+if @DateEnd3 is Null
+	set @DateEnd3 = CONVERT(DATE, GETDATE())
+	
+--3.更新Pms_To_Trade.dbo.dateInfo
+if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName3 )
+	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart3,DateEnd = @DateEnd3, Remark=@Remark where Name = @DateInfoName3 
+else
+	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
+	values (@DateInfoName3,@DateStart3,@DateEnd3,@Remark);
+
+--SewingOutputTransfer
+select *
+into SewingOutputTransfer
+from Production.dbo.SewingOutputTransfer sot
+where sot.Status = 'Confirmed'
+and sot.EditDate between @DateStart3 and @DateEnd3
+
+--SewingOutputTransfer_Detail
+select sotd.*
+into SewingOutputTransfer_Detail
+from Production.dbo.SewingOutputTransfer_Detail sotd
+inner join Pms_To_Trade.dbo.SewingOutputTransfer sot on sot.ID = sotd.ID
 END

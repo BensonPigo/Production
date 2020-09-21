@@ -135,7 +135,17 @@ BEGIN
 	inner join Factory on Orders.FactoryID = Factory.ID
 	left Join Order_TmsCost on Orders.ID = Order_TmsCost.ID And Order_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = @ArtWorkType
-	outer apply (select SewOutputQty = dbo.GetSewingQtybyRate(Orders.ID, null, null ) ) oq -- PMS無實體欄位, 用此Function取得
+	outer apply (
+		select TransferQty = sum(sotd.TransferQty * isnull(ol.Rate, 0) / 100.0)
+		from SewingOutputTransfer sot
+		inner join SewingOutputTransfer_Detail sotd on sotd.ID = sot.id
+		inner join Orders o on o.ID = sotd.FromOrderID and o.Junk = 1 and o.NeedProduction = 1
+		inner join Orders o2 on o2.ID = sotd.ToOrderID and o2.IsBuyBack = 1 and o2.BuyBackReason = 'Garment'
+		inner join Order_Location ol on ol.OrderId = sotd.FromOrderID and ol.Location = sotd.FromComboType
+		where sot.Status = 'Confirmed'
+		and sotd.FromOrderID = Orders.ID
+	)tfr
+	outer apply (select SewOutputQty = dbo.GetSewingQtybyRate(Orders.ID, null, null ) + isnull(tfr.TransferQty, 0)) oq -- PMS無實體欄位, 用此Function取得
 	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Order_TmsCost.Qty / 1000,
 						iif(ArtworkType.ArtworkUnit = 'PPU', Order_TmsCost.Price,
 						iif(ArtworkType.ProductionUnit = 'Qty', Order_TmsCost.Qty,
@@ -158,7 +168,17 @@ BEGIN
 	into #FactoryOrder 
 	from Orders 
 	inner join Factory on Orders.FactoryID = Factory.ID
-	outer apply (select SewOutputQty = dbo.GetSewingQtybyRate(Orders.ID, null, null ) ) oq -- PMS無實體欄位, 用此Function取得
+	outer apply (
+		select TransferQty = sum(sotd.TransferQty * isnull(ol.Rate, 0) / 100.0)
+		from SewingOutputTransfer sot
+		inner join SewingOutputTransfer_Detail sotd on sotd.ID = sot.id
+		inner join Orders o on o.ID = sotd.FromOrderID and o.Junk = 1 and o.NeedProduction = 1
+		inner join Orders o2 on o2.ID = sotd.ToOrderID and o2.IsBuyBack = 1 and o2.BuyBackReason = 'Garment'
+		inner join Order_Location ol on ol.OrderId = sotd.FromOrderID and ol.Location = sotd.FromComboType
+		where sot.Status = 'Confirmed'
+		and sotd.FromOrderID = Orders.ID
+	)tfr
+	outer apply (select SewOutputQty = dbo.GetSewingQtybyRate(Orders.ID, null, null ) + isnull(tfr.TransferQty, 0)) oq -- PMS無實體欄位, 用此Function取得
 	outer apply (select SewLastDate = MAX(OutputDate) from SewingOutput s join SewingOutput_Detail sd on s.ID = sd.ID where sd.OrderId = Orders.ID )so -- 在trade是 Orders.SewLastDate (從PMS轉過去)
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s_by and @date_e_by)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
