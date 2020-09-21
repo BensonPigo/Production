@@ -115,6 +115,7 @@
     <Folder Include="Storage\" />
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="dbo\User Defined Types\" />
+    <Folder Include="dbo\CLR Store Procedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\MyGridStd1.sql">
@@ -2505,6 +2506,10 @@
     <Build Include="dbo\Tables\FtyStdRate_EMB.sql" />
     <Build Include="dbo\Functions\GetEmboideryCost.sql" />
     <Build Include="dbo\Functions\GetPrintingCost.sql" />
+    <Build Include="dbo\Tables\AccessoryDefect.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
     <Build Include="dbo\Tables\AccountNoSetting.sql" />
     <Build Include="dbo\Tables\CFAInspectionRecord.sql" />
     <Build Include="dbo\Tables\CFAInspectionRecord_Detail.sql" />
@@ -2531,6 +2536,13 @@
     <Build Include="dbo\Tables\ShippingMarkPicture_Detail.sql" />
     <Build Include="dbo\Tables\GarmentTest_Detail_FGPT.sql" />
     <Build Include="dbo\Tables\Bundle_Detail_Order.sql" />
+    <Build Include="dbo\Tables\AutomationStyle.sql" />
+    <Build Include="dbo\CLR Store Procedures\SentOrdersToFinishingProcesses.sql" />
+    <Build Include="dbo\CLR Store Procedures\SentStyleFPSSettingToFinishingProcesses.sql" />
+    <Build Include="dbo\CLR Store Procedures\SentOrderQtyToAGV.sql" />
+    <Build Include="dbo\CLR Store Procedures\SentSubprocessToAGV.sql" />
+    <Build Include="dbo\CLR Store Procedures\SentJsonToAGV.sql" />
+    <Build Include="dbo\CLR Store Procedures\SentJsonFromAutomationErrMsg.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
@@ -2543,5 +2555,10 @@
       <DefaultValue>FinanceEN</DefaultValue>
       <Value>$(SqlCmdVar__1)</Value>
     </SqlCmdVariable>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
 </Project>
