@@ -716,9 +716,16 @@ where OrderID = '{this.CurrentMaintain["OrderID"]}' AND OrderShipmodeSeq = '{thi
             List<string> cartons = this.CurrentMaintain["Carton"].ToString().Split(',').ToList();
             string cmd = string.Empty;
 
+            cmd = $@"
+UPDATE PackingList_Detail
+SET StaggeredCFAInspectionRecordID = ''
+WHERE StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
+;
+";
+
             if (this.CurrentMaintain["Stage"].ToString() == "Staggered" && this.CurrentMaintain["Result"].ToString() == "Pass")
             {
-                cmd = $@"
+                cmd += $@"
 UPDATE PackingList_Detail
 SET StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
 WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
@@ -729,7 +736,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
             }
             else
             {
-                cmd = $@"
+                cmd += $@"
 UPDATE PackingList_Detail
 SET StaggeredCFAInspectionRecordID=''
 WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
@@ -1200,7 +1207,10 @@ AND CTNStartNo = @CTNStartNo
                 return;
             }
 
-            this.CurrentMaintain["Carton"] = string.Empty;
+            if (this._oldStage != stage)
+            {
+                this.CurrentMaintain["Carton"] = string.Empty;
+            }
 
             // 只有選擇Staggered時Inspected Carton、Shift才可以欄位才可以編輯，選到其他Stage時請一併清除這些欄位資料。
             if (stage == "Staggered")
