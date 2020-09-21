@@ -1070,39 +1070,19 @@ and SunriseNid = 0
         }
 
         // 撈取RFT值
+        // Sewing P01 表身計算公式：SewingOutput_Detail.QAQty / SewingOutput_Detail.InlineQty
         private void GetRFT(DataRow dr)
         {
-            // sql參數
-            SqlParameter sp1 = new SqlParameter("@orderid", MyUtility.Convert.GetString(dr["OrderID"]));
-            SqlParameter sp2 = new SqlParameter("@cdate", MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]));
-            SqlParameter sp3 = new SqlParameter("@sewinglineid", MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
-            SqlParameter sp4 = new SqlParameter("@shift", MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]));
-            SqlParameter sp5 = new SqlParameter("@team", MyUtility.Convert.GetString(this.CurrentMaintain["Team"]));
-
-            IList<SqlParameter> cmds = new List<SqlParameter>();
-            cmds.Add(sp1);
-            cmds.Add(sp2);
-            cmds.Add(sp3);
-            cmds.Add(sp4);
-            cmds.Add(sp5);
-
-            string sqlCmd = @"select iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%') as RFT
-from RFT WITH (NOLOCK) 
-where OrderID = @orderid
-and CDate = @cdate
-and SewinglineID = @sewinglineid
-and Shift = @shift
-and Team = @team";
-
-            DataTable rFTData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out rFTData);
-            if (result && rFTData.Rows.Count > 0)
+            if (MyUtility.Check.Empty(dr["QAQty"]) || MyUtility.Check.Empty(dr["InlineQty"]))
             {
-                dr["RFT"] = rFTData.Rows[0]["RFT"];
+                dr["RFT"] = "0.00%";
             }
             else
             {
-                dr["RFT"] = "0.00%";
+                double qAqty = MyUtility.Convert.GetDouble(dr["QAQty"]);
+                double inLineQty = MyUtility.Convert.GetDouble(dr["InlineQty"]);
+                string rFT = MyUtility.Convert.GetString(Math.Round( qAqty / inLineQty * 100, 2)) + "%";
+                dr["RFT"] = rFT;
             }
 
             dr.EndEdit();
@@ -3124,27 +3104,15 @@ select  s.OutputDate
 		, [MockupSeason] = isnull(mo.SeasonID,'')
 	    , [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id, sd.ComboType),100)/100
 		, System.StdTMS
-		, [InspectQty] = isnull(r.InspectQty,0)
-		, [RejectQty] = isnull(r.RejectQty,0)
+		, [ori_QAQty] = sd.QAQty
+		, [ori_InlineQty] = sd.InlineQty
         , [SubconInSisterFty] = isnull(o.SubconInSisterFty,0)
 into #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId 
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
---left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
---														    and sl.Location = sd.ComboType
-outer apply(
-	select top 1 RejectQty
-		   , InspectQty 
-    from Rft r WITH (NOLOCK)  
-    where r.OrderID = sd.OrderId 
-    	  and r.CDate = s.OutputDate 
-    	  and r.SewinglineID = s.SewingLineID 
-		  and r.FactoryID = s.FactoryID 
-		  and r.Shift = s.Shift 
-		  and r.Team = s.Team
-) as r
+
 where s.OutputDate = '{0}'
 	  and s.FactoryID = '{1}'
       and (o.CateGory NOT IN ('G','A') or s.Category='M')  ",
@@ -3178,8 +3146,8 @@ select OutputDate
 	   , MockupSeason
 	   , Rate
 	   , StdTMS
-	   , InspectQty
-	   , RejectQty
+	   , ori_QAQty = sum(ori_QAQty)
+	   , ori_InlineQty = sum(ori_InlineQty)
        , SubconInSisterFty
 into #tmpSewingGroup
 from #tmpSewingDetail
@@ -3187,8 +3155,7 @@ group by OutputDate, Category, Shift, SewingLineID, Team, OrderId
 		 , ComboType, OrderCategory, LocalOrder, OrderCdCodeID
 		 , MockupCDCodeID, FactoryID, OrderCPU, OrderCPUFactor
 		 , MockupCPU, MockupCPUFactor, OrderStyle, MockupStyle
-		 , OrderSeason, MockupSeason, Rate, StdTMS, InspectQty
-		 , RejectQty, SubconInSisterFty
+		 , OrderSeason, MockupSeason, Rate, StdTMS, SubconInSisterFty
 ----↓計算累計天數 function table太慢直接寫在這
 select distinct scOutputDate = s.OutputDate 
 	   , style = IIF(t.Category <> 'M', OrderStyle, MockupStyle)
@@ -3311,7 +3278,7 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
 	   						      							 , OrderCPU * OrderCPUFactor * Rate) * QAQty, 2) / (ROUND(IIF(QAQty > 0, ActManPower / QAQty
 	   						      							 																	   , ActManPower) * WorkHour, 2) * 3600 / StdTMS)) * 100, 0)
 	   							  , 1) 
-	   , RFT = IIF(InspectQty > 0, ROUND((InspectQty - RejectQty) / InspectQty * 100, 2), 0)
+	   , RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
 	   , CumulateDate
 	   , InlineQty
 	   , Diff = QAQty - InlineQty

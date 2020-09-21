@@ -138,27 +138,14 @@ select  s.OutputDate
 		, [MockupSeason] = isnull(mo.SeasonID,'')
 	    , [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id, sd.ComboType),100)/100
 		, System.StdTMS
-		, [InspectQty] = isnull(r.InspectQty,0)
-		, [RejectQty] = isnull(r.RejectQty,0)
+		, [ori_QAQty] = sd.QAQty
+		, [ori_InlineQty] = sd.InlineQty
         , [SubconInType] = isnull(o.SubconInType,0)
 into #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId 
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
---left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
---														    and sl.Location = sd.ComboType
-outer apply(
-	select top 1 RejectQty
-		   , InspectQty 
-    from Rft r WITH (NOLOCK)  
-    where r.OrderID = sd.OrderId 
-    	  and r.CDate = s.OutputDate 
-    	  and r.SewinglineID = s.SewingLineID 
-		  and r.FactoryID = s.FactoryID 
-		  and r.Shift = s.Shift 
-		  and r.Team = s.Team
-) as r
 where s.OutputDate = '{0}'
 	  and s.FactoryID = '{1}'
       and (o.CateGory NOT IN ( 'G' ,'A') or s.Category='M')  ",
@@ -197,8 +184,8 @@ select OutputDate
 	   , MockupSeason
 	   , Rate
 	   , StdTMS
-	   , InspectQty
-	   , RejectQty
+	   , ori_QAQty = sum(ori_QAQty) 
+	   , ori_InlineQty = sum(ori_InlineQty) 
        , SubconInType
 into #tmpSewingGroup
 from #tmpSewingDetail
@@ -206,8 +193,7 @@ group by OutputDate, Category, Shift, SewingLineID, Team, OrderId
 		 , ComboType, OrderCategory, LocalOrder, OrderCdCodeID
 		 , MockupCDCodeID, FactoryID, OrderCPU, OrderCPUFactor
 		 , MockupCPU, MockupCPUFactor, OrderStyle, MockupStyle
-		 , OrderSeason, MockupSeason, Rate, StdTMS, InspectQty
-		 , RejectQty, SubconInType,ActManPower
+		 , OrderSeason, MockupSeason, Rate, StdTMS, SubconInType,ActManPower
 ----↓計算累計天數 function table太慢直接寫在這
 select distinct scOutputDate = s.OutputDate 
 	   , style = IIF(t.Category <> 'M', OrderStyle, MockupStyle)
@@ -326,7 +312,7 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
 	   						      , (ROUND(IIF(Category = 'M', MockupCPU * MockupCPUFactor
 	   						      							 , OrderCPU * OrderCPUFactor * Rate) * QAQty, 2) / (ROUND(ActManPower * WorkHour, 2) * 3600 / StdTMS)) * 100, 0)
 	   							  , 1) 
-	   , RFT = IIF(InspectQty > 0, ROUND((InspectQty - RejectQty) / InspectQty * 100, 2), 0)
+	   , RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
 	   , CumulateDate
 	   , InlineQty
 	   , Diff = QAQty - InlineQty

@@ -12,6 +12,8 @@ BEGIN
 	--根據條件撈基本資料
 select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,s.FactoryID
 	,sd.OrderId,sd.ComboType,ActManPower = IIF(sd.QAQty=0, s.Manpower, s.Manpower * sd.QAQty),sd.WorkHour,sd.QAQty,sd.InlineQty
+	, [ori_QAQty] = sd.QAQty
+	, [ori_InlineQty] = sd.InlineQty
 	,o.LocalOrder,o.CustPONo,OrderCategory = isnull(o.Category,''),OrderType = isnull(o.OrderTypeID,''), CASE WHEN ot.IsDevSample =1 THEN 'Y' ELSE 'N' END AS IsDevSample
 	,OrderBrandID = case 
 		when o.BrandID != 'SUBCON-I' then o.BrandID
@@ -23,7 +25,6 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
 	,MockupBrandID= isnull(mo.BrandID,'')   ,MockupCDCodeID= isnull(mo.MockupID,'')
 	,MockupProgram= isnull(mo.ProgramID,'') ,MockupCPU= isnull(mo.Cpu,0),MockupCPUFactor= isnull(mo.CPUFactor,0),MockupStyle= isnull(mo.StyleID,''),MockupSeason= isnull(mo.SeasonID,'')	
     ,Rate = isnull([dbo].[GetOrderLocation_Rate](o.id,sd.ComboType),100)/100,System.StdTMS
-	,InspectQty = isnull(r.InspectQty,0),RejectQty = isnull(r.RejectQty,0)
     ,BuyerDelivery = format(o.BuyerDelivery,'yyyy/MM/dd')
     ,OrderQty = o.Qty
     ,s.SubconOutFty
@@ -39,13 +40,6 @@ left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Factory f WITH (NOLOCK) on s.FactoryID = f.ID
---left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType 
-outer apply
-(
-    select top 1 InspectQty,RejectQty 
-    from Rft r WITH (NOLOCK) 
-    where r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
-) r
 outer apply
 (
 	select [SewingReasonDesc]=stuff((
@@ -68,7 +62,9 @@ select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionI
 	,LocalOrder,CustPONo,OrderCategory,OrderType,IsDevSample
 	,OrderBrandID ,OrderCdCodeID ,OrderProgram ,OrderCPU ,OrderCPUFactor ,OrderStyle ,OrderSeason
 	,MockupBrandID,MockupCDCodeID,MockupProgram,MockupCPU,MockupCPUFactor,MockupStyle,MockupSeason
-	,Rate,StdTMS,InspectQty,RejectQty
+	,Rate,StdTMS
+	,ori_QAQty = sum(ori_QAQty)over(partition by id,OrderId,ComboType)
+	,ori_InlineQty = sum(ori_InlineQty)over(partition by id,OrderId,ComboType)
     ,BuyerDelivery
 	,SciDelivery
     ,OrderQty
@@ -130,7 +126,7 @@ select * from(
 		,TotalCPU = ROUND(IIF(t.Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty,3)
 		,CPUSewer = IIF(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)>0,(IIF(t.Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2),0)
 		,EFF = ROUND(IIF(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)>0,((IIF(t.Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)*3600/StdTMS))*100,0),1)
-		,RFT = IIF(InspectQty>0,ROUND((InspectQty-RejectQty)/InspectQty*100,2),0)
+	    ,RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
 		,CumulateDate
 		,DateRange = IIF(CumulateDate>=10,'>=10',CONVERT(VARCHAR,CumulateDate))
 		,InlineQty,Diff = t.QAQty-InlineQty
