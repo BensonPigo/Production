@@ -855,6 +855,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
 
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["Weight"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ActualWeight"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
         }
 

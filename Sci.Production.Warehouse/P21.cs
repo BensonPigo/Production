@@ -647,7 +647,7 @@ Insert into LocationTrans_Detail(   ID,
 
                 if (updateItem["ReceivingSource"].ToString() == "TransferIn")
                 {
-                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set Weight  = {updateItem["ActualWeight"]}
+                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set ActualWeight  = {updateItem["ActualWeight"]}
                                                     where   ID = '{updateItem["ID"]}' and
                                                             POID = '{updateItem["POID"]}' and
                                                             Seq1 = '{updateItem["Seq1"]}' and
