@@ -28,6 +28,7 @@ namespace Sci.Production.Sewing
         private DataGridViewGeneratorTextColumnSettings ToArticle = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings ToSizeCode = new DataGridViewGeneratorTextColumnSettings();
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -257,7 +258,6 @@ and sd.AutoCreate = 0 --排除G單
                     e.Cancel = true;
                     return;
                 }
-
             }
             catch (Exception ex)
             {
@@ -403,6 +403,5 @@ group by sdd.OrderID, sdd.ComboType, sdd.Article, sdd.SizeCode
         {
             this.Close();
         }
-
     }
 }

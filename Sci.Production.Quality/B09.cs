@@ -18,6 +18,7 @@ namespace Sci.Production.Quality
             this.pictureBoxSignature.SizeMode = PictureBoxSizeMode.Zoom;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -65,6 +66,7 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -97,6 +99,7 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             // 依照attach_flag判斷新增編輯資料時是否有上傳圖檔

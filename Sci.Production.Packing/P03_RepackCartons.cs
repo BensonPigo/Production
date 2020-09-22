@@ -450,7 +450,7 @@ where   oq.ID = '{0}'
             }
 
             string type = "B";
-            string M = Env.User.Keyword;
+            string m = Env.User.Keyword;
             string factoryID = Env.User.Factory;
             string status = "New";
             listSqlPar.Add(new SqlParameter("@EstCTNBooking", this.drMaster["EstCTNBooking"]));
@@ -461,7 +461,7 @@ where   oq.ID = '{0}'
 
             sqlUpdatePackingList = $@"
 insert into PackingList(ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,EstCTNBooking,EstCTNArrive,LocalPOID,Status,AddName,AddDate,TransFerToClogID,ClogReceiveID,QueryDate)
-        values('{newPackID}','{type}','{M}','{factoryID}','{this.txtshipmode.Text}','{this.displayBrand.Text}','{this.txtDest.TextBox1.Text}',
+        values('{newPackID}','{type}','{m}','{factoryID}','{this.txtshipmode.Text}','{this.displayBrand.Text}','{this.txtDest.TextBox1.Text}',
                 '{this.txtcustcd.Text}',{this.drNewMaster["CTNQty"]},{this.drNewMaster["ShipQty"]},{this.drNewMaster["NW"]},{this.drNewMaster["GW"]},{this.drNewMaster["NNW"]},
                 {this.drNewMaster["CBM"]},'{this.editRemark.Text}',@EstCTNBooking,@EstCTNArrive,'{localPOID}','{status}','{Env.User.UserID}',GETDATE(),'{this.drMaster["TransFerToClogID"]}','{this.drMaster["ClogReceiveID"]}',GETDATE())
 ";

@@ -186,7 +186,7 @@
             this.checkBoxNoClosed.TabIndex = 94;
             this.checkBoxNoClosed.Text = "Outstanding";
             this.checkBoxNoClosed.UseVisualStyleBackColor = true;
-            this.checkBoxNoClosed.CheckedChanged += new System.EventHandler(this.checkBoxNoClosed_CheckedChanged);
+            this.checkBoxNoClosed.CheckedChanged += new System.EventHandler(this.CheckBoxNoClosed_CheckedChanged);
             // 
             // comboFactory
             // 
@@ -271,7 +271,7 @@
             this.comboReportType.OldText = "";
             this.comboReportType.Size = new System.Drawing.Size(121, 24);
             this.comboReportType.TabIndex = 9;
-            this.comboReportType.SelectedIndexChanged += new System.EventHandler(this.comboReportType_SelectedIndexChanged);
+            this.comboReportType.SelectedIndexChanged += new System.EventHandler(this.ComboReportType_SelectedIndexChanged);
             // 
             // txtsubconSupplier
             // 
@@ -293,7 +293,7 @@
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
             this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(153, 23);
             this.txtartworktype_ftyCategory.TabIndex = 7;
-            this.txtartworktype_ftyCategory.TextChanged += new System.EventHandler(this.txtartworktype_ftyCategory_TextChanged);
+            this.txtartworktype_ftyCategory.TextChanged += new System.EventHandler(this.Txtartworktype_ftyCategory_TextChanged);
             // 
             // dateIssueDate
             // 
@@ -413,7 +413,7 @@
             this.checkShippingMark.TabIndex = 0;
             this.checkShippingMark.Text = "Shipping Mark";
             this.checkShippingMark.UseVisualStyleBackColor = true;
-            this.checkShippingMark.CheckedChanged += new System.EventHandler(this.checkShippingMark_CheckedChanged);
+            this.checkShippingMark.CheckedChanged += new System.EventHandler(this.CheckShippingMark_CheckedChanged);
             // 
             // R26
             // 

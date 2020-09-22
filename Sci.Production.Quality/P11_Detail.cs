@@ -34,18 +34,19 @@ namespace Sci.Production.Quality
             this.status = status;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery()
         {
             #region 表頭設定
             MyUtility.Check.Seek($"select * from MockupCrocking WITH (NOLOCK) where ID = '{this.id}'", out this.masterDr);
-            DataRow Detaildr;
-            MyUtility.Check.Seek($"select * from MockupCrocking_Detail WITH (NOLOCK) where ReportNo = '{this.reportNo}'", out Detaildr);
+            DataRow detaildr;
+            MyUtility.Check.Seek($"select * from MockupCrocking_Detail WITH (NOLOCK) where ReportNo = '{this.reportNo}'", out detaildr);
 
             this.displayStyleID.Text = this.masterDr["StyleID"].ToString();
             this.displaySeasonID.Text = this.masterDr["SeasonID"].ToString();
             this.displayBrandID.Text = this.masterDr["BrandID"].ToString();
             this.displayArticle.Text = this.masterDr["Article"].ToString();
-            if (MyUtility.Check.Empty(Detaildr))
+            if (MyUtility.Check.Empty(detaildr))
             {
                 this.txtCombineStyle.Text = string.Empty;
                 this.displayNo.Text = string.Empty;
@@ -59,15 +60,15 @@ namespace Sci.Production.Quality
             }
             else
             {
-                this.txtCombineStyle.Text = Detaildr["CombineStyle"].ToString();
-                this.displayNo.Text = Detaildr["NO"].ToString();
-                this.displayReportNo.Text = Detaildr["ReportNo"].ToString();
-                this.dateBoxSubmitDate.Value = MyUtility.Convert.GetDate(Detaildr["SubmitDate"]);
-                this.dateBoxReceivedDate.Value = MyUtility.Convert.GetDate(Detaildr["ReceivedDate"]);
-                this.dateBoxReleasedDate.Value = MyUtility.Convert.GetDate(Detaildr["ReleasedDate"]);
-                this.displayResult.Text = Detaildr["Result"].ToString();
-                this.txtTechnician.Textbox1_text = Detaildr["Technician"].ToString();
-                this.txtMR.Textbox1_text = Detaildr["MR"].ToString();
+                this.txtCombineStyle.Text = detaildr["CombineStyle"].ToString();
+                this.displayNo.Text = detaildr["NO"].ToString();
+                this.displayReportNo.Text = detaildr["ReportNo"].ToString();
+                this.dateBoxSubmitDate.Value = MyUtility.Convert.GetDate(detaildr["SubmitDate"]);
+                this.dateBoxReceivedDate.Value = MyUtility.Convert.GetDate(detaildr["ReceivedDate"]);
+                this.dateBoxReleasedDate.Value = MyUtility.Convert.GetDate(detaildr["ReleasedDate"]);
+                this.displayResult.Text = detaildr["Result"].ToString();
+                this.txtTechnician.Textbox1_text = detaildr["Technician"].ToString();
+                this.txtMR.Textbox1_text = detaildr["MR"].ToString();
             }
 
             #endregion
@@ -75,6 +76,7 @@ namespace Sci.Production.Quality
             return base.OnRequery();
         }
 
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -103,18 +105,19 @@ namespace Sci.Production.Quality
 
                 dr["ArtworkColorName"] = colorName.Substring(0, colorName.Length - 1);
 
-                string FabName = string.Empty;
+                string fabName = string.Empty;
                 string[] drFab = dr["FabricColor"].ToString().Split(';');
                 foreach (var item in drFab)
                 {
-                    FabName += MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{item}'  and BrandID =  '{this.masterDr["BrandID"]}'") + ",";
+                    fabName += MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{item}'  and BrandID =  '{this.masterDr["BrandID"]}'") + ",";
                 }
 
-                dr["FabricColorName"] = FabName.Substring(0, FabName.Length - 1);
+                dr["FabricColorName"] = fabName.Substring(0, fabName.Length - 1);
             }
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -122,6 +125,7 @@ namespace Sci.Production.Quality
             this.btnSendMR.Enabled = !this.EditMode;
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
@@ -132,11 +136,12 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_DryScale;
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_WetScale;
-            DataGridViewGeneratorTextColumnSettings ResulCell = Prgs.CellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings resulCell = Prgs.CellResult.GetGridCell();
             #region Artwork event
             DataGridViewGeneratorTextColumnSettings ts_artwork = new DataGridViewGeneratorTextColumnSettings();
             ts_artwork.EditingMouseDown += (s, e) =>
@@ -355,11 +360,11 @@ namespace Sci.Production.Quality
             .Text("FabricColorName", "Fabric Color", width: Widths.AnsiChars(18), settings: ts_fabricColor)
             .ComboBox("DryScale", "Dry Scale", width: Widths.AnsiChars(3)).Get(out cbb_DryScale)
             .ComboBox("WetScale", "Wet Scale", width: Widths.AnsiChars(3)).Get(out cbb_WetScale)
-            .Text("Result", "Result", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ResulCell)
+            .Text("Result", "Result", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: resulCell)
             .EditText("Remark", "Remark", width: Widths.AnsiChars(15))
             .Text("LastUpdate", "Last Update", width: Widths.AnsiChars(28), iseditingreadonly: true);
 
-            Dictionary<string, string> ScaleSource = new Dictionary<string, string>()
+            Dictionary<string, string> scaleSource = new Dictionary<string, string>()
             {
                 { "1", "1" },
                 { "1-2", "1-2" },
@@ -372,10 +377,10 @@ namespace Sci.Production.Quality
                 { "5", "5" },
             };
 
-            cbb_DryScale.DataSource = new BindingSource(ScaleSource, null);
+            cbb_DryScale.DataSource = new BindingSource(scaleSource, null);
             cbb_DryScale.ValueMember = "Key";
             cbb_DryScale.DisplayMember = "Value";
-            cbb_WetScale.DataSource = new BindingSource(ScaleSource, null);
+            cbb_WetScale.DataSource = new BindingSource(scaleSource, null);
             cbb_WetScale.ValueMember = "Key";
             cbb_WetScale.DisplayMember = "Value";
 
@@ -395,6 +400,7 @@ namespace Sci.Production.Quality
             this.txtCombineStyle.Text = item.GetSelectedString().Replace(",", "/");
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             if (this.status.Equals("New"))
@@ -408,6 +414,7 @@ namespace Sci.Production.Quality
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSavePost()
         {
             DualResult execute_result;
@@ -476,6 +483,7 @@ namespace Sci.Production.Quality
             e.Handled = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnInsertPrepare(DataRow data)
         {
             base.OnInsertPrepare(data);

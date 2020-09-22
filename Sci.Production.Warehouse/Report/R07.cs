@@ -24,6 +24,7 @@ namespace Sci.Production.Warehouse
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.strIssueDate1 = this.dateIssueDate.Value1;
@@ -40,6 +41,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DualResult result = Ict.Result.True;
@@ -119,6 +121,7 @@ order by s.IssueDate,s.Id,o.MDivisionID,o.FactoryID,sd.FromPOID,sd.FromSeq1,sd.F
             return result;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.SetCount(this.dt.Rows.Count);

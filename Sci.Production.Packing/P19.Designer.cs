@@ -231,7 +231,7 @@
             this.picUpdate.TabIndex = 18;
             this.picUpdate.TabStop = false;
             this.picUpdate.WaitOnLoad = true;
-            this.picUpdate.Click += new System.EventHandler(this.picUpdate_Click);
+            this.picUpdate.Click += new System.EventHandler(this.PicUpdate_Click);
             // 
             // labErrorType
             // 

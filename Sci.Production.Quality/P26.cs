@@ -20,6 +20,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

@@ -18,6 +18,7 @@ namespace Sci.Production.Subcon
             this.displayDescription.Text = this.motherData["description"].ToString();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -45,7 +46,7 @@ namespace Sci.Production.Subcon
                  .Text("abb", header: "Supplier Abb.", width: Widths.AnsiChars(15));
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

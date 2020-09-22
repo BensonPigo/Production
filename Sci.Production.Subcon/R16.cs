@@ -10,19 +10,19 @@ namespace Sci.Production.Subcon
 {
     public partial class R16 : Win.Tems.PrintForm
     {
-        string artworktype;
-        string factory;
-        string style;
-        string mdivision;
-        string spno1;
-        string spno2;
-        string ordertype;
-        string ratetype;
-        int ordertypeindex;
-        int statusindex;
-        DateTime? Issuedate1;
-        DateTime? Issuedate2; // , GLdate1, GLdate2;
-        DataTable printData;
+        private string artworktype;
+        private string factory;
+        private string style;
+        private string mdivision;
+        private string spno1;
+        private string spno2;
+        private string ordertype;
+        private string ratetype;
+        private int ordertypeindex;
+        private int statusindex;
+        private DateTime? Issuedate1;
+        private DateTime? Issuedate2; // , GLdate1, GLdate2;
+        private DataTable printData;
 
         public R16(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -42,6 +42,8 @@ namespace Sci.Production.Subcon
         }
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (this.comboStatus.SelectedIndex != 1 && MyUtility.Check.Empty(this.dateIssueDate.Value1) && MyUtility.Check.Empty(this.dateIssueDate.Value2))
@@ -90,6 +92,8 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sqlparameter delcare --
@@ -375,7 +379,8 @@ where po_qty > 0
             }
             #endregion
 
-            if (this.ordertypeindex >= 4) // include Forecast
+            // include Forecast
+            if (this.ordertypeindex >= 4)
             {
                 sqlCmd.Append(string.Format(@" and (aa.category in {0} OR aa.IsForecast =1)", this.ordertype));
             }
@@ -417,6 +422,8 @@ where po_qty > 0
         }
 
         // 產生Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -440,7 +447,7 @@ where po_qty > 0
             return true;
         }
 
-        private void comboStatus_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.dateIssueDate.Enabled = !(this.comboStatus.SelectedIndex == 1);
         }

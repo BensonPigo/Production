@@ -63,6 +63,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -73,6 +75,8 @@ namespace Sci.Production.Warehouse
         }
 
         // delete前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -85,6 +89,8 @@ namespace Sci.Production.Warehouse
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -102,6 +108,8 @@ namespace Sci.Production.Warehouse
         }
 
         // save前檢查 & 取id
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -176,12 +184,16 @@ namespace Sci.Production.Warehouse
         }
 
         // grid 加工填值
+
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -202,6 +214,8 @@ namespace Sci.Production.Warehouse
         }
 
         // detail 新增時設定預設值
+
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
@@ -209,6 +223,8 @@ namespace Sci.Production.Warehouse
         }
 
         // Detail Grid 設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
@@ -243,6 +259,8 @@ namespace Sci.Production.Warehouse
         }
 
         // Confirm
+
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -352,10 +370,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        select new
                        {
                            poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty")),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             var bs1I = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
                        group b by new
@@ -368,11 +386,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         into m
                         select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty")),
+                           Poid = m.First().Field<string>("poid"),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             if (bs1.Count > 0)
             {
@@ -448,7 +466,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                if (true) return;// 暫未開放
+                if (true)
+                {
+                    return; // 暫未開放
+                }
+
                 DataTable dtDetail = new DataTable();
                 string sqlGetData = string.Empty;
                 sqlGetData = $@"
@@ -481,13 +503,13 @@ and exists(
 	where id = td.Poid and seq1=td.seq1 and seq2=td.seq2 
 	and FabricType='F'
 )
-and t.id = '{CurrentMaintain["ID"]}'
+and t.id = '{this.CurrentMaintain["ID"]}'
 ";
 
                 DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
                 if (!drResult)
                 {
-                    ShowErr(drResult);
+                    this.ShowErr(drResult);
                 }
 
                 Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))
@@ -495,6 +517,7 @@ and t.id = '{CurrentMaintain["ID"]}'
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -602,10 +625,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                        select new
                        {
                            poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty")),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             var bs1I = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
                         group b by new
@@ -618,11 +641,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                         into m
                         select new Prgs_POSuppDetailData
                         {
-                            poid = m.First().Field<string>("poid"),
-                            seq1 = m.First().Field<string>("seq1"),
-                            seq2 = m.First().Field<string>("seq2"),
-                            stocktype = m.First().Field<string>("stocktype"),
-                            qty = m.Sum(w => w.Field<decimal>("qty")),
+                            Poid = m.First().Field<string>("poid"),
+                            Seq1 = m.First().Field<string>("seq1"),
+                            Seq2 = m.First().Field<string>("seq2"),
+                            Stocktype = m.First().Field<string>("stocktype"),
+                            Qty = m.Sum(w => w.Field<decimal>("qty")),
                         }).ToList();
 
             if (bs1.Count > 0)
@@ -709,6 +732,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         }
 
         // 寫明細撈出的sql command
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -779,6 +804,7 @@ Where a.id = '{0}'", masterID);
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             // DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());

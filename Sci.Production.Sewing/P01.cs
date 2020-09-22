@@ -1873,6 +1873,7 @@ where   OrderQty < (QAQty + OtherSewingOutputQty + TransOutQty)
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
             #region 檢查是否有SewingOutput_Detail_Detail沒存到
@@ -2868,6 +2869,7 @@ where ID = '{this.CurrentMaintain["ID"]}'
             callNextForm.ShowDialog(this);
         }
 
+        /// <inheritdoc/>
         protected override void ClickSend()
         {
             base.ClickSend();

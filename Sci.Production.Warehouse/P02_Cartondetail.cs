@@ -16,6 +16,7 @@ namespace Sci.Production.Warehouse
             this.Export_DetailUkey = export_DetailUkey;
         }
 
+        /// <inheritdoc/>
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);

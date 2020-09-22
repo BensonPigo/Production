@@ -25,13 +25,13 @@ namespace Sci.Production.Warehouse
             this.EditMode = true;
         }
 
-        public P11_IssueBreakDown(DataRow _master, DataTable _dtIssueBreakDown, DataTable _dtSizeCode)
+        public P11_IssueBreakDown(DataRow master, DataTable dtIssueBreakDown, DataTable dtSizeCode)
             : this()
         {
-            this.DtSizeCode = _dtSizeCode;
-            this.DtIssueBreakDown = _dtIssueBreakDown;
-            this.Master = _master;
-            this.DtModifyIssueBDown = _dtIssueBreakDown.Clone();
+            this.DtSizeCode = dtSizeCode;
+            this.DtIssueBreakDown = dtIssueBreakDown;
+            this.Master = master;
+            this.DtModifyIssueBDown = dtIssueBreakDown.Clone();
             foreach (DataRow dr in this.DtIssueBreakDown.Rows)
             {
                 this.DtModifyIssueBDown.ImportRow(dr);
@@ -42,6 +42,7 @@ namespace Sci.Production.Warehouse
             this.displayColor.BackColor = Color.LightGray;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

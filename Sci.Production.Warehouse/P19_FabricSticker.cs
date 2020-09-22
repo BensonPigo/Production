@@ -24,6 +24,7 @@ namespace Sci.Production.Warehouse
             this.remark = remark;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

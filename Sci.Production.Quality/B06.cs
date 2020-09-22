@@ -10,7 +10,8 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
         }
 
-       protected override void ClickNewAfter()
+        /// <inheritdoc/>
+        protected override void ClickNewAfter()
        {
            this.txtAreaCode.ReadOnly = false;
            this.editDescription.ReadOnly = false;
@@ -18,20 +19,23 @@ namespace Sci.Production.Quality
            base.ClickNewAfter();
        }
 
-       protected override bool ClickEditBefore()
+        /// <inheritdoc/>
+        protected override bool ClickEditBefore()
        {
            this.txtAreaCode.ReadOnly = true;
            this.editDescription.ReadOnly = false;
            return base.ClickEditBefore();
        }
 
-       protected override void ClickUndo()
+        /// <inheritdoc/>
+        protected override void ClickUndo()
        {
            this.txtAreaCode.ReadOnly = true;
            base.ClickUndo();
        }
 
-       protected override bool ClickSaveBefore()
+        /// <inheritdoc/>
+        protected override bool ClickSaveBefore()
        {
            if (MyUtility.Check.Empty(this.txtAreaCode.Text))
            {
@@ -42,7 +46,8 @@ namespace Sci.Production.Quality
            return base.ClickSaveBefore();
        }
 
-       protected override Ict.DualResult ClickSave()
+        /// <inheritdoc/>
+        protected override Ict.DualResult ClickSave()
        {
            this.txtAreaCode.ReadOnly = true;
 

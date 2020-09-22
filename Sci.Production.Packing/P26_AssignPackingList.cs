@@ -23,7 +23,8 @@ namespace Sci.Production.Packing
         private Dictionary<string, string> _File_Name_PDF;
         private List<string> _wattingForConvert_contentsOfZPL;
 
-        public P26_AssignPackingList(List<NewFormModel> newFormModels, DataTable p25Dt, string uploadType, List<string> wattingForConvert, Dictionary<string, string> File_Name_PDF, List<string> wattingForConvert_contentsOfZPL)
+        /// <inheritdoc/>
+        public P26_AssignPackingList(List<NewFormModel> newFormModels, DataTable p25Dt, string uploadType, List<string> wattingForConvert, Dictionary<string, string> file_Name_PDF, List<string> wattingForConvert_contentsOfZPL)
         {
             this.InitializeComponent();
             this._NewFormModels = newFormModels;
@@ -38,10 +39,11 @@ namespace Sci.Production.Packing
             this.GridDt.Columns.Add(new DataColumn() { ColumnName = "PackingListID", DataType = typeof(string) });
 
             this._wattingForConvert = wattingForConvert;
-            this._File_Name_PDF = File_Name_PDF;
+            this._File_Name_PDF = file_Name_PDF;
             this._wattingForConvert_contentsOfZPL = wattingForConvert_contentsOfZPL;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -300,6 +302,7 @@ namespace Sci.Production.Packing
             this.Close();
         }
 
+        /// <inheritdoc/>
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);

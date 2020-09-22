@@ -68,14 +68,14 @@ where styleUkey = '{0}'",
                  if (this.EditMode && e.Button == MouseButtons.Right)
                  {
                      Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select  Id,ArtworkTypeId  from  subprocess  where isselection=1 and Junk=0  order by Id", "10,20", null);
-                    DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel)
+                     DialogResult result = item.ShowDialog();
+                     if (result == DialogResult.Cancel)
                      {
                          return;
                      }
 
-                    var x = item.GetSelecteds();
-                    this.CurrentDetailData["Type"] = x[0]["ID"].ToString();
+                     var x = item.GetSelecteds();
+                     this.CurrentDetailData["Type"] = x[0]["ID"].ToString();
                  }
              };
 

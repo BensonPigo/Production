@@ -369,7 +369,7 @@ where id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
             }
         }
 
-        private void cmbDescription_SelectedIndexChanged(object sender, EventArgs e)
+        private void CmbDescription_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.Loadgrid();
         }

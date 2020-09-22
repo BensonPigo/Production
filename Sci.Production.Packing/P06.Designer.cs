@@ -569,7 +569,7 @@
             this.btnCartonSummary.TabIndex = 19;
             this.btnCartonSummary.Text = "Carton Summary";
             this.btnCartonSummary.UseVisualStyleBackColor = true;
-            this.btnCartonSummary.Click += new System.EventHandler(this.btnCartonSummary_Click);
+            this.btnCartonSummary.Click += new System.EventHandler(this.BtnCartonSummary_Click);
             // 
             // labelCartonEstArrived
             // 

@@ -11,11 +11,13 @@ namespace Sci.Production.Sewing
             this.DefaultFilter = string.Format("FactoryID = '{0}'", Env.User.Factory);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;

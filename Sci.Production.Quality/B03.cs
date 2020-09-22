@@ -10,11 +10,13 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 必輸檢查

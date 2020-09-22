@@ -116,6 +116,8 @@ where 1=1 and Linv.LobQty>0 ");
         }
 
         // Form Load
+
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

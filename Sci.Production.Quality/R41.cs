@@ -16,7 +16,7 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             this.InitializeComponent();
-            System.Data.DataTable Year = null;
+            System.Data.DataTable year = null;
             string cmd = @"
 declare @y Table (M int);
 
@@ -36,13 +36,13 @@ end
 select *
 from @y
 order by M desc";
-            DBProxy.Current.Select(string.Empty, cmd, out Year);
-            this.comboYear.DataSource = Year;
+            DBProxy.Current.Select(string.Empty, cmd, out year);
+            this.comboYear.DataSource = year;
             this.comboYear.ValueMember = "M";
             this.comboYear.DisplayMember = "M";
 
-            if (Year != null
-                && Year.Rows.Count > 0)
+            if (year != null
+                && year.Rows.Count > 0)
             {
                 this.comboYear.SelectedIndex = 0;
             }
@@ -51,39 +51,40 @@ order by M desc";
             this.print.Enabled = false;
         }
 
-        string Brand;
-        string Year;
-        DualResult result;
+        private string Brand;
+        private string Year;
+        private DualResult result;
 
-        System.Data.DataTable[] alldt;
-        System.Data.DataTable dym = null;
-        System.Data.DataTable dy = null;
-        string defect1 = string.Empty;
-        string defect2 = string.Empty;
-        System.Data.DataTable[] dt;
-        System.Data.DataTable[] dts;
+        private System.Data.DataTable[] alldt;
+        private System.Data.DataTable dym = null;
+        private System.Data.DataTable dy = null;
+        private string defect1 = string.Empty;
+        private string defect2 = string.Empty;
+        private System.Data.DataTable[] dt;
+        private System.Data.DataTable[] dts;
 
-        System.Data.DataTable[] allda;
-        System.Data.DataTable sym = null;
-        System.Data.DataTable sy = null;
-        string style1 = string.Empty;
-        string style2 = string.Empty;
-        System.Data.DataTable[] da;
-        System.Data.DataTable[] das;
+        private System.Data.DataTable[] allda;
+        private System.Data.DataTable sym = null;
+        private System.Data.DataTable sy = null;
+        private string style1 = string.Empty;
+        private string style2 = string.Empty;
+        private System.Data.DataTable[] da;
+        private System.Data.DataTable[] das;
 
-        System.Data.DataTable[] alldatb;
-        System.Data.DataTable cym = null;
-        System.Data.DataTable cy = null;
-        string country1 = string.Empty;
-        string country2 = string.Empty;
-        System.Data.DataTable[] datb;
-        System.Data.DataTable[] datbs;
+        private System.Data.DataTable[] alldatb;
+        private System.Data.DataTable cym = null;
+        private System.Data.DataTable cy = null;
+        private string country1 = string.Empty;
+        private string country2 = string.Empty;
+        private System.Data.DataTable[] datb;
+        private System.Data.DataTable[] datbs;
 
-        System.Data.DataTable[] alldatatable;
-        System.Data.DataTable fm = null;
-        System.Data.DataTable datatab;
-        System.Data.DataTable dt_All;
+        private System.Data.DataTable[] alldatatable;
+        private System.Data.DataTable fm = null;
+        private System.Data.DataTable datatab;
+        private System.Data.DataTable dt_All;
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.Brand = this.comboBrand.Text.ToString();
@@ -91,6 +92,7 @@ order by M desc";
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> lis = new List<SqlParameter>();
@@ -111,8 +113,8 @@ order by M desc";
 
             if (this.Year != string.Empty)
             {
-                string Year2 = (Convert.ToInt32(this.Year) - 2).ToString();
-                sqlWheres.Add("year(a.StartDate)" + "between" + "'" + Year2 + "' " + "and" + "'" + this.Year + "'");
+                string year2 = (Convert.ToInt32(this.Year) - 2).ToString();
+                sqlWheres.Add("year(a.StartDate)" + "between" + "'" + year2 + "' " + "and" + "'" + this.Year + "'");
             }
 
             List<string> sqlWh = new List<string>();
@@ -712,8 +714,9 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             return this.result;
         }
 
-        readonly Dictionary<string, System.Data.DataTable> dicFTY = new Dictionary<string, System.Data.DataTable>();
+        private readonly Dictionary<string, System.Data.DataTable> dicFTY = new Dictionary<string, System.Data.DataTable>();
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             var saveDialog = MyExcelPrg.GetSaveFileDialog(MyExcelPrg.Filter_Excel);
@@ -983,7 +986,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             this.dt_All = null;
         }
 
-        void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
+        private void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
         {
             _Application myExcel = null;
             _Workbook myBook = null;
@@ -1067,7 +1070,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             // mySheet.Delete();
         }
 
-        void Addrow(Worksheet mySheet, int rowNo, int columnNo)
+        private void Addrow(Worksheet mySheet, int rowNo, int columnNo)
         {
             Range fRow1 = (Range)mySheet.Rows[5];
             Range fRow2 = (Range)mySheet.Rows[6];
@@ -1126,7 +1129,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             fRow27.Insert(XlInsertShiftDirection.xlShiftDown, Type.Missing);
         }
 
-        void Addfilter(Worksheet mySheet, int rowNo, int columnNo)
+        private void Addfilter(Worksheet mySheet, int rowNo, int columnNo)
         {
             Range firstRow = (Range)mySheet.Rows[2];
             firstRow.Interior.Color = Color.SkyBlue;

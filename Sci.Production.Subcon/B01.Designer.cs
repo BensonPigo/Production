@@ -169,8 +169,8 @@
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
             this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(209, 23);
             this.txtartworktype_ftyCategory.TabIndex = 2;
-            this.txtartworktype_ftyCategory.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyCategory_Validating);
-            this.txtartworktype_ftyCategory.Validated += new System.EventHandler(this.txtartworktype_ftyCategory_Validated);
+            this.txtartworktype_ftyCategory.Validating += new System.ComponentModel.CancelEventHandler(this.Txtartworktype_ftyCategory_Validating);
+            this.txtartworktype_ftyCategory.Validated += new System.EventHandler(this.Txtartworktype_ftyCategory_Validated);
             // 
             // labelCategory
             // 
@@ -397,7 +397,7 @@
             this.comboCartonDimension.OldText = "";
             this.comboCartonDimension.Size = new System.Drawing.Size(121, 24);
             this.comboCartonDimension.TabIndex = 10;
-            this.comboCartonDimension.SelectedIndexChanged += new System.EventHandler(this.comboCartonDimension_SelectedIndexChanged);
+            this.comboCartonDimension.SelectedIndexChanged += new System.EventHandler(this.ComboCartonDimension_SelectedIndexChanged);
             // 
             // txtThreadType
             // 
@@ -408,8 +408,8 @@
             this.txtThreadType.Name = "txtThreadType";
             this.txtThreadType.Size = new System.Drawing.Size(100, 23);
             this.txtThreadType.TabIndex = 16;
-            this.txtThreadType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtThreadType_PopUp);
-            this.txtThreadType.Validating += new System.ComponentModel.CancelEventHandler(this.txtThreadType_Validating);
+            this.txtThreadType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtThreadType_PopUp);
+            this.txtThreadType.Validating += new System.ComponentModel.CancelEventHandler(this.TxtThreadType_Validating);
             // 
             // label25
             // 
@@ -487,7 +487,7 @@
             this.btnSetCardboardPads.TabIndex = 11;
             this.btnSetCardboardPads.Text = "Set Cardboard Pads";
             this.btnSetCardboardPads.UseVisualStyleBackColor = true;
-            this.btnSetCardboardPads.Click += new System.EventHandler(this.btnSetCardboardPads_Click);
+            this.btnSetCardboardPads.Click += new System.EventHandler(this.BtnSetCardboardPads_Click);
             // 
             // numCTNWeight
             // 
@@ -703,7 +703,7 @@
             this.btnThread.TabIndex = 21;
             this.btnThread.Text = "Set Buyer/Color Price";
             this.btnThread.UseVisualStyleBackColor = true;
-            this.btnThread.Click += new System.EventHandler(this.btnThread_Click);
+            this.btnThread.Click += new System.EventHandler(this.BtnThread_Click);
             // 
             // label1
             // 
@@ -872,7 +872,7 @@
             this.btnQuotationRecord.TabIndex = 23;
             this.btnQuotationRecord.Text = "Quotation Record";
             this.btnQuotationRecord.UseVisualStyleBackColor = true;
-            this.btnQuotationRecord.Click += new System.EventHandler(this.btnQuotationRecord_Click);
+            this.btnQuotationRecord.Click += new System.EventHandler(this.BtnQuotationRecord_Click);
             // 
             // btnPaymentHistory
             // 
@@ -884,7 +884,7 @@
             this.btnPaymentHistory.TabIndex = 24;
             this.btnPaymentHistory.Text = "Payment History";
             this.btnPaymentHistory.UseVisualStyleBackColor = true;
-            this.btnPaymentHistory.Click += new System.EventHandler(this.btnPaymentHistory_Click);
+            this.btnPaymentHistory.Click += new System.EventHandler(this.BtnPaymentHistory_Click);
             // 
             // txtSubconSupplier
             // 
@@ -940,7 +940,7 @@
             this.btnBatchApprove.TabIndex = 25;
             this.btnBatchApprove.Text = "Quotation Batch Approve";
             this.btnBatchApprove.UseVisualStyleBackColor = true;
-            this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
+            this.btnBatchApprove.Click += new System.EventHandler(this.BtnBatchApprove_Click);
             // 
             // txtAccountNo
             // 

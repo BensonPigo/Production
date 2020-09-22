@@ -83,11 +83,14 @@ namespace Sci.Production.Warehouse
         }
 
         #region Form事件
+
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -151,6 +154,7 @@ WHERE o.id = '{orderID}' AND o.sewline != '') t FOR xml path('')
             this.poid = this.displayPOID.Text;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -336,6 +340,7 @@ OUTER APPLY(
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
         {
             Sum_subDetail(e.Detail, e.SubDetails);
@@ -352,6 +357,7 @@ OUTER APPLY(
             return base.ConvertSubDetailDatasFromDoSubForm(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region Refno事件
@@ -1796,6 +1802,7 @@ GROUP BY Article
             #endregion 可編輯欄位變色
         }
 
+        /// <inheritdoc/>
         protected override void OpenSubDetailPage()
         {
             base.OpenSubDetailPage();
@@ -1806,6 +1813,8 @@ GROUP BY Article
         #region ToolBar事件
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -1833,6 +1842,7 @@ GROUP BY Article
             // txtRequest.ReadOnly = false;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             string status = this.CurrentMaintain["Status"].ToString();
@@ -1845,6 +1855,7 @@ GROUP BY Article
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             DataTable result = null;
@@ -1990,11 +2001,13 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickDeleteAfter()
         {
             base.ClickDeleteAfter();
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -2139,11 +2152,11 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty")),
+                           Poid = m.First().Field<string>("poid"),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
@@ -2194,6 +2207,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             transactionscope = null;
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -2257,11 +2271,11 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty")),
+                           Poid = m.First().Field<string>("poid"),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
@@ -2311,6 +2325,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             transactionscope = null;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             this.labelConfirmed.Text = this.CurrentMaintain["status"].ToString();

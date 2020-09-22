@@ -21,7 +21,7 @@ namespace Sci.Production.Subcon
 
         public string StyleID { get; set; }
 
-        public string poQTY { get; set; }
+        public string PoQTY { get; set; }
 
         public string ArtworkID { get; set; }
 

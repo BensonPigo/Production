@@ -11,7 +11,7 @@ namespace Sci.Production.Quality
         private readonly DataTable defRecord;
         private readonly string def_num;
         private readonly DataRow def_dr;
-        readonly Ict.Win.UI.DataGridViewNumericBoxColumn col_Points;
+        private readonly Ict.Win.UI.DataGridViewNumericBoxColumn col_Points;
 
         public P01_PhysicalInspection_PointRecord(DataRow data_dr, string n_column, bool edit)
         {
@@ -36,10 +36,10 @@ namespace Sci.Production.Quality
                     // 第一碼為ID,第二碼為Points
                     defid = dr.Substring(0, 1);
                     point = MyUtility.Convert.GetInt(dr.Substring(1));
-                    DataRow[] Ary = this.defRecord.Select(string.Format("ID = '{0}'", defid));
-                    if (Ary.Length > 0)
+                    DataRow[] ary = this.defRecord.Select(string.Format("ID = '{0}'", defid));
+                    if (ary.Length > 0)
                     {
-                        Ary[0]["Points"] = point;
+                        ary[0]["Points"] = point;
                     }
                 }
             }
@@ -70,8 +70,8 @@ namespace Sci.Production.Quality
             }
 
             string def = string.Empty;
-            DataRow[] Ary = this.defRecord.Select("Points<>0");
-            foreach (DataRow dr in Ary)
+            DataRow[] ary = this.defRecord.Select("Points<>0");
+            foreach (DataRow dr in ary)
             {
                 if (def == string.Empty)
                 {

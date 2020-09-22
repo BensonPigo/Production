@@ -28,6 +28,7 @@ namespace Sci.Production.Warehouse
             comboBox1_RowSource.Add("A", "Accessory");
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -483,7 +484,8 @@ DROP TABLE #tmpStockType
             DataRow[] drArryActualWeight = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
                                                                              && x.Field<decimal>("ActualWeight") != x.Field<decimal>("OldActualWeight")).ToArray();
             DataRow[] drArryCutShadebandTime = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
-                                                                             //&& !MyUtility.Check.Empty(x["CutShadebandTime"])
+
+                                                                             // && !MyUtility.Check.Empty(x["CutShadebandTime"])
                                                                              && !MyUtility.Convert.GetDate(x["CutShadebandTime"]).EqualString(MyUtility.Convert.GetDate(x["OldCutShadebandTime"]))).ToArray();
 
             // Remark沒資料則統一合併後寫入P26 同ID，排除Location沒有修改的資料

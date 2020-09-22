@@ -19,6 +19,7 @@ namespace Sci.Production.Subcon
             this.dr = data;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -88,7 +89,7 @@ and ad.PatternCode = '{this.dr["PatternCode"]}'";
                  ;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

@@ -171,6 +171,7 @@ AND Orders.Category <> 'A' ");
             this.displayTotalQty.Value = localPrice.ToString();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

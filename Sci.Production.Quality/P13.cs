@@ -10,13 +10,13 @@ namespace Sci.Production.Quality
     public partial class P13 : Win.Tems.Input6
     {
         // 宣告Context Menu Item
-        ToolStripMenuItem add;
+        private ToolStripMenuItem add;
 
         // 宣告Context Menu Item
-        ToolStripMenuItem edit;
+        private ToolStripMenuItem edit;
 
         // 宣告Context Menu Item
-        ToolStripMenuItem delete;
+        private ToolStripMenuItem delete;
 
         public P13(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -27,6 +27,7 @@ namespace Sci.Production.Quality
             this.DefaultFilter = "Type = 'S'";
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
@@ -53,6 +54,7 @@ masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -105,6 +107,7 @@ masterID);
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             this.detailgrid.IsEditingReadOnly = false;
@@ -136,6 +139,7 @@ masterID);
             return base.OnGridSetup();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -173,6 +177,7 @@ masterID);
             this.txtArticle.Text = item.GetSelectedString();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -196,12 +201,14 @@ masterID);
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Type"] = "S";
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             // 檢查表頭Style#, Season, Brand, Article / Colorway, T1/SubconName必須輸入
@@ -272,6 +279,7 @@ masterID);
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             DualResult result;

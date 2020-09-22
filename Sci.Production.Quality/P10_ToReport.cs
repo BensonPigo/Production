@@ -1909,7 +1909,6 @@ namespace Sci.Production.Quality
                 {
                     technicianName = drTechnicianInfo["name"].ToString();
                     picSource = drTechnicianInfo["SignaturePic"].ToString();
-
                 }
 
                 // Name
@@ -1926,7 +1925,6 @@ namespace Sci.Production.Quality
                         worksheet.Shapes.AddPicture(picSource, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellPic.Left, cellPic.Top, 100, 24);
                     }
                 }
-
             }
 
             if (to == "ToExcel")
@@ -2175,6 +2173,5 @@ namespace Sci.Production.Quality
         public decimal? NumTopL { get; set; }
 
         public string TxtLotoFactory { get; set; }
-
     }
 }

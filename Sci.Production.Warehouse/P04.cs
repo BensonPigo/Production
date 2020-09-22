@@ -81,6 +81,7 @@ namespace Sci.Production.Warehouse
             this.Event_Query();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -132,6 +133,7 @@ namespace Sci.Production.Warehouse
             this.Event_Query();
         }
 
+        /// <inheritdoc/>
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (this.txtSPNo.Focused)

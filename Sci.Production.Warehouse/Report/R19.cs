@@ -22,12 +22,14 @@ namespace Sci.Production.Warehouse
             this.txtfactory.Text = Env.User.Factory;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.selectindex = this.comboCategoryAlreadyReturn.SelectedIndex;
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.SetCount(this.dt.Rows.Count);
@@ -42,6 +44,7 @@ namespace Sci.Production.Warehouse
             return false;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             // return base.OnAsyncDataLoad(e);

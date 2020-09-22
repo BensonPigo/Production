@@ -27,6 +27,7 @@ namespace Sci.Production.Warehouse
             this.InsertDetailGridOnDoubleClick = false;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string iD = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -52,6 +53,7 @@ where   LI.ID = '{0}'
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region RefNo Setting
@@ -286,6 +288,7 @@ where   orderID = '{0}'
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -295,6 +298,7 @@ where   orderID = '{0}'
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("confirmed"))
@@ -306,6 +310,7 @@ where   orderID = '{0}'
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             this.detailgrid.EndEdit();
@@ -343,6 +348,7 @@ where   orderID = '{0}'
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -442,6 +448,7 @@ where LID.ID = @ID";
 
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -570,6 +577,7 @@ where LID.ID = @ID";
             this.RenewData();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             #region Check Status
@@ -582,6 +590,7 @@ where LID.ID = @ID";
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             #region Check Status

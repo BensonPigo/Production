@@ -19,11 +19,13 @@ namespace Sci.Production.Quality
             this.comboMaterialType.DisplayMember = "Value";
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 必輸檢查

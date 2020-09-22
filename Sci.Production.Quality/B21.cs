@@ -10,7 +10,7 @@ namespace Sci.Production.Quality
 {
     public partial class B21 : Win.Tems.Input1
     {
-        DualResult result;
+        private DualResult result;
 
         public B21(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -19,18 +19,21 @@ namespace Sci.Production.Quality
             this.DefaultOrder = "DefectTypeID,id";
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
          {
              this.txtDefectcode.ReadOnly = true;
              base.ClickEditAfter();
          }
 
+        /// <inheritdoc/>
         protected override bool ClickNewBefore()
          {
              this.txtDefectcode.ReadOnly = false;
              return base.ClickNewBefore();
          }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
          {
              #region 必輸檢查
@@ -79,8 +82,8 @@ namespace Sci.Production.Quality
             }
 
             DataTable dtCode;
-            string SQLCmd = string.Format(@"select ID,junk from GarmentDefectType where ID='{0}' ", firstword);
-            if (!(this.result = DBProxy.Current.Select(null, SQLCmd, out dtCode)))
+            string sQLCmd = string.Format(@"select ID,junk from GarmentDefectType where ID='{0}' ", firstword);
+            if (!(this.result = DBProxy.Current.Select(null, sQLCmd, out dtCode)))
              {
                  MyUtility.Msg.ErrorBox(this.result.ToString());
                  return;

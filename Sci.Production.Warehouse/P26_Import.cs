@@ -408,6 +408,7 @@ outer apply(SELECT top 1 [val] = lt.EditDate
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

@@ -14,16 +14,17 @@ namespace Sci.Production.Warehouse
         private string orderid;
 
        // Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        public P11_BOA(string _issueid, string _poid, string _cutplanid, string _orderid)
+        public P11_BOA(string issueid, string poid, string cutplanid, string orderid)
         {
             this.InitializeComponent();
-            this.poid = _poid;
-            this.issueid = _issueid;
-            this.cutplanid = _cutplanid;
-            this.orderid = _orderid;
+            this.poid = poid;
+            this.issueid = issueid;
+            this.cutplanid = cutplanid;
+            this.orderid = orderid;
             this.Text += string.Format(" ({0} - {1})", this.poid, this.cutplanid);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

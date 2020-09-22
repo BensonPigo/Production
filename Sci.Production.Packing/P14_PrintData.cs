@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Packing
 {
-    class P14_PrintData
+    internal class P14_PrintData
     {
         public string TransferDate { get; set; }
 

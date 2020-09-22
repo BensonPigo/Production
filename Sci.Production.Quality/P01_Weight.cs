@@ -20,7 +20,7 @@ namespace Sci.Production.Quality
         private readonly DataRow maindr;
         private readonly string loginID = Env.User.UserID;
         private readonly string keyWord = Env.User.Keyword;
-        string excelFile;
+        private string excelFile;
 
         public P01_Weight(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
@@ -30,12 +30,14 @@ namespace Sci.Production.Quality
             this.textID.Text = keyvalue1;
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
             this.Button_enable();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery()
         {
             #region Encode/Approve Enable
@@ -75,9 +77,9 @@ namespace Sci.Production.Quality
                 this.txtsupplier.TextBox1.Text = string.Empty;
             }
 
-            string Receiving_cmd = string.Format("select b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", this.maindr["id"]);
+            string receiving_cmd = string.Format("select b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", this.maindr["id"]);
             DataRow rec_dr;
-            if (MyUtility.Check.Seek(Receiving_cmd, out rec_dr))
+            if (MyUtility.Check.Seek(receiving_cmd, out rec_dr))
             {
                 this.displayRefno.Text = rec_dr["Refno"].ToString();
             }
@@ -113,6 +115,7 @@ namespace Sci.Production.Quality
             return base.OnRequery();
         }
 
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -130,13 +133,14 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings averageWeightM2cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResulCell = Prgs.CellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings resulCell = Prgs.CellResult.GetGridCell();
             #region Roll
-            Rollcell.EditingMouseDown += (s, e) =>
+            rollcell.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode == false)
                 {
@@ -171,7 +175,7 @@ namespace Sci.Production.Quality
                     dr["Dyelot"] = sele.GetSelecteds()[0]["Dyelot"].ToString().Trim();
                 }
             };
-            Rollcell.CellValidating += (s, e) =>
+            rollcell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Roll"].ToString();
@@ -239,10 +243,10 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                decimal M2 = MyUtility.Convert.GetDecimal(dr["WeightM2"]);
-                decimal AvgM2 = MyUtility.Convert.GetDecimal(e.FormattedValue);
-                decimal diff = M2 == 0 ? 0 : Math.Round(((AvgM2 - M2) / M2) * 100, 2);
-                dr["averageWeightM2"] = AvgM2;
+                decimal m2 = MyUtility.Convert.GetDecimal(dr["WeightM2"]);
+                decimal avgM2 = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                decimal diff = m2 == 0 ? 0 : Math.Round(((avgM2 - m2) / m2) * 100, 2);
+                dr["averageWeightM2"] = avgM2;
                 dr["Difference"] = diff;
                 dr.EndEdit();
             };
@@ -250,12 +254,12 @@ namespace Sci.Production.Quality
 
             this.Helper.Controls.Grid.Generator(this.grid)
             .Date("SubmitDate", header: "Submit Date", width: Widths.AnsiChars(10))
-            .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
+            .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("WeightM2", header: "DeclaredMass", width: Widths.AnsiChars(7), integer_places: 4, decimal_places: 1, iseditingreadonly: true)
             .Numeric("averageWeightM2", header: "Average Mass", width: Widths.AnsiChars(7), integer_places: 4, decimal_places: 1, settings: averageWeightM2cell)
             .Numeric("Difference", header: "Diff%", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2, iseditingreadonly: true)
-            .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: ResulCell)
+            .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: resulCell)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
             .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name")
             .Text("Name", header: "Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -272,9 +276,10 @@ namespace Sci.Production.Quality
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnInsert()
         {
-            DataTable Dt = (DataTable)this.gridbs.DataSource;
+            DataTable dt = (DataTable)this.gridbs.DataSource;
             base.OnInsert();
 
             DataRow selectDr = ((DataRowView)this.grid.GetSelecteds(SelectedSort.Index)[0]).Row;
@@ -290,6 +295,7 @@ namespace Sci.Production.Quality
             selectDr["difference"] = 0;
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             DataTable gridTb = (DataTable)this.gridbs.DataSource;
@@ -383,9 +389,9 @@ and not exists
                 }
 
                 DataTable gridTb = (DataTable)this.gridbs.DataSource;
-                DataRow[] ResultAry = gridTb.Select("Result = 'Fail'");
+                DataRow[] resultAry = gridTb.Select("Result = 'Fail'");
                 string result = "Pass";
-                if (ResultAry.Length > 0)
+                if (resultAry.Length > 0)
                 {
                     result = "Fail";
                 }
@@ -457,30 +463,30 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
                     if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{this.maindr["POID"].ToString()}'; ")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -519,24 +525,24 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -610,8 +616,8 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             #endregion
             #region Excel 表頭值
             DataTable dt1;
-            string SeasonID = string.Empty;
-            string ContinuityEncode = string.Empty;
+            string seasonID = string.Empty;
+            string continuityEncode = string.Empty;
             DualResult xresult1;
 
             if (xresult1 = DBProxy.Current.Select("Production", string.Format(
@@ -619,8 +625,8 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             {
                 if (dt1.Rows.Count > 0)
                 {
-                    SeasonID = dt1.Rows[0]["SeasonID"].ToString();
-                    ContinuityEncode = dt1.Rows[0]["ContinuityEncode"].ToString();
+                    seasonID = dt1.Rows[0]["SeasonID"].ToString();
+                    continuityEncode = dt1.Rows[0]["ContinuityEncode"].ToString();
                 }
             }
             #endregion
@@ -632,9 +638,9 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             objSheets.Cells[2, 4] = this.displaySEQ.Text.ToString();
             objSheets.Cells[2, 6] = this.displayColor.Text.ToString();
             objSheets.Cells[2, 8] = this.displayStyle.Text.ToString();
-            objSheets.Cells[2, 10] = SeasonID;
+            objSheets.Cells[2, 10] = seasonID;
             objSheets.Cells[3, 2] = this.displaySCIRefno.Text.ToString();
-            objSheets.Cells[3, 4] = ContinuityEncode;
+            objSheets.Cells[3, 4] = continuityEncode;
             objSheets.Cells[3, 6] = this.displayResult.Text.ToString();
             objSheets.Cells[3, 8] = this.dateLastInspectionDate.Value;
             objSheets.Cells[3, 10] = this.displayBrand.Text.ToString();

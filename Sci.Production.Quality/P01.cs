@@ -15,9 +15,9 @@ namespace Sci.Production.Quality
         private readonly string keyWord = Env.User.Keyword;
         private readonly bool boolFromP01;
 
-        int index;
-        string find = string.Empty;
-        DataRow[] find_dr;
+        private int index;
+        private string find = string.Empty;
+        private DataRow[] find_dr;
 
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -40,15 +40,16 @@ namespace Sci.Production.Quality
             this.boolFromP01 = false;
         }
 
-        public P01(string Poid) // for Form直接call form
+        public P01(string poid) // for Form直接call form
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("ID = '{0}'", Poid);
+            this.DefaultFilter = string.Format("ID = '{0}'", poid);
             this.InsertDetailGridOnDoubleClick = false;
             this.IsSupportEdit = false;
             this.boolFromP01 = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, ",last two years data");
@@ -81,6 +82,7 @@ namespace Sci.Production.Quality
             };
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
@@ -116,6 +118,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup() // Grid 設定
         {
             base.OnDetailGridSetup();
@@ -128,14 +131,14 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             DataGridViewGeneratorTextColumnSettings phy = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorDateColumnSettings phyD = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorNumericColumnSettings phyYds = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings Wei = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorDateColumnSettings WeiD = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings wei = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings weiD = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings sha = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorDateColumnSettings shaD = new DataGridViewGeneratorDateColumnSettings();
-            DataGridViewGeneratorTextColumnSettings Con = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorDateColumnSettings ConD = new DataGridViewGeneratorDateColumnSettings();
-            DataGridViewGeneratorTextColumnSettings Odor = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorDateColumnSettings OdorD = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings con = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings conD = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings odor = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings odorD = new DataGridViewGeneratorDateColumnSettings();
             #region ClickEvent
             phy.CellMouseDoubleClick += (s, e) =>
             {
@@ -195,7 +198,7 @@ and ActualYds > 0
                 frm.Dispose();
                 this.RenewData();
             };
-            Wei.CellMouseDoubleClick += (s, e) =>
+            wei.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -208,7 +211,7 @@ and ActualYds > 0
                 frm.Dispose();
                 this.RenewData();
             };
-            WeiD.CellMouseDoubleClick += (s, e) =>
+            weiD.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -247,7 +250,7 @@ and ActualYds > 0
                 frm.Dispose();
                 this.RenewData();
             };
-            Con.CellMouseDoubleClick += (s, e) =>
+            con.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -260,7 +263,7 @@ and ActualYds > 0
                 frm.Dispose();
                 this.RenewData();
             };
-            ConD.CellMouseDoubleClick += (s, e) =>
+            conD.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -273,7 +276,7 @@ and ActualYds > 0
                 frm.Dispose();
                 this.RenewData();
             };
-            Odor.CellMouseDoubleClick += (s, e) =>
+            odor.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -286,7 +289,7 @@ and ActualYds > 0
                 frm.Dispose();
                 this.RenewData();
             };
-            OdorD.CellMouseDoubleClick += (s, e) =>
+            odorD.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -399,18 +402,18 @@ and ActualYds > 0
                 .Numeric("TotalInspYds", header: "Act. Ttl Ysd\nInspection", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true, settings: phyYds)
                 .Date("PhysicalDate", header: "Last Phy.\nInsp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: phyD)
                 .CheckBox("NonWeight", header: "Weight N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonWei)
-                .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: Wei)
-                .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WeiD)
+                .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: wei)
+                .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: weiD)
                 .CheckBox("NonShadeBond", header: "Shade\nBandN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonSha)
                 .Text("Shadebond", header: "Shade\nBand", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: sha)
                 .Date("ShadeBondDate", header: "Last Shade.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: shaD)
                 .CheckBox("NonContinuity", header: "Continuity \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonCon)
-                .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: Con)
-                .Date("ContinuityDate", header: "Last Cont.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: ConD)
+                .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: con)
+                .Date("ContinuityDate", header: "Last Cont.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: conD)
 
                 .CheckBox("nonOdor", header: "Odor \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonOdor)
-                .Text("Odor", header: "Odor", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: Odor)
-                .Date("OdorDate", header: "Last Odor\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: OdorD)
+                .Text("Odor", header: "Odor", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: odor)
+                .Date("OdorDate", header: "Last Odor\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: odorD)
 
                 .Text("Approve1", header: "Approve", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ReplacementReportID", header: "1st Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -449,6 +452,7 @@ and ActualYds > 0
 
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -530,30 +534,30 @@ and ActualYds > 0
             }
 
             // displayofInspection.Text = inspnum;
-            DateTime? completedate, Physicalcompletedate, Weightcompletedate, ShadeBondcompletedate, Continuitycompletedate;
+            DateTime? completedate, physicalcompletedate, weightcompletedate, shadeBondcompletedate, continuitycompletedate;
             if (inspnum == "100")
             {
-                Physicalcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(PhysicalDate)", string.Empty));
-                Weightcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(WeightDate)", string.Empty));
-                ShadeBondcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(ShadeBondDate)", string.Empty));
-                Continuitycompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(ContinuityDate)", string.Empty));
-                if (MyUtility.Math.DateMinus(Physicalcompletedate, Weightcompletedate).TotalSeconds < 0)
+                physicalcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(PhysicalDate)", string.Empty));
+                weightcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(WeightDate)", string.Empty));
+                shadeBondcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(ShadeBondDate)", string.Empty));
+                continuitycompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(ContinuityDate)", string.Empty));
+                if (MyUtility.Math.DateMinus(physicalcompletedate, weightcompletedate).TotalSeconds < 0)
                 {
-                    completedate = Weightcompletedate;
+                    completedate = weightcompletedate;
                 }
                 else
                 {
-                    completedate = Physicalcompletedate;
+                    completedate = physicalcompletedate;
                 }
 
-                if (MyUtility.Math.DateMinus(completedate, ShadeBondcompletedate).TotalSeconds < 0)
+                if (MyUtility.Math.DateMinus(completedate, shadeBondcompletedate).TotalSeconds < 0)
                 {
-                    completedate = ShadeBondcompletedate;
+                    completedate = shadeBondcompletedate;
                 }
 
-                if (MyUtility.Math.DateMinus(completedate, Continuitycompletedate).TotalSeconds < 0)
+                if (MyUtility.Math.DateMinus(completedate, continuitycompletedate).TotalSeconds < 0)
                 {
-                    completedate = Continuitycompletedate;
+                    completedate = continuitycompletedate;
                 }
 
                 this.dateCompletionDate.Text = completedate == null ? string.Empty : ((DateTime)completedate).ToShortDateString();
@@ -575,6 +579,7 @@ and ActualYds > 0
             this.detailgrid.AutoResizeColumns();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             // 因為表頭是PO不能覆蓋其他資料，必需自行存檔
@@ -589,11 +594,9 @@ and ActualYds > 0
                     int nonsha = dr["NonShadeBond"].ToString() == "True" ? 1 : 0;
                     int noncon = dr["NonContinuity"].ToString() == "True" ? 1 : 0;
                     int nonOdor = dr["NonOdor"].ToString() == "True" ? 1 : 0;
-                    save_po_cmd = save_po_cmd + string.Format(
-                    @"Update FIR Set Result = '{0}',NonPhysical = {1},NonWeight = {2},
-                    NonShadeBond = {3},NonContinuity = {4},Status = '{6}',NonOdor={7}
-                    Where ID = '{5}';",
-                    dr["Result"], nonph, nonwei, nonsha, noncon, dr["ID"], dr["Status"], nonOdor);
+                    save_po_cmd = save_po_cmd + $@"Update FIR Set Result = '{dr["Result"]}',NonPhysical = {nonph},NonWeight = {nonwei},
+                    NonShadeBond = {nonsha},NonContinuity = {noncon},Status = '{dr["Status"]}',NonOdor={nonOdor}
+                    Where ID = '{dr["ID"]}';";
                 }
                 #region 重新判斷AllResult
 
@@ -605,38 +608,38 @@ and ActualYds > 0
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, save_po_cmd)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return upResult;
                     }
 
                     // 更新PO.FIRInspPercent
                     if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{this.CurrentMaintain["ID"]}'")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return upResult;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return Ict.Result.True;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             return Ict.Result.True;
         }
@@ -723,6 +726,7 @@ and ActualYds > 0
             this.detailgridbs.Position = this.DetailDatas.IndexOf(this.find_dr[this.index]);
         }
 
+        /// <inheritdoc/>
         protected override DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
         {
             // 非編輯狀態不顯示

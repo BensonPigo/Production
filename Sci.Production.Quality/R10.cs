@@ -76,6 +76,7 @@ namespace Sci.Production.Quality
             this.comboBoxTypeofPrint.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.Type = this.comboBoxTypeofPrint.SelectedValue.ToString();
@@ -95,48 +96,49 @@ namespace Sci.Production.Quality
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             #region Filter
-            List<string> Filter = new List<string>();
+            List<string> filter = new List<string>();
             if (!MyUtility.Check.Empty(this.Type) && this.Type != "All")
             {
-                Filter.Add($"and TypeOfPrint='{this.Type}'");
+                filter.Add($"and TypeOfPrint='{this.Type}'");
             }
 
             if (!MyUtility.Check.Empty(this.Style))
             {
-                Filter.Add($"and Style = '{this.Style}'");
+                filter.Add($"and Style = '{this.Style}'");
             }
 
             if (!MyUtility.Check.Empty(this.Season))
             {
-                Filter.Add($"and Season = '{this.Season}'");
+                filter.Add($"and Season = '{this.Season}'");
             }
 
             if (!MyUtility.Check.Empty(this.Brand))
             {
-                Filter.Add($"and Brand = '{this.Brand}'");
+                filter.Add($"and Brand = '{this.Brand}'");
             }
 
             if (!MyUtility.Check.Empty(this.Brand))
             {
-                Filter.Add($"and Brand = '{this.Brand}'");
+                filter.Add($"and Brand = '{this.Brand}'");
             }
 
             if (!MyUtility.Check.Empty(this.FabricRefNo))
             {
-                Filter.Add($"and FabricRefNo = '{this.FabricRefNo}'");
+                filter.Add($"and FabricRefNo = '{this.FabricRefNo}'");
             }
 
             if (!MyUtility.Check.Empty(this.T1SubconName))
             {
-                Filter.Add($"and T1SubconName = '{this.T1SubconName}'");
+                filter.Add($"and T1SubconName = '{this.T1SubconName}'");
             }
 
             if (!MyUtility.Check.Empty(this.T2SubconName) && this.Type != "Mockup Crocking")
             {
-                Filter.Add($"and (T2SubconName = '{this.T2SubconName}' or TypeOfPrint='Mockup Crocking')");
+                filter.Add($"and (T2SubconName = '{this.T2SubconName}' or TypeOfPrint='Mockup Crocking')");
             }
             #endregion
 
@@ -248,7 +250,7 @@ union all
 	 left join MockupWash_Detail_Detail c on a.ID=c.ID
 ) d
 where 1=1
-{Filter.JoinToString($"{Environment.NewLine} ")}
+{filter.JoinToString($"{Environment.NewLine} ")}
 ";
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlcmd.ToString(), out this.printData);
@@ -261,6 +263,7 @@ where 1=1
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

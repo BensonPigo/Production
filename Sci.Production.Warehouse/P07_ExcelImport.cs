@@ -19,13 +19,14 @@ namespace Sci.Production.Warehouse
         private DataTable detailData;
         private DataRow master;
 
-        public P07_ExcelImport(DataRow _master, DataTable detailData)
+        public P07_ExcelImport(DataRow master, DataTable detailData)
         {
             this.InitializeComponent();
             this.detailData = detailData;
-            this.master = _master;
+            this.master = master;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -547,8 +548,8 @@ where   stocktype='{0}'
                         select new
                         {
                             poid = m.First().Field<string>("poid"),
-                            seq1 = m.First().Field<string>("seq1"),
-                            seq2 = m.First().Field<string>("seq2"),
+                            Seq1 = m.First().Field<string>("seq1"),
+                            Seq2 = m.First().Field<string>("seq2"),
                             Roll = m.First().Field<string>("Roll"),
                             Dyelot = m.First().Field<string>("Dyelot"),
                             count = m.Count(),
@@ -559,7 +560,7 @@ where   stocktype='{0}'
 
                     foreach (var dr in q)
                     {
-                        warning += string.Format("{0}-{1}-{2}-{3}-{4}" + Environment.NewLine, dr.poid, dr.seq1, dr.seq2, dr.Roll, dr.Dyelot);
+                        warning += string.Format("{0}-{1}-{2}-{3}-{4}" + Environment.NewLine, dr.poid, dr.Seq1, dr.Seq2, dr.Roll, dr.Dyelot);
                     }
 
                     MyUtility.Msg.WarningBox(warning, "Roll# are duplicated!!");
@@ -586,7 +587,6 @@ where   stocktype='{0}'
                     string dyelot = MyUtility.Convert.GetString(dr2["dyelot"]);
                     string fabricType = MyUtility.Convert.GetString(dr2["fabrictype"]);
                     string stockType = MyUtility.Convert.GetString(dr2["stockType"]);
-
 
                     // 布料，且都有值了才檢查該Row
                     if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))

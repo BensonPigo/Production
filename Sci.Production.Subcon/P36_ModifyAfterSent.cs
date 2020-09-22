@@ -8,14 +8,14 @@ namespace Sci.Production.Subcon
 {
     public partial class P36_ModifyAfterSent : Win.Subs.Base
     {
-        DataRow dr;
-        DataTable dtData;
+        private DataRow dr;
+        private DataTable dtData;
 
-        public P36_ModifyAfterSent(DataRow Data)
+        public P36_ModifyAfterSent(DataRow data)
         {
             this.InitializeComponent();
             DualResult result;
-            this.dr = Data;
+            this.dr = data;
             if (!(result = DBProxy.Current.Select(null, string.Format(@"select * from localdebit WITH (NOLOCK) where id = '{0}'", this.dr["id"]), out this.dtData)))
             {
                 this.ShowErr(result);
@@ -25,6 +25,7 @@ namespace Sci.Production.Subcon
             this.mtbs.DataSource = this.dtData;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -42,12 +43,12 @@ namespace Sci.Production.Subcon
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             this.ReCalculateTax();
             if (!MyUtility.Tool.CursorUpdateTable(this.dtData, "localdebit", null))
@@ -60,7 +61,7 @@ namespace Sci.Production.Subcon
             }
         }
 
-        private void numExchange_Validating(object sender, CancelEventArgs e)
+        private void NumExchange_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.numExchange.Value))
             {
@@ -79,20 +80,20 @@ namespace Sci.Production.Subcon
         {
             #region 計算TAX
             decimal amount = MyUtility.Convert.GetDecimal(this.dtData.Rows[0]["amount"]);
-            decimal TaxRate = MyUtility.Convert.GetDecimal(this.dtData.Rows[0]["taxrate"]);
-            int Exact = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", this.dtData.Rows[0]["currencyId"]), null));
-            this.dtData.Rows[0]["tax"] = Math.Round((amount * TaxRate) / 100, Exact);
+            decimal taxRate = MyUtility.Convert.GetDecimal(this.dtData.Rows[0]["taxrate"]);
+            int exact = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", this.dtData.Rows[0]["currencyId"]), null));
+            this.dtData.Rows[0]["tax"] = Math.Round((amount * taxRate) / 100, exact);
 
             #endregion
         }
 
-        private void numtaxrate_Validating(object sender, CancelEventArgs e)
+        private void Numtaxrate_Validating(object sender, CancelEventArgs e)
         {
             this.dtData.Rows[0]["taxrate"] = this.numtaxrate.Text;
             this.ReCalculateTax();
         }
 
-        private void numAmount_Validating(object sender, CancelEventArgs e)
+        private void NumAmount_Validating(object sender, CancelEventArgs e)
         {
             this.dtData.Rows[0]["amount"] = this.numAmount.Text;
             this.ReCalculateTax();

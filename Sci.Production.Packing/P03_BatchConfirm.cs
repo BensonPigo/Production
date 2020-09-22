@@ -10,14 +10,15 @@ namespace Sci.Production.Packing
 {
     public partial class P03_BatchConfirm : Win.Subs.Base
     {
-        DataTable dt_detail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataTable dt_detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         public P03_BatchConfirm()
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -69,12 +70,12 @@ namespace Sci.Production.Packing
             }
         }
 
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             this.QueryData(false);
         }
 
-        public void QueryData(bool AutoQuery)
+        public void QueryData(bool autoQuery)
         {
             DateTime? pulloutdate1;
             StringBuilder strSQLCmd = new StringBuilder();
@@ -166,12 +167,12 @@ where 1=1 and p1.Status='New' and p1.MDivisionID='{Env.User.Keyword}' and p1.Typ
             this.HideWaitMessage();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnBatchConfirmed_Click(object sender, EventArgs e)
+        private void BtnBatchConfirmed_Click(object sender, EventArgs e)
         {
             this.grid.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;

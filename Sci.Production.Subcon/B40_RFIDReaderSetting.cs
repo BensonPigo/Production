@@ -23,11 +23,12 @@ namespace Sci.Production.Subcon
             this.DetailDT = dt;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             #region Grid事件
-            DataGridViewGeneratorTextColumnSettings CutCellID = new DataGridViewGeneratorTextColumnSettings();
-            CutCellID.EditingMouseDown += (s, e) =>
+            DataGridViewGeneratorTextColumnSettings cutCellID = new DataGridViewGeneratorTextColumnSettings();
+            cutCellID.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -54,7 +55,7 @@ namespace Sci.Production.Subcon
                     dr.EndEdit();
                 }
             };
-            CutCellID.CellValidating += (s, e) =>
+            cutCellID.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -91,7 +92,7 @@ namespace Sci.Production.Subcon
             this.grid.IsEditingReadOnly = true;
             this.Helper.Controls.Grid.Generator(this.grid)
              .Text("PanelNo", header: "Panel No", width: Widths.AnsiChars(20))
-             .Text("CutCellID", header: "Cut Cell", width: Widths.AnsiChars(8), settings: CutCellID, iseditingreadonly: false)
+             .Text("CutCellID", header: "Cut Cell", width: Widths.AnsiChars(8), settings: cutCellID, iseditingreadonly: false)
              .DateTime("addDate", header: "Add Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
              .Text("addName", header: "Add Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .DateTime("editDate", header: "Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
@@ -101,6 +102,7 @@ namespace Sci.Production.Subcon
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnRequired()
         {
             base.OnRequired();
@@ -124,6 +126,7 @@ where rp.RFIDReaderID ='{this.ID}'
             this.gridbs.DataSource = datas;
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
@@ -136,22 +139,26 @@ where rp.RFIDReaderID ='{this.ID}'
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSave()
         {
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSavePost()
         {
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override void OnSaveAfter()
         {
             base.OnSaveAfter();
             this.DetailDT = ((DataTable)this.gridbs.DataSource).Copy();
         }
 
+        /// <inheritdoc/>
         protected override void OnUIConvertToMaintain()
         {
             base.OnUIConvertToMaintain();

@@ -367,7 +367,7 @@
             this.btnBatchImport.TabIndex = 10;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
-            this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
+            this.btnBatchImport.Click += new System.EventHandler(this.BtnBatchImport_Click);
             // 
             // displayID
             // 
@@ -618,7 +618,7 @@
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
             this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyCategory.TabIndex = 0;
-            this.txtartworktype_ftyCategory.Validated += new System.EventHandler(this.txtartworktype_ftyCategory_Validated);
+            this.txtartworktype_ftyCategory.Validated += new System.EventHandler(this.Txtartworktype_ftyCategory_Validated);
             // 
             // txtsubconSupplier
             // 

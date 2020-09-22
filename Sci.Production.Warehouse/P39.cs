@@ -29,6 +29,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 寫明細撈出的sql command
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -55,6 +57,8 @@ Where ALD.id = '{0}'", masterID);
         }
 
         // Detail Grid 設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region --Vaild Current Qty 不可等於Original qty 且 Adjust Qty = Current Qty -Original Qty
@@ -186,6 +190,7 @@ Where ALD.id = '{0}'", masterID);
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -193,12 +198,16 @@ Where ALD.id = '{0}'", masterID);
         }
 
         // detail 新增時設定預設值
+
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -210,6 +219,8 @@ Where ALD.id = '{0}'", masterID);
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -222,6 +233,8 @@ Where ALD.id = '{0}'", masterID);
         }
 
         // delete前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -234,6 +247,8 @@ Where ALD.id = '{0}'", masterID);
         }
 
         // save前檢查 & 取id
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 檢查明細至少存在一筆資料
@@ -289,6 +304,8 @@ Where ALD.id = '{0}'", masterID);
         }
 
         // Confirm
+
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -352,6 +369,8 @@ update AdjustLocal set status='Confirmed' where id = '{0}'",
         }
 
         // Unconfirm
+
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();

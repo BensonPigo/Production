@@ -11,18 +11,18 @@ namespace Sci.Production.Subcon
 {
     public partial class B40 : Win.Tems.Input1
     {
-        IList<DataRow> Subprocesslist;
-        DataTable DT_RFIDReader_Panel;
+        private IList<DataRow> Subprocesslist;
+        private DataTable DT_RFIDReader_Panel;
 
         public B40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboload();
+            this.Comboload();
             this.comboRFIDProcessLocation.SetDataSource(false);
         }
 
-        private void comboload()
+        private void Comboload()
         {
             // DualResult Result;
             // if (Result = DBProxy.Current.Select(null, "select ID from Subprocess WITH (NOLOCK) where Junk = '0'", out dtSubprocessID))
@@ -42,6 +42,7 @@ namespace Sci.Production.Subcon
             this.comboMDivision.SetDefalutIndex();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -62,18 +63,21 @@ where rp.RFIDReaderID ='{this.CurrentMaintain["ID"]}'
             this.txtSubprocess.Text = MyUtility.GetValue.Lookup(sqlsubprocess);
         }
 
+        /// <inheritdoc/>
         protected override void ClickCopyAfter()
         {
             this.txtSubprocess.Text = string.Empty;
             this.txtID.ReadOnly = false;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickNew()
         {
             this.txtID.ReadOnly = false;
             return base.ClickNew();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.txtID.Text))
@@ -97,6 +101,7 @@ where rp.RFIDReaderID ='{this.CurrentMaintain["ID"]}'
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             if (this.Subprocesslist != null)
@@ -154,18 +159,21 @@ when not matched by source and t.[RFIDReaderID] = '{this.CurrentMaintain["id"]}'
             return base.ClickSave();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
             this.txtID.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override void ClickUndo()
         {
             base.ClickUndo();
             this.txtID.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDelete()
         {
             string delete = $@"
@@ -176,7 +184,7 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
             return base.ClickDelete();
         }
 
-        private void txtSewingLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtSewingLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             this.txtSewingLine.Text = this.SelectSewingLine(this.txtSewingLine.Text);
         }
@@ -201,7 +209,7 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
             }
         }
 
-        private void txtSewingLine_Validating(object sender, CancelEventArgs e)
+        private void TxtSewingLine_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Empty(this.txtSewingLine.Text))
             {
@@ -222,7 +230,7 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
             }
         }
 
-        private void btnSetPanelCutcell_Click(object sender, EventArgs e)
+        private void BtnSetPanelCutcell_Click(object sender, EventArgs e)
         {
             string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
 
@@ -231,7 +239,7 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
             this.DT_RFIDReader_Panel = callfrm.DetailDT;
         }
 
-        private void txtSubprocess_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtSubprocess_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "select ID from Subprocess WITH (NOLOCK) where Junk = '0'";
             Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, headercaptions: "Subprocess ID", columnwidths: "30", defaults: this.txtSubprocess.Text, defaultValueColumn: "ID");

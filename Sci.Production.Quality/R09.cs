@@ -10,11 +10,11 @@ namespace Sci.Production.Quality
 {
     public partial class R09 : Win.Tems.PrintForm
     {
-        DateTime? DateInspDateStart; DateTime? DateInspDateEnd;
-        DateTime? DateArrStart; DateTime? DateArrEnd;
-        string spStrat; string spEnd; string Ref; string Supp;
-        List<SqlParameter> lis;
-        DataTable dt; string cmd;
+        private DateTime? DateInspDateStart; private DateTime? DateInspDateEnd;
+        private DateTime? DateArrStart; private DateTime? DateArrEnd;
+        private string spStrat; private string spEnd; private string Ref; private string Supp;
+        private List<SqlParameter> lis;
+        private DataTable dt; private string cmd;
 
         public R09(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -23,6 +23,7 @@ namespace Sci.Production.Quality
             this.print.Enabled = false;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.DateArrStart = this.dateArriveWHDate.Value1;
@@ -126,11 +127,13 @@ order by ord.FactoryID, fir.poid, ord.StyleID, fir.SEQ1, fir.SEQ2, firo.roll, fi
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             return DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

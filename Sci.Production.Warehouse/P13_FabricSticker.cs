@@ -22,6 +22,7 @@ namespace Sci.Production.Warehouse
             this.strSubTransferID = strSubTransferID;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

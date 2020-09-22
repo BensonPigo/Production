@@ -714,7 +714,7 @@ drop table #tmp  {(!string.IsNullOrEmpty(invCfmDate_s) && !string.IsNullOrEmpty(
 
                 if (dr["selected"].ToString() == "True" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
-                    var issued = Prgs.autopick(dr, false, "I");
+                    var issued = Prgs.Autopick(dr, false, "I");
                     if (issued == null)
                     {
                         return;

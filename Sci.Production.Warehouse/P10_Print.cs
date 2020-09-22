@@ -39,11 +39,13 @@ namespace Sci.Production.Warehouse
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             if (this.radioFabricsRelaxationLogsheet.Checked)
@@ -84,6 +86,7 @@ order by psd.Refno,isd.POID,isd.Roll
             return this.result;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.radioFabricsRelaxationLogsheet.Checked)
@@ -140,6 +143,7 @@ order by psd.Refno,isd.POID,isd.Roll
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool ToPrint()
         {
             if (MyUtility.Check.Empty(this.drPrint))

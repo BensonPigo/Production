@@ -297,14 +297,14 @@ namespace Sci.Production.Subcon
                                               (
                                               MyUtility.Convert.GetDecimal(dt.Compute(
                                                   "sum(ReqQty)",
-                                             $@"OrderID = '{m.Key.t1}' and ArtworkTypeID = '{m.Key.t2}' and artworkid = '{m.Key.t3}'
+                                                  $@"OrderID = '{m.Key.t1}' and ArtworkTypeID = '{m.Key.t2}' and artworkid = '{m.Key.t3}'
                                                     and PatternCode = '{m.Key.t4}' and PatternDesc = '{m.Key.t5}' and Selected = 1"))
                                              +
                                              MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<decimal>("AccReqQty")))
                                              - MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<int>("OrderQty")))) < 0 ? 0 :
                                               MyUtility.Convert.GetDecimal(dt.Compute(
                                                   "sum(ReqQty)",
-                                             $@"OrderID = '{m.Key.t1}' and ArtworkTypeID = '{m.Key.t2}' and artworkid = '{m.Key.t3}'
+                                                  $@"OrderID = '{m.Key.t1}' and ArtworkTypeID = '{m.Key.t2}' and artworkid = '{m.Key.t3}'
                                                     and PatternCode = '{m.Key.t4}' and PatternDesc = '{m.Key.t5}' and Selected = 1"))
                                              +
                                              MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<decimal>("AccReqQty")))

@@ -13,8 +13,10 @@ using Word = Microsoft.Office.Interop.Word;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     internal class PackingPrintBarcode
     {
+        /// <inheritdoc/>
         public DualResult PrintBarcode(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
         {
             DataTable printData;
@@ -365,6 +367,7 @@ namespace Sci.Production.Packing
             return new DualResult(true);
         }
 
+        /// <inheritdoc/>
         public DualResult PrintCustCTN(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
         {
             DataTable printData;

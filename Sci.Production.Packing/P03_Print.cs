@@ -112,6 +112,7 @@ namespace Sci.Production.Packing
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             if (this.reportType == "1" || this.reportType == "2")

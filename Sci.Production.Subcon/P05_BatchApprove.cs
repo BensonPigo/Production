@@ -11,12 +11,12 @@ namespace Sci.Production.Subcon
 {
     public partial class P05_BatchApprove : Win.Subs.Base
     {
-        Action delegateAct;
+        private Action delegateAct;
         private bool boolDeptApv;
         private bool canConfrim;
         private bool canCheck;
-        Func<string, string> sqlGetBuyBackDeduction;
-        public P05_BatchApprove(Action reload, Func<string, string> SqlGetBuyBackDeduction)
+        private Func<string, string> sqlGetBuyBackDeduction;
+        public P05_BatchApprove(Action reload, Func<string, string> sqlGetBuyBackDeduction)
         {
             this.InitializeComponent();
             this.EditMode = true;
@@ -28,9 +28,10 @@ namespace Sci.Production.Subcon
 
             this.boolDeptApv = true;
             this.Authority();
-            this.sqlGetBuyBackDeduction = SqlGetBuyBackDeduction;
+            this.sqlGetBuyBackDeduction = sqlGetBuyBackDeduction;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -72,7 +73,7 @@ namespace Sci.Production.Subcon
             }
         }
 
-        private void btnRefresh_Click(object sender, EventArgs e)
+        private void BtnRefresh_Click(object sender, EventArgs e)
         {
             this.Query();
         }
@@ -150,12 +151,12 @@ where 1=1
             this.Authority();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnApprove_Click(object sender, EventArgs e)
+        private void BtnApprove_Click(object sender, EventArgs e)
         {
             this.gridArtworkReq.ValidateControl();
             DataSet ds = (DataSet)this.listControlBindingSource1.DataSource;
@@ -185,9 +186,9 @@ where 1=1
                 {
                     // 判斷irregular Reason沒寫不能存檔
                     DataTable dtDetail = dt2.AsEnumerable().Where(x => x["ID"].EqualString(dr["id"].ToString())).CopyToDataTable();
-                    var IrregularQtyReason = new P05_IrregularQtyReason(dr["ID"].ToString(), dr, dtDetail, this.sqlGetBuyBackDeduction);
+                    var irregularQtyReason = new P05_IrregularQtyReason(dr["ID"].ToString(), dr, dtDetail, this.sqlGetBuyBackDeduction);
 
-                    DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
+                    DataTable dtIrregular = irregularQtyReason.Check_Irregular_Qty();
                     if (dtIrregular != null)
                     {
                         bool isReasonEmpty = dtIrregular.AsEnumerable().Any(s => MyUtility.Check.Empty(s["SubconReasonID"]));
@@ -242,7 +243,7 @@ where ID = '{dr["ID"]}' ";
             this.delegateAct();
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable printData;
             string sqlCmd = string.Format(@"

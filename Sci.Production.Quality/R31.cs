@@ -15,15 +15,17 @@ namespace Sci.Production.Quality
 {
     public partial class R31 : Sci.Win.Tems.PrintForm
     {
-        DataTable printData;
+        private DataTable printData;
 
-        DateTime? Buyerdelivery1, Buyerdelivery2;
-        string sp1, sp2, MDivisionID, FactoryID, Brand;
+        private DateTime? Buyerdelivery1;
+        private DateTime? Buyerdelivery2;
+        private string sp1;
+        private string sp2;
+        private string MDivisionID;
+        private string FactoryID;
+        private string Brand;
         private bool exSis;
-        private readonly bool bulk;
-        private readonly bool sample;
-        private readonly bool garment;
-        readonly List<string> categoryList = new List<string>();
+        private readonly List<string> categoryList = new List<string>();
 
         public R31(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -33,6 +35,7 @@ namespace Sci.Production.Quality
             this.comboFactory.SetDataSource();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.categoryList.Clear();
@@ -60,11 +63,10 @@ namespace Sci.Production.Quality
                 this.categoryList.Add("G");
             }
 
-            if (MyUtility.Check.Empty(Buyerdelivery1) && 
-                    MyUtility.Check.Empty(Buyerdelivery2) &&
-                    MyUtility.Check.Empty(sp1) &&
-                    MyUtility.Check.Empty(sp2)
-                )
+            if (MyUtility.Check.Empty(this.Buyerdelivery1) &&
+                    MyUtility.Check.Empty(this.Buyerdelivery2) &&
+                    MyUtility.Check.Empty(this.sp1) &&
+                    MyUtility.Check.Empty(this.sp2))
             {
                 MyUtility.Msg.InfoBox("Buyer Delivery and SP# can't be all empty.");
 
@@ -74,6 +76,7 @@ namespace Sci.Production.Quality
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -227,43 +230,41 @@ WHERE 1=1
             #endregion
 
             #region Where
-            if (!MyUtility.Check.Empty(Buyerdelivery1))
+            if (!MyUtility.Check.Empty(this.Buyerdelivery1))
             {
                 sqlCmd.Append($"AND oq.BuyerDelivery BETWEEN @Buyerdelivery1 AND @Buyerdelivery2" + Environment.NewLine);
-                paramList.Add(new SqlParameter("@Buyerdelivery1", Buyerdelivery1.Value));
-                paramList.Add(new SqlParameter("@BuyerDelivery2", Buyerdelivery2.Value));
+                paramList.Add(new SqlParameter("@Buyerdelivery1", this.Buyerdelivery1.Value));
+                paramList.Add(new SqlParameter("@BuyerDelivery2", this.Buyerdelivery2.Value));
             }
 
-            if (!MyUtility.Check.Empty(sp1))
+            if (!MyUtility.Check.Empty(this.sp1))
             {
                 sqlCmd.Append($"AND oq.ID >= @sp1" + Environment.NewLine);
-                paramList.Add(new SqlParameter("@sp1", sp1));
+                paramList.Add(new SqlParameter("@sp1", this.sp1));
             }
 
-            if (!MyUtility.Check.Empty(sp2))
+            if (!MyUtility.Check.Empty(this.sp2))
             {
                 sqlCmd.Append($"AND oq.ID <= @sp2" + Environment.NewLine);
-                paramList.Add(new SqlParameter("@sp2", sp1));
+                paramList.Add(new SqlParameter("@sp2", this.sp1));
             }
 
-            if (!MyUtility.Check.Empty(MDivisionID))
+            if (!MyUtility.Check.Empty(this.MDivisionID))
             {
                 sqlCmd.Append($"AND o.MDivisionID=@MDivisionID " + Environment.NewLine);
-                paramList.Add(new SqlParameter("@MDivisionID", MDivisionID));
+                paramList.Add(new SqlParameter("@MDivisionID", this.MDivisionID));
             }
 
-            if (!MyUtility.Check.Empty(FactoryID))
+            if (!MyUtility.Check.Empty(this.FactoryID))
             {
                 sqlCmd.Append($"AND o.FtyGroup=@FactoryID " + Environment.NewLine);
-                paramList.Add(new SqlParameter("@FactoryID", FactoryID));
-
+                paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
             }
 
-            if (!MyUtility.Check.Empty(Brand))
+            if (!MyUtility.Check.Empty(this.Brand))
             {
                 sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
-                paramList.Add(new SqlParameter("@Brand", Brand));
-
+                paramList.Add(new SqlParameter("@Brand", this.Brand));
             }
 
             if (this.exSis)
@@ -271,20 +272,19 @@ WHERE 1=1
                 sqlCmd.Append($"AND f.IsProduceFty = 1" + Environment.NewLine);
             }
 
-            if (categoryList.Count > 0)
+            if (this.categoryList.Count > 0)
             {
-                sqlCmd.Append($"AND o.Category IN ('{categoryList.JoinToString("','")}') " + Environment.NewLine);
+                sqlCmd.Append($"AND o.Category IN ('{this.categoryList.JoinToString("','")}') " + Environment.NewLine);
             }
             else
             {
                 // 如果全部勾選，則無資料
                 sqlCmd.Append($"AND 1=0 " + Environment.NewLine);
-
             }
 
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),paramList, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), paramList, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -294,23 +294,23 @@ WHERE 1=1
             return Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
             StringBuilder c = new StringBuilder();
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R31.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Quality_R31.xltx", 1, false, null, objApp);// 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R31.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R31.xltx", 1, false, null, objApp); // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             // 客製化欄位，記得設定this.IsSupportCopy = true
-            //this.CreateCustomizedExcel(ref objSheets);
+            // this.CreateCustomizedExcel(ref objSheets);
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R31");
@@ -320,7 +320,7 @@ WHERE 1=1
             Marshal.ReleaseComObject(objApp);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return true;
         }
     }

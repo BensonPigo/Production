@@ -15,10 +15,10 @@ namespace Sci.Production.Quality
     {
         private readonly string masterID;
 
-        public P02_BatchEncode(string MasterID)
+        public P02_BatchEncode(string masterID)
         {
             this.InitializeComponent();
-            this.masterID = MasterID;
+            this.masterID = masterID;
             Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add(string.Empty, string.Empty);
             comboBox1_RowSource.Add("Approval", "Approval");
@@ -35,6 +35,7 @@ namespace Sci.Production.Quality
             this.grid.SupportEditMode = Win.UI.AdvEditModesReadOnly.True;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -164,34 +165,34 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.
             string updSQL = string.Empty;
             foreach (var item in selectedData)
             {
-                int InspQty = (int)Math.Ceiling(((decimal)item["ArriveQty"]) * this.numInspectRate.Value / 100);
-                string Inspdate = this.dateInspectDt.Text;
-                string Inspector = this.txtInspector.TextBox1.Text;
-                string Result = this.comboResult.Text;
+                int inspQty = (int)Math.Ceiling(((decimal)item["ArriveQty"]) * this.numInspectRate.Value / 100);
+                string inspdate = this.dateInspectDt.Text;
+                string inspector = this.txtInspector.TextBox1.Text;
+                string result = this.comboResult.Text;
                 string remark = this.txtRemark.Text;
-                updSQL += $" update AIR set InspQty= {InspQty},Inspdate = '{Inspdate}',Inspector = '{Inspector}',Result = '{Result}',remark = '{remark}'  where ID = '{item["ID"]}'" + Environment.NewLine;
+                updSQL += $" update AIR set InspQty= {inspQty},Inspdate = '{inspdate}',Inspector = '{inspector}',Result = '{result}',remark = '{remark}'  where ID = '{item["ID"]}'" + Environment.NewLine;
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updSQL)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Update Fail!!");
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -303,25 +304,25 @@ WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToStri
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updSQL)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Update Fail!!");
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }

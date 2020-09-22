@@ -47,6 +47,7 @@ namespace Sci.Production.Warehouse
             this.gridLack_Detail.ValidateControl();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

@@ -316,7 +316,7 @@ where   pd.CustCTN= '{dr["CustCTN"]}'
                                             dr["SCICtnNo"] = seekData["SCICtnNo"].ToString().Trim();
                                             string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
                                             string packinglistid = seekData["id"].ToString().Trim();
-                                            string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                            string cTNStartNo = seekData["CTNStartNo"].ToString().Trim();
                                             sqlCmd = string.Format(
                                                 @"
 select  a.StyleID
@@ -342,7 +342,7 @@ where   a.ID = '{0}'",
                                                 dr["Alias"] = seekData["Alias"].ToString().Trim();
                                                 dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                                 dr["packinglistid"] = packinglistid.Trim();
-                                                dr["CTNStartNo"] = CTNStartNo.Trim();
+                                                dr["CTNStartNo"] = cTNStartNo.Trim();
                                             }
 
                                             selectDataTable.Rows.Add(dr);
@@ -401,7 +401,7 @@ where   pd.CustCTN= '{dr["CustCTN"]}'
                                         dr["OrderID"] = seekData["OrderID"].ToString().Trim();
                                         dr["SCICtnNo"] = seekData["SCICtnNo"].ToString().Trim();
                                         string packinglistid = seekData["id"].ToString().Trim();
-                                        string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                        string cTNStartNo = seekData["CTNStartNo"].ToString().Trim();
                                         string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
                                         sqlCmd = string.Format(
                                             @"
@@ -428,7 +428,7 @@ where   a.ID = '{0}'",
                                             dr["Alias"] = seekData["Alias"].ToString().Trim();
                                             dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                             dr["packinglistid"] = packinglistid.Trim();
-                                            dr["CTNStartNo"] = CTNStartNo.Trim();
+                                            dr["CTNStartNo"] = cTNStartNo.Trim();
                                         }
 
                                         insertCount++;

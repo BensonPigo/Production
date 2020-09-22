@@ -15,8 +15,8 @@ namespace Sci.Production.Quality
     {
         private readonly string loginID = Env.User.UserID;
         private readonly string keyWord = Env.User.Keyword;
-        int index;
-        DataRow[] find_dr;
+        private int index;
+        private DataRow[] find_dr;
 
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -38,6 +38,7 @@ namespace Sci.Production.Quality
             this.InsertDetailGridOnDoubleClick = false;
         }
 
+        /// <inheritdoc/>
         protected override DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
         {
             // 非編輯狀態不顯示
@@ -49,7 +50,7 @@ namespace Sci.Production.Quality
             return DetailGridContextMenuMode.None;
         }
 
-        void ContextMenuStrip1_VisibleChanged(object sender, EventArgs e)
+        private void ContextMenuStrip1_VisibleChanged(object sender, EventArgs e)
         {
             if (this.contextMenuStrip1.Visible && this.EditMode)
             {
@@ -60,6 +61,7 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -162,6 +164,8 @@ where POID='{0}'
         }
 
         // 表身額外的資料來源
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
@@ -192,6 +196,7 @@ masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -408,6 +413,7 @@ masterID);
 
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             // 因為表頭是PO不能覆蓋其他資料，必需自行存檔
@@ -435,24 +441,24 @@ masterID);
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, save_po_cmd, spam_po)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return upResult;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return Ict.Result.True;
                 }
@@ -474,40 +480,41 @@ masterID);
             }
 
             #endregion
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     // 更新PO.FIRLabInspPercent
                     if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIRLab','{this.CurrentMaintain["ID"]}'")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
             this.RenewData();
             base.ClickSaveAfter();
         }

@@ -46,6 +46,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.strSP1 = this.txtSPNoStart.Text.Trim();
@@ -60,6 +61,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region Set SQL Command & SQLParameter
@@ -204,6 +206,7 @@ left join Orders O ON Linv.OrderID = O.ID
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (this.dataTable != null && this.dataTable.Rows.Count > 0)

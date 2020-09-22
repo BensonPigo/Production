@@ -58,6 +58,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -69,6 +71,8 @@ namespace Sci.Production.Warehouse
         }
 
         // delete前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -80,6 +84,7 @@ namespace Sci.Production.Warehouse
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             // 當表身被刪除時，要判斷是否[Issue_Detail.ukey]有在[FIR_Physical].[Issue_DetailUkey]中，若有則將[FIR_Physical].[Issue_DetailUkey]更新成0。
@@ -102,6 +107,8 @@ WHERE Issue_DetailUkey IN ({ukeys})
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -114,6 +121,8 @@ WHERE Issue_DetailUkey IN ({ukeys})
         }
 
         // print
+
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             // DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
@@ -251,6 +260,8 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
         }
 
         // save前檢查 & 取id
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -328,6 +339,7 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePre()
         {
             DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(this.DetailDatas);
@@ -341,12 +353,16 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
         }
 
         // grid 加工填值
+
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -370,12 +386,16 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
         }
 
         // detail 新增時設定預設值
+
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
         }
 
         // Detail Grid 設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region 欄位設定
@@ -399,6 +419,8 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
         }
 
         // Confirm
+
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -506,11 +528,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty")),
+                           Poid = m.First().Field<string>("poid"),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
             var bsfio = (from m in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
@@ -558,7 +580,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
-                    SentToGensong_AutoWHFabric();
+                    this.SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -574,6 +596,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         }
 
         // Unconfirm
+
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -691,11 +715,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty")),
+                           Poid = m.First().Field<string>("poid"),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
 
@@ -744,7 +768,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
-                    SentToGensong_AutoWHFabric();
+                    this.SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -761,7 +785,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
         private void SentToGensong_AutoWHFabric()
         {
-            if (true) return;// 暫未開放
+            if (true)
+            {
+                return; // 暫未開放
+            }
+
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
@@ -799,14 +827,14 @@ and exists(
 		where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 		and FabricType='F'
 	)
-and i.id = '{CurrentMaintain["ID"]}'
+and i.id = '{this.CurrentMaintain["ID"]}'
 
 ";
 
                 DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
                 if (!drResult)
                 {
-                    ShowErr(drResult);
+                    this.ShowErr(drResult);
                 }
 
                 Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))
@@ -815,6 +843,8 @@ and i.id = '{CurrentMaintain["ID"]}'
         }
 
         // 寫明細撈出的sql command
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();

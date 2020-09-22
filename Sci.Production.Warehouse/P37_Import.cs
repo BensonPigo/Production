@@ -184,6 +184,8 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
         }
 
         // Form Load
+
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

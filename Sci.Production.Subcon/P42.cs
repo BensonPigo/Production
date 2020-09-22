@@ -20,6 +20,7 @@ namespace Sci.Production.Subcon
             this.txtfactory1.MDivision = this.txtMdivision1;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -41,8 +42,8 @@ namespace Sci.Production.Subcon
                 frm.ShowDialog(this);
             };
 
-            DataGridViewGeneratorTextColumnSettings BundleReplacement = new DataGridViewGeneratorTextColumnSettings();
-            BundleReplacement.CellMouseDoubleClick += (s, e) =>
+            DataGridViewGeneratorTextColumnSettings bundleReplacement = new DataGridViewGeneratorTextColumnSettings();
+            bundleReplacement.CellMouseDoubleClick += (s, e) =>
             {
                 DataRow drSelected = this.grid1.GetDataRow(e.RowIndex);
                 if (drSelected == null)
@@ -126,10 +127,10 @@ where b.Orderid = '{drSelected["OrderID"]}'
                 .Numeric("SewQty", header: "Sew. Qty", width: Widths.AnsiChars(6), iseditingreadonly: true);
 
             int subprocessStartColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["SewQty"].Ordinal;
-            int BundleReplacementColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["BundleReplacement"].Ordinal;
+            int bundleReplacementColumn = ((DataTable)this.listControlBindingSource1.DataSource).Columns["BundleReplacement"].Ordinal;
             foreach (DataColumn column in ((DataTable)this.listControlBindingSource1.DataSource).Columns)
             {
-                if (column.Ordinal > subprocessStartColumn && column.Ordinal < BundleReplacementColumn)
+                if (column.Ordinal > subprocessStartColumn && column.Ordinal < bundleReplacementColumn)
                 {
                     DataGridViewGeneratorTextColumnSettings subprocess = new DataGridViewGeneratorTextColumnSettings();
                     subprocess.CellMouseDoubleClick += (s, e) =>
@@ -166,7 +167,7 @@ where b.Orderid = '{drSelected["OrderID"]}'
             }
 
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .Text("BundleReplacement", header: "Bundle Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: BundleReplacement)
+            .Text("BundleReplacement", header: "Bundle Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: bundleReplacement)
             ;
         }
 
@@ -1194,7 +1195,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
                 ;
             }
 
-            this.grid2.CellFormatting += new DataGridViewCellFormattingEventHandler(this.grid2_CellFormatting);
+            this.grid2.CellFormatting += new DataGridViewCellFormattingEventHandler(this.Grid2_CellFormatting);
 
             #endregion
 
@@ -1206,7 +1207,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             msgGridForm.ShowDialog();
         }
 
-        private void grid2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        private void Grid2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             switch (MyUtility.Convert.GetString(e.Value))
             {

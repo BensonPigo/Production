@@ -21,18 +21,19 @@ namespace Sci.Production.Quality
             this.comboBrand.SelectedIndex = 0;
         }
 
-        string Brand;
-        string Year;
-        string Factory;
-        DualResult result;
-        System.Data.DataTable dtt;
-        System.Data.DataTable dt;
-        System.Data.DataTable dtt_All;
-        System.Data.DataTable alltemp;
-        System.Data.DataTable alltemp_All;
-        System.Data.DataTable[] alltemps;
-        readonly string userfactory = Env.User.Factory;
+        private string Brand;
+        private string Year;
+        private string Factory;
+        private DualResult result;
+        private System.Data.DataTable dtt;
+        private System.Data.DataTable dt;
+        private System.Data.DataTable dtt_All;
+        private System.Data.DataTable alltemp;
+        private System.Data.DataTable alltemp_All;
+        private System.Data.DataTable[] alltemps;
+        private readonly string userfactory = Env.User.Factory;
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.Brand = this.comboBrand.SelectedItem.ToString();
@@ -42,8 +43,9 @@ namespace Sci.Production.Quality
             return true;
         }
 
-        System.Data.DataTable allFactory = null;
+        private System.Data.DataTable allFactory = null;
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.dtt_All = null;
@@ -177,28 +179,28 @@ drop table #dRangesM,#dRangesY,#daterange,#temp", this.Brand, this.userfactory);
                 totalrow[0] = "YTD";
 
                 // for dt每個欄位
-                decimal TTColumnAMT = 0;
+                decimal tTColumnAMT = 0;
                 for (int colIdx = startIndex; colIdx < this.dtt.Columns.Count; colIdx++)
                 {
-                    TTColumnAMT = 0;
+                    tTColumnAMT = 0;
 
                     // for dt每一列
                     for (int rowIdx = 0; rowIdx < this.dtt.Rows.Count; rowIdx++)
                     {
-                        TTColumnAMT += Convert.ToDecimal(this.dtt.Rows[rowIdx][colIdx]);
+                        tTColumnAMT += Convert.ToDecimal(this.dtt.Rows[rowIdx][colIdx]);
                     }
 
                     if (colIdx == 1)
                     {
-                        totalrow[colIdx] = TTColumnAMT == 0 ? 0 : TTColumnAMT / 12;
+                        totalrow[colIdx] = tTColumnAMT == 0 ? 0 : tTColumnAMT / 12;
                     }
                     else if ((colIdx - 1) % 3 == 0)
                     {
-                        totalrow[colIdx] = TTColumnAMT == 0 ? 0 : MyUtility.Convert.GetDecimal(totalrow[colIdx - 2]) / MyUtility.Convert.GetDecimal(totalrow[colIdx - 1]);
+                        totalrow[colIdx] = tTColumnAMT == 0 ? 0 : MyUtility.Convert.GetDecimal(totalrow[colIdx - 2]) / MyUtility.Convert.GetDecimal(totalrow[colIdx - 1]);
                     }
                     else
                     {
-                        totalrow[colIdx] = TTColumnAMT;
+                        totalrow[colIdx] = tTColumnAMT;
                     }
                 }
 
@@ -339,28 +341,28 @@ outer apply (
                 totalrow[0] = "YTD";
 
                 // for alltemp每個欄位
-                decimal TTColumnAMT = 0;
+                decimal tTColumnAMT = 0;
                 for (int colIdx = startIndex; colIdx < this.alltemp.Columns.Count; colIdx++)
                 {
-                    TTColumnAMT = 0;
+                    tTColumnAMT = 0;
 
                     // for alltemp每一列
                     for (int rowIdx = 0; rowIdx < this.alltemp.Rows.Count; rowIdx++)
                     {
-                        TTColumnAMT += Convert.ToDecimal(this.alltemp.Rows[rowIdx][colIdx]);
+                        tTColumnAMT += Convert.ToDecimal(this.alltemp.Rows[rowIdx][colIdx]);
                     }
 
                     if (colIdx == 1)
                     {
-                        totalrow[colIdx] = TTColumnAMT == 0 ? 0 : TTColumnAMT / 12;
+                        totalrow[colIdx] = tTColumnAMT == 0 ? 0 : tTColumnAMT / 12;
                     }
                     else if ((colIdx - 1) % 3 == 0)
                     {
-                        totalrow[colIdx] = TTColumnAMT == 0 ? 0 : MyUtility.Convert.GetDecimal(totalrow[colIdx - 2]) / MyUtility.Convert.GetDecimal(totalrow[colIdx - 1]);
+                        totalrow[colIdx] = tTColumnAMT == 0 ? 0 : MyUtility.Convert.GetDecimal(totalrow[colIdx - 2]) / MyUtility.Convert.GetDecimal(totalrow[colIdx - 1]);
                     }
                     else
                     {
-                        totalrow[colIdx] = TTColumnAMT;
+                        totalrow[colIdx] = tTColumnAMT;
                     }
                 }
 
@@ -476,28 +478,28 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                     totalrow1[0] = "YTD";
 
                     // for dt每個欄位
-                    decimal TTColumnAMT1 = 0;
+                    decimal tTColumnAMT1 = 0;
                     for (int colIdx = startIndex1; colIdx < this.dt.Columns.Count; colIdx++)
                     {
-                        TTColumnAMT1 = 0;
+                        tTColumnAMT1 = 0;
 
                         // for dt每一列
                         for (int rowIdx = 0; rowIdx < this.dt.Rows.Count; rowIdx++)
                         {
-                            TTColumnAMT1 += Convert.ToDecimal(this.dt.Rows[rowIdx][colIdx]);
+                            tTColumnAMT1 += Convert.ToDecimal(this.dt.Rows[rowIdx][colIdx]);
                         }
 
                         if (colIdx == 1)
                         {
-                            totalrow1[colIdx] = TTColumnAMT1 == 0 ? 0 : TTColumnAMT1 / 12;
+                            totalrow1[colIdx] = tTColumnAMT1 == 0 ? 0 : tTColumnAMT1 / 12;
                         }
                         else if ((colIdx - 1) % 3 == 0)
                         {
-                            totalrow1[colIdx] = TTColumnAMT1 == 0 ? 0 : MyUtility.Convert.GetDecimal(totalrow1[colIdx - 2]) / MyUtility.Convert.GetDecimal(totalrow1[colIdx - 1]);
+                            totalrow1[colIdx] = tTColumnAMT1 == 0 ? 0 : MyUtility.Convert.GetDecimal(totalrow1[colIdx - 2]) / MyUtility.Convert.GetDecimal(totalrow1[colIdx - 1]);
                         }
                         else
                         {
-                            totalrow1[colIdx] = TTColumnAMT1;
+                            totalrow1[colIdx] = tTColumnAMT1;
                         }
                     }
 
@@ -520,11 +522,12 @@ drop table #dRangesM,#dRangesY,#daterange,#F
             return this.result;
         }
 
-        readonly Dictionary<string, System.Data.DataTable> dicFTY = new Dictionary<string, System.Data.DataTable>();
-        string stringyear2;
-        string stringyear3;
-        string stringyear4;
+        private readonly Dictionary<string, System.Data.DataTable> dicFTY = new Dictionary<string, System.Data.DataTable>();
+        private string stringyear2;
+        private string stringyear3;
+        private string stringyear4;
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (this.radiobyYear.Checked == true)
@@ -540,8 +543,8 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 int year2;
                 int year3;
                 int year4;
-                int Month = newtodaty.Month;
-                if (Month == 1)
+                int month = newtodaty.Month;
+                if (month == 1)
                 {
                     year2 = year1 - 1;
                     year3 = year1 - 2;
@@ -603,8 +606,8 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                     int year2;
                     int year3;
                     int year4;
-                    int Month = newtodaty.Month;
-                    if (Month == 1)
+                    int month = newtodaty.Month;
+                    if (month == 1)
                     {
                         year2 = year1 - 1;
                         year3 = year1 - 2;
@@ -652,7 +655,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
             return true; // base.OnToExcel(report);
         }
 
-        void AddRpt(Worksheet mySheet, int rowNo, int columnNo)
+        private void AddRpt(Worksheet mySheet, int rowNo, int columnNo)
         {
             #region By Year
             // 改名字
@@ -800,7 +803,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
             #endregion
         }
 
-        void Addfactory(Worksheet mySheet, int rowNo, int columnNo)
+        private void Addfactory(Worksheet mySheet, int rowNo, int columnNo)
         {
             #region By Factory
 
@@ -968,7 +971,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
             #endregion
         }
 
-        void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
+        private void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
         {
             _Application myExcel = null;
             _Workbook myBook = null;

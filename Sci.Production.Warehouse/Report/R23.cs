@@ -17,6 +17,7 @@ namespace Sci.Production.Warehouse
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1)
@@ -34,6 +35,7 @@ namespace Sci.Production.Warehouse
 
         private DataTable dt;
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string spno = this.txtSPNo.Text.Trim();
@@ -107,6 +109,7 @@ where 1=1
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.SetCount(this.dt.Rows.Count);

@@ -290,7 +290,7 @@
             this.grid2.Size = new System.Drawing.Size(51, 17);
             this.grid2.TabIndex = 57;
             this.grid2.Visible = false;
-            this.grid2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grid2_CellFormatting);
+            this.grid2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Grid2_CellFormatting);
             // 
             // label9
             // 

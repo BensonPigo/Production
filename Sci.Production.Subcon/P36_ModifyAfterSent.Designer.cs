@@ -60,7 +60,7 @@
             this.btnClose.TabIndex = 7;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnSave
             // 
@@ -71,7 +71,7 @@
             this.btnSave.TabIndex = 6;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // labelDescription
             // 
@@ -113,7 +113,7 @@
             0,
             0,
             0});
-            this.numExchange.Validating += new System.ComponentModel.CancelEventHandler(this.numExchange_Validating);
+            this.numExchange.Validating += new System.ComponentModel.CancelEventHandler(this.NumExchange_Validating);
             // 
             // labelExchange
             // 
@@ -144,7 +144,7 @@
             0,
             0,
             0});
-            this.numtaxrate.Validating += new System.ComponentModel.CancelEventHandler(this.numtaxrate_Validating);
+            this.numtaxrate.Validating += new System.ComponentModel.CancelEventHandler(this.Numtaxrate_Validating);
             // 
             // numTax
             // 
@@ -199,7 +199,7 @@
             0,
             0,
             0});
-            this.numAmount.Validating += new System.ComponentModel.CancelEventHandler(this.numAmount_Validating);
+            this.numAmount.Validating += new System.ComponentModel.CancelEventHandler(this.NumAmount_Validating);
             // 
             // labelAmount
             // 

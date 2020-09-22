@@ -19,8 +19,8 @@ namespace Sci.Production.Quality
         private readonly DataRow maindr;
         private readonly string loginID = Env.User.UserID;
         private readonly string keyWord = Env.User.Keyword;
-        string excelFile = string.Empty;
-        DataTable Fir_physical_Defect;
+        private string excelFile = string.Empty;
+        private DataTable Fir_physical_Defect;
 
         public P01_PhysicalInspection(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
@@ -36,12 +36,14 @@ namespace Sci.Production.Quality
             this.QueryHeader();
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
             this.Button_enable();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery()
         {
             this.QueryHeader();
@@ -74,9 +76,9 @@ namespace Sci.Production.Quality
                 this.displayStyle.Text = string.Empty;
             }
 
-            string Receiving_cmd = string.Format("select a.exportid,a.WhseArrival ,b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", this.maindr["id"]);
+            string receiving_cmd = string.Format("select a.exportid,a.WhseArrival ,b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", this.maindr["id"]);
             DataRow rec_dr;
-            if (MyUtility.Check.Seek(Receiving_cmd, out rec_dr))
+            if (MyUtility.Check.Seek(receiving_cmd, out rec_dr))
             {
                 this.displayBrandRefno.Text = rec_dr["Refno"].ToString();
             }
@@ -123,8 +125,9 @@ namespace Sci.Production.Quality
             this.txtPhysicalInspector.Text = this.maindr["PhysicalInspector"].ToString();
         }
 
-        DataTable datas2;
+        private DataTable datas2;
 
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             this.datas2 = datas;
@@ -191,9 +194,9 @@ namespace Sci.Production.Quality
         protected void Get_total_point()
         {
             double double_ActualYds = MyUtility.Convert.GetDouble(this.CurrentData["ActualYds"]);
-            double ActualYdsT = Math.Floor(MyUtility.Convert.GetDouble(this.CurrentData["ActualYds"]) - 0.01);
-            double ActualWidth = MyUtility.Convert.GetDouble(this.CurrentData["actualwidth"]);
-            double ActualYdsF = ActualYdsT - (ActualYdsT % 5);
+            double actualYdsT = Math.Floor(MyUtility.Convert.GetDouble(this.CurrentData["ActualYds"]) - 0.01);
+            double actualWidth = MyUtility.Convert.GetDouble(this.CurrentData["actualwidth"]);
+            double actualYdsF = actualYdsT - (actualYdsT % 5);
             double def_locT = 0d;
             double def_locF = 0d;
 
@@ -217,20 +220,20 @@ namespace Sci.Production.Quality
                     // }
 
                     // DefectLocation的範圍如果與目前ActualYds界限值不符的話就update DefectLocation
-                    if (def_locF == ActualYdsF && def_locT != ActualYdsT)
+                    if (def_locF == actualYdsF && def_locT != actualYdsT)
                     {
-                        this.Fir_physical_Defect.Rows[i]["DefectLocation"] = ActualYdsF.ToString().PadLeft(3, '0') + "-" + ActualYdsT.ToString().PadLeft(3, '0');
+                        this.Fir_physical_Defect.Rows[i]["DefectLocation"] = actualYdsF.ToString().PadLeft(3, '0') + "-" + actualYdsT.ToString().PadLeft(3, '0');
                     }
 
-                    if (def_locT < ActualYdsF && def_locT - def_locF != 4)
+                    if (def_locT < actualYdsF && def_locT - def_locF != 4)
                     {
                         /*
                          *  如果DefectLocation的相同範圍內有２筆資料,就必須把舊的給刪除
                          *  ex: 080-083 汙點D1, 080-084 汙點A1/D1 ,就必須要080-083給刪除
                          *  不然將080-083 改為080-084 Pkey就會重複
                         */
-                        DataRow[] Ary = this.Fir_physical_Defect.Select(string.Format(@"NewKey = {0} and DefectLocation like '%{1}%'", this.CurrentData["NewKey"].ToString(), def_locF));
-                        if (Ary.Length > 1)
+                        DataRow[] ary = this.Fir_physical_Defect.Select(string.Format(@"NewKey = {0} and DefectLocation like '%{1}%'", this.CurrentData["NewKey"].ToString(), def_locF));
+                        if (ary.Length > 1)
                         {
                             this.Fir_physical_Defect.Rows[i].Delete();
                         }
@@ -242,23 +245,23 @@ namespace Sci.Production.Quality
                 }
             }
 
-            double SumPoint = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Compute("Sum(Point)", string.Format("NewKey = {0}", this.CurrentData["NewKey"])));
+            double sumPoint = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Compute("Sum(Point)", string.Format("NewKey = {0}", this.CurrentData["NewKey"])));
 
             // PointRate 國際公式每五碼最高20點
-            this.CurrentData["TotalPoint"] = SumPoint;
+            this.CurrentData["TotalPoint"] = sumPoint;
 
             #region 依dbo.PointRate 來判斷新的PointRate計算公式
             DataRow drPoint;
-            string PointRateID = MyUtility.Check.Seek($@"select * from PointRate where Brandid='{this.displayBrand.Text}'", out drPoint) ? drPoint["id"].ToString() : "1";
+            string pointRateID = MyUtility.Check.Seek($@"select * from PointRate where Brandid='{this.displayBrand.Text}'", out drPoint) ? drPoint["id"].ToString() : "1";
 
-            this.CurrentData["PointRate"] = (PointRateID == "2") ?
-                ((double_ActualYds == 0 || ActualWidth == 0) ? 0 : Math.Round((SumPoint * 3600) / (double_ActualYds * ActualWidth), 2)) :
-                (double_ActualYds == 0) ? 0 : Math.Round((SumPoint / double_ActualYds) * 100, 2);
+            this.CurrentData["PointRate"] = (pointRateID == "2") ?
+                ((double_ActualYds == 0 || actualWidth == 0) ? 0 : Math.Round((sumPoint * 3600) / (double_ActualYds * actualWidth), 2)) :
+                (double_ActualYds == 0) ? 0 : Math.Round((sumPoint / double_ActualYds) * 100, 2);
 
             #endregion
 
             #region Grade,Result
-            string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", this.maindr["SCiRefno"].ToString(), "Fabric", "SciRefno");
+            string weaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", this.maindr["SCiRefno"].ToString(), "Fabric", "SciRefno");
 
             string grade_cmd = $@"
 
@@ -266,7 +269,7 @@ namespace Sci.Production.Quality
 SELECT [Grade]=MIN(Grade)
 INTO #default
 FROM FIR_Grade f WITH (NOLOCK) 
-WHERE f.WeaveTypeID = '{WeaveTypeid}' 
+WHERE f.WeaveTypeID = '{weaveTypeid}' 
 AND f.Percentage >= IIF({this.CurrentData["PointRate"]} > 100, 100, {this.CurrentData["PointRate"]})
 AND BrandID=''
 
@@ -274,7 +277,7 @@ AND BrandID=''
 SELECT [Grade]=MIN(Grade)
 INTO #withBrandID
 FROM FIR_Grade WITH (NOLOCK) 
-WHERE WeaveTypeID = '{WeaveTypeid}' 
+WHERE WeaveTypeID = '{weaveTypeid}' 
 AND Percentage >= IIF({this.CurrentData["PointRate"]} > 100, 100, {this.CurrentData["PointRate"]})
 AND BrandID='{this.displayBrand.Text}'
 
@@ -293,7 +296,7 @@ Select TOP 1 [Result] =	case Result
 						when 'F' then 'Fail'
 					end
 from Fir_Grade WITH (NOLOCK) 
-WHERE WeaveTypeID = '{WeaveTypeid}' 
+WHERE WeaveTypeID = '{weaveTypeid}' 
 AND Grade = (
 	SELECT ISNULL(Brand.Grade, (SELECT Grade FROM #default)) 
 	FROM #withBrandID brand
@@ -316,14 +319,15 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
 #endregion
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings Ydscell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings TotalPointcell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResulCell = PublicPrg.Prgs.CellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings rollcell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ydscell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings totalPointcell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorTextColumnSettings resulCell = PublicPrg.Prgs.CellResult.GetGridCell();
             #region TotalPoint Double Click
-            TotalPointcell.EditingMouseDoubleClick += (s, e) =>
+            totalPointcell.EditingMouseDoubleClick += (s, e) =>
             {
                 this.grid.ValidateControl();
                 P01_PhysicalInspection_Defect frm = new P01_PhysicalInspection_Defect(this.Fir_physical_Defect, this.maindr, this.EditMode);
@@ -336,7 +340,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
             };
             #endregion
             #region Roll
-            Rollcell.EditingMouseDown += (s, e) =>
+            rollcell.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode == false)
                 {
@@ -392,7 +396,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
                     dr.EndEdit();
                 }
             };
-            Rollcell.CellValidating += (s, e) =>
+            rollcell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string strNewKey = dr["NewKey"].ToString();
@@ -451,13 +455,13 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
                     dr["Roll"] = roll_dr["Roll"];
                     dr["Dyelot"] = roll_dr["Dyelot"];
                     dr["Ticketyds"] = roll_dr["StockQty"];
-                    dr["CutWidth"] = dr["CutWidth"] = MyUtility.GetValue.Lookup(
-                        string.Format(
+                    string cmd = string.Format(
                         @"
                                                                         select width
                                                                         from Fabric 
                                                                         inner join Fir on Fabric.SCIRefno = fir.SCIRefno
-                                                                        where Fir.ID = '{0}'", dr["id"]), null, null);
+                                                                        where Fir.ID = '{0}'", dr["id"]);
+                    dr["CutWidth"] = dr["CutWidth"] = MyUtility.GetValue.Lookup(cmd, null, null);
                     dr["Result"] = "Pass";
                     dr["Grade"] = "A";
                     dr["totalpoint"] = 0.00;
@@ -488,7 +492,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
             };
             #endregion
             #region Act Yds
-            Ydscell.CellValidating += (s, e) =>
+            ydscell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Actualyds"].ToString();
@@ -540,16 +544,16 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.grid)
-            .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
+            .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-            .Numeric("Actualyds", header: "Act.Yds\nInspected", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, settings: Ydscell)
+            .Numeric("Actualyds", header: "Act.Yds\nInspected", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, settings: ydscell)
             .Numeric("LthOfDiff", header: "Lth. Of Diff", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
             .Text("TransactionID", header: "TransactionID", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Numeric("CutWidth", header: "Cut. Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2, iseditingreadonly: true)
             .Numeric("fullwidth", header: "Full width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("actualwidth", header: "Actual Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
-            .Numeric("totalpoint", header: "Total Points", width: Widths.AnsiChars(7), integer_places: 6, iseditingreadonly: true, settings: TotalPointcell)
+            .Numeric("totalpoint", header: "Total Points", width: Widths.AnsiChars(7), integer_places: 6, iseditingreadonly: true, settings: totalPointcell)
             .Numeric("pointRate", header: "Point Rate \nper 100yds", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 6, decimal_places: 2)
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("Grade", header: "Grade", width: Widths.AnsiChars(1), iseditingreadonly: true)
@@ -572,10 +576,11 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnInsert()
         {
-            DataTable Dt = (DataTable)this.gridbs.DataSource;
-            int Maxi = MyUtility.Convert.GetInt(Dt.Compute("Max(NewKey)", string.Empty));
+            DataTable dt = (DataTable)this.gridbs.DataSource;
+            int maxi = MyUtility.Convert.GetInt(dt.Compute("Max(NewKey)", string.Empty));
             base.OnInsert();
 
             DataRow selectDr = ((DataRowView)this.grid.GetSelecteds(SelectedSort.Index)[0]).Row;
@@ -583,13 +588,14 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
             selectDr["Inspdate"] = DateTime.Now.ToShortDateString();
             selectDr["Inspector"] = this.loginID;
             selectDr["Name"] = MyUtility.GetValue.Lookup("Name", this.loginID, "Pass1", "ID");
-            selectDr["NewKey"] = Maxi + 1;
+            selectDr["NewKey"] = maxi + 1;
             selectDr["Moisture"] = 0;
             selectDr["poid"] = this.maindr["poid"];
             selectDr["SEQ1"] = this.maindr["SEQ1"];
             selectDr["SEQ2"] = this.maindr["SEQ2"];
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             DataTable gridTb = (DataTable)this.gridbs.DataSource;
@@ -662,6 +668,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
@@ -714,12 +721,12 @@ Values({0},'{1}','{2}',{3},{4},{5},{6},{7},{8},'{9}','{10}','{11}','{12}','{13}'
                     {
                         iden = idenDt.Rows[0]["ii"].ToString(); // 取出Identity
 
-                        DataRow[] Ary = this.Fir_physical_Defect.Select(string.Format("NewKey={0}", dr["NewKey"]));
-                        if (Ary.Length > 0)
+                        DataRow[] ary = this.Fir_physical_Defect.Select(string.Format("NewKey={0}", dr["NewKey"]));
+                        if (ary.Length > 0)
                         {
-                            foreach (DataRow Ary_dr in Ary)
+                            foreach (DataRow ary_dr in ary)
                             {
-                                Ary_dr["FIR_PhysicalDetailUKey"] = iden;
+                                ary_dr["FIR_PhysicalDetailUKey"] = iden;
                             }
                         }
                     }
@@ -831,9 +838,9 @@ and not exists
                 }
 
                 DataTable gridTb = (DataTable)this.gridbs.DataSource;
-                DataRow[] ResultAry = gridTb.Select("Result = 'Fail'");
+                DataRow[] resultAry = gridTb.Select("Result = 'Fail'");
                 string result = "Pass";
-                if (ResultAry.Length > 0)
+                if (resultAry.Length > 0)
                 {
                     result = "Fail";
                 }
@@ -887,31 +894,31 @@ and not exists
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
                     // 更新PO.FIRInspPercent和AIRInspPercent
                     if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{this.maindr["POID"].ToString()}'; ")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -950,24 +957,24 @@ and not exists
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -1017,7 +1024,7 @@ and not exists
             this.ToExcel(false, "DefectYds");
         }
 
-        private bool ToExcel(bool isSendMail, string Type)
+        private bool ToExcel(bool isSendMail, string type)
         {
             #region DataTables && 共用變數
             // FabricDefect 基本資料 DB
@@ -1232,7 +1239,7 @@ order by Yards
                 }
 
                 // 依照Type來匯出Excel
-                if (Type == "DefectYds" && dtRealTime.Rows.Count > 0)
+                if (type == "DefectYds" && dtRealTime.Rows.Count > 0)
                 {
                     int cntRealTime = 0;
                     int cntDtRealTime = dtRealTime.Rows.Count;
@@ -1276,7 +1283,7 @@ order by Yards
                 {
                     DataTable dtDefect;
                     DBProxy.Current.Select("Production", string.Format("select * from  FIR_Physical_Defect WITH (NOLOCK) WHERE FIR_PhysicalDetailUKey='{0}'", dtGrid.Rows[rowcount - 1]["detailUkey"]), out dtDefect);
-                    int PDrowcount = 0;
+                    int pDrowcount = 0;
                     int dtRowCount = (int)dtDefect.Rows.Count;
                     int nextLineCount = 1;
                     for (int c = 1; c < dtRowCount; c++)
@@ -1310,12 +1317,12 @@ order by Yards
                                 addline++;
                             }
 
-                            excel.Cells[16 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[PDrowcount]["DefectLocation"];
-                            PDrowcount++;
+                            excel.Cells[16 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount]["DefectLocation"];
+                            pDrowcount++;
                         }
                         else
                         {
-                            excel.Cells[16 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[PDrowcount - 1]["DefectRecord"];
+                            excel.Cells[16 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount - 1]["DefectRecord"];
                         }
                     }
                 }

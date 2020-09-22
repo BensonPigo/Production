@@ -223,6 +223,7 @@ please check again.");
         #endregion
 
         #region B42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
+
         /// <summary>
         /// 42 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
         /// </summary>
@@ -298,15 +299,32 @@ please check again.");
         /// </summary>
         public class ParGetVNConsumption_Detail_Detail
         {
-            public DateTime? dateBuyerDeliveryFrom;
-            public DateTime? dateBuyerDeliveryTo;
-            public string Style;
-            public string Category;
-            public string BrandID;
-            public string StyleUkey;
-            public string SizeCode;
-            public string Article;
-            public string ContractID;
+            /// <inheritdoc/>
+            public DateTime? DateBuyerDeliveryFrom { get; set; }
+
+            /// <inheritdoc/>
+            public DateTime? DateBuyerDeliveryTo { get; set; }
+
+            /// <inheritdoc/>
+            public string Style { get; set; }
+
+            /// <inheritdoc/>
+            public string Category { get; set; }
+
+            /// <inheritdoc/>
+            public string BrandID { get; set; }
+
+            /// <inheritdoc/>
+            public string StyleUkey { get; set; }
+
+            /// <inheritdoc/>
+            public string SizeCode { get; set; }
+
+            /// <inheritdoc/>
+            public string Article { get; set; }
+
+            /// <inheritdoc/>
+            public string ContractID { get; set; }
         }
 
         /// <summary>
@@ -342,14 +360,14 @@ inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID
 left join Style s WITH (NOLOCK) on o.StyleUkey = s.Ukey
 where   1=1");
 
-            if (!MyUtility.Check.Empty(sqlPar.dateBuyerDeliveryFrom))
+            if (!MyUtility.Check.Empty(sqlPar.DateBuyerDeliveryFrom))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(sqlPar.dateBuyerDeliveryFrom).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(sqlPar.DateBuyerDeliveryFrom).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(sqlPar.dateBuyerDeliveryTo))
+            if (!MyUtility.Check.Empty(sqlPar.DateBuyerDeliveryTo))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(sqlPar.dateBuyerDeliveryTo).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(sqlPar.DateBuyerDeliveryTo).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(sqlPar.Style))

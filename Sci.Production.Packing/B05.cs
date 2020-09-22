@@ -40,6 +40,7 @@ WHERE Type ='PMS_ShipMarkCategory'
             this.comboCategory.DisplayMember = "Text";
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -56,6 +57,7 @@ WHERE Type ='PMS_ShipMarkCategory'
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -71,6 +73,7 @@ WHERE Type ='PMS_ShipMarkCategory'
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             this.CurrentMaintain["Category"] = "PIC";
@@ -78,6 +81,7 @@ WHERE Type ='PMS_ShipMarkCategory'
             base.ClickNewAfter();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -98,6 +102,7 @@ WHERE Type ='PMS_ShipMarkCategory'
             this.txtID.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]) || MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
@@ -166,6 +171,7 @@ Please check to continue process.");
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -194,6 +200,7 @@ Please check to continue process.");
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickJunk()
         {
             base.ClickJunk();
@@ -212,6 +219,7 @@ Please check to continue process.");
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();
