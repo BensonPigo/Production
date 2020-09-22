@@ -16,21 +16,23 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Quality
 {
-    public partial class P31 : Sci.Win.Tems.Input6
+    /// <inheritdoc/>
+    public partial class P31 : Win.Tems.Input6
     {
-        public string _Type = string.Empty;
+        public string type = string.Empty;
         private List<string> _Articles = new List<string>();
         private List<string> _Articles_c = new List<string>();
 
         // 每一Article底下的Size數量
         private readonly Dictionary<string, int> Size_per_Article = new Dictionary<string, int>();
 
+        /// <inheritdoc/>
         public P31(ToolStripMenuItem menuitem, string type)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.Text = type == "1" ? "P31. CFA Master List" : "P311. CFA Master List(History)";
-            this._Type = type;
+            this.type = type;
 
             string isfinished = type == "1" ? "0" : "1";
             string defaultFilter = $@" 
@@ -750,7 +752,7 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
                 r1.X += -1;
 
                 // r1.Y += 1;
-                r1.Height = r1.Height / 2 - 2;
+                r1.Height = (r1.Height / 2) - 2;
 
                 // r1.Width -= 1;
 
@@ -943,7 +945,7 @@ SELECT Packing2
 FROM Orders 
 WHERE ID='{this.CurrentMaintain["ID"]}'
 ");
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(content, "VAS/SHAS Instruction", false, null);
+            EditMemo callNextForm = new EditMemo(content, "VAS/SHAS Instruction", false, null);
             callNextForm.ShowDialog(this);
         }
 
@@ -961,34 +963,26 @@ WHERE ID='{this.CurrentMaintain["ID"]}'
 
         private void BtnCreateInsRecord_Click(object sender, EventArgs e)
         {
-            P32Header obj = new P32Header()
-            {
-                OrderID = this.CurrentMaintain["ID"].ToString(),
-                Seq = this.CurrentMaintain["Seq"].ToString(),
-                PO = this.disPO.Value.ToString(),
-                Style = this.CurrentMaintain["StyleID"].ToString(),
-                Brand = this.disBrand.Value.ToString(),
-                Season = MyUtility.GetValue.Lookup($@"
+            string cmdSeason = $@"
 SELECT  SeasonID
 FROM Orders 
 WHERE ID = '{this.CurrentMaintain["ID"].ToString()}'
-"),
+";
 
-                M = MyUtility.GetValue.Lookup($@"
+            string cmdM = $@"
 SELECT  MDivisionid
 FROM Orders 
 WHERE ID = '{this.CurrentMaintain["ID"].ToString()}'
-"),
-                Factory = this.CurrentMaintain["FactoryID"].ToString(),
-                BuyerDev = this.CurrentMaintain["BuyerDelivery"].ToString(),
-                OrderQty = this.CurrentMaintain["Qty"].ToString(),
-                Dest = MyUtility.GetValue.Lookup($@"
+";
+
+            string cmdDest = $@"
 SELECT c.Alias
 FROM Orders o
 INNER JOIN Country c ON o.Dest = c.ID
 WHERE o.ID = '{this.CurrentMaintain["ID"].ToString()}'
-"),
-                Article = MyUtility.GetValue.Lookup($@"
+";
+
+            string cmdArticle = $@"
 SELECT STUFF(
     (SELECT DISTINCT ','+Article 
     FROM Order_QtyShip_Detail 
@@ -996,10 +990,24 @@ SELECT STUFF(
     FOR XML PATH('')
     )
 ,1,1,'')
-"),
+";
+            P32Header obj = new P32Header()
+            {
+                OrderID = this.CurrentMaintain["ID"].ToString(),
+                Seq = this.CurrentMaintain["Seq"].ToString(),
+                PO = this.disPO.Value.ToString(),
+                Style = this.CurrentMaintain["StyleID"].ToString(),
+                Brand = this.disBrand.Value.ToString(),
+                Season = MyUtility.GetValue.Lookup(cmdSeason),
+                M = MyUtility.GetValue.Lookup(cmdM),
+                Factory = this.CurrentMaintain["FactoryID"].ToString(),
+                BuyerDev = this.CurrentMaintain["BuyerDelivery"].ToString(),
+                OrderQty = this.CurrentMaintain["Qty"].ToString(),
+                Dest = MyUtility.GetValue.Lookup(cmdDest),
+                Article = MyUtility.GetValue.Lookup(cmdArticle),
             };
 
-            Sci.Production.Quality.P32 p32 = new P32(new ToolStripMenuItem(), "1", sourceHeader: obj);
+            P32 p32 = new P32(new ToolStripMenuItem(), "1", sourceHeader: obj);
             p32.ShowDialog(this);
         }
     }

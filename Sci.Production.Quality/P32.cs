@@ -382,7 +382,7 @@ WHERE a.ID ='{masterID}'
                 this.disBrand.Value = this._sourceHeader.Brand;
                 this.disSeason.Value = this._sourceHeader.Season;
                 this.CurrentMaintain["MDivisionid"] = this._sourceHeader.M;
-                this.CurrentMaintain["FactoryID"] = this._sourceHeader.Factory;
+                // this.CurrentMaintain["FactoryID"] = this._sourceHeader.Factory;
                 this.disOrderQty.Value = this._sourceHeader.OrderQty;
                 this.disDest.Value = this._sourceHeader.Dest;
                 this.disArticle.Value = this._sourceHeader.Article;
@@ -1349,11 +1349,11 @@ SELECT STUFF(
             this.comboStage.Items.Clear();
             this.comboStage.Items.AddRange(new object[]
             {
-            string.Empty,
-            "Inline",
-            "Staggered",
-            "Final",
-            "3rd party",
+                string.Empty,
+                "Inline",
+                "Staggered",
+                "Final",
+                "3rd party",
             });
             if (isSample)
             {
