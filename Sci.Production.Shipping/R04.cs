@@ -184,6 +184,7 @@ namespace Sci.Production.Shipping
 		,ShipQty = (select isnull(sum(ShipQty), 0) 
 					from Pullout_Detail WITH (NOLOCK) 
 					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq)
+        ,FOCBalQty = isnull(dbo.GetFocStockByOrder(o.ID),0)
 		,OrderTtlQty=o.Qty
 		,ShipTtlQty=isnull(plds.ShipQty,0)
         ,plds.CTNQty
@@ -410,6 +411,7 @@ select 	oq.BuyerDelivery
 		,o.SeasonID
 		,oq.Qty
 		,ShipQty = isnull(ShipQty.ShipQty,0)
+        ,FOCBalQty = isnull(dbo.GetFocStockByOrder(o.ID),0)
 		,OrderTtlQty=o.Qty
 		,NULL
 		,NULL
@@ -504,6 +506,7 @@ and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
 		,ShipQty = (select isnull(sum(ShipQty), 0) 
 					from Pullout_Detail WITH (NOLOCK) 
 					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq)
+        ,FOCBalQty = isnull(dbo.GetFocStockByOrder(o.ID),0)
 		,OrderTtlQty=o.Qty
 		,ShipTtlQty=isnull(plds.ShipQty,0)
         ,plds.CTNQty
@@ -621,6 +624,7 @@ select oq.BuyerDelivery
 		,o.SeasonID
 		,oq.Qty
 		,ShipQty.ShipQty
+        ,FOCBalQty = isnull(dbo.GetFocStockByOrder(o.ID),0)
 		,OrderTtlQty = o.Qty
 		,ShipTtlQty=isnull(plds.ShipQty,0)
         ,plds.CTNQty
