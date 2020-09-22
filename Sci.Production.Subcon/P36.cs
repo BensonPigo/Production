@@ -26,12 +26,15 @@ namespace Sci.Production.Subcon
 
         private bool isTaipeiDBC = false;
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
         }
 
         // Refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -122,15 +125,17 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", this.CurrentMaintain["id"
         }
 
         // Detail Grid 設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             this.detailgrid.CellDoubleClick += (s, e) =>
             {
                 if (e.ColumnIndex == 0)
                 {
-                    P36_ModifyDetail DoForm = new P36_ModifyDetail();
-                    DoForm.Set(this.EditMode, this.DetailDatas, this.CurrentDetailData);
-                    DoForm.ShowDialog(this);
+                    P36_ModifyDetail doForm = new P36_ModifyDetail();
+                    doForm.Set(this.EditMode, this.DetailDatas, this.CurrentDetailData);
+                    doForm.ShowDialog(this);
                     if (e.RowIndex == -1)
                     {
                         return;
@@ -179,6 +184,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", this.CurrentMaintain["id"
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -196,6 +203,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", this.CurrentMaintain["id"
         }
 
         // save前檢查 & 取id
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             this.detailgridbs.EndEdit();
@@ -281,6 +290,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", this.CurrentMaintain["id"
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].ToString().ToUpper() == "JUNKED")
@@ -319,6 +330,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", this.CurrentMaintain["id"
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -344,7 +356,7 @@ Where a.id = '{0}' order by orderid ", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        private void updateStatus(string oldvalue, string newValue, bool seleReason, string reasonType = "DebitNote_LS")
+        private void UpdateStatus(string oldvalue, string newValue, bool seleReason, string reasonType = "DebitNote_LS")
         {
             DualResult result;
             string insertCmd, updateCmd;
@@ -415,21 +427,21 @@ values ('LocalDebit',@id,@oldvalue,@newvalue,'','',@addname,getdate())";
 
             updateCmd += string.Format(@" where id = '{0}'", this.CurrentMaintain["id"]);
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(result = DBProxy.Current.Execute(null, insertCmd, paraList)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(insertCmd, result);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, updateCmd)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(updateCmd, result);
                         return;
                     }
@@ -445,7 +457,7 @@ where id = '{4}'",
                             this.CurrentMaintain["exchange"],
                             this.CurrentMaintain["id"]))))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(result);
                             return;
                         }
@@ -458,7 +470,7 @@ where id = '{4}'",
                             where id = '{0}'",
                             this.CurrentMaintain["id"]))))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(
                                 string.Format(
                                 @"update debit set LCLName ='' , LCLCurrency='' ,LCLAmount=0, LCLRate=0 where id = '{0}'",
@@ -468,63 +480,70 @@ where id = '{4}'",
 
                         if (!(result = DBProxy.Current.Execute(null, string.Format("delete from Debit_Schedule where id = '{0}'", this.CurrentMaintain["id"]))))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             this.ShowErr(string.Format("delete from Debit_Schedule where id = '{0}'", this.CurrentMaintain["id"]), result);
                             return;
                         }
                     }
 
-                    _transactionscope.Complete();
+                    transactionscope.Complete();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
+        /// <inheritdoc/>
         protected override void ClickSend()
         {
             base.ClickSend();
 
-            this.updateStatus(this.CurrentMaintain["status"].ToString(), "Sent", false);
+            this.UpdateStatus(this.CurrentMaintain["status"].ToString(), "Sent", false);
         }
 
+        /// <inheritdoc/>
         protected override void ClickRecall()
         {
             base.ClickRecall();
-            this.updateStatus(this.CurrentMaintain["status"].ToString(), "New", true);
+            this.UpdateStatus(this.CurrentMaintain["status"].ToString(), "New", true);
         }
 
+        /// <inheritdoc/>
         protected override void ClickReceive()
         {
             base.ClickReceive();
-            this.updateStatus(this.CurrentMaintain["status"].ToString(), "Received", false);
+            this.UpdateStatus(this.CurrentMaintain["status"].ToString(), "Received", false);
         }
 
+        /// <inheritdoc/>
         protected override void ClickReturn()
         {
             base.ClickReturn();
-            this.updateStatus(this.CurrentMaintain["status"].ToString(), "Sent", true);
+            this.UpdateStatus(this.CurrentMaintain["status"].ToString(), "Sent", true);
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            this.updateStatus(this.CurrentMaintain["status"].ToString(), "Confirmed", false);
+            this.UpdateStatus(this.CurrentMaintain["status"].ToString(), "Confirmed", false);
         }
 
+        /// <inheritdoc/>
         protected override bool ClickNew()
         {
             this.dateReceiveDate.ReadOnly = true;
             return base.ClickNew();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             // 有傳票號碼,則不能unconfirm
@@ -535,9 +554,10 @@ where id = '{4}'",
             }
 
             base.ClickUnconfirm();
-            this.updateStatus(this.CurrentMaintain["status"].ToString(), "Received", true);
+            this.UpdateStatus(this.CurrentMaintain["status"].ToString(), "Received", true);
         }
 
+        /// <inheritdoc/>
         protected override void ClickJunk()
         {
             base.ClickJunk();
@@ -553,21 +573,21 @@ where id = '{4}'",
                 return;
             }
 
-            this.updateStatus(this.CurrentMaintain["status"].ToString(), "Junked", true, "DebitNote_Factory");
+            this.UpdateStatus(this.CurrentMaintain["status"].ToString(), "Junked", true, "DebitNote_Factory");
         }
 
-        private void btnStatusHistory_Click(object sender, EventArgs e)
+        private void BtnStatusHistory_Click(object sender, EventArgs e)
         {
             var showhis = new Win.UI.ShowHistory("localdebit_history", this.CurrentMaintain["ID"].ToString(), "LocalDebit", "DebitNote_LS");
             showhis.ShowDialog();
         }
 
-        private void txtsubconSupplier_Validated(object sender, EventArgs e)
+        private void TxtsubconSupplier_Validated(object sender, EventArgs e)
         {
             this.CurrentMaintain["CURRENCYID"] = MyUtility.GetValue.Lookup(string.Format(@"SELECT CurrencyID FROM DBO.LocalSupp WITH (NOLOCK) WHERE ID='{0}'", this.CurrentMaintain["LOCALSUPPID"]));
         }
 
-        private void btnDebitSchedule_Click(object sender, EventArgs e)
+        private void BtnDebitSchedule_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -583,6 +603,8 @@ where id = '{4}'",
         }
 
         // print
+
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             if (this.CurrentMaintain["status"].ToString() == "Junked")
@@ -659,12 +681,12 @@ where Ldeb.ID= @ID";
 
             MyUtility.Check.Seek(sqlSubject, pars, out drSubject);
 
-            string Barcode = drSubject["ID"].ToString();
-            string FROM = drSubject["FROM"].ToString();
+            string barcode = drSubject["ID"].ToString();
+            string fROM = drSubject["FROM"].ToString();
             string title = drSubject["nameEn"].ToString();
             string titletaxrate = drSubject["titletaxrate"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Barcode", Barcode));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FROM", FROM));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Barcode", barcode));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FROM", fROM));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", title));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("titletaxrate", titletaxrate));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", drSubject["Supplier"].ToString()));
@@ -694,12 +716,12 @@ where Ldeb.ID= @ID";
 
             // 指定是哪個 RDLC
             // DualResult result;
-            Type ReportResourceNamespace = typeof(P36_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P36_Print.rdlc";
+            Type reportResourceNamespace = typeof(P36_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P36_Print.rdlc";
 
             IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 // this.ShowException(result);
                 return false;
@@ -722,7 +744,7 @@ where Ldeb.ID= @ID";
             return true;
         }
 
-        private void numExchange_Validating(object sender, CancelEventArgs e)
+        private void NumExchange_Validating(object sender, CancelEventArgs e)
         {
             // 若 Debit Note 屬於工廠建立,則Exchange不須判斷
             if (MyUtility.Check.Empty(this.CurrentMaintain["TaipeiDBC"]))
@@ -741,7 +763,7 @@ where Ldeb.ID= @ID";
             this.CurrentMaintain["amount"] = Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TaipeiAMT"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["Exchange"]), 2);
         }
 
-        private void numAmount_Validating(object sender, CancelEventArgs e)
+        private void NumAmount_Validating(object sender, CancelEventArgs e)
         {
             this.CurrentMaintain["amount"] = this.numAmount.Text;
             this.ReCalculateTax();
@@ -750,18 +772,18 @@ where Ldeb.ID= @ID";
         private void ReCalculateTax()
         {
             decimal amount = MyUtility.Convert.GetDecimal(this.CurrentMaintain["amount"]);
-            decimal TaxRate = MyUtility.Convert.GetDecimal(this.CurrentMaintain["taxrate"]);
-            int Exact = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["currencyId"]), null));
-            if (MyUtility.Check.Empty(Exact))
+            decimal taxRate = MyUtility.Convert.GetDecimal(this.CurrentMaintain["taxrate"]);
+            int exact = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["currencyId"]), null));
+            if (MyUtility.Check.Empty(exact))
             {
-                Exact = 0;
+                exact = 0;
             }
 
-            this.CurrentMaintain["Tax"] = Math.Round((amount * TaxRate) / 100, Exact);
+            this.CurrentMaintain["Tax"] = Math.Round((amount * taxRate) / 100, exact);
             this.numTotalAmt.Value = decimal.Parse(this.CurrentMaintain["amount"].ToString()) + decimal.Parse(this.CurrentMaintain["tax"].ToString());
         }
 
-        private void numtaxrate_Validating(object sender, CancelEventArgs e)
+        private void Numtaxrate_Validating(object sender, CancelEventArgs e)
         {
             this.CurrentMaintain["taxrate"] = this.numtaxrate.Text;
             this.ReCalculateTax();

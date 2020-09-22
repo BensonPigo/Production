@@ -18,24 +18,24 @@ namespace Sci.Production.Quality
 {
     public partial class P31_ByRecord : Sci.Win.Forms.Base
     {
+        private readonly string _OrderID = string.Empty;
+        private readonly string _OrderShipmodeSeq = string.Empty;
 
-        private readonly string _OrderID = "";
-        private readonly string _OrderShipmodeSeq = "";
-
-        public P31_ByRecord(string OrderID , string OrderShipmodeSeq)
+        public P31_ByRecord(string orderID, string orderShipmodeSeq)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            this._OrderID = OrderID;
-            this._OrderShipmodeSeq = OrderShipmodeSeq;
+            this._OrderID = orderID;
+            this._OrderShipmodeSeq = orderShipmodeSeq;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
             DualResult res;
-            DataTable dt; 
+            DataTable dt;
 
             string cmd = $@"
 SELECt AuditDate
@@ -65,7 +65,7 @@ WHERE OrderID= '{this._OrderID}'  and SEQ='{this._OrderShipmodeSeq}'
             this.Helper.Controls.Grid.Generator(this.grid)
                  .Date("AuditDate", header: "Audit Date", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("Stage", header: "Stage", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Numeric("ClogReceivedPercentage", header: "Closed carton Output(%)", width: Widths.AnsiChars(10),decimal_places:0, iseditingreadonly: true)
+                 .Numeric("ClogReceivedPercentage", header: "Closed carton Output(%)", width: Widths.AnsiChars(10), decimal_places: 0, iseditingreadonly: true)
                  .Numeric("InspectQty", header: "Inspect Qty", width: Widths.AnsiChars(8), decimal_places: 0, iseditingreadonly: true)
                  .Numeric("DefectQty", header: "Defect Qty", width: Widths.AnsiChars(8), decimal_places: 0, iseditingreadonly: true)
                  .Text("Result", header: "Result", width: Widths.AnsiChars(15), iseditingreadonly: true)

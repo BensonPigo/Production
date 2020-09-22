@@ -10,18 +10,18 @@ namespace Sci.Production.Quality
 {
     public partial class R30 : Win.Tems.PrintForm
     {
-        DataTable printData;
-        string sp1;
-        string sp2;
-        string Style;
-        string Season;
-        string Brand;
-        string Factory;
-        string Inspected;
-        DateTime? Buyerdelivery1;
-        DateTime? Buyerdelivery2;
-        DateTime? InspectionDate1;
-        DateTime? InspectionDate2;
+        private DataTable printData;
+        private string sp1;
+        private string sp2;
+        private string Style;
+        private string Season;
+        private string Brand;
+        private string Factory;
+        private string Inspected;
+        private DateTime? Buyerdelivery1;
+        private DateTime? Buyerdelivery2;
+        private DateTime? InspectionDate1;
+        private DateTime? InspectionDate2;
 
         public R30(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -36,6 +36,8 @@ namespace Sci.Production.Quality
         }
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.sp1 = this.txtSPStart.Text;
@@ -54,6 +56,8 @@ namespace Sci.Production.Quality
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -153,6 +157,8 @@ order by a.ID
         }
 
         // 產生Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

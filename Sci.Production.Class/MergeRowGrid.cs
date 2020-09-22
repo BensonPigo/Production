@@ -5,11 +5,13 @@ namespace Sci.Production.Class
 {
     public class MergeRowGrid : Grid
     {
+        /// <inheritdoc/>
         protected override void InitLayout()
         {
             base.InitLayout();
         }
 
+        /// <inheritdoc/>
         protected override void OnCellClick(DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == -1)

@@ -13,15 +13,15 @@ namespace Sci.Production.Quality
 {
     public partial class R06 : Win.Tems.PrintForm
     {
-        DateTime? DateArrStart; DateTime? DateArrEnd;
-        List<SqlParameter> lis;
-        DataTable[] allDatas;
-        string cmd;
-        string Supp;
-        string refno;
-        string brand;
-        string season;
-        string reportType;
+        private DateTime? DateArrStart; private DateTime? DateArrEnd;
+        private List<SqlParameter> lis;
+        private DataTable[] allDatas;
+        private string cmd;
+        private string Supp;
+        private string refno;
+        private string brand;
+        private string season;
+        private string reportType;
 
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -31,12 +31,13 @@ namespace Sci.Production.Quality
             this.txtbrand.MultiSelect = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.lis = new List<SqlParameter>();
-            bool DateArr_empty = !this.dateArriveWHDate.HasValue, Supplier_empty = !this.txtsupplier.Text.Empty(), refno_empty = !this.txtRef.Text.Empty(), brand_empty = !this.txtbrand.Text.Empty(),
+            bool dateArr_empty = !this.dateArriveWHDate.HasValue, supplier_empty = !this.txtsupplier.Text.Empty(), refno_empty = !this.txtRef.Text.Empty(), brand_empty = !this.txtbrand.Text.Empty(),
                  season_empty = !this.txtseason.Text.Empty();
-            if (DateArr_empty)
+            if (dateArr_empty)
             {
                 this.dateArriveWHDate.Focus();
                 MyUtility.Msg.ErrorBox("<Arrive W/H> Cannot be empty");
@@ -55,18 +56,18 @@ namespace Sci.Production.Quality
             string sqlRWhere = string.Empty;
             string sqlSuppWhere = string.Empty;
             List<string> sqlWheres = new List<string>();
-            List<string> RWheres = new List<string>();
+            List<string> rWheres = new List<string>();
             #region --組WHERE--
 
             if (!this.dateArriveWHDate.Value1.Empty())
             {
-                RWheres.Add("r.WhseArrival >= @DateArrStart");
+                rWheres.Add("r.WhseArrival >= @DateArrStart");
                 this.lis.Add(new SqlParameter("@DateArrStart", this.DateArrStart));
             }
 
             if (!this.dateArriveWHDate.Value2.Empty())
             {
-                RWheres.Add("r.WhseArrival <= @DateArrEnd");
+                rWheres.Add("r.WhseArrival <= @DateArrEnd");
                 this.lis.Add(new SqlParameter("@DateArrEnd", this.DateArrEnd));
             }
 
@@ -102,7 +103,7 @@ namespace Sci.Production.Quality
             }
 
             sqlWhere = string.Join(" and ", sqlWheres);
-            sqlRWhere = string.Join(" and ", RWheres);
+            sqlRWhere = string.Join(" and ", rWheres);
 
             if (!sqlWhere.Empty())
             {
@@ -731,6 +732,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
@@ -743,6 +745,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             return res;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -801,8 +804,8 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
                     }
                 }
 
-                bool Clima = (bool)this.allDatas[0].Rows[i]["Clima"];
-                if (Clima)
+                bool clima = (bool)this.allDatas[0].Rows[i]["Clima"];
+                if (clima)
                 {
                     objSheets.get_Range((Microsoft.Office.Interop.Excel.Range)objSheets.Cells[line, coltype], (Microsoft.Office.Interop.Excel.Range)objSheets.Cells[line, coltype]).Interior.Color = Color.Yellow;
                 }

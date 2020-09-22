@@ -21,7 +21,7 @@ namespace Sci.Production.Subcon
     {
         public static DataTable dtPadBoardInfo;
         private bool boolNeedReaload = false;
-        Form batchapprove;
+        private Form batchapprove;
 
         public P30(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -45,12 +45,13 @@ namespace Sci.Production.Subcon
             };
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
             if (!this.tabs.TabPages[0].Equals(this.tabs.SelectedTab) && !MyUtility.Check.Empty(this.CurrentMaintain))
             {
-                bool NotEditModeAndHasAuthority = !this.EditMode && Prgs.GetAuthority(Env.User.UserID);
+                bool notEditModeAndHasAuthority = !this.EditMode && Prgs.GetAuthority(Env.User.UserID);
 
                 // 狀態流程：New → Locked → Approved → Closed
                 this.toolbar.cmdConfirm.Enabled = !this.EditMode && this.Perm.Confirm && this.CurrentMaintain["status"].ToString() == "Locked";
@@ -65,6 +66,8 @@ namespace Sci.Production.Subcon
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -79,6 +82,8 @@ namespace Sci.Production.Subcon
         }
 
         // delete前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["status"].ToString().ToUpper() == "APPROVED")
@@ -119,14 +124,14 @@ namespace Sci.Production.Subcon
         /// <summary>
         /// Edit前檢查：若狀態為『Locked, Approved, Closed』只允許變更表頭 Remark
         /// </summary>
-        /// <returns></returns>
+        /// <returns>bool</returns>
         protected override bool ClickEditBefore()
         {
-            bool IsOnlyRemark = this.CurrentMaintain["status"].ToString().ToUpper() == "LOCKED" ||
+            bool isOnlyRemark = this.CurrentMaintain["status"].ToString().ToUpper() == "LOCKED" ||
                 this.CurrentMaintain["status"].ToString().ToUpper() == "APPROVED" ||
                 this.CurrentMaintain["status"].ToString().ToUpper() == "CLOSED";
 
-            if (IsOnlyRemark)
+            if (isOnlyRemark)
             {
                 var frm = new PublicForm.EditRemark("Localpo", "remark", this.CurrentMaintain);
                 frm.ShowDialog(this);
@@ -170,6 +175,8 @@ namespace Sci.Production.Subcon
         }
 
         // save前檢查 & 取id
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 必輸檢查
@@ -207,15 +214,15 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
-            foreach (DataRow Ddr in this.DetailDatas)
+            foreach (DataRow ddr in this.DetailDatas)
             {
-                if (MyUtility.Check.Empty(Ddr["delivery"]))
+                if (MyUtility.Check.Empty(ddr["delivery"]))
                 {
                     MessageBox.Show("Delivery can not any empty.");
                     return false;
                 }
 
-                if (MyUtility.Check.Empty(Ddr["orderid"]))
+                if (MyUtility.Check.Empty(ddr["orderid"]))
                 {
                     MyUtility.Msg.InfoBox("SP# can't be empty.");
                     return false;
@@ -327,9 +334,9 @@ where a.RequestID <> '' and lpd.qty-lld.qty-a.Qty<0";
 
             var frm = new P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), (DataTable)this.detailgridbs.DataSource);
 
-            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
+            bool has_Irregular_Price = frm.Check_Irregular_Price(false);
 
-            if (Has_Irregular_Price && frm.ReasonNullCount > 0)
+            if (has_Irregular_Price && frm.ReasonNullCount > 0)
             {
                 MyUtility.Msg.WarningBox("There is Irregular Price!! Please fix it.");
                 return false;
@@ -339,6 +346,7 @@ where a.RequestID <> '' and lpd.qty-lld.qty-a.Qty<0";
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             string sqlupd2 = string.Empty, ids = string.Empty;
@@ -432,8 +440,8 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                 }
             }
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -441,31 +449,31 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                     {
                         if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             return result2;
                         }
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     DualResult er = Ict.Result.F("Commit transaction error.", ex);
                     return er;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
             #endregion
 
             #region 天地板
             DualResult padResult = new DualResult(false);
-            TransactionScope _transactionscope2 = new TransactionScope();
-            using (_transactionscope2)
+            TransactionScope transactionscope2 = new TransactionScope();
+            using (transactionscope2)
             {
                 try
                 {
@@ -473,7 +481,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                     padResult = base.ClickSave();
                     if (padResult == false)
                     {
-                        _transactionscope2.Dispose();
+                        transactionscope2.Dispose();
                         return padResult;
                     }
 
@@ -482,9 +490,9 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                         if (dtPadBoardInfo.Rows.Count > 0)
                         {
                             // 根據不同供應商，寫入LocalPO
-                            List<string> SupplyList = dtPadBoardInfo.AsEnumerable().Select(o => o.Field<string>("localsuppid")).Distinct().ToList();
+                            List<string> supplyList = dtPadBoardInfo.AsEnumerable().Select(o => o.Field<string>("localsuppid")).Distinct().ToList();
 
-                            string[] IDList = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "LP", "Localpo", DateTime.Now, batchNumber: SupplyList.Count).ToArray();
+                            string[] iDList = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "LP", "Localpo", DateTime.Now, batchNumber: supplyList.Count).ToArray();
 
                             // 用於顯示MessageBox
                             List<string> msg_Id_List = new List<string>();
@@ -495,15 +503,15 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
                             #region 新增LocalPO_Detail（表身)
 
-                            int IdListInsex = 0;
-                            foreach (string Supplyer in SupplyList)
+                            int idListInsex = 0;
+                            foreach (string supplyer in supplyList)
                             {
                                 // ↑↑↑↑供應商↑↑↑↑
-                                dt = dtPadBoardInfo.AsEnumerable().Where(o => o.Field<string>("localsuppid") == Supplyer).CopyToDataTable();
+                                dt = dtPadBoardInfo.AsEnumerable().Where(o => o.Field<string>("localsuppid") == supplyer).CopyToDataTable();
 
                                 // 單號
-                                string ID = IDList[IdListInsex++];
-                                msg_Id_List.Add(ID);
+                                string iD = iDList[idListInsex++];
+                                msg_Id_List.Add(iD);
 
                                 decimal amount = 0;
 
@@ -513,7 +521,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                                     amount += MyUtility.Convert.GetDecimal(item["Price"]) * MyUtility.Convert.GetDecimal(item["Qty"]);
 
                                     parameters.Clear();
-                                    parameters.Add(new SqlParameter("@Id", ID));
+                                    parameters.Add(new SqlParameter("@Id", iD));
                                     parameters.Add(new SqlParameter("@OrderId", item["OrderId"]));
                                     parameters.Add(new SqlParameter("@Refno", item["Refno"]));
                                     parameters.Add(new SqlParameter("@ThreadColorID", item["ThreadColorID"]));
@@ -560,7 +568,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
                                     if (padResult == false)
                                     {
-                                        _transactionscope2.Dispose();
+                                        transactionscope2.Dispose();
                                         return padResult;
                                     }
                                 }
@@ -570,24 +578,24 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                                 #region SqlParameter設定
                                 parameters.Clear();
 
-                                string CurrencyId = MyUtility.GetValue.Lookup($"SELECT DISTINCT CurrencyID FROM LocalSupp WHERE ID='{Supplyer}'");
-                                decimal VatRate = Convert.ToDecimal(this.CurrentMaintain["VatRate"]);
-                                decimal Vat = (VatRate / 100) * amount;
+                                string currencyId = MyUtility.GetValue.Lookup($"SELECT DISTINCT CurrencyID FROM LocalSupp WHERE ID='{supplyer}'");
+                                decimal vatRate = Convert.ToDecimal(this.CurrentMaintain["VatRate"]);
+                                decimal vat = (vatRate / 100) * amount;
 
                                 // decimal total = amount + Vat;
-                                parameters.Add(new SqlParameter("@Id", ID));
+                                parameters.Add(new SqlParameter("@Id", iD));
                                 parameters.Add(new SqlParameter("@MDivisionID", this.CurrentMaintain["MDivisionID"]));
                                 parameters.Add(new SqlParameter("@FactoryId", this.CurrentMaintain["FactoryId"]));
-                                parameters.Add(new SqlParameter("@LocalSuppID", Supplyer));
+                                parameters.Add(new SqlParameter("@LocalSuppID", supplyer));
                                 parameters.Add(new SqlParameter("@Category", this.CurrentMaintain["Category"]));
 
                                 parameters.Add(new SqlParameter("@IssueDate", this.CurrentMaintain["IssueDate"]));
                                 parameters.Add(new SqlParameter("@Remark", string.Empty));
-                                parameters.Add(new SqlParameter("@CurrencyId", CurrencyId));
+                                parameters.Add(new SqlParameter("@CurrencyId", currencyId));
                                 parameters.Add(new SqlParameter("@Amount", amount));
-                                parameters.Add(new SqlParameter("@VatRate", VatRate));
+                                parameters.Add(new SqlParameter("@VatRate", vatRate));
 
-                                parameters.Add(new SqlParameter("@Vat", Vat));
+                                parameters.Add(new SqlParameter("@Vat", vat));
                                 parameters.Add(new SqlParameter("@InternalRemark", $"Auto create pads PO from PO#:{this.CurrentMaintain["ID"]}."));
                                 parameters.Add(new SqlParameter("@ApvName", this.CurrentMaintain["ApvName"]));
                                 parameters.Add(new SqlParameter("@ApvDate", this.CurrentMaintain["ApvDate"]));
@@ -647,7 +655,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                                 padResult = DBProxy.Current.Execute(null, sql.ToString(), parameters);
                                 if (padResult == false)
                                 {
-                                    _transactionscope2.Dispose();
+                                    transactionscope2.Dispose();
                                     return padResult;
                                 }
                             }
@@ -660,23 +668,24 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                         }
                     }
 
-                    _transactionscope2.Complete();
-                    _transactionscope2.Dispose();
+                    transactionscope2.Complete();
+                    transactionscope2.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope2.Dispose();
+                    transactionscope2.Dispose();
                     return new DualResult(false, "Commit transaction error." + ex);
                 }
             }
 
-            _transactionscope2.Dispose();
-            _transactionscope2 = null;
+            transactionscope2.Dispose();
+            transactionscope2 = null;
             #endregion
 
             return padResult;
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -690,6 +699,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDelete()
         {
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
@@ -710,8 +720,8 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                 }
             }
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -719,36 +729,40 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                     {
                         if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             return result2;
                         }
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     DualResult er = Ict.Result.F("Commit transaction error.", ex);
                     return er;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             return base.ClickDelete();
         }
 
         // grid 加工填值
+
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -826,11 +840,11 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             // 取得價格異常DataTable，如果有，則存在 P30的_Irregular_Price_Table，  開啟P30_IrregularPriceReason時後直接丟進去，避免再做一次查詢
             this.ShowWaitMessage("Data Loading...");
 
-            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
+            bool has_Irregular_Price = frm.Check_Irregular_Price(false);
 
             this.HideWaitMessage();
 
-            if (Has_Irregular_Price)
+            if (has_Irregular_Price)
             {
                 this.btnIrrPriceReason.ForeColor = Color.Red;
             }
@@ -838,7 +852,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             #endregion
 
             detailDt.AcceptChanges();
-            this.calttlqty();
+            this.Calttlqty();
 
             // 根據Request ID有無資料，決定Reason ID的背景顏色、可否編輯
             for (int i = 0; i <= this.detailgrid.Rows.Count - 1; i++)
@@ -859,6 +873,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailDetached()
         {
             // 使用者可能會多次 Import，dtPadBoardInfo 清空的時間點應該是在每一次進入 Detail 時
@@ -867,6 +882,8 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
         }
 
         // detail 新增時設定預設值
+
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
@@ -874,6 +891,8 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
         }
 
         // Detail Grid 設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region SP# Vaild 判斷此sp#的cateogry存在 order_tmscost
@@ -1200,9 +1219,9 @@ where refno = '{0}'
             };
 
             #region ReasonID 欄位事件
-            DataGridViewGeneratorTextColumnSettings ReasonIDSetting = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings reasonIDSetting = new DataGridViewGeneratorTextColumnSettings();
 
-            ReasonIDSetting.CellValidating += (s, e) =>
+            reasonIDSetting.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -1219,9 +1238,9 @@ where refno = '{0}'
                     return;
                 }
 
-                bool IsExists = MyUtility.Check.Seek($@"SELECT * FROM SubconReason WHERE ID ='{e.FormattedValue}' AND Type = 'WR'");
+                bool isExists = MyUtility.Check.Seek($@"SELECT * FROM SubconReason WHERE ID ='{e.FormattedValue}' AND Type = 'WR'");
 
-                if (IsExists)
+                if (isExists)
                 {
                     string reason = MyUtility.GetValue.Lookup($@"SELECT Reason FROM SubconReason WHERE ID ='{e.FormattedValue}' AND Type = 'WR'");
                     this.CurrentDetailData["ReasonID"] = e.FormattedValue;
@@ -1235,7 +1254,7 @@ where refno = '{0}'
                     return;
                 }
             };
-            ReasonIDSetting.EditingMouseDown += (s, e) =>
+            reasonIDSetting.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
@@ -1279,7 +1298,7 @@ where refno = '{0}'
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true, settings: ns2) // 16
             .Numeric("apqty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true, settings: ns3) // 17
             .Text("remark", header: "Remark", width: Widths.AnsiChars(25)) // 18
-            .Text("ReasonID", header: "Reason ID", width: Widths.AnsiChars(8), settings: ReasonIDSetting) // 18
+            .Text("ReasonID", header: "Reason ID", width: Widths.AnsiChars(8), settings: reasonIDSetting) // 18
             .Text("Reason", header: "Reason", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("BuyerID", header: "Buyer", width: Widths.AnsiChars(6), iseditingreadonly: true) // 19
             ;
@@ -1295,15 +1314,15 @@ where refno = '{0}'
             this.detailgrid.Columns["ReasonID"].DefaultCellStyle.BackColor = Color.Pink;
 
             #endregion
-            this.detailgrid.RowEnter += this.detailgrid_RowEnter;
-            this.change_record();
+            this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
+            this.Change_record();
         }
 
-        Ict.Win.UI.DataGridViewTextBoxColumn col_Ref;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_color;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Ref;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_color;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
 
-        private void detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || this.EditMode == false)
             {
@@ -1388,7 +1407,7 @@ where refno = '{0}'
             return 0;
         }
 
-        private void change_record()
+        private void Change_record()
         {
             this.col_Ref.CellFormatting += (s, e) =>
             {
@@ -1447,7 +1466,7 @@ where refno = '{0}'
         }
 
         // import thread or carton request
-        private void btnImportThread_Click(object sender, EventArgs e)
+        private void BtnImportThread_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -1478,7 +1497,7 @@ where refno = '{0}'
             frm.ShowDialog(this);
             this.RenewData();
 
-            this.calttlqty();
+            this.Calttlqty();
         }
 
         #region 狀態控制相關事件 Locked/Approved/Closed
@@ -1503,32 +1522,32 @@ where refno = '{0}'
                 Env.User.UserID, this.CurrentMaintain["ID"]);
 
             DualResult result;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(result = DBProxy.Current.Execute(null, sql)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sql, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Check successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         /// <summary>
@@ -1557,32 +1576,32 @@ where refno = '{0}'
                 Env.User.UserID, this.CurrentMaintain["ID"]);
 
             DualResult result;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(result = DBProxy.Current.Execute(null, sql)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sql, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Check successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         /// <summary>
@@ -1604,31 +1623,31 @@ where refno = '{0}'
                 "update Localpo set status='Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
                                "where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             DualResult result;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         /// <summary>
@@ -1665,32 +1684,32 @@ where refno = '{0}'
                 @"update Localpo set status='Locked',apvname='', apvdate = null , editname = '{0}' 
                                                     , editdate = GETDATE() where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnApprove successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         /// <summary>
@@ -1704,32 +1723,32 @@ where refno = '{0}'
                 "update Localpo set status='Closed', CloseName='{0}', CloseDate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
                               "where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             DualResult result;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Close successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
 
         /// <summary>
@@ -1759,35 +1778,36 @@ where refno = '{0}'
                 @"update Localpo set status='Approved',CloseName='', CloseDate = null , editname = '{0}' 
                                                     , editdate = GETDATE() where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnClose successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
         }
         #endregion
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -1813,6 +1833,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override bool ClickNewBefore()
         {
             // this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
@@ -1828,6 +1849,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             return base.ClickNewBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             DataRow row = this.CurrentMaintain;
@@ -1840,7 +1862,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             return true;
         }
 
-        private void btnBatchUpdateDellivery_Click(object sender, EventArgs e)
+        private void BtnBatchUpdateDellivery_Click(object sender, EventArgs e)
         {
             // int deleteIndex = 0;
             foreach (DataGridViewRow dr in this.detailgrid.Rows)
@@ -1870,13 +1892,14 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridAppendClick()
         {
             base.OnDetailGridAppendClick();
             this.CurrentDetailData["RequestID"] = this.CurrentDetailData["RequestID"].Equals(DBNull.Value) ? string.Empty : this.CurrentDetailData["RequestID"];
         }
 
-        void calttlqty()
+        private void Calttlqty()
         {
             if (this.DetailDatas.Count > 0)
             {
@@ -1884,7 +1907,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             }
         }
 
-        private void txtBuyer_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtBuyer_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                    @"Select ID,NameEN  from Buyer WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
@@ -1898,7 +1921,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             this.txtBuyer.Text = item.GetSelectedString();
         }
 
-        private void txtBuyer_Validating(object sender, CancelEventArgs e)
+        private void TxtBuyer_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Seek($@"select 1 from Buyer WITH (NOLOCK) where junk=0 and id='{this.txtBuyer.Text}'"))
             {
@@ -1907,7 +1930,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             }
         }
 
-        private void btnIrrPriceReason_Click(object sender, EventArgs e)
+        private void BtnIrrPriceReason_Click(object sender, EventArgs e)
         {
             // 進入Deatail畫面時，會取得_Irregular_Price_Table，直接丟進去開啟
             var frm = new P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), (DataTable)this.detailgridbs.DataSource);
@@ -1920,21 +1943,21 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             this.btnIrrPriceReason.ForeColor = Color.Black;
             this.ShowWaitMessage("Data Loading...");
 
-            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
+            bool has_Irregular_Price = frm.Check_Irregular_Price(false);
 
             this.HideWaitMessage();
 
-            if (Has_Irregular_Price)
+            if (has_Irregular_Price)
             {
                 this.btnIrrPriceReason.ForeColor = Color.Red;
             }
         }
 
-        private void btnBatchApprove_Click(object sender, EventArgs e)
+        private void BtnBatchApprove_Click(object sender, EventArgs e)
         {
-            bool NotEditModeAndHasAuthority = !this.EditMode && this.Perm.Confirm;
+            bool notEditModeAndHasAuthority = !this.EditMode && this.Perm.Confirm;
 
-            if (!NotEditModeAndHasAuthority)
+            if (!notEditModeAndHasAuthority)
             {
                 MyUtility.Msg.WarningBox("You don't have permission to confirm.");
                 return;
@@ -1943,7 +1966,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             // 避免重複開啟視窗
             if (this.batchapprove == null || this.batchapprove.IsDisposed)
             {
-                this.batchapprove = new P30_BatchApprove(this.reload);
+                this.batchapprove = new P30_BatchApprove(this.Reload);
                 this.batchapprove.Show();
             }
             else
@@ -1952,7 +1975,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             }
         }
 
-        public void reload()
+        public void Reload()
         {
             // 避免User先關 P30再關P30_BatchApprove
             if (this.CurrentDataRow != null)
@@ -1983,7 +2006,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             }
         }
 
-        private void dateDeliveryDate_Validating(object sender, CancelEventArgs e)
+        private void DateDeliveryDate_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Empty(this.dateDeliveryDate.Value))
             {
@@ -1996,7 +2019,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             }
         }
 
-        private void txtLocalPurchaseItem_Validated(object sender, EventArgs e)
+        private void TxtLocalPurchaseItem_Validated(object sender, EventArgs e)
         {
             Class.TxtLocalPurchaseItem o;
             o = (Class.TxtLocalPurchaseItem)sender;
@@ -2010,7 +2033,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             }
         }
 
-        private void txtLocalPurchaseItem_TextChanged(object sender, EventArgs e)
+        private void TxtLocalPurchaseItem_TextChanged(object sender, EventArgs e)
         {
             if (this.txtLocalPurchaseItem.Text.EqualString("SP_Thread")
                 || this.txtLocalPurchaseItem.Text.EqualString("EMB_Thread"))

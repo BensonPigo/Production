@@ -25,6 +25,7 @@ namespace Sci.Production.Warehouse
             this.gridBulk.SupportEditMode = Win.UI.AdvEditModesReadOnly.True;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

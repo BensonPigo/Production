@@ -18,11 +18,13 @@ namespace Sci.Production.Sewing
             this.DefaultFilter = string.Format("FactoryID = '{0}'", Env.User.Factory);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterFactoryID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["FactoryID"]);
@@ -39,6 +41,7 @@ and a.ProductionDate  = '{1}'",
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -164,18 +167,21 @@ and a.ProductionDate  = '{1}'",
                 .Text("Team", header: "Team", width: Widths.AnsiChars(1), settings: team, iseditingreadonly: true);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridInsertClick()
         {
             base.OnDetailGridInsertClick();
             this.CurrentDetailData["Team"] = "A";
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridAppendClick()
         {
             base.OnDetailGridAppendClick();
             this.CurrentDetailData["Team"] = "A";
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -213,6 +219,7 @@ and a.ProductionDate  = '{1}'",
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             string msg = this.CheckEmpty();

@@ -145,6 +145,8 @@ where 1=1 and FTI.StockType='O' ");
         }
 
         // Form Load
+
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

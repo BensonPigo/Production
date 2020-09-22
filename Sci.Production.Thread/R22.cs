@@ -32,6 +32,7 @@ namespace Sci.Production.Thread
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.Parameters.Clear();
@@ -81,6 +82,7 @@ namespace Sci.Production.Thread
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             this.sqlWhere = string.Empty;
@@ -224,6 +226,7 @@ drop table #tmp
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.printData.Rows.Count <= 0)

@@ -10,9 +10,9 @@ namespace Sci.Production.Subcon
 {
     public partial class P35_Import : Win.Subs.Base
     {
-        DataRow dr_localAp;
-        DataTable dt_localApDetail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_localAp;
+        private DataTable dt_localApDetail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         protected DataTable dtlocal;
 
@@ -30,7 +30,7 @@ namespace Sci.Production.Subcon
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             string sp_b = this.txtSPNoStart.Text;
             string sp_e = this.txtSPNoEnd.Text;
@@ -197,6 +197,7 @@ and a.localsuppid = '{this.dr_localAp["localsuppid"]}' and a.mdivisionid = '{Env
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -238,12 +239,12 @@ and a.localsuppid = '{this.dr_localAp["localsuppid"]}' and a.mdivisionid = '{Env
             this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;  // Qty
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             this.gridImport.ValidateControl();

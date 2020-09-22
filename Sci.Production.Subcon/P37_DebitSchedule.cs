@@ -13,14 +13,14 @@ namespace Sci.Production.Subcon
         private string _CurrencyID;
         private string _TaipeiCurrencyID;
 
-        public P37_DebitSchedule(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow _Master, string FromFuncton, bool isTaipeiDBC = true)
+        public P37_DebitSchedule(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow master, string fromFuncton, bool isTaipeiDBC = true)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
-            this.Master = _Master;
+            this.Master = master;
             this.KeyField1 = "ID";
             this.WorkAlias = "Debit_Schedule";
-            this._FromFuncton = FromFuncton;
+            this._FromFuncton = fromFuncton;
             this._isTaipeiDBC = isTaipeiDBC;
             this._CurrencyID = this.Master["CurrencyID"].ToString();
 
@@ -29,6 +29,7 @@ namespace Sci.Production.Subcon
             this.numericBoxTotal.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorNumericColumnSettings amountSetting = new DataGridViewGeneratorNumericColumnSettings();
@@ -73,6 +74,7 @@ namespace Sci.Production.Subcon
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             decimal ttl = 0;
@@ -102,6 +104,7 @@ namespace Sci.Production.Subcon
             base.OnRequeryPost(datas);
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
@@ -109,6 +112,7 @@ namespace Sci.Production.Subcon
             this.revise.Visible = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnDelete()
         {
             if (this.CurrentData != null)
@@ -123,9 +127,10 @@ namespace Sci.Production.Subcon
             base.OnDelete();
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
-            decimal GridAmount = 0;
+            decimal gridAmount = 0;
             foreach (DataRow dr in this.Datas)
             {
                 if (MyUtility.Check.Empty(dr["IssueDate"]) || MyUtility.Check.Empty(dr["Amount"]))
@@ -134,13 +139,13 @@ namespace Sci.Production.Subcon
                     return false;
                 }
 
-                GridAmount += (decimal)dr["Amount"];
+                gridAmount += (decimal)dr["Amount"];
             }
 
             // 根據Debit是否為台北建立的，修改判斷的數字
             if (this._isTaipeiDBC)
             {
-                if ((decimal)this.Master["TaipeiAMT"] < GridAmount)
+                if ((decimal)this.Master["TaipeiAMT"] < gridAmount)
                 {
                     MyUtility.Msg.WarningBox("Total deibt amount more than DBC amount, cann't save!!");
                     return false;
@@ -148,7 +153,7 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                if ((decimal)this.Master["Amount"] < GridAmount)
+                if ((decimal)this.Master["Amount"] < gridAmount)
                 {
                     MyUtility.Msg.WarningBox("Total deibt amount more than DBC amount, cann't save!!");
                     return false;
@@ -158,6 +163,7 @@ namespace Sci.Production.Subcon
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void OnInsertPrepare(DataRow data)
         {
             base.OnInsertPrepare(data);

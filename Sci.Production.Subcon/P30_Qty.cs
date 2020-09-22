@@ -18,6 +18,7 @@ namespace Sci.Production.Subcon
             this.DataRow = dataRow;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

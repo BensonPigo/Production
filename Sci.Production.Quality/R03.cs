@@ -10,12 +10,12 @@ namespace Sci.Production.Quality
 {
     public partial class R03 : Win.Tems.PrintForm
     {
-        DateTime? DateSCIStart; DateTime? DateSCIEnd;
-        DateTime? DateSewStart; DateTime? DateSewEnd;
-        DateTime? DateEstStart; DateTime? DateEstEnd;
-        string Category; string Sea; string Brand; string Factory;
-        List<SqlParameter> lis; DualResult res;
-        DataTable dt; string cmd;
+        private DateTime? DateSCIStart; private DateTime? DateSCIEnd;
+        private DateTime? DateSewStart; private DateTime? DateSewEnd;
+        private DateTime? DateEstStart; private DateTime? DateEstEnd;
+        private string Category; private string Sea; private string Brand; private string Factory;
+        private List<SqlParameter> lis; private DualResult res;
+        private DataTable dt; private string cmd;
 
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -30,10 +30,11 @@ namespace Sci.Production.Quality
             this.print.Enabled = false;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             bool date_SCI_Empty = !this.dateSCIDelivery.HasValue, date_Sewing_Empty = !this.dateSewingInLineDate.HasValue, date_Est_Empty = !this.dateEstCuttingDate.HasValue,
-                txtSeason_Empty = this.txtSeason.Text.Empty(), txtBrand_Empty = this.txtBrand.Text.Empty(),  Cate_comboBox_Empty = this.comboCategory.Text.Empty(), comboFactory_Empty = this.comboFactory.Text.Empty();
+                txtSeason_Empty = this.txtSeason.Text.Empty(), txtBrand_Empty = this.txtBrand.Text.Empty(),  cate_comboBox_Empty = this.comboCategory.Text.Empty(), comboFactory_Empty = this.comboFactory.Text.Empty();
             if (date_SCI_Empty && date_Sewing_Empty && date_Est_Empty && txtSeason_Empty && txtBrand_Empty)
             {
                 this.dateSCIDelivery.Focus();
@@ -173,6 +174,7 @@ namespace Sci.Production.Quality
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);
@@ -184,6 +186,7 @@ namespace Sci.Production.Quality
             return this.res;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

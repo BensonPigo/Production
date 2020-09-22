@@ -144,6 +144,7 @@ Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2  and a.receivingid = 
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             StringBuilder sqlcmd = new StringBuilder();

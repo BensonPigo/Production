@@ -214,7 +214,7 @@
             this.cmbDescription.OldText = "";
             this.cmbDescription.Size = new System.Drawing.Size(121, 24);
             this.cmbDescription.TabIndex = 19;
-            this.cmbDescription.SelectedIndexChanged += new System.EventHandler(this.cmbDescription_SelectedIndexChanged);
+            this.cmbDescription.SelectedIndexChanged += new System.EventHandler(this.CmbDescription_SelectedIndexChanged);
             // 
             // checkOnlyShowNotYetAssignCombination
             // 

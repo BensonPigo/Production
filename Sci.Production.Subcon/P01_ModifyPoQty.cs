@@ -40,13 +40,14 @@ namespace Sci.Production.Subcon
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnClosed(EventArgs e)
         {
             this.dr.RejectChanges();
             base.OnClosed(e);
         }
 
-        private void numPOQty_Validated(object sender, EventArgs e)
+        private void NumPOQty_Validated(object sender, EventArgs e)
         {
             this.dr["poqty"] = ((Win.UI.NumericBox)sender).Value;
             if (((Win.UI.NumericBox)sender).Value > this.sum_order_qty)
@@ -63,11 +64,11 @@ namespace Sci.Production.Subcon
             this.dr["amount"] = Convert.ToDecimal(this.dr["poqty"]) * Convert.ToDecimal(this.dr["price"]);
         }
 
-        private void numPOQty_Validating(object sender, CancelEventArgs e)
+        private void NumPOQty_Validating(object sender, CancelEventArgs e)
         {
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             if (!(this.dr["apqty"] == DBNull.Value) && (this.numPOQty.Value < int.Parse(this.dr["apqty"].ToString())))
             {
@@ -77,8 +78,8 @@ namespace Sci.Production.Subcon
 
             DualResult result, result2;
             DataTable dt_out;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
@@ -93,7 +94,7 @@ and patterncode != '{4}'",
                         this.dr["poqty"], this.dr["exceedqty"], this.dr["id"], this.dr["orderid"], this.dr["artworktypeid"], this.dr["artworkid"], this.dr["patterncode"]);
                     if (!(result = DBProxy.Current.Select(null, sqlcmd, out dt_out)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlcmd, result);
                         return;
                     }
@@ -125,33 +126,33 @@ and patterncode != '{4}'",
                     result2 = DBProxy.Current.Execute(null, sqlcmd);
                     if (result && result2)
                     {
-                        _transactionscope.Complete();
-                        _transactionscope.Dispose();
+                        transactionscope.Complete();
+                        transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Save sucessful");
                     }
                     else
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Save Error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             this.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.Close();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.dr.RejectChanges();
             this.Close();

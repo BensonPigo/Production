@@ -183,6 +183,7 @@ and f.MDivisionID='{0}' ", Env.User.Keyword, this.dr_master["stocktype"]));
             this.HideWaitMessage();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

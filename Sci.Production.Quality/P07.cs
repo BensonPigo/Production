@@ -12,18 +12,18 @@ namespace Sci.Production.Quality
 {
     public partial class P07 : Win.Tems.Input6
     {
-        DualResult result;
-        string sql;
-        string ID;
-        string POID;
-        string SEQ1;
-        string SEQ2;
-        string OLDtxtWK;
-        string OLDtxtSEQ;
-        DataRow ROW;
-        DataRow[] rows = null;
-        DataTable dtDetail = null;
-        int rowsCount = 0;
+        private DualResult result;
+        private string sql;
+        private string ID;
+        private string POID;
+        private string SEQ1;
+        private string SEQ2;
+        private string OLDtxtWK;
+        private string OLDtxtSEQ;
+        private DataRow ROW;
+        private DataRow[] rows = null;
+        private DataTable dtDetail = null;
+        private int rowsCount = 0;
 
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -35,17 +35,19 @@ namespace Sci.Production.Quality
 
         private void GenComboBox()
         {
-            Dictionary<string, string> Result_RowSource = new Dictionary<string, string>();
-            Result_RowSource.Add(string.Empty, string.Empty);
-            Result_RowSource.Add("Oven Test", "Oven Test");
-            Result_RowSource.Add("Wash Test", "Wash Test");
-            Result_RowSource.Add("Both Test", "Both Test");
-            this.comboOvenWashBoth.DataSource = new BindingSource(Result_RowSource, null);
+            Dictionary<string, string> result_RowSource = new Dictionary<string, string>();
+            result_RowSource.Add(string.Empty, string.Empty);
+            result_RowSource.Add("Oven Test", "Oven Test");
+            result_RowSource.Add("Wash Test", "Wash Test");
+            result_RowSource.Add("Both Test", "Both Test");
+            this.comboOvenWashBoth.DataSource = new BindingSource(result_RowSource, null);
             this.comboOvenWashBoth.ValueMember = "Key";
             this.comboOvenWashBoth.DisplayMember = "Value";
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             DataRow dr;
@@ -107,21 +109,21 @@ namespace Sci.Production.Quality
                 }
             }
 
-            DateTime? CompDate, OvenDate, WashDate;
+            DateTime? compDate, ovenDate, washDate;
             if (inspnum == "100")
             {
-                OvenDate = MyUtility.Convert.GetDate(articleDT.Compute("Max(OvenDate)", string.Empty));
-                WashDate = MyUtility.Convert.GetDate(articleDT.Compute("Max(WashDate)", string.Empty));
-                if (MyUtility.Math.DateMinus(OvenDate, WashDate).TotalSeconds < 0)
+                ovenDate = MyUtility.Convert.GetDate(articleDT.Compute("Max(OvenDate)", string.Empty));
+                washDate = MyUtility.Convert.GetDate(articleDT.Compute("Max(WashDate)", string.Empty));
+                if (MyUtility.Math.DateMinus(ovenDate, washDate).TotalSeconds < 0)
                 {
-                    CompDate = WashDate;
+                    compDate = washDate;
                 }
                 else
                 {
-                    CompDate = OvenDate;
+                    compDate = ovenDate;
                 }
 
-                this.dateCompletionDate.Text = CompDate == null ? string.Empty : ((DateTime)CompDate).ToShortDateString();
+                this.dateCompletionDate.Text = compDate == null ? string.Empty : ((DateTime)compDate).ToShortDateString();
             }
             else
             {
@@ -134,6 +136,7 @@ namespace Sci.Production.Quality
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             Ict.Win.UI.DataGridViewCheckBoxColumn col_NonOven;
@@ -149,20 +152,20 @@ namespace Sci.Production.Quality
             Ict.Win.UI.DataGridViewTextBoxColumn col_Washinspector;
             Ict.Win.UI.DataGridViewTextBoxColumn col_WashRemark;
 
-            DataGridViewGeneratorTextColumnSettings OvenCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings OvenScaleCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorDateColumnSettings OvenDateCell = new DataGridViewGeneratorDateColumnSettings();
-            DataGridViewGeneratorTextColumnSettings OvenInspectorCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings OvenRemarkCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings WashCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings WashScaleCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorDateColumnSettings WashDateCell = new DataGridViewGeneratorDateColumnSettings();
-            DataGridViewGeneratorTextColumnSettings WashInspectorCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings WashRemarkCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ovenCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ovenScaleCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings ovenDateCell = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ovenInspectorCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ovenRemarkCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings washCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings washScaleCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings washDateCell = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings washInspectorCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings washRemarkCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region CellMouseDoubleClick
 
-            OvenCell.CellMouseDoubleClick += (s, e) =>
+            ovenCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -174,7 +177,7 @@ namespace Sci.Production.Quality
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
-            OvenScaleCell.CellMouseDoubleClick += (s, e) =>
+            ovenScaleCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -186,7 +189,7 @@ namespace Sci.Production.Quality
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
-            OvenDateCell.CellMouseDoubleClick += (s, e) =>
+            ovenDateCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -198,7 +201,7 @@ namespace Sci.Production.Quality
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
-            OvenInspectorCell.CellMouseDoubleClick += (s, e) =>
+            ovenInspectorCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -210,7 +213,7 @@ namespace Sci.Production.Quality
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
-            OvenRemarkCell.CellMouseDoubleClick += (s, e) =>
+            ovenRemarkCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -223,7 +226,7 @@ namespace Sci.Production.Quality
                 frm.Dispose();
             };
 
-            WashCell.CellMouseDoubleClick += (s, e) =>
+            washCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -235,7 +238,7 @@ namespace Sci.Production.Quality
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
-            WashScaleCell.CellMouseDoubleClick += (s, e) =>
+            washScaleCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -247,7 +250,7 @@ namespace Sci.Production.Quality
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
-            WashDateCell.CellMouseDoubleClick += (s, e) =>
+            washDateCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -259,7 +262,7 @@ namespace Sci.Production.Quality
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
-            WashInspectorCell.CellMouseDoubleClick += (s, e) =>
+            washInspectorCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -271,7 +274,7 @@ namespace Sci.Production.Quality
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
-            WashRemarkCell.CellMouseDoubleClick += (s, e) =>
+            washRemarkCell.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null)
@@ -298,17 +301,17 @@ namespace Sci.Production.Quality
                 .Date("InspDeadline", header: "Insp. DeadLine", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Result", header: "Over all Result", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .CheckBox("NonOven", header: "Oven N/A", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_NonOven)
-                .Text("Oven", header: "Oven Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: OvenCell).Get(out col_Oven)
-                .Text("OvenScale", header: "Oven Scale", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: OvenScaleCell).Get(out col_OvenScale)
-                .Date("OvenDate", header: "Oven Last Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: OvenDateCell).Get(out col_OvenDate)
-                .Text("OvenInspector", header: "Oven Lab Tech", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: OvenInspectorCell).Get(out col_OvenInspector)
-                .Text("OvenRemark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: OvenRemarkCell).Get(out col_OvenRemark)
+                .Text("Oven", header: "Oven Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: ovenCell).Get(out col_Oven)
+                .Text("OvenScale", header: "Oven Scale", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: ovenScaleCell).Get(out col_OvenScale)
+                .Date("OvenDate", header: "Oven Last Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: ovenDateCell).Get(out col_OvenDate)
+                .Text("OvenInspector", header: "Oven Lab Tech", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: ovenInspectorCell).Get(out col_OvenInspector)
+                .Text("OvenRemark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: ovenRemarkCell).Get(out col_OvenRemark)
                 .CheckBox("nonWash", header: "Wash N/A", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_NonWash)
-                .Text("Wash", header: "Wash Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: WashCell).Get(out col_Wash)
-                .Text("Washscale", header: "Wash Scale", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: WashScaleCell).Get(out col_Washscale)
-                .Date("WashDate", header: "Wash Last Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WashDateCell).Get(out col_WashDate)
-                .Text("Washinspector", header: "Wash Lab Tech", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WashInspectorCell).Get(out col_Washinspector)
-                .Text("WashRemark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WashRemarkCell).Get(out col_WashRemark)
+                .Text("Wash", header: "Wash Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: washCell).Get(out col_Wash)
+                .Text("Washscale", header: "Wash Scale", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: washScaleCell).Get(out col_Washscale)
+                .Date("WashDate", header: "Wash Last Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: washDateCell).Get(out col_WashDate)
+                .Text("Washinspector", header: "Wash Lab Tech", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: washInspectorCell).Get(out col_Washinspector)
+                .Text("WashRemark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: washRemarkCell).Get(out col_WashRemark)
                 .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             col_NonOven.DefaultCellStyle.BackColor = Color.Pink;
@@ -325,6 +328,7 @@ namespace Sci.Production.Quality
             col_WashRemark.DefaultCellStyle.BackColor = Color.SkyBlue;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             this.detailgridmenus.Items.Clear();
@@ -395,6 +399,7 @@ namespace Sci.Production.Quality
             this.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             DataTable dt = (DataTable)e.Details;
@@ -445,8 +450,8 @@ namespace Sci.Production.Quality
         // [Find]
         private void BtnFind_Click(object sender, EventArgs e)
         {
-            int Count = this.DetailDatas.Count;
-            if (Count == 0)
+            int count = this.DetailDatas.Count;
+            if (count == 0)
             {
                 return;
             }
@@ -557,34 +562,35 @@ namespace Sci.Production.Quality
             this.detailgrid.Refresh();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     // 更新PO.AIRLabInspPercent
                     if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIRLab','{this.CurrentMaintain["ID"]}'")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
             this.RenewData();
             base.ClickSaveAfter();
         }

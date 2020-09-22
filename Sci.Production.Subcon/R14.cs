@@ -10,21 +10,21 @@ namespace Sci.Production.Subcon
 {
     public partial class R14 : Win.Tems.PrintForm
     {
-        string artworktype;
-        string factory;
-        string style;
-        string mdivision;
-        string spno1;
-        string spno2;
-        string ordertype;
-        string ratetype;
-        int ordertypeindex;
-        int statusindex;
-        DateTime? Issuedate1;
-        DateTime? Issuedate2;
-        DateTime? GLdate1;
-        DateTime? GLdate2;
-        DataTable printData;
+        private string artworktype;
+        private string factory;
+        private string style;
+        private string mdivision;
+        private string spno1;
+        private string spno2;
+        private string ordertype;
+        private string ratetype;
+        private int ordertypeindex;
+        private int statusindex;
+        private DateTime? Issuedate1;
+        private DateTime? Issuedate2;
+        private DateTime? GLdate1;
+        private DateTime? GLdate2;
+        private DataTable printData;
 
         public R14(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -48,6 +48,8 @@ namespace Sci.Production.Subcon
         }
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (this.comboStatus.SelectedIndex != 1 && MyUtility.Check.Empty(this.dateAPDate.Value1) && MyUtility.Check.Empty(this.dateAPDate.Value2))
@@ -97,6 +99,8 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sqlparameter delcare --
@@ -519,6 +523,8 @@ namespace Sci.Production.Subcon
         }
 
         // 產生Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -542,7 +548,7 @@ namespace Sci.Production.Subcon
             return true;
         }
 
-        private void comboStatus_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.dateAPDate.Enabled = !(this.comboStatus.SelectedIndex == 1);
         }

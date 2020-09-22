@@ -57,7 +57,7 @@
             this.radioPanel1.Size = new System.Drawing.Size(270, 122);
             this.radioPanel1.TabIndex = 95;
             this.radioPanel1.Value = "Material Status";
-            this.radioPanel1.ValueChanged += new System.EventHandler(this.radioPanel1_ValueChanged);
+            this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioPanel1_ValueChanged);
             // 
             // radioByRefno
             // 

@@ -11,15 +11,17 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class B02 : Win.Tems.Input1
     {
         private string destination_path; // 放的路徑
         private bool Upload_flag = false;
-        string Destination_fileName;
+        private string Destination_fileName;
         private Hashtable ht = new Hashtable();
-        DataTable sizes;
-        DataTable sizesAll;
+        private DataTable sizes;
+        private DataTable sizesAll;
 
+        /// <inheritdoc/>
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -325,7 +327,7 @@ and Side = '{this.CurrentMaintain["Side"]}'
 
             DataTable dt;
             DualResult result;
-            Int64 id = Convert.ToInt64(this.comboStickerSize.SelectedValue);
+            long id = Convert.ToInt64(this.comboStickerSize.SelectedValue);
             string cmd = "SELECT  Size ,Width,Length FROM StickerSize WITH(NOLOCK) WHERE ID=@ID";
             List<SqlParameter> paras = new List<SqlParameter>();
 

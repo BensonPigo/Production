@@ -7,14 +7,14 @@ namespace Sci.Production.Subcon
 {
     public partial class P36_ModifyAfterReceived : Win.Subs.Base
     {
-        DataRow dr;
-        DataTable dtData;
+        private DataRow dr;
+        private DataTable dtData;
 
-        public P36_ModifyAfterReceived(DataRow Data)
+        public P36_ModifyAfterReceived(DataRow data)
         {
             this.InitializeComponent();
             DualResult result;
-            this.dr = Data;
+            this.dr = data;
             if (!(result = DBProxy.Current.Select(null, string.Format(@"select * from localdebit WITH (NOLOCK) where id = '{0}'", this.dr["id"]), out this.dtData)))
             {
                 this.ShowErr(result);
@@ -24,12 +24,12 @@ namespace Sci.Production.Subcon
             this.mtbs.DataSource = this.dtData;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             if (!MyUtility.Tool.CursorUpdateTable(this.dtData, "localdebit", null))
             {

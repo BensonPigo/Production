@@ -35,6 +35,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             #region Set Value
@@ -55,6 +56,7 @@ namespace Sci.Production.Warehouse
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region SQl Parameters --- _ADD10 -> SPNo 補足 10 碼
@@ -177,6 +179,7 @@ left join fabric WITH (NOLOCK) on fabric.SCIRefno = psd.scirefno
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region check printData

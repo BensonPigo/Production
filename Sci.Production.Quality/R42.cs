@@ -13,26 +13,26 @@ namespace Sci.Production.Quality
 {
     public partial class R42 : Win.Tems.PrintForm
     {
-        string Brand;
-        string Year;
-        string Report_Type1;
-        string Report_Type2;
-        DualResult result;
-        System.Data.DataTable dt;
-        System.Data.DataTable dt_All;
-        System.Data.DataTable[] alldt;
-        System.Data.DataTable month12 = null;
-        System.Data.DataTable allsupplier = null;
-        System.Data.DataTable dat;
-        System.Data.DataTable dt_temp = new System.Data.DataTable(); // for Printing Detail Report only
-        System.Data.DataTable dt_printing = new System.Data.DataTable(); // for Printing Detail Report only
+        private string Brand;
+        private string Year;
+        private string Report_Type1;
+        private string Report_Type2;
+        private DualResult result;
+        private System.Data.DataTable dt;
+        private System.Data.DataTable dt_All;
+        private System.Data.DataTable[] alldt;
+        private System.Data.DataTable month12 = null;
+        private System.Data.DataTable allsupplier = null;
+        private System.Data.DataTable dat;
+        private System.Data.DataTable dt_temp = new System.Data.DataTable(); // for Printing Detail Report only
+        private System.Data.DataTable dt_printing = new System.Data.DataTable(); // for Printing Detail Report only
 
         public R42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
 
-            System.Data.DataTable Year = null;
+            System.Data.DataTable year = null;
             string cmd = @"
 declare @y Table (M int);
 
@@ -52,13 +52,13 @@ end
 select *
 from @y
 order by M desc";
-            DBProxy.Current.Select(string.Empty, cmd, out Year);
-            this.comboYear.DataSource = Year;
+            DBProxy.Current.Select(string.Empty, cmd, out year);
+            this.comboYear.DataSource = year;
             this.comboYear.ValueMember = "M";
             this.comboYear.DisplayMember = "M";
 
-            if (Year != null
-                && Year.Rows.Count > 0)
+            if (year != null
+                && year.Rows.Count > 0)
             {
                 this.comboYear.SelectedIndex = 0;
             }
@@ -66,14 +66,16 @@ order by M desc";
             this.print.Enabled = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             this.comboYear.SelectedValue = DateTime.Today.AddMonths(-1).Year;
         }
 
-        readonly Dictionary<string, System.Data.DataTable> PrintingData = new Dictionary<string, System.Data.DataTable>();
+        private readonly Dictionary<string, System.Data.DataTable> PrintingData = new Dictionary<string, System.Data.DataTable>();
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.Brand = this.comboBrand.Text.ToString();
@@ -83,6 +85,7 @@ order by M desc";
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.dt = null;
@@ -175,8 +178,8 @@ order by M desc";
 
             this.month12 = this.alldt[0];
             string month_Columns = string.Empty;
-            string Qty_SumColumns = string.Empty;
-            string Complaint_SumColumns = string.Empty;
+            string qty_SumColumns = string.Empty;
+            string complaint_SumColumns = string.Empty;
             var total_Rows = new List<DataRow>();
             if (this.alldt[0].Rows.Count <= 0)
             {
@@ -214,12 +217,12 @@ from
                     string o = string.Format("left join (select {0}_idx=ROW_NUMBER()OVER(partition by supplier order by supplier),{0}_supplier=supplier,{0}_Style=styleid,{0}_Shell=Refno,{0}_Qty=qty,{0}_Complaint_Value=ValueinUSD from #temp where m = '{0}') {0} on main.Shell_Supplier = {0}.{0}_supplier and main.idx = {0}.{0}_idx", month);
                     sp = sp + Environment.NewLine + o;
                     month_Columns += month + "_Qty," + month + "_Complaint_Value,";
-                    Qty_SumColumns += month + "_Qty+";
-                    Complaint_SumColumns += month + "_Complaint_Value+";
+                    qty_SumColumns += month + "_Qty+";
+                    complaint_SumColumns += month + "_Complaint_Value+";
                 }
 
-                Qty_SumColumns = Qty_SumColumns.Substring(0, Qty_SumColumns.Length - 1);
-                Complaint_SumColumns = Complaint_SumColumns.Substring(0, Complaint_SumColumns.Length - 1);
+                qty_SumColumns = qty_SumColumns.Substring(0, qty_SumColumns.Length - 1);
+                complaint_SumColumns = complaint_SumColumns.Substring(0, complaint_SumColumns.Length - 1);
                 this.result = DBProxy.Current.SelectByConn(conn, sp, out this.dt);
                 if (!this.result)
                 {
@@ -252,8 +255,8 @@ from
                 this.dt.Columns.Remove("November_supplier");
                 this.dt.Columns.Remove("December_supplier");
 
-                this.dt.ColumnsDecimalAdd("Qty", expression: Qty_SumColumns);
-                this.dt.ColumnsDecimalAdd("Complaint_Value", expression: Complaint_SumColumns);
+                this.dt.ColumnsDecimalAdd("Qty", expression: qty_SumColumns);
+                this.dt.ColumnsDecimalAdd("Complaint_Value", expression: complaint_SumColumns);
                 total_Rows = this.dt.Sum(month_Columns, "Shell_Supplier");
                 if (!MyUtility.Check.Empty(total_Rows))
                 {
@@ -281,7 +284,7 @@ from
                 this.month12 = this.alldt[0];
                 this.dt_printing = new System.Data.DataTable();
                 this.dt_printing.Columns.Add("Shell_Supplier", typeof(string));
-                bool First = true;
+                bool first = true;
 
                 // Type=  Pilling & Snagging Detail
                 for (int i = 0; i < this.month12.Rows.Count; i++)
@@ -300,15 +303,15 @@ from
                     from #temp where m = '{0}'", month);
 
                     month_Columns += month + "_Qty," + month + "_Complaint_Value,";
-                    Qty_SumColumns += month + "_Qty+";
-                    Complaint_SumColumns += month + "_Complaint_Value+";
+                    qty_SumColumns += month + "_Qty+";
+                    complaint_SumColumns += month + "_Complaint_Value+";
                     this.result = DBProxy.Current.SelectByConn(conn, scmd, out this.dt_temp);
                     int counts = this.dt_temp.Rows.Count;
 
                     // DataTable第一次塞值避免null, 所以要先NewRow
-                    if (First)
+                    if (first)
                     {
-                        First = false;
+                        first = false;
                         for (int t = 0; t < this.dt_temp.Rows.Count; t++)
                         {
                             dr = this.dt_printing.NewRow();
@@ -351,13 +354,13 @@ from
                     }
                 }
 
-                Qty_SumColumns = Qty_SumColumns.Substring(0, Qty_SumColumns.Length - 1);
-                Complaint_SumColumns = Complaint_SumColumns.Substring(0, Complaint_SumColumns.Length - 1);
+                qty_SumColumns = qty_SumColumns.Substring(0, qty_SumColumns.Length - 1);
+                complaint_SumColumns = complaint_SumColumns.Substring(0, complaint_SumColumns.Length - 1);
 
                 this.dt_printing.ColumnsDecimalAdd("Qty");
                 this.dt_printing.ColumnsDecimalAdd("Complaint_Value");
-                decimal TTLQty = 0;
-                decimal TTLValue = 0;
+                decimal tTLQty = 0;
+                decimal tTLValue = 0;
                 total_Rows = this.dt_printing.Sum(month_Columns, string.Empty);
                 if (!MyUtility.Check.Empty(total_Rows))
                 {
@@ -374,17 +377,17 @@ from
                 {
                     if ((i + 1) % 4 == 0)
                     {
-                        TTLQty += MyUtility.Convert.GetDecimal(this.dt_printing.Rows[this.dt_printing.Rows.Count - 1][i]);
+                        tTLQty += MyUtility.Convert.GetDecimal(this.dt_printing.Rows[this.dt_printing.Rows.Count - 1][i]);
                     }
 
                     if (i % 4 == 0)
                     {
-                        TTLValue += MyUtility.Convert.GetDecimal(this.dt_printing.Rows[this.dt_printing.Rows.Count - 1][i]);
+                        tTLValue += MyUtility.Convert.GetDecimal(this.dt_printing.Rows[this.dt_printing.Rows.Count - 1][i]);
                     }
                 }
 
-                this.dt_printing.Rows[this.dt_printing.Rows.Count - 1][this.dt_printing.Columns.Count - 1] = TTLValue;
-                this.dt_printing.Rows[this.dt_printing.Rows.Count - 1][this.dt_printing.Columns.Count - 2] = TTLQty;
+                this.dt_printing.Rows[this.dt_printing.Rows.Count - 1][this.dt_printing.Columns.Count - 1] = tTLValue;
+                this.dt_printing.Rows[this.dt_printing.Rows.Count - 1][this.dt_printing.Columns.Count - 2] = tTLQty;
                 if (this.dt_All == null || this.dt_All.Rows.Count == 0)
                 {
                     this.dt_All = this.dt_printing;
@@ -490,8 +493,9 @@ from
             return this.result;  // base.OnAsyncDataLoad(e);
         }
 
-        readonly Dictionary<string, System.Data.DataTable> dicSUP = new Dictionary<string, System.Data.DataTable>();
+        private readonly Dictionary<string, System.Data.DataTable> dicSUP = new Dictionary<string, System.Data.DataTable>();
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             var saveDialog = MyExcelPrg.GetSaveFileDialog(MyExcelPrg.Filter_Excel);
@@ -566,7 +570,7 @@ from
             return true;
         }
 
-        void Addcolor(Worksheet mySheet, int rowNo, int columnNo)
+        private void Addcolor(Worksheet mySheet, int rowNo, int columnNo)
         {
             mySheet.get_Range("A2", "AY2").Interior.Color = Color.SkyBlue;
             mySheet.get_Range("A2", "AY2").Borders.LineStyle = XlLineStyle.xlContinuous;
@@ -603,8 +607,8 @@ from
             }
 
             Range formatRange;
-            Range ReplaceRange;
-            Range ReplaceRange1;
+            Range replaceRange;
+            Range replaceRange1;
 
             if (this.Report_Type2 == "True")
             {
@@ -613,10 +617,10 @@ from
                 formatRange.NumberFormat = "$#,##0.00";
 
                 // 只顯示total的值,其他數值為0都轉空白
-                ReplaceRange = mySheet.get_Range(string.Format("AY{0}", 3), string.Format("AY{0}", this.dt_printing.Rows.Count + 1));
-                ReplaceRange.Replace("0", string.Empty);
-                ReplaceRange1 = mySheet.get_Range(string.Format("AX{0}", 3), string.Format("AX{0}", this.dt_printing.Rows.Count + 1));
-                ReplaceRange1.Replace("0", string.Empty);
+                replaceRange = mySheet.get_Range(string.Format("AY{0}", 3), string.Format("AY{0}", this.dt_printing.Rows.Count + 1));
+                replaceRange.Replace("0", string.Empty);
+                replaceRange1 = mySheet.get_Range(string.Format("AX{0}", 3), string.Format("AX{0}", this.dt_printing.Rows.Count + 1));
+                replaceRange1.Replace("0", string.Empty);
             }
             else
             {
@@ -626,7 +630,7 @@ from
             }
         }
 
-        void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
+        private void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
         {
             _Application myExcel = null;
             _Workbook myBook = null;
@@ -658,7 +662,7 @@ from
             }
         }
 
-        void Addfilter(Worksheet mySheet, int rowNo, int columnNo)
+        private void Addfilter(Worksheet mySheet, int rowNo, int columnNo)
         {
             Range firstRow = (Range)mySheet.Rows[1];
             firstRow.AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlAnd, Type.Missing, true);

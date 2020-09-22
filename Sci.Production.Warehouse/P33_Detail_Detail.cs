@@ -35,6 +35,7 @@ namespace Sci.Production.Warehouse
             this.numIssueQty.Value = MyUtility.Check.Empty(dt.Compute("Sum(Qty)", "selected = 1")) ? 0 : Convert.ToDecimal(dt.Compute("Sum(Qty)", "selected = 1"));
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

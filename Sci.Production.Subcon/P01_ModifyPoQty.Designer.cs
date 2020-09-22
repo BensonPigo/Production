@@ -75,8 +75,8 @@
             0,
             0,
             0});
-            this.numPOQty.Validating += new System.ComponentModel.CancelEventHandler(this.numPOQty_Validating);
-            this.numPOQty.Validated += new System.EventHandler(this.numPOQty_Validated);
+            this.numPOQty.Validating += new System.ComponentModel.CancelEventHandler(this.NumPOQty_Validating);
+            this.numPOQty.Validated += new System.EventHandler(this.NumPOQty_Validated);
             // 
             // displayExceedQty
             // 
@@ -269,7 +269,7 @@
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnSave
             // 
@@ -281,7 +281,7 @@
             this.btnSave.TabIndex = 0;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // P01_ModifyPoQty
             // 

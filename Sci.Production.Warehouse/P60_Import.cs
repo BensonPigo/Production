@@ -157,6 +157,7 @@ Where b.Qty - b.InQty >0
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

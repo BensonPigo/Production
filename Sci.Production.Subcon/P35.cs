@@ -41,6 +41,7 @@ namespace Sci.Production.Subcon
             };
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -69,7 +70,7 @@ where lapd.id = '{0}'",
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        private void txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
+        private void Txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
         {
             Class.Txtartworktype_fty o;
             o = (Class.Txtartworktype_fty)sender;
@@ -81,6 +82,8 @@ where lapd.id = '{0}'",
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -95,6 +98,8 @@ where lapd.id = '{0}'",
         }
 
         // delete前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].ToString().ToUpper() == "APPROVED")
@@ -115,6 +120,8 @@ where lapd.id = '{0}'",
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["status"].ToString() == "Approved")
@@ -129,6 +136,8 @@ where lapd.id = '{0}'",
         }
 
         // save前檢查 & 取id
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 必輸檢查
@@ -222,7 +231,7 @@ where lapd.id = '{0}'",
             //    return false;
             // }
             // int exact = int.Parse(str);
-            if (!this.get_exact())
+            if (!this.Get_exact())
             {
                 MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", this.CurrentMaintain["currencyID"]), "Warning");
                 return false;
@@ -236,6 +245,7 @@ where lapd.id = '{0}'",
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             string sqlupdate = string.Format(
@@ -254,10 +264,10 @@ where lapd.id = '{0}'",
             base.ClickSaveAfter();
         }
 
-        string old_currencyID = string.Empty;
-        int exact = 2;
+        private string old_currencyID = string.Empty;
+        private int exact = 2;
 
-        private bool get_exact()
+        private bool Get_exact()
         {
             if (!this.old_currencyID.Equals(this.CurrentMaintain["currencyID"].ToString()))
             {
@@ -275,6 +285,8 @@ where lapd.id = '{0}'",
         }
 
         // grid 加工填值
+
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             if (!this.tabs.TabPages[0].Equals(this.tabs.SelectedTab))
@@ -289,6 +301,8 @@ where lapd.id = '{0}'",
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -302,7 +316,7 @@ where lapd.id = '{0}'",
                     this.numTotal.Text = amount.ToString();
                 }
 
-                this.get_exact();
+                this.Get_exact();
                 decimal x = 0;
                 decimal x1 = 0;
                 decimal x2 = 0;
@@ -355,6 +369,8 @@ where lapd.id = '{0}'",
         }
 
         // detail 新增時設定預設值
+
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
@@ -363,6 +379,8 @@ where lapd.id = '{0}'",
         }
 
         // Detail Grid 設定 & Detail Vaild
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region qtygarment Valid
@@ -408,6 +426,8 @@ where lapd.id = '{0}'",
         }
 
         // Approve
+
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -515,14 +535,14 @@ where lapd.id = '{0}'",
                 dtUpdateLocalPoData.Rows.Add(drNewPoData);
             }
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
@@ -535,30 +555,32 @@ from Localpo_detail a
 inner join #tmp b on a.ukey = b.ukey";
                     if (!(result2 = MyUtility.Tool.ProcessWithDatatable(dtUpdateLocalPoData, null, strUpdate, out dtResult))) // DBProxy.Current.Execute(null, sqlupd2)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd2, result2);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Approve successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             #endregion
         }
 
         // unApprove
+
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             // mantis 9749 confirm前先檢查此單狀態為Approved才可以UNconfirm
@@ -626,45 +648,45 @@ inner join #tmp b on a.ukey = b.ukey";
                 }
             }
 
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd3, result);
                         return;
                     }
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlupd2, result2);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnApprove successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             #endregion
         }
 
         // P35_Import
-        private void btnBatchImport_Click(object sender, EventArgs e)
+        private void BtnBatchImport_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -701,12 +723,14 @@ inner join #tmp b on a.ukey = b.ukey";
             // }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickNewBefore()
         {
             this.DetailSelectCommand = string.Format("select *,0.0 as amount,0.0 as balance,0 as inqty,0 as apqty,'' as description from localap_detail WITH (NOLOCK) where 1=0");
             return base.ClickNewBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             DataRow row = this.CurrentMaintain;
@@ -763,54 +787,54 @@ where a.id = @ID",
                 this.ShowErr(result);
             }
 
-            string RptTitle = dt.Rows[0]["nameEn"].ToString();
+            string rptTitle = dt.Rows[0]["nameEn"].ToString();
             string address = dt.Rows[0]["AddressEN"].ToString();
-            string Tel = dt.Rows[0]["Tel"].ToString();
-            string Barcode = dt.Rows[0]["Id"].ToString();
-            string Supplier = dt.Rows[0]["name"].ToString();
-            string Address1 = dt.Rows[0]["Address"].ToString();
-            string TEL1 = dt.Rows[0]["Tel"].ToString();
-            string Terms = dt.Rows[0]["Terms"].ToString();
-            string Invoice = dt.Rows[0]["Invoice"].ToString();
-            string Remark = dt.Rows[0]["Remark"].ToString();
-            string AC_No = dt.Rows[0]["AC_No"].ToString();
-            string AC_Name = dt.Rows[0]["AC_Name"].ToString();
-            string Bank_Name = dt.Rows[0]["Bank_Name"].ToString();
-            string Country = dt.Rows[0]["Country"].ToString();
+            string tel = dt.Rows[0]["Tel"].ToString();
+            string barcode = dt.Rows[0]["Id"].ToString();
+            string supplier = dt.Rows[0]["name"].ToString();
+            string address1 = dt.Rows[0]["Address"].ToString();
+            string tEL1 = dt.Rows[0]["Tel"].ToString();
+            string terms = dt.Rows[0]["Terms"].ToString();
+            string invoice = dt.Rows[0]["Invoice"].ToString();
+            string remark = dt.Rows[0]["Remark"].ToString();
+            string aC_No = dt.Rows[0]["AC_No"].ToString();
+            string aC_Name = dt.Rows[0]["AC_Name"].ToString();
+            string bank_Name = dt.Rows[0]["Bank_Name"].ToString();
+            string country = dt.Rows[0]["Country"].ToString();
             string city = dt.Rows[0]["city"].ToString();
-            string SwiftCode = dt.Rows[0]["SwiftCode"].ToString();
-            string Total = this.numAmount.Text;
-            string Vat = this.numVat.Text;
-            string Grand_Total = (decimal.Parse(this.numAmount.Text) + decimal.Parse(this.numVat.Text)).ToString();
-            string Prepared_by = dt.Rows[0]["Prepared_by"].ToString();
-            string CurrencyID = dt.Rows[0]["CurrencyID"].ToString();
-            string VatRate = dt.Rows[0]["VatRate"].ToString();
+            string swiftCode = dt.Rows[0]["SwiftCode"].ToString();
+            string total = this.numAmount.Text;
+            string vat = this.numVat.Text;
+            string grand_Total = (decimal.Parse(this.numAmount.Text) + decimal.Parse(this.numVat.Text)).ToString();
+            string prepared_by = dt.Rows[0]["Prepared_by"].ToString();
+            string currencyID = dt.Rows[0]["CurrencyID"].ToString();
+            string vatRate = dt.Rows[0]["VatRate"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("address", address));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Barcode", Barcode));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address1", Address1));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL1", TEL1));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", tel));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Barcode", barcode));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", supplier));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address1", address1));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL1", tEL1));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("id", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Terms", Terms));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", Invoice));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Terms", terms));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", invoice));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", this.numTotalqty.Text.ToString()));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AC_No", AC_No));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AC_Name", AC_Name));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Bank_Name", Bank_Name));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Country", Country));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AC_No", aC_No));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AC_Name", aC_Name));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Bank_Name", bank_Name));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Country", country));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("city", city));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SwiftCode", SwiftCode));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total", Total));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Vat", Vat));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Grand_Total", Grand_Total));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Prepared_by", Prepared_by));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyID", CurrencyID));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VatRate", VatRate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SwiftCode", swiftCode));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total", total));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Vat", vat));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Grand_Total", grand_Total));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Prepared_by", prepared_by));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyID", currencyID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VatRate", vatRate));
             #endregion
 
             #region  抓表身資料
@@ -852,12 +876,12 @@ where a.id = @ID",
             #region  指定是哪個 RDLC
 
             // DualResult result;
-            Type ReportResourceNamespace = typeof(P35_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P35_Print.rdlc";
+            Type reportResourceNamespace = typeof(P35_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P35_Print.rdlc";
 
             IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 // this.ShowException(result);
                 return false;

@@ -10,6 +10,7 @@ namespace Sci.Production.Subcon
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -34,7 +35,7 @@ namespace Sci.Production.Subcon
             }
         }
 
-        private void txtSPNo_Validating(object sender, CancelEventArgs e)
+        private void TxtSPNo_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSPNo.Text))
             {

@@ -10,20 +10,22 @@ namespace Sci.Production.Subcon
     {
         private string _refno;
 
-        public B01_ThreadColorPrice(bool canedit, string Refno, string keyvalue2, string keyvalue3)
-            : base(canedit, Refno, keyvalue2, keyvalue3)
+        public B01_ThreadColorPrice(bool canedit, string refno, string keyvalue2, string keyvalue3)
+            : base(canedit, refno, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
             this.WorkAlias = "LocalItem_ThreadBuyerColorGroupPrice";
             this.KeyField1 = "Refno";
-            this._refno = Refno;
+            this._refno = refno;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             #region Grid事件
@@ -171,17 +173,20 @@ namespace Sci.Production.Subcon
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnInsert()
         {
             base.OnInsert();
         }
 
+        /// <inheritdoc/>
         protected override void OnInsertPrepare(DataRow data)
         {
             data["Refno"] = this._refno;
             base.OnInsertPrepare(data);
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             foreach (DataRow dr in this.Datas)
@@ -211,6 +216,7 @@ namespace Sci.Production.Subcon
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSave()
         {
             return base.OnSave();

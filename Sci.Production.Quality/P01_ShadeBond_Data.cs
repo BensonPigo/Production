@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Quality
 {
-    class P01_ShadeBond_Data
+    internal class P01_ShadeBond_Data
     {
         public string FactoryID { get; set; }
 

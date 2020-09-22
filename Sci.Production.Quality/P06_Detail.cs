@@ -23,14 +23,14 @@ namespace Sci.Production.Quality
         private DataTable dtColorFastness;  // dtOven
         private bool newOven = false;
         private readonly bool isSee = false;
-        readonly bool canEdit = true;
+        private readonly bool canEdit = true;
 
-        public P06_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr, string Poid)
+        public P06_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr, string poid)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
             this.maindr = mainDr;
-            this.PoID = Poid.Trim();
+            this.PoID = poid.Trim();
             this.ID = id.Trim();
             this.isSee = true;
             this.canEdit = canedit;
@@ -42,6 +42,7 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -72,6 +73,7 @@ namespace Sci.Production.Quality
             this.comboCycle.Text = MyUtility.Check.Empty(this.comboCycle.Text) ? "0" : this.comboCycle.Text;
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             DataTable dt;
@@ -91,13 +93,14 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery(out DataTable datas)
         {
-            Dictionary<string, string> Result_RowSource = new Dictionary<string, string>();
-            Result_RowSource.Add("Pass", "Pass");
-            Result_RowSource.Add("Fail", "Fail");
-            Result_RowSource.Add(" ", " ");
-            this.comboResult.DataSource = new BindingSource(Result_RowSource, null);
+            Dictionary<string, string> result_RowSource = new Dictionary<string, string>();
+            result_RowSource.Add("Pass", "Pass");
+            result_RowSource.Add("Fail", "Fail");
+            result_RowSource.Add(" ", " ");
+            this.comboResult.DataSource = new BindingSource(result_RowSource, null);
             this.comboResult.ValueMember = "Key";
             this.comboResult.DisplayMember = "Value";
 
@@ -156,6 +159,8 @@ namespace Sci.Production.Quality
         }
 
         // 重組grid view
+
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -234,6 +239,7 @@ namespace Sci.Production.Quality
             return sqlInput;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             #region groupCell
@@ -848,6 +854,7 @@ namespace Sci.Production.Quality
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             if (MyUtility.Check.Empty(this.txtArticle.Text))
@@ -884,6 +891,7 @@ namespace Sci.Production.Quality
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSave()
         {
             DualResult upResult;
@@ -891,11 +899,11 @@ namespace Sci.Production.Quality
             DataTable dt;
             DBProxy.Current.Select(null, $@"select Max(testno) as testMaxNo from ColorFastness WITH (NOLOCK) where poid='{this.PoID}'", out dt);
             int testMaxNo = MyUtility.Convert.GetInt(dt.Rows[0]["testMaxNo"]);
-            int Temperature = MyUtility.Check.Empty(this.comboTempt.Text) ? 0 : MyUtility.Convert.GetInt(this.comboTempt.Text);
-            int Cycle = MyUtility.Check.Empty(this.comboCycle.Text) ? 0 : MyUtility.Convert.GetInt(this.comboCycle.Text);
-            string Detergent = MyUtility.Check.Empty(this.comboDetergent.Text) ? string.Empty : this.comboDetergent.Text;
-            string Machine = MyUtility.Check.Empty(this.comboMachineUs.Text) ? string.Empty : this.comboMachineUs.Text;
-            string Drying = MyUtility.Check.Empty(this.comboDryProcess.Text) ? string.Empty : this.comboDryProcess.Text;
+            int temperature = MyUtility.Check.Empty(this.comboTempt.Text) ? 0 : MyUtility.Convert.GetInt(this.comboTempt.Text);
+            int cycle = MyUtility.Check.Empty(this.comboCycle.Text) ? 0 : MyUtility.Convert.GetInt(this.comboCycle.Text);
+            string detergent = MyUtility.Check.Empty(this.comboDetergent.Text) ? string.Empty : this.comboDetergent.Text;
+            string machine = MyUtility.Check.Empty(this.comboMachineUs.Text) ? string.Empty : this.comboMachineUs.Text;
+            string drying = MyUtility.Check.Empty(this.comboDryProcess.Text) ? string.Empty : this.comboDryProcess.Text;
 
             DataRow dr = ((DataTable)this.gridbs.DataSource).NewRow();
             for (int i = ((DataTable)this.gridbs.DataSource).Rows.Count; i > 0; i--)
@@ -926,7 +934,7 @@ namespace Sci.Production.Quality
                     continue;
                 }
 
-                string Today = DateTime.Now.ToShortDateString();
+                string today = DateTime.Now.ToShortDateString();
 
                 // 新增
                 if (dr.RowState == DataRowState.Added)
@@ -945,11 +953,11 @@ namespace Sci.Production.Quality
                         spamAddNew.Add(new SqlParameter("@logid", this.loginID));
                         spamAddNew.Add(new SqlParameter("@remark", this.txtRemark.Text));
                         spamAddNew.Add(new SqlParameter("@Testno", testMaxNo + 1));
-                        spamAddNew.Add(new SqlParameter("@Temperature", Temperature));
-                        spamAddNew.Add(new SqlParameter("@Cycle", Cycle));
-                        spamAddNew.Add(new SqlParameter("@Detergent", Detergent));
-                        spamAddNew.Add(new SqlParameter("@Machine", Machine));
-                        spamAddNew.Add(new SqlParameter("@Drying", Drying));
+                        spamAddNew.Add(new SqlParameter("@Temperature", temperature));
+                        spamAddNew.Add(new SqlParameter("@Cycle", cycle));
+                        spamAddNew.Add(new SqlParameter("@Detergent", detergent));
+                        spamAddNew.Add(new SqlParameter("@Machine", machine));
+                        spamAddNew.Add(new SqlParameter("@Drying", drying));
                         upResult = DBProxy.Current.Execute(null, insCmd, spamAddNew);
                         if (upResult)
                         {
@@ -973,11 +981,11 @@ inspdate='{this.dateTestDate.Text}'
 ,remark='{this.txtRemark.Text}'
 ,EditName='{this.loginID}'
 ,EditDate='{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}'
-,Temperature={Temperature}
-,Cycle={Cycle}
-,Detergent='{Detergent}'
-,Machine='{Machine}'
-,Drying='{Drying}'
+,Temperature={temperature}
+,Cycle={cycle}
+,Detergent='{detergent}'
+,Machine='{machine}'
+,Drying='{drying}'
 where id='{this.ID}'";
 
             if (!(upResult = DBProxy.Current.Execute(null, editCmd)))
@@ -1134,16 +1142,16 @@ where id='{this.ID}'";
                 return;
             }
 
-            string StyleID = string.Empty;
-            string SeasonID = string.Empty;
-            string BrandID = string.Empty;
+            string styleID = string.Empty;
+            string seasonID = string.Empty;
+            string brandID = string.Empty;
             DataTable dtPo;
             DBProxy.Current.Select(null, string.Format("select * from PO WITH (NOLOCK) where id='{0}'", this.PoID), out dtPo);
             if (dtPo.Rows.Count > 0)
             {
-                StyleID = dtPo.Rows[0]["StyleID"].ToString();
-                SeasonID = dtPo.Rows[0]["SeasonID"].ToString();
-                BrandID = dtPo.Rows[0]["BrandID"].ToString();
+                styleID = dtPo.Rows[0]["StyleID"].ToString();
+                seasonID = dtPo.Rows[0]["SeasonID"].ToString();
+                brandID = dtPo.Rows[0]["BrandID"].ToString();
             }
 
             string strXltName = Env.Cfg.XltPathDir + "\\Quality_P06_Detail_Report.xltx";
@@ -1156,30 +1164,30 @@ where id='{this.ID}'";
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[1, 2] = this.txtSP.Text.ToString();
-            worksheet.Cells[1, 4] = StyleID;
-            worksheet.Cells[1, 6] = SeasonID;
+            worksheet.Cells[1, 4] = styleID;
+            worksheet.Cells[1, 6] = seasonID;
             worksheet.Cells[1, 8] = this.txtArticle.Text.ToString();
             worksheet.Cells[1, 10] = this.txtNoofTest.Text.ToString();
             worksheet.Cells[2, 2] = this.dtColorFastness.Rows.Count > 0 ? this.dtColorFastness.Rows[0]["status"].ToString() : string.Empty;
             worksheet.Cells[2, 4] = this.comboResult.Text;
             worksheet.Cells[2, 6] = this.dateTestDate.Text;
             worksheet.Cells[2, 8] = this.txtuserInspector.TextBox1.Text.ToString();
-            worksheet.Cells[2, 10] = BrandID;
+            worksheet.Cells[2, 10] = brandID;
 
-            int StartRow = 4;
+            int startRow = 4;
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                worksheet.Cells[StartRow + i, 1] = ret[i, 0];
-                worksheet.Cells[StartRow + i, 2] = ret[i, 1];
-                worksheet.Cells[StartRow + i, 3] = ret[i, 2];
-                worksheet.Cells[StartRow + i, 4] = ret[i, 3];
-                worksheet.Cells[StartRow + i, 5] = ret[i, 4];
-                worksheet.Cells[StartRow + i, 6] = ret[i, 5];
-                worksheet.Cells[StartRow + i, 7] = ret[i, 6];
-                worksheet.Cells[StartRow + i, 8] = ret[i, 7];
-                worksheet.Cells[StartRow + i, 9] = ret[i, 8];
-                worksheet.Cells[StartRow + i, 10] = ret[i, 9];
-                worksheet.Cells[StartRow + i, 11] = ret[i, 10];
+                worksheet.Cells[startRow + i, 1] = ret[i, 0];
+                worksheet.Cells[startRow + i, 2] = ret[i, 1];
+                worksheet.Cells[startRow + i, 3] = ret[i, 2];
+                worksheet.Cells[startRow + i, 4] = ret[i, 3];
+                worksheet.Cells[startRow + i, 5] = ret[i, 4];
+                worksheet.Cells[startRow + i, 6] = ret[i, 5];
+                worksheet.Cells[startRow + i, 7] = ret[i, 6];
+                worksheet.Cells[startRow + i, 8] = ret[i, 7];
+                worksheet.Cells[startRow + i, 9] = ret[i, 8];
+                worksheet.Cells[startRow + i, 10] = ret[i, 9];
+                worksheet.Cells[startRow + i, 11] = ret[i, 10];
             }
 
             worksheet.Cells.EntireColumn.AutoFit();
@@ -1215,7 +1223,7 @@ where id='{this.ID}'";
             }
 
             DataTable dtOrders;
-            string StyleID, SeasonID, CustPONo, BrandID, StyleUkey;
+            string styleID, seasonID, custPONo, brandID, styleUkey;
             if (!(this.result = DBProxy.Current.Select(null, $@"select * from Orders WITH (NOLOCK) where poid='{this.PoID}'", out dtOrders)))
             {
                 this.ShowErr(this.result);
@@ -1224,19 +1232,19 @@ where id='{this.ID}'";
 
             if (dtOrders.Rows.Count == 0)
             {
-                StyleID = string.Empty;
-                SeasonID = string.Empty;
-                CustPONo = string.Empty;
-                BrandID = string.Empty;
-                StyleUkey = string.Empty;
+                styleID = string.Empty;
+                seasonID = string.Empty;
+                custPONo = string.Empty;
+                brandID = string.Empty;
+                styleUkey = string.Empty;
             }
             else
             {
-                StyleID = dtOrders.Rows[0]["StyleID"].ToString();
-                StyleUkey = dtOrders.Rows[0]["StyleUkey"].ToString();
-                SeasonID = dtOrders.Rows[0]["SeasonID"].ToString();
-                CustPONo = dtOrders.Rows[0]["CustPONo"].ToString();
-                BrandID = dtOrders.Rows[0]["BrandID"].ToString();
+                styleID = dtOrders.Rows[0]["StyleID"].ToString();
+                styleUkey = dtOrders.Rows[0]["StyleUkey"].ToString();
+                seasonID = dtOrders.Rows[0]["SeasonID"].ToString();
+                custPONo = dtOrders.Rows[0]["CustPONo"].ToString();
+                brandID = dtOrders.Rows[0]["BrandID"].ToString();
             }
 
             string strXltName = Env.Cfg.XltPathDir + "\\Quality_P06_Detail_Report_ToPDF.xltx";
@@ -1262,13 +1270,13 @@ where id='{this.ID}'";
                 worksheet.Cells[3, 4] = dtSubDate.Rows[i]["submitDate"].ToString();
                 worksheet.Cells[3, 7] = this.dateTestDate.Text;
                 worksheet.Cells[3, 9] = this.txtSP.Text;
-                worksheet.Cells[3, 12] = BrandID;
+                worksheet.Cells[3, 12] = brandID;
 
-                worksheet.Cells[5, 4] = StyleID;
-                worksheet.Cells[5, 10] = CustPONo;
+                worksheet.Cells[5, 4] = styleID;
+                worksheet.Cells[5, 10] = custPONo;
                 worksheet.Cells[5, 12] = this.txtArticle.Text;
-                worksheet.Cells[6, 4] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where ukey='{StyleUkey}'", null));
-                worksheet.Cells[6, 10] = SeasonID;
+                worksheet.Cells[6, 4] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where ukey='{styleUkey}'", null));
+                worksheet.Cells[6, 10] = seasonID;
 
                 worksheet.Cells[9, 4] = MyUtility.Check.Empty(this.comboTempt.Text) ? "0" : this.comboTempt.Text + "˚C";
                 worksheet.Cells[9, 7] = MyUtility.Check.Empty(this.comboCycle.Text) ? "0" : this.comboCycle.Text;

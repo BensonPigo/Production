@@ -13,9 +13,9 @@ namespace Sci.Production.Quality
 {
     public partial class P20 : Win.Tems.Input6
     {
-        string sql;
-        DataRow ROW;
-        bool isNew = false;
+        private string sql;
+        private DataRow ROW;
+        private bool isNew = false;
 
         public P20(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -36,6 +36,8 @@ namespace Sci.Production.Quality
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -126,6 +128,8 @@ and f.IsProduceFty=1 ", textValue, Env.User.Factory);
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             // add column 避免add沒有Description可使用
@@ -171,6 +175,7 @@ select B.StyleID
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             DataTable dt = (DataTable)e.Details;
@@ -192,13 +197,14 @@ select B.StyleID
             return base.OnRenewDataDetailPost(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings GarmentDefectCodeIDCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings QtyCell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorTextColumnSettings garmentDefectCodeIDCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings qtyCell = new DataGridViewGeneratorNumericColumnSettings();
 
             #region MouseClick
-            GarmentDefectCodeIDCell.CellMouseClick += (s, e) =>
+            garmentDefectCodeIDCell.CellMouseClick += (s, e) =>
             {
                 DataRow drDesc;
                 if (e.RowIndex == -1)
@@ -244,7 +250,7 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
                     }
                 }
             };
-            GarmentDefectCodeIDCell.EditingMouseDown += (s, e) =>
+            garmentDefectCodeIDCell.EditingMouseDown += (s, e) =>
             {
                 DataRow drDesc;
                 if (e.RowIndex == -1)
@@ -293,7 +299,7 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
             #endregion
 
             #region CellValidating
-            GarmentDefectCodeIDCell.CellValidating += (s, e) =>
+            garmentDefectCodeIDCell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -352,7 +358,7 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
                 }
             };
 
-            QtyCell.CellValidating += (s, e) =>
+            qtyCell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -385,11 +391,12 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("GarmentDefectTypeid", header: "Defect Type", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("GarmentDefectCodeID", header: "Defect Code", width: Widths.AnsiChars(5), settings: GarmentDefectCodeIDCell)
+                .Text("GarmentDefectCodeID", header: "Defect Code", width: Widths.AnsiChars(5), settings: garmentDefectCodeIDCell)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, integer_places: 5, settings: QtyCell);
+                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, integer_places: 5, settings: qtyCell);
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -400,6 +407,7 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
             DBProxy.Current.Execute(null, this.sql);
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -417,9 +425,11 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
         }
 
         // save前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            decimal DefectQty = 0;
+            decimal defectQty = 0;
 
             #region 必輸檢查
             if (MyUtility.Check.Empty(this.CurrentMaintain["CDate"]))
@@ -460,10 +470,10 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
 
             foreach (DataRow row in this.DetailDatas)
             {
-                DefectQty += Convert.ToDecimal(row["Qty"]);
+                defectQty += Convert.ToDecimal(row["Qty"]);
             }
 
-            this.CurrentMaintain["DefectQty"] = DefectQty;  // 2.將表身的sum(RFT_detail.Qty) 加總回寫回表頭RFT.DefectQty
+            this.CurrentMaintain["DefectQty"] = defectQty;  // 2.將表身的sum(RFT_detail.Qty) 加總回寫回表頭RFT.DefectQty
 
             // 3.當RFT.RejectQty 有值時，若RFT.DefectQty 為空則Show Message 並Return 不可存檔
             if (!MyUtility.Check.Empty(this.CurrentMaintain["RejectQty"]) && Convert.ToDecimal(this.CurrentMaintain["DefectQty"]) == 0)
@@ -532,6 +542,8 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
         }
 
         // delete前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             DataRow dr = this.grid.GetDataRow<DataRow>(this.grid.GetSelectedRowIndex());
@@ -545,6 +557,8 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             DataTable dt;
@@ -560,6 +574,7 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickNew()
         {
             this.displayStyle.Text = string.Empty;

@@ -321,7 +321,7 @@
             this.btnLacking.TabIndex = 112;
             this.btnLacking.Text = "Lacking";
             this.btnLacking.UseVisualStyleBackColor = true;
-            this.btnLacking.Click += new System.EventHandler(this.btnLacking_Click);
+            this.btnLacking.Click += new System.EventHandler(this.BtnLacking_Click);
             // 
             // numBoxScanQty
             // 
@@ -377,7 +377,7 @@
             this.txtScanEAN.Name = "txtScanEAN";
             this.txtScanEAN.Size = new System.Drawing.Size(184, 23);
             this.txtScanEAN.TabIndex = 1;
-            this.txtScanEAN.Leave += new System.EventHandler(this.txtScanEAN_Leave);
+            this.txtScanEAN.Leave += new System.EventHandler(this.TxtScanEAN_Leave);
             this.txtScanEAN.Validating += new System.ComponentModel.CancelEventHandler(this.TxtScanEAN_Validating);
             // 
             // labelEAN

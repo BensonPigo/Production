@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Subcon
 {
-    class P30_PrintData
+    internal class P30_PrintData
     {
         public string Sort { get; set; }
 

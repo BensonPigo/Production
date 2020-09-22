@@ -5,16 +5,19 @@ using System.Data;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class P03_ScanAndPackDeletedHistory : Win.Tems.Base
     {
         private string PackingListID = string.Empty;
 
-        public P03_ScanAndPackDeletedHistory(string _PackingListID)
+        /// <inheritdoc/>
+        public P03_ScanAndPackDeletedHistory(string packingListID)
         {
             this.InitializeComponent();
-            this.PackingListID = _PackingListID;
+            this.PackingListID = packingListID;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             this.Helper.Controls.Grid.Generator(this.grid1)
@@ -51,7 +54,7 @@ WHERE PackingListID='{this.PackingListID}'
             base.OnFormLoaded();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

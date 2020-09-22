@@ -36,14 +36,11 @@ namespace Sci.Production.PublicPrg
         /// *   16. 更新LObQty
         /// *   32. 更新AdQty
         /// </summary>
-        /// <param name="Int Type"></param>
+        /// <param name="type"></param>
         /// <param name="String Poid"></param>
         /// <param name="String Seq1"></param>
         /// <param name="String Seq2"></param>
         /// <param name="decimal qty"</param>
-        /// <param name="bool encoded"></param>
-        /// <param name="string stocktype"></param>
-        /// <param name="string m"></param>
         /// <returns>String Sqlcmd</returns>
         // (整批) A & B倉
         public static string UpdateMPoDetail(int type, List<Prgs_POSuppDetailData> datas, bool encoded, bool attachLocation = true, SqlConnection sqlConn = null)
@@ -91,12 +88,12 @@ OUTER APPLY(
                         var newDatas = tBattachlocation.AsEnumerable().Select(w =>
                                 new Prgs_POSuppDetailData
                                 {
-                                    poid = w.Field<string>("poid"),
-                                    seq1 = w.Field<string>("seq1"),
-                                    seq2 = w.Field<string>("seq2"),
-                                    stocktype = w.Field<string>("stocktype"),
-                                    qty = w.Field<decimal>("qty"),
-                                    location = w.Field<string>("location"),
+                                    Poid = w.Field<string>("poid"),
+                                    Seq1 = w.Field<string>("seq1"),
+                                    Seq2 = w.Field<string>("seq2"),
+                                    Stocktype = w.Field<string>("stocktype"),
+                                    Qty = w.Field<decimal>("qty"),
+                                    Location = w.Field<string>("location"),
                                 }).ToList();
                         datas.Clear();
                         datas.AddRange(newDatas);
@@ -590,7 +587,7 @@ drop table #TmpSource;";
         /// </summary>
         /// <param name="junk">junk</param>
         /// <returns>string</returns>
-        public static string selePoItemSqlCmd(bool junk = true)
+        public static string SelePoItemSqlCmd(bool junk = true)
         {
             return @"
 select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
@@ -648,7 +645,7 @@ where p.id ='{0}'
         public static Win.Tools.SelectItem SelePoItem(string poid, string defaultseq, string filters = null, bool junk = true)
         {
             DataTable dt;
-            string poItemSql = selePoItemSqlCmd(junk);
+            string poItemSql = SelePoItemSqlCmd(junk);
             if (!MyUtility.Check.Empty(poItemSql))
             {
                 poItemSql += string.Format(" And {0}", filters);
@@ -825,7 +822,7 @@ for xml path('') ", ukey), out dt);
         }
         #endregion
 
-        public static IList<DataRow> autopick(DataRow materials, bool isIssue = true, string stocktype = "B")
+        public static IList<DataRow> Autopick(DataRow materials, bool isIssue = true, string stocktype = "B")
         {
             List<DataRow> items = new List<DataRow>();
             string sqlcmd;
@@ -946,8 +943,7 @@ where   a.lock = 0
             else// P29,P30 Auto Pick
             {
                 request = decimal.Parse(materials["requestqty"].ToString());
-                sqlcmd = string.Format(
-                    @"
+                sqlcmd = $@"
 with cte as (
     select  Dyelot
             , sum (inqty - OutQty + AdjustQty) as GroupQty
@@ -955,11 +951,11 @@ with cte as (
     inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
                                                       and p.seq1 = a.Seq1 
                                                       and p.seq2 = a.Seq2
-    where   poid = '{1}' 
-            and Stocktype = '{4}' 
+    where   poid = '{materials["StockPOID"]}' 
+            and Stocktype = '{stocktype}' 
             and inqty - OutQty + AdjustQty > 0
-            and p.seq1 = '{2}' 
-            and p.seq2 = '{3}'
+            and p.seq1 = '{materials["StockSeq1"]}' 
+            and p.seq2 = '{materials["StockSeq2"]}'
     Group by Dyelot
 ) 
 select  location = Stuff ((select ',' + t.mtllocationid 
@@ -990,11 +986,11 @@ inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID
                                                   and p.seq1 = a.Seq1 
                                                   and p.seq2 = a.Seq2
 inner join cte c on c.Dyelot = a.Dyelot
-where   poid = '{1}' 
-        and Stocktype = '{4}' 
+where   poid = '{materials["StockPOID"]}' 
+        and Stocktype = '{stocktype}' 
         and inqty - OutQty + AdjustQty > 0
-        and p.seq1 = '{2}' 
-        and p.seq2 = '{3}'", Env.User.Keyword, materials["StockPOID"], materials["StockSeq1"], materials["StockSeq2"], stocktype);
+        and p.seq1 = '{materials["StockSeq1"]}' 
+        and p.seq2 = '{materials["StockSeq2"]}'";
             }
 
             DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
@@ -1197,7 +1193,6 @@ where   poid = '{1}'
             List<DataRow> items = new List<DataRow>();
             string sqlcmd;
             DataTable dt;
-            decimal accu_issue = 0;
 
             // 此筆需求數 = 總需求數 - 已經issue總數
             decimal request = decimal.Parse(materials["requestqty"].ToString()) - decimal.Parse(materials["accu_issue"].ToString());
@@ -1256,8 +1251,6 @@ drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"])
                 MyUtility.Msg.WarningBox(sqlcmd, "Sql Error");
                 return null;
             }
-
-            DataTable findrow = null;
             if (dt.Rows.Count == 0 || dt.Select("balanceqty<>0").Length == 0)
             {
                 return null;
@@ -1600,12 +1593,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                                 into m
                               select new Prgs_POSuppDetailData
                               {
-                                  poid = m.First().Field<string>("frompoid"),
-                                  seq1 = m.First().Field<string>("fromseq1"),
-                                  seq2 = m.First().Field<string>("fromseq2"),
-                                  stocktype = m.First().Field<string>("fromstocktype"),
-                                  qty = m.Sum(w => MyUtility.Convert.GetDecimal(w["qty"])),
-                                  location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct()),
+                                  Poid = m.First().Field<string>("frompoid"),
+                                  Seq1 = m.First().Field<string>("fromseq1"),
+                                  Seq2 = m.First().Field<string>("fromseq2"),
+                                  Stocktype = m.First().Field<string>("fromstocktype"),
+                                  Qty = m.Sum(w => MyUtility.Convert.GetDecimal(w["qty"])),
+                                  Location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct()),
                               }).ToList();
 
             var data_MD_0F = (from b in dt.AsEnumerable()
@@ -1619,12 +1612,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                                 into m
                               select new Prgs_POSuppDetailData
                               {
-                                  poid = m.First().Field<string>("topoid"),
-                                  seq1 = m.First().Field<string>("toseq1"),
-                                  seq2 = m.First().Field<string>("toseq2"),
-                                  stocktype = m.First().Field<string>("tostocktype"),
-                                  qty = 0,
-                                  location = string.Empty,
+                                  Poid = m.First().Field<string>("topoid"),
+                                  Seq1 = m.First().Field<string>("toseq1"),
+                                  Seq2 = m.First().Field<string>("toseq2"),
+                                  Stocktype = m.First().Field<string>("tostocktype"),
+                                  Qty = 0,
+                                  Location = string.Empty,
                               }).ToList();
             #endregion
             #region -- 更新庫存數量 ftyinventory --
@@ -1681,11 +1674,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             upd_Fty_2T = UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量 ftyinventory
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
 
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 try
@@ -1699,14 +1692,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4T, string.Empty, upd_Fty_4T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
                         return false;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
                         return false;
                     }
@@ -1717,7 +1710,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T.ToString(), out resulttb,
                         "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
                         return false;
                     }
@@ -1726,7 +1719,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_0F, string.Empty, upd_MD_0F.ToString(), out resulttb,
                         "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
                         return false;
                     }
@@ -1735,26 +1728,26 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
                         return false;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
 
                     // MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     MyUtility.Msg.ErrorBox(ex.ToString());
                     return false;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             return true;
         }
@@ -1974,21 +1967,21 @@ Where a.id = '{subTransfer_ID}'";
                                 into m
                               select new Prgs_POSuppDetailData
                               {
-                                  poid = m.First().Field<string>("frompoid"),
-                                  seq1 = m.First().Field<string>("fromseq1"),
-                                  seq2 = m.First().Field<string>("fromseq2"),
-                                  stocktype = m.First().Field<string>("fromstocktype"),
-                                  qty = m.Sum(w => w.Field<decimal>("qty")),
-                                  location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct()),
+                                  Poid = m.First().Field<string>("frompoid"),
+                                  Seq1 = m.First().Field<string>("fromseq1"),
+                                  Seq2 = m.First().Field<string>("fromseq2"),
+                                  Stocktype = m.First().Field<string>("fromstocktype"),
+                                  Qty = m.Sum(w => w.Field<decimal>("qty")),
+                                  Location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct()),
                               }).ToList();
 
             var data_MD_8T = data_MD_4T.Select(data => new Prgs_POSuppDetailData
             {
-                poid = data.poid,
-                seq1 = data.seq1,
-                seq2 = data.seq2,
-                stocktype = data.stocktype,
-                qty = -data.qty,
+                Poid = data.Poid,
+                Seq1 = data.Seq1,
+                Seq2 = data.Seq2,
+                Stocktype = data.Stocktype,
+                Qty = -data.Qty,
             }).ToList();
 
             #endregion
@@ -2005,12 +1998,12 @@ Where a.id = '{subTransfer_ID}'";
                                 into m
                               select new Prgs_POSuppDetailData
                               {
-                                  poid = m.First().Field<string>("Topoid"),
-                                  seq1 = m.First().Field<string>("Toseq1"),
-                                  seq2 = m.First().Field<string>("Toseq2"),
-                                  stocktype = m.First().Field<string>("Tostocktype"),
-                                  qty = m.Sum(w => w.Field<decimal>("qty")),
-                                  location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct()),
+                                  Poid = m.First().Field<string>("Topoid"),
+                                  Seq1 = m.First().Field<string>("Toseq1"),
+                                  Seq2 = m.First().Field<string>("Toseq2"),
+                                  Stocktype = m.First().Field<string>("Tostocktype"),
+                                  Qty = m.Sum(w => w.Field<decimal>("qty")),
+                                  Location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct()),
                               }).ToList();
 
             #endregion
@@ -2103,10 +2096,10 @@ when matched then
     set target.StockUnit = src.StockUnit;
 ";
             #endregion
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 try
@@ -2120,13 +2113,13 @@ when matched then
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4T, string.Empty, upd_Fty_4T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
                     #endregion
@@ -2139,20 +2132,20 @@ when matched then
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4T, string.Empty, upd_MD_4T, out resulttb,
                         "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T, out resulttb,
                         "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, string.Empty, upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
                     #endregion
@@ -2160,28 +2153,28 @@ when matched then
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(
                         dtSubTransfer_Detail, string.Empty, sql_UpdatePO_Supp_Detail, out resulttb, "#tmp", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     return new DualResult(false, "Commit transaction error.", ex);
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
             return result;
         }
 
@@ -2277,9 +2270,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             #region -- 更新表頭狀態資料 --
 
-            sqlupd3 = string.Format(
-                @"update SubTransfer set status='Confirmed', editname = '{0}' , editdate = GETDATE()
-                                where id = '{1}'", Env.User.UserID, subTransfer_ID);
+            sqlupd3 = $@"update SubTransfer set status='Confirmed', editname = '{Env.User.UserID}' , editdate = GETDATE()
+                                where id = '{subTransfer_ID}'";
 
             #endregion 更新表頭狀態資料
 
@@ -2332,29 +2324,29 @@ Where a.id = '{subTransfer_ID}'";
                                 into m
                               select new Prgs_POSuppDetailData
                               {
-                                  poid = m.First().Field<string>("frompoid"),
-                                  seq1 = m.First().Field<string>("fromseq1"),
-                                  seq2 = m.First().Field<string>("fromseq2"),
-                                  stocktype = m.First().Field<string>("fromstocktype"),
-                                  qty = m.Sum(w => w.Field<decimal>("qty")),
+                                  Poid = m.First().Field<string>("frompoid"),
+                                  Seq1 = m.First().Field<string>("fromseq1"),
+                                  Seq2 = m.First().Field<string>("fromseq2"),
+                                  Stocktype = m.First().Field<string>("fromstocktype"),
+                                  Qty = m.Sum(w => w.Field<decimal>("qty")),
                               }).ToList();
 
             var data_MD_8T = data_MD_4T.Select(data => new Prgs_POSuppDetailData
             {
-                poid = data.poid,
-                seq1 = data.seq1,
-                seq2 = data.seq2,
-                stocktype = data.stocktype,
-                qty = -data.qty,
+                Poid = data.Poid,
+                Seq1 = data.Seq1,
+                Seq2 = data.Seq2,
+                Stocktype = data.Stocktype,
+                Qty = -data.Qty,
             }).ToList();
 
             var data_MD_0F = data_MD_4T.Select(data => new Prgs_POSuppDetailData
             {
-                poid = data.poid,
-                seq1 = data.seq1,
-                seq2 = data.seq2,
-                stocktype = data.stocktype,
-                qty = 0,
+                Poid = data.Poid,
+                Seq1 = data.Seq1,
+                Seq2 = data.Seq2,
+                Stocktype = data.Stocktype,
+                Qty = 0,
             }).ToList();
 
             #endregion
@@ -2371,10 +2363,10 @@ Where a.id = '{subTransfer_ID}'";
                                select new
                                {
                                    poid = m.First().Field<string>("topoid"),
-                                   seq1 = m.First().Field<string>("toseq1"),
-                                   seq2 = m.First().Field<string>("toseq2"),
-                                   stocktype = m.First().Field<string>("tostocktype"),
-                                   qty = m.Sum(w => w.Field<decimal>("qty")),
+                                   Seq1 = m.First().Field<string>("toseq1"),
+                                   Seq2 = m.First().Field<string>("toseq2"),
+                                   Stocktype = m.First().Field<string>("tostocktype"),
+                                   Qty = m.Sum(w => w.Field<decimal>("qty")),
                                }).ToList();
 
             #endregion
@@ -2455,13 +2447,13 @@ Where a.id = '{subTransfer_ID}'";
             foreach (var updItem in listDistinctPoIdSeq)
             {
                 string pOID = updItem.FromPOID;
-                string Seq1 = updItem.FromSeq1;
-                string Seq2 = updItem.FromSeq2;
+                string seq11 = updItem.FromSeq1;
+                string seq21 = updItem.FromSeq2;
 
                 List<string> new_CLocationList = listMDivisionPODetailCLocation
                             .Where(o => o.FromPOID == pOID &&
-                                         o.FromSeq1 == Seq1 &&
-                                         o.FromSeq2 == Seq2)
+                                         o.FromSeq1 == seq11 &&
+                                         o.FromSeq2 == seq21)
                             .Select(o => o.ToLocation)
                             .Distinct().ToList();
 
@@ -2471,7 +2463,7 @@ Where a.id = '{subTransfer_ID}'";
 SELECt CLocation
 FROM MDivisionPoDetail
 WHERE POID='{pOID}'
-AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+AND Seq1='{seq11}' AND Seq2='{seq21}'
 ", out dT_MDivisionPoDetail);
 
                 List<string> dB_CLocations = dT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != string.Empty).ToList();
@@ -2500,18 +2492,18 @@ AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                 string cmd = $@"
 UPDATE MDivisionPoDetail
 SET CLocation='{fincal.Distinct().ToList().JoinToString(",")}'
-WHERE POID='{pOID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
 
 ";
                 updateMDivisionPODetailCLocation += cmd;
             }
             #endregion
 
-            TransactionScope _transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
 
-            using (_transactionscope)
+            using (transactionscope)
             using (sqlConn)
             {
                 try
@@ -2525,13 +2517,13 @@ WHERE POID='{pOID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4T, string.Empty, upd_Fty_4T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
                     #endregion
@@ -2545,33 +2537,33 @@ WHERE POID='{pOID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T.ToString(), out resulttb,
                         "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4T, string.Empty, upd_MD_4T.ToString(), out resulttb,
                         "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_16T, string.Empty, upd_MD_16T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_0F, string.Empty, upd_MD_0F, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
                     #endregion
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return result;
                     }
 
@@ -2580,25 +2572,25 @@ WHERE POID='{pOID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                         result = DBProxy.Current.Execute(null, updateMDivisionPODetailCLocation);
                         if (!result)
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             return result;
                         }
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
 
                     // MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     return new DualResult(false, "Commit transaction error.", ex);
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
             return result;
         }
 
@@ -3107,7 +3099,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             }
         }
 
-        public static List<string> GetBarcodeNo(string tableName, string keyWord, int batchNumber = 1 ,int dateType = 3, string checkColumn = "Barcode", String connectionName = null, int sequenceMode = 1, int sequenceLength = 0)
+        public static List<string> GetBarcodeNo(string tableName, string keyWord, int batchNumber = 1, int dateType = 3, string checkColumn = "Barcode", string connectionName = null, int sequenceMode = 1, int sequenceLength = 0)
         {
             List<string> iDList = new List<string>();
             if (MyUtility.Check.Empty(tableName))
@@ -3119,38 +3111,38 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             string taiwanYear;
             switch (dateType)
             {
-                case 1:     // A yy xxxx
+                case 1: // A yy xxxx
                     keyWord = keyWord.ToUpper().Trim() + today.ToString("yy");
                     break;
-                case 2:     // A yyMM xxxx
+                case 2: // A yyMM xxxx
                     keyWord = keyWord.ToUpper().Trim() + today.ToString("yyMM");
                     break;
-                case 3:      // A yyMMdd xxxx
+                case 3: // A yyMMdd xxxx
                     keyWord = keyWord.ToUpper().Trim() + today.ToString("yyMMdd");
                     break;
-                case 4:      // A yyyyMM xxxxx
+                case 4: // A yyyyMM xxxxx
                     keyWord = keyWord.ToUpper().Trim() + today.ToString("yyyyMM");
                     break;
-                case 5:     // 民國年 A yyyMM xxxx
-                    taiwanYear = ((today.Year - 1911).ToString()).PadLeft(3, '0');
+                case 5: // 民國年 A yyyMM xxxx
+                    taiwanYear = (today.Year - 1911).ToString().PadLeft(3, '0');
                     keyWord = keyWord.ToUpper().Trim() + taiwanYear + today.ToString("MM");
                     break;
-                case 6:     // A xxxx
+                case 6: // A xxxx
                     keyWord = keyWord.ToUpper().Trim();
                     break;
-                case 7:    // A yyyy xxxx
+                case 7: // A yyyy xxxx
                     keyWord = keyWord.ToUpper().Trim() + today.ToString("yyyy");
                     break;
-                case 8:    // 民國年 A yyyMMdd xxxx
-                    taiwanYear = ((today.Year - 1911).ToString()).PadLeft(3, '0');
+                case 8: // 民國年 A yyyMMdd xxxx
+                    taiwanYear = (today.Year - 1911).ToString().PadLeft(3, '0');
                     keyWord = keyWord.ToUpper().Trim() + taiwanYear + today.ToString("MM") + today.ToString("dd");
                     break;
                 default:
                     return iDList;
             }
 
-            //判斷schema欄位的結構長度
-            string returnID = "";
+            // 判斷schema欄位的結構長度
+            string returnID = string.Empty;
             string sqlCmd = string.Format("SELECT TOP 1 {0} FROM {1} WHERE {2} LIKE '{3}%' ORDER BY {4} DESC", checkColumn, tableName, checkColumn, keyWord.Trim(), checkColumn);
 
             DualResult result = null;
@@ -3254,12 +3246,13 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                 DataTable dT_MDivisionPoDetail;
 
                 // 從MDivisionPoDetail出現有的Location
-                DBProxy.Current.Select(null, $@"
+                string c = $@"
 SELECt CLocation
 FROM MDivisionPoDetail
 WHERE POID='{pOID}'
 AND Seq1='{Seq1}' AND Seq2='{Seq2}'
-", out dT_MDivisionPoDetail);
+";
+                DBProxy.Current.Select(null, c, out dT_MDivisionPoDetail);
 
                 List<string> dB_CLocations = dT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != string.Empty).ToList();
 
@@ -3327,12 +3320,12 @@ AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                                 into m
                               select new Prgs_POSuppDetailData
                               {
-                                  poid = m.First().Field<string>("poid"),
-                                  seq1 = m.First().Field<string>("seq1"),
-                                  seq2 = m.First().Field<string>("seq2"),
-                                  location = string.Join(",", m.Select(r => r.Field<string>("ToLocation")).Distinct()),
-                                  qty = 0,
-                                  stocktype = m.First().Field<string>("stocktype"),
+                                  Poid = m.First().Field<string>("poid"),
+                                  Seq1 = m.First().Field<string>("seq1"),
+                                  Seq2 = m.First().Field<string>("seq2"),
+                                  Location = string.Join(",", m.Select(r => r.Field<string>("ToLocation")).Distinct()),
+                                  Qty = 0,
+                                  Stocktype = m.First().Field<string>("stocktype"),
                               }).ToList();
             #endregion
 
@@ -3440,16 +3433,16 @@ WHERE POID='{pOID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
 
     public class Prgs_POSuppDetailData
     {
-        public string poid { get; set; }
+        public string Poid { get; set; }
 
-        public string seq1 { get; set; }
+        public string Seq1 { get; set; }
 
-        public string seq2 { get; set; }
+        public string Seq2 { get; set; }
 
-        public string stocktype { get; set; }
+        public string Stocktype { get; set; }
 
-        public decimal qty { get; set; }
+        public decimal Qty { get; set; }
 
-        public string location { get; set; }
+        public string Location { get; set; }
     }
 }

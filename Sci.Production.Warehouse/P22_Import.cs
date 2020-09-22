@@ -240,7 +240,7 @@ drop table #tmp", Env.User.Keyword, this.dr_master["id"], where));
             {
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    DataRow currentrow = this.grid_ftyDetail.GetDataRow(this.grid_ftyDetail.GetSelectedRowIndex());                    
+                    DataRow currentrow = this.grid_ftyDetail.GetDataRow(this.grid_ftyDetail.GetSelectedRowIndex());
                     currentrow["qty"] = e.FormattedValue;
                     currentrow["selected"] = true;
                 }

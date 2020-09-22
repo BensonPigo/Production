@@ -21,6 +21,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.txtSPFrom.Text) &&
@@ -34,6 +35,7 @@ namespace Sci.Production.Warehouse
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             string sqlWhere = string.Empty;
@@ -100,6 +102,7 @@ where I.type= 'E' and I.Status = 'Confirmed'
             return result;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.ShowWaitMessage("Excel Processing...");

@@ -32,6 +32,7 @@ namespace Sci.Production.Quality
         private Ict.Win.UI.DataGridViewDateBoxColumn col_FirstDyelot;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_TestReportCheckClima;
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -39,8 +40,8 @@ namespace Sci.Production.Quality
             #region tabPage1
             #region settings Event
 
-            DataGridViewGeneratorTextColumnSettings Refno = new DataGridViewGeneratorTextColumnSettings();
-            Refno.CellFormatting += (s, e) =>
+            DataGridViewGeneratorTextColumnSettings refno = new DataGridViewGeneratorTextColumnSettings();
+            refno.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -58,9 +59,9 @@ namespace Sci.Production.Quality
                     e.CellStyle.BackColor = Color.Yellow;
                 }
             };
-            DataGridViewGeneratorDateColumnSettings Inspection = new DataGridViewGeneratorDateColumnSettings();
-            DataGridViewGeneratorDateColumnSettings Test = new DataGridViewGeneratorDateColumnSettings();
-            Inspection.CellFormatting += (s, e) =>
+            DataGridViewGeneratorDateColumnSettings inspection = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorDateColumnSettings test = new DataGridViewGeneratorDateColumnSettings();
+            inspection.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -79,7 +80,7 @@ namespace Sci.Production.Quality
                     e.CellStyle.ForeColor = Color.Blue;
                 }
             };
-            Test.CellFormatting += (s, e) =>
+            test.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -100,11 +101,11 @@ namespace Sci.Production.Quality
             };
 
             // 帶出grade
-            DataGridViewGeneratorNumericColumnSettings T2IY = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings T2DP = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings t2IY = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings t2DP = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings col_CheckClima = new DataGridViewGeneratorCheckBoxColumnSettings();
 
-            T2IY.CellValidating += (s, e) =>
+            t2IY.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -121,7 +122,7 @@ namespace Sci.Production.Quality
                 dr.EndEdit();
                 this.T2Validating(s, e);
             };
-            T2DP.CellValidating += (s, e) =>
+            t2DP.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -171,21 +172,21 @@ namespace Sci.Production.Quality
             .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: Refno)
+            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: refno)
             .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Date("InspectionReport", header: "Inspection Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
-            .Date("TPEInspectionReport", header: "Inspection Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: Inspection)
+            .Date("TPEInspectionReport", header: "Inspection Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: inspection)
             .Date("TestReport", header: "Test Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
             .CheckBox("TestReportCheckClima", header: "Test Report\r\n Check Clima", trueValue: 1, falseValue: 0, iseditable: true, settings: col_CheckClima).Get(out this.col_TestReportCheckClima)
-            .Date("TPETestReport", header: "Test Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: Test)
+            .Date("TPETestReport", header: "Test Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: test)
             .Date("ContinuityCard", header: "Continuity Card\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
             .Date("TPEContinuityCard", header: "Continuity Card\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("AWBNo", header: "Continuity Card\r\nAWB#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("T2InspYds", header: "T2 Inspected Yards", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: T2IY) // W
-            .Numeric("T2DefectPoint", header: "T2 Defect Points", width: Widths.AnsiChars(8), integer_places: 5, settings: T2DP) // W
+            .Numeric("T2InspYds", header: "T2 Inspected Yards", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: t2IY) // W
+            .Numeric("T2DefectPoint", header: "T2 Defect Points", width: Widths.AnsiChars(8), integer_places: 5, settings: t2DP) // W
             .Text("T2Grade", header: "Grade", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("T1InspectedYards", header: "T1 Inspected Yards", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("T1DefectPoints", header: "T1 Defect Points", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -201,9 +202,9 @@ namespace Sci.Production.Quality
             #endregion tabPage1_grid1
             #region tabPage2
             #region settings Event
-            DataGridViewGeneratorDateColumnSettings FirstDyelot = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorDateColumnSettings firstDyelot = new DataGridViewGeneratorDateColumnSettings();
 
-            FirstDyelot.CellValidating += (s, e) =>
+            firstDyelot.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -235,7 +236,7 @@ namespace Sci.Production.Quality
             .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SeasonSCIID", header: "Approved Season", width: Widths.AnsiChars(8), iseditingreadonly: true).Get(out this.col_ApprovedSeason)
             .Numeric("Period", header: "Period", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), settings: FirstDyelot).Get(out this.col_FirstDyelot) // W (Pink)
+            .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), settings: firstDyelot).Get(out this.col_FirstDyelot) // W (Pink)
             .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             #endregion Set_grid2 Columns
@@ -382,17 +383,17 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            decimal PointRate = 0;
+            decimal pointRate = 0;
             if (MyUtility.Convert.GetDecimal(dr["T2InspYds"]).EqualDecimal(0))
             {
-                PointRate = 0;
+                pointRate = 0;
             }
             else
             {
-                PointRate = MyUtility.Convert.GetDecimal(dr["T2DefectPoint"]) / MyUtility.Convert.GetDecimal(dr["T2InspYds"]) * 100;
+                pointRate = MyUtility.Convert.GetDecimal(dr["T2DefectPoint"]) / MyUtility.Convert.GetDecimal(dr["T2InspYds"]) * 100;
             }
 
-            string BrandID = dr["BrandID"].ToString();
+            string brandID = dr["BrandID"].ToString();
 
             string sqlWEAVETYPEID = $@"
 
@@ -406,7 +407,7 @@ WHERE f.WeaveTypeID= (
 	LEFT JOIN PO_Supp_Detail  PSD ON PSD.SCIRefno = F.SCIRefno
 	WHERE PSD.ID='{dr["poid"]}' AND PSD.SEQ1 ='{dr["seq1"]}' AND PSD.SEQ2 ='{dr["seq2"]}'
 ) 
-AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
+AND PERCENTAGE >= IIF({pointRate} > 100, 100, {pointRate} )
 AND BrandID=''
 
 ---- 2. 取得該品牌布種的等級
@@ -419,8 +420,8 @@ WHERE f.WeaveTypeID= (
 	LEFT JOIN PO_Supp_Detail  PSD ON PSD.SCIRefno = F.SCIRefno
 	WHERE PSD.ID='{dr["poid"]}' AND PSD.SEQ1 ='{dr["seq1"]}' AND PSD.SEQ2 ='{dr["seq2"]}'
 ) 
-AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
-AND BrandID='{BrandID}'
+AND PERCENTAGE >= IIF({pointRate} > 100, 100, {pointRate} )
+AND BrandID='{brandID}'
 
 ---- 若該品牌有另外設定等級，就用該設定，不然用預設（主索引鍵是WeaveTypeID + Percentage + BrandID，因此不會找到多筆預設的Grade）
 SELECT ISNULL(Brand.Grade, ISNULL((SELECT Grade FROM #default),'') ) 
@@ -648,7 +649,7 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
             this.Page1_Query();
         }
 
-        readonly TransferPms transferPMS = new TransferPms();
+        private readonly TransferPms transferPMS = new TransferPms();
 
         private void BtnDownloadFile_Click(object sender, EventArgs e)
         {

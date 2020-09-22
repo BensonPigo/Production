@@ -12,12 +12,12 @@ namespace Sci.Production.Subcon
 {
     public partial class R44 : Win.Tems.PrintForm
     {
-        string Factory;
-        string SewingStart;
-        string SewingEnd;
-        string SP;
-        string Category;
-        DataTable printData;
+        private string Factory;
+        private string SewingStart;
+        private string SewingEnd;
+        private string SP;
+        private string Category;
+        private DataTable printData;
 
         public R44(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -40,6 +40,7 @@ where Junk != 1", out dtFactory);
             this.comboDropDownList1.SelectedIndex = 2;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             #region check Sewing Date
@@ -59,6 +60,7 @@ where Junk != 1", out dtFactory);
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region SQLParameter
@@ -255,6 +257,7 @@ DROP TABLE #print0
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (this.printData == null || this.printData.Rows.Count == 0)

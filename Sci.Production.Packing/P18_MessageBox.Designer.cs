@@ -43,7 +43,7 @@
             this.btnLacking.TabIndex = 1;
             this.btnLacking.Text = "Lacking Pieces";
             this.btnLacking.UseVisualStyleBackColor = true;
-            this.btnLacking.Click += new System.EventHandler(this.btnLacking_Click);
+            this.btnLacking.Click += new System.EventHandler(this.BtnLacking_Click);
             // 
             // btnContinue
             // 
@@ -54,7 +54,7 @@
             this.btnContinue.TabIndex = 5;
             this.btnContinue.Text = "Continue Scanning";
             this.btnContinue.UseVisualStyleBackColor = true;
-            this.btnContinue.Click += new System.EventHandler(this.btnContinue_Click);
+            this.btnContinue.Click += new System.EventHandler(this.BtnContinue_Click);
             // 
             // labelmsg
             // 

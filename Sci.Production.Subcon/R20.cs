@@ -26,6 +26,7 @@ namespace Sci.Production.Subcon
             this.comboBoxType.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             // 預設一個Type "Thread", 之後可能會有Label,Carton....
@@ -44,6 +45,7 @@ namespace Sci.Production.Subcon
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             #region Filter
@@ -157,6 +159,7 @@ namespace Sci.Production.Subcon
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dtPrint.Rows.Count < 1)

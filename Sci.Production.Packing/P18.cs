@@ -1108,7 +1108,7 @@ and CTNStartNo = '{this.selecedPK.CTNStartNo}' ";
             }
         }
 
-        private void btnLacking_Click(object sender, EventArgs e)
+        private void BtnLacking_Click(object sender, EventArgs e)
         {
             this.UpdateLackingStatus();
         }
@@ -1207,6 +1207,7 @@ and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             if (!this.LackingClose())
@@ -1378,7 +1379,7 @@ and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
             #endregion
         }
 
-        private void txtScanEAN_Leave(object sender, EventArgs e)
+        private void TxtScanEAN_Leave(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtScanEAN.Text))
             {

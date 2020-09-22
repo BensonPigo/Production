@@ -399,7 +399,7 @@
             this.btnDebitSchedule.TabIndex = 6;
             this.btnDebitSchedule.Text = "Debit Schedule";
             this.btnDebitSchedule.UseVisualStyleBackColor = true;
-            this.btnDebitSchedule.Click += new System.EventHandler(this.btnDebitSchedule_Click);
+            this.btnDebitSchedule.Click += new System.EventHandler(this.BtnDebitSchedule_Click);
             // 
             // labelSubconName
             // 

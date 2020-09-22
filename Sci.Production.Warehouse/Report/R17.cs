@@ -23,6 +23,7 @@ namespace Sci.Production.Warehouse
             this.comboStockType.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1)
@@ -41,6 +42,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.SetCount(this.dt.Rows.Count);
@@ -82,6 +84,7 @@ namespace Sci.Production.Warehouse
             return false;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             // return base.OnAsyncDataLoad(e);

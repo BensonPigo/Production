@@ -425,7 +425,7 @@
             this.btnDebitSchedule.TabIndex = 22;
             this.btnDebitSchedule.Text = "Debit Schedule";
             this.btnDebitSchedule.UseVisualStyleBackColor = true;
-            this.btnDebitSchedule.Click += new System.EventHandler(this.btnDebitSchedule_Click);
+            this.btnDebitSchedule.Click += new System.EventHandler(this.BtnDebitSchedule_Click);
             // 
             // editDescription
             // 
@@ -479,7 +479,7 @@
             0,
             0,
             0});
-            this.numAmount.Validating += new System.ComponentModel.CancelEventHandler(this.numAmount_Validating);
+            this.numAmount.Validating += new System.ComponentModel.CancelEventHandler(this.NumAmount_Validating);
             // 
             // numTax
             // 
@@ -566,7 +566,7 @@
             0,
             0,
             0});
-            this.numtaxrate.Validating += new System.ComponentModel.CancelEventHandler(this.numtaxrate_Validating);
+            this.numtaxrate.Validating += new System.ComponentModel.CancelEventHandler(this.Numtaxrate_Validating);
             // 
             // numExchange
             // 
@@ -589,7 +589,7 @@
             0,
             0,
             0});
-            this.numExchange.Validating += new System.ComponentModel.CancelEventHandler(this.numExchange_Validating);
+            this.numExchange.Validating += new System.ComponentModel.CancelEventHandler(this.NumExchange_Validating);
             // 
             // labelExchange
             // 
@@ -657,7 +657,7 @@
             this.btnStatusHistory.TabStop = false;
             this.btnStatusHistory.Text = "H";
             this.btnStatusHistory.UseVisualStyleBackColor = true;
-            this.btnStatusHistory.Click += new System.EventHandler(this.btnStatusHistory_Click);
+            this.btnStatusHistory.Click += new System.EventHandler(this.BtnStatusHistory_Click);
             // 
             // displaycurrencyid
             // 
@@ -798,7 +798,7 @@
             this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
             this.txtsubconSupplier.TabIndex = 0;
             this.txtsubconSupplier.TextBox1Binding = "";
-            this.txtsubconSupplier.Validated += new System.EventHandler(this.txtsubconSupplier_Validated);
+            this.txtsubconSupplier.Validated += new System.EventHandler(this.TxtsubconSupplier_Validated);
             // 
             // txtuserSMR
             // 

@@ -10,22 +10,22 @@ namespace Sci.Production.Subcon
 {
     public partial class R24 : Win.Tems.PrintForm
     {
-        string artworktype;
-        string factory;
-        string brandid;
-        string style;
-        string mdivision;
-        string spno1;
-        string spno2;
-        string ordertype;
-        string ratetype;
-        int ordertypeindex;
-        int statusindex;
-        DateTime? APdate1;
-        DateTime? APdate2;
-        DateTime? GLdate1;
-        DateTime? GLdate2;
-        DataTable printData;
+        private string artworktype;
+        private string factory;
+        private string brandid;
+        private string style;
+        private string mdivision;
+        private string spno1;
+        private string spno2;
+        private string ordertype;
+        private string ratetype;
+        private int ordertypeindex;
+        private int statusindex;
+        private DateTime? APdate1;
+        private DateTime? APdate2;
+        private DateTime? GLdate1;
+        private DateTime? GLdate2;
+        private DataTable printData;
 
         public R24(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -53,6 +53,8 @@ namespace Sci.Production.Subcon
         }
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (this.comboStatus.SelectedIndex != 1)
@@ -106,6 +108,8 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sqlparameter delcare --
@@ -411,6 +415,8 @@ drop table #tmp,#tmp_orders,#tmp_localap,#tmp_final");
         }
 
         // 產生Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -426,7 +432,7 @@ drop table #tmp,#tmp_orders,#tmp_localap,#tmp_final");
             return true;
         }
 
-        private void comboStatus_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.dateAPDate.Enabled = !(this.comboStatus.SelectedIndex == 1);
             this.dateGLDate.Enabled = !(this.comboStatus.SelectedIndex == 1);

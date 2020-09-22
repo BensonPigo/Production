@@ -59,6 +59,7 @@ namespace Sci.Production.Warehouse
             this.comboSubconInType.DisplayMember = "Value";
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailDetached()
         {
             base.OnDetailDetached();
@@ -79,6 +80,7 @@ namespace Sci.Production.Warehouse
             this.btnPackingMethod.Enabled = this.CurrentMaintain != null;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -123,6 +125,7 @@ namespace Sci.Production.Warehouse
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -272,6 +275,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -557,11 +561,12 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     return;
                 }
                 #region Sent W/H Fabric to Gensong
+
                 // WHClose
                 if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
                 {
-                    DataTable dtMain = CurrentMaintain.Table.Clone();
-                    dtMain.ImportRow(CurrentMaintain);
+                    DataTable dtMain = this.CurrentMaintain.Table.Clone();
+                    dtMain.ImportRow(this.CurrentMaintain);
                     Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMain))
                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }
@@ -573,7 +578,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     dtMain.Columns.Add("ID", typeof(string));
                     dtMain.Columns.Add("Type", typeof(string));
                     DataRow row = dtMain.NewRow();
-                    row["ID"] = CurrentMaintain["Poid"].ToString();
+                    row["ID"] = this.CurrentMaintain["Poid"].ToString();
                     row["Type"] = "D";
                     dtMain.Rows.Add(row);
                     Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))

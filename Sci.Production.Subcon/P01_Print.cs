@@ -169,7 +169,7 @@ order by ID", this.masterData["LocalSuppID"]);
                     {
                         OrderID = row1["Orderid"].ToString(),
                         StyleID = row1["styleID"].ToString(),
-                        poQTY = row1["poQty"].ToString(),
+                        PoQTY = row1["poQty"].ToString(),
                         ArtworkID = row1["artworkid"].ToString(),
                         PCS = row1["Stitch"].ToString(),
                         Unitprice = row1["Unitprice"].ToString(),
@@ -256,7 +256,7 @@ order by ID", this.masterData["LocalSuppID"]);
                     {
                         OrderID = row1["Orderid"].ToString(),
                         StyleID = row1["styleID"].ToString(),
-                        poQTY = row1["poQty"].ToString(),
+                        PoQTY = row1["poQty"].ToString(),
                         ArtworkID = row1["artworkid"].ToString(),
                         PCS = row1["Stitch"].ToString(),
                         Unitprice = row1["Unitprice"].ToString(),

@@ -286,6 +286,7 @@ order by RefNo", MyUtility.Convert.GetString(this.masterData["ID"]));
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool ToPrint()
         {
             this.ValidateInput();

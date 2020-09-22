@@ -630,7 +630,7 @@ drop table #tmp");
 
                 if (dr["selected"].ToString().ToUpper() == "TRUE" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
-                    var issued = Prgs.autopick(dr, false, "B");
+                    var issued = Prgs.Autopick(dr, false, "B");
                     if (issued == null)
                     {
                         return;

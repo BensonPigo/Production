@@ -34,6 +34,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if ((!this.dateArrive.HasValue1 || !this.dateArrive.HasValue2) &&
@@ -55,6 +56,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region Where條件
@@ -232,6 +235,7 @@ Group by F.POID,TD.Seq1,TD.Seq2,o.BrandID,O.StyleID,PSD.Refno,PSD.ColorID,FC.Wea
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

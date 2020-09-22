@@ -35,6 +35,7 @@ namespace Sci.Production.Warehouse
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -222,6 +223,7 @@ Where   LInv.OrderID = '{1}'
             dataRow.EndEdit();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string strMasterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -277,6 +279,7 @@ order by STLD.POID, STLD.Refno, STLD.Color
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -288,6 +291,7 @@ order by STLD.POID, STLD.Refno, STLD.Color
             this.CurrentMaintain["Status"] = "New";
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain != null && this.CurrentMaintain["Status"].EqualString("Confirmed"))
@@ -299,6 +303,7 @@ order by STLD.POID, STLD.Refno, STLD.Color
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain != null && this.CurrentMaintain["Status"].EqualString("Confirmed"))
@@ -310,6 +315,7 @@ order by STLD.POID, STLD.Refno, STLD.Color
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             DualResult result;
@@ -434,6 +440,7 @@ where countDuplicate.value > 1";
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             DualResult result;
@@ -604,6 +611,7 @@ where STL.ID = '{0}'", this.CurrentMaintain["ID"],
             base.ClickConfirm();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             DataTable dtDetailGrid = (DataTable)((BindingSource)this.detailgrid.DataSource).DataSource;

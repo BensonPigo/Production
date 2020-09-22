@@ -10,17 +10,17 @@ namespace Sci.Production.Subcon
 {
     public partial class R22 : Win.Tems.PrintForm
     {
-        string category;
-        string factory;
-        string subcon;
-        string mdivision;
-        string spNoStart;
-        string spNoEnd;
-        DateTime? issueDate1;
-        DateTime? issueDate2;
-        DateTime? approveDate1;
-        DateTime? approveDate2;
-        DataTable printData;
+        private string category;
+        private string factory;
+        private string subcon;
+        private string mdivision;
+        private string spNoStart;
+        private string spNoEnd;
+        private DateTime? issueDate1;
+        private DateTime? issueDate2;
+        private DateTime? approveDate1;
+        private DateTime? approveDate2;
+        private DataTable printData;
 
         public R22(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -42,6 +42,8 @@ namespace Sci.Production.Subcon
         }
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.dateIssueDate.Value1) || MyUtility.Check.Empty(this.dateApproveDate.Value1))
@@ -65,6 +67,8 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -272,6 +276,8 @@ where 1=1"));
         }
 
         // 產生Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

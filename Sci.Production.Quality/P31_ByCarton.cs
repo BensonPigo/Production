@@ -18,18 +18,18 @@ namespace Sci.Production.Quality
 {
     public partial class P31_ByCarton : Sci.Win.Forms.Base
     {
+        private readonly string _OrderID = string.Empty;
+        private readonly string _OrderShipmodeSeq = string.Empty;
 
-        private readonly string _OrderID = "";
-        private readonly string _OrderShipmodeSeq = "";
-
-        public P31_ByCarton(string OrderID , string OrderShipmodeSeq)
+        public P31_ByCarton(string orderID, string orderShipmodeSeq)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            this._OrderID = OrderID;
-            this._OrderShipmodeSeq = OrderShipmodeSeq;
+            this._OrderID = orderID;
+            this._OrderShipmodeSeq = orderShipmodeSeq;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -226,9 +226,8 @@ DROP TABLE #MixCTNStartNo ,#Mix_MAX_ReceiveDate
                  .Numeric("ShipQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 0, iseditingreadonly: true)
                  .Text("Result", header: "Staggered Result", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Numeric("InsCtn", header: "No. of Staggered inspection", width: Widths.AnsiChars(10), decimal_places: 0, iseditingreadonly: true)
-                 .Date("ReceiveDate", header: "CLOG"+Environment.NewLine+ "received", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Date("ReceiveDate", header: "CLOG" + Environment.NewLine + "received", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  ;
-
         }
     }
 }

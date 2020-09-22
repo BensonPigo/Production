@@ -17,15 +17,15 @@ namespace Sci.Production.Quality
         private readonly string SEQ1;
         private readonly string SEQ2;
         private readonly bool EDIT;
-        string sql;
-        DataRow DR;
+        private string sql;
+        private DataRow DR;
 
-        public P07_Oven(bool canedit, string id, string Poid, string seq1, string seq2, DataRow mainDr)
+        public P07_Oven(bool canedit, string id, string poid, string seq1, string seq2, DataRow mainDr)
         {
             this.InitializeComponent();
             this.maindr = mainDr;
             this.ID = id.Trim();
-            this.PoID = Poid.Trim();
+            this.PoID = poid.Trim();
             this.SEQ1 = seq1.Trim();
             this.SEQ2 = seq2.Trim();
 
@@ -43,22 +43,24 @@ namespace Sci.Production.Quality
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             bool edit = this.EditMode;
             base.OnEditModeChanged();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
             #region [comboResult]
-            Dictionary<string, string> Result_RowSource = new Dictionary<string, string>();
-            Result_RowSource.Add(string.Empty, string.Empty);
-            Result_RowSource.Add("Pass", "Pass");
-            Result_RowSource.Add("Fail", "Fail");
-            this.comboResult.DataSource = new BindingSource(Result_RowSource, null);
+            Dictionary<string, string> result_RowSource = new Dictionary<string, string>();
+            result_RowSource.Add(string.Empty, string.Empty);
+            result_RowSource.Add("Pass", "Pass");
+            result_RowSource.Add("Fail", "Fail");
+            this.comboResult.DataSource = new BindingSource(result_RowSource, null);
             this.comboResult.ValueMember = "Key";
             this.comboResult.DisplayMember = "Value";
             #endregion
@@ -304,6 +306,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             this.Close();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);

@@ -1799,7 +1799,7 @@ where s.Type = 'EXPORT'");
                 int counts = 0;
                 string accnoL1 = "5912"; // Z欄 5912-2222 Airfreight
                 string accnoLnow = string.Empty;
-                if (this.reportType != 3 )
+                if (this.reportType != 3)
                 {
                     counts = this.accnoData.Rows.Count;
                     foreach (DataRow dr in this.accnoData.Rows)

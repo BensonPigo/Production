@@ -26,6 +26,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             CellDropDownList dropdown = (CellDropDownList)CellDropDownList.GetGridCell("Pms_CFAReturnReason");
@@ -535,8 +536,8 @@ set TransferCFADate = null
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 and DisposeFromClog= 0
 ");
-                                string ScanQty = MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"].ToString();
-                                string ScanEditDate = MyUtility.Check.Empty(dr["ScanEditDate"]) ? "NULL" : "'" + Convert.ToDateTime(dr["ScanEditDate"]).ToAppDateTimeFormatString() + "'";
+                                string scanQty = MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"].ToString();
+                                string scanEditDate = MyUtility.Check.Empty(dr["ScanEditDate"]) ? "NULL" : "'" + Convert.ToDateTime(dr["ScanEditDate"]).ToAppDateTimeFormatString() + "'";
 
                                 insertCmds.Add($@"
 
@@ -560,8 +561,8 @@ INSERT INTO [dbo].[PackingScan_History]
            ,'{dr["CTNStartNo"]}'
            ,'{dr["SCICtnNo"]}'
            ,'QA P24'
-           ,{ScanQty}
-           ,{ScanEditDate}
+           ,{scanQty}
+           ,{scanEditDate}
            ,'{dr["ScanName"]}'
            ,'{Env.User.UserID}'
            ,GETDATE()
@@ -571,7 +572,7 @@ INSERT INTO [dbo].[PackingScan_History]
                             WHERE  pd.ID='{dr["ID"]}' AND pd.CTNStartNo='{dr["CTNStartNo"]}'
                         ) 
                     ,0)
-                - {ScanQty}
+                - {scanQty}
              )----LackingQty計算規則詳見：ISP20191801
             )");
                                 break;

@@ -26,6 +26,7 @@ namespace Sci.Production.Warehouse
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnSubDetailInsert(int index = -1)
         {
             var frm = new P10_Detail_Detail(this.CurrentDetailData, (DataTable)this.gridbs.DataSource, this.Type);
@@ -34,6 +35,7 @@ namespace Sci.Production.Warehouse
             this.Sum_checkedqty();
         }
 
+        /// <inheritdoc/>
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -139,6 +141,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
             this.numVariance.Value = this.numBalanceQty.Value - this.numIssueQty.Value;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
@@ -170,6 +173,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             this.grid.ValidateControl();
@@ -195,7 +199,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
             IList<DataRow> issued;
             if (this.Type == 0)
             {
-                issued = PublicPrg.Prgs.autopick(this.CurrentDetailData);
+                issued = PublicPrg.Prgs.Autopick(this.CurrentDetailData);
             }
             else
             {

@@ -19,7 +19,7 @@ namespace Sci.Production.Quality
         private readonly string Factory = Env.User.Keyword;
 
         // 宣告Context Menu Item
-        ToolStripMenuItem edit;
+        private ToolStripMenuItem edit;
 
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -31,6 +31,7 @@ namespace Sci.Production.Quality
             this.detailgrid.ContextMenuShowing += new EventHandler<ContextMenuShowingEventArgs>(this.Detailgrid_ContextMenuShowing);
         }
 
+        /// <inheritdoc/>
         protected override DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
         {
             if (!this.EditMode)
@@ -59,6 +60,7 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
@@ -89,10 +91,12 @@ namespace Sci.Production.Quality
             this.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            //this.detailgrid.AutoResizeColumns();
+
+            // this.detailgrid.AutoResizeColumns();
             DataTable dt;
             DualResult result;
             string cmd = "select * from dbo.GetSCI(@poid,'')";
@@ -174,6 +178,7 @@ namespace Sci.Production.Quality
             DataTable datas = (DataTable)this.detailgridbs.DataSource;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             DataTable dt = (DataTable)e.Details;
@@ -248,26 +253,27 @@ namespace Sci.Production.Quality
             this.Send_Mail();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorDateColumnSettings inspDateCell = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings inspectorCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings CommentsCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings SendCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings SenderCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ReceiveCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ReceiverCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorComboBoxColumnSettings ResultValid = new DataGridViewGeneratorComboBoxColumnSettings();
-            DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings commentsCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings sendCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings senderCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings receiveCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings receiverCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings resultValid = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings resultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings mtlTypeIDComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
-            DataGridViewGeneratorTextColumnSettings SizeCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings sizeCell = new DataGridViewGeneratorTextColumnSettings();
 
-            Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
-            ResultCombo.Add("P", "Pass");
-            ResultCombo.Add("F", "Fail");
-            ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
-            ResultComboCell.ValueMember = "Key";
-            ResultComboCell.DisplayMember = "Value";
+            Dictionary<string, string> resultCombo = new Dictionary<string, string>();
+            resultCombo.Add("P", "Pass");
+            resultCombo.Add("F", "Fail");
+            resultComboCell.DataSource = new BindingSource(resultCombo, null);
+            resultComboCell.ValueMember = "Key";
+            resultComboCell.DisplayMember = "Value";
 
             Dictionary<string, string> mtlTypeCombo = new Dictionary<string, string>();
             mtlTypeCombo.Add(string.Empty, string.Empty);
@@ -430,7 +436,7 @@ namespace Sci.Production.Quality
             #endregion
 
             #region CommentsCell
-            CommentsCell.CellValidating += (s, e) =>
+            commentsCell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Remark"]))
@@ -446,7 +452,7 @@ namespace Sci.Production.Quality
             #endregion
 
             #region SendCell
-            SendCell.CellEditable += (s, e) =>
+            sendCell.CellEditable += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (this.EditMode == true && MyUtility.Check.Empty(dr["SendDate"]))
@@ -454,7 +460,7 @@ namespace Sci.Production.Quality
                     e.IsEditable = false;
                 }
             };
-            SendCell.EditingMouseClick += (s, e) =>
+            sendCell.EditingMouseClick += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["Send"]))
@@ -471,7 +477,7 @@ namespace Sci.Production.Quality
             #endregion
 
             #region ReceiveCell
-            ReceiveCell.CellEditable += (s, e) =>
+            receiveCell.CellEditable += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (this.EditMode == true && MyUtility.Check.Empty(dr["ReceiveDate"]))
@@ -480,7 +486,7 @@ namespace Sci.Production.Quality
                 }
             };
 
-            ReceiveCell.CellMouseClick += (s, e) =>
+            receiveCell.CellMouseClick += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["Receive"]))
@@ -497,7 +503,7 @@ namespace Sci.Production.Quality
             #endregion
 
             #region ResultValid
-            ResultValid.CellEditable += (s, e) =>
+            resultValid.CellEditable += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"])))
@@ -505,7 +511,7 @@ namespace Sci.Production.Quality
                     e.IsEditable = false;
                 }
             };
-            ResultValid.CellValidating += (s, e) =>
+            resultValid.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Result"]))
@@ -522,7 +528,7 @@ namespace Sci.Production.Quality
             #endregion
 
             #region SizeComboCell
-            SizeCell.EditingMouseDown += (s, e) =>
+            sizeCell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -555,7 +561,7 @@ namespace Sci.Production.Quality
                 dr.EndEdit();
             };
 
-            SizeCell.CellValidating += (s, e) =>
+            sizeCell.CellValidating += (s, e) =>
              {
                  if (e.RowIndex == -1)
                  {
@@ -586,13 +592,13 @@ namespace Sci.Production.Quality
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("No", header: "No. Of Test", integer_places: 8, decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(8))
-            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), settings: SizeCell)
+            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), settings: sizeCell)
             .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell)
             .ComboBox("MtlTypeID", header: "Material" + Environment.NewLine + "Type", width: Widths.AnsiChars(10), settings: mtlTypeIDComboCell)
-            .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultComboCell) // .Get(out ResultComboCell)
+            .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: resultComboCell) // .Get(out ResultComboCell)
             .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(18), settings: inspectorCell)
             .Text("Showname", header: "Inspector Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("Remark", header: "Comments", width: Widths.AnsiChars(10), settings: CommentsCell)
+            .Text("Remark", header: "Comments", width: Widths.AnsiChars(10), settings: commentsCell)
             .Button("Send", null, header: "Send", width: Widths.AnsiChars(5), onclick: this.BtnSend)
             .Text("Sender", header: "Sender", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("SendDate", header: "Send Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -605,32 +611,36 @@ namespace Sci.Production.Quality
             .Text("LastEditName", header: "Last Edit Name", width: Widths.AnsiChars(25), iseditingreadonly: true); // editName + editDate
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             this.CurrentMaintain["No"] = (int)this.CurrentMaintain["No"] + 1;
             base.ClickNewAfter();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = 1)
         {
             base.OnDetailGridInsert(index);
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-            int MaxNo;
+            int maxNo;
             if (dt.Rows.Count == 0)
             {
-                MaxNo = 0;
+                maxNo = 0;
                 base.OnDetailGridInsert(0);
-                this.CurrentDetailData["No"] = MaxNo + 1;
+                this.CurrentDetailData["No"] = maxNo + 1;
             }
             else
             {
-                MaxNo = Convert.ToInt32(dt.Compute("Max(No)", string.Empty));
-                this.CurrentDetailData["No"] = MaxNo + 1;
+                maxNo = Convert.ToInt32(dt.Compute("Max(No)", string.Empty));
+                this.CurrentDetailData["No"] = maxNo + 1;
             }
         }
 
         // delete前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             DataRow dr = this.grid.GetDataRow<DataRow>(this.grid.GetSelectedRowIndex());
@@ -644,6 +654,8 @@ namespace Sci.Production.Quality
         }
 
         // Edit 前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (this.txtSP.Text == string.Empty || MyUtility.Check.Empty(this.txtSP.Text))
@@ -667,6 +679,7 @@ namespace Sci.Production.Quality
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             DualResult upResult = new DualResult(true);
@@ -969,11 +982,11 @@ INSERT INTO GarmentTest_Detail_FGPT
             {
                 string maxNo = dt.Compute("MAX(NO)", string.Empty).ToString();
                 string where = string.Format("NO='{0}'", maxNo);
-                DataRow DetailRow = dt.Select(where)[0];
+                DataRow detailRow = dt.Select(where)[0];
 
-                this.CurrentMaintain["Result"] = DetailRow["Result"];
-                this.CurrentMaintain["Date"] = DetailRow["inspdate"];
-                this.CurrentMaintain["Remark"] = DetailRow["remark"];
+                this.CurrentMaintain["Result"] = detailRow["Result"];
+                this.CurrentMaintain["Date"] = detailRow["inspdate"];
+                this.CurrentMaintain["Remark"] = detailRow["remark"];
             }
             else
             {
@@ -1006,9 +1019,9 @@ left join Order_Qty c WITH (NOLOCK) on a.ID=c.ID and c.Article=b.Article where a
             }
         }
 
-        void Update_detailgrid_CellValidated(int RowIndex)
+        private void Update_detailgrid_CellValidated(int rowIndex)
         {
-            this.detailgrid.InvalidateRow(RowIndex);
+            this.detailgrid.InvalidateRow(rowIndex);
         }
 
         private void Send_Mail()

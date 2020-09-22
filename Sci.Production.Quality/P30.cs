@@ -15,8 +15,8 @@ namespace Sci.Production.Quality
     public partial class P30 : Win.Tems.Input6
     {
         protected DataRow motherData;
-        Size thisSize;
-        readonly bool FirstTime = true;
+        private Size thisSize;
+        private readonly bool FirstTime = true;
 
         // (menuitem, args= 參數)
         public P30(ToolStripMenuItem menuitem, string history)
@@ -27,20 +27,21 @@ namespace Sci.Production.Quality
             this.FirstTime = false;
 
             // 設定init()
-            string MDivisionID = Env.User.Keyword;
+            string mDivisionID = Env.User.Keyword;
             if (history == "1".ToString())
             {
-                this.DefaultFilter = string.Format("MDivisionID= '{0}' and MDClose is null and orders.IsForecast<>1", MDivisionID);
+                this.DefaultFilter = string.Format("MDivisionID= '{0}' and MDClose is null and orders.IsForecast<>1", mDivisionID);
                 this.Text = "P30 .MD Master List";
             }
             else if (history == "2".ToString())
             {
-                this.DefaultFilter = string.Format("MDivisionID= '{0}' and MDClose is not null", MDivisionID);
+                this.DefaultFilter = string.Format("MDivisionID= '{0}' and MDClose is not null", mDivisionID);
                 this.Text = "P31 .MD Master List(History)";
                 this.IsSupportEdit = false;
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             if (this.FirstTime)
@@ -157,6 +158,8 @@ order by RowNum", this.txtSP.Text.ToString());
         }
 
         // 設定Grid內容值
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region OnClick Right Click Even
@@ -305,6 +308,8 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
 
         // When click Edit button and Grid is empty then New 5 column in GridView
         // choice ClickEditAfter becauser Transaction problemm
+
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             #region 設定表頭欄位只能Readonly
@@ -376,6 +381,7 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
                 base.ClickEditAfter();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
@@ -384,6 +390,7 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
             this.CurrentDetailData["Type"] = "Accessory items";
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridDelete()
         {
             if (this.CurrentDetailData["Type"].StrStartsWith("Cutparts") || this.CurrentDetailData["Type"].StrStartsWith("Garment"))
@@ -396,6 +403,8 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
         }
 
         // delete rows when the pk value is empty
+
+        /// <inheritdoc/>
         protected override DualResult ClickSavePre()
         {
             if (!MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
@@ -418,6 +427,8 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
         }
 
         // 表頭combobox
+
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -437,12 +448,14 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             this.Button_enable();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             int a = this.detailgrid.Rows.Count;
@@ -487,6 +500,7 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
             this.btnFinished.Enabled = !this.EditMode;
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             return base.ClickSave();

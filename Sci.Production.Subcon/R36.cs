@@ -11,28 +11,28 @@ namespace Sci.Production.Subcon
 {
     public partial class R36 : Win.Tems.PrintForm
     {
-        string reportType;
-        List<SqlParameter> ParameterList;
-        DataTable dt;
-        string cmd;
-        DateTime? debitdate1;
-        DateTime? debitdate2;
-        DateTime? aprdate1;
-        DateTime? aprdate2;
-        string SDNo1;
-        string SDNo2;
-        string Supplier;
-        string handle;
-        string smr;
-        string status;
-        string factoryid;
-        DateTime? amtrevisedate1; DateTime? amtrevisedate2;
-        DateTime? ReceiveDate1; DateTime? ReceiveDate2;
-        DataTable dtSummary; string cmdSummary;
-        DataTable dtDetail; string cmdDetail;
-        DataTable dtSchedule; string cmdSchedule;
-        DateTime? SettledDate1; DateTime? SettledDate2;
-        string payment;
+        private string reportType;
+        private List<SqlParameter> ParameterList;
+        private DataTable dt;
+        private string cmd;
+        private DateTime? debitdate1;
+        private DateTime? debitdate2;
+        private DateTime? aprdate1;
+        private DateTime? aprdate2;
+        private string SDNo1;
+        private string SDNo2;
+        private string Supplier;
+        private string handle;
+        private string smr;
+        private string status;
+        private string factoryid;
+        private DateTime? amtrevisedate1; private DateTime? amtrevisedate2;
+        private DateTime? ReceiveDate1; private DateTime? ReceiveDate2;
+        private DataTable dtSummary; private string cmdSummary;
+        private DataTable dtDetail; private string cmdDetail;
+        private DataTable dtSchedule; private string cmdSchedule;
+        private DateTime? SettledDate1; private DateTime? SettledDate2;
+        private string payment;
 
         public R36(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -49,6 +49,7 @@ namespace Sci.Production.Subcon
             this.print.Enabled = false;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             bool dateRange1_Empty = !this.dateDebitDate.HasValue,
@@ -617,6 +618,7 @@ OUTER APPLY(
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
@@ -642,6 +644,7 @@ OUTER APPLY(
             return res;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             switch (this.reportType)

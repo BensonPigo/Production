@@ -4,13 +4,14 @@ namespace Sci.Production.Quality
 {
     public partial class P40_History : P40
     {
-        public P40_History(string ID)
+        public P40_History(string iD)
         {
             this.InitializeComponent();
 
-            this.DefaultFilter = $"ID = '{ID}'";
+            this.DefaultFilter = $"ID = '{iD}'";
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();

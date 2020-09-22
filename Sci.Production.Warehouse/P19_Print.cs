@@ -49,6 +49,7 @@ namespace Sci.Production.Warehouse
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             if (this.radioTransferOutReport.Checked)
@@ -147,6 +148,7 @@ where ID = '{this.mainCurrentMaintain["ID"]}'
             return new DualResult(true);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.ShowWaitMessage("Excel Processing...");
@@ -171,6 +173,7 @@ where ID = '{this.mainCurrentMaintain["ID"]}'
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToPrint(ReportDefinition report)
         {
             this.SetCount(this.dtResult.Rows.Count);

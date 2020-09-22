@@ -21,6 +21,7 @@ namespace Sci.Production.Warehouse
             this.strIssueID = issueID;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

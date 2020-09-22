@@ -11,16 +11,16 @@ namespace Sci.Production.Quality
 {
     public partial class R21 : Win.Tems.PrintForm
     {
-        DateTime? cdate1;
-        DateTime? cdate2;
-        DateTime? bdate1;
-        DateTime? bdate2;
-        string factory;
-        string id1;
-        string id2;
-        string brand;
-        DataTable SummaryData;
-        DataTable DetailData;
+        private DateTime? cdate1;
+        private DateTime? cdate2;
+        private DateTime? bdate1;
+        private DateTime? bdate2;
+        private string factory;
+        private string id1;
+        private string id2;
+        private string brand;
+        private DataTable SummaryData;
+        private DataTable DetailData;
 
         public R21(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -36,6 +36,8 @@ namespace Sci.Production.Quality
         }
 
         // 驗證輸入條件 必須要有
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (this.radioSummary.Checked == false && this.radiobyDetail.Checked == false)
@@ -56,6 +58,8 @@ namespace Sci.Production.Quality
         }
 
         // 非同步資料 必須要有
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd_Summary = new StringBuilder();
@@ -267,6 +271,8 @@ where a.Status = 'Confirmed'");
         }
 
         // 產生Excel 必須要有
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.ShowWaitMessage("Starting Excel");

@@ -14,12 +14,14 @@ namespace Sci.Production.Centralized
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Type"] = "IP";
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Reason"].ToString()))

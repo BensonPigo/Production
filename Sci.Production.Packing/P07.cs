@@ -190,7 +190,7 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
             MyUtility.Msg.InfoBox("Complete.");
         }
 
-        private void btnToExcelCombo_Click(object sender, EventArgs e)
+        private void BtnToExcelCombo_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Data Loading....");
             if (MyUtility.Check.Empty(this.gridData))

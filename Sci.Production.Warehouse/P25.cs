@@ -53,6 +53,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -64,6 +66,8 @@ namespace Sci.Production.Warehouse
         }
 
         // delete前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -76,6 +80,8 @@ namespace Sci.Production.Warehouse
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -88,6 +94,8 @@ namespace Sci.Production.Warehouse
         }
 
         // save前檢查 & 取id
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -139,12 +147,16 @@ namespace Sci.Production.Warehouse
         }
 
         // grid 加工填值
+
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -156,12 +168,16 @@ namespace Sci.Production.Warehouse
         }
 
         // detail 新增時設定預設值
+
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
         }
 
         // Detail Grid 設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings locationSet = new DataGridViewGeneratorTextColumnSettings();
@@ -245,6 +261,8 @@ WHERE   StockType='{0}'
         }
 
         // Confirm
+
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -362,11 +380,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     into m
                        select new Prgs_POSuppDetailData
                    {
-                       poid = m.First().Field<string>("frompoid"),
-                       seq1 = m.First().Field<string>("fromseq1"),
-                       seq2 = m.First().Field<string>("fromseq2"),
-                       stocktype = m.First().Field<string>("fromstocktype"),
-                       qty = m.Sum(w => w.Field<decimal>("qty")),
+                       Poid = m.First().Field<string>("frompoid"),
+                       Seq1 = m.First().Field<string>("fromseq1"),
+                       Seq2 = m.First().Field<string>("fromseq2"),
+                       Stocktype = m.First().Field<string>("fromstocktype"),
+                       Qty = m.Sum(w => w.Field<decimal>("qty")),
                    }).ToList();
 
             #endregion
@@ -383,10 +401,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        select new
                        {
                            poid = m.First().Field<string>("topoid"),
-                           seq1 = m.First().Field<string>("toseq1"),
-                           seq2 = m.First().Field<string>("toseq2"),
-                           stocktype = m.First().Field<string>("tostocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty")),
+                           Seq1 = m.First().Field<string>("toseq1"),
+                           Seq2 = m.First().Field<string>("toseq2"),
+                           Stocktype = m.First().Field<string>("tostocktype"),
+                           Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
 
             #endregion
@@ -518,6 +536,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         }
 
         // Unconfirm
+
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -649,11 +669,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("frompoid"),
-                           seq1 = m.First().Field<string>("fromseq1"),
-                           seq2 = m.First().Field<string>("fromseq2"),
-                           stocktype = m.First().Field<string>("fromstocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty")),
+                           Poid = m.First().Field<string>("frompoid"),
+                           Seq1 = m.First().Field<string>("fromseq1"),
+                           Seq2 = m.First().Field<string>("fromseq2"),
+                           Stocktype = m.First().Field<string>("fromstocktype"),
+                           Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
 
             #endregion
@@ -670,10 +690,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                    select new
                    {
                        poid = m.First().Field<string>("topoid"),
-                       seq1 = m.First().Field<string>("toseq1"),
-                       seq2 = m.First().Field<string>("toseq2"),
-                       stocktype = m.First().Field<string>("tostocktype"),
-                       qty = -m.Sum(w => w.Field<decimal>("qty")),
+                       Seq1 = m.First().Field<string>("toseq1"),
+                       Seq2 = m.First().Field<string>("toseq2"),
+                       Stocktype = m.First().Field<string>("tostocktype"),
+                       Qty = -m.Sum(w => w.Field<decimal>("qty")),
                    }).ToList();
 
             #endregion
@@ -780,6 +800,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         }
 
         // 寫明細撈出的sql command
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -850,6 +872,7 @@ Where a.id = '{0}'", masterID);
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             DataRow row = this.CurrentMaintain;

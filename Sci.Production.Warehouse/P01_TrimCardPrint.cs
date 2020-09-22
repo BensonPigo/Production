@@ -27,18 +27,20 @@ namespace Sci.Production.Warehouse
         private string POID;
         private List<string> ListColor = new List<string>();
 
-        public P01_TrimCardPrint(string _orderID, string _StyleID, string _SeasonID, string _FactoryID, string _BrandID, string _POID)
+        public P01_TrimCardPrint(string orderID, string styleID, string seasonID, string factoryID, string brandID, string pOID)
         {
             this.InitializeComponent();
-            this.orderID = _orderID;
-            this.StyleID = _StyleID;
-            this.SeasonID = _SeasonID;
-            this.FactoryID = _FactoryID;
-            this.BrandID = _BrandID;
-            this.POID = _POID;
+            this.orderID = orderID;
+            this.StyleID = styleID;
+            this.SeasonID = seasonID;
+            this.FactoryID = factoryID;
+            this.BrandID = brandID;
+            this.POID = pOID;
         }
 
         // 欄位檢核
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (!this.radioFabric.Checked && !this.radioAccessory.Checked && !this.radioOther.Checked && !this.radioThread.Checked)
@@ -50,6 +52,7 @@ namespace Sci.Production.Warehouse
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult result = Ict.Result.True;
@@ -595,6 +598,7 @@ ORDER BY ThreadColorID ASC
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (this.dtPrint_Content.Rows.Count == 0)

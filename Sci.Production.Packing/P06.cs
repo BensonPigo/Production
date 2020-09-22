@@ -655,6 +655,7 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -664,6 +665,7 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             #region ISP20200757 資料交換 - Sunrise
@@ -1030,7 +1032,7 @@ and p.ID = pl.PulloutID",
             }
         }
 
-        private void btnCartonSummary_Click(object sender, EventArgs e)
+        private void BtnCartonSummary_Click(object sender, EventArgs e)
         {
             P03_CartonSummary callNextForm = new P03_CartonSummary(this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);

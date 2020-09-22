@@ -140,8 +140,8 @@ namespace Sci.Production.Quality
 
             // if (!MyUtility.Check.Empty(Deatilrow["SendDate"]))
             //    worksheet.Cells[8, 4] = MyUtility.Convert.GetDate(Deatilrow["SendDate"]).Value.Year + "/" + MyUtility.Convert.GetDate(Deatilrow["SendDate"]).Value.Month + "/" + MyUtility.Convert.GetDate(Deatilrow["SendDate"]).Value.Day;
-            string SendDate = Convert.ToDateTime(MyUtility.GetValue.Lookup($"SELECT BuyerDelivery FROM Orders WHERE ID = '{this.MasterRow["OrderID"].ToString()}'")).ToShortDateString();
-            worksheet.Cells[8, 4] = SendDate;
+            string sendDate = Convert.ToDateTime(MyUtility.GetValue.Lookup($"SELECT BuyerDelivery FROM Orders WHERE ID = '{this.MasterRow["OrderID"].ToString()}'")).ToShortDateString();
+            worksheet.Cells[8, 4] = sendDate;
             worksheet.Cells[8, 10] = MyUtility.Convert.GetString(this.data.TxtSize);
 
             worksheet.Cells[11, 4] = this.data.RdbtnLine ? "V" : string.Empty;
@@ -1135,7 +1135,6 @@ namespace Sci.Production.Quality
 
                 if (to == "ToPDF")
                 {
-
                     string sql_cmd = $@"select p.name,[SignaturePic] = s.PicPath + t.SignaturePic
                                             from Technician t WITH (NOLOCK)
                                             inner join pass1 p WITH (NOLOCK) on t.ID = p.ID  
@@ -1173,7 +1172,6 @@ namespace Sci.Production.Quality
                     {
                         worksheet.Cells[74, 9] = MyUtility.Convert.GetString(this.Deatilrow["Showname"]);
                     }
-
                 }
 
                 if (to == "ToExcel")
@@ -2079,7 +2077,6 @@ namespace Sci.Production.Quality
 
             if (to == "ToPDF")
             {
-
                 string sql_cmd = $@"select p.name,[SignaturePic] = s.PicPath + t.SignaturePic
                                         from Technician t WITH (NOLOCK)
                                         inner join pass1 p WITH (NOLOCK) on t.ID = p.ID  
@@ -2281,7 +2278,6 @@ namespace Sci.Production.Quality
                 {
                     worksheet.Cells[159, 7] = MyUtility.Convert.GetString(this.Deatilrow["Showname"]);
                 }
-
             }
 
             if (to == "ToExcel")
@@ -2453,7 +2449,7 @@ namespace Sci.Production.Quality
         /// <param name="dt"></param>
         /// <param name="strFilter"></param>
         /// <param name="count"></param>
-        /// <returns></returns>
+        /// <returns>string</returns>
         private string AddShrinkageUnit(DataTable dt, string strFilter, int count)
         {
             string strValie = string.Empty;
@@ -2532,6 +2528,5 @@ namespace Sci.Production.Quality
         public decimal? NumTopL { get; set; }
 
         public string TxtLotoFactory { get; set; }
-
     }
 }

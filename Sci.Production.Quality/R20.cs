@@ -11,15 +11,15 @@ namespace Sci.Production.Quality
 {
     public partial class R20 : Win.Tems.PrintForm
     {
-        DataTable printData;
-        DateTime? Period1;
-        DateTime? Period2;
-        string Factory;
-        string Brand;
-        string Line;
-        string Cell;
-        string DefectCode;
-        string DefectType;
+        private DataTable printData;
+        private DateTime? Period1;
+        private DateTime? Period2;
+        private string Factory;
+        private string Brand;
+        private string Line;
+        private string Cell;
+        private string DefectCode;
+        private string DefectType;
 
         public R20(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -91,6 +91,8 @@ namespace Sci.Production.Quality
         }
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.Period1 = this.datePeriod.Value1;
@@ -106,6 +108,8 @@ namespace Sci.Production.Quality
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -881,6 +885,8 @@ drop table #tmpall
         }
 
         // 產生Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

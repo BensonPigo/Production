@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Quality
 {
-    class P01_Continuity_PrintData
+    internal class P01_Continuity_PrintData
     {
         public string FactoryNameEN { get; set; }
 

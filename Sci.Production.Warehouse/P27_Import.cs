@@ -110,6 +110,8 @@ where (case when '{0}' = 'B'then LI.InQty-LI.OutQty+LI.AdjustQty
         }
 
         // Form Load
+
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

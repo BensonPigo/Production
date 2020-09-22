@@ -10,12 +10,12 @@ namespace Sci.Production.Subcon
 {
     public partial class P01_SpecialRecord : Win.Subs.Base
     {
-        DataTable dt_artworkpo_detail;
-        DataRow dr;
-        bool flag;
+        private DataTable dt_artworkpo_detail;
+        private DataRow dr;
+        private bool flag;
         protected DataTable dtArtwork;
-        string poType;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private string poType;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         public P01_SpecialRecord()
         {
@@ -40,6 +40,7 @@ namespace Sci.Production.Subcon
             this.Text += string.Format(" : {0}", this.dr["artworktypeid"].ToString());
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -79,7 +80,7 @@ namespace Sci.Production.Subcon
             this.gridSpecialRecord.Columns["Amount"].Visible = this.flag;
         }
 
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             string orderID = this.txtSPNo.Text;
             string poid = this.txtMotherSPNo.Text;
@@ -196,7 +197,7 @@ group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc
             }
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
@@ -221,7 +222,8 @@ group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc
             dr2 = dtGridBS1.Select("Selected =  1");
             if (dr2.Length > 0)
             {
-                foreach (DataRow tmp in dr2) // dtGridBS1.Rows
+                // dtGridBS1.Rows
+                foreach (DataRow tmp in dr2)
                 {
                     DataRow[] findrow = this.dt_artworkpo_detail.Select(string.Format("orderid = '{0}' and ArtworkId = '{1}' ", tmp["orderid"].ToString(), tmp["ArtworkId"].ToString()));
 
@@ -254,17 +256,17 @@ group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc
             this.Close();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void txtSPNo_Validating(object sender, CancelEventArgs e)
+        private void TxtSPNo_Validating(object sender, CancelEventArgs e)
         {
-            this.val(sender, e);
+            this.Val(sender, e);
         }
 
-        private void val(object sender, CancelEventArgs e)
+        private void Val(object sender, CancelEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(((Win.UI.TextBox)sender).Text))
             {
@@ -309,9 +311,9 @@ group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc
             }
         }
 
-        private void txtMotherSPNo_Validating(object sender, CancelEventArgs e)
+        private void TxtMotherSPNo_Validating(object sender, CancelEventArgs e)
         {
-            this.val(sender, e);
+            this.Val(sender, e);
         }
     }
 }

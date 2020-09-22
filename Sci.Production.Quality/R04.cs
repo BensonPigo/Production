@@ -11,20 +11,20 @@ namespace Sci.Production.Quality
 {
     public partial class R04 : Win.Tems.PrintForm
     {
-        DateTime? DateRecStart; DateTime? DateRecEnd;
-        DateTime? DateArrStart; DateTime? DateArrEnd;
-        string Category; string factory; string M;
-        string OUTSTAN = string.Empty;
-        List<SqlParameter> lis; DualResult res;
-        DataTable dt; string cmd;
+        private DateTime? DateRecStart; private DateTime? DateRecEnd;
+        private DateTime? DateArrStart; private DateTime? DateArrEnd;
+        private string Category; private string factory; private string M;
+        private string OUTSTAN = string.Empty;
+        private List<SqlParameter> lis; private DualResult res;
+        private DataTable dt; private string cmd;
 
         public R04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable M;
-            DBProxy.Current.Select(null, "select '' as id union all select distinct id from MDivision WITH (NOLOCK)  ", out M);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, M);
+            DataTable m;
+            DBProxy.Current.Select(null, "select '' as id union all select distinct id from MDivision WITH (NOLOCK)  ", out m);
+            MyUtility.Tool.SetupCombox(this.comboM, 1, m);
             this.comboM.Text = Env.User.Keyword;
 
             DataTable factory;
@@ -35,12 +35,13 @@ namespace Sci.Production.Quality
             this.print.Enabled = false;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.lis = new List<SqlParameter>();
-            bool DateReceived_empty = !this.dateReceivedSampleDate.HasValue, DateArr_empty = !this.dateArriveWHDate.HasValue, Cate_comboBox_Empty = this.comboCategory.Text.Empty(), comboFactory_Empty = this.comboFactory.Text.Empty(), comboM_Empty = this.comboM.Text.Empty(),
+            bool dateReceived_empty = !this.dateReceivedSampleDate.HasValue, dateArr_empty = !this.dateArriveWHDate.HasValue, cate_comboBox_Empty = this.comboCategory.Text.Empty(), comboFactory_Empty = this.comboFactory.Text.Empty(), comboM_Empty = this.comboM.Text.Empty(),
                 checkOuter_empty = this.checkOutstandingOnly.Checked.Empty();
-            if (DateReceived_empty && DateArr_empty)
+            if (dateReceived_empty && dateArr_empty)
             {
                 this.dateReceivedSampleDate.Focus();
                 MyUtility.Msg.ErrorBox("Please select 'Received Sample Date' or 'Arrive W/H Date' at least one field entry");
@@ -194,6 +195,7 @@ namespace Sci.Production.Quality
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);
@@ -205,6 +207,7 @@ namespace Sci.Production.Quality
             return this.res;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

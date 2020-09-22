@@ -11,49 +11,51 @@ namespace Sci.Production.Subcon
 {
     public partial class R41_1 : Win.Tems.PrintForm
     {
-        string SubProcess;
-        string SP;
-        string M;
-        string Factory;
-        string processLocation;
-        DateTime? dateBundle1;
-        DateTime? dateBundle2;
-        DateTime? dateBundleScanDate1;
-        DateTime? dateBundleScanDate2;
-        DateTime? dateBDelivery1;
-        DateTime? dateBDelivery2;
-        DateTime? dateSewInLine1;
-        DateTime? dateSewInLine2;
+        private string SubProcess;
+        private string SP;
+        private string M;
+        private string Factory;
+        private string processLocation;
+        private DateTime? dateBundle1;
+        private DateTime? dateBundle2;
+        private DateTime? dateBundleScanDate1;
+        private DateTime? dateBundleScanDate2;
+        private DateTime? dateBDelivery1;
+        private DateTime? dateBDelivery2;
+        private DateTime? dateSewInLine1;
+        private DateTime? dateSewInLine2;
 
         public R41_1(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboload();
+            this.Comboload();
             this.comboFactory.SetDataSource();
             this.comboRFIDProcessLocation.SetDataSource();
             this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
-        private void comboload()
+        private void Comboload()
         {
-            DualResult Result;
+            DualResult result;
 
             DataTable dtM;
-            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtM))
+            if (result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtM))
             {
                 this.comboM.DataSource = dtM;
                 this.comboM.DisplayMember = "ID";
             }
             else
             {
-                this.ShowErr(Result);
+                this.ShowErr(result);
             }
         }
 
         #region ToExcel3步驟
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.SubProcess = this.txtsubprocess.Text;
@@ -83,12 +85,16 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步讀取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             return Ict.Result.True;
         }
 
         // 產生Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region Append畫面上的條件

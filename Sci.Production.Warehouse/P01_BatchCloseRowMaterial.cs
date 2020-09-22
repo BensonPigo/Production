@@ -202,6 +202,7 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
             this.HideWaitMessage();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -284,10 +285,11 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
             }
 
             #region Sent W/H Fabric to Gensong
+
             // WHClose
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                DataTable dtFilter = ((DataTable)listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
+                DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
                 DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
                 Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMaster))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);

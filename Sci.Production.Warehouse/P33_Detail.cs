@@ -35,6 +35,7 @@ namespace Sci.Production.Warehouse
             // CurrentSubDetailData["Issue_SummaryUkey"] = 0;
         }
 
+        /// <inheritdoc/>
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -105,6 +106,7 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
@@ -149,6 +151,7 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             this.grid.ValidateControl();
@@ -169,6 +172,7 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool OnUndo()
         {
             this.isSave = false;

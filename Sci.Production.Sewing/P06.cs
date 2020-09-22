@@ -22,6 +22,7 @@ namespace Sci.Production.Sewing
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -72,7 +73,7 @@ where	1 = 0";
             this.gridReceive.DataSource = this.dtReceive;
         }
 
-        DataTable dtReceive = new DataTable();
+        private DataTable dtReceive = new DataTable();
 
         private void BtnFind_Click(object sender, EventArgs e)
         {

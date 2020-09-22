@@ -24,6 +24,7 @@ namespace Sci.Production.Warehouse
             this.dt_detail = detail;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

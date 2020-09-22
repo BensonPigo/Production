@@ -165,7 +165,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
         {
             StringBuilder sqlCmd = new StringBuilder();
             string seperCmd = string.Empty, seperCmdkpi = string.Empty, seperCmdkpi2 = string.Empty;
-            string order_QtyShip_Source_InspDate = string.Empty , order_QtyShip_Source_InspResult = string.Empty, order_QtyShip_Source_InspHandle = string.Empty, order_QtyShip_OuterApply = string.Empty;
+            string order_QtyShip_Source_InspDate = string.Empty, order_QtyShip_Source_InspResult = string.Empty, order_QtyShip_Source_InspHandle = string.Empty, order_QtyShip_OuterApply = string.Empty;
 
             #region 組SQL
             if (this.seperate && p_type.Equals("ALL"))

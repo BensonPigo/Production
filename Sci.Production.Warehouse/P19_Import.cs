@@ -170,6 +170,7 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
             this.displayTotal.Value = localPrice.ToString();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_ToPOID;

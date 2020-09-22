@@ -22,6 +22,7 @@ namespace Sci.Production.Warehouse
             this.P61_Detail = detail;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

@@ -593,6 +593,7 @@ where InvA.OrderID = '{0}'
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             #region ISP20200757 資料交換 - Sunrise

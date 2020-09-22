@@ -102,13 +102,14 @@ namespace Sci.Production.Quality
         }
 
         [DllImport("user32.dll")]
-        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
 
         private void SetComboBoxHeight(IntPtr comboBoxHandle, int comboBoxDesiredHeight)
         {
             SendMessage(comboBoxHandle, CB_SETITEMHEIGHT, -1, comboBoxDesiredHeight);
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery()
         {
             #region 表頭設定
@@ -157,8 +158,8 @@ namespace Sci.Production.Quality
                 this.num2Pr.Value = MyUtility.Convert.GetDecimal(this.Detaildr["HT2ndPressreversed"]);
                 this.num2Pnr.Value = MyUtility.Convert.GetDecimal(this.Detaildr["HT2ndPressnoreverse"]);
                 this.txtPOff.Text = this.Detaildr["HTPellOff"].ToString();
-                string TestMethod = this.Detaildr["TestingMethod"].ToString();
-                if (!this.listTestingMethod.ContainsKey(TestMethod))
+                string testMethod = this.Detaildr["TestingMethod"].ToString();
+                if (!this.listTestingMethod.ContainsKey(testMethod))
                 {
                     this.txtOther.Text = this.Detaildr["TestingMethod"].ToString();
                     this.chkOtherMethod.Checked = true;
@@ -175,6 +176,7 @@ namespace Sci.Production.Quality
             return base.OnRequery();
         }
 
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -203,18 +205,19 @@ namespace Sci.Production.Quality
 
                 dr["ArtworkColorName"] = colorName.Substring(0, colorName.Length - 1);
 
-                string FabName = string.Empty;
+                string fabName = string.Empty;
                 string[] drFab = dr["FabricColor"].ToString().Split(';');
                 foreach (var item in drFab)
                 {
-                    FabName += MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{item}'  and BrandID =  '{this.masterDr["BrandID"]}'") + ",";
+                    fabName += MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{item}'  and BrandID =  '{this.masterDr["BrandID"]}'") + ",";
                 }
 
-                dr["FabricColorName"] = FabName.Substring(0, FabName.Length - 1);
+                dr["FabricColorName"] = fabName.Substring(0, fabName.Length - 1);
             }
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -224,6 +227,7 @@ namespace Sci.Production.Quality
             this.btnSendMR.Enabled = !this.EditMode;
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
@@ -235,9 +239,10 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings ResulCell = Prgs.CellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings resulCell = Prgs.CellResult.GetGridCell();
             #region Artwork event
             DataGridViewGeneratorTextColumnSettings ts_artwork = new DataGridViewGeneratorTextColumnSettings();
             ts_artwork.EditingMouseDown += (s, e) =>
@@ -467,7 +472,7 @@ namespace Sci.Production.Quality
             .Text("ArtworkColorName", "Artwork Color", width: Widths.AnsiChars(18), settings: ts_artworkColor)
             .Text("FabricRefNo", "Fabric Ref No.", width: Widths.AnsiChars(17))
             .Text("FabricColorName", "Fabric Color", width: Widths.AnsiChars(18), settings: ts_fabricColor)
-            .Text("Result", "Result", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ResulCell)
+            .Text("Result", "Result", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: resulCell)
             .EditText("Remark", "Remark", width: Widths.AnsiChars(15))
             .Text("LastUpdate", "Last Update", width: Widths.AnsiChars(28), iseditingreadonly: true);
 
@@ -487,6 +492,7 @@ namespace Sci.Production.Quality
             this.txtCombineStyle.Text = item.GetSelectedString().Replace(",", "/");
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             if (this.status.Equals("New"))
@@ -500,6 +506,7 @@ namespace Sci.Production.Quality
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSavePost()
         {
             DualResult execute_result;
@@ -612,6 +619,7 @@ where ReportNo = '{this.reportNo}';";
             Process.Start(startInfo);
         }
 
+        /// <inheritdoc/>
         protected override void OnInsertPrepare(DataRow data)
         {
             base.OnInsertPrepare(data);
@@ -713,11 +721,11 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             {
                 string remark = dr["Remark"].ToString();
                 string fabric = MyUtility.Check.Empty(dr["FabricColorName"]) ? dr["FabricRefNo"].ToString() : dr["FabricRefNo"].ToString() + " - " + dr["FabricColorName"].ToString();
-                string Artwork = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["Design"] + " - " + dr["ArtworkColorName"].ToString() : dr["ArtworkTypeID"].ToString() + "/" + dr["Design"] + " - " + dr["ArtworkColorName"].ToString();
+                string artwork = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["Design"] + " - " + dr["ArtworkColorName"].ToString() : dr["ArtworkTypeID"].ToString() + "/" + dr["Design"] + " - " + dr["ArtworkColorName"].ToString();
 
                 worksheet.Cells[start_row, 1] = styleNo;
                 worksheet.Cells[start_row, 2] = fabric;
-                worksheet.Cells[start_row, 3] = Artwork;
+                worksheet.Cells[start_row, 3] = artwork;
                 worksheet.Cells[start_row, 4] = dr["Result"].ToString();
                 worksheet.Cells[start_row, 5] = remark;
                 worksheet.Rows[start_row].Font.Bold = false;
@@ -725,7 +733,7 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
                 worksheet.Rows[start_row].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
 
                 // 合併儲存格無法AutoFit()因此要自己算高度
-                if (fabric.Length > remark.Length || Artwork.Length > remark.Length)
+                if (fabric.Length > remark.Length || artwork.Length > remark.Length)
                 {
                     worksheet.Rows[start_row].AutoFit();
                 }

@@ -10,14 +10,14 @@ namespace Sci.Production.Subcon
 {
     public partial class R12 : Win.Tems.PrintForm
     {
-        string artworktype;
-        string factory;
-        string subcon;
-        string mdivision;
-        string orderby;
-        DateTime? APdate1;
-        DateTime? APdate2;
-        DataTable printData;
+        private string artworktype;
+        private string factory;
+        private string subcon;
+        private string mdivision;
+        private string orderby;
+        private DateTime? APdate1;
+        private DateTime? APdate2;
+        private DataTable printData;
 
         public R12(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -37,6 +37,8 @@ namespace Sci.Production.Subcon
         }
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.dateAPDate.Value1) && MyUtility.Check.Empty(this.dateAPDate.Value2))
@@ -58,6 +60,8 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- Sql Command --
@@ -169,6 +173,8 @@ where  a.ApvDate is null and 1=1"));
         }
 
         // 產生Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

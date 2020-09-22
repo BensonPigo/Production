@@ -14,6 +14,7 @@ namespace Sci.Production.Centralized
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
@@ -59,6 +60,7 @@ namespace Sci.Production.Centralized
             this.RenewData();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();

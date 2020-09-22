@@ -40,6 +40,7 @@ namespace Sci.Production.Quality
             this.numInsGap.Text = "1";
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.F = this.txtfactory.Text;
@@ -112,6 +113,7 @@ and pd.ReceiveDate between '{this.dateRangeReady1}' and '{this.dateRangeReady2}'
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             #region Sql Command
@@ -414,6 +416,7 @@ drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
             return new DualResult(true);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             #region check resultDT

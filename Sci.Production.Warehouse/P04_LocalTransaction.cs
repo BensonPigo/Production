@@ -36,6 +36,7 @@ namespace Sci.Production.Warehouse
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -266,6 +267,7 @@ WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
             this.Close();
         }
 
+        /// <inheritdoc/>
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);

@@ -17,6 +17,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -30,6 +31,7 @@ namespace Sci.Production.Quality
             this.grid1.Columns["Seq"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
@@ -46,6 +48,7 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -56,12 +59,14 @@ namespace Sci.Production.Quality
             this.listControlBindingSource1.DataSource = dt;
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtDefectType.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.txtDefectType.Text))
@@ -86,6 +91,7 @@ namespace Sci.Production.Quality
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
             string update = string.Empty;

@@ -36,6 +36,8 @@ namespace Sci.Production.Quality
         }
 
         // 編輯事件觸發
+
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
@@ -43,6 +45,8 @@ namespace Sci.Production.Quality
         }
 
         // 設定表頭資料
+
+        /// <inheritdoc/>
         protected override DualResult OnRequery()
         {
             this.MainDBQuery(); // 重新query maindr
@@ -127,6 +131,8 @@ this.ID);
         }
 
         // Grid View DataTable 新增欄位資料供撈取顯示
+
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -171,35 +177,37 @@ this.ID);
 
                 string name = MyUtility.Check.Empty(datas.Rows[i]["EditName"].ToString()) ? MyUtility.GetValue.Lookup("Name_Extno", datas.Rows[i]["AddName"].ToString(), "View_ShowName", "ID") :
                    MyUtility.GetValue.Lookup("Name_Extno", datas.Rows[i]["EditName"].ToString(), "View_ShowName", "ID");
-                string Date = MyUtility.Check.Empty(datas.Rows[i]["EditDate"].ToString()) ? datas.Rows[i]["AddDate"].ToString() : datas.Rows[i]["EditDate"].ToString();
-                dr["Last update"] = name + " - " + Date;
+                string date = MyUtility.Check.Empty(datas.Rows[i]["EditDate"].ToString()) ? datas.Rows[i]["AddDate"].ToString() : datas.Rows[i]["EditDate"].ToString();
+                dr["Last update"] = name + " - " + date;
                 i++;
             }
         }
 
         // GridView 設定
+
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings orlHorCell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings orlVirCell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings HorTest1Cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings HorTest2Cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings HorTest3Cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings VirTest1Cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings VirTest2Cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings VirTest3Cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings SkeTest1Cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings SkeTest2Cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings SkeTest3Cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings SkeTest4Cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings DyelotCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings horTest1Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings horTest2Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings horTest3Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings virTest1Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings virTest2Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings virTest3Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings skeTest1Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings skeTest2Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings skeTest3Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings skeTest4Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorTextColumnSettings dyelotCell = new DataGridViewGeneratorTextColumnSettings();
 
-            DataGridViewGeneratorTextColumnSettings LabTechCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResultCell = PublicPrg.Prgs.CellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings labTechCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings resultCell = PublicPrg.Prgs.CellResult.GetGridCell();
 
             #region 設定GridMouse Click 事件
-            Rollcell.EditingMouseDown += (s, e) =>
+            rollcell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -250,7 +258,7 @@ this.ID);
                 }
             };
 
-            DyelotCell.EditingMouseDown += (s, e) =>
+            dyelotCell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -300,7 +308,7 @@ this.ID);
                 }
             };
 
-            LabTechCell.EditingMouseDown += (s, e) =>
+            labTechCell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -334,7 +342,7 @@ this.ID);
 
             #endregion
             #region 設定Grid Valid事件
-            Rollcell.CellValidating += (s, e) =>
+            rollcell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Roll"].ToString();
@@ -389,7 +397,7 @@ this.ID);
                 }
             };
 
-            DyelotCell.CellValidating += (s, e) =>
+            dyelotCell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Dyelot"].ToString();
@@ -518,7 +526,7 @@ this.ID);
                     return;
                 }
             };
-            HorTest1Cell.CellValidating += (s, e) =>
+            horTest1Cell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -541,7 +549,7 @@ this.ID);
 
                 this.CalHorRate(dr);
             };
-            HorTest2Cell.CellValidating += (s, e) =>
+            horTest2Cell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -564,7 +572,7 @@ this.ID);
 
                 this.CalHorRate(dr);
             };
-            HorTest3Cell.CellValidating += (s, e) =>
+            horTest3Cell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -588,7 +596,7 @@ this.ID);
                 this.CalHorRate(dr);
             };
 
-            VirTest1Cell.CellValidating += (s, e) =>
+            virTest1Cell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -611,7 +619,7 @@ this.ID);
 
                 this.CalVerRate(dr);
             };
-            VirTest2Cell.CellValidating += (s, e) =>
+            virTest2Cell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -634,7 +642,7 @@ this.ID);
 
                 this.CalVerRate(dr);
             };
-            VirTest3Cell.CellValidating += (s, e) =>
+            virTest3Cell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -658,7 +666,7 @@ this.ID);
                 this.CalVerRate(dr);
             };
 
-            SkeTest1Cell.CellValidating += (s, e) =>
+            skeTest1Cell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -683,7 +691,7 @@ this.ID);
                 this.CalSkeValue(dr);
             };
 
-            SkeTest2Cell.CellValidating += (s, e) =>
+            skeTest2Cell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -706,7 +714,7 @@ this.ID);
 
                 this.CalSkeValue(dr);
             };
-            SkeTest3Cell.CellValidating += (s, e) =>
+            skeTest3Cell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -729,7 +737,7 @@ this.ID);
 
                 this.CalSkeValue(dr);
             };
-            SkeTest4Cell.CellValidating += (s, e) =>
+            skeTest4Cell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -753,7 +761,7 @@ this.ID);
                 this.CalSkeValue(dr);
             };
 
-            LabTechCell.CellValidating += (s, e) =>
+            labTechCell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -796,32 +804,32 @@ this.ID);
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.grid)
-              .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
-              .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), settings: DyelotCell)
+              .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: rollcell)
+              .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), settings: dyelotCell)
               .Numeric("HorizontalOriginal", header: "Original Horizontal", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: orlHorCell)
               .Numeric("VerticalOriginal", header: "Original Vertical", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: orlVirCell)
-              .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell, iseditingreadonly: true)
-              .Numeric("HorizontalTest1", header: "Horizontal 1", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: HorTest1Cell)
-              .Numeric("HorizontalTest2", header: "Horizontal 2", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: HorTest2Cell)
-              .Numeric("HorizontalTest3", header: "Horizontal 3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, maximum: 99, settings: HorTest3Cell)
+              .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true)
+              .Numeric("HorizontalTest1", header: "Horizontal 1", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: horTest1Cell)
+              .Numeric("HorizontalTest2", header: "Horizontal 2", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: horTest2Cell)
+              .Numeric("HorizontalTest3", header: "Horizontal 3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, maximum: 99, settings: horTest3Cell)
               .Numeric("Horizontal_Average", header: "Horizontal_Average", width: Widths.AnsiChars(6), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
               .Numeric("Horizontalrate", header: "Horizontal Shrinkage rate", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
-              .Numeric("VerticalTest1", header: "Vertical 1", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: VirTest1Cell)
-              .Numeric("VerticalTest2", header: "Vertical 2", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: VirTest2Cell)
-              .Numeric("VerticalTest3", header: "Vertical 3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: VirTest3Cell)
+              .Numeric("VerticalTest1", header: "Vertical 1", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: virTest1Cell)
+              .Numeric("VerticalTest2", header: "Vertical 2", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: virTest2Cell)
+              .Numeric("VerticalTest3", header: "Vertical 3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: virTest3Cell)
               .Numeric("Vertical_Average", header: "Vertical Average", width: Widths.AnsiChars(6), integer_places: 2, decimal_places: 2, iseditingreadonly: true)
               .Numeric("VerticalRate", header: "Vertical Shrinkage Rate", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
 
                 // 注意,SkewnessTest Header Name 會隨Option變動的,Function =GridView_Visable()
-              .Numeric("SkewnessTest1", header: "SkewnessTest1", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest1Cell)
-              .Numeric("SkewnessTest2", header: "SkewnessTest2", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest2Cell)
-              .Numeric("SkewnessTest3", header: "SkewnessTest3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest3Cell)
-              .Numeric("SkewnessTest4", header: "SkewnessTest4", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest4Cell)
+              .Numeric("SkewnessTest1", header: "SkewnessTest1", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: skeTest1Cell)
+              .Numeric("SkewnessTest2", header: "SkewnessTest2", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: skeTest2Cell)
+              .Numeric("SkewnessTest3", header: "SkewnessTest3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: skeTest3Cell)
+              .Numeric("SkewnessTest4", header: "SkewnessTest4", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: skeTest4Cell)
 
               // ********end**************
               .Numeric("SkewnessRate", header: "Skewness Rate", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
               .Date("InspDate", header: "Test Date", width: Widths.AnsiChars(10))
-              .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), settings: LabTechCell)
+              .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), settings: labTechCell)
               .Text("Name", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
               .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
               .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
@@ -874,24 +882,27 @@ this.ID);
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnInsert()
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
 
-            int Maxi = MyUtility.Convert.GetInt(dt.Compute("Max(NewKey)", string.Empty));
+            int maxi = MyUtility.Convert.GetInt(dt.Compute("Max(NewKey)", string.Empty));
             base.OnInsert();
 
             DataRow selectDr = ((DataRowView)this.grid.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr["Inspdate"] = DateTime.Now.ToShortDateString();
             selectDr["Inspector"] = this.loginID;
             selectDr["Name"] = MyUtility.GetValue.Lookup("Name", this.loginID, "Pass1", "ID");
-            selectDr["NewKey"] = Maxi + 1;
+            selectDr["NewKey"] = maxi + 1;
             selectDr["poid"] = this.maindr["poid"];
             selectDr["SEQ1"] = this.maindr["SEQ1"];
             selectDr["SEQ2"] = this.maindr["SEQ2"];
         }
 
         // 判斷Grid View有無空白
+
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             DataTable gridTb = (DataTable)this.gridbs.DataSource;
@@ -991,6 +1002,7 @@ this.ID);
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
@@ -1023,7 +1035,7 @@ this.ID);
                     inspdate = string.Format("{0:yyyy-MM-dd}", dr["InspDate"]);
                 }
 
-                DateTime Today = DateTime.Now;
+                DateTime today = DateTime.Now;
                 if (dr.RowState == DataRowState.Added)
                 {
                     List<SqlParameter> spamAdd = new List<SqlParameter>();
@@ -1042,7 +1054,7 @@ this.ID);
                     spamAdd.Add(new SqlParameter("@Inspector", dr["Inspector"]));
                     spamAdd.Add(new SqlParameter("@Result", dr["Result"]));
                     spamAdd.Add(new SqlParameter("@Remark", dr["Remark"]));
-                    spamAdd.Add(new SqlParameter("@AddDate", Today));
+                    spamAdd.Add(new SqlParameter("@AddDate", today));
                     spamAdd.Add(new SqlParameter("@AddName", this.loginID));
                     spamAdd.Add(new SqlParameter("@HorizontalRate", dr["HorizontalRate"]));
                     spamAdd.Add(new SqlParameter("@HorizontalOriginal", dr["HorizontalOriginal"]));
@@ -1088,7 +1100,7 @@ this.ID);
                     spamUpd.Add(new SqlParameter("@Inspector", dr["Inspector"]));
                     spamUpd.Add(new SqlParameter("@Result", dr["Result"]));
                     spamUpd.Add(new SqlParameter("@Remark", dr["Remark"]));
-                    spamUpd.Add(new SqlParameter("@EditDate", Today));
+                    spamUpd.Add(new SqlParameter("@EditDate", today));
                     spamUpd.Add(new SqlParameter("@EditName", this.loginID));
                     spamUpd.Add(new SqlParameter("@HorizontalRate", dr["HorizontalRate"]));
                     spamUpd.Add(new SqlParameter("@HorizontalOriginal", dr["HorizontalOriginal"]));
@@ -1202,9 +1214,9 @@ this.ID);
                 }
                 #region 判斷Wash Result
                 DataTable gridDt = (DataTable)this.gridbs.DataSource;
-                DataRow[] ResultAry = gridDt.Select("Result='Fail'");
+                DataRow[] resultAry = gridDt.Select("Result='Fail'");
                 string result = "Pass";
-                if (ResultAry.Length > 0)
+                if (resultAry.Length > 0)
                 {
                     result = "Fail";
                 }
@@ -1247,24 +1259,24 @@ this.ID);
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -1315,16 +1327,16 @@ this.ID);
 
             // 撈seasonID
             DataTable dtSeason;
-            string SeasonID;
+            string seasonID;
             DBProxy.Current.Select("Production", string.Format(
             "select C.SeasonID from FIR_Laboratory_Wash a WITH (NOLOCK) left join FIR_Laboratory b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C WITH (NOLOCK) ON B.POID=C.ID where a.ID='{0}'", this.maindr["ID"]), out dtSeason);
             if (dtSeason.Rows.Count == 0)
             {
-                SeasonID = string.Empty;
+                seasonID = string.Empty;
             }
             else
             {
-                SeasonID = dtSeason.Rows[0]["SeasonID"].ToString();
+                seasonID = dtSeason.Rows[0]["SeasonID"].ToString();
             }
 
             Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
@@ -1334,7 +1346,7 @@ this.ID);
             excelSheets.Cells[2, 4] = this.txtSEQ.Text.ToString();
             excelSheets.Cells[2, 6] = this.txtColor.Text.ToString();
             excelSheets.Cells[2, 8] = this.txtStyle.Text.ToString();
-            excelSheets.Cells[2, 10] = SeasonID;
+            excelSheets.Cells[2, 10] = seasonID;
             excelSheets.Cells[3, 2] = this.txtSCIRefno.Text.ToString();
             excelSheets.Cells[3, 4] = this.txtWkno.Text.ToString();
             excelSheets.Cells[3, 6] = this.txtResult.Text.ToString();
@@ -1375,8 +1387,8 @@ this.ID);
             {
                 if (MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]) != 0)
                 {
-                    decimal SkewnessRate = (Math.Abs((decimal)dr["SkewnessTest1"] - (decimal)dr["SkewnessTest2"]) / ((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"])) * 2 * 100;
-                    dr["SkewnessRate"] = Math.Round(SkewnessRate, 2);
+                    decimal skewnessRate = (Math.Abs((decimal)dr["SkewnessTest1"] - (decimal)dr["SkewnessTest2"]) / ((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"])) * 2 * 100;
+                    dr["SkewnessRate"] = Math.Round(skewnessRate, 2);
                 }
                 else
                 {
@@ -1389,8 +1401,8 @@ this.ID);
             {
                 if (MyUtility.Convert.GetDecimal(dr["SkewnessTest3"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest4"]) != 0)
                 {
-                    decimal SkewnessRate = (Math.Abs((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"]) / ((decimal)dr["SkewnessTest3"] + (decimal)dr["SkewnessTest4"])) * 100;
-                    dr["SkewnessRate"] = Math.Round(SkewnessRate, 2);
+                    decimal skewnessRate = (Math.Abs((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"]) / ((decimal)dr["SkewnessTest3"] + (decimal)dr["SkewnessTest4"])) * 100;
+                    dr["SkewnessRate"] = Math.Round(skewnessRate, 2);
                 }
                 else
                 {

@@ -32,6 +32,7 @@ namespace Sci.Production.Sewing
             this.txtMdivisionM.Text = Env.User.Keyword;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.Factory = this.txtfactory.Text;
@@ -48,6 +49,7 @@ namespace Sci.Production.Sewing
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             List<string> listSQLFilter = new List<string>();
@@ -177,6 +179,7 @@ where 1=1
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

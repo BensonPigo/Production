@@ -23,6 +23,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -215,10 +216,10 @@ where a.CFANeedInsp <> b.CFANeedInsp and b.DisposeFromClog= 0", out selectData);
 
             foreach (DataRow dr in selectData.Rows)
             {
-                int CFANeedInsp = dr["CFANeedInsp"].ToString() == "True" ? 1 : 0;
+                int cFANeedInsp = dr["CFANeedInsp"].ToString() == "True" ? 1 : 0;
                 updateSqlCmd = updateSqlCmd + $@"
 update PackingList_Detail 
-set CFANeedInsp ={CFANeedInsp} ,CFASelectInspDate = GETDATE()
+set CFANeedInsp ={cFANeedInsp} ,CFASelectInspDate = GETDATE()
 where id='{dr["id"]}'
 and DisposeFromClog= 0
 and CTNStartNo ='{dr["CTNStartNo"]}'

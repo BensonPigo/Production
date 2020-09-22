@@ -64,7 +64,7 @@
         public string Brand { get; set; }
 
         /// <inheritdoc/>
-        public string item { get; set; }
+        public string Item1 { get; set; }
 
         /// <inheritdoc/>
         public string CutRef { get; set; }
@@ -136,7 +136,7 @@
         public string Brand2 { get; set; }
 
         /// <inheritdoc/>
-        public string item2 { get; set; }
+        public string Item21 { get; set; }
 
         /// <inheritdoc/>
         public string CutRef2 { get; set; }
@@ -208,7 +208,7 @@
         public string Brand3 { get; set; }
 
         /// <inheritdoc/>
-        public string item3 { get; set; }
+        public string Item31 { get; set; }
 
         /// <inheritdoc/>
         public string CutRef3 { get; set; }

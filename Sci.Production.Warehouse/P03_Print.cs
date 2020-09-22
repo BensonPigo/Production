@@ -39,9 +39,11 @@ namespace Sci.Production.Warehouse
             // TODO: Complete member initialization
         }
 
-       // string outpa;
+        // string outpa;
 
-       // string sqlcmd;
+        // string sqlcmd;
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
            // var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
@@ -55,6 +57,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;
@@ -362,6 +365,7 @@ namespace Sci.Production.Warehouse
             return result;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dt.Rows.Count <= 0)

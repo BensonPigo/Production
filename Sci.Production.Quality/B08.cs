@@ -13,6 +13,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             if (!MyUtility.Check.Empty(this.CurrentMaintain["Refno"]))
@@ -27,12 +28,14 @@ namespace Sci.Production.Quality
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtRefno.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["Refno"]))
@@ -44,6 +47,7 @@ namespace Sci.Production.Quality
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             var result = base.ClickSave();

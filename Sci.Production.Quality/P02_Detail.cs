@@ -28,11 +28,11 @@ namespace Sci.Production.Quality
         private string seq1;
         private string seq2;
 
-        public P02_Detail(bool CanEdit, string airID, string spNo)
+        public P02_Detail(bool canEdit, string airID, string spNo)
         {
             this.InitializeComponent();
             this.id = airID;
-            this.canedit = CanEdit;
+            this.canedit = canEdit;
             this.Btn_status(this.id);
             this.Button_enable(this.canedit);
 
@@ -65,6 +65,7 @@ namespace Sci.Production.Quality
             this.comboResult.DisplayMember = "Value";
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -93,20 +94,20 @@ namespace Sci.Production.Quality
                     this.loginID, this.id);
 
                     DualResult upResult1;
-                    TransactionScope _transactionscope1 = new TransactionScope();
-                    using (_transactionscope1)
+                    TransactionScope transactionscope1 = new TransactionScope();
+                    using (transactionscope1)
                     {
                         try
                         {
                             if (!(upResult1 = DBProxy.Current.Execute(null, updatesql1)))
                             {
-                                _transactionscope1.Dispose();
+                                transactionscope1.Dispose();
 
                                 return;
                             }
 
-                            _transactionscope1.Complete();
-                            _transactionscope1.Dispose();
+                            transactionscope1.Complete();
+                            transactionscope1.Dispose();
                             this.Btn_status(this.id);
                             this.btnEdit.Text = "Edit";
                             this.btnAmend.Text = "Encode";
@@ -114,7 +115,7 @@ namespace Sci.Production.Quality
                         }
                         catch (Exception ex)
                         {
-                            _transactionscope1.Dispose();
+                            transactionscope1.Dispose();
                             this.ShowErr("Commit transaction error.", ex);
                             return;
                         }
@@ -224,20 +225,20 @@ WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
                 }
 
                 DualResult upResult;
-                TransactionScope _transactionscope = new TransactionScope();
-                using (_transactionscope)
+                TransactionScope transactionscope = new TransactionScope();
+                using (transactionscope)
                 {
                     try
                     {
                         if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
 
                             return;
                         }
 
-                        _transactionscope.Complete();
-                        _transactionscope.Dispose();
+                        transactionscope.Complete();
+                        transactionscope.Dispose();
                         MyUtility.Msg.InfoBox("Successfully");
                         this.btnAmend.Text = "Amend";
                         this.btnEdit.Text = "Edit";
@@ -247,7 +248,7 @@ WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
                     }
                     catch (Exception ex)
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr("Commit transaction error.", ex);
                         return;
                     }
@@ -341,27 +342,27 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
 
                         string updatesql = string.Empty;
                         #region  寫入實體Table Encode
-                        string InspDate = MyUtility.Check.Empty(this.dateInspectDate.Value) ? "Null" : "'" + string.Format("{0:yyyy-MM-dd}", this.dateInspectDate.Value) + "'";
+                        string inspDate = MyUtility.Check.Empty(this.dateInspectDate.Value) ? "Null" : "'" + string.Format("{0:yyyy-MM-dd}", this.dateInspectDate.Value) + "'";
                         updatesql = string.Format(
                         "Update Air set InspQty= '{0}',RejectQty='{1}',Inspdate = {2},Inspector = '{3}',Result= '{4}',Defect='{5}',Remark='{6}' where id ='{7}'",
                         this.txtInspectedQty.Text, this.txtRejectedQty.Text,
-                        InspDate, this.txtInspector.TextBox1.Text, this.comboResult.Text, this.editDefect.Text, this.txtRemark.Text, this.id);
+                        inspDate, this.txtInspector.TextBox1.Text, this.comboResult.Text, this.editDefect.Text, this.txtRemark.Text, this.id);
 
                         DualResult upResult;
-                        TransactionScope _transactionscope = new TransactionScope();
-                        using (_transactionscope)
+                        TransactionScope transactionscope = new TransactionScope();
+                        using (transactionscope)
                         {
                             try
                             {
                                 if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                                 {
-                                    _transactionscope.Dispose();
+                                    transactionscope.Dispose();
                                     MyUtility.Msg.WarningBox("Update Fail!!");
                                     return;
                                 }
 
-                                _transactionscope.Complete();
-                                _transactionscope.Dispose();
+                                transactionscope.Complete();
+                                transactionscope.Dispose();
                                 MyUtility.Msg.InfoBox("Successfully");
                                 this.btnAmend.Text = "Encode";
                                 this.btnEdit.Text = "Edit";
@@ -369,7 +370,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                             }
                             catch (Exception ex)
                             {
-                                _transactionscope.Dispose();
+                                transactionscope.Dispose();
                                 this.ShowErr("Commit transaction error.", ex);
                                 return;
                             }

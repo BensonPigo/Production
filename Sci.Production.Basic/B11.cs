@@ -19,6 +19,7 @@ namespace Sci.Production.Basic
     {
         private string oldStickerComb;
         private string oldStickerCombMix;
+
         /// <summary>
         /// B11
         /// </summary>
@@ -101,7 +102,6 @@ AND Junk = 0
             {
                 if (MyUtility.Check.Empty(newStickerComb))
                 {
-
                     this.CurrentMaintain["StickerCombinationUkey"] = DBNull.Value;
                     this.txtStickerComb.Text = string.Empty;
                     return;
@@ -222,7 +222,6 @@ AND Junk=0";
 
         private void TxtStickerCombMix_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-
             string cmd = $@"
 SELECT  [Shipping Mark Combination ID]=ID
 FROM ShippingMarkCombination

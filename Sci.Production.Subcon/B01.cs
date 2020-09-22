@@ -46,13 +46,16 @@ WHERE Type='Pms_LocalItem_UnPack'
             this.dropDownUnpack.ValueMember = "Value";
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.groupbox_status_control();
+            this.Groupbox_status_control();
         }
 
         // copy前清空id
+
+        /// <inheritdoc/>
         protected override void ClickCopyAfter()
         {
             this.CurrentMaintain["Refno"] = DBNull.Value;
@@ -66,6 +69,8 @@ WHERE Type='Pms_LocalItem_UnPack'
         }
 
         // 編輯狀態限制
+
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -80,6 +85,8 @@ WHERE Type='Pms_LocalItem_UnPack'
         }
 
         // 存檔前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (string.IsNullOrWhiteSpace(this.CurrentMaintain["refno"].ToString()))
@@ -189,6 +196,7 @@ WHERE Type='Pms_LocalItem_UnPack'
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -201,6 +209,7 @@ WHERE Type='Pms_LocalItem_UnPack'
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void ClickClose()
         {
             string updatesql = $@"update  LocalItem set Status = 'Locked' where Refno = '{this.CurrentMaintain["Refno"]}'";
@@ -214,6 +223,7 @@ WHERE Type='Pms_LocalItem_UnPack'
             base.ClickClose();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnclose()
         {
             string updatesql = $@"update  LocalItem set Status = 'New' where Refno = '{this.CurrentMaintain["Refno"]}'";
@@ -228,7 +238,7 @@ WHERE Type='Pms_LocalItem_UnPack'
         }
 
         // 算CBM
-        private void getCBM()
+        private void GetCBM()
         {
             if (this.CurrentMaintain == null)
             {
@@ -272,7 +282,7 @@ WHERE Type='Pms_LocalItem_UnPack'
         }
 
         // 改變artworktype時，控制可輸入的欄位
-        private void txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
+        private void Txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
         {
             if (MyUtility.Convert.GetString(this.CurrentMaintain["category"]).EqualString("Carton"))
             {
@@ -291,10 +301,10 @@ WHERE Type='Pms_LocalItem_UnPack'
 
         private void W_H_L_Validated(object sender, EventArgs e)
         {
-            this.getCBM();
+            this.GetCBM();
         }
 
-        private void btnQuotationRecord_Click(object sender, EventArgs e)
+        private void BtnQuotationRecord_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -308,6 +318,8 @@ WHERE Type='Pms_LocalItem_UnPack'
         }
 
         // 按鈕變色
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -376,7 +388,7 @@ WHERE Type='Pms_LocalItem_UnPack'
             }
         }
 
-        private void btnPaymentHistory_Click(object sender, EventArgs e)
+        private void BtnPaymentHistory_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -389,7 +401,7 @@ WHERE Type='Pms_LocalItem_UnPack'
             this.RenewData();
         }
 
-        private void groupbox_status_control()
+        private void Groupbox_status_control()
         {
             this.CurrentMaintain["category"] = this.txtartworktype_ftyCategory.Text;
             switch (this.txtartworktype_ftyCategory.Text.Trim())
@@ -443,13 +455,13 @@ WHERE Type='Pms_LocalItem_UnPack'
             }
         }
 
-        private void txtartworktype_ftyCategory_Validating(object sender, CancelEventArgs e)
+        private void Txtartworktype_ftyCategory_Validating(object sender, CancelEventArgs e)
         {
-            this.groupbox_status_control();
+            this.Groupbox_status_control();
         }
 
         // [Thread Type]右鍵開窗
-        private void txtThreadType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtThreadType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.txtThreadType.ReadOnly == true)
@@ -468,7 +480,7 @@ WHERE Type='Pms_LocalItem_UnPack'
         }
 
         // [Thread Type]檢核
-        private void txtThreadType_Validating(object sender, CancelEventArgs e)
+        private void TxtThreadType_Validating(object sender, CancelEventArgs e)
         {
             string textValue = this.txtThreadType.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtThreadType.OldValue)
@@ -484,7 +496,7 @@ WHERE Type='Pms_LocalItem_UnPack'
         }
 
         // 計算cbm相關欄位的valid事件
-        private void comboCartonDimension_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboCartonDimension_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.CurrentMaintain != null && this.comboCartonDimension.SelectedValue != null)
             {
@@ -498,18 +510,18 @@ WHERE Type='Pms_LocalItem_UnPack'
                 return;
             }
 
-            this.getCBM();
+            this.GetCBM();
         }
 
-        private void btnThread_Click(object sender, EventArgs e)
+        private void BtnThread_Click(object sender, EventArgs e)
         {
             var callfrm = new B01_ThreadColorPrice(true, this.CurrentMaintain["Refno"].ToString(), string.Empty, string.Empty);
             callfrm.ShowDialog();
         }
 
-        Form batchapprove;
+        private Form batchapprove;
 
-        private void btnBatchApprove_Click(object sender, EventArgs e)
+        private void BtnBatchApprove_Click(object sender, EventArgs e)
         {
             if (!this.Perm.Confirm)
             {
@@ -519,7 +531,7 @@ WHERE Type='Pms_LocalItem_UnPack'
 
             if (this.batchapprove == null || this.batchapprove.IsDisposed)
             {
-                this.batchapprove = new B01_BatchApprove(this.reload);
+                this.batchapprove = new B01_BatchApprove(this.Reload);
                 this.batchapprove.Show();
             }
             else
@@ -528,7 +540,7 @@ WHERE Type='Pms_LocalItem_UnPack'
             }
         }
 
-        private void btnSetCardboardPads_Click(object sender, EventArgs e)
+        private void BtnSetCardboardPads_Click(object sender, EventArgs e)
         {
             Form form = new B01_SetCardBoarsPads(this.CurrentMaintain);
             form.ShowDialog(this);
@@ -536,6 +548,7 @@ WHERE Type='Pms_LocalItem_UnPack'
             this.RenewData();
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
@@ -555,7 +568,7 @@ WHERE Type='Pms_LocalItem_UnPack'
             }
         }
 
-        public void reload()
+        public void Reload()
         {
             this.ReloadDatas();
             this.RenewData();

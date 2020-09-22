@@ -96,7 +96,7 @@ namespace Sci.Production.PPIC
             DataTable dt;
             DualResult result;
             string typeSql = (this.FormCode == "Fabric") ? " and FabricType = 'F'" : " and FabricType = 'A'";
-            string sqlcmd = string.Format(Prgs.selePoItemSqlCmd(), this.Dr_master["POID"].ToString()) + typeSql;
+            string sqlcmd = string.Format(Prgs.SelePoItemSqlCmd(), this.Dr_master["POID"].ToString()) + typeSql;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dt))
             {
                 if (dt.Rows.Count > 0)

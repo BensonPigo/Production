@@ -10,8 +10,8 @@ namespace Sci.Production.Subcon
     {
         protected DataRow dr;
         protected DataRow dr_detail;
-        bool _canedit;
-        bool _canconfirm;
+        private bool _canedit;
+        private bool _canconfirm;
 
         public B01_Quotation(bool canedit, DataRow data, bool cancomfirmed)
         {
@@ -53,6 +53,7 @@ namespace Sci.Production.Subcon
             };
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -80,6 +81,7 @@ namespace Sci.Production.Subcon
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickNewBefore()
         {
             bool flag = false;
@@ -102,6 +104,8 @@ namespace Sci.Production.Subcon
         }
 
         // 新增預設值
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -113,6 +117,8 @@ namespace Sci.Production.Subcon
         }
 
         // 修改前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].ToString() == "Approved")
@@ -124,6 +130,7 @@ namespace Sci.Production.Subcon
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             bool flag = false;
@@ -145,7 +152,7 @@ namespace Sci.Production.Subcon
             var suppid = string.Empty;
             var price = 0.0;
             var currencyid = string.Empty;
-            DateTime? QuotDate = null;
+            DateTime? quotDate = null;
 
             #region 選取的報價資料
             switch (this.CurrentMaintain["ChooseSupp"].ToString())
@@ -154,30 +161,30 @@ namespace Sci.Production.Subcon
                     suppid = this.CurrentMaintain["localsuppid1"].ToString();
                     price = double.Parse(this.CurrentMaintain["price1"].ToString());
                     currencyid = this.CurrentMaintain["currencyid1"].ToString();
-                    QuotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate1"]);
+                    quotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate1"]);
                     break;
                 case "2":
                     suppid = this.CurrentMaintain["localsuppid2"].ToString();
                     price = double.Parse(this.CurrentMaintain["price2"].ToString());
                     currencyid = this.CurrentMaintain["currencyid2"].ToString();
-                    QuotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate2"]);
+                    quotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate2"]);
                     break;
                 case "3":
                     suppid = this.CurrentMaintain["localsuppid3"].ToString();
                     price = double.Parse(this.CurrentMaintain["price3"].ToString());
                     currencyid = this.CurrentMaintain["currencyid3"].ToString();
-                    QuotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate3"]);
+                    quotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate3"]);
                     break;
                 case "4":
                     suppid = this.CurrentMaintain["localsuppid4"].ToString();
                     price = double.Parse(this.CurrentMaintain["price4"].ToString());
                     currencyid = this.CurrentMaintain["currencyid4"].ToString();
-                    QuotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate4"]);
+                    quotDate = MyUtility.Convert.GetDate(this.CurrentMaintain["QuotDate4"]);
                     break;
             }
             #endregion
 
-            if (string.IsNullOrWhiteSpace(suppid) || string.IsNullOrWhiteSpace(currencyid) || price == 0.0 || MyUtility.Check.Empty(QuotDate))
+            if (string.IsNullOrWhiteSpace(suppid) || string.IsNullOrWhiteSpace(currencyid) || price == 0.0 || MyUtility.Check.Empty(quotDate))
             {
                 MyUtility.Msg.WarningBox("Choosed Set of data can't be empty!!");
                 return false;
@@ -187,6 +194,8 @@ namespace Sci.Production.Subcon
         }
 
         // 刪除前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].ToString() == "Approved")
@@ -199,11 +208,14 @@ namespace Sci.Production.Subcon
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             var suppid = string.Empty;
@@ -243,15 +255,15 @@ namespace Sci.Production.Subcon
             }
 
             DataTable dt;
-            var s = new B01_BatchApprove(this.reload);
-            DualResult result = DBProxy.Current.Select(string.Empty, s.sqlcmd(MyUtility.Convert.GetString(this.CurrentMaintain["Refno"]), MyUtility.Convert.GetString(this.CurrentMaintain["ukey"])), out dt);
+            var s = new B01_BatchApprove(this.Reload);
+            DualResult result = DBProxy.Current.Select(string.Empty, s.Sqlcmd(MyUtility.Convert.GetString(this.CurrentMaintain["Refno"]), MyUtility.Convert.GetString(this.CurrentMaintain["ukey"])), out dt);
             if (!result)
             {
                 this.ShowErr(result);
                 return;
             }
 
-            if (!s.confirm(dt))
+            if (!s.Confirm(dt))
             {
                 return;
             }
@@ -259,7 +271,7 @@ namespace Sci.Production.Subcon
             base.ClickConfirm();
         }
 
-        public void reload()
+        public void Reload()
         {
             this.ReloadDatas();
             this.RenewData();

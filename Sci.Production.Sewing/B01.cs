@@ -11,6 +11,7 @@ namespace Sci.Production.Sewing
             this.DefaultFilter = string.Format("Type = 'SO'");
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             this.txtID.ReadOnly = true;

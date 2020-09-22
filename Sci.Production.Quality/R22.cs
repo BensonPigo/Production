@@ -10,9 +10,9 @@ namespace Sci.Production.Quality
 {
     public partial class R22 : Win.Tems.PrintForm
     {
-        DateTime? AuditDate1;
-        DateTime? AuditDate2;
-        System.Data.DataTable printData;
+        private DateTime? AuditDate1;
+        private DateTime? AuditDate2;
+        private System.Data.DataTable printData;
 
         public R22(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -51,6 +51,8 @@ namespace Sci.Production.Quality
         }
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.AuditDate1 = this.dateAuditDate.Value1;
@@ -60,6 +62,8 @@ namespace Sci.Production.Quality
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -738,24 +742,28 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
         {
             int cc1 = 0, cc2 = 0;
             string c3 = string.Empty;
-            if (cc > 26) // 將欄位數轉成英文字元
+
+            // 將欄位數轉成英文字元
+            if (cc > 26)
             {
                 cc1 = cc / 26;
-                char C = Convert.ToChar(64 + cc1);
+                char c = Convert.ToChar(64 + cc1);
                 cc2 = cc % 26;
-                char C2 = Convert.ToChar(64 + cc2);
-                c3 = C.ToString() + C2.ToString();
+                char c2 = Convert.ToChar(64 + cc2);
+                c3 = c.ToString() + c2.ToString();
             }
             else
             {
-                char C2 = Convert.ToChar(64 + cc);
-                c3 = C2.ToString();
+                char c2 = Convert.ToChar(64 + cc);
+                c3 = c2.ToString();
             }
 
             return c3;
         }
 
         // 產生Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // int cc1 = 0, cc2 = 0;
@@ -794,7 +802,9 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 objSheets.Cells[1, 1] = "Pass Rate"; // 加入Pass Rate
 
                 #region 依據欄位數量,指定合併,框線,底色
-                for (int i = 1; i < ((this.printData.Columns.Count - 4) / 3) + 1; i++) // 第4列,在summary之後要做幾次合併
+
+                // 第4列,在summary之後要做幾次合併
+                for (int i = 1; i < ((this.printData.Columns.Count - 4) / 3) + 1; i++)
                 {
                     string s1 = this.IntToExcelcolumn(2 + (i * 3)) + "4";
                     string s2 = this.IntToExcelcolumn(4 + (i * 3)) + "4";
@@ -836,7 +846,9 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 #region 依據欄位數量,指定合併,框線,底色
-                for (int i = 1; i < ((this.printData.Columns.Count - 1) / 3) + 1; i++) // 第3列,在date之後要做幾次合併
+
+                // 第3列,在date之後要做幾次合併
+                for (int i = 1; i < ((this.printData.Columns.Count - 1) / 3) + 1; i++)
                 {
                     string s1 = this.IntToExcelcolumn(-1 + (i * 3)) + "3";
                     string s2 = this.IntToExcelcolumn(1 + (i * 3)) + "3";

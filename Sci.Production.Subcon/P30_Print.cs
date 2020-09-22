@@ -14,23 +14,25 @@ namespace Sci.Production.Subcon
 {
     public partial class P30_Print : Win.Tems.PrintForm
     {
-        DualResult result;
-        DataTable dtHeader;
-        DataTable dtBody;
-        DataTable dtexcel;
-        DataRow CurrentDataRow;
-        string currentID;
-        string currentdate;
+        private DualResult result;
+        private DataTable dtHeader;
+        private DataTable dtBody;
+        private DataTable dtexcel;
+        private DataRow CurrentDataRow;
+        private string currentID;
+        private string currentdate;
 
-        public P30_Print(DataRow row, string ID, string issuedate)
+        public P30_Print(DataRow row, string iD, string issuedate)
         {
             this.InitializeComponent();
             this.CurrentDataRow = row;
-            this.currentID = ID;
+            this.currentID = iD;
             this.currentdate = issuedate;
         }
 
         // 設定畫面
+
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -39,11 +41,14 @@ namespace Sci.Production.Subcon
         }
 
         // 設定參數
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             // print Rdlc
@@ -214,6 +219,8 @@ order by orderid,a.refno,threadcolorid", this.currentID);
         }
 
         // To Rdlc Print
+
+        /// <inheritdoc/>
         protected override bool OnToPrint(ReportDefinition report)
         {
             if ((this.dtBody == null || this.dtBody.Rows.Count == 0) || (this.dtHeader == null || this.dtHeader.Rows.Count == 0))
@@ -225,38 +232,38 @@ order by orderid,a.refno,threadcolorid", this.currentID);
             if (this.radioNmrmalFormat.Checked == true)
             {
                 #region 表頭
-                string RptTitle = this.dtHeader.Rows[0]["RptTitle"].ToString().Trim();
-                string Supplier = this.dtHeader.Rows[0]["Supplier"].ToString().Trim();
-                string FactoryID = this.dtHeader.Rows[0]["FactoryID"].ToString().Trim();
-                string Tel = this.dtHeader.Rows[0]["Tel"].ToString().Trim();
-                string Address = this.dtHeader.Rows[0]["Address"].ToString().Trim();
-                string AddressEN = this.dtHeader.Rows[0]["AddressEN"].ToString().Trim();
+                string rptTitle = this.dtHeader.Rows[0]["RptTitle"].ToString().Trim();
+                string supplier = this.dtHeader.Rows[0]["Supplier"].ToString().Trim();
+                string factoryID = this.dtHeader.Rows[0]["FactoryID"].ToString().Trim();
+                string tel = this.dtHeader.Rows[0]["Tel"].ToString().Trim();
+                string address = this.dtHeader.Rows[0]["Address"].ToString().Trim();
+                string addressEN = this.dtHeader.Rows[0]["AddressEN"].ToString().Trim();
                 string fTel = this.dtHeader.Rows[0]["fTel"].ToString().Trim();
-                string Fax = this.dtHeader.Rows[0]["Fax"].ToString().Trim();
+                string fax = this.dtHeader.Rows[0]["Fax"].ToString().Trim();
                 decimal amount = MyUtility.Convert.GetDecimal(this.CurrentDataRow["amount"]);
                 decimal vat = MyUtility.Convert.GetDecimal(this.CurrentDataRow["vat"]);
-                string CurrencyID = this.CurrentDataRow["CurrencyID"].ToString();
+                string currencyID = this.CurrentDataRow["CurrencyID"].ToString();
                 string vatrate = this.CurrentDataRow["vatrate"].ToString() + "%";
-                string Remark = this.CurrentDataRow["remark"].ToString();
+                string remark = this.CurrentDataRow["remark"].ToString();
 
-                decimal Total = (decimal)this.CurrentDataRow["amount"] + (decimal)this.CurrentDataRow["vat"];
+                decimal total = (decimal)this.CurrentDataRow["amount"] + (decimal)this.CurrentDataRow["vat"];
                 report = new ReportDefinition();
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", this.currentID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", this.currentdate));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address", Address));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", AddressEN));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", supplier));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", tel));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address", address));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", addressEN));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("fTel", fTel));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", FactoryID));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", fax));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", factoryID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("amount", amount.ToString("#,0.00")));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat.ToString("#,0.00")));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", Total.ToString("#,0.00")));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", total.ToString("#,0.00")));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", currencyID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vatrate", vatrate));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", remark));
 
                 #endregion
 
@@ -287,33 +294,33 @@ order by orderid,a.refno,threadcolorid", this.currentID);
             else
             {
                 #region 表頭
-                string RptTitle = this.dtHeader.Rows[0]["RptTitle"].ToString().Trim();
-                string Supplier = this.dtHeader.Rows[0]["Supplier"].ToString().Trim();
-                string Tel = this.dtHeader.Rows[0]["Tel"].ToString().Trim();
-                string AddressEN = this.dtHeader.Rows[0]["AddressEN"].ToString().Trim();
+                string rptTitle = this.dtHeader.Rows[0]["RptTitle"].ToString().Trim();
+                string supplier = this.dtHeader.Rows[0]["Supplier"].ToString().Trim();
+                string tel = this.dtHeader.Rows[0]["Tel"].ToString().Trim();
+                string addressEN = this.dtHeader.Rows[0]["AddressEN"].ToString().Trim();
                 string fTel = this.dtHeader.Rows[0]["fTel"].ToString().Trim();
-                string Fax = this.dtHeader.Rows[0]["Fax"].ToString().Trim();
+                string fax = this.dtHeader.Rows[0]["Fax"].ToString().Trim();
                 decimal amount = MyUtility.Convert.GetDecimal(this.CurrentDataRow["amount"]);
-                string CurrencyID = this.CurrentDataRow["CurrencyID"].ToString();
+                string currencyID = this.CurrentDataRow["CurrencyID"].ToString();
                 decimal vat = MyUtility.Convert.GetDecimal(this.CurrentDataRow["vat"]);
-                string Remark = this.CurrentDataRow["remark"].ToString();
-                decimal Total = (decimal)this.CurrentDataRow["amount"] + (decimal)this.CurrentDataRow["vat"];
-                string AddName = this.dtHeader.Rows[0]["AddName"].ToString();
+                string remark = this.CurrentDataRow["remark"].ToString();
+                decimal total = (decimal)this.CurrentDataRow["amount"] + (decimal)this.CurrentDataRow["vat"];
+                string addName = this.dtHeader.Rows[0]["AddName"].ToString();
                 report = new ReportDefinition();
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", this.currentID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", this.currentdate));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Delivery", string.Empty));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", AddressEN));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", supplier));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", tel));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", addressEN));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("fTel", fTel));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", fax));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("amount", amount.ToString("#,0.00")));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", Total.ToString("#,0.00")));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddName", AddName));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", total.ToString("#,0.00")));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", currencyID));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", remark));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddName", addName));
 
                 #endregion
 
@@ -342,12 +349,12 @@ order by orderid,a.refno,threadcolorid", this.currentID);
 
             // 指定是哪個 RDLC
             #region  指定是哪個 RDLC
-            Type ReportResourceNamespace = typeof(P30_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = this.radioNmrmalFormat.Checked ? "P30_Print.rdlc" : "P30_Print_ByRefno.rdlc";
+            Type reportResourceNamespace = typeof(P30_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = this.radioNmrmalFormat.Checked ? "P30_Print.rdlc" : "P30_Print_ByRefno.rdlc";
 
             IReportResource reportresource;
-            if (!(this.result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(this.result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
             {
                 this.ShowException(this.result);
                 return this.result;
@@ -367,6 +374,8 @@ order by orderid,a.refno,threadcolorid", this.currentID);
         }
 
         // To Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dtexcel == null || this.dtexcel.Rows.Count == 0)
@@ -394,7 +403,7 @@ order by orderid,a.refno,threadcolorid", this.currentID);
         }
 
         // 變更radio後調整畫面顯示
-        private void radioPanel1_ValueChanged(object sender, EventArgs e)
+        private void RadioPanel1_ValueChanged(object sender, EventArgs e)
         {
             if (this.radioCoatsOrderFormat.Checked == true)
             {

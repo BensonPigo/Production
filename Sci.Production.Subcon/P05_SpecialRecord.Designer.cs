@@ -83,7 +83,7 @@
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnImport
             // 
@@ -95,7 +95,7 @@
             this.btnImport.TabIndex = 1;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // labelSPNo
             // 
@@ -115,7 +115,7 @@
             this.btnFindNow.TabIndex = 2;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
             // 
             // txtSPNo
             // 
@@ -125,7 +125,7 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(122, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSPNo_Validating);
             // 
             // groupBox2
             // 
@@ -161,7 +161,7 @@
             this.txtMotherSPNo.Name = "txtMotherSPNo";
             this.txtMotherSPNo.Size = new System.Drawing.Size(122, 23);
             this.txtMotherSPNo.TabIndex = 1;
-            this.txtMotherSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtMotherSPNo_Validating);
+            this.txtMotherSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMotherSPNo_Validating);
             // 
             // labelMotherSPNo
             // 

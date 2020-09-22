@@ -33,9 +33,9 @@ namespace Sci.Production.Quality
             this.comboFactory.SetDataSource();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-
             this.sp1 = this.txtSP_s.Text;
             this.sp2 = this.txtSP_e.Text;
             this.MDivisionID = this.comboM.Text;
@@ -53,8 +53,7 @@ namespace Sci.Production.Quality
                     MyUtility.Check.Empty(this.Buyerdelivery1) &&
                     MyUtility.Check.Empty(this.Buyerdelivery2) &&
                     MyUtility.Check.Empty(this.sp1) &&
-                    MyUtility.Check.Empty(this.sp2)
-                )
+                    MyUtility.Check.Empty(this.sp2))
             {
                 MyUtility.Msg.InfoBox("Audit Date ,Buyer Delivery and SP# can't be all empty.");
 
@@ -64,6 +63,7 @@ namespace Sci.Production.Quality
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -154,21 +154,18 @@ WHERE 1=1
                 {
                     sqlCmd.Append($"AND c.FactoryID =@FactoryID " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
-
                 }
 
                 if (!MyUtility.Check.Empty(this.Brand))
                 {
                     sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@Brand", this.Brand));
-
                 }
 
                 if (!MyUtility.Check.Empty(this.Stage))
                 {
                     sqlCmd.Append($"AND c.Stage=@Stage " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@Stage", this.Stage));
-
                 }
                 #endregion
 
@@ -322,21 +319,18 @@ WHERE 1=1
                 {
                     sqlCmd.Append($"AND c.FactoryID =@FactoryID " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
-
                 }
 
                 if (!MyUtility.Check.Empty(this.Brand))
                 {
                     sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@Brand", this.Brand));
-
                 }
 
                 if (!MyUtility.Check.Empty(this.Stage))
                 {
                     sqlCmd.Append($"AND c.Stage=@Stage " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@Stage", this.Stage));
-
                 }
                 #endregion
 
@@ -415,6 +409,7 @@ DROP TABLE #tmp ,#PackingList_Detail
             return Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.SetCount(this.printData.Rows.Count);
@@ -439,12 +434,13 @@ DROP TABLE #tmp ,#PackingList_Detail
                     break;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{templateName}.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{templateName}.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, $"{templateName}.xltx", 2, false, null, objApp); // 將datatable copy to excel
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
             // 客製化欄位，記得設定this.IsSupportCopy = true
-            //this.CreateCustomizedExcel(ref objSheets);
+            // this.CreateCustomizedExcel(ref objSheets);
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R32");
@@ -454,7 +450,7 @@ DROP TABLE #tmp ,#PackingList_Detail
             Marshal.ReleaseComObject(objApp);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return true;
         }
     }

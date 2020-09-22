@@ -14,7 +14,7 @@ namespace Sci.Production.Quality
     public partial class P21 : Win.Tems.Input6
     {
         private readonly string loginID = Env.User.UserID;
-        string tmpId;
+        private string tmpId;
 
         private readonly Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
 
@@ -26,6 +26,7 @@ namespace Sci.Production.Quality
            // this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -37,21 +38,21 @@ namespace Sci.Production.Quality
             this.comboTeam.ValueMember = "Key";
             this.comboTeam.DisplayMember = "Value";
 
-            Dictionary<string, string> Stage_RowSource = new Dictionary<string, string>();
-            Stage_RowSource.Add("I", "Comments/Roving");
-            Stage_RowSource.Add("C", "Change Over");
-            Stage_RowSource.Add("P", "Stagger");
-            Stage_RowSource.Add("R", "Re-Stagger");
-            Stage_RowSource.Add("F", "Final");
-            Stage_RowSource.Add("B", "Buyer");
-            this.comboInspectionStage.DataSource = new BindingSource(Stage_RowSource, null);
+            Dictionary<string, string> stage_RowSource = new Dictionary<string, string>();
+            stage_RowSource.Add("I", "Comments/Roving");
+            stage_RowSource.Add("C", "Change Over");
+            stage_RowSource.Add("P", "Stagger");
+            stage_RowSource.Add("R", "Re-Stagger");
+            stage_RowSource.Add("F", "Final");
+            stage_RowSource.Add("B", "Buyer");
+            this.comboInspectionStage.DataSource = new BindingSource(stage_RowSource, null);
             this.comboInspectionStage.ValueMember = "Key";
             this.comboInspectionStage.DisplayMember = "Value";
 
-            Dictionary<string, string> Result_RowSource = new Dictionary<string, string>();
-            Result_RowSource.Add("P", "Pass");
-            Result_RowSource.Add("F", "Fail");
-            this.comboResult.DataSource = new BindingSource(Result_RowSource, null);
+            Dictionary<string, string> result_RowSource = new Dictionary<string, string>();
+            result_RowSource.Add("P", "Pass");
+            result_RowSource.Add("F", "Fail");
+            this.comboResult.DataSource = new BindingSource(result_RowSource, null);
             this.comboResult.ValueMember = "Key";
             this.comboResult.DisplayMember = "Value";
             #endregion
@@ -81,6 +82,7 @@ from Factory ";
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             List<SqlParameter> spam = new List<SqlParameter>();
@@ -128,6 +130,7 @@ from Factory ";
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -149,11 +152,12 @@ where a.ID='{0}'",
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings defectCode = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings defectQty = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings AreaCode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings areaCode = new DataGridViewGeneratorTextColumnSettings();
 
             #region MousClick Event
             defectCode.CellMouseClick += (s, e) =>
@@ -232,7 +236,7 @@ where a.ID='{0}'",
                     }
                 }
             };
-            AreaCode.EditingMouseDown += (s, e) =>
+            areaCode.EditingMouseDown += (s, e) =>
             {
                 DataRow drDesc;
                 if (e.RowIndex == -1)
@@ -269,7 +273,7 @@ where a.ID='{0}'",
                 }
             };
 
-            AreaCode.CellMouseClick += (s, e) =>
+            areaCode.CellMouseClick += (s, e) =>
             {
                 DataRow drDesc;
                 if (e.RowIndex == -1)
@@ -373,7 +377,7 @@ where a.ID='{0}'",
                     return;
                 }
             };
-            AreaCode.CellValidating += (s, e) =>
+            areaCode.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -413,13 +417,14 @@ where a.ID='{0}'",
             .Text("GarmentDefectTypeID", header: "Defect Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("GarmentDefectCodeid", header: "Defect Code", width: Widths.AnsiChars(10), settings: defectCode)
             .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
-            .Text("CFAAreaID", header: "Area Code", width: Widths.AnsiChars(10), settings: AreaCode)
+            .Text("CFAAreaID", header: "Area Code", width: Widths.AnsiChars(10), settings: areaCode)
             .Text("AreaDesc", header: "Area Desc", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(30))
             .Numeric("qty", header: "No.of Defects", width: Widths.AnsiChars(5), settings: defectQty)
             .Text("Action", header: "Action", width: Widths.AnsiChars(20));
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -458,6 +463,7 @@ where a.ID='{0}'",
                 }
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -497,6 +503,8 @@ where a.ID='{0}'",
         }
 
         // save 前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             DataTable gridDT = (DataTable)this.detailgridbs.DataSource;
@@ -606,7 +614,7 @@ where a.ID='{0}'",
             }
 
             int qty = 0;
-            int InQty = 0;
+            int inQty = 0;
 
             foreach (DataRow row in this.DetailDatas)
             {
@@ -614,8 +622,8 @@ where a.ID='{0}'",
             }
 
             this.CurrentMaintain["DefectQty"] = qty.ToString();
-            InQty = Convert.ToInt32(this.numInspectQty.Text);
-            if (qty > InQty)
+            inQty = Convert.ToInt32(this.numInspectQty.Text);
+            if (qty > inQty)
             {
                 MyUtility.Msg.WarningBox("<Defects Qty> cannot more than <Inspect Qty>", "Warning");
                 return false;
@@ -624,6 +632,7 @@ where a.ID='{0}'",
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -634,6 +643,8 @@ where a.ID='{0}'",
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             DataTable dt;
@@ -648,12 +659,15 @@ where a.ID='{0}'",
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
         }
 
         // delete前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             DataRow dr = this.grid.GetDataRow<DataRow>(this.grid.GetSelectedRowIndex());

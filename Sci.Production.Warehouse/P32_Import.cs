@@ -31,6 +31,8 @@ namespace Sci.Production.Warehouse
         }
 
         // Form Load
+
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             string sqlcmd;
