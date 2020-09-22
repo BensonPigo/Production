@@ -466,6 +466,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Text("WashLab", header: "WashLab Report", iseditingreadonly: true, settings: ts10) // 33
             .Text("Preshrink", header: "Preshrink", iseditingreadonly: true) // 34
             .EditText("Remark", header: "Remark", iseditingreadonly: true) // 35
+            .EditText("TPERemark", header: "TPE Remark", iseditingreadonly: true) // 36
             ;
             #endregion
 
@@ -707,6 +708,7 @@ from(
 			, Article
             , FabricCombo
 			, SustainableMaterial
+			, TPERemark
     from (
         select  *
                 , -len(description) as len_D 
@@ -798,6 +800,7 @@ from(
 					, [Article] = aft.Article
 					, EachCons.FabricCombo 
 					, [SustainableMaterial] = IIF(fs.SustainableMaterial='Recycled' and fabric.MtlTypeID='HANGTAG',1,0)
+					, [TPERemark]=a.Remark
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -910,6 +913,7 @@ from(
 					, [Article] = aft.Article
 					, EachCons.FabricCombo 
 					, [SustainableMaterial] = IIF(fs.SustainableMaterial='Recycled' and fabric.MtlTypeID='HANGTAG',1,0)
+					, [TPERemark]=a.Remark
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
@@ -997,6 +1001,7 @@ select ROW_NUMBER_D = 1
 	   , [Article] = ''
        , [FabricCombo] = ''
        , [SustainableMateria] = ''
+	   , [TPERemark]=''
 from #tmpLocalPO_Detail a
 left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
 left join LocalItem b on a.Refno=b.RefNo

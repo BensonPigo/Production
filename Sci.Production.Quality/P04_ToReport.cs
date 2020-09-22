@@ -2030,12 +2030,12 @@ namespace Sci.Production.Quality
 
             #region Save & Show Excel
 
+            string fileProcessName = "FGWT" + "_"
+                + this.MasterRow["seasonid"].ToString() + "_" + this.MasterRow["StyleID"].ToString() + "_" + this.MasterRow["Article"].ToString();
             if (to == "ToPDF")
             {
-                string strFileName = string.Empty;
-                string strPDFFileName = string.Empty;
-                strFileName = Class.MicrosoftFile.GetName("Quality_P04_GarmentWash");
-                strPDFFileName = Class.MicrosoftFile.GetName("Quality_P04_GarmentWash", Class.PDFFileNameExtension.PDF);
+                string strFileName = Class.MicrosoftFile.GetName(fileProcessName);
+                string strPDFFileName = Class.MicrosoftFile.GetName(fileProcessName, Class.PDFFileNameExtension.PDF);
                 objApp.ActiveWorkbook.SaveAs(strFileName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
@@ -2049,7 +2049,7 @@ namespace Sci.Production.Quality
 
             if (to == "ToExcel")
             {
-                string strExcelName = Class.MicrosoftFile.GetName("Quality_P04_GarmentWash");
+                string strExcelName = Class.MicrosoftFile.GetName(fileProcessName);
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(worksheet);
@@ -2194,12 +2194,12 @@ namespace Sci.Production.Quality
 
             #region Save & Show Excel
 
+            string fileProcessName = "FGWT" + "_"
+              + this.MasterRow["seasonid"].ToString() + "_" + this.MasterRow["StyleID"].ToString() + "_" + this.MasterRow["Article"].ToString();
             if (to == "ToPDF")
             {
-                string strFileName = string.Empty;
-                string strPDFFileName = string.Empty;
-                strFileName = Class.MicrosoftFile.GetName("QA_P04_FGWT");
-                strPDFFileName = Class.MicrosoftFile.GetName("QA_P04_FGWT", Class.PDFFileNameExtension.PDF);
+                string strFileName = Class.MicrosoftFile.GetName(fileProcessName);
+                string strPDFFileName = Class.MicrosoftFile.GetName(fileProcessName, Class.PDFFileNameExtension.PDF);
 
                 objApp.ActiveWorkbook.SaveAs(strFileName);
                 objApp.Quit();
@@ -2215,12 +2215,12 @@ namespace Sci.Production.Quality
 
             if (to == "ToExcel")
             {
-                string strExcelName = Class.MicrosoftFile.GetName("QA_P04_FGWT");
-                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                string strFileName = Class.MicrosoftFile.GetName(fileProcessName);
+                objApp.ActiveWorkbook.SaveAs(strFileName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(worksheet);
                 Marshal.ReleaseComObject(objApp);
-                strExcelName.OpenFile();
+                strFileName.OpenFile();
             }
             #endregion
         }
@@ -2402,12 +2402,12 @@ namespace Sci.Production.Quality
 
             #region Save & Show Excel
 
+            string fileProcessName = "FGPT" + "_"
+              + this.MasterRow["seasonid"].ToString() + "_" + this.MasterRow["StyleID"].ToString() + "_" + this.MasterRow["Article"].ToString();
             if (to == "ToPDF")
             {
-                string strFileName = string.Empty;
-                string strPDFFileName = string.Empty;
-                strFileName = Class.MicrosoftFile.GetName("QA_P04_FGPT");
-                strPDFFileName = Class.MicrosoftFile.GetName("QA_P04_FGPT", Class.PDFFileNameExtension.PDF);
+                string strFileName = Class.MicrosoftFile.GetName(fileProcessName);
+                string strPDFFileName = Class.MicrosoftFile.GetName(fileProcessName, Class.PDFFileNameExtension.PDF);
 
                 objApp.ActiveWorkbook.SaveAs(strFileName);
                 objApp.Quit();
@@ -2423,7 +2423,7 @@ namespace Sci.Production.Quality
 
             if (to == "ToExcel")
             {
-                string strExcelName = Class.MicrosoftFile.GetName("QA_P04_FGPT");
+                string strExcelName = Class.MicrosoftFile.GetName(fileProcessName);
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(worksheet);
