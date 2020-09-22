@@ -236,7 +236,7 @@ ORDER BY b.Seq
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("Seq", header: "Seq", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: false)
-            .Text("ShippingMarkTypeID", header: "Sticker Type", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: shippingMarkTypeID)
+            .Text("ShippingMarkTypeID", header: "Mark Type", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: shippingMarkTypeID)
             .CheckBox("IsSSCC", header: "Is SSCC", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0, settings: col_IsSSCC)
             .CheckBox("FromTemplate", header: "From Template", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             ;

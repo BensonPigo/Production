@@ -134,7 +134,7 @@
   <!-- always-print-barcodes          will print barcodes even if they will be    -->
   <!--                                not readable. This is ONLY useful for       -->
   <!--                                preview purposes.                           -->
-  <HTML media="A4" orientation="portrait" resolution="96" barcode-opt-resolution="0"
+  <HTML media="A4" orientation="portrait" resolution="300" barcode-opt-resolution="0"
     always-print-barcodes="1" />
 
   <!-- IMAGE OPTIONS:       Configure settings for image output                   -->
