@@ -557,6 +557,7 @@ order by ld.No, ld.GroupKey",
                 if (!this.EditMode || !this.IsDetailInserting)
                 {
                     dr["IsHide"] = dr["IsHide"];
+                    dr.EndEdit();
                     return;
                 }
 
@@ -607,7 +608,7 @@ order by ld.No, ld.GroupKey",
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
-            .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: ppa)
+            .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false)
             .CheckBox("IsHide", header: "Hide", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: hide)
             .Text("MachineTypeID", header: "ST/MC type", width: Widths.AnsiChars(10), settings: machine)
             .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(10), settings: txtSubReason)
@@ -1316,7 +1317,7 @@ select ID = null
        , ld.MasterPlusGroup
 		,[IsHide] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 1, 1, 0)))
 		,[IsGroupHeader] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, 0)
-		,[IsSewingOperation] = iif(show.IsDesignatedArea = 1, 1, 0)
+		,[IsSewingOperation] = cast(iif(show.IsDesignatedArea = 1, 1, 0) as bit)
         ,[IsShow] = isnull(show.IsShowinIEP03, 1)
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID

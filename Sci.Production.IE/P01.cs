@@ -1061,6 +1061,8 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
                 var email = new MailTo(Env.Cfg.MailFrom, toAddress, string.Empty, subject, string.Empty, description, true, true);
                 email.ShowDialog();
             }
+
+            this.HideRows();
         }
 
         /// <summary>
