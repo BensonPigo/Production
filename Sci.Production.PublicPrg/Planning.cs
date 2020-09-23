@@ -419,6 +419,7 @@ inner join Bundle_Detail bunD WITH (NOLOCK) on bunD.BundleNo = bdo.BundleNo
 inner join Bundle bun WITH (NOLOCK) on bun.id = bunD.id
 inner join Orders o WITH (NOLOCK) ON x.Orderid = o.id and bun.MDivisionid=o.MDivisionID 
 
+--#BundleInOutDetail... 在 WebApi 有使用到, 變更時注意
 select st4.*, [IsPair]=ISNULL(TopIsPair.IsPair,0)
 into #BundleInOutDetail{subprocessIDtmp}
 from #QtyBySetPerCutpart4{subprocessIDtmp} st4
@@ -433,6 +434,7 @@ outer apply(
 	order by st5.AddDate desc
 )TopIsPair
 
+--#BundleInOutQty... 在 WebApi 有使用到, 變更時注意
 select	Orderid
 		, SubprocessId
 		, BundleGroup
@@ -441,30 +443,39 @@ select	Orderid
 		, PatternPanel
 		, FabricPanelCode
 		, PatternCode
-		, InQty = Case when PostSewingSubProcess_SL = 1 Then Qty
+		, InQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
 							when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then Qty--不判斷InComing,直接計算數量
 					   else iif(I_Judge.v = 1, Qty, 0)
 					   End
-		, OutQty = Case when PostSewingSubProcess_SL = 1 Then Qty
+					 ) / IsPair.M
+
+		, OutQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
 							 when NoBundleCardAfterSubprocess=1 and InOutRule = 3 Then Qty--不判斷OutGoing,直接計算數量
 						else iif(O_Judge.v = 1, Qty, 0)
-						End
-		, OriInQty = Case when PostSewingSubProcess_SL = 1 Then Qty
+						End 
+					  ) / IsPair.M
+
+		, OriInQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
 							   when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then Qty--不判斷InComing,直接計算數量
 						  else iif(I_Judge.v = 1, Qty, 0)
-						  End--原始裁片數總和
-		, OriOutQty = Case when PostSewingSubProcess_SL = 1 Then Qty
+						  End
+					 ) --原始裁片數總和
+
+		, OriOutQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
 							    when NoBundleCardAfterSubprocess=1 and InOutRule = 3 Then Qty--不判斷OutGoing,直接計算數量
 						   else iif(O_Judge.v = 1, Qty, 0)
-						   End--原始裁片數總和
-		, FinishedQty = case when PostSewingSubProcess_SL = 1 Then Qty
+						   End 
+					  ) --原始裁片數總和
+
+		, FinishedQty = sum(case when PostSewingSubProcess_SL = 1 Then Qty
 								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 1 Then Qty-- 不判斷InComing
 								 when InOutRule = 1 then iif(I_Judge.v = 1,Qty,0)
 								 when InOutRule = 2 then iif(O_Judge.v = 1,Qty,0)
 								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 3 Then iif(I_Judge.v = 1,Qty,0)-- 忽略OutGoing, 只判斷InComing									
 								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 4 Then iif(O_Judge.v = 1,Qty,0)-- 忽略InComing, 只判斷OutGoing
 								 else iif(O_Judge.v = 1 and I_Judge.v = 1 ,Qty,0)
-							end
+							end) 
+						/ IsPair.M
         , InStartDate,InEndDate,OutStartDate,OutEndDate
 into #BundleInOutQty{subprocessIDtmp}
 from #BundleInOutDetail{subprocessIDtmp} bt
@@ -474,6 +485,9 @@ outer  apply(
 )x
 outer apply(select v = iif(InComing is not null and (x.InStartDate is null or x.InStartDate <= InComing) and (x.InEndDate is null or InComing <= x.InEndDate),1,0))I_Judge
 outer apply(select v = iif(OutGoing is not null and (x.OutStartDate is null or x.OutStartDate <= OutGoing) and (x.OutEndDate is null or OutGoing <= x.OutEndDate),1,0))O_Judge
+outer apply(select M = iif(IsPair=1,2,1) )IsPair--此處判斷後才放入group by 欄位中 
+group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair.m
+    , InStartDate,InEndDate,OutStartDate,OutEndDate
 ";
 
                 if (isNeedCombinBundleGroup)
@@ -622,6 +636,7 @@ where FinishedQty is not null
 
 -- Result Data --
 --	 *	3.	最終算出每張訂單目前可完成的成衣件數
+--QtyBySetPerSubprocess... 在 WebApi 有使用到, 變更時注意
 select	OrderID = cbs.OrderID
 		, cbs.Article
 		, cbs.Sizecode
