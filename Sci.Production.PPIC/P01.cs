@@ -1793,9 +1793,16 @@ order by id";
                 }
                 else
                 {
-                    this.CurrentMaintain["NonRevenue"] = true;
+                    // SubconInType == 1 或2 代表為姊妹廠，不能勾選
+                    if (!(MyUtility.Convert.GetInt(this.CurrentMaintain["SubconInType"]) == 1 || MyUtility.Convert.GetInt(this.CurrentMaintain["SubconInType"]) == 2))
+                    {
+                        this.CurrentMaintain["NonRevenue"] = true;
+                    }
+                    else
+                    {
+                        this.CurrentMaintain["NonRevenue"] = false;
+                    }
                 }
-
             }
 
         }
