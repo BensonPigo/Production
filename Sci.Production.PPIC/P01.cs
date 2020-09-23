@@ -1787,6 +1787,14 @@ AND abb = @abb
 order by id";
 
                 this.CurrentMaintain["ProgramID"] = this.txtProgram.Text;
+
+                // 若登入工廠為所輸入的Program，則要勾選"non revenue"
+                if (this.txtProgram.Text == Sci.Env.User.Factory)
+                {
+                    this.CurrentMaintain["NonRevenue"] = true;
+                    return;
+                }
+
                 if (MyUtility.Check.Seek(cmd, parameters))
                 {
                     this.CurrentMaintain["NonRevenue"] = false;
