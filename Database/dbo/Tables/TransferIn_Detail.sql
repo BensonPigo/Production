@@ -15,6 +15,7 @@
     [CompleteTime] DATETIME NULL, 
     [CombineBarcode] VARCHAR NULL, 
     [Unoriginal] BIT NULL, 
+    [ActualWeight] NUMERIC(7, 2) CONSTRAINT [DF_TransferIn_Detail_ActualWeight] NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_TransferIn_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -83,3 +84,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'TransferIn_Detail',
     @level2type = N'COLUMN',
     @level2name = N'Unoriginal'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'貨物實際重量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferIn_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ActualWeight'

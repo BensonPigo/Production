@@ -362,10 +362,10 @@ SELECT
 ,td.StockType
 ,[Location]=Location.MtlLocationID 
 ,[OldLocation] = Location.MtlLocationID 
-,[Weight]=0
-,ActualWeight=td.Weight
-,[OldActualWeight] = td.Weight
-,[Differential] = 0,
+,[Weight]=td.Weight
+,ActualWeight=td.ActualWeight
+,[OldActualWeight] = td.ActualWeight
+,[Differential] = td.ActualWeight - td.Weight,
 [FtyInventoryUkey] = fi.Ukey,
 [FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty,
 td.Seq1,
@@ -649,7 +649,7 @@ Insert into LocationTrans_Detail(   ID,
 
                 if (updateItem["ReceivingSource"].ToString() == "TransferIn")
                 {
-                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set Weight  = {updateItem["ActualWeight"]}
+                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set ActualWeight  = {updateItem["ActualWeight"]}
                                                     where   ID = '{updateItem["ID"]}' and
                                                             POID = '{updateItem["POID"]}' and
                                                             Seq1 = '{updateItem["Seq1"]}' and
