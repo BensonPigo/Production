@@ -284,8 +284,8 @@ namespace Sci.Production.Quality
         /// </summary>
         private void Query()
         {
-            string sqlWhere = "where fb.WeaveTypeID in ('KNIT','WOVEN') and o.category in ('B','M','T') " + Environment.NewLine;
-            string sqlWhere2 = "where fb.WeaveTypeID in ('KNIT','WOVEN') and o.category in ('B','M','T') " + Environment.NewLine;
+            string sqlWhere = "where fb.WeaveTypeID in ('KNIT','WOVEN') and o.category in ('B','M') " + Environment.NewLine;
+            string sqlWhere2 = "where fb.WeaveTypeID in ('KNIT','WOVEN') and o.category in ('B','M') " + Environment.NewLine;
 
             if (!MyUtility.Check.Empty(this.txtRecivingID.Text))
             {
