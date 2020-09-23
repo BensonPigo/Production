@@ -2849,7 +2849,9 @@ where ID = '{this.CurrentMaintain["ID"]}'
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, sqlcmd)))
                     {
+                        scope.Dispose();
                         this.ShowErr(upResult);
+                        return;
                     }
                 }
 

@@ -891,6 +891,7 @@ where 1=1
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, sqlcmd)))
                     {
+                        scope.Dispose();
                         this.ShowErr(upResult);
                         return;
                     }
@@ -964,7 +965,9 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, sqlCmd)))
                     {
+                        scope.Dispose();
                         this.ShowErr(upResult);
+                        return;
                     }
                 }
 

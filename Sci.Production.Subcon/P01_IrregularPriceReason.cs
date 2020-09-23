@@ -312,6 +312,7 @@ namespace Sci.Production.Subcon
                                 upResult = DBProxy.Current.Execute(null, sql.ToString());
                                 if (!upResult)
                                 {
+                                    scope.Dispose();
                                     this.ShowErr(sql.ToString(), upResult);
                                     return;
                                 }

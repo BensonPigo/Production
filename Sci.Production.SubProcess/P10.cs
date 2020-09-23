@@ -867,8 +867,8 @@ select @@IDENTITY";
 
                         if (result == false)
                         {
-                            MyUtility.Msg.WarningBox(result.ToString());
                             transactionscope.Dispose();
+                            MyUtility.Msg.WarningBox(result.ToString());
                             this.HideWaitMessage();
                             return;
                         }
@@ -933,8 +933,8 @@ and t.OutputDate between @StartDate and @EndDate";
 
                         if (result == false)
                         {
-                            MyUtility.Msg.WarningBox(result.ToString());
                             transactionscope.Dispose();
+                            MyUtility.Msg.WarningBox(result.ToString());
                             this.HideWaitMessage();
                             return;
                         }

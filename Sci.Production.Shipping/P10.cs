@@ -534,7 +534,6 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
             {
                 DualResult result;
 
-                // 2018/11/09 Benson 加上Transaction
                 using (TransactionScope scope = new TransactionScope())
                 {
                     try
@@ -542,6 +541,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
                         result = DBProxy.Current.Executes(null, this.updateCmds);
                         if (!result)
                         {
+                            scope.Dispose();
                             DualResult failResult = new DualResult(false, "Update fail!!\r\n" + result.ToString());
                             return failResult;
                         }

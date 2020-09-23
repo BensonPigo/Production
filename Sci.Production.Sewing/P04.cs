@@ -446,71 +446,9 @@ DROP TABLE #Child;");
                 if (!boolResult)
                 {
                     transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox(boolResult.ToString());
+                    this.ShowErr(boolResult);
+                    return;
                 }
-
-                #region
-
-                // #region Check 母單 PackingList = Confirmed，必須保證拆單後，母單剩餘數量大於 Packing 數量
-                //                strSqlCmd = @"
-                //-- Check 母單 PackingList = Confirmed，必須保證拆單後，母單剩餘數量大於 Packing 數量 --
-                //-- checkValue => Packing > Sewing = 0 數量不足
-                //--                 Packing <= Sewing = 1 數量足夠
-                // declare @PackingTtlQty int = 0;
-                // declare @SewingTtlQty int = 0;
-
-                // select   @PackingTtlQty = isnull (sum (pld.ShipQty), 0)
-                // from PackingList pl
-                // inner join PackingList_Detail pld on pl.ID = pld.ID
-                // where    pld.OrderID = @FromOrderID
-                // and pl.Status = 'Confirmed'
-
-                // select   @SewingTtlQty = isnull (sum (sodd.QAQty), 0)
-                // from PackingList pl
-                // inner join PackingList_Detail pld on pl.ID = pld.ID
-                // inner join SewingOutput_Detail sod on pl.OrderID = sod.OrderId
-                // inner join SewingOutput_Detail_Detail sodd on sod.UKey = sodd.SewingOutput_DetailUKey
-                // and pld.Article = sodd.Article
-                // and pld.SizeCode = sodd.SizeCode
-                // where    pl.OrderID = @FromOrderID
-                // and pl.Status = 'Confirmed'
-
-                // select checkValue = iif (@SewingTtlQty >= @PackingTtlQty, 1
-                // , 0)";
-                //                #endregion
-                //                if (MyUtility.GetValue.Lookup(strSqlCmd, listSqlPara).Equals("0"))
-                //                {
-                //                    transactionscope.Dispose();
-                //                    MyUtility.Msg.WarningBox(string.Format("From SP {0} Sewing Output Qty can't less then PackingList Qty.", FromOrderID));
-                //                    return false;
-                //                }
-
-                // #region Check 拆單後的數量，總數不得超過子單 Order_Qty
-                //                strSqlCmd = @"
-                //-- Check 拆單後的數量，總數不得超過子單 Order_Qty --
-                // select   *
-                // from Order_Qty oq
-                // cross apply (
-                // select value = MIN(value)
-                // from (
-                // select value = sum(sodd.QaQty)
-                // from SewingOutput_Detail_Detail sodd
-                // where oq.Article = sodd.Article
-                // and oq.SizeCode = sodd.SizeCode
-                // and oq.ID = sodd.OrderId
-                // group by ComboType
-                // )x
-                // ) SewingQty
-                // where    oq.id = @ToOrderID
-                // and oq.Qty < SewingQty.value";
-                //                #endregion
-                //                if (MyUtility.Check.Seek(strSqlCmd, listSqlPara))
-                //                {
-                //                    transactionscope.Dispose();
-                //                    MyUtility.Msg.WarningBox(string.Format("SP {0}, ComboType {1}, Article {2}, SizeCode {3} Sewing Output Qty can't more then Order_Qty.", ToOrderID, ComboType, Article, SizeCode));
-                //                    return false;
-                //                }
-                #endregion
 
                 transactionscope.Complete();
                 transactionscope.Dispose();
