@@ -601,37 +601,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 }
                 #endregion
 
-                // 檢查是否幫姊妹廠代工
-                List<SqlParameter> cmds = new List<SqlParameter>
-                {
-                    new SqlParameter("@ProgramID", this.CurrentMaintain["ProgramID"].ToString()),
-                    new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"].ToString()),
-                    new SqlParameter("@M", this.CurrentMaintain["MDivisionID"].ToString()),
-                };
-                string sqlCmd = @"select ID from SCIFty WITH (NOLOCK) where ID = @programid";
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out System.Data.DataTable sCIFtyData);
-                if (result && sCIFtyData.Rows.Count < 1)
-                {
-                    this.CurrentMaintain["SubconInType"] = 3;
-                    this.CurrentMaintain["SubconInSisterFty"] = 0;
-                }
-                else
-                {
-                    sqlCmd = @"
-select ID from SCIFty s WITH (NOLOCK)
-where id = @ProgramID
-and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDivisionID)";
-                    if (MyUtility.Check.Seek(sqlCmd, cmds, null))
-                    {
-                        this.CurrentMaintain["SubconInType"] = 1;
-                    }
-                    else
-                    {
-                        this.CurrentMaintain["SubconInType"] = 2;
-                    }
-
-                    this.CurrentMaintain["SubconInSisterFty"] = 1;
-                }
+                this.Check_Sister();
 
                 string strUpd_QtyShip_BuyerDelivery = string.Format(
                     @"
@@ -1767,6 +1737,26 @@ order by id";
                     return;
                 }
 
+                this.CurrentMaintain["ProgramID"] = this.txtProgram.Text;
+
+                // 若登入工廠為所輸入的Program，則直接勾選"non revenue"
+                if (this.txtProgram.Text == Sci.Env.User.Factory)
+                {
+                    this.CurrentMaintain["NonRevenue"] = true;
+                    return;
+                }
+
+                // 根據ProgramID，更新姊妹廠資訊(SubconInType、SubconInSisterFty)
+                this.Check_Sister();
+
+                // 若為SubconInType、SubconInSisterFty = 1或2則不打勾
+                if (MyUtility.Convert.GetInt(this.CurrentMaintain["SubconInType"]) == 1 || MyUtility.Convert.GetInt(this.CurrentMaintain["SubconInType"]) == 2)
+                {
+                    this.CurrentMaintain["NonRevenue"] = false;
+                    return;
+                }
+
+                // 私接外面訂單 或 工廠做給自己做(例如: uniform, mask)，則適用以下判斷
                 List<SqlParameter> parameters = new List<SqlParameter>
                 {
                     new SqlParameter("@abb", this.txtProgram.Text),
@@ -1786,33 +1776,51 @@ and ls.abb <> '{Env.User.Factory}'
 AND abb = @abb
 order by id";
 
-                this.CurrentMaintain["ProgramID"] = this.txtProgram.Text;
-
-                // 若登入工廠為所輸入的Program，則要勾選"non revenue"
-                if (this.txtProgram.Text == Sci.Env.User.Factory)
-                {
-                    this.CurrentMaintain["NonRevenue"] = true;
-                    return;
-                }
-
                 if (MyUtility.Check.Seek(cmd, parameters))
                 {
                     this.CurrentMaintain["NonRevenue"] = false;
                 }
                 else
                 {
-                    // SubconInType == 1 或2 代表為姊妹廠，不能勾選
-                    if (!(MyUtility.Convert.GetInt(this.CurrentMaintain["SubconInType"]) == 1 || MyUtility.Convert.GetInt(this.CurrentMaintain["SubconInType"]) == 2))
-                    {
-                        this.CurrentMaintain["NonRevenue"] = true;
-                    }
-                    else
-                    {
-                        this.CurrentMaintain["NonRevenue"] = false;
-                    }
+                    this.CurrentMaintain["NonRevenue"] = true;
                 }
             }
+        }
 
+        // 檢查是否幫姊妹廠代工，並更新SubconInType和SubconInSisterFty
+        private void Check_Sister()
+        {
+            // 檢查是否幫姊妹廠代工
+            List<SqlParameter> cmds = new List<SqlParameter>
+                {
+                    new SqlParameter("@ProgramID", this.CurrentMaintain["ProgramID"].ToString()),
+                    new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"].ToString()),
+                    new SqlParameter("@M", this.CurrentMaintain["MDivisionID"].ToString()),
+                };
+            string sqlCmd = @"select ID from SCIFty WITH (NOLOCK) where ID = @programid";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out System.Data.DataTable sCIFtyData);
+            if (result && sCIFtyData.Rows.Count < 1)
+            {
+                this.CurrentMaintain["SubconInType"] = 3;
+                this.CurrentMaintain["SubconInSisterFty"] = 0;
+            }
+            else
+            {
+                sqlCmd = @"
+select ID from SCIFty s WITH (NOLOCK)
+where id = @ProgramID
+and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDivisionID)";
+                if (MyUtility.Check.Seek(sqlCmd, cmds, null))
+                {
+                    this.CurrentMaintain["SubconInType"] = 1;
+                }
+                else
+                {
+                    this.CurrentMaintain["SubconInType"] = 2;
+                }
+
+                this.CurrentMaintain["SubconInSisterFty"] = 1;
+            }
         }
     }
 }
