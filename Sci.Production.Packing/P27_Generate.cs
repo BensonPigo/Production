@@ -3,6 +3,7 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -25,6 +26,10 @@ namespace Sci.Production.Packing
         public P27_Generate()
         {
             this.InitializeComponent();
+            string licensee = MyUtility.Convert.GetString(ConfigurationManager.AppSettings["TFORMer_Licensee"]);
+            string licenseKey = MyUtility.Convert.GetString(ConfigurationManager.AppSettings["TFORMer_LicenseKey"]);
+
+            TFORMer.License(licensee, LicenseKind.Workgroup, 1, licenseKey);
         }
 
         /// <inheritdoc/>
@@ -361,6 +366,12 @@ WHERE td.TemplateName <> ''
                 {
                     // 取得使用相同範本的箱子
                     List<P27_Template> sameTemplateDatas = p27_Templates.Where(o => o.TemplatePath == templatePath).ToList();
+
+                    if (!System.IO.File.Exists(templatePath))
+                    {
+                        MyUtility.Msg.WarningBox("Template Path not found!!");
+                        return null;
+                    }
 
                     // 開啟範本
                     Repository repository = new Repository(templatePath, false, true)
