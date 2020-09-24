@@ -719,7 +719,24 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
 
                 if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE" && MyUtility.Check.Seek(string.Format("select ID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
                 {
-                    updateCmd = string.Format("update Order_QtyShip set ShipModeID = '{0}' where ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeList"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                    updateCmd = string.Format(
+                        @"update Order_QtyShip set ShipModeID = '{0}' where ID = '{1}'
+update oqs
+	set oqs.CFAIs3rdInspect = 1
+from Order_QtyShip oqs
+inner join Orders o on oqs.Id = o.ID
+inner join CustCD c on o.BrandID = c.BrandID and o.CustCDID = c.ID
+where exists (
+	select 1 
+	from Orders o
+	inner join CustCD c on o.BrandID = c.BrandID and o.CustCDID = c.ID
+	where c.Need3rdInspect = 1
+	and o.ID = oqs.Id
+)
+and oqs.Id = '{1}'
+",
+                        MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeList"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     result = DBProxy.Current.Execute(null, updateCmd);
                     if (!result)
                     {
