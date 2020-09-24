@@ -45,6 +45,9 @@
             this.txtShiftTime1 = new Sci.Win.UI.TextBox();
             this.txtShiftTime2 = new Sci.Win.UI.TextBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new Sci.Win.UI.Label();
+            this.radioSummary = new Sci.Win.UI.RadioButton();
+            this.radioDetail = new Sci.Win.UI.RadioButton();
             this.SuspendLayout();
             // 
             // print
@@ -254,9 +257,45 @@
             this.label7.TabIndex = 131;
             this.label7.Text = "～";
             // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(18, 190);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(105, 23);
+            this.label8.TabIndex = 132;
+            this.label8.Text = "Format";
+            // 
+            // radioSummary
+            // 
+            this.radioSummary.AutoSize = true;
+            this.radioSummary.Checked = true;
+            this.radioSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSummary.Location = new System.Drawing.Point(126, 192);
+            this.radioSummary.Name = "radioSummary";
+            this.radioSummary.Size = new System.Drawing.Size(85, 21);
+            this.radioSummary.TabIndex = 133;
+            this.radioSummary.TabStop = true;
+            this.radioSummary.Text = "Summary";
+            this.radioSummary.UseVisualStyleBackColor = true;
+            // 
+            // radioDetail
+            // 
+            this.radioDetail.AutoSize = true;
+            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail.Location = new System.Drawing.Point(126, 219);
+            this.radioDetail.Name = "radioDetail";
+            this.radioDetail.Size = new System.Drawing.Size(82, 21);
+            this.radioDetail.TabIndex = 134;
+            this.radioDetail.TabStop = true;
+            this.radioDetail.Text = "By Detail";
+            this.radioDetail.UseVisualStyleBackColor = true;
+            // 
             // R50
             // 
-            this.ClientSize = new System.Drawing.Size(522, 260);
+            this.ClientSize = new System.Drawing.Size(522, 276);
+            this.Controls.Add(this.radioDetail);
+            this.Controls.Add(this.radioSummary);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.txtShiftTime2);
             this.Controls.Add(this.txtShiftTime1);
@@ -298,6 +337,9 @@
             this.Controls.SetChildIndex(this.txtShiftTime1, 0);
             this.Controls.SetChildIndex(this.txtShiftTime2, 0);
             this.Controls.SetChildIndex(this.label7, 0);
+            this.Controls.SetChildIndex(this.label8, 0);
+            this.Controls.SetChildIndex(this.radioSummary, 0);
+            this.Controls.SetChildIndex(this.radioDetail, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -320,5 +362,8 @@
         private Win.UI.TextBox txtShiftTime1;
         private Win.UI.TextBox txtShiftTime2;
         private System.Windows.Forms.Label label7;
+        private Win.UI.Label label8;
+        private Win.UI.RadioButton radioSummary;
+        private Win.UI.RadioButton radioDetail;
     }
 }
