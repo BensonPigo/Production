@@ -16,10 +16,15 @@ namespace Sci.Production.PPIC
         private DataRow masterData;
         private string cuttingWorkType;
         private DataGridViewGeneratorNumericColumnSettings sewingqty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings sewingqtyCombo = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings t = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings b = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings i = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings o = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings t_combo = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings b_combo = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings i_combo = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings o_combo = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings cuttingqty = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings loadoutput = new DataGridViewGeneratorNumericColumnSettings();
 
@@ -326,9 +331,186 @@ where oq.id = '{this.masterData["ID"]}'
 
             this.numLoadingQty.Value = MyUtility.Convert.GetDecimal(loadingoutput.Compute("sum(AccuInCome)", string.Empty));  // Sewing Q'ty
 
+            #region 設定tabControl 4
+
+            this.sewingqtyCombo.CellMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    DataRow dr = this.gridComboSP.GetDataRow<DataRow>(e.RowIndex);
+                    P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(dr["OrderID"]), "S", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    callNextForm.ShowDialog(this);
+                }
+            };
+
+            this.t_combo.CellMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    DataRow dr = this.gridComboSP.GetDataRow<DataRow>(e.RowIndex);
+                    P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(dr["orderid"]), "T", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    callNextForm.ShowDialog(this);
+                }
+            };
+
+            this.b_combo.CellMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    DataRow dr = this.gridComboSP.GetDataRow<DataRow>(e.RowIndex);
+                    P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(dr["orderid"]), "B", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    callNextForm.ShowDialog(this);
+                }
+            };
+
+            this.i_combo.CellMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    DataRow dr = this.gridComboSP.GetDataRow<DataRow>(e.RowIndex);
+                    P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(dr["orderid"]), "I", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    callNextForm.ShowDialog(this);
+                }
+            };
+
+            this.o_combo.CellMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    DataRow dr = this.gridComboSP.GetDataRow<DataRow>(e.RowIndex);
+                    P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(dr["orderid"]), "O", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    callNextForm.ShowDialog(this);
+                }
+            };
+
+            // 設定Grid4 欄位
+            this.gridComboSP.IsEditingReadOnly = true;
+            this.gridComboSP.DataSource = this.listControlBindingSource4;
+            this.Helper.Controls.Grid.Generator(this.gridComboSP)
+                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15))
+                 .Text("Article", header: "Colorway", width: Widths.AnsiChars(8))
+                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8))
+                 .Numeric("OrderQty", header: "Order Q'ty", width: Widths.AnsiChars(6))
+                 .Numeric("SewQty", header: "Sewing Q'ty", width: Widths.AnsiChars(6), settings: this.sewingqtyCombo)
+                 .Numeric("T", header: "Top", width: Widths.AnsiChars(6), settings: this.t_combo)
+                 .Numeric("B", header: "Bottom", width: Widths.AnsiChars(6), settings: this.b_combo)
+                 .Numeric("I", header: "Inner", width: Widths.AnsiChars(6), settings: this.i_combo)
+                 .Numeric("O", header: "Outer", width: Widths.AnsiChars(6), settings: this.o_combo);
+            ;
+
+            #region 控制Column是否可被看見
+            this.gridComboSP.Columns[5].Visible = false;
+            this.gridComboSP.Columns[6].Visible = false;
+            this.gridComboSP.Columns[7].Visible = false;
+            this.gridComboSP.Columns[8].Visible = false;
+            if (MyUtility.Convert.GetString(this.masterData["StyleUnit"]) == "SETS")
+            {
+                sqlCmd = string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(this.masterData["StyleUKey"]));
+                DataTable styleLocation;
+                result = DBProxy.Current.Select(null, sqlCmd, out styleLocation);
+                if (styleLocation != null)
+                {
+                    foreach (DataRow dr in styleLocation.Rows)
+                    {
+                        if (MyUtility.Convert.GetString(dr["Location"]) == "T")
+                        {
+                            this.gridComboSP.Columns[5].Visible = true;
+                        }
+
+                        if (MyUtility.Convert.GetString(dr["Location"]) == "B")
+                        {
+                            this.gridComboSP.Columns[6].Visible = true;
+                        }
+
+                        if (MyUtility.Convert.GetString(dr["Location"]) == "I")
+                        {
+                            this.gridComboSP.Columns[7].Visible = true;
+                        }
+
+                        if (MyUtility.Convert.GetString(dr["Location"]) == "O")
+                        {
+                            this.gridComboSP.Columns[8].Visible = true;
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            DataTable[] dtSewingComboSP;
+            sqlCmd = $@"
+with SewQty as (
+	select	OrderID = o.ID
+			, oq.Article
+			, oq.SizeCode
+			, OrderQty = oq.Qty
+			, ComboType = sl.Location
+			, QAQty = isnull(sum(sdd.QAQty),0)
+	from Orders o WITH (NOLOCK) 
+	inner join Order_Location  sl WITH (NOLOCK) on sl.OrderId = o.id -- OrderLocation 
+	inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
+	left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = o.ID 
+															  and sdd.Article = oq.Article 
+															  and sdd.SizeCode = oq.SizeCode 
+															  and sdd.ComboType = sl.Location
+	where o.POID = '{this.masterData["Poid"].ToString()}'
+	group by oq.Article,oq.SizeCode,oq.Qty,sl.Location,o.ID
+), 
+minSewQty as (
+	select	Article
+			, SizeCode
+			, OrderID
+			, QAQty = MIN(QAQty)
+	from SewQty
+	group by Article,SizeCode,OrderID
+),
+PivotData as (
+	select *
+	from SewQty
+	PIVOT (SUM(QAQty)
+	FOR ComboType IN ([T],[B],[I],[O])) a
+)
+select	p.*
+		, SewQty = m.QAQty 
+into #tmp
+from PivotData p
+left join minSewQty m on m.Article = p.Article and m.SizeCode = p.SizeCode
+ and m.OrderID = p.OrderID
+
+select * from #tmp
+
+select LastSewingDate = LastSewingDate.value	
+,OrderQty = sum(t.OrderQty)
+,SewQty = sum(t.SewQty)
+from #tmp t
+outer apply(
+	select value =Max(s.OutputDate)
+	from SewingOutput_Detail sd WITH (NOLOCK) 
+	inner join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
+	and sd.OrderId = '{this.masterData["Poid"].ToString()}'
+)LastSewingDate
+group by LastSewingDate.value	
+
+drop table #tmp
+
+
+";
+            result = DBProxy.Current.Select(null, sqlCmd, out dtSewingComboSP);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.numbTtlOrderQty.Value = MyUtility.Convert.GetInt(dtSewingComboSP[1].Rows[0]["OrderQty"]);
+            this.numbTtlSewQty.Value = MyUtility.Convert.GetInt(dtSewingComboSP[1].Rows[0]["SewQty"]);
+            this.dateLastSewOutputDate.Value = MyUtility.Convert.GetDate(dtSewingComboSP[1].Rows[0]["LastSewingDate"]);
+
+            #endregion
+
             this.listControlBindingSource1.DataSource = sewingData;
             this.listControlBindingSource2.DataSource = cuttingData;
             this.listControlBindingSource3.DataSource = loadingoutput;
+            this.listControlBindingSource4.DataSource = dtSewingComboSP[0];
         }
 
         // Sewing Q'ty
@@ -341,6 +523,12 @@ where oq.id = '{this.masterData["ID"]}'
         private void NumLoadingQty_DoubleClick(object sender, EventArgs e)
         {
             P01_ProductionOutput_LoadingoutputDetail callNextForm = new P01_ProductionOutput_LoadingoutputDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "A", string.Empty, string.Empty);
+            callNextForm.ShowDialog(this);
+        }
+
+        private void NumbTtlSewQty_DoubleClick(object sender, EventArgs e)
+        {
+            P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["POID"]), "combo", string.Empty, string.Empty);
             callNextForm.ShowDialog(this);
         }
     }
