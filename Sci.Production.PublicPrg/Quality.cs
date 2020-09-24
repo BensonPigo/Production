@@ -492,9 +492,9 @@ namespace Sci.Production.PublicPrg
                 new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - width direction - upper body wear", Criteria = upperbodywearCriteriaPHXAP0450 },
                 new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - upper body wear", Criteria = upperbodywearCriteriaPHXAP0450 },
                 new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - upper body wear", Criteria = upperbodywearCriteriaPHXAP0450 },
-                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP045", Type = "seam breakage: Garment - width direction - upper bodywear", Criteria = 150 },
-                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP045", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - upper bodywear", Criteria = 150 },
-                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP045", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - upper bodywear", Criteria = 150 },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage: Garment - width direction - upper bodywear", Criteria = upperbodywearCriteriaPHXAP0450 },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - length direction - upper bodywear", Criteria = upperbodywearCriteriaPHXAP0450 },
+                new FGPT() { Location = "Top", TestDetail = "N", TestUnit = "N", TestName = "PHX-AP0450", Type = "seam breakage after wash (only for welded/bonded seams): Garment - width direction - upper bodywear", Criteria = upperbodywearCriteriaPHXAP0450 },
             };
 
             List<FGPT> lowerOnly = new List<FGPT>()
