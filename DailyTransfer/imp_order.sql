@@ -757,6 +757,16 @@ else
 	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 	delete;
 
+	--ISP20201565
+	update oqs
+		set oqs.CFAIs3rdInspect = 1
+	from Order_QtyShip oqs
+	where exists (
+		select 1 from Orders o
+		inner join CustCD c on o.BrandID = c.BrandID and o.CustCDID = c.ID
+		where c.Need3rdInspect = 1 
+		and o.ID = oqs.Id
+	)
 	-----------Order_QtyShip_Detail--------------------------調整: 來源比對Production表頭資料 
 		Merge Production.dbo.Order_QtyShip_detail as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_QtyShip_detail as a WITH (NOLOCK) inner join #TOrder b on a.id=b.id  ) as s
