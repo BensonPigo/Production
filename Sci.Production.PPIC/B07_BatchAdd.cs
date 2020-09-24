@@ -252,7 +252,6 @@ Values('{0}','{1}','{2}','{3}','{4}','{5}',GETDATE());",
                         if (insertReturnResult)
                         {
                             transactionScope.Complete();
-                            transactionScope.Dispose();
                             this.DialogResult = DialogResult.OK;
                         }
                         else

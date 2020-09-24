@@ -638,9 +638,6 @@ and ActualYds > 0
                 }
             }
 
-            transactionscope.Dispose();
-            transactionscope = null;
-
             return Ict.Result.True;
         }
 

@@ -584,32 +584,17 @@ and CutRef = '{item.CutRef}'
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
             {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, update)))
-                    {
-                        throw new Exception(upResult.Messages.ToString());
-                    }
-
-                    transactionscope.Complete();
-                }
-                catch (Exception ex)
+                if (!(upResult = DBProxy.Current.Execute(null, update)))
                 {
                     transactionscope.Dispose();
-                    upResult = new DualResult(false, "Commit transaction error.", ex);
+                    this.ShowErr(upResult);
+                    return;
                 }
+
+                transactionscope.Complete();
             }
 
-            if (!upResult)
-            {
-                this.ShowErr(upResult);
-                return;
-            }
-
-            transactionscope.Dispose();
-            transactionscope = null;
             MyUtility.Msg.InfoBox("Finished");
-
             this.Queryable();
         }
     }

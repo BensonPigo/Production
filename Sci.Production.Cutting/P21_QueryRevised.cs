@@ -262,7 +262,9 @@ namespace Sci.Production.Cutting
                         returnResult = DBProxy.Current.UpdateByChanged(null, tableSchema, item, out different);
                         if (!returnResult)
                         {
-                            throw new Exception(returnResult.Messages.ToString());
+                            transactionscope.Dispose();
+                            this.ShowErr(upResult);
+                            return;
                         }
                     }
 
@@ -337,7 +339,9 @@ namespace Sci.Production.Cutting
                     returnResult = DBProxy.Current.Deletes(null, tableSchema, selectedRow);
                     if (!returnResult)
                     {
-                        throw new Exception(returnResult.Messages.ToString());
+                        transactionscope.Dispose();
+                        this.ShowErr(upResult);
+                        return;
                     }
 
                     transactionscope.Complete();

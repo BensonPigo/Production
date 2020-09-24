@@ -2580,10 +2580,12 @@ END";
                     {
                         if (upResult.ToString().Contains("Duplicate Cutref. Please redo Auto Ref#"))
                         {
+                            transactionscope.Dispose();
                             MyUtility.Msg.WarningBox("Duplicate Cutref. Please redo Auto Ref#");
                         }
                         else
                         {
+                            transactionscope.Dispose();
                             this.ShowErr(upResult);
                         }
                     }

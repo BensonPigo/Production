@@ -340,6 +340,7 @@ Exists (
                 var rowSMNotice = dtSMNotice.AsEnumerable().FirstOrDefault();
                 if (rowSMNotice == null)
                 {
+                    scope.Dispose();
                     MyUtility.Msg.ErrorBox("can't find SMNotice data.(" + id + ")");
                     return ChangeFactoryResultEnum.Fail;
                 }
@@ -364,6 +365,7 @@ Exists (
                                 }
                                 else
                                 {
+                                    scope.Dispose();
                                     MyUtility.Msg.ErrorBox("can't find Pattern/Marker data.(" + id + ")");
                                     return ChangeFactoryResultEnum.Fail;
                                 }
@@ -385,6 +387,7 @@ Exists (
                                 var dtSMNotice_Detail = helper.LoadTable("Select ID, Type, Factory, EditName, EditDate From SMNotice_Detail Where ID = @ID and Type in ('P', 'M')", "ID", id);
                                 if (dtSMNotice_Detail.Rows.Count == 0)
                                 {
+                                    scope.Dispose();
                                     MyUtility.Msg.ErrorBox("can't find SMNotice_Detail data.(" + id + ")");
                                     return ChangeFactoryResultEnum.Fail;
                                 }
@@ -413,6 +416,7 @@ Exists (
                                 }
                                 else
                                 {
+                                    scope.Dispose();
                                     MyUtility.Msg.ErrorBox("can't find IETMS data.(" + id + ")");
                                     return ChangeFactoryResultEnum.Fail;
                                 }
@@ -429,6 +433,7 @@ Exists (
                                 var dtSMNotice_Detail = helper.LoadTable("Select ID, Type, Factory, EditName, EditDate From SMNotice_Detail Where ID = @ID and Type = 'I'", "ID", id);
                                 if (dtSMNotice_Detail.Rows.Count == 0)
                                 {
+                                    scope.Dispose();
                                     MyUtility.Msg.ErrorBox("can't find SMNotice_Detail data.(" + id + ")");
                                     return ChangeFactoryResultEnum.Fail;
                                 }
@@ -451,6 +456,7 @@ Exists (
                             var dt = helper.LoadTable("Select ID, Version, ActFtyIE, EditName, EditDate From IETMS Where ID = @ID And Version = @Version", "ID", id, "Version", version);
                             if (dt.Rows.Count == 0)
                             {
+                                scope.Dispose();
                                 MyUtility.Msg.ErrorBox("can't find IETMS data.(" + id + ")");
                                 return ChangeFactoryResultEnum.Fail;
                             }
@@ -475,6 +481,7 @@ Exists (
                 }
                 catch (Exception ex)
                 {
+                    scope.Dispose();
                     MyUtility.Msg.ErrorBox("update factory failed: " + ex.Message);
                     return ChangeFactoryResultEnum.Fail;
                 }

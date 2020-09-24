@@ -1022,6 +1022,7 @@ where a.id = '{this.CurrentMaintain["ID"]}' and c.lock = 0
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, strSQLCmd.ToString())))
                     {
+                        scope.Dispose();
                         this.ShowErr(upResult);
                         return;
                     }
