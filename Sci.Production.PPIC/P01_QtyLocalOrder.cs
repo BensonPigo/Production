@@ -347,6 +347,24 @@ namespace Sci.Production.PPIC
                 }
             }
 
+            updateCmds.Add(string.Format(
+                @"
+update oqs
+	set oqs.CFAIs3rdInspect = 1
+from Order_QtyShip oqs
+inner join Orders o on oqs.Id = o.ID
+inner join CustCD c on o.BrandID = c.BrandID and o.CustCDID = c.ID
+where exists (
+	select 1 
+	from Orders o
+	inner join CustCD c on o.BrandID = c.BrandID and o.CustCDID = c.ID
+	where c.Need3rdInspect = 1
+	and o.ID = oqs.Id
+)
+and oqs.Id = '{0}'
+",
+                this.orderID));
+
             TransactionScope transactionscope;
             try
             {

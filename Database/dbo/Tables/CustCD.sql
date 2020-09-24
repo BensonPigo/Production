@@ -38,6 +38,9 @@
 	[DiamondCity]		VARCHAR (100)  NULL,
     [StickerCombinationUkey] BIGINT NULL, 
     [StickerCombinationUkey_MixPack] BIGINT NULL, 
+    [Need3rdInspect] BIT CONSTRAINT [DF_CustCD_Need3rdInspect] NOT NULL DEFAULT ((0)), 
+    [QAEditName] VARCHAR(10) CONSTRAINT [DF_CustCD_QAEditName] NOT NULL DEFAULT (''), 
+    [QAEditDate] DATETIME NULL, 
     CONSTRAINT [PK_CustCD] PRIMARY KEY CLUSTERED ([BrandID] ASC, [ID] ASC)
 );
 
@@ -192,3 +195,30 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'混尺碼�
 , @level2type = N'COLUMN', @level2name = N'StickerCombinationUkey_MixPack'
 GO
 ;
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'須要第三方檢驗',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'CustCD',
+    @level2type = N'COLUMN',
+    @level2name = N'Need3rdInspect'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'QA 最後編輯日',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'CustCD',
+    @level2type = N'COLUMN',
+    @level2name = N'QAEditDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'QA 最後編輯人員',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'CustCD',
+    @level2type = N'COLUMN',
+    @level2name = N'QAEditName'
