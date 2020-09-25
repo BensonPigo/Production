@@ -7,8 +7,8 @@
     [StyleID]       VARCHAR (15)    CONSTRAINT [DF_Express_Detail_StyleID] DEFAULT ('') NULL,
     [Description]   NVARCHAR (MAX)  CONSTRAINT [DF_Express_Detail_Description] DEFAULT ('') NULL,
     [SuppID]        VARCHAR (6)     CONSTRAINT [DF_Express_Detail_SuppID] DEFAULT ('') NULL,
-    [CTNNo]         VARCHAR (10)    CONSTRAINT [DF_Express_Detail_CTNNo] DEFAULT ('') NULL,
-    [NW]            NUMERIC (7, 2)  CONSTRAINT [DF_Express_Detail_NW] DEFAULT ((0)) NULL,
+    [CTNNo]         VARCHAR (10)    CONSTRAINT [DF_Express_Detail_CTNNo] DEFAULT ('') NOT NULL,
+    [NW]            NUMERIC (9, 3)  CONSTRAINT [DF_Express_Detail_NW] DEFAULT ((0)) NULL,
     [Price]         NUMERIC (10, 4) CONSTRAINT [DF_Express_Detail_Price] DEFAULT ((0)) NULL,
     [Qty]           NUMERIC (8, 2)  CONSTRAINT [DF_Express_Detail_Qty] DEFAULT ((0)) NULL,
     [UnitID]        VARCHAR (8)     CONSTRAINT [DF_Express_Detail_UnitID] DEFAULT ('') NULL,
@@ -23,9 +23,11 @@
     [AddDate]       DATETIME        NULL,
     [EditName]      VARCHAR (10)    CONSTRAINT [DF_Express_Detail_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME        NULL,
-    [PackingListID] VARCHAR (13)    DEFAULT ('') NULL,
-    CONSTRAINT [PK_Express_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OrderID] ASC, [Seq1] ASC, [Seq2] ASC, [Category] ASC)
+    [PackingListID] VARCHAR (13)    CONSTRAINT [DF__Express_D__Packi__089BAC90] DEFAULT ('') NULL,
+    CONSTRAINT [PK_Express_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OrderID] ASC, [Seq1] ASC, [Seq2] ASC, [CTNNo] ASC, [Category] ASC)
 );
+
+
 
 
 

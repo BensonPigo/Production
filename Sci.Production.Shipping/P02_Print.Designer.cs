@@ -33,7 +33,6 @@
             this.radioDetailPackingList = new Sci.Win.UI.RadioButton();
             this.radioPackingList = new Sci.Win.UI.RadioButton();
             this.radioDetailList = new Sci.Win.UI.RadioButton();
-            this.rdbtnDHLcustomsclearance = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -74,13 +73,12 @@
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.rdbtnDHLcustomsclearance);
             this.radioPanel1.Controls.Add(this.radioDetailPackingList);
             this.radioPanel1.Controls.Add(this.radioPackingList);
             this.radioPanel1.Controls.Add(this.radioDetailList);
             this.radioPanel1.Location = new System.Drawing.Point(42, 39);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(200, 126);
+            this.radioPanel1.Size = new System.Drawing.Size(200, 147);
             this.radioPanel1.TabIndex = 95;
             // 
             // radioDetailPackingList
@@ -89,10 +87,10 @@
             this.radioDetailPackingList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioDetailPackingList.Location = new System.Drawing.Point(16, 63);
             this.radioDetailPackingList.Name = "radioDetailPackingList";
-            this.radioDetailPackingList.Size = new System.Drawing.Size(142, 21);
+            this.radioDetailPackingList.Size = new System.Drawing.Size(162, 21);
             this.radioDetailPackingList.TabIndex = 2;
             this.radioDetailPackingList.TabStop = true;
-            this.radioDetailPackingList.Text = "Detail Packing List";
+            this.radioDetailPackingList.Text = "Invoice + Packing List";
             this.radioDetailPackingList.UseVisualStyleBackColor = true;
             // 
             // radioPackingList
@@ -119,18 +117,6 @@
             this.radioDetailList.Text = "Detail List";
             this.radioDetailList.UseVisualStyleBackColor = true;
             // 
-            // rdbtnDHLcustomsclearance
-            // 
-            this.rdbtnDHLcustomsclearance.AutoSize = true;
-            this.rdbtnDHLcustomsclearance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnDHLcustomsclearance.Location = new System.Drawing.Point(16, 90);
-            this.rdbtnDHLcustomsclearance.Name = "rdbtnDHLcustomsclearance";
-            this.rdbtnDHLcustomsclearance.Size = new System.Drawing.Size(176, 21);
-            this.rdbtnDHLcustomsclearance.TabIndex = 3;
-            this.rdbtnDHLcustomsclearance.TabStop = true;
-            this.rdbtnDHLcustomsclearance.Text = "DHL customs clearance";
-            this.rdbtnDHLcustomsclearance.UseVisualStyleBackColor = true;
-            // 
             // P02_Print
             // 
             this.ClientSize = new System.Drawing.Size(412, 238);
@@ -140,6 +126,7 @@
             this.Name = "P02_Print";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "Print";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.P02_Print_FormClosed);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
@@ -162,6 +149,5 @@
         private Win.UI.RadioButton radioDetailPackingList;
         private Win.UI.RadioButton radioPackingList;
         private Win.UI.RadioButton radioDetailList;
-        private Win.UI.RadioButton rdbtnDHLcustomsclearance;
     }
 }

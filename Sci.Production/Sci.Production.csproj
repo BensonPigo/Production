@@ -1049,7 +1049,7 @@
     <None Include="XLT\Shipping_P02_Print_DetailList.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Shipping_P02_Print_DetailPackingList.xltx">
+    <None Include="XLT\Shipping_P02_Print_Invoice + PackingList.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Shipping_P02_Print_PackingList.xltx">
