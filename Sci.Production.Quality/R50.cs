@@ -99,7 +99,7 @@ namespace Sci.Production.Quality
 
             this.Sqlcmd.Append($@"
 select
-	CR.AddDate,
+	Convert(date,CR.AddDate),
 	[RFT] = iif(isnull(CR.InspectQty, 0) = 0, 0, round((isnull(CR.InspectQty, 0)- isnull(CR.RejectQty, 0)) / Cast(CR.InspectQty as float),2)),
 	CR.CutRef,
 	W.ID,

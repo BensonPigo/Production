@@ -120,7 +120,7 @@ namespace Sci.Production.Quality
 
             this.Sqlcmd.Append($@"
 select
-	SR.AddDate,
+	Convert(date,SR.AddDate) as AddDate,
 	[RFT] = iif(isnull(BD.Qty, 0) = 0, 0, round((isnull(BD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BD.Qty as float),2)),
 	SR.SubProcessID,
 	SR.BundleNo,
@@ -157,7 +157,7 @@ Where 1=1
 UNION
 
 select
-	SR.AddDate,
+	Convert(date,SR.AddDate) as AddDate,
 	[RFT] = iif(isnull(BRD.Qty, 0) = 0, 0, round((isnull(BRD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BRD.Qty as float),2)),
 	SR.SubProcessID,
 	SR.BundleNo,
