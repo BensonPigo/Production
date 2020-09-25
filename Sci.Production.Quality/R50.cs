@@ -39,6 +39,23 @@ namespace Sci.Production.Quality
                 return false;
             }
 
+            string formatCol;
+            string formatJoin;
+
+            if (this.radioSummary.Checked)
+            {
+                formatJoin = @"outer apply (select [val] = sum(CRD.DefectQty)
+                                            from CutInsRecord_Defect CRD WITH(NOLOCK)
+                                            where CR.Ukey = CRD.CutInsRecordUkey ) DefectQty";
+                formatCol = "DefectQty.val,";
+            }
+            else
+            {
+                formatJoin = @"left join CutInsRecord_Defect CRD on CR.Ukey = CRD.CutInsRecordUkey";
+                formatCol = @"  CRD.DefectCode,
+                                CRD.DefectQty,";
+            }
+
             #region where
             StringBuilder sqlwhere = new StringBuilder();
             if (!this.dateInspectionDate.Value1.Empty())
@@ -80,9 +97,9 @@ namespace Sci.Production.Quality
             }
             #endregion
 
-            this.Sqlcmd.Append(@"
+            this.Sqlcmd.Append($@"
 select
-	CR.AddDate,
+	Convert(date,CR.AddDate),
 	[RFT] = iif(isnull(CR.InspectQty, 0) = 0, 0, round((isnull(CR.InspectQty, 0)- isnull(CR.RejectQty, 0)) / Cast(CR.InspectQty as float),2)),
 	CR.CutRef,
 	W.ID,
@@ -109,8 +126,7 @@ select
 	CR.Middle,
 	CR.Bottom,
 	CR.InspRatio,
-	DefectCode.DefectCode,
-	DefectQty.DefectQty,
+	{formatCol}
 	CR.InspectQty,
 	CR.RejectQty,
 	Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = CR.AddName),
@@ -149,24 +165,7 @@ outer apply(
 		for XML path('')
 	),1,1,'')
 )TicketYDS
-outer apply(
-	select DefectCode = STUFF((
-		select CONCAT(CHAR(10), DefectCode)
-		from CutInsRecord_Defect CRD WITH(NOLOCK)
-		where CR.Ukey=CRD.CutInsRecordUkey
-		order by CRD.Ukey
-		for XML path('')
-	),1,1,'')
-)DefectCode
-outer apply(
-	select DefectQty = STUFF((
-		select CONCAT(CHAR(10), DefectQty)
-		from CutInsRecord_Defect CRD WITH(NOLOCK)
-		where CR.Ukey=CRD.CutInsRecordUkey
-		order by CRD.Ukey
-		for XML path('')
-	),1,1,'')
-)DefectQty
+{formatJoin}
 outer apply(select Top 1 * from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef and CR.MDivisionID=W.MDivisionID)W
 Left join Orders O on W.ID=O.ID
 Left join Order_EachCons OE on W.ID=OE.ID and W.MarkerName=OE.MarkerName
@@ -231,7 +230,7 @@ where 1=1
                 return false;
             }
 
-            string filename = "Quality_R50.xltx";
+            string filename = this.radioSummary.Checked ? "Quality_R50_Summary.xltx" : "Quality_R50_Detail.xltx";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.PrintData, string.Empty, filename, 2, false, null, excelApp, wSheet: excelApp.Sheets[1]);
 

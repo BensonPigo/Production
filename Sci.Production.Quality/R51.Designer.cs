@@ -47,6 +47,9 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.comboSubprocess = new Sci.Win.UI.ComboBox();
+            this.radioDetail = new Sci.Win.UI.RadioButton();
+            this.radioSummary = new Sci.Win.UI.RadioButton();
+            this.label9 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -276,9 +279,44 @@
             this.comboSubprocess.Size = new System.Drawing.Size(130, 24);
             this.comboSubprocess.TabIndex = 3;
             // 
+            // radioDetail
+            // 
+            this.radioDetail.AutoSize = true;
+            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail.Location = new System.Drawing.Point(126, 249);
+            this.radioDetail.Name = "radioDetail";
+            this.radioDetail.Size = new System.Drawing.Size(82, 21);
+            this.radioDetail.TabIndex = 137;
+            this.radioDetail.Text = "By Detail";
+            this.radioDetail.UseVisualStyleBackColor = true;
+            // 
+            // radioSummary
+            // 
+            this.radioSummary.AutoSize = true;
+            this.radioSummary.Checked = true;
+            this.radioSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSummary.Location = new System.Drawing.Point(126, 222);
+            this.radioSummary.Name = "radioSummary";
+            this.radioSummary.Size = new System.Drawing.Size(85, 21);
+            this.radioSummary.TabIndex = 136;
+            this.radioSummary.TabStop = true;
+            this.radioSummary.Text = "Summary";
+            this.radioSummary.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(18, 220);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(105, 23);
+            this.label9.TabIndex = 135;
+            this.label9.Text = "Format";
+            // 
             // R51
             // 
-            this.ClientSize = new System.Drawing.Size(496, 255);
+            this.ClientSize = new System.Drawing.Size(496, 306);
+            this.Controls.Add(this.radioDetail);
+            this.Controls.Add(this.radioSummary);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.comboSubprocess);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
@@ -324,6 +362,9 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.label8, 0);
             this.Controls.SetChildIndex(this.comboSubprocess, 0);
+            this.Controls.SetChildIndex(this.label9, 0);
+            this.Controls.SetChildIndex(this.radioSummary, 0);
+            this.Controls.SetChildIndex(this.radioDetail, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -348,5 +389,8 @@
         private System.Windows.Forms.Label label7;
         private Win.UI.Label label8;
         private Win.UI.ComboBox comboSubprocess;
+        private Win.UI.RadioButton radioDetail;
+        private Win.UI.RadioButton radioSummary;
+        private Win.UI.Label label9;
     }
 }
