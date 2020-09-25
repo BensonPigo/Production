@@ -86,7 +86,7 @@ from (
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
-    inner join brand WITH (NOLOCK) on brand.id = c.brandid
+    left join brand WITH (NOLOCK) on brand.id = c.brandid
     outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
     outer apply
     (
@@ -130,7 +130,7 @@ from (
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
-    inner join brand WITH (NOLOCK) on brand.id = c.brandid
+    left join brand WITH (NOLOCK) on brand.id = c.brandid
     left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
     outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
     outer apply
@@ -191,7 +191,7 @@ from (
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
 	inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
-    inner join brand WITH (NOLOCK) on brand.id = c.brandid
+    left join brand WITH (NOLOCK) on brand.id = c.brandid
 	outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
 	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 															from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
@@ -229,7 +229,7 @@ from (
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
 	inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
-    inner join brand WITH (NOLOCK) on brand.id = c.brandid
+    left join brand WITH (NOLOCK) on brand.id = c.brandid
 	outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
 	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 															from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
