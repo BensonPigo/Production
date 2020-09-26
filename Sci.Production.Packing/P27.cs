@@ -142,7 +142,7 @@ ORDER BY CAST(pd.CTNStartNo as int)
             base.OnDetailEntered();
 
             // 檢查是否擁有Packing P27的Canedit 權限
-            bool canCanEdit = Prgs.GetAuthority(Env.User.UserID, "Shipping Mark Stamp (for GenSong)", "CanEdit");
+            bool canCanEdit = Prgs.GetAuthority(Env.User.UserID, "P27. Shipping Mark Stamp (for GenSong)", "CanEdit");
 
             this.btnGenerate.Enabled = !this.EditMode && canCanEdit;
         }
