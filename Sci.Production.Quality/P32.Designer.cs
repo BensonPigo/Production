@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataSourceCtnSummary = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.dataSourceQtyBreakdown = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label2 = new Sci.Win.UI.Label();
@@ -274,17 +274,17 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(271, 37);
+            this.label4.Location = new System.Drawing.Point(268, 37);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(100, 23);
+            this.label4.Size = new System.Drawing.Size(95, 23);
             this.label4.TabIndex = 4;
             this.label4.Text = "Buyer Delivery";
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(271, 64);
+            this.label5.Location = new System.Drawing.Point(268, 64);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(100, 23);
+            this.label5.Size = new System.Drawing.Size(95, 23);
             this.label5.TabIndex = 8;
             this.label5.Text = "Destination";
             // 
@@ -306,17 +306,17 @@
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(271, 176);
+            this.label10.Location = new System.Drawing.Point(268, 176);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(100, 23);
+            this.label10.Size = new System.Drawing.Size(95, 23);
             this.label10.TabIndex = 11;
             this.label10.Text = "Shift";
             // 
             // label12
             // 
-            this.label12.Location = new System.Drawing.Point(271, 92);
+            this.label12.Location = new System.Drawing.Point(268, 92);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(100, 23);
+            this.label12.Size = new System.Drawing.Size(95, 23);
             this.label12.TabIndex = 9;
             this.label12.Text = "Order Qty";
             // 
@@ -390,10 +390,10 @@
             // dateBuyerDev
             // 
             this.dateBuyerDev.IsSupportEditMode = false;
-            this.dateBuyerDev.Location = new System.Drawing.Point(374, 37);
+            this.dateBuyerDev.Location = new System.Drawing.Point(364, 37);
             this.dateBuyerDev.Name = "dateBuyerDev";
             this.dateBuyerDev.ReadOnly = true;
-            this.dateBuyerDev.Size = new System.Drawing.Size(87, 23);
+            this.dateBuyerDev.Size = new System.Drawing.Size(97, 23);
             this.dateBuyerDev.TabIndex = 1;
             this.dateBuyerDev.TabStop = false;
             // 
@@ -419,18 +419,18 @@
             // 
             this.disDest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disDest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disDest.Location = new System.Drawing.Point(374, 64);
+            this.disDest.Location = new System.Drawing.Point(364, 64);
             this.disDest.Name = "disDest";
-            this.disDest.Size = new System.Drawing.Size(87, 23);
+            this.disDest.Size = new System.Drawing.Size(97, 23);
             this.disDest.TabIndex = 30;
             // 
             // disOrderQty
             // 
             this.disOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disOrderQty.Location = new System.Drawing.Point(374, 92);
+            this.disOrderQty.Location = new System.Drawing.Point(364, 92);
             this.disOrderQty.Name = "disOrderQty";
-            this.disOrderQty.Size = new System.Drawing.Size(87, 23);
+            this.disOrderQty.Size = new System.Drawing.Size(97, 23);
             this.disOrderQty.TabIndex = 31;
             // 
             // editBoxRemark
@@ -478,15 +478,15 @@
             // 
             // label23
             // 
-            this.label23.Location = new System.Drawing.Point(271, 148);
+            this.label23.Location = new System.Drawing.Point(268, 148);
             this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(100, 23);
+            this.label23.Size = new System.Drawing.Size(95, 23);
             this.label23.TabIndex = 51;
             this.label23.Text = "Line";
             // 
             // label24
             // 
-            this.label24.Location = new System.Drawing.Point(271, 204);
+            this.label24.Location = new System.Drawing.Point(268, 204);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(153, 23);
             this.label24.TabIndex = 53;
@@ -494,7 +494,7 @@
             // 
             // label25
             // 
-            this.label25.Location = new System.Drawing.Point(271, 120);
+            this.label25.Location = new System.Drawing.Point(268, 120);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(153, 23);
             this.label25.TabIndex = 54;
@@ -540,9 +540,9 @@
             this.txtSewingLine.BackColor = System.Drawing.Color.White;
             this.txtSewingLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
             this.txtSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSewingLine.Location = new System.Drawing.Point(374, 148);
+            this.txtSewingLine.Location = new System.Drawing.Point(364, 148);
             this.txtSewingLine.Name = "txtSewingLine";
-            this.txtSewingLine.Size = new System.Drawing.Size(87, 23);
+            this.txtSewingLine.Size = new System.Drawing.Size(97, 23);
             this.txtSewingLine.TabIndex = 6;
             this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLine_PopUp);
             this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSewingLine_Validating);
@@ -558,10 +558,10 @@
             "",
             "A",
             "B"});
-            this.comboTeam.Location = new System.Drawing.Point(427, 204);
+            this.comboTeam.Location = new System.Drawing.Point(422, 204);
             this.comboTeam.Name = "comboTeam";
             this.comboTeam.OldText = "";
-            this.comboTeam.Size = new System.Drawing.Size(34, 24);
+            this.comboTeam.Size = new System.Drawing.Size(39, 24);
             this.comboTeam.TabIndex = 7;
             this.comboTeam.SelectedIndexChanged += new System.EventHandler(this.ComboTeam_SelectedIndexChanged);
             // 
@@ -571,7 +571,7 @@
             this.numClogReceivedPercentage.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ClogReceivedPercentage", true));
             this.numClogReceivedPercentage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numClogReceivedPercentage.IsSupportEditMode = false;
-            this.numClogReceivedPercentage.Location = new System.Drawing.Point(427, 120);
+            this.numClogReceivedPercentage.Location = new System.Drawing.Point(421, 120);
             this.numClogReceivedPercentage.MaxLength = 3;
             this.numClogReceivedPercentage.Name = "numClogReceivedPercentage";
             this.numClogReceivedPercentage.NullValue = new decimal(new int[] {
@@ -580,7 +580,7 @@
             0,
             0});
             this.numClogReceivedPercentage.ReadOnly = true;
-            this.numClogReceivedPercentage.Size = new System.Drawing.Size(34, 23);
+            this.numClogReceivedPercentage.Size = new System.Drawing.Size(40, 23);
             this.numClogReceivedPercentage.TabIndex = 62;
             this.numClogReceivedPercentage.TabStop = false;
             this.numClogReceivedPercentage.Value = new decimal(new int[] {
@@ -729,9 +729,9 @@
             this.txtshift.BackColor = System.Drawing.Color.White;
             this.txtshift.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Shift", true));
             this.txtshift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshift.Location = new System.Drawing.Point(374, 177);
+            this.txtshift.Location = new System.Drawing.Point(364, 177);
             this.txtshift.Name = "txtshift";
-            this.txtshift.Size = new System.Drawing.Size(87, 23);
+            this.txtshift.Size = new System.Drawing.Size(97, 23);
             this.txtshift.TabIndex = 5;
             this.txtshift.Type = "SewingOutput_Shift";
             // 
@@ -796,6 +796,7 @@
             // 
             // btnSettingSpSeq
             // 
+            this.btnSettingSpSeq.Enabled = false;
             this.btnSettingSpSeq.Location = new System.Drawing.Point(604, 234);
             this.btnSettingSpSeq.Name = "btnSettingSpSeq";
             this.btnSettingSpSeq.Size = new System.Drawing.Size(110, 30);
@@ -803,7 +804,6 @@
             this.btnSettingSpSeq.Text = "Combine PO#";
             this.btnSettingSpSeq.UseVisualStyleBackColor = true;
             this.btnSettingSpSeq.Click += new System.EventHandler(this.BtnSettingSpSeq_Click);
-            this.btnSettingSpSeq.Enabled = false;
             // 
             // gridSpSeq
             // 
@@ -819,14 +819,14 @@
             this.gridSpSeq.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridSpSeq.Location = new System.Drawing.Point(752, 35);
             this.gridSpSeq.Name = "gridSpSeq";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSpSeq.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSpSeq.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridSpSeq.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSpSeq.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSpSeq.RowTemplate.Height = 24;

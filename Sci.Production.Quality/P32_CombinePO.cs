@@ -17,16 +17,12 @@ namespace Sci.Production.Quality
 
         private DataTable MasterCFAInspectionRecord_OrderSEQ;
 
-        // 從P32傳入原始的CFAInspectionRecord_OrderSEQ
-        //private DataTable Ori_MasterCFAInspectionRecord_OrderSEQ;
-
         /// <inheritdoc/>
         public P32_CombinePO(bool canedit, string cFAInspectionRecordID, DataTable cFAInspectionRecord_OrderSEQ)
         {
             this.InitializeComponent();
             this.CFAInspectionRecordID = cFAInspectionRecordID;
             this.MasterCFAInspectionRecord_OrderSEQ = cFAInspectionRecord_OrderSEQ;
-            //this.Ori_MasterCFAInspectionRecord_OrderSEQ = cFAInspectionRecord_OrderSEQ.Copy();
         }
 
         /// <inheritdoc/>
@@ -323,7 +319,7 @@ EXISTS
                 DataTable gridDt = (DataTable)this.grid.DataSource;
 
                 this.MasterCFAInspectionRecord_OrderSEQ.Clear();
-                foreach (DataRow dr in gridDt.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
+                foreach (DataRow dr in gridDt.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted && !MyUtility.Check.Empty(o["OrderID"]) && !MyUtility.Check.Empty(o["Seq"])))
                 {
                     string currentOrderID = MyUtility.Convert.GetString(dr["OrderID"]);
                     string currentSeq = MyUtility.Convert.GetString(dr["Seq"]);

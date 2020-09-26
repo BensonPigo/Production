@@ -105,8 +105,8 @@ namespace Sci.Production.Quality
             DBProxy.Current.Select(null, cmd, out dt_GridSpSeq);
 
             this.CFAInspectionRecord_OrderSEQ = dt_GridSpSeq;
-            this.topOrderID = dt_GridSpSeq == null ? MyUtility.Convert.GetString(dt_GridSpSeq.AsEnumerable().FirstOrDefault()["OrderID"]) : string.Empty;
-            this.topSeq = dt_GridSpSeq == null ? MyUtility.Convert.GetString(dt_GridSpSeq.AsEnumerable().FirstOrDefault()["Seq"]) : string.Empty;
+            this.topOrderID = dt_GridSpSeq != null && dt_GridSpSeq.Rows.Count > 0 ? MyUtility.Convert.GetString(dt_GridSpSeq.AsEnumerable().FirstOrDefault()["OrderID"]) : string.Empty;
+            this.topSeq = dt_GridSpSeq != null && dt_GridSpSeq.Rows.Count > 0 ? MyUtility.Convert.GetString(dt_GridSpSeq.AsEnumerable().FirstOrDefault()["Seq"]) : string.Empty;
 
             this.AutoInsertBySP(this.topOrderID, this.topSeq);
 
@@ -116,13 +116,12 @@ namespace Sci.Production.Quality
 
             this.ComboStage_Change(this.CurrentMaintain["Stage"].ToString());
 
-            this.CalInsepectionCtn(this.IsDetailInserting, false);
+            this.CalInsepectionCtn(this.IsDetailInserting, MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]));
 
             this.txtSpSeq.TextBoxSPBinding = this.topOrderID;
 
             this.txtSpSeq.TextBoxSeqBinding = this.topSeq;
 
-            this.btnSettingSpSeq.Enabled = false;
             #region -- Grid欄位設定 --
             this.gridSpSeq.DataSource = null;
             this.gridSpSeq.DataSource = dt_GridSpSeq;
@@ -397,9 +396,16 @@ WHERE a.ID ='{masterID}'
                 this.CurrentMaintain["SewingLineID"] = string.Empty;
                 this.CurrentMaintain["Result"] = string.Empty;
                 this.CurrentMaintain["Team"] = string.Empty;
+                this.CurrentMaintain["IsCombinePO"] = false;
                 this.disInsCtn.Value = 0;
 
                 this.ComboStage_Change(this.CurrentMaintain["Stage"].ToString());
+
+                this.txtSpSeq.TextBoxSP.ReadOnly = false;
+                this.txtSpSeq.TextBoxSeq.ReadOnly = false;
+
+                this.txtSpSeq.TextBoxSP.IsSupportEditMode = true;
+                this.txtSpSeq.TextBoxSeq.IsSupportEditMode = true;
 
                 if (this._sourceHeader != null)
                 {
@@ -603,8 +609,7 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.topSeq}'
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["CFA"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["OrderID"]) ||
-                MyUtility.Check.Empty(this.topSeq) ||
+                this.CFAInspectionRecord_OrderSEQ.Rows.Count == 0 ||
                 MyUtility.Check.Empty(this.CurrentMaintain["AuditDate"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["Stage"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["Result"]) ||
@@ -641,7 +646,11 @@ SELECT 1 FROM Orders WHERE ID='{this.topOrderID}' AND FtyGroup = '{Sci.Env.User.
 
             List<string> cartons = this.CurrentMaintain["Carton"].ToString().Split(',').ToList();
 
-            if (cartons.Where(o => !MyUtility.Check.Empty(o)).Count() == 0 && (this.CurrentMaintain["Stage"].ToString() == "Staggered" || this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party"))
+            if (cartons.Where(o => !MyUtility.Check.Empty(o)).Count() == 0 &&
+                (this.CurrentMaintain["Stage"].ToString() == "Staggered" ||
+                this.CurrentMaintain["Stage"].ToString() == "Final" ||
+                this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party") &&
+                !MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]))
             {
                 MyUtility.Msg.WarningBox("Inspected Carton can't be empty!!");
                 return false;
@@ -746,6 +755,7 @@ where OrderID = '{this.topOrderID}' AND OrderShipmodeSeq = '{this.topSeq}'
             // 只有Inspection stage為Staggered且Inspection result = Pass ，才需要將檢驗的箱號回寫PackingList_Detail.StaggeredCFAInspectionRecordID
             List<string> cartons = this.CurrentMaintain["Carton"].ToString().Split(',').ToList();
             string cmd = string.Empty;
+            string cmd_CFAInspectionRecord_OrderSEQ = string.Empty;
 
             cmd = $@"
 UPDATE PackingList_Detail
@@ -778,8 +788,48 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
 
                 foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
                 {
-                    dr["OrderID"] = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+                    dr["ID"] = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
                 }
+            }
+
+            if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]))
+            {
+                int count = 1;
+                string tempTable = string.Empty;
+                foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
+                {
+                    string tmp = $"SELECT [ID]='{MyUtility.Convert.GetString(dr["ID"])}', [OrderID]='{MyUtility.Convert.GetString(dr["OrderID"])}', [Seq]='{MyUtility.Convert.GetString(dr["Seq"])}'";
+
+                    tempTable += tmp + Environment.NewLine;
+
+                    if (count == 1)
+                    {
+                        tempTable += "INTO #source" + Environment.NewLine;
+                    }
+
+                    if (this.CFAInspectionRecord_OrderSEQ.Rows.Count > count)
+                    {
+                        tempTable += "UNION" + Environment.NewLine;
+                    }
+
+                    count++;
+                }
+
+                cmd_CFAInspectionRecord_OrderSEQ = $@"
+{tempTable}
+
+MERGE CFAInspectionRecord_OrderSEQ t 
+USING #source s
+on t.ID = s.ID AND t.OrderID = s.OrderID AND t.Seq = s.Seq 
+WHEN NOT MATCHED by target then
+	INSERT (ID, OrderID, Seq)
+	VALUES (s.ID, s.OrderID, s.Seq)
+WHEN NOT MATCHED by source then
+	DELETE
+;
+
+";
+                cmd += cmd_CFAInspectionRecord_OrderSEQ;
             }
 
             if (!MyUtility.Check.Empty(cmd))
@@ -1261,8 +1311,11 @@ AND CTNStartNo = @CTNStartNo
             }
             else
             {
-                this.txtInspectedCarton.IsSupportEditMode = true;
-                this.txtInspectedCarton.ReadOnly = false;
+                if (!MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]))
+                {
+                    this.txtInspectedCarton.IsSupportEditMode = true;
+                    this.txtInspectedCarton.ReadOnly = false;
+                }
 
                 // this.CurrentMaintain["Carton"] = string.Empty;
 
@@ -1357,9 +1410,9 @@ WHERE ID = '{orderID}' AND Seq ='{seq}'
 "));
 
             this.disOrderQty.Value = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"
-SELECT Qty
-FROM Order_QtyShip  WITH(NOLOCK)
-WHERE ID = '{orderID}' AND Seq ='{seq}'
+SELECT SUM(Qty) 
+FROM Order_QtyShip oq 
+WHERE EXISTS(SELECT 1 FROM CFAInspectionRecord_OrderSEQ s WHERE s.ID = '{this.CurrentMaintain["ID"]}' AND s.OrderID = oq.Id AND s.Seq = oq.Seq )
 "));
 
             this.disDest.Value = MyUtility.GetValue.Lookup($@"
@@ -1382,6 +1435,11 @@ SELECT STUFF(
 
         private void Reset_comboStage(string orderID, bool isCombinePO = false)
         {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
             bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{orderID}' "));
 
             this.comboStage.Items.Clear();
@@ -1399,11 +1457,11 @@ SELECT STUFF(
             }
             else if (isCombinePO)
             {
-                this.comboStage.Items.RemoveAt(0);
+                // 刪除，後面的Index了會往前推，所以同一個Index就好
+                this.comboStage.Items.RemoveAt(1);
                 this.comboStage.Items.RemoveAt(1);
             }
-
-            this.comboStage.SelectedItem = this.CurrentMaintain["Stage"].ToString();
+            // this.comboStage.SelectedItem = this.CurrentMaintain["Stage"].ToString();
         }
 
         private void Reset_comboResult(bool isFinal = false)
@@ -1473,37 +1531,47 @@ AND ID  != '{this.CurrentMaintain["ID"]}'
 
         private void ChkIsCombinePO_CheckedChanged(object sender, EventArgs e)
         {
-            this.CurrentMaintain["IsCombinePO"] = this.chkIsCombinePO.Checked;
-            if (this.chkIsCombinePO.Checked)
+            if (this.EditMode)
             {
-                // 清空
+                this.CurrentMaintain["IsCombinePO"] = this.chkIsCombinePO.Checked;
                 this.txtSpSeq.TextBoxSPBinding = string.Empty;
                 this.txtSpSeq.TextBoxSeqBinding = string.Empty;
-                this.CurrentMaintain["Carton"] = string.Empty;
+                this.topOrderID = string.Empty;
+                this.topSeq = string.Empty;
 
-                this.txtSpSeq.TextBoxSP.ReadOnly = true;
-                this.txtSpSeq.TextBoxSeq.ReadOnly = true;
-                this.txtInspectedCarton.ReadOnly = true;
+                this.AutoInsertBySP(this.topOrderID, this.topSeq);
 
-                this.txtSpSeq.TextBoxSP.IsSupportEditMode = false;
-                this.txtSpSeq.TextBoxSeq.IsSupportEditMode = false;
-                this.txtInspectedCarton.IsSupportEditMode = false;
+                if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]))
+                {
+                    // 清空
+                    this.CurrentMaintain["Carton"] = string.Empty;
 
-                this.btnSettingSpSeq.Enabled = true && this.EditMode;
-            }
-            else
-            {
-                this.txtSpSeq.TextBoxSP.ReadOnly = false;
-                this.txtSpSeq.TextBoxSeq.ReadOnly = false;
-                this.txtInspectedCarton.ReadOnly = false;
+                    this.txtSpSeq.TextBoxSP.ReadOnly = true;
+                    this.txtSpSeq.TextBoxSeq.ReadOnly = true;
+                    this.txtInspectedCarton.ReadOnly = true;
 
-                this.txtSpSeq.TextBoxSP.IsSupportEditMode = true;
-                this.txtSpSeq.TextBoxSeq.IsSupportEditMode = true;
-                this.txtInspectedCarton.IsSupportEditMode = true;
+                    this.txtSpSeq.TextBoxSP.IsSupportEditMode = false;
+                    this.txtSpSeq.TextBoxSeq.IsSupportEditMode = false;
+                    this.txtInspectedCarton.IsSupportEditMode = false;
 
-                this.btnSettingSpSeq.Enabled = false && this.EditMode;
+                    this.btnSettingSpSeq.Enabled = true && this.EditMode;
+                    this.Reset_comboStage(this.topOrderID, true);
+                }
+                else
+                {
+                    this.txtSpSeq.TextBoxSP.ReadOnly = false;
+                    this.txtSpSeq.TextBoxSeq.ReadOnly = false;
+                    this.txtInspectedCarton.ReadOnly = false;
 
-                this.CFAInspectionRecord_OrderSEQ.Clear();
+                    this.txtSpSeq.TextBoxSP.IsSupportEditMode = true;
+                    this.txtSpSeq.TextBoxSeq.IsSupportEditMode = true;
+                    this.txtInspectedCarton.IsSupportEditMode = true;
+
+                    this.btnSettingSpSeq.Enabled = false && this.EditMode;
+
+                    this.CFAInspectionRecord_OrderSEQ.Clear();
+                    this.Reset_comboStage(this.topOrderID);
+                }
             }
         }
 
@@ -1512,6 +1580,22 @@ AND ID  != '{this.CurrentMaintain["ID"]}'
             bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanEdit");
             P32_CombinePO form = new P32_CombinePO(canEdit, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.CFAInspectionRecord_OrderSEQ);
             form.ShowDialog();
+
+            if (this.CFAInspectionRecord_OrderSEQ.Rows.Count > 0)
+            {
+
+                this.topOrderID = MyUtility.Convert.GetString(this.CFAInspectionRecord_OrderSEQ.AsEnumerable().FirstOrDefault()["OrderID"]);
+                this.topSeq = MyUtility.Convert.GetString(this.CFAInspectionRecord_OrderSEQ.AsEnumerable().FirstOrDefault()["Seq"]);
+
+                this.txtSpSeq.TextBoxSPBinding = this.topOrderID;
+                this.txtSpSeq.TextBoxSeqBinding = this.topSeq;
+
+                this.AutoInsertBySP(this.topOrderID, this.topSeq);
+
+                this.CurrentMaintain["Stage"] = string.Empty;
+                this.CurrentMaintain["Result"] = string.Empty;
+                this.CurrentMaintain["Carton"] = string.Empty;
+            }
         }
     }
 
