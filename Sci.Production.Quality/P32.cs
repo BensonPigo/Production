@@ -20,6 +20,9 @@ namespace Sci.Production.Quality
         private readonly P32Header _sourceHeader = new P32Header();
         private string _oldStage = string.Empty;
         private bool _canConfirm = false;
+        private string topOrderID = string.Empty;
+        private string topSeq = string.Empty;
+        private DataTable CFAInspectionRecord_OrderSEQ;
 
         /// <inheritdoc/>
         public P32(ToolStripMenuItem menuitem, string type)
@@ -31,7 +34,7 @@ namespace Sci.Production.Quality
             this._sourceHeader = null;
 
             string isfinished = type == "1" ? "0" : "1";
-            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE Ftygroup='{Sci.Env.User.Factory}' AND Finished = {isfinished} AND ID = CFAInspectionRecord.OrderID)";
+            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE Ftygroup='{Sci.Env.User.Factory}' AND Finished = {isfinished} AND ID IN (SELECT OrderID FROM CFAInspectionRecord_OrderSEQ WHERE ID IN (CFAInspectionRecord.ID)))";
             this.DefaultFilter = defaultFilter;
 
             if (type != "1")
@@ -58,7 +61,7 @@ namespace Sci.Production.Quality
             this._sourceHeader = sourceHeader;
 
             string isfinished = type == "1" ? "0" : "1";
-            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE Ftygroup='{Sci.Env.User.Factory}' AND Finished = {isfinished} AND ID = CFAInspectionRecord.OrderID)";
+            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE Ftygroup='{Sci.Env.User.Factory}' AND Finished = {isfinished} AND ID IN (SELECT OrderID FROM CFAInspectionRecord_OrderSEQ WHERE ID IN (CFAInspectionRecord.ID)))";
             this.DefaultFilter = defaultFilter;
 
             if (type != "1")
@@ -97,15 +100,33 @@ namespace Sci.Production.Quality
         {
             base.OnDetailEntered();
 
-            this.AutoInsertBySP(this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["Seq"].ToString());
+            DataTable dt_GridSpSeq;
+            string cmd = $@"SELECT * FROM CFAInspectionRecord_OrderSEQ WHERE ID='{this.CurrentMaintain["ID"]}' ORDER BY Ukey";
+            DBProxy.Current.Select(null, cmd, out dt_GridSpSeq);
+
+            this.CFAInspectionRecord_OrderSEQ = dt_GridSpSeq;
+            this.topOrderID = dt_GridSpSeq == null ? MyUtility.Convert.GetString(dt_GridSpSeq.AsEnumerable().FirstOrDefault()["OrderID"]) : string.Empty;
+            this.topSeq = dt_GridSpSeq == null ? MyUtility.Convert.GetString(dt_GridSpSeq.AsEnumerable().FirstOrDefault()["Seq"]) : string.Empty;
+
+            this.AutoInsertBySP(this.topOrderID, this.topSeq);
 
             this.CauculateSQR();
 
-            this.Reset_comboStage(this.CurrentMaintain["OrderID"].ToString());
+            this.Reset_comboStage(this.topOrderID);
 
             this.ComboStage_Change(this.CurrentMaintain["Stage"].ToString());
 
-            this.CalInsepectionCtn(this.IsDetailInserting);
+            this.CalInsepectionCtn(this.IsDetailInserting, false);
+
+            this.txtSpSeq.TextBoxSPBinding = this.topOrderID;
+
+            this.txtSpSeq.TextBoxSeqBinding = this.topSeq;
+
+            this.btnSettingSpSeq.Enabled = false;
+            #region -- Grid欄位設定 --
+            this.gridSpSeq.DataSource = null;
+            this.gridSpSeq.DataSource = dt_GridSpSeq;
+            #endregion 欄位設定
         }
 
         /// <inheritdoc/>
@@ -320,6 +341,11 @@ namespace Sci.Production.Quality
             ;
             #endregion 欄位設定
 
+            this.Helper.Controls.Grid.Generator(this.gridSpSeq)
+            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(12), iseditingreadonly: true)
+            .Text("Seq", header: "SEQ", width: Widths.AnsiChars(3), iseditingreadonly: true)
+            ;
+
             #region 可編輯欄位變色
             this.detailgrid.Columns["GarmentDefectCodeid"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["CFAAreaID"].DefaultCellStyle.BackColor = Color.Pink;
@@ -359,37 +385,44 @@ WHERE a.ID ='{masterID}'
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
-            base.ClickNewAfter();
-            this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["AuditDate"] = DateTime.Now;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            this.CurrentMaintain["CFA"] = Sci.Env.User.UserID;
-            this.CurrentMaintain["Stage"] = string.Empty;
-            this.CurrentMaintain["SewingLineID"] = string.Empty;
-            this.CurrentMaintain["Result"] = string.Empty;
-            this.CurrentMaintain["Team"] = string.Empty;
-            this.disInsCtn.Value = 0;
-
-            this.ComboStage_Change(this.CurrentMaintain["Stage"].ToString());
-
-            if (this._sourceHeader != null)
+            try
             {
-                this.CurrentMaintain["OrderID"] = this._sourceHeader.OrderID;
-                this.CurrentMaintain["Seq"] = this._sourceHeader.Seq;
-                this.disPO.Value = this._sourceHeader.PO;
-                this.disStyle.Value = this._sourceHeader.Style;
-                this.disBrand.Value = this._sourceHeader.Brand;
-                this.disSeason.Value = this._sourceHeader.Season;
-                this.CurrentMaintain["MDivisionid"] = this._sourceHeader.M;
-                // this.CurrentMaintain["FactoryID"] = this._sourceHeader.Factory;
-                this.disOrderQty.Value = this._sourceHeader.OrderQty;
-                this.disDest.Value = this._sourceHeader.Dest;
-                this.disArticle.Value = this._sourceHeader.Article;
-                this.dateBuyerDev.Value = MyUtility.Convert.GetDate(this._sourceHeader.BuyerDev);
-            }
+                base.ClickNewAfter();
+                this.CurrentMaintain["Status"] = "New";
+                this.CurrentMaintain["AuditDate"] = DateTime.Now;
+                this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+                this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+                this.CurrentMaintain["CFA"] = Sci.Env.User.UserID;
+                this.CurrentMaintain["Stage"] = string.Empty;
+                this.CurrentMaintain["SewingLineID"] = string.Empty;
+                this.CurrentMaintain["Result"] = string.Empty;
+                this.CurrentMaintain["Team"] = string.Empty;
+                this.disInsCtn.Value = 0;
 
-            this.Reset_comboStage(this.CurrentMaintain["OrderID"].ToString());
+                this.ComboStage_Change(this.CurrentMaintain["Stage"].ToString());
+
+                if (this._sourceHeader != null)
+                {
+                    this.CurrentMaintain["OrderID"] = this._sourceHeader.OrderID;
+                    this.topSeq = this._sourceHeader.Seq;
+                    this.disPO.Value = this._sourceHeader.PO;
+                    this.disStyle.Value = this._sourceHeader.Style;
+                    this.disBrand.Value = this._sourceHeader.Brand;
+                    this.disSeason.Value = this._sourceHeader.Season;
+                    this.CurrentMaintain["MDivisionid"] = this._sourceHeader.M;
+                    // this.CurrentMaintain["FactoryID"] = this._sourceHeader.Factory;
+                    this.disOrderQty.Value = this._sourceHeader.OrderQty;
+                    this.disDest.Value = this._sourceHeader.Dest;
+                    this.disArticle.Value = this._sourceHeader.Article;
+                    this.dateBuyerDev.Value = MyUtility.Convert.GetDate(this._sourceHeader.BuyerDev);
+                }
+
+                this.Reset_comboStage(this.topOrderID);
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr(ex);
+            }
         }
 
         /// <inheritdoc/>
@@ -415,7 +448,7 @@ WHERE a.ID ='{masterID}'
 UPDATE CFAInspectionRecord SET Status='Confirmed',EditName='{Sci.Env.User.UserID}' ,EditDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' 
 ;
 IF NOT EXISTS(
-    SELECT 1 FROM Order_QtyShip WHERE ID = '{this.CurrentMaintain["OrderID"]}' AND Seq = '{this.CurrentMaintain["Seq"]}'
+    SELECT 1 FROM Order_QtyShip WHERE ID = '{this.CurrentMaintain["OrderID"]}' AND Seq = '{this.topSeq}'
     AND  (";
                 if (this.CurrentMaintain["Stage"].ToString() == "Final")
                 {
@@ -451,7 +484,7 @@ BEGIN
                 }
 
                 updateCmd += $@"
-    WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["Seq"]}'
+    WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.topSeq}'
 END
 ";
             }
@@ -462,7 +495,7 @@ UPDATE CFAInspectionRecord SET Status='Confirmed',EditName='{Sci.Env.User.UserID
 
 UPDATE Order_QtyShip 
 SET CFAUpdateDate=GETDATE()
-WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["Seq"]}'
+WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.topSeq}'
 ";
             }
 
@@ -488,7 +521,7 @@ INTO #LastConfirm
 FROM CFAInspectionRecord
 WHERE Result='Fail'
 AND OrderID='{this.CurrentMaintain["OrderID"].ToString()}'
-AND Seq='{this.CurrentMaintain["Seq"].ToString()}'
+AND Seq='{this.topSeq}'
 AND Stage='{this.CurrentMaintain["Stage"].ToString()}'
 AND Status = 'Confirmed'
 AND ID != '{this.CurrentMaintain["ID"].ToString()}'
@@ -502,7 +535,7 @@ IF NOT EXISTS(
     FROM CFAInspectionRecord
     WHERE (Result = 'Pass' OR Result='Fail but release')	
     AND OrderID='{this.CurrentMaintain["OrderID"].ToString()}'
-	AND Seq='{this.CurrentMaintain["Seq"].ToString()}'
+	AND Seq='{this.topSeq}'
     AND Stage='{this.CurrentMaintain["Stage"].ToString()}'
     AND ID != '{this.CurrentMaintain["ID"].ToString()}'
 )
@@ -514,7 +547,7 @@ BEGIN
     FROM CFAInspectionRecord
     WHERE Result='Fail'
     AND OrderID='{this.CurrentMaintain["OrderID"].ToString()}'
-	AND Seq='{this.CurrentMaintain["Seq"].ToString()}'
+	AND Seq='{this.topSeq}'
     AND Stage='{this.CurrentMaintain["Stage"].ToString()}'
 	AND Status = 'Confirmed'
     AND ID != '{this.CurrentMaintain["ID"].ToString()}'
@@ -541,7 +574,7 @@ BEGIN
 ";
                 }
 
-                updateCmd += $@"    WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["Seq"]}'";
+                updateCmd += $@"    WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.topSeq}'";
                 updateCmd += $@"
 END";
             }
@@ -552,7 +585,7 @@ UPDATE CFAInspectionRecord SET Status='New',EditName='{Sci.Env.User.UserID}' ,Ed
 
 UPDATE Order_QtyShip 
 SET CFAUpdateDate=GETDATE()
-WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["Seq"]}'
+WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.topSeq}'
 ";
             }
 
@@ -571,7 +604,7 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["CFA"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["OrderID"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["Seq"]) ||
+                MyUtility.Check.Empty(this.topSeq) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["AuditDate"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["Stage"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["Result"]) ||
@@ -597,7 +630,7 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
             }
 
             bool sameFactory = MyUtility.Check.Seek($@"
-SELECT 1 FROM Orders WHERE ID='{this.CurrentMaintain["OrderID"]}' AND FtyGroup = '{Sci.Env.User.Factory}'
+SELECT 1 FROM Orders WHERE ID='{this.topOrderID}' AND FtyGroup = '{Sci.Env.User.Factory}'
 ");
 
             if (!sameFactory)
@@ -617,8 +650,8 @@ SELECT 1 FROM Orders WHERE ID='{this.CurrentMaintain["OrderID"]}' AND FtyGroup =
             string cmd = $@"
 SELECT 1
 FROM PackingList_Detail
-WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
-AND OrderShipmodeSeq ='{this.CurrentMaintain["Seq"]}'
+WHERE OrderID = '{this.topOrderID}'
+AND OrderShipmodeSeq ='{this.topSeq}'
 AND CTNStartNo IN ('{cartons.JoinToString("','")}')
 AND StaggeredCFAInspectionRecordID <> '{this.CurrentMaintain["ID"]}'
 AND StaggeredCFAInspectionRecordID <> ''
@@ -652,8 +685,8 @@ AND StaggeredCFAInspectionRecordID <> ''
 SELECT 1 
 FROM CFAInspectionRecord WITH(NOLOCK)
 WHERE ID <> '{this.CurrentMaintain["ID"]}'
-AND OrderID = '{this.CurrentMaintain["OrderID"]}'
-AND Seq = '{this.CurrentMaintain["Seq"]}'
+AND OrderID = '{this.topOrderID}'
+AND Seq = '{this.topSeq}'
 AND Stage='{this.CurrentMaintain["Stage"].ToString()}'
 AND (Result='Pass' OR Result='Fail but release')
 ");
@@ -669,13 +702,13 @@ AND (Result='Pass' OR Result='Fail but release')
                 bool cFAIs3rdInspect = MyUtility.Check.Seek($@"
 SELECT 1
 FROM Order_QtyShip WITH(NOLOCK)
-WHERE ID = '{this.CurrentMaintain["OrderID"]}'
-AND Seq = '{this.CurrentMaintain["Seq"]}'
+WHERE ID = '{this.topOrderID}'
+AND Seq = '{this.topSeq}'
 AND CFAIs3rdInspect = 1
 ");
                 if (!cFAIs3rdInspect)
                 {
-                    MyUtility.Msg.InfoBox($"SP#:{this.CurrentMaintain["OrderID"]} 、Sep:{this.CurrentMaintain["Seq"]}   is not 3rd Inspect.");
+                    MyUtility.Msg.InfoBox($"SP#:{this.topOrderID} 、Sep:{this.topSeq}   is not 3rd Inspect.");
                     return false;
                 }
             }
@@ -689,7 +722,7 @@ SELECT  CAST(ROUND( SUM(IIF( CFAReceiveDate IS NOT NULL OR ReceiveDate IS NOT NU
 						/  SUM(ShipQty) * 100 
 ,0) AS INT) 
 FROM PackingList_Detail WITH(NOLOCK)
-where OrderID = '{this.CurrentMaintain["OrderID"]}' AND OrderShipmodeSeq = '{this.CurrentMaintain["Seq"]}'
+where OrderID = '{this.topOrderID}' AND OrderShipmodeSeq = '{this.topSeq}'
 "));
 
             if (this.IsDetailInserting)
@@ -726,8 +759,8 @@ WHERE StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
                 cmd += $@"
 UPDATE PackingList_Detail
 SET StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
-WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
-    AND OrderShipmodeSeq ='{this.CurrentMaintain["Seq"]}' 
+WHERE OrderID = '{this.topOrderID}'
+    AND OrderShipmodeSeq ='{this.topSeq}' 
     AND CTNStartNo IN ('{cartons.JoinToString("','")}')
     AND StaggeredCFAInspectionRecordID = ''
 ";
@@ -737,11 +770,16 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
                 cmd += $@"
 UPDATE PackingList_Detail
 SET StaggeredCFAInspectionRecordID=''
-WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
-AND OrderShipmodeSeq ='{this.CurrentMaintain["Seq"]}' 
+WHERE OrderID = '{this.topOrderID}'
+AND OrderShipmodeSeq ='{this.topSeq}' 
 AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
 ;
 ";
+
+                foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
+                {
+                    dr["OrderID"] = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+                }
             }
 
             if (!MyUtility.Check.Empty(cmd))
@@ -817,7 +855,7 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
                 this._oldStage = this.CurrentMaintain["Stage"].ToString();
             }
 
-            this.CalInsepectionCtn(this.IsDetailInserting);
+            this.CalInsepectionCtn(this.IsDetailInserting, MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]));
         }
 
         private void TxtSpSeq_Leave(object sender, EventArgs e)
@@ -826,13 +864,13 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
             string newSeq = this.txtSpSeq.TextBoxSeqBinding;
             if (this.CurrentMaintain != null)
             {
-                string oldOrderID = this.CurrentMaintain["OrderID"].ToString();
-                string oldSeq = this.CurrentMaintain["Seq"].ToString();
+                string oldOrderID = this.topOrderID;
+                string oldSeq = this.topSeq;
 
                 if ((newOrderID != oldOrderID) || (newSeq != oldSeq))
                 {
-                    this.CurrentMaintain["OrderID"] = newOrderID;
-                    this.CurrentMaintain["Seq"] = newSeq;
+                    this.topOrderID = newOrderID;
+                    this.topSeq = newSeq;
                     this.AutoInsertBySP(newOrderID, newSeq);
 
                     this.CurrentMaintain["Stage"] = string.Empty;
@@ -841,10 +879,10 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
                 }
 
                 // 開始計算檢驗次數
-                this.CalInsepectionCtn(this.IsDetailInserting);
+                this.CalInsepectionCtn(this.IsDetailInserting, false);
             }
 
-            bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["OrderID"].ToString()}' "));
+            bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.topOrderID}' "));
 
             if (isSample && this.comboStage.Items.Contains("Staggered"))
             {
@@ -950,8 +988,8 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
             if (this.EditMode)
             {
                 List<SqlParameter> paras = new List<SqlParameter>();
-                paras.Add(new SqlParameter("@OrderID", this.CurrentMaintain["OrderID"].ToString()));
-                paras.Add(new SqlParameter("@Seq", this.CurrentMaintain["Seq"].ToString()));
+                paras.Add(new SqlParameter("@OrderID", this.topOrderID));
+                paras.Add(new SqlParameter("@Seq", this.topSeq));
 
                 string sqlCmd = $@"
 
@@ -1149,7 +1187,7 @@ AND CTNStartNo = @CTNStartNo
 
                     List<SqlParameter> paras = new List<SqlParameter>();
                     paras.Add(new SqlParameter("@OrderID", this.CurrentMaintain["OrderID"].ToString()));
-                    paras.Add(new SqlParameter("@Seq", this.CurrentMaintain["Seq"].ToString()));
+                    paras.Add(new SqlParameter("@Seq", this.topSeq));
                     paras.Add(new SqlParameter("@CTNStartNo", carton));
                     paras.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()));
 
@@ -1242,13 +1280,13 @@ AND CTNStartNo = @CTNStartNo
                 bool cFAIs3rdInspect = MyUtility.Check.Seek($@"
 SELECT 1
 FROM Order_QtyShip WITH(NOLOCK)
-WHERE ID = '{this.CurrentMaintain["OrderID"]}'
-AND Seq = '{this.CurrentMaintain["Seq"]}'
+WHERE ID = '{this.topOrderID}'
+AND Seq = '{this.topSeq}'
 AND CFAIs3rdInspect = 1
 ");
                 if (!cFAIs3rdInspect)
                 {
-                    MyUtility.Msg.InfoBox($"SP#:{this.CurrentMaintain["OrderID"]} 、Sep:{this.CurrentMaintain["Seq"]}   is not 3rd Inspect.");
+                    MyUtility.Msg.InfoBox($"SP#:{this.topOrderID} 、Sep:{this.topSeq}   is not 3rd Inspect.");
 
                     // 不能存檔還留著的話太蠢，直接清空
                     this.comboStage.SelectedIndex = 0;
@@ -1342,7 +1380,7 @@ SELECT STUFF(
 ");
         }
 
-        private void Reset_comboStage(string orderID)
+        private void Reset_comboStage(string orderID, bool isCombinePO = false)
         {
             bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{orderID}' "));
 
@@ -1358,6 +1396,11 @@ SELECT STUFF(
             if (isSample)
             {
                 this.comboStage.Items.RemoveAt(2);
+            }
+            else if (isCombinePO)
+            {
+                this.comboStage.Items.RemoveAt(0);
+                this.comboStage.Items.RemoveAt(1);
             }
 
             this.comboStage.SelectedItem = this.CurrentMaintain["Stage"].ToString();
@@ -1391,12 +1434,12 @@ SELECT STUFF(
             this.comboResult.SelectedItem = this.CurrentMaintain["Result"].ToString();
         }
 
-        private void CalInsepectionCtn(bool isClickNew)
+        private void CalInsepectionCtn(bool isClickNew, bool isCombinePO)
         {
             string cmd = string.Empty;
 
             // 必須條件
-            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderID"]) || MyUtility.Check.Empty(this.CurrentMaintain["SEQ"]) || MyUtility.Check.Empty(this.CurrentMaintain["Stage"]) || MyUtility.Check.Empty(this.CurrentMaintain["AuditDate"]))
+            if (MyUtility.Check.Empty(this.topOrderID) || MyUtility.Check.Empty(this.topSeq) || MyUtility.Check.Empty(this.CurrentMaintain["Stage"]) || MyUtility.Check.Empty(this.CurrentMaintain["AuditDate"]))
             {
                 this.disInsCtn.Value = 0;
                 return;
@@ -1409,10 +1452,16 @@ SELECT STUFF(
                 return;
             }
 
+            if (isCombinePO)
+            {
+                this.disInsCtn.Value = null;
+                return;
+            }
+
             cmd = $@"
 SELECT COUNT(1) + 1
 FROM CFAInspectionRecord
-WHERE OrderID='{this.CurrentMaintain["OrderID"]}' AND SEQ='{this.CurrentMaintain["Seq"]}'
+WHERE OrderID='{this.topOrderID}' AND SEQ='{this.topSeq}'
 AND Status = 'Confirmed'
 AND Stage='{this.CurrentMaintain["Stage"]}'
 AND AuditDate <= '{MyUtility.Convert.GetDate(this.CurrentMaintain["AuditDate"]).Value.ToString("yyyy/MM/dd")}'
@@ -1421,21 +1470,75 @@ AND ID  != '{this.CurrentMaintain["ID"]}'
 
             this.disInsCtn.Value = MyUtility.GetValue.Lookup(cmd);
         }
+
+        private void ChkIsCombinePO_CheckedChanged(object sender, EventArgs e)
+        {
+            this.CurrentMaintain["IsCombinePO"] = this.chkIsCombinePO.Checked;
+            if (this.chkIsCombinePO.Checked)
+            {
+                // 清空
+                this.txtSpSeq.TextBoxSPBinding = string.Empty;
+                this.txtSpSeq.TextBoxSeqBinding = string.Empty;
+                this.CurrentMaintain["Carton"] = string.Empty;
+
+                this.txtSpSeq.TextBoxSP.ReadOnly = true;
+                this.txtSpSeq.TextBoxSeq.ReadOnly = true;
+                this.txtInspectedCarton.ReadOnly = true;
+
+                this.txtSpSeq.TextBoxSP.IsSupportEditMode = false;
+                this.txtSpSeq.TextBoxSeq.IsSupportEditMode = false;
+                this.txtInspectedCarton.IsSupportEditMode = false;
+
+                this.btnSettingSpSeq.Enabled = true && this.EditMode;
+            }
+            else
+            {
+                this.txtSpSeq.TextBoxSP.ReadOnly = false;
+                this.txtSpSeq.TextBoxSeq.ReadOnly = false;
+                this.txtInspectedCarton.ReadOnly = false;
+
+                this.txtSpSeq.TextBoxSP.IsSupportEditMode = true;
+                this.txtSpSeq.TextBoxSeq.IsSupportEditMode = true;
+                this.txtInspectedCarton.IsSupportEditMode = true;
+
+                this.btnSettingSpSeq.Enabled = false && this.EditMode;
+
+                this.CFAInspectionRecord_OrderSEQ.Clear();
+            }
+        }
+
+        private void BtnSettingSpSeq_Click(object sender, EventArgs e)
+        {
+            bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanEdit");
+            P32_CombinePO form = new P32_CombinePO(canEdit, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.CFAInspectionRecord_OrderSEQ);
+            form.ShowDialog();
+        }
     }
 
     public class P32Header
     {
         public string OrderID { get; set; }
+
         public string Seq { get; set; }
+
         public string PO { get; set; }
+
         public string Style { get; set; }
+
         public string Brand { get; set; }
+
         public string Season { get; set; }
+
         public string M { get; set; }
+
         public string Factory { get; set; }
+
         public string BuyerDev { get; set; }
+
         public string OrderQty { get; set; }
+
         public string Dest { get; set; }
+
         public string Article { get; set; }
     }
 }

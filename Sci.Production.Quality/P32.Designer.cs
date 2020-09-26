@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataSourceCtnSummary = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.dataSourceQtyBreakdown = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label2 = new Sci.Win.UI.Label();
@@ -80,6 +81,9 @@
             this.disArticle = new Sci.Win.UI.DisplayBox();
             this.label9 = new Sci.Win.UI.Label();
             this.disInsCtn = new Sci.Win.UI.DisplayBox();
+            this.chkIsCombinePO = new Sci.Win.UI.CheckBox();
+            this.btnSettingSpSeq = new Sci.Win.UI.Button();
+            this.gridSpSeq = new Sci.Win.UI.Grid();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -94,10 +98,14 @@
             this.tabs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataSourceCtnSummary)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataSourceQtyBreakdown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSpSeq)).BeginInit();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.gridSpSeq);
+            this.masterpanel.Controls.Add(this.btnSettingSpSeq);
+            this.masterpanel.Controls.Add(this.chkIsCombinePO);
             this.masterpanel.Controls.Add(this.disInsCtn);
             this.masterpanel.Controls.Add(this.disArticle);
             this.masterpanel.Controls.Add(this.label9);
@@ -147,7 +155,7 @@
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 327);
+            this.masterpanel.Size = new System.Drawing.Size(951, 327);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -198,19 +206,22 @@
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
             this.masterpanel.Controls.SetChildIndex(this.disArticle, 0);
             this.masterpanel.Controls.SetChildIndex(this.disInsCtn, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkIsCombinePO, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnSettingSpSeq, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridSpSeq, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 327);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 303);
+            this.detailpanel.Size = new System.Drawing.Size(951, 303);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(890, 285);
+            this.gridicon.Location = new System.Drawing.Point(1020, 285);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 303);
+            this.detailgridcont.Size = new System.Drawing.Size(951, 303);
             // 
             // detail2
             // 
@@ -226,28 +237,28 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 668);
+            this.detail.Size = new System.Drawing.Size(951, 668);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 630);
+            this.detailcont.Size = new System.Drawing.Size(951, 630);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 630);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Size = new System.Drawing.Size(951, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 668);
+            this.browse.Size = new System.Drawing.Size(951, 668);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 697);
+            this.tabs.Size = new System.Drawing.Size(959, 697);
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(23, 203);
+            this.label2.Location = new System.Drawing.Point(5, 204);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(100, 23);
             this.label2.TabIndex = 2;
@@ -255,7 +266,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(23, 91);
+            this.label3.Location = new System.Drawing.Point(5, 92);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(100, 23);
             this.label3.TabIndex = 3;
@@ -263,7 +274,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(289, 36);
+            this.label4.Location = new System.Drawing.Point(271, 37);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(100, 23);
             this.label4.TabIndex = 4;
@@ -271,7 +282,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(289, 63);
+            this.label5.Location = new System.Drawing.Point(271, 64);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(100, 23);
             this.label5.TabIndex = 8;
@@ -279,7 +290,7 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(23, 119);
+            this.label7.Location = new System.Drawing.Point(5, 120);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(100, 23);
             this.label7.TabIndex = 6;
@@ -287,7 +298,7 @@
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(23, 63);
+            this.label8.Location = new System.Drawing.Point(5, 64);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(100, 23);
             this.label8.TabIndex = 5;
@@ -295,7 +306,7 @@
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(289, 175);
+            this.label10.Location = new System.Drawing.Point(271, 176);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(100, 23);
             this.label10.TabIndex = 11;
@@ -303,7 +314,7 @@
             // 
             // label12
             // 
-            this.label12.Location = new System.Drawing.Point(289, 91);
+            this.label12.Location = new System.Drawing.Point(271, 92);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(100, 23);
             this.label12.TabIndex = 9;
@@ -311,47 +322,47 @@
             // 
             // label16
             // 
-            this.label16.Location = new System.Drawing.Point(535, 34);
+            this.label16.Location = new System.Drawing.Point(464, 37);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(165, 23);
+            this.label16.Size = new System.Drawing.Size(137, 23);
             this.label16.TabIndex = 13;
             this.label16.Text = "Audit Date";
             // 
             // label17
             // 
-            this.label17.Location = new System.Drawing.Point(535, 172);
+            this.label17.Location = new System.Drawing.Point(464, 175);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(165, 23);
+            this.label17.Size = new System.Drawing.Size(137, 23);
             this.label17.TabIndex = 20;
             this.label17.Text = "Defect Qty";
             // 
             // label18
             // 
-            this.label18.Location = new System.Drawing.Point(535, 144);
+            this.label18.Location = new System.Drawing.Point(464, 147);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(165, 23);
+            this.label18.Size = new System.Drawing.Size(137, 23);
             this.label18.TabIndex = 19;
             this.label18.Text = "Total Inspected Qty";
             // 
             // label19
             // 
-            this.label19.Location = new System.Drawing.Point(535, 116);
+            this.label19.Location = new System.Drawing.Point(464, 119);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(165, 23);
+            this.label19.Size = new System.Drawing.Size(137, 23);
             this.label19.TabIndex = 18;
             this.label19.Text = "Inspected Carton";
             // 
             // label20
             // 
-            this.label20.Location = new System.Drawing.Point(535, 88);
+            this.label20.Location = new System.Drawing.Point(464, 91);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(165, 23);
+            this.label20.Size = new System.Drawing.Size(137, 23);
             this.label20.TabIndex = 17;
             this.label20.Text = "Inspection result";
             // 
             // label21
             // 
-            this.label21.Location = new System.Drawing.Point(23, 261);
+            this.label21.Location = new System.Drawing.Point(5, 262);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(100, 23);
             this.label21.TabIndex = 21;
@@ -362,7 +373,7 @@
             this.disFactoryID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disFactoryID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
             this.disFactoryID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disFactoryID.Location = new System.Drawing.Point(126, 205);
+            this.disFactoryID.Location = new System.Drawing.Point(108, 206);
             this.disFactoryID.Name = "disFactoryID";
             this.disFactoryID.Size = new System.Drawing.Size(100, 23);
             this.disFactoryID.TabIndex = 23;
@@ -371,7 +382,7 @@
             // 
             this.disStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disStyle.Location = new System.Drawing.Point(126, 91);
+            this.disStyle.Location = new System.Drawing.Point(108, 92);
             this.disStyle.Name = "disStyle";
             this.disStyle.Size = new System.Drawing.Size(100, 23);
             this.disStyle.TabIndex = 24;
@@ -379,10 +390,10 @@
             // dateBuyerDev
             // 
             this.dateBuyerDev.IsSupportEditMode = false;
-            this.dateBuyerDev.Location = new System.Drawing.Point(392, 36);
+            this.dateBuyerDev.Location = new System.Drawing.Point(374, 37);
             this.dateBuyerDev.Name = "dateBuyerDev";
             this.dateBuyerDev.ReadOnly = true;
-            this.dateBuyerDev.Size = new System.Drawing.Size(130, 23);
+            this.dateBuyerDev.Size = new System.Drawing.Size(87, 23);
             this.dateBuyerDev.TabIndex = 1;
             this.dateBuyerDev.TabStop = false;
             // 
@@ -390,7 +401,7 @@
             // 
             this.disPO.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disPO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disPO.Location = new System.Drawing.Point(126, 63);
+            this.disPO.Location = new System.Drawing.Point(108, 64);
             this.disPO.Name = "disPO";
             this.disPO.Size = new System.Drawing.Size(100, 23);
             this.disPO.TabIndex = 27;
@@ -399,7 +410,7 @@
             // 
             this.disBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disBrand.Location = new System.Drawing.Point(126, 119);
+            this.disBrand.Location = new System.Drawing.Point(108, 120);
             this.disBrand.Name = "disBrand";
             this.disBrand.Size = new System.Drawing.Size(100, 23);
             this.disBrand.TabIndex = 28;
@@ -408,18 +419,18 @@
             // 
             this.disDest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disDest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disDest.Location = new System.Drawing.Point(392, 63);
+            this.disDest.Location = new System.Drawing.Point(374, 64);
             this.disDest.Name = "disDest";
-            this.disDest.Size = new System.Drawing.Size(130, 23);
+            this.disDest.Size = new System.Drawing.Size(87, 23);
             this.disDest.TabIndex = 30;
             // 
             // disOrderQty
             // 
             this.disOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disOrderQty.Location = new System.Drawing.Point(392, 91);
+            this.disOrderQty.Location = new System.Drawing.Point(374, 92);
             this.disOrderQty.Name = "disOrderQty";
-            this.disOrderQty.Size = new System.Drawing.Size(130, 23);
+            this.disOrderQty.Size = new System.Drawing.Size(87, 23);
             this.disOrderQty.TabIndex = 31;
             // 
             // editBoxRemark
@@ -427,23 +438,23 @@
             this.editBoxRemark.BackColor = System.Drawing.Color.White;
             this.editBoxRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editBoxRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBoxRemark.Location = new System.Drawing.Point(126, 261);
+            this.editBoxRemark.Location = new System.Drawing.Point(108, 262);
             this.editBoxRemark.Multiline = true;
             this.editBoxRemark.Name = "editBoxRemark";
-            this.editBoxRemark.Size = new System.Drawing.Size(396, 23);
+            this.editBoxRemark.Size = new System.Drawing.Size(353, 23);
             this.editBoxRemark.TabIndex = 12;
             // 
             // dateAuditDate
             // 
             this.dateAuditDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AuditDate", true));
-            this.dateAuditDate.Location = new System.Drawing.Point(703, 34);
+            this.dateAuditDate.Location = new System.Drawing.Point(604, 36);
             this.dateAuditDate.Name = "dateAuditDate";
-            this.dateAuditDate.Size = new System.Drawing.Size(135, 23);
+            this.dateAuditDate.Size = new System.Drawing.Size(110, 23);
             this.dateAuditDate.TabIndex = 4;
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(23, 9);
+            this.label1.Location = new System.Drawing.Point(5, 10);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(100, 23);
             this.label1.TabIndex = 48;
@@ -451,7 +462,7 @@
             // 
             // label22
             // 
-            this.label22.Location = new System.Drawing.Point(23, 175);
+            this.label22.Location = new System.Drawing.Point(5, 176);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(100, 23);
             this.label22.TabIndex = 49;
@@ -459,7 +470,7 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(23, 147);
+            this.label6.Location = new System.Drawing.Point(5, 148);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(100, 23);
             this.label6.TabIndex = 50;
@@ -467,7 +478,7 @@
             // 
             // label23
             // 
-            this.label23.Location = new System.Drawing.Point(289, 147);
+            this.label23.Location = new System.Drawing.Point(271, 148);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(100, 23);
             this.label23.TabIndex = 51;
@@ -475,33 +486,33 @@
             // 
             // label24
             // 
-            this.label24.Location = new System.Drawing.Point(289, 203);
+            this.label24.Location = new System.Drawing.Point(271, 204);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(165, 23);
+            this.label24.Size = new System.Drawing.Size(153, 23);
             this.label24.TabIndex = 53;
             this.label24.Text = "Team";
             // 
             // label25
             // 
-            this.label25.Location = new System.Drawing.Point(289, 119);
+            this.label25.Location = new System.Drawing.Point(271, 120);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(165, 23);
+            this.label25.Size = new System.Drawing.Size(153, 23);
             this.label25.TabIndex = 54;
             this.label25.Text = "Closed carton Output %";
             // 
             // label26
             // 
-            this.label26.Location = new System.Drawing.Point(535, 61);
+            this.label26.Location = new System.Drawing.Point(464, 64);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(165, 23);
+            this.label26.Size = new System.Drawing.Size(137, 23);
             this.label26.TabIndex = 55;
             this.label26.Text = "Inspection stage & No";
             // 
             // label27
             // 
-            this.label27.Location = new System.Drawing.Point(535, 201);
+            this.label27.Location = new System.Drawing.Point(464, 204);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(165, 23);
+            this.label27.Size = new System.Drawing.Size(137, 23);
             this.label27.TabIndex = 56;
             this.label27.Text = "SQR";
             // 
@@ -509,7 +520,7 @@
             // 
             this.disSeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disSeason.Location = new System.Drawing.Point(126, 147);
+            this.disSeason.Location = new System.Drawing.Point(108, 148);
             this.disSeason.Name = "disSeason";
             this.disSeason.Size = new System.Drawing.Size(100, 23);
             this.disSeason.TabIndex = 57;
@@ -519,7 +530,7 @@
             this.disM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionid", true));
             this.disM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disM.Location = new System.Drawing.Point(126, 175);
+            this.disM.Location = new System.Drawing.Point(108, 176);
             this.disM.Name = "disM";
             this.disM.Size = new System.Drawing.Size(100, 23);
             this.disM.TabIndex = 58;
@@ -529,9 +540,9 @@
             this.txtSewingLine.BackColor = System.Drawing.Color.White;
             this.txtSewingLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
             this.txtSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSewingLine.Location = new System.Drawing.Point(392, 147);
+            this.txtSewingLine.Location = new System.Drawing.Point(374, 148);
             this.txtSewingLine.Name = "txtSewingLine";
-            this.txtSewingLine.Size = new System.Drawing.Size(130, 23);
+            this.txtSewingLine.Size = new System.Drawing.Size(87, 23);
             this.txtSewingLine.TabIndex = 6;
             this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLine_PopUp);
             this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSewingLine_Validating);
@@ -547,10 +558,10 @@
             "",
             "A",
             "B"});
-            this.comboTeam.Location = new System.Drawing.Point(459, 202);
+            this.comboTeam.Location = new System.Drawing.Point(427, 204);
             this.comboTeam.Name = "comboTeam";
             this.comboTeam.OldText = "";
-            this.comboTeam.Size = new System.Drawing.Size(63, 24);
+            this.comboTeam.Size = new System.Drawing.Size(34, 24);
             this.comboTeam.TabIndex = 7;
             this.comboTeam.SelectedIndexChanged += new System.EventHandler(this.ComboTeam_SelectedIndexChanged);
             // 
@@ -560,7 +571,7 @@
             this.numClogReceivedPercentage.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ClogReceivedPercentage", true));
             this.numClogReceivedPercentage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numClogReceivedPercentage.IsSupportEditMode = false;
-            this.numClogReceivedPercentage.Location = new System.Drawing.Point(457, 119);
+            this.numClogReceivedPercentage.Location = new System.Drawing.Point(427, 120);
             this.numClogReceivedPercentage.MaxLength = 3;
             this.numClogReceivedPercentage.Name = "numClogReceivedPercentage";
             this.numClogReceivedPercentage.NullValue = new decimal(new int[] {
@@ -569,7 +580,7 @@
             0,
             0});
             this.numClogReceivedPercentage.ReadOnly = true;
-            this.numClogReceivedPercentage.Size = new System.Drawing.Size(63, 23);
+            this.numClogReceivedPercentage.Size = new System.Drawing.Size(34, 23);
             this.numClogReceivedPercentage.TabIndex = 62;
             this.numClogReceivedPercentage.TabStop = false;
             this.numClogReceivedPercentage.Value = new decimal(new int[] {
@@ -591,10 +602,10 @@
             "Staggered",
             "Final",
             "3rd party"});
-            this.comboStage.Location = new System.Drawing.Point(703, 60);
+            this.comboStage.Location = new System.Drawing.Point(604, 62);
             this.comboStage.Name = "comboStage";
             this.comboStage.OldText = "";
-            this.comboStage.Size = new System.Drawing.Size(135, 24);
+            this.comboStage.Size = new System.Drawing.Size(110, 24);
             this.comboStage.TabIndex = 8;
             this.comboStage.SelectedIndexChanged += new System.EventHandler(this.ComboStage_SelectedIndexChanged);
             // 
@@ -610,10 +621,10 @@
             "Pass",
             "Fail",
             "Fail but release"});
-            this.comboResult.Location = new System.Drawing.Point(703, 87);
+            this.comboResult.Location = new System.Drawing.Point(604, 89);
             this.comboResult.Name = "comboResult";
             this.comboResult.OldText = "";
-            this.comboResult.Size = new System.Drawing.Size(135, 24);
+            this.comboResult.Size = new System.Drawing.Size(110, 24);
             this.comboResult.TabIndex = 9;
             this.comboResult.SelectedIndexChanged += new System.EventHandler(this.ComboResult_SelectedIndexChanged);
             // 
@@ -622,9 +633,9 @@
             this.txtInspectedCarton.BackColor = System.Drawing.Color.White;
             this.txtInspectedCarton.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Carton", true));
             this.txtInspectedCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInspectedCarton.Location = new System.Drawing.Point(703, 116);
+            this.txtInspectedCarton.Location = new System.Drawing.Point(604, 118);
             this.txtInspectedCarton.Name = "txtInspectedCarton";
-            this.txtInspectedCarton.Size = new System.Drawing.Size(135, 23);
+            this.txtInspectedCarton.Size = new System.Drawing.Size(110, 23);
             this.txtInspectedCarton.TabIndex = 10;
             this.txtInspectedCarton.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtInspectedCarton_PopUp);
             this.txtInspectedCarton.Validating += new System.ComponentModel.CancelEventHandler(this.TxtInspectedCarton_Validating);
@@ -634,7 +645,7 @@
             this.numInspectQty.BackColor = System.Drawing.Color.White;
             this.numInspectQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InspectQty", true));
             this.numInspectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numInspectQty.Location = new System.Drawing.Point(703, 144);
+            this.numInspectQty.Location = new System.Drawing.Point(604, 146);
             this.numInspectQty.MaxLength = 7;
             this.numInspectQty.Name = "numInspectQty";
             this.numInspectQty.NullValue = new decimal(new int[] {
@@ -642,7 +653,7 @@
             0,
             0,
             0});
-            this.numInspectQty.Size = new System.Drawing.Size(135, 23);
+            this.numInspectQty.Size = new System.Drawing.Size(110, 23);
             this.numInspectQty.TabIndex = 11;
             this.numInspectQty.Value = new decimal(new int[] {
             0,
@@ -657,7 +668,7 @@
             this.numDefectQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DefectQty", true));
             this.numDefectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numDefectQty.IsSupportEditMode = false;
-            this.numDefectQty.Location = new System.Drawing.Point(703, 172);
+            this.numDefectQty.Location = new System.Drawing.Point(604, 174);
             this.numDefectQty.MaxLength = 7;
             this.numDefectQty.Name = "numDefectQty";
             this.numDefectQty.NullValue = new decimal(new int[] {
@@ -666,7 +677,7 @@
             0,
             0});
             this.numDefectQty.ReadOnly = true;
-            this.numDefectQty.Size = new System.Drawing.Size(135, 23);
+            this.numDefectQty.Size = new System.Drawing.Size(110, 23);
             this.numDefectQty.TabIndex = 67;
             this.numDefectQty.TabStop = false;
             this.numDefectQty.Value = new decimal(new int[] {
@@ -681,7 +692,7 @@
             this.numSQR.DecimalPlaces = 2;
             this.numSQR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numSQR.IsSupportEditMode = false;
-            this.numSQR.Location = new System.Drawing.Point(703, 200);
+            this.numSQR.Location = new System.Drawing.Point(604, 202);
             this.numSQR.MaxLength = 9;
             this.numSQR.Name = "numSQR";
             this.numSQR.NullValue = new decimal(new int[] {
@@ -690,7 +701,7 @@
             0,
             0});
             this.numSQR.ReadOnly = true;
-            this.numSQR.Size = new System.Drawing.Size(135, 23);
+            this.numSQR.Size = new System.Drawing.Size(110, 23);
             this.numSQR.TabIndex = 68;
             this.numSQR.TabStop = false;
             this.numSQR.Value = new decimal(new int[] {
@@ -704,7 +715,7 @@
             this.labelStatus.BackColor = System.Drawing.Color.Transparent;
             this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.labelStatus.Location = new System.Drawing.Point(703, 6);
+            this.labelStatus.Location = new System.Drawing.Point(604, 8);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(125, 25);
             this.labelStatus.TabIndex = 69;
@@ -718,9 +729,9 @@
             this.txtshift.BackColor = System.Drawing.Color.White;
             this.txtshift.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Shift", true));
             this.txtshift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshift.Location = new System.Drawing.Point(392, 176);
+            this.txtshift.Location = new System.Drawing.Point(374, 177);
             this.txtshift.Name = "txtshift";
-            this.txtshift.Size = new System.Drawing.Size(130, 23);
+            this.txtshift.Size = new System.Drawing.Size(87, 23);
             this.txtshift.TabIndex = 5;
             this.txtshift.Type = "SewingOutput_Shift";
             // 
@@ -728,7 +739,7 @@
             // 
             this.txtCFA.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CFA", true));
             this.txtCFA.DisplayBox1Binding = "";
-            this.txtCFA.Location = new System.Drawing.Point(126, 9);
+            this.txtCFA.Location = new System.Drawing.Point(108, 10);
             this.txtCFA.Name = "txtCFA";
             this.txtCFA.Size = new System.Drawing.Size(300, 23);
             this.txtCFA.TabIndex = 1;
@@ -736,9 +747,7 @@
             // 
             // txtSpSeq
             // 
-            this.txtSpSeq.DataBindings.Add(new System.Windows.Forms.Binding("TextBoxSPBinding", this.mtbs, "OrderID", true));
-            this.txtSpSeq.DataBindings.Add(new System.Windows.Forms.Binding("TextBoxSeqBinding", this.mtbs, "Seq", true));
-            this.txtSpSeq.Location = new System.Drawing.Point(20, 34);
+            this.txtSpSeq.Location = new System.Drawing.Point(2, 35);
             this.txtSpSeq.Name = "txtSpSeq";
             this.txtSpSeq.Size = new System.Drawing.Size(266, 27);
             this.txtSpSeq.TabIndex = 3;
@@ -750,14 +759,14 @@
             // 
             this.disArticle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disArticle.Location = new System.Drawing.Point(126, 233);
+            this.disArticle.Location = new System.Drawing.Point(108, 234);
             this.disArticle.Name = "disArticle";
-            this.disArticle.Size = new System.Drawing.Size(396, 23);
+            this.disArticle.Size = new System.Drawing.Size(353, 23);
             this.disArticle.TabIndex = 71;
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(23, 233);
+            this.label9.Location = new System.Drawing.Point(5, 234);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(100, 23);
             this.label9.TabIndex = 70;
@@ -767,17 +776,71 @@
             // 
             this.disInsCtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disInsCtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disInsCtn.Location = new System.Drawing.Point(844, 61);
+            this.disInsCtn.Location = new System.Drawing.Point(717, 64);
             this.disInsCtn.Name = "disInsCtn";
             this.disInsCtn.Size = new System.Drawing.Size(33, 23);
             this.disInsCtn.TabIndex = 72;
+            // 
+            // chkIsCombinePO
+            // 
+            this.chkIsCombinePO.AutoSize = true;
+            this.chkIsCombinePO.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCombinePO", true));
+            this.chkIsCombinePO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsCombinePO.Location = new System.Drawing.Point(464, 236);
+            this.chkIsCombinePO.Name = "chkIsCombinePO";
+            this.chkIsCombinePO.Size = new System.Drawing.Size(114, 21);
+            this.chkIsCombinePO.TabIndex = 73;
+            this.chkIsCombinePO.Text = "Combine PO#";
+            this.chkIsCombinePO.UseVisualStyleBackColor = true;
+            this.chkIsCombinePO.CheckedChanged += new System.EventHandler(this.ChkIsCombinePO_CheckedChanged);
+            // 
+            // btnSettingSpSeq
+            // 
+            this.btnSettingSpSeq.Location = new System.Drawing.Point(604, 234);
+            this.btnSettingSpSeq.Name = "btnSettingSpSeq";
+            this.btnSettingSpSeq.Size = new System.Drawing.Size(110, 30);
+            this.btnSettingSpSeq.TabIndex = 74;
+            this.btnSettingSpSeq.Text = "Combine PO#";
+            this.btnSettingSpSeq.UseVisualStyleBackColor = true;
+            this.btnSettingSpSeq.Click += new System.EventHandler(this.BtnSettingSpSeq_Click);
+            this.btnSettingSpSeq.Enabled = false;
+            // 
+            // gridSpSeq
+            // 
+            this.gridSpSeq.AllowUserToAddRows = false;
+            this.gridSpSeq.AllowUserToDeleteRows = false;
+            this.gridSpSeq.AllowUserToResizeRows = false;
+            this.gridSpSeq.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridSpSeq.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridSpSeq.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSpSeq.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridSpSeq.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridSpSeq.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridSpSeq.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridSpSeq.Location = new System.Drawing.Point(752, 35);
+            this.gridSpSeq.Name = "gridSpSeq";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSpSeq.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridSpSeq.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridSpSeq.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridSpSeq.RowTemplate.Height = 24;
+            this.gridSpSeq.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSpSeq.ShowCellToolTips = false;
+            this.gridSpSeq.Size = new System.Drawing.Size(197, 250);
+            this.gridSpSeq.TabIndex = 75;
             // 
             // P32
             // 
             this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 730);
+            this.ClientSize = new System.Drawing.Size(959, 730);
             this.GridAlias = "CFAInspectionRecord_Detail";
             this.GridUniqueKey = "ID,GarmentDefectCodeID";
             this.IsGridIcon2Visible = false;
@@ -808,6 +871,7 @@
             this.tabs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataSourceCtnSummary)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataSourceQtyBreakdown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSpSeq)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -865,5 +929,8 @@
         private Win.UI.DisplayBox disArticle;
         private Win.UI.Label label9;
         private Win.UI.DisplayBox disInsCtn;
+        private Win.UI.Grid gridSpSeq;
+        private Win.UI.Button btnSettingSpSeq;
+        private Win.UI.CheckBox chkIsCombinePO;
     }
 }
