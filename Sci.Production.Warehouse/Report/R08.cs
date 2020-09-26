@@ -137,6 +137,7 @@ outer apply (
 	and FIT.Seq2 = RD.Seq2
     and FIT.Roll = RD.Roll
     and FIT.Dyelot = RD.Dyelot
+    and FIT.StockType = RD.StockType
 )FIT
 OUTER APPLY(
     SELECT [Date] = Max(EditDate)
@@ -195,6 +196,7 @@ OUTER APPLY(
 	and FIT.Seq2 = TD.Seq2
     and FIT.Roll = TD.Roll
     and FIT.Dyelot = TD.Dyelot
+    and FIT.StockType = TD.StockType
 ) FIT
 OUTER APPLY(
     SELECT [Date] = Max(EditDate)
