@@ -97,7 +97,7 @@
             this.btnQuery.TabIndex = 8;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // dateSCIDelivery
             // 
@@ -214,7 +214,7 @@
             this.btnClose.TabIndex = 1;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnToExcel
             // 
@@ -225,11 +225,11 @@
             this.btnToExcel.TabIndex = 0;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // listControlBindingSource1
             // 
-            this.listControlBindingSource1.PositionChanged += new System.EventHandler(this.listControlBindingSource1_PositionChanged);
+            this.listControlBindingSource1.PositionChanged += new System.EventHandler(this.ListControlBindingSource1_PositionChanged);
             // 
             // splitContainer1
             // 

@@ -25,6 +25,7 @@ namespace Sci.Production.Warehouse
             this.DefaultFilter = $@"Type = 'H' and MDivisionID = '{Env.User.Keyword}'";
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickEditAfter();
@@ -36,6 +37,7 @@ namespace Sci.Production.Warehouse
             this.txtfactory.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed")
@@ -47,6 +49,7 @@ namespace Sci.Production.Warehouse
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -54,6 +57,7 @@ namespace Sci.Production.Warehouse
             this.txtfactory.ReadOnly = !this.checkToSisterFty.Checked;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["IssueDate"]))
@@ -147,6 +151,7 @@ namespace Sci.Production.Warehouse
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePre()
         {
             DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(this.DetailDatas);
@@ -159,6 +164,7 @@ namespace Sci.Production.Warehouse
             return base.ClickSavePre();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed")
@@ -170,6 +176,7 @@ namespace Sci.Production.Warehouse
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -191,6 +198,7 @@ Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region Seq 右鍵開窗
@@ -329,6 +337,7 @@ order by SEQ1, SEQ2
             ;
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -430,11 +439,11 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty")),
+                           Poid = m.First().Field<string>("poid"),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
             var bsfio = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
@@ -457,7 +466,7 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
                              m.Key.location,
                              m.Key.roll,
                              m.Key.dyelot,
-                             qty = m.Sum(w => w.Field<decimal>("qty")),
+                             Qty = m.Sum(w => w.Field<decimal>("qty")),
                          }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
@@ -468,8 +477,7 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
                 try
                 {
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb,
-                        "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);
@@ -506,6 +514,7 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
             transactionscope = null;
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -550,11 +559,11 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty")),
+                           Poid = m.First().Field<string>("poid"),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
 
@@ -578,7 +587,7 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
                              m.Key.location,
                              m.Key.roll,
                              m.Key.dyelot,
-                             qty = -m.Sum(w => w.Field<decimal>("qty")),
+                             Qty = -m.Sum(w => w.Field<decimal>("qty")),
                          }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
             #endregion
@@ -589,8 +598,7 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
                 try
                 {
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb,
-                        "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);
@@ -627,6 +635,7 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
             transactionscope = null;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             if (this.CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")

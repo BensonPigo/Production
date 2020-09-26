@@ -8,11 +8,11 @@ namespace Sci.Production.Quality
 {
     public partial class P01_PhysicalInspection_Defect : Win.Subs.Input6A
     {
-        readonly DataTable DefectTb;
-        DataTable DefectFilterTb;
+        private readonly DataTable DefectTb;
+        private DataTable DefectFilterTb;
         private DataTable gridTb;
         public DataRow mainrow;
-        readonly bool editm = false;
+        private readonly bool editm = false;
 
         public P01_PhysicalInspection_Defect(DataTable defectTb, DataRow maindr, bool edit)
         {
@@ -22,6 +22,7 @@ namespace Sci.Production.Quality
             this.editm = edit;
         }
 
+        /// <inheritdoc/>
         protected override void OnAttached(DataRow data)
         {
             base.OnAttached(data);
@@ -44,9 +45,12 @@ namespace Sci.Production.Quality
             double actyds = MyUtility.Convert.GetDouble(data["ActualYds"]);
             string cStr = string.Empty;
             int j = 1;
-            for (int i = 0; i < actyds; i = i + 5) // 每5碼為一組
+
+            // 每5碼為一組
+            for (int i = 0; i < actyds; i = i + 5)
             {
-                if (i + 5 >= actyds) // 最後超過需-0.01的整數當做最後碼長
+                // 最後超過需-0.01的整數當做最後碼長
+                if (i + 5 >= actyds)
                 {
                     cStr = MyUtility.Convert.NTOC(i, 3) + "-" + MyUtility.Convert.NTOC(MyUtility.Convert.GetInt(Math.Floor(actyds - 0.01)), 3);
                 }
@@ -55,18 +59,20 @@ namespace Sci.Production.Quality
                     cStr = MyUtility.Convert.NTOC(i, 3) + "-" + MyUtility.Convert.NTOC(i + 4, 3);
                 }
 
-                DataRow[] Ary = this.DefectFilterTb.Select(string.Format("DefectLocationF >= {0} and DefectLocationT <= {1}", Convert.ToInt32(cStr.Split('-')[0]), Convert.ToInt32(cStr.Split('-')[1])));
+                DataRow[] ary = this.DefectFilterTb.Select(string.Format("DefectLocationF >= {0} and DefectLocationT <= {1}", Convert.ToInt32(cStr.Split('-')[0]), Convert.ToInt32(cStr.Split('-')[1])));
 
                 // 將存在DefectFilterTb的資料填入Grid
                 #region 填入對的位置 % 去找位置
-                if (j % 3 == 1) // 新增一筆從頭開始
+
+                // 新增一筆從頭開始
+                if (j % 3 == 1)
                 {
                     DataRow ndr = this.gridTb.NewRow();
                     ndr["yds1"] = cStr;
-                    if (Ary.Length > 0)
+                    if (ary.Length > 0)
                     {
-                        ndr["def1"] = Ary[0]["DefectRecord"];
-                        ndr["point1"] = Ary[0]["point"];
+                        ndr["def1"] = ary[0]["DefectRecord"];
+                        ndr["point1"] = ary[0]["point"];
                     }
 
                     this.gridTb.Rows.Add(ndr);
@@ -78,10 +84,10 @@ namespace Sci.Production.Quality
                 {
                     DataRow dr = this.gridTb.Rows[rowIndex];
                     dr["yds2"] = cStr;
-                    if (Ary.Length > 0)
+                    if (ary.Length > 0)
                     {
-                        dr["def2"] = Ary[0]["DefectRecord"];
-                        dr["point2"] = Ary[0]["point"];
+                        dr["def2"] = ary[0]["DefectRecord"];
+                        dr["point2"] = ary[0]["point"];
                     }
                 }
 
@@ -89,10 +95,10 @@ namespace Sci.Production.Quality
                 {
                     DataRow dr = this.gridTb.Rows[rowIndex - 1];
                     dr["yds3"] = cStr;
-                    if (Ary.Length > 0)
+                    if (ary.Length > 0)
                     {
-                        dr["def3"] = Ary[0]["DefectRecord"];
-                        dr["point3"] = Ary[0]["point"];
+                        dr["def3"] = ary[0]["DefectRecord"];
+                        dr["point3"] = ary[0]["point"];
                     }
                 }
                 #endregion
@@ -103,6 +109,7 @@ namespace Sci.Production.Quality
             this.gridFabricInspection.DataSource = this.gridTb;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -111,10 +118,10 @@ namespace Sci.Production.Quality
 
         public void GridSetUp()
         {
-            DataGridViewGeneratorTextColumnSettings DefectsCell1 = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings DefectsCell2 = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings DefectsCell3 = new DataGridViewGeneratorTextColumnSettings();
-            DefectsCell1.CellMouseDoubleClick += (s, e) =>
+            DataGridViewGeneratorTextColumnSettings defectsCell1 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings defectsCell2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings defectsCell3 = new DataGridViewGeneratorTextColumnSettings();
+            defectsCell1.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -130,7 +137,7 @@ namespace Sci.Production.Quality
                 var frm = new P01_PhysicalInspection_PointRecord(dr, "1", this.editm);
                 frm.ShowDialog(this);
             };
-            DefectsCell2.CellMouseDoubleClick += (s, e) =>
+            defectsCell2.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -146,7 +153,7 @@ namespace Sci.Production.Quality
                 var frm = new P01_PhysicalInspection_PointRecord(dr, "2", this.editm);
                 frm.ShowDialog(this);
             };
-            DefectsCell3.CellMouseDoubleClick += (s, e) =>
+            defectsCell3.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -164,13 +171,14 @@ namespace Sci.Production.Quality
             };
             this.Helper.Controls.Grid.Generator(this.gridFabricInspection)
                  .Text("yds1", header: "Yds", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                 .Text("def1", header: "Defects", width: Widths.AnsiChars(15), settings: DefectsCell1)
+                 .Text("def1", header: "Defects", width: Widths.AnsiChars(15), settings: defectsCell1)
                  .Text("yds2", header: "Yds", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("def2", header: "Defects", width: Widths.AnsiChars(15), settings: DefectsCell2)
+                 .Text("def2", header: "Defects", width: Widths.AnsiChars(15), settings: defectsCell2)
                  .Text("yds3", header: "Yds", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("def3", header: "Defects", width: Widths.AnsiChars(15), settings: DefectsCell3);
+                 .Text("def3", header: "Defects", width: Widths.AnsiChars(15), settings: defectsCell3);
         }
 
+        /// <inheritdoc/>
         protected override bool DoSave()
         {
             foreach (DataRow dr in this.gridTb.Rows)
@@ -179,21 +187,21 @@ namespace Sci.Production.Quality
                 for (int i = 1; i <= 3; i++) // 有3個yds,def 所以直接用Forloop
                 {
                     string str_col = i.ToString();
-                    DataRow[] Ary = this.DefectTb.Select(string.Format("NewKey = {0} and DefectLocation = '{1}'", this.CurrentData["NewKey"], dr["yds" + str_col]));
+                    DataRow[] ary = this.DefectTb.Select(string.Format("NewKey = {0} and DefectLocation = '{1}'", this.CurrentData["NewKey"], dr["yds" + str_col]));
                     if (MyUtility.Check.Empty(dr["def" + str_col]))
                     {
                         // 找出Table是否有存在的Location
-                        if (Ary.Length > 0)
+                        if (ary.Length > 0)
                         {
-                            Ary[0].Delete(); // 原本有值現在為空需要刪除資料
+                            ary[0].Delete(); // 原本有值現在為空需要刪除資料
                         }
                     }
                     else
                     {
-                        if (Ary.Length > 0)
+                        if (ary.Length > 0)
                         {
-                            Ary[0]["DefectRecord"] = dr["def" + str_col];
-                            Ary[0]["Point"] = dr["point" + str_col];
+                            ary[0]["DefectRecord"] = dr["def" + str_col];
+                            ary[0]["Point"] = dr["point" + str_col];
                         }
                         else
                         {

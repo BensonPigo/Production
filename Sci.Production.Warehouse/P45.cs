@@ -366,7 +366,13 @@ select  ad.POID
 	, ad.Roll
 	, ad.Dyelot
 	, [ColorID] = dbo.GetColorMultipleID(psd.BrandId, psd.ColorID)
-	, [Description] = dbo.getmtldesc(ad.POID, ad.Seq1, ad.Seq2, 2, 0)
+	, [Description] =IIF((
+								ad.POID = LAG(ad.POID,1,'') OVER (ORDER BY ad.POID,ad.seq1,ad.seq2, ad.Dyelot,ad.Roll) 
+								AND ad.Seq1 = LAG(ad.Seq1,1,'') OVER (ORDER BY ad.POID,ad.seq1,ad.seq2, ad.Dyelot,ad.Roll) 
+								AND ad.Seq2 = LAG(ad.Seq2,1,'') OVER (ORDER BY ad.POID,ad.seq1,ad.seq2, ad.Dyelot,ad.Roll) 
+							)
+						,''
+						, dbo.getmtldesc(ad.POID, ad.Seq1, ad.Seq2, 2, 0))
 	, [AdjustQty] = ad.QtyBefore - ad.QtyAfter
 	, psd.StockUnit
 	, [Location] = dbo.Getlocation(fi.ukey)

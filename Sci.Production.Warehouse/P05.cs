@@ -20,6 +20,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -44,7 +45,7 @@ WHERE p1.ID ='{Env.User.UserID}'
 
                DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
 
-                P02 callP02 = null;
+               P02 callP02 = null;
 
                 // 避免重複開啟視窗
                foreach (Form form in Application.OpenForms)

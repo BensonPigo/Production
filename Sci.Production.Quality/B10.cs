@@ -8,7 +8,7 @@ namespace Sci.Production.Quality
 {
     public partial class B10 : Win.Tems.Input1
     {
-        readonly Hashtable ht = new Hashtable();
+        private readonly Hashtable ht = new Hashtable();
 
         public B10(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -18,6 +18,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.txtbrand.Text))
@@ -38,6 +39,7 @@ namespace Sci.Production.Quality
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override Ict.DualResult ClickSave()
         {
             DataRow dr;
@@ -49,12 +51,14 @@ namespace Sci.Production.Quality
             return base.ClickSave();
         }
 
+        /// <inheritdoc/>
         protected override void ClickLocate()
         {
             base.ClickLocate();
             this.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             if (this.CurrentMaintain.Empty())
@@ -78,6 +82,7 @@ namespace Sci.Production.Quality
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             this.txtbrand.ReadOnly = false;
@@ -85,6 +90,7 @@ namespace Sci.Production.Quality
             base.ClickNewAfter();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             this.txtbrand.ReadOnly = true;

@@ -5,6 +5,7 @@ namespace Sci.Production.Warehouse
 {
     public class P07_Sticker_Data : INotifyPropertyChanged
     {
+        /// <inheritdoc/>
         public event PropertyChangedEventHandler PropertyChanged;
 
         // This method is called by the Set accessor of each property.

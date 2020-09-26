@@ -22,6 +22,7 @@ namespace Sci.Production.Warehouse
             this.Color = color;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

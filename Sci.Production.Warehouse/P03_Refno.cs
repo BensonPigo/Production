@@ -21,6 +21,7 @@ namespace Sci.Production.Warehouse
             this.Text += string.Format(" ({0})", this.dr["refno"]);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

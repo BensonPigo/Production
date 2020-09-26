@@ -266,7 +266,7 @@
             this.comboStatus.OldText = "";
             this.comboStatus.Size = new System.Drawing.Size(158, 24);
             this.comboStatus.TabIndex = 11;
-            this.comboStatus.SelectedIndexChanged += new System.EventHandler(this.comboStatus_SelectedIndexChanged);
+            this.comboStatus.SelectedIndexChanged += new System.EventHandler(this.ComboStatus_SelectedIndexChanged);
             // 
             // labelStatus
             // 

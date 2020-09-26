@@ -11,9 +11,9 @@ namespace Sci.Production.Subcon
 {
     public partial class P30_Import : Win.Subs.Base
     {
-        DataRow dr_localPO;
-        DataTable dt_localPODetail;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow dr_localPO;
+        private DataTable dt_localPODetail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         protected DataTable dtlocal;
 
@@ -27,7 +27,7 @@ namespace Sci.Production.Subcon
         }
 
         // Find Now Button
-        private void btnFindNow_Click(object sender, EventArgs e)
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
             string sp_b = this.txtSPNoStart.Text;
             string sp_e = this.txtSPNoEnd.Text;
@@ -426,7 +426,7 @@ where a.status = 'Approved'
                 }
 
                 #region 加工remark欄位
-                string category, Finished;
+                string category, finished;
                 decimal price;
                 foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
                 {
@@ -453,8 +453,8 @@ where a.status = 'Approved'
                         }
                     }
 
-                    Finished = MyUtility.GetValue.Lookup(string.Format(@"select Finished from orders WITH (NOLOCK) where id = '{0}'", dr["orderid"]), null);
-                    if (Finished == "True")
+                    finished = MyUtility.GetValue.Lookup(string.Format(@"select Finished from orders WITH (NOLOCK) where id = '{0}'", dr["orderid"]), null);
+                    if (finished == "True")
                     {
                         dr["remark"] += "  This orders already finished, can not be transfered to local purchase!!";
                         dr["selected"] = 0;
@@ -523,13 +523,14 @@ where Qty - ShipQty - DiffQty = 0";
                 #endregion
             }
 
-            this.showQtymorezero();
+            this.ShowQtymorezero();
             if (this.listControlBindingSource1.Position == -1)
             {
                 MyUtility.Msg.WarningBox("Data not found");
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -607,13 +608,13 @@ where Qty - ShipQty - DiffQty = 0";
         }
 
         // close
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // import
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             this.gridImport.ValidateControl();
@@ -716,17 +717,17 @@ group by POID, OrderID, StyleID, SciDelivery, SeasonID, Refno
         , remark, etd, requestid, ID, FactoryID, SewInLine
         , Delivery, BuyerID, LocalSuppID
 ";
-                DataTable CartonCardboardPad;
-                DualResult result = MyUtility.Tool.ProcessWithDatatable(tmpdt, string.Empty, sqlcmd, out CartonCardboardPad);
+                DataTable cartonCardboardPad;
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(tmpdt, string.Empty, sqlcmd, out cartonCardboardPad);
 
                 // 複製DataTable結構，若已複製過則不執行，否則會清空資料
                 if (P30.dtPadBoardInfo.Columns.Count == 0)
                 {
-                    P30.dtPadBoardInfo = CartonCardboardPad.Clone();
+                    P30.dtPadBoardInfo = cartonCardboardPad.Clone();
                 }
 
-                List<string> Refno = new List<string>();
-                foreach (DataRow tmp in CartonCardboardPad.Rows)
+                List<string> refno = new List<string>();
+                foreach (DataRow tmp in cartonCardboardPad.Rows)
                 {
                     // 判斷紙箱、天地板供應商是否相同：相同寫回表身、不同則h存進P30.dtPadBoardInfo後續處理
                     if (this.dr_localPO["localsuppid"].ToString() == tmp["localsuppid"].ToString())
@@ -787,7 +788,7 @@ group by POID, OrderID, StyleID, SciDelivery, SeasonID, Refno
         }
 
         // To Excel
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Copy();
             dt.Columns.RemoveAt(dt.Columns.Count - 1);
@@ -797,10 +798,10 @@ group by POID, OrderID, StyleID, SciDelivery, SeasonID, Refno
 
         private void ChkQty_CheckedChanged(object sender, EventArgs e)
         {
-            this.showQtymorezero();
+            this.ShowQtymorezero();
         }
 
-        private void showQtymorezero()
+        private void ShowQtymorezero()
         {
             if (this.listControlBindingSource1 != null && this.listControlBindingSource1.DataSource != null)
             {

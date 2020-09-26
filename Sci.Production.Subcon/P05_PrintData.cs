@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sci.Production.Subcon
 {
-    class P05_PrintData
+    internal class P05_PrintData
     {
         public string OrderID { get; set; }
         public string ID { get; set; }

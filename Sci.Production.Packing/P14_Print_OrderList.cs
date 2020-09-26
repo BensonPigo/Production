@@ -329,7 +329,7 @@ outer apply(
                   PackID = row1["PackID"].ToString().Trim(),
                   OrderID = row1["OrderID"].ToString().Trim(),
                   PONo = row1["PONo"].ToString().Trim(),
-                  ttlCtn = row1["ttlCtn"].ToString().Trim(),
+                  TtlCtn = row1["ttlCtn"].ToString().Trim(),
                   ClogLocationId = row1["ClogLocationId"].ToString().Trim(),
                   Dest = row1["Dest"].ToString().Trim(),
                   TTL_PCS = row1["TTL_PCS"].ToString().Trim(),

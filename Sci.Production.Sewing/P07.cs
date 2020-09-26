@@ -15,6 +15,7 @@ namespace Sci.Production.Sewing
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

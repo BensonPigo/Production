@@ -12,7 +12,7 @@ namespace Sci.Production.Subcon
 {
     public partial class B01_BatchApprove : Win.Forms.Base
     {
-        Action aa;
+        private Action aa;
 
         public B01_BatchApprove(Action aa)
         {
@@ -21,11 +21,12 @@ namespace Sci.Production.Subcon
             this.aa = aa;
         }
 
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
-        DataTable master;
-        DataTable detail;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
+        private DataTable master;
+        private DataTable detail;
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -68,16 +69,16 @@ namespace Sci.Production.Subcon
                 this.grid2.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            this.query();
+            this.Query();
             this.listControlBindingSource1.Filter = "IsApproved='N'";
         }
 
-        public string sqlcmd(string Refno = "", string ukey = "")
+        public string Sqlcmd(string refno = "", string ukey = "")
         {
             string wheresql = string.Empty;
-            if (!MyUtility.Check.Empty(Refno))
+            if (!MyUtility.Check.Empty(refno))
             {
-                wheresql = $" and l.RefNo = '{Refno}'";
+                wheresql = $" and l.RefNo = '{refno}'";
             }
 
             if (!MyUtility.Check.Empty(ukey))
@@ -129,13 +130,13 @@ left join LocalSupp lsn on l.NewSupp = lsn.ID
 ";
         }
 
-        private void query()
+        private void Query()
         {
             DataSet datas = null;
             this.master = null;
             this.detail = null;
             #region
-            string sqlCmd = this.sqlcmd() +
+            string sqlCmd = this.Sqlcmd() +
                 $@"
 select	lq.RefNo
 		, lq.IssueDate
@@ -304,12 +305,12 @@ drop table #bas
             }
         }
 
-        private void btnRefresh_Click(object sender, EventArgs e)
+        private void BtnRefresh_Click(object sender, EventArgs e)
         {
-            this.query();
+            this.Query();
         }
 
-        private void btnconfirm_Click(object sender, EventArgs e)
+        private void Btnconfirm_Click(object sender, EventArgs e)
         {
             if (this.master == null || this.master.Rows.Count == 0)
             {
@@ -341,13 +342,13 @@ drop table #bas
                 return;
             }
 
-            this.confirm(selectdt);
-            this.query();
+            this.Confirm(selectdt);
+            this.Query();
 
             this.aa();
         }
 
-        public bool confirm(DataTable selectdt)
+        public bool Confirm(DataTable selectdt)
         {
             DualResult upResult;
             string chkstatus = $@"
@@ -394,7 +395,7 @@ when matched then update set
             return true;
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             if (this.master == null || this.master.Rows.Count == 0)
             {
@@ -462,7 +463,7 @@ when matched then update set
             this.HideWaitMessage();
         }
 
-        private void chkIncludeApproved_CheckedChanged(object sender, EventArgs e)
+        private void ChkIncludeApproved_CheckedChanged(object sender, EventArgs e)
         {
             if (this.chkIncludeApproved.Checked)
             {

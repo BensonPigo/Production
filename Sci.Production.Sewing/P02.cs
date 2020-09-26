@@ -845,6 +845,7 @@ values('{this.CurrentMaintain["ID"]}' ,'{callReason.ReturnReason}' ,'{callReason
             form.ShowDialog(this);
         }
 
+        /// <inheritdoc/>
         protected override void ClickSend()
         {
             base.ClickSend();
@@ -904,6 +905,7 @@ where 1=1
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickRecall()
         {
             base.ClickRecall();

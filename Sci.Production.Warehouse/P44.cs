@@ -41,6 +41,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -52,6 +54,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 刪除前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -64,6 +68,8 @@ namespace Sci.Production.Warehouse
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -76,6 +82,8 @@ namespace Sci.Production.Warehouse
         }
 
         // save前檢查 & 取id
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -152,18 +160,24 @@ where id='{1}'", Env.User.Keyword, this.CurrentMaintain["ID"]);
         }
 
         // detail 新增時設定預設值
+
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
         }
 
         // grid 加工填值
+
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -175,6 +189,8 @@ where id='{1}'", Env.User.Keyword, this.CurrentMaintain["ID"]);
         }
 
         // 表身資料SQL Command
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -204,6 +220,8 @@ where AL2.Id='{0}' ", masterID);
         }
 
         // 表身資料設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region -- Current Qty Vaild 判斷 --
@@ -320,6 +338,8 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         // Confirm
+
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -396,6 +416,8 @@ where AL2.Id='{0}'", this.CurrentMaintain["id"]);
         }
 
         // UnConfirm
+
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();

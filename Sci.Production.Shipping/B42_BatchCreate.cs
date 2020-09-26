@@ -151,8 +151,8 @@ namespace Sci.Production.Shipping
             string contractID = MyUtility.GetValue.Lookup(@"select ID from VNContract WITH (NOLOCK) where StartDate = (select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed')");
             #region 取得VNConsumption_Detail_Detail資料
             Prgs.ParGetVNConsumption_Detail_Detail parData = new Prgs.ParGetVNConsumption_Detail_Detail();
-            parData.dateBuyerDeliveryFrom = this.dateBuyerDelivery.Value1;
-            parData.dateBuyerDeliveryTo = this.dateBuyerDelivery.Value2;
+            parData.DateBuyerDeliveryFrom = this.dateBuyerDelivery.Value1;
+            parData.DateBuyerDeliveryTo = this.dateBuyerDelivery.Value2;
             parData.Style = this.txtstyle.Text;
             parData.Category = this.comboCategory.Text;
             parData.BrandID = this.txtbrand.Text;

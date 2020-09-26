@@ -130,7 +130,7 @@
             this.btnconfirm.TabIndex = 6;
             this.btnconfirm.Text = "Approve";
             this.btnconfirm.UseVisualStyleBackColor = true;
-            this.btnconfirm.Click += new System.EventHandler(this.btnconfirm_Click);
+            this.btnconfirm.Click += new System.EventHandler(this.Btnconfirm_Click);
             // 
             // btnRefresh
             // 
@@ -141,7 +141,7 @@
             this.btnRefresh.TabIndex = 7;
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
             // 
             // splitContainer2
             // 
@@ -174,7 +174,7 @@
             this.chkIncludeApproved.TabIndex = 10;
             this.chkIncludeApproved.Text = "Include Approved Records";
             this.chkIncludeApproved.UseVisualStyleBackColor = true;
-            this.chkIncludeApproved.CheckedChanged += new System.EventHandler(this.chkIncludeApproved_CheckedChanged);
+            this.chkIncludeApproved.CheckedChanged += new System.EventHandler(this.ChkIncludeApproved_CheckedChanged);
             // 
             // btnToExcel
             // 
@@ -185,7 +185,7 @@
             this.btnToExcel.TabIndex = 12;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // B01_BatchApprove
             // 

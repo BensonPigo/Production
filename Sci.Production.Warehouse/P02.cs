@@ -28,6 +28,7 @@ namespace Sci.Production.Warehouse
             this._spNo = spNo;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -45,6 +46,7 @@ namespace Sci.Production.Warehouse
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             DataRow dr = this.grid.GetDataRow<DataRow>(this.grid.GetSelectedRowIndex());
@@ -71,6 +73,7 @@ where exists(
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
@@ -174,6 +177,7 @@ where ed.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -198,6 +202,7 @@ where ed.ID = '{0}'", masterID);
             this.btnShippingMark.Enabled = !MyUtility.Check.Empty(MyUtility.Convert.GetString(this.CurrentMaintain["ShipMarkDesc"]));
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -251,6 +256,7 @@ where ed.ID = '{0}'", masterID);
                 .EditText("TPERemark", header: "TPE Remark", iseditingreadonly: true);
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             DateTime arrivePortDate;
@@ -294,6 +300,7 @@ where ed.ID = '{0}'", masterID);
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             Shipping.P03_Print callNextForm = new Shipping.P03_Print(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);

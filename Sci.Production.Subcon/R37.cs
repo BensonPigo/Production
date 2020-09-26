@@ -11,16 +11,16 @@ namespace Sci.Production.Subcon
 {
     public partial class R37 : Win.Tems.PrintForm
     {
-        string reportType;
-        List<SqlParameter> list;
-        DataTable dtList; string cmd;
-        DataTable dt; string cmdDt;
-        DateTime? DebDate1; DateTime? DebDate2;
-        DateTime? ConDate1; DateTime? ConDate2;
-        DateTime? SettDate1; DateTime? SettDate2;
-        string DebitNo1; string DebitNo2;
-        string handle; string smr;
-        string fac; string Pay;
+        private string reportType;
+        private List<SqlParameter> list;
+        private DataTable dtList; private string cmd;
+        private DataTable dt; private string cmdDt;
+        private DateTime? DebDate1; private DateTime? DebDate2;
+        private DateTime? ConDate1; private DateTime? ConDate2;
+        private DateTime? SettDate1; private DateTime? SettDate2;
+        private string DebitNo1; private string DebitNo2;
+        private string handle; private string smr;
+        private string fac; private string Pay;
 
         public R37(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -41,6 +41,7 @@ namespace Sci.Production.Subcon
             this.print.Enabled = false;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.DebDate1 = this.dateDebitDate.Value1;
@@ -324,6 +325,7 @@ where a.type='F' and " + sqlWhere + ' ' + sqlHaving);
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
@@ -344,6 +346,7 @@ where a.type='F' and " + sqlWhere + ' ' + sqlHaving);
             return res;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             switch (this.reportType)

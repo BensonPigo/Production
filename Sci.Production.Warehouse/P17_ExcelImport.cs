@@ -20,13 +20,14 @@ namespace Sci.Production.Warehouse
         private DataTable detailData;
         private DataRow master;
 
-        public P17_ExcelImport(DataRow _master, DataTable detailData)
+        public P17_ExcelImport(DataRow master, DataTable detailData)
         {
             this.InitializeComponent();
             this.detailData = detailData;
-            this.master = _master;
+            this.master = master;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -361,7 +362,7 @@ and f.MDivisionID = @MDivisionID ";
                                 newRow["roll"],
                                 newRow["dyelot"],
                                 newRow["Location"]), false);
-                        } 
+                        }
                         else if (isLocationExists)
                         {
                             listNewRowErrMsg.Add(
@@ -457,8 +458,8 @@ and f.MDivisionID = @MDivisionID ";
                         select new
                         {
                             poid = m.First().Field<string>("poid"),
-                            seq1 = m.First().Field<string>("seq1"),
-                            seq2 = m.First().Field<string>("seq2"),
+                            Seq1 = m.First().Field<string>("seq1"),
+                            Seq2 = m.First().Field<string>("seq2"),
                             Roll = m.First().Field<string>("Roll"),
                             Dyelot = m.First().Field<string>("Dyelot"),
                             count = m.Count(),
@@ -469,7 +470,7 @@ and f.MDivisionID = @MDivisionID ";
 
                     foreach (var dr in q)
                     {
-                        warning += string.Format("{0}-{1}-{2}-{3}-{4}" + Environment.NewLine, dr.poid, dr.seq1, dr.seq2, dr.Roll, dr.Dyelot);
+                        warning += string.Format("{0}-{1}-{2}-{3}-{4}" + Environment.NewLine, dr.poid, dr.Seq1, dr.Seq2, dr.Roll, dr.Dyelot);
                     }
 
                     MyUtility.Msg.WarningBox(warning, "Roll# are duplicated!!");

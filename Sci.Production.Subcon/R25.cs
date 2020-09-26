@@ -23,14 +23,15 @@ namespace Sci.Production.Subcon
             this.print.Enabled = false;
         }
 
-        DateTime? ReceiveDate;
-        DateTime? ReceiveDate2;
-        string SP;
-        string Refno;
-        string Category;
-        string Supplier;
-        string Factory;
+        private DateTime? ReceiveDate;
+        private DateTime? ReceiveDate2;
+        private string SP;
+        private string Refno;
+        private string Category;
+        private string Supplier;
+        private string Factory;
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (!this.dateReceiveDate.HasValue && this.txtSPNo.Text.Empty())
@@ -52,6 +53,7 @@ namespace Sci.Production.Subcon
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> lis = new List<SqlParameter>();
@@ -140,8 +142,9 @@ left join dbo.LocalItem li WITH (NOLOCK) on li.RefNo=lrd.Refno
             return result; // base.OnAsyncDataLoad(e);
         }
 
-        DataTable dtt;
+        private DataTable dtt;
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (this.dtt == null || this.dtt.Rows.Count <= 0)

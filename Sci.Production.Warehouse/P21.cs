@@ -28,6 +28,7 @@ namespace Sci.Production.Warehouse
             comboBox1_RowSource.Add("A", "Accessory");
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -361,10 +362,10 @@ SELECT
 ,td.StockType
 ,[Location]=Location.MtlLocationID 
 ,[OldLocation] = Location.MtlLocationID 
-,[Weight]=0
-,ActualWeight=td.Weight
-,[OldActualWeight] = td.Weight
-,[Differential] = 0,
+,[Weight]=td.Weight
+,ActualWeight=td.ActualWeight
+,[OldActualWeight] = td.ActualWeight
+,[Differential] = td.ActualWeight - td.Weight,
 [FtyInventoryUkey] = fi.Ukey,
 [FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty,
 td.Seq1,
@@ -483,7 +484,8 @@ DROP TABLE #tmpStockType
             DataRow[] drArryActualWeight = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
                                                                              && x.Field<decimal>("ActualWeight") != x.Field<decimal>("OldActualWeight")).ToArray();
             DataRow[] drArryCutShadebandTime = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
-                                                                             //&& !MyUtility.Check.Empty(x["CutShadebandTime"])
+
+                                                                             // && !MyUtility.Check.Empty(x["CutShadebandTime"])
                                                                              && !MyUtility.Convert.GetDate(x["CutShadebandTime"]).EqualString(MyUtility.Convert.GetDate(x["OldCutShadebandTime"]))).ToArray();
 
             // Remark沒資料則統一合併後寫入P26 同ID，排除Location沒有修改的資料
@@ -647,7 +649,7 @@ Insert into LocationTrans_Detail(   ID,
 
                 if (updateItem["ReceivingSource"].ToString() == "TransferIn")
                 {
-                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set Weight  = {updateItem["ActualWeight"]}
+                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set ActualWeight  = {updateItem["ActualWeight"]}
                                                     where   ID = '{updateItem["ID"]}' and
                                                             POID = '{updateItem["POID"]}' and
                                                             Seq1 = '{updateItem["Seq1"]}' and

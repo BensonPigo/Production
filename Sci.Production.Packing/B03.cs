@@ -12,6 +12,7 @@ using System;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class B03 : Sci.Win.Tems.Input6
     {
         private Hashtable ht = new Hashtable();
@@ -20,6 +21,7 @@ namespace Sci.Production.Packing
         private string oldStickerComb = string.Empty;
         private string oldBrandID = string.Empty;
 
+        /// <inheritdoc/>
         public B03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -78,6 +80,7 @@ WHERE Type ='PMS_ShipMarkCategory'
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -99,6 +102,7 @@ WHERE Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
 "));
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterUkey = (e.Master == null) ? string.Empty : e.Master["Ukey"].ToString();
@@ -114,6 +118,7 @@ ORDER BY b.Seq
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorComboBoxColumnSettings sideComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
@@ -185,6 +190,7 @@ AND Junk = 1
             return base.OnGridSetup();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (MyUtility.Convert.GetBool(this.CurrentMaintain["Junk"]))
@@ -196,6 +202,7 @@ AND Junk = 1
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -203,6 +210,7 @@ AND Junk = 1
             this.CurrentMaintain["Category"] = "PIC";
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
@@ -251,6 +259,7 @@ AND Ukey <> {this.CurrentMaintain["Ukey"]}
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -267,6 +276,7 @@ AND Ukey <> {this.CurrentMaintain["Ukey"]}
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickJunk()
         {
             base.ClickJunk();
@@ -280,6 +290,7 @@ where Ukey = '{this.CurrentMaintain["Ukey"]}'
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();
@@ -295,7 +306,6 @@ where Ukey = '{this.CurrentMaintain["Ukey"]}'
 
         private void TxtStickerComb_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-
             string cmd = $@"
 SELECT  [Shipping Mark Combination ID]=ID
 FROM ShippingMarkCombination
@@ -327,7 +337,6 @@ AND ID = '{item.GetSelectedString()}'
             this.txtStickerComb.Text = item.GetSelectedString();
             this.CurrentMaintain["ShippingMarkCombinationUkey"] = MyUtility.Convert.GetInt(dr["Ukey"]);
             this.chkIsMixPack.Checked = MyUtility.Convert.GetBool(dr["IsMixPack"]);
-
         }
 
         private void TxtStickerComb_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -473,7 +482,6 @@ WHERE a.Ukey = '{ this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
 
         private void Txtbrand1_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-
             string newBrandID = this.txtbrand1.Text;
 
             if (this.oldBrandID != newBrandID)

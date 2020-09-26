@@ -177,6 +177,7 @@ namespace Sci.Production.Warehouse
             this.ChangeDetailColor();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -1256,6 +1257,7 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
             this.ChangeDetailColor();
         }
 
+        /// <inheritdoc/>
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (this.txtSPNo.Focused)

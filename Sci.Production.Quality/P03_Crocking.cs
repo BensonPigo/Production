@@ -30,12 +30,14 @@ namespace Sci.Production.Quality
             this.ID = id.Trim();
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
             this.Button_enable();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery()
         {
             this.MainDBQuery();
@@ -102,6 +104,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             return base.OnRequery();
         }
 
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -121,29 +124,30 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 dr["SEQ2"] = this.maindr["SEQ2"];
                 string name = MyUtility.Check.Empty(datas.Rows[i]["EditName"].ToString()) ? MyUtility.GetValue.Lookup("Name_Extno", datas.Rows[i]["AddName"].ToString(), "View_ShowName", "ID") :
                    MyUtility.GetValue.Lookup("Name_Extno", datas.Rows[i]["EditName"].ToString(), "View_ShowName", "ID");
-                string Date = MyUtility.Check.Empty(datas.Rows[i]["EditDate"].ToString()) ? datas.Rows[i]["AddDate"].ToString() : datas.Rows[i]["EditDate"].ToString();
-                dr["Last update"] = name + " - " + Date;
+                string date = MyUtility.Check.Empty(datas.Rows[i]["EditDate"].ToString()) ? datas.Rows[i]["AddDate"].ToString() : datas.Rows[i]["EditDate"].ToString();
+                dr["Last update"] = name + " - " + date;
 
                 i++;
             }
         }
 
-        Ict.Win.UI.DataGridViewTextBoxColumn ResultCell;
+        private Ict.Win.UI.DataGridViewTextBoxColumn ResultCell;
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings dryScaleCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings wetScaleCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings LabTechCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorDateColumnSettings InspDateCell = new DataGridViewGeneratorDateColumnSettings();
-            DataGridViewGeneratorTextColumnSettings InspectorCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings Resultdry = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings Resultwet = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings DyelotCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings labTechCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings inspDateCell = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings inspectorCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings resultdry = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings resultwet = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings dyelotCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region grid MouseClickEvent
-            Rollcell.EditingMouseDown += (s, e) =>
+            rollcell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -194,7 +198,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 }
             };
 
-            DyelotCell.EditingMouseDown += (s, e) =>
+            dyelotCell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -297,7 +301,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     dr["WetScale"] = item1.GetSelectedString();
                 }
             };
-            LabTechCell.EditingMouseDown += (s, e) =>
+            labTechCell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -329,7 +333,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 }
             };
 
-            Resultdry.CellMouseDoubleClick += (s, e) =>
+            resultdry.CellMouseDoubleClick += (s, e) =>
             {
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
                 if (!((Win.Forms.Base)grid.FindForm()).EditMode)
@@ -349,7 +353,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
                 this.Resultchange();
             };
-            Resultwet.CellMouseDoubleClick += (s, e) =>
+            resultwet.CellMouseDoubleClick += (s, e) =>
             {
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
                 if (!((Win.Forms.Base)grid.FindForm()).EditMode)
@@ -372,7 +376,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             #endregion
 
             #region Valid 檢驗
-            Rollcell.CellValidating += (s, e) =>
+            rollcell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Roll"].ToString();
@@ -427,7 +431,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 }
             };
 
-            DyelotCell.CellValidating += (s, e) =>
+            dyelotCell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Dyelot"].ToString();
@@ -559,7 +563,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     return;
                 }
             };
-            LabTechCell.CellValidating += (s, e) =>
+            labTechCell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 if (!this.EditMode)
@@ -594,7 +598,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     dr["Name"] = userDt["Name"].ToString();
                 }
             };
-            InspDateCell.CellValidating += (s, e) =>
+            inspDateCell.CellValidating += (s, e) =>
             {
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
@@ -607,15 +611,15 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.grid)
-            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), settings: DyelotCell)
+            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: rollcell)
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), settings: dyelotCell)
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out this.ResultCell)
             .Text("DryScale", header: "Dry Scale", width: Widths.AnsiChars(5), settings: dryScaleCell, iseditingreadonly: true)
-            .Text("ResultDry", header: "Result(Dry)", width: Widths.AnsiChars(5), settings: Resultdry, iseditingreadonly: true)
+            .Text("ResultDry", header: "Result(Dry)", width: Widths.AnsiChars(5), settings: resultdry, iseditingreadonly: true)
             .Text("WetScale", header: "Wet Scale", width: Widths.AnsiChars(5), settings: wetScaleCell, iseditingreadonly: true)
-            .Text("ResultWet", header: "Result(Wet)", width: Widths.AnsiChars(5), settings: Resultwet, iseditingreadonly: true)
-            .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10), settings: InspDateCell)
-            .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16),  settings: LabTechCell)
+            .Text("ResultWet", header: "Result(Wet)", width: Widths.AnsiChars(5), settings: resultwet, iseditingreadonly: true)
+            .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10), settings: inspDateCell)
+            .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16),  settings: labTechCell)
             .Text("Name", header: "Name", width: Widths.AnsiChars(25),  iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
             .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
@@ -645,23 +649,25 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             this.CurrentData.EndEdit();
         }
 
+        /// <inheritdoc/>
         protected override void OnInsert()
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
 
-            int Maxi = MyUtility.Convert.GetInt(dt.Compute("Max(NewKey)", string.Empty));
+            int maxi = MyUtility.Convert.GetInt(dt.Compute("Max(NewKey)", string.Empty));
             base.OnInsert();
 
             DataRow selectDr = ((DataRowView)this.grid.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr["Inspdate"] = DateTime.Now.ToShortDateString();
             selectDr["Inspector"] = this.loginID;
             selectDr["Name"] = MyUtility.GetValue.Lookup("Name", this.loginID, "Pass1", "ID");
-            selectDr["NewKey"] = Maxi + 1;
+            selectDr["NewKey"] = maxi + 1;
             selectDr["poid"] = this.maindr["poid"];
             selectDr["SEQ1"] = this.maindr["SEQ1"];
             selectDr["SEQ2"] = this.maindr["SEQ2"];
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             DataTable gridTb = (DataTable)this.gridbs.DataSource;
@@ -737,6 +743,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
@@ -770,7 +777,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     inspdate = string.Format("{0:yyyy-MM-dd}", dr["InspDate"]);
                 }
 
-                DateTime Today = DateTime.Now;
+                DateTime today = DateTime.Now;
                 if (dr.RowState == DataRowState.Added)
                 {
                     List<SqlParameter> spamAdd = new List<SqlParameter>();
@@ -785,7 +792,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     spamAdd.Add(new SqlParameter("@Inspector", this.loginID));
                     spamAdd.Add(new SqlParameter("@Result", dr["Result"]));
                     spamAdd.Add(new SqlParameter("@Remark", dr["Remark"]));
-                    spamAdd.Add(new SqlParameter("@AddDate", Today));
+                    spamAdd.Add(new SqlParameter("@AddDate", today));
                     spamAdd.Add(new SqlParameter("@AddName", this.loginID));
                     spamAdd.Add(new SqlParameter("@ResultDry", dr["ResultDry"]));
                     spamAdd.Add(new SqlParameter("@ResultWet", dr["ResultWet"]));
@@ -814,7 +821,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     spamUpd.Add(new SqlParameter("@Inspector", dr["Inspector"]));
                     spamUpd.Add(new SqlParameter("@Result", dr["Result"]));
                     spamUpd.Add(new SqlParameter("@Remark", dr["Remark"]));
-                    spamUpd.Add(new SqlParameter("@EditDate", Today));
+                    spamUpd.Add(new SqlParameter("@EditDate", today));
                     spamUpd.Add(new SqlParameter("@EditName", this.loginID));
                     spamUpd.Add(new SqlParameter("@rollbefore", dr["Roll", DataRowVersion.Original]));
                     spamUpd.Add(new SqlParameter("@ResultDry", dr["ResultDry"]));
@@ -844,10 +851,10 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             {
                 #region 判斷Crocking Result
                 DataTable gridDt = (DataTable)this.gridbs.DataSource;
-                DataRow[] ResultAry = gridDt.Select("Result='Fail'");
+                DataRow[] resultAry = gridDt.Select("Result='Fail'");
                 string result = "Pass";
-                string Today = DateTime.Now.ToShortDateString();
-                if (ResultAry.Length > 0)
+                string today = DateTime.Now.ToShortDateString();
+                if (resultAry.Length > 0)
                 {
                     result = "Fail";
                 }
@@ -875,7 +882,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     @"Update Fir_Laboratory set CrockingEncode = 1 , Crocking='{0}',CrockingDate ='{2}',CrockingInspector = '{3}' where id ='{1}'",
                     result, this.maindr["ID"], lastDate.ToShortDateString(), Env.User.UserID);
 
-                    updatesql = updatesql + string.Format(@"update FIR_Laboratory_Crocking set inspDate='{1}' where id='{0}'", this.maindr["ID"], Today);
+                    updatesql = updatesql + string.Format(@"update FIR_Laboratory_Crocking set inspDate='{1}' where id='{0}'", this.maindr["ID"], today);
                 }
                 else
                 {
@@ -896,25 +903,25 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             }
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         MyUtility.Msg.InfoBox("Error Message：" + upResult);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -975,16 +982,16 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
             // 撈取seasonID
             DataTable dtSeason;
-            string SeasonID;
+            string seasonID;
             DBProxy.Current.Select("Production", string.Format(
             "select C.SeasonID from FIR_Laboratory_Crocking a WITH (NOLOCK) left join FIR_Laboratory b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C WITH (NOLOCK) ON B.POID=C.ID where a.ID='{0}'", this.maindr["ID"]), out dtSeason);
             if (dtSeason.Rows.Count == 0)
             {
-                SeasonID = string.Empty;
+                seasonID = string.Empty;
             }
             else
             {
-                SeasonID = dtSeason.Rows[0]["SeasonID"].ToString();
+                seasonID = dtSeason.Rows[0]["SeasonID"].ToString();
             }
 
             Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
@@ -995,7 +1002,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             excel.Cells[2, 4] = this.txtSEQ.Text.ToString();
             excel.Cells[2, 6] = this.txtColor.Text.ToString();
             excel.Cells[2, 8] = this.txtStyle.Text.ToString();
-            excel.Cells[2, 10] = SeasonID;
+            excel.Cells[2, 10] = seasonID;
             excel.Cells[3, 2] = this.txtSCIRefno.Text.ToString();
             excel.Cells[3, 4] = this.txtWkno.Text.ToString();
             excel.Cells[3, 6] = this.txtResult.Text.ToString();

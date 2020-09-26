@@ -19,8 +19,8 @@ namespace Sci.Production.SubProcess
     {
         private DataTable dtPrint = null;
         private int intRowHeaderCount = 2;
-        DateTime? date1;
-        DateTime? date2;
+        private DateTime? date1;
+        private DateTime? date2;
 
         /// <summary>
         /// R01

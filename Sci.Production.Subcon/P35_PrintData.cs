@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Subcon
 {
-    class P35_PrintData
+    internal class P35_PrintData
     {
         public string LocalPO { get; set; }
 

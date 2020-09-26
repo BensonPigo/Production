@@ -30,6 +30,7 @@ namespace Sci.Production.Warehouse
             this.comboFactory.Text = string.Empty;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

@@ -13,13 +13,13 @@ namespace Sci.Production.Quality
     public partial class P05 : Win.Tems.Input6
     {
         // 宣告Context Menu Item
-        ToolStripMenuItem add;
+        private ToolStripMenuItem add;
 
         // 宣告Context Menu Item
-        ToolStripMenuItem edit;
+        private ToolStripMenuItem edit;
 
         // 宣告Context Menu Item
-        ToolStripMenuItem delete;
+        private ToolStripMenuItem delete;
         private readonly string loginID = Env.User.UserID;
         private readonly string Factory = Env.User.Keyword;
         private new readonly bool IsSupportEdit = true;
@@ -32,6 +32,8 @@ namespace Sci.Production.Quality
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             List<SqlParameter> spam = new List<SqlParameter>();
@@ -96,11 +98,11 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
             decimal intArticle = 0;
             DataTable articleDT = (DataTable)this.detailgridbs.DataSource;
 
-            DateTime CompDate;
+            DateTime compDate;
             if (intArticle >= 100)
             {
-                CompDate = (DateTime)articleDT.Compute("Max(Inspdate)", string.Empty);
-                this.dateCompletionDate.Value = CompDate;
+                compDate = (DateTime)articleDT.Compute("Max(Inspdate)", string.Empty);
+                this.dateCompletionDate.Value = compDate;
             }
             else
             {
@@ -127,11 +129,12 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
             // }
 
             // 判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
-            this.ContextMenuStrip();
+            this.ContextMenuStripSet();
 
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorNumericColumnSettings testNoCell = new DataGridViewGeneratorNumericColumnSettings();
@@ -219,6 +222,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
                 .Text("LastUpdate", header: "Last Update", width: Widths.AnsiChars(30), iseditingreadonly: true);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
@@ -258,7 +262,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
             var frm = new P05_Detail(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
             frm.ShowDialog(this);
             frm.Dispose();
-            this.ContextMenuStrip();
+            this.ContextMenuStripSet();
             this.RenewData();
             this.OnDetailEntered();
 
@@ -302,11 +306,11 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
                 }
             }
 
-            this.ContextMenuStrip();
+            this.ContextMenuStripSet();
             this.RenewData();
         }
 
-        private void ContextMenuStrip()
+        private void ContextMenuStripSet()
         {
             var dr = this.CurrentDetailData;
             DataTable dtCheck;
@@ -363,6 +367,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             DataTable dt = (DataTable)e.Details;
@@ -383,40 +388,42 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
             return base.OnRenewDataDetailPost(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridRowChanged()
         {
-            this.ContextMenuStrip();
+            this.ContextMenuStripSet();
             base.OnDetailGridRowChanged();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     // 更新PO.LabOvenPercent
                     if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabOven','{this.CurrentMaintain["ID"]}'")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
             this.RenewData();
             base.ClickSaveAfter();
         }

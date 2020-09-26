@@ -19,13 +19,14 @@ namespace Sci.Production.Warehouse
         private DataTable detailData;
         private DataRow master;
 
-        public P18_ExcelImport(DataRow _master, DataTable detailData)
+        public P18_ExcelImport(DataRow master, DataTable detailData)
         {
             this.InitializeComponent();
             this.detailData = detailData;
-            this.master = _master;
+            this.master = master;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -59,6 +60,7 @@ namespace Sci.Production.Warehouse
             this.grid2Data.Columns.Add("Description", typeof(string));
             this.grid2Data.Columns.Add("fabrictype", typeof(string));
             this.grid2Data.Columns.Add("Weight", typeof(decimal));
+            this.grid2Data.Columns.Add("ActualWeight", typeof(decimal));
             this.grid2Data.Columns.Add("qty", typeof(decimal));
             this.grid2Data.Columns.Add("OriQty", typeof(decimal));
             this.grid2Data.Columns.Add("stocktype", typeof(string));
@@ -99,7 +101,9 @@ namespace Sci.Production.Warehouse
         private void BtnAddExcel_Click(object sender, EventArgs e)
         {
             this.openFileDialog1.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls";
-            if (this.openFileDialog1.ShowDialog() == DialogResult.OK) // 開窗且有選擇檔案
+
+            // 開窗且有選擇檔案
+            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 DataRow dr = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
                 dr["Filename"] = this.openFileDialog1.SafeFileName;
@@ -262,6 +266,7 @@ namespace Sci.Production.Warehouse
                     newRow["Roll"] = (objCellArray[1, itemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[3]].ToString().Trim(), "C");
                     newRow["Dyelot"] = (objCellArray[1, itemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[4]].ToString().Trim(), "C").ToString();
                     newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[5]], "N");
+                    newRow["ActualWeight"] = 0;
                     newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[6]], "N");
                     newRow["stocktype"] = stockType;
                     newRow["location"] = (objCellArray[1, itemPosition[8]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[8]].ToString().Replace("'", string.Empty).Trim(), "C");
@@ -480,8 +485,8 @@ where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
                         select new
                         {
                             poid = m.First().Field<string>("poid"),
-                            seq1 = m.First().Field<string>("seq1"),
-                            seq2 = m.First().Field<string>("seq2"),
+                            Seq1 = m.First().Field<string>("seq1"),
+                            Seq2 = m.First().Field<string>("seq2"),
                             Roll = m.First().Field<string>("Roll"),
                             Dyelot = m.First().Field<string>("Dyelot"),
                             count = m.Count(),
@@ -492,7 +497,7 @@ where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
 
                     foreach (var dr in q)
                     {
-                        warning += string.Format("{0}-{1}-{2}-{3}-{4}" + Environment.NewLine, dr.poid, dr.seq1, dr.seq2, dr.Roll, dr.Dyelot);
+                        warning += string.Format("{0}-{1}-{2}-{3}-{4}" + Environment.NewLine, dr.poid, dr.Seq1, dr.Seq2, dr.Roll, dr.Dyelot);
                     }
 
                     MyUtility.Msg.WarningBox(warning, "Roll# are duplicated!!");

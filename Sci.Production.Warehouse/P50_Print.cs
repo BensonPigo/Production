@@ -20,11 +20,13 @@ namespace Sci.Production.Warehouse
 
         private string selectOption;
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
            return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;

@@ -13,12 +13,14 @@ namespace Sci.Production.Centralized
             this.DefaultFilter = string.Format("Type = 'SO'");
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             this.txtID.ReadOnly = true;
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.txtDescription.Text))
@@ -30,6 +32,7 @@ namespace Sci.Production.Centralized
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             this.CurrentMaintain["Type"] = "SO";
@@ -37,6 +40,7 @@ namespace Sci.Production.Centralized
             return base.ClickSave();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             string newID = string.Format("{0:00000}", Convert.ToInt32(MyUtility.GetValue.Lookup("SELECT ISNULL(Max(Cast(ID as int)),0) FROM SewingReason", "ProductionTPE")) + 1);

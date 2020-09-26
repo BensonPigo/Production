@@ -12,9 +12,9 @@ namespace Sci.Production.Subcon
 {
     public partial class P30_BatchApprove : Win.Forms.Base
     {
-        Action delegateAct;
-        DataTable LocalPOs;
-        DataTable LocalPO_Details;
+        private Action delegateAct;
+        private DataTable LocalPOs;
+        private DataTable LocalPO_Details;
 
         public P30_BatchApprove(Action reload)
         {
@@ -23,6 +23,7 @@ namespace Sci.Production.Subcon
             this.delegateAct = reload;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -68,12 +69,12 @@ namespace Sci.Production.Subcon
             this.Query();
         }
 
-        private void btnRefresh_Click(object sender, EventArgs e)
+        private void BtnRefresh_Click(object sender, EventArgs e)
         {
             this.Query();
         }
 
-        private void btnApprove_Click(object sender, EventArgs e)
+        private void BtnApprove_Click(object sender, EventArgs e)
         {
             string sqlCmd = string.Empty;
             DualResult result;
@@ -91,32 +92,32 @@ namespace Sci.Production.Subcon
             }
 
             // 取得勾選資料並檢查，得到確定是Locked的資料
-            DataTable SelectedList = this.LocalPOs.AsEnumerable().Where(o => (int)o["Selected"] == 1).CopyToDataTable();
-            DataTable RealLockedList = this.CheckSelectedData(SelectedList);
+            DataTable selectedList = this.LocalPOs.AsEnumerable().Where(o => (int)o["Selected"] == 1).CopyToDataTable();
+            DataTable realLockedList = this.CheckSelectedData(selectedList);
 
-            if (RealLockedList.Rows.Count == 0)
+            if (realLockedList.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No Data.");
                 return;
             }
 
-            List<string> IdList = RealLockedList.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
+            List<string> idList = realLockedList.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
 
-            sqlCmd = $" UPDATE LocalPO SET Status='Approved', ApvName='{Env.User.UserID}',ApvDate=GETDATE() WHERE ID IN ('{IdList.JoinToString("','")}')";
+            sqlCmd = $" UPDATE LocalPO SET Status='Approved', ApvName='{Env.User.UserID}',ApvDate=GETDATE() WHERE ID IN ('{idList.JoinToString("','")}')";
 
-            using (TransactionScope _transactionscope = new TransactionScope())
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
                 {
                     if (!(result = DBProxy.Current.Execute(null, sqlCmd)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         this.ShowErr(sqlCmd, result);
                         return;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
 
                     this.Query();
                     this.delegateAct();
@@ -124,23 +125,23 @@ namespace Sci.Production.Subcon
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             string sqlCmd = string.Empty;
             DualResult result;
-            DataTable PrictData;
+            DataTable prictData;
 
             try
             {
@@ -154,9 +155,9 @@ namespace Sci.Production.Subcon
                 this.ShowWaitMessage("Data Loading...");
 
                 // 取得勾選資料並檢查，得到確定是Locked的資料
-                DataTable RealLockedList = this.CheckSelectedData(this.LocalPOs);
+                DataTable realLockedList = this.CheckSelectedData(this.LocalPOs);
 
-                List<string> IdList = RealLockedList.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
+                List<string> idList = realLockedList.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
 
                 #region 組合SQL
 
@@ -167,7 +168,7 @@ namespace Sci.Production.Subcon
                         INTO #tmp_AllOrders 
                         FROM LocalPO a 
                         INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID
-                        WHERE a.ID IN( '{IdList.JoinToString("','")}')
+                        WHERE a.ID IN( '{idList.JoinToString("','")}')
 
                         --計算採購價總合
                         SELECT   [Category] = t.ArtworkTypeID  
@@ -228,19 +229,19 @@ namespace Sci.Production.Subcon
                         OUTER APPLY(
 	                        SELECT stdPrice FROM #StdPriceTable WHERE OrderID=ld.OrderId AND Category = l.Category
                         )std
-                        WHERE l.ID IN( '{IdList.JoinToString("','")}')
+                        WHERE l.ID IN( '{idList.JoinToString("','")}')
 
                         DROP TABLE #tmp_AllOrders, #StdPriceTable";
 
                 #endregion
 
-                result = DBProxy.Current.Select(null, sqlCmd, out PrictData);
+                result = DBProxy.Current.Select(null, sqlCmd, out prictData);
                 if (!result)
                 {
                     this.ShowErr(result);
                 }
 
-                MyUtility.Excel.CopyToXls(PrictData, string.Empty, "Subcon_P30_LockList.xltx", 1);
+                MyUtility.Excel.CopyToXls(prictData, string.Empty, "Subcon_P30_LockList.xltx", 1);
 
                 this.HideWaitMessage();
             }
@@ -254,7 +255,7 @@ namespace Sci.Production.Subcon
 
         private void Query()
         {
-            DataSet LocalPOs_And_Details = null;
+            DataSet localPOs_And_Details = null;
             this.LocalPOs = null;
             this.LocalPO_Details = null;
             string sqlCmd = string.Empty;
@@ -303,22 +304,22 @@ namespace Sci.Production.Subcon
 
             try
             {
-                 if (!SQL.Selects(string.Empty, sqlCmd, out LocalPOs_And_Details))
+                 if (!SQL.Selects(string.Empty, sqlCmd, out localPOs_And_Details))
                 {
                     MyUtility.Msg.WarningBox(sqlCmd, "Query error!!");
                     return;
                 }
 
-                 if (LocalPOs_And_Details.Tables.Count == 0)
+                 if (localPOs_And_Details.Tables.Count == 0)
                 {
                     return;
                 }
 
                 // 將Table從DataSet切分出來
-                 this.LocalPOs = LocalPOs_And_Details.Tables[0];
+                 this.LocalPOs = localPOs_And_Details.Tables[0];
                  this.LocalPOs.TableName = "Master";
 
-                 this.LocalPO_Details = LocalPOs_And_Details.Tables[1];
+                 this.LocalPO_Details = localPOs_And_Details.Tables[1];
                  this.LocalPO_Details.TableName = "Detail";
 
                 // 建立Relation，連動兩個Grid
@@ -327,7 +328,7 @@ namespace Sci.Production.Subcon
                      new DataColumn[] { this.LocalPOs.Columns["ID"] },
                      new DataColumn[] { this.LocalPO_Details.Columns["ID"] });
 
-                 LocalPOs_And_Details.Relations.Add(relation);
+                 localPOs_And_Details.Relations.Add(relation);
 
                 // DataSource必須Reset
                  if (this.listControlBindingSource_Master.DataSource != null)
@@ -340,7 +341,7 @@ namespace Sci.Production.Subcon
                     this.listControlBindingSource_Detail.DataSource = null;
                 }
 
-                 this.listControlBindingSource_Master.DataSource = LocalPOs_And_Details;
+                 this.listControlBindingSource_Master.DataSource = localPOs_And_Details;
                  this.listControlBindingSource_Master.DataMember = "Master";
 
                  this.listControlBindingSource_Detail.DataSource = this.listControlBindingSource_Master;
@@ -355,24 +356,24 @@ namespace Sci.Production.Subcon
             }
         }
 
-        private DataTable CheckSelectedData(DataTable SelectedList)
+        private DataTable CheckSelectedData(DataTable selectedList)
         {
             string sqlCmd = string.Empty;
-            DataTable RealLockedList;
+            DataTable realLockedList;
 
-            List<string> IdList = SelectedList.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
+            List<string> idList = selectedList.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
 
-            sqlCmd = $" SELECT ID FROm LocalPO WHERE Status='Locked' AND ID IN ('{IdList.JoinToString("','")}')";
+            sqlCmd = $" SELECT ID FROm LocalPO WHERE Status='Locked' AND ID IN ('{idList.JoinToString("','")}')";
 
             // Form並不是最新的狀態，避免Form上的Status與DB歧異，因此回去撈出真正Locked的LocalPO
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out RealLockedList);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out realLockedList);
             if (!result)
             {
                 this.ShowErr(result);
                 return null;
             }
 
-            return RealLockedList;
+            return realLockedList;
         }
         #endregion
 

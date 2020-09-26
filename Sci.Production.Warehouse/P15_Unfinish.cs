@@ -22,6 +22,7 @@ namespace Sci.Production.Warehouse
             // this.timer();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

@@ -17,9 +17,9 @@ namespace Sci.Production.Subcon
 
         private IntPtr hLib;
 
-        public DllInvoke(string DLLPath)
+        public DllInvoke(string dLLPath)
         {
-            this.hLib = LoadLibrary(DLLPath);
+            this.hLib = LoadLibrary(dLLPath);
         }
 
         ~DllInvoke()
@@ -27,9 +27,9 @@ namespace Sci.Production.Subcon
             FreeLibrary(this.hLib);
         }
 
-        public Delegate Invoke(string APIName, Type t)
+        public Delegate Invoke(string aPIName, Type t)
         {
-            IntPtr api = GetProcAddress(this.hLib, APIName);
+            IntPtr api = GetProcAddress(this.hLib, aPIName);
             try
             {
                 return (Delegate)Marshal.GetDelegateForFunctionPointer(api, t);
@@ -44,10 +44,10 @@ namespace Sci.Production.Subcon
 
     public class P23_bhtprtd
     {
-        private delegate int bhtCallVB_func(IntPtr nhWnd, string pcParam, StringBuilder FileNameBuf, int ProtocolType);
+        private delegate int BhtCallVB_func(IntPtr nhWnd, string pcParam, StringBuilder fileNameBuf, int protocolType);
 
-        DllInvoke dll;
-        bhtCallVB_func func;
+        private DllInvoke dll;
+        private BhtCallVB_func func;
 
         public P23_bhtprtd()
         {
@@ -55,15 +55,15 @@ namespace Sci.Production.Subcon
             this.dll = new DllInvoke(".\\Bhtprtd.dll");
 
             // 設定dll檔內的function名稱 ExecProtocol
-            this.func = (bhtCallVB_func)this.dll.Invoke("ExecProtocol", typeof(bhtCallVB_func));
+            this.func = (BhtCallVB_func)this.dll.Invoke("ExecProtocol", typeof(BhtCallVB_func));
         }
 
-        public int ExecProtocol(IntPtr nhWnd, string pcParam, StringBuilder FileNameBuf, int ProtocolType)
+        public int ExecProtocol(IntPtr nhWnd, string pcParam, StringBuilder fileNameBuf, int protocolType)
         {
             if (this.func != null)
             {
                 // 真正執行dll的function的地方
-                return this.func(nhWnd, pcParam, FileNameBuf, ProtocolType);
+                return this.func(nhWnd, pcParam, fileNameBuf, protocolType);
             }
             else
             {
@@ -113,41 +113,41 @@ namespace Sci.Production.Subcon
             return error_msg;
         }
 
-        public string csharpExecProtocol(IntPtr nhWnd, string Options, int RcvMode, int ProtocolType)
+        public string CsharpExecProtocol(IntPtr nhWnd, string options, int rcvMode, int protocolType)
         {
             string pcParam;
-            StringBuilder FileNameBuf = new StringBuilder();
+            StringBuilder fileNameBuf = new StringBuilder();
 
             // Set option string
-            if (RcvMode == 2)
+            if (rcvMode == 2)
             {
-                pcParam = Options + " +R";
+                pcParam = options + " +R";
             }
             else
             {
-                pcParam = Options + " -R";
+                pcParam = options + " -R";
             }
 
             // 呼叫自定義方法，名稱命名與dll的function相同
-            int Ret = this.ExecProtocol(nhWnd, pcParam, FileNameBuf, ProtocolType);
+            int ret = this.ExecProtocol(nhWnd, pcParam, fileNameBuf, protocolType);
 
             // 設定回傳訊息
-            string TransferFile = string.Empty;
-            if (Ret == 0)
+            string transferFile = string.Empty;
+            if (ret == 0)
             {
-                TransferFile = " 0 : Receive Success : " + FileNameBuf.ToString().Trim();
+                transferFile = " 0 : Receive Success : " + fileNameBuf.ToString().Trim();
             }
             else
             {
-                TransferFile = Ret.ToString() + " : Receive Error : " + FileNameBuf.ToString().Trim() + Environment.NewLine +
-                               this.ErrorMapping(Ret) + Environment.NewLine +
+                transferFile = ret.ToString() + " : Receive Error : " + fileNameBuf.ToString().Trim() + Environment.NewLine +
+                               this.ErrorMapping(ret) + Environment.NewLine +
                                @"Set up scanner steps:
 1.create C:\temp\ floder.
 2.connect scanner to computer.
 3.set up connect port is 8.";
             }
 
-            return TransferFile;
+            return transferFile;
         }
     }
 }

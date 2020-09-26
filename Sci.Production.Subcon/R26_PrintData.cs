@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Subcon
 {
-    class R26_PrintData
+    internal class R26_PrintData
     {
         public string PO { get; set; }
 
@@ -46,7 +46,7 @@
 
         public string CurrencyId { get; set; }
 
-        public string vat { get; set; }
+        public string Vat { get; set; }
 
         public string Grand_Total { get; set; }
 

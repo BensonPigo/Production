@@ -49,7 +49,7 @@ namespace Sci.Production.Subcon
             string pcPath = "C:\\";
             string pcPara = "+B115200 +P8 " + pcPath + "temp\\(file)";
             P23_bhtprtd bht = new P23_bhtprtd();
-            string msg = bht.csharpExecProtocol(this.Handle, pcPara, 2, 2);
+            string msg = bht.CsharpExecProtocol(this.Handle, pcPara, 2, 2);
             this.ShowInfo(msg);
             if (msg.Contains("Error"))
             {

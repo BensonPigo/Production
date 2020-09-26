@@ -5,7 +5,7 @@ namespace Sci.Production.Quality
 {
     public partial class B05 : Win.Tems.Input1
     {
-        readonly ToolTip toolTip1 = new ToolTip();
+        private readonly ToolTip toolTip1 = new ToolTip();
 
         public B05(ToolStripMenuItem menuitem)
             : base(menuitem)

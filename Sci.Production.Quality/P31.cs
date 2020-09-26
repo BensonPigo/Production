@@ -16,29 +16,31 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Quality
 {
-    public partial class P31 : Sci.Win.Tems.Input6
+    /// <inheritdoc/>
+    public partial class P31 : Win.Tems.Input6
     {
-        public string _Type = string.Empty;
+        public string type = string.Empty;
         private List<string> _Articles = new List<string>();
         private List<string> _Articles_c = new List<string>();
 
         // 每一Article底下的Size數量
         private readonly Dictionary<string, int> Size_per_Article = new Dictionary<string, int>();
 
-        public P31(ToolStripMenuItem menuitem,string type)
+        /// <inheritdoc/>
+        public P31(ToolStripMenuItem menuitem, string type)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Text = type == "1" ? "P31. CFA Master List" : "P311. CFA Master List(History)";
-            this._Type = type;
+            this.type = type;
 
-            string Isfinished = type == "1" ? "0" : "1";
+            string isfinished = type == "1" ? "0" : "1";
             string defaultFilter = $@" 
 EXISTS (
     SELECT 1 
     FROM Orders o WITH (NOLOCK) 
     WHERE o.Ftygroup = '{Sci.Env.User.Factory}'  --MDivisionID='{Sci.Env.User.Keyword}' 
-    AND Finished = {Isfinished} 
+    AND Finished = {isfinished} 
 	AND o.ID = Order_QtyShip.ID
     AND o.Category IN ('B','S','G')
 )";
@@ -50,11 +52,13 @@ EXISTS (
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             this.Size_per_Article.Clear();
@@ -63,14 +67,13 @@ EXISTS (
             this.gridQtyBreakdown.Columns.Clear();
             this.gridCartonSummary.Columns.Clear();
 
-            bool IsSample =MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["ID"].ToString()}' "));
-            
+            bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["ID"].ToString()}' "));
 
-
-            if (IsSample)
+            if (isSample)
             {
                 this.ByCarton.Visible = false;
-                //this.tabControl.TabPages.Remove(this.tab_CartonSummary);
+
+                // this.tabControl.TabPages.Remove(this.tab_CartonSummary);
                 this.tab_CartonSummary.Parent = null;
             }
             else
@@ -86,7 +89,7 @@ EXISTS (
             this.txtSpSeq.TextBoxSP.ReadOnly = true;
             this.txtSpSeq.TextBoxSeq.ReadOnly = true;
 
-            this.disFinalCtn.Value =MyUtility.GetValue.Lookup($@"
+            this.disFinalCtn.Value = MyUtility.GetValue.Lookup($@"
 select COUNT(1)
 from CFAInspectionRecord
 where Status='Confirmed'
@@ -182,7 +185,6 @@ where pd.OrderID ='{this.CurrentMaintain["ID"].ToString()}'
 and pd.OrderShipmodeSeq='{this.CurrentMaintain["Seq"].ToString()}'
 "));
 
-
             this.disVasShas.Value = MyUtility.GetValue.Lookup($@"
 SElECT IIF(VasShas=1 ,'Y' ,'N')
 FROM Orders
@@ -216,7 +218,6 @@ AND (SELECT  COUNT(ID) FROM GarmentTest WHERE OrderID = '{this.CurrentMaintain["
                 this.btnCreateInsRecord.Enabled = canNew;
             }
 
-
             // 雙行Column Header的做法
             // 搭配I:\MIS\Personal\Benson\QA P31\CFA.xlxs 第一個Sheet的畫面看比較好懂
 
@@ -224,18 +225,17 @@ AND (SELECT  COUNT(ID) FROM GarmentTest WHERE OrderID = '{this.CurrentMaintain["
             DataTable dtQtybreakdown;
             DataTable dtCtnSummary;
 
+            DataTable gridQtybreakdown = new DataTable();
+            DataTable gridCtnSummary = new DataTable();
 
-            DataTable GridQtybreakdown=new DataTable();
-            DataTable GridCtnSummary = new DataTable();
-
-            string OrderID = this.CurrentMaintain["ID"].ToString();
-            string Seq = this.CurrentMaintain["Seq"].ToString();
+            string orderID = this.CurrentMaintain["ID"].ToString();
+            string seq = this.CurrentMaintain["Seq"].ToString();
 
             #region Qtybreakdown分頁
 
             #region SQL
 
-             string cmd = $@"
+            string cmd = $@"
 ----By Qty Breakdown分頁
 SELECT oqd.ID,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty
 		,[IsCategory]=(SELECT IIF(Category='S',1,0) FROM Orders o WHERE ID = oqd.Id)
@@ -271,8 +271,8 @@ OUTER APPLY(
 	FROM PackingList_Detail pd
 	where pd.OrderID=oqd.ID and pd.OrderShipmodeSeq = oqd.SEQ and pd.Article= oqd.Article and pd.SizeCode= oqd.SizeCode
 )Clog
-WHERE oqd.ID='{OrderID}'
-AND oqd.Seq='{Seq}'
+WHERE oqd.ID='{orderID}'
+AND oqd.Seq='{seq}'
 
 SELECT --[ID]
 	--,[Seq]
@@ -314,6 +314,7 @@ ORDER BY [OrderKey]
 DROP TABLE #tmp
 ";
             #endregion
+
             // 取得基礎資料
             DualResult r = DBProxy.Current.Select(null, cmd, out dtQtybreakdown);
 
@@ -323,66 +324,64 @@ DROP TABLE #tmp
                 return;
             }
 
-            var Qtybreakdown = dtQtybreakdown.AsEnumerable().ToList();
+            var qtybreakdown = dtQtybreakdown.AsEnumerable().ToList();
 
-            List<string> Articles = new List<string>();
+            List<string> articles = new List<string>();
 
             #region Gird 客製 : 第一行Column Header的第一欄是固定的，可以先塞
+
             // 第一欄是固定的
-            Articles.Add("Article");
-            Articles.AddRange(Qtybreakdown.Select(o => o["Article"].ToString()).Distinct().ToList());
-            
-            this._Articles = Articles;
+            articles.Add("Article");
+            articles.AddRange(qtybreakdown.Select(o => o["Article"].ToString()).Distinct().ToList());
+
+            this._Articles = articles;
             this.Size_per_Article.Add("Article", 1);
 
-            System.Windows.Forms.DataGridViewTextBoxColumn Firstcol = new System.Windows.Forms.DataGridViewTextBoxColumn()
+            System.Windows.Forms.DataGridViewTextBoxColumn firstcol = new System.Windows.Forms.DataGridViewTextBoxColumn()
             {
-                DataPropertyName= "Category/Size",
+                DataPropertyName = "Category/Size",
                 Name = "Category/Size",
                 HeaderText = "Category/Size",
-                Width = 150
+                Width = 150,
             };
-            
-            this.gridQtyBreakdown.Columns.Add(Firstcol);
+
+            this.gridQtyBreakdown.Columns.Add(firstcol);
             #endregion
 
+            #region  Gird 客製 : 先產生第二行Column Header (Size)
 
-            #region  Gird 客製 : 先產生第二行Column Header (Size) 
-
-            foreach (var Article in Articles)
+            foreach (var article in articles)
             {
-                List<string> SizeCodes = Qtybreakdown.Where(o => o["Article"].ToString() == Article).Select(o => o["SizeCode"].ToString()).ToList();
+                List<string> sizeCodes = qtybreakdown.Where(o => o["Article"].ToString() == article).Select(o => o["SizeCode"].ToString()).ToList();
 
-                if (!this.Size_per_Article.Keys.Contains(Article))
+                if (!this.Size_per_Article.Keys.Contains(article))
                 {
                     // 紀錄每個Article有多少個Size，用於後面產生第一行Header
-                    this.Size_per_Article.Add(Article, SizeCodes.Count());
+                    this.Size_per_Article.Add(article, sizeCodes.Count());
 
-                    foreach (var SizeCode in SizeCodes)
+                    foreach (var sizeCode in sizeCodes)
                     {
                         System.Windows.Forms.DataGridViewTextBoxColumn col = new System.Windows.Forms.DataGridViewTextBoxColumn()
                         {
-                            DataPropertyName = Article + "_" + SizeCode,
-                            Name = Article+"_"+SizeCode,
-                            HeaderText = SizeCode/*,
+                            DataPropertyName = article + "_" + sizeCode,
+                            Name = article + "_" + sizeCode,
+                            HeaderText = sizeCode, /*,
                             Width = 20*/
                         };
                         this.gridQtyBreakdown.Columns.Add(col);
                     }
                 }
-
             }
             #endregion
-
 
             #region 製作Grid的DataSource
 
             DataTable source_QtyBreakdown = new DataTable();
 
             // 設定欄位名稱
-            foreach (System.Windows.Forms.DataGridViewTextBoxColumn Columm in gridQtyBreakdown.Columns)
+            foreach (System.Windows.Forms.DataGridViewTextBoxColumn columm in this.gridQtyBreakdown.Columns)
             {
-                source_QtyBreakdown.ColumnsStringAdd(Columm.Name);
+                source_QtyBreakdown.ColumnsStringAdd(columm.Name);
             }
 
             // 注意！ 這邊要對應到SQL語法的欄位名稱
@@ -400,20 +399,19 @@ DROP TABLE #tmp
                 DataRow newRow = source_QtyBreakdown.NewRow();
                 string dtColumnName = vHeader;
 
-                foreach (System.Windows.Forms.DataGridViewTextBoxColumn Columm in gridQtyBreakdown.Columns)
+                foreach (System.Windows.Forms.DataGridViewTextBoxColumn columm in this.gridQtyBreakdown.Columns)
                 {
-                    string Article_SizeCode = Columm.Name;
-                    if (Article_SizeCode == "Category/Size")
+                    string article_SizeCode = columm.Name;
+                    if (article_SizeCode == "Category/Size")
                     {
-                        newRow[Article_SizeCode] = dtColumnName;
+                        newRow[article_SizeCode] = dtColumnName;
                     }
                     else
                     {
-                        string Article = Article_SizeCode.Split('_')[0];
-                        string SizeCode = Article_SizeCode.Split('_')[1];
+                        string article = article_SizeCode.Split('_')[0];
+                        string sizeCode = article_SizeCode.Split('_')[1];
 
-                        newRow[Article_SizeCode] = Qtybreakdown.Where(o => o["Article"].ToString() == Article && o["SizeCode"].ToString() == SizeCode).FirstOrDefault()[dtColumnName];
-                        
+                        newRow[article_SizeCode] = qtybreakdown.Where(o => o["Article"].ToString() == article && o["SizeCode"].ToString() == sizeCode).FirstOrDefault()[dtColumnName];
                     }
                 }
 
@@ -439,8 +437,8 @@ SELECT ID,OrderID,OrderShipmodeSeq,CTNStartNo
 		,[SizeCodeCount]=COUNT(DISTINCT SizeCode)
 INTO #MixCTNStartNo
 FROM PackingList_Detail pd
-WHERE OrderID LIKE '{OrderID}' 
-AND OrderShipmodeSeq ='{Seq}'
+WHERE OrderID LIKE '{orderID}' 
+AND OrderShipmodeSeq ='{seq}'
 GROUP BY ID,OrderID,OrderShipmodeSeq,CTNStartNo
 HAVING COUNT(DISTINCT Article) > 1 OR COUNT(DISTINCT SizeCode) > 1
 
@@ -453,8 +451,8 @@ SELECT ID,OrderID,OrderShipmodeSeq,CTNStartNo
 		,ReceiveDate
 INTO #Not_MixCTNStartNo
 FROM PackingList_Detail pd
-WHERE OrderID LIKE '{OrderID}'
-AND  OrderShipmodeSeq ='{Seq}'
+WHERE OrderID LIKE '{orderID}'
+AND  OrderShipmodeSeq ='{seq}'
 AND CTNStartNo NOT IN (SELECT CTNStartNo FROM #MixCTNStartNo)
 
 ----記錄 混尺碼箱號 包含的Article SizeCode
@@ -466,8 +464,8 @@ SELECT ID, OrderID, OrderShipmodeSeq, CTNStartNo
         , ReceiveDate
 INTO #Is_MixCTNStartNo
 FROM PackingList_Detail pd
-WHERE OrderID LIKE '{OrderID}'
-AND OrderShipmodeSeq = '{Seq}'
+WHERE OrderID LIKE '{orderID}'
+AND OrderShipmodeSeq = '{seq}'
 AND CTNStartNo IN(SELECT CTNStartNo FROM #MixCTNStartNo)
 
 ----先計算 不是 混尺碼
@@ -515,7 +513,7 @@ OUTER APPLY(
         AND t.SizeCode = oqd.SizeCode
 		AND (t.CFAReceiveDate IS NOT NULL OR t.ReceiveDate IS NOT NULL)
 )ClogCTN
-WHERE oqd.ID = '{OrderID}' AND oqd.Seq = '{Seq}'
+WHERE oqd.ID = '{orderID}' AND oqd.Seq = '{seq}'
 
 ----計算 是 混尺碼
 SELECT DISTINCT
@@ -605,6 +603,7 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
 
 ";
             #endregion
+
             // 取得基礎資料
             r = DBProxy.Current.Select(null, cmd, out dtCtnSummary);
 
@@ -614,67 +613,64 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
                 return;
             }
 
-            var CartonSummary = dtCtnSummary.AsEnumerable().ToList();
+            var cartonSummary = dtCtnSummary.AsEnumerable().ToList();
 
-            List<string> Articles_c = new List<string>();
-
+            List<string> articles_c = new List<string>();
 
             #region Gird 客製 : 第一行Column Header的第一欄是固定的，可以先塞
-            // 第一欄是固定的
-            Articles_c.Add("Article");
-            Articles_c.AddRange(CartonSummary.Select(o => o["Article"].ToString()).Distinct().ToList());
 
-            this._Articles_c = Articles_c;
+            // 第一欄是固定的
+            articles_c.Add("Article");
+            articles_c.AddRange(cartonSummary.Select(o => o["Article"].ToString()).Distinct().ToList());
+
+            this._Articles_c = articles_c;
             this.Size_per_Article.Add("Article", 1);
 
-            System.Windows.Forms.DataGridViewTextBoxColumn Firstcol_c = new System.Windows.Forms.DataGridViewTextBoxColumn()
+            System.Windows.Forms.DataGridViewTextBoxColumn firstcol_c = new System.Windows.Forms.DataGridViewTextBoxColumn()
             {
                 DataPropertyName = "Category/Size",
                 Name = "Category/Size",
                 HeaderText = "Category/Size",
-                Width = 150
+                Width = 150,
             };
 
-            this.gridCartonSummary.Columns.Add(Firstcol_c);
+            this.gridCartonSummary.Columns.Add(firstcol_c);
             #endregion
 
+            #region  Gird 客製 : 先產生第二行Column Header (Size)
 
-            #region  Gird 客製 : 先產生第二行Column Header (Size) 
-
-            foreach (var Article in Articles_c)
+            foreach (var article in articles_c)
             {
-                List<string> SizeCodes = CartonSummary.Where(o => o["Article"].ToString() == Article).Select(o => o["SizeCode"].ToString()).ToList();
+                List<string> sizeCodes = cartonSummary.Where(o => o["Article"].ToString() == article).Select(o => o["SizeCode"].ToString()).ToList();
 
-                if (!this.Size_per_Article.Keys.Contains(Article))
+                if (!this.Size_per_Article.Keys.Contains(article))
                 {
                     // 紀錄每個Article有多少個Size，用於後面產生第一行Header
-                    this.Size_per_Article.Add(Article, SizeCodes.Count());
+                    this.Size_per_Article.Add(article, sizeCodes.Count());
 
-                    foreach (var SizeCode in SizeCodes)
+                    foreach (var sizeCode in sizeCodes)
                     {
                         System.Windows.Forms.DataGridViewTextBoxColumn col = new System.Windows.Forms.DataGridViewTextBoxColumn()
                         {
-                            DataPropertyName = Article + "_" + SizeCode,
-                            Name = Article + "_" + SizeCode,
-                            HeaderText = SizeCode/*,
+                            DataPropertyName = article + "_" + sizeCode,
+                            Name = article + "_" + sizeCode,
+                            HeaderText = sizeCode, /*,
                             Width = 20*/
                         };
                         this.gridCartonSummary.Columns.Add(col);
                     }
                 }
-
             }
             #endregion
-
 
             #region 製作Grid的DataSource
 
             DataTable source_CartonSummary = new DataTable();
 
             // 設定欄位名稱
-            foreach (System.Windows.Forms.DataGridViewTextBoxColumn Columm in gridCartonSummary.Columns)
+            foreach (System.Windows.Forms.DataGridViewTextBoxColumn columm in this.gridCartonSummary.Columns)
             {
-                source_CartonSummary.ColumnsStringAdd(Columm.Name);
+                source_CartonSummary.ColumnsStringAdd(columm.Name);
             }
 
             // 注意！ 這邊要對應到SQL語法的欄位名稱
@@ -690,20 +686,19 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
                 DataRow newRow = source_CartonSummary.NewRow();
                 string dtColumnName = cHeader;
 
-                foreach (System.Windows.Forms.DataGridViewTextBoxColumn Columm in gridCartonSummary.Columns)
+                foreach (System.Windows.Forms.DataGridViewTextBoxColumn columm in this.gridCartonSummary.Columns)
                 {
-                    string Article_SizeCode = Columm.Name;
-                    if (Article_SizeCode == "Category/Size")
+                    string article_SizeCode = columm.Name;
+                    if (article_SizeCode == "Category/Size")
                     {
-                        newRow[Article_SizeCode] = dtColumnName;
+                        newRow[article_SizeCode] = dtColumnName;
                     }
                     else
                     {
-                        string Article = Article_SizeCode.Split('_')[0];
-                        string SizeCode = Article_SizeCode.Split('_')[1];
+                        string article = article_SizeCode.Split('_')[0];
+                        string sizeCode = article_SizeCode.Split('_')[1];
 
-                        newRow[Article_SizeCode] = CartonSummary.Where(o => o["Article"].ToString() == Article && o["SizeCode"].ToString() == SizeCode).FirstOrDefault()[dtColumnName];
-
+                        newRow[article_SizeCode] = cartonSummary.Where(o => o["Article"].ToString() == article && o["SizeCode"].ToString() == sizeCode).FirstOrDefault()[dtColumnName];
                     }
                 }
 
@@ -719,25 +714,23 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
             // 動態產生第一行Column Header在這裡面的Paint事件
             this.GridSetting();
 
-
             base.OnDetailEntered();
         }
-
 
         private void GridQtyBreakdown_Paint(object sender, PaintEventArgs e)
         {
             int col = 0;
 
             // 一個Article畫一次
-            foreach (string Article in this._Articles)
+            foreach (string article in this._Articles)
             {
                 // 宣告要放在第一行的矩形物件
                 Rectangle r1 = this.gridQtyBreakdown.GetCellDisplayRectangle(col, -1, true);
 
                 // 取得第二行有幾格
-                int SizeCount = this.Size_per_Article[Article];
+                int sizeCount = this.Size_per_Article[article];
 
-                for (int ctn = 0; ctn < SizeCount; ctn++)
+                for (int ctn = 0; ctn < sizeCount; ctn++)
                 {
                     Rectangle r2 = this.gridQtyBreakdown.GetCellDisplayRectangle(col + ctn, -1, true);
 
@@ -748,7 +741,7 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
                     else
                     {
                         // 如果超過兩個，則寬度累計上去
-                        if(SizeCount > 1)
+                        if (sizeCount > 1)
                         {
                             r1.Width += r2.Width;
                         }
@@ -757,9 +750,11 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
 
                 // 微調新的矩形位置
                 r1.X += -1;
-                //r1.Y += 1;
-                r1.Height = r1.Height / 2 - 2;
-                //r1.Width -= 1;
+
+                // r1.Y += 1;
+                r1.Height = (r1.Height / 2) - 2;
+
+                // r1.Width -= 1;
 
                 // 重點 !!!  開始畫第一行Header
                 using (Brush back = new SolidBrush(this.gridQtyBreakdown.ColumnHeadersDefaultCellStyle.BackColor))
@@ -774,11 +769,12 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
                     // 沿用Grid的字型和樣式
                     e.Graphics.FillRectangle(back, r1);
                     e.Graphics.DrawRectangle(p, r1);
+
                     // 畫上第一行Header
-                    e.Graphics.DrawString(Article, this.gridQtyBreakdown.ColumnHeadersDefaultCellStyle.Font, fore, r1, format);
+                    e.Graphics.DrawString(article, this.gridQtyBreakdown.ColumnHeadersDefaultCellStyle.Font, fore, r1, format);
                 }
 
-                col += SizeCount; // 這個Article畫完，移動到下一個Article
+                col += sizeCount; // 這個Article畫完，移動到下一個Article
             }
         }
 
@@ -803,7 +799,6 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
             rtHeader.Height = this.gridQtyBreakdown.ColumnHeadersHeight / 2;
             this.gridQtyBreakdown.Invalidate(rtHeader);
 
-
             Rectangle rtHeader_c = this.gridCartonSummary.DisplayRectangle;
             rtHeader_c.Height = this.gridCartonSummary.ColumnHeadersHeight / 2;
             this.gridCartonSummary.Invalidate(rtHeader_c);
@@ -814,15 +809,15 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
             int col = 0;
 
             // 一個Article畫一次
-            foreach (string Article in this._Articles_c)
+            foreach (string article in this._Articles_c)
             {
                 // 宣告要放在第一行的矩形物件
                 Rectangle r1 = this.gridCartonSummary.GetCellDisplayRectangle(col, -1, true);
 
                 // 取得第二行有幾格
-                int SizeCount = this.Size_per_Article[Article];
+                int sizeCount = this.Size_per_Article[article];
 
-                for (int ctn = 0; ctn < SizeCount; ctn++)
+                for (int ctn = 0; ctn < sizeCount; ctn++)
                 {
                     Rectangle r2 = this.gridCartonSummary.GetCellDisplayRectangle(col + ctn, -1, true);
 
@@ -833,7 +828,7 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
                     else
                     {
                         // 如果超過兩個，則寬度累計上去
-                        if (SizeCount > 1)
+                        if (sizeCount > 1)
                         {
                             r1.Width += r2.Width;
                         }
@@ -842,9 +837,11 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
 
                 // 微調新的矩形位置
                 r1.X += -1;
-                //r1.Y += 1;
-                r1.Height = r1.Height / 2 - 2;
-                //r1.Width -= 1;
+
+                // r1.Y += 1;
+                r1.Height = (r1.Height / 2) - 2;
+
+                // r1.Width -= 1;
 
                 // 重點 !!!  開始畫第一行Header
                 using (Brush back = new SolidBrush(this.gridCartonSummary.ColumnHeadersDefaultCellStyle.BackColor))
@@ -859,11 +856,12 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
                     // 沿用Grid的字型和樣式
                     e.Graphics.FillRectangle(back, r1);
                     e.Graphics.DrawRectangle(p, r1);
+
                     // 畫上第一行Header
-                    e.Graphics.DrawString(Article, this.gridCartonSummary.ColumnHeadersDefaultCellStyle.Font, fore, r1, format);
+                    e.Graphics.DrawString(article, this.gridCartonSummary.ColumnHeadersDefaultCellStyle.Font, fore, r1, format);
                 }
 
-                col += SizeCount; // 這個Article畫完，移動到下一個Article
+                col += sizeCount; // 這個Article畫完，移動到下一個Article
             }
         }
 
@@ -887,59 +885,56 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
             this.gridQtyBreakdown.AllowUserToAddRows = false;
             this.gridQtyBreakdown.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.gridQtyBreakdown.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
-            this.gridQtyBreakdown.ColumnHeadersHeight = 46;// this.gridQtyBreakdown.ColumnHeadersHeight * 2;
+            this.gridQtyBreakdown.ColumnHeadersHeight = 46; // this.gridQtyBreakdown.ColumnHeadersHeight * 2;
             this.gridQtyBreakdown.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
             this.gridQtyBreakdown.RowHeadersVisible = false;
 
             this.gridQtyBreakdown.IsEditingReadOnly = true;
 
             // 動態畫出第一行Header
-            this.gridQtyBreakdown.Paint += GridQtyBreakdown_Paint;
-            this.gridQtyBreakdown.Scroll += GridQtyBreakdown_Scroll;
-            this.gridQtyBreakdown.ColumnWidthChanged += GridQtyBreakdown_ColumnWidthChanged;
-            this.gridQtyBreakdown.Resize += GridQtyBreakdown_Resize;
+            this.gridQtyBreakdown.Paint += this.GridQtyBreakdown_Paint;
+            this.gridQtyBreakdown.Scroll += this.GridQtyBreakdown_Scroll;
+            this.gridQtyBreakdown.ColumnWidthChanged += this.GridQtyBreakdown_ColumnWidthChanged;
+            this.gridQtyBreakdown.Resize += this.GridQtyBreakdown_Resize;
 
             /*--------------------我是分隔線--------------------*/
 
             this.gridCartonSummary.AllowUserToAddRows = false;
             this.gridCartonSummary.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.gridCartonSummary.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
-            this.gridCartonSummary.ColumnHeadersHeight = 46;// this.gridCartonSummary.ColumnHeadersHeight * 2;
+            this.gridCartonSummary.ColumnHeadersHeight = 46; // this.gridCartonSummary.ColumnHeadersHeight * 2;
             this.gridCartonSummary.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
             this.gridCartonSummary.RowHeadersVisible = false;
 
             this.gridCartonSummary.IsEditingReadOnly = true;
 
             // 動態畫出第一行Header
-            this.gridCartonSummary.Paint += GridCartonSummary_Paint;
-            this.gridCartonSummary.Scroll += GridCartonSummary_Scroll;
-            this.gridCartonSummary.ColumnWidthChanged += GridCartonSummary_ColumnWidthChanged;
-            this.gridCartonSummary.Resize += GridCartonSummary_Resize;
-
+            this.gridCartonSummary.Paint += this.GridCartonSummary_Paint;
+            this.gridCartonSummary.Scroll += this.GridCartonSummary_Scroll;
+            this.gridCartonSummary.ColumnWidthChanged += this.GridCartonSummary_ColumnWidthChanged;
+            this.gridCartonSummary.Resize += this.GridCartonSummary_Resize;
         }
-
 
         private void ChkForThird_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.CurrentMaintain !=  null)
+            if (this.CurrentMaintain != null)
             {
                 if (!this.chkForThird.Checked)
                 {
-                    string InspectionCtn = MyUtility.GetValue.Lookup($@"
+                    string inspectionCtn = MyUtility.GetValue.Lookup($@"
 SELECT COUNT(ID)
 FROM CFAInspectionRecord
 WHERE ID = '{this.CurrentMaintain["ID"].ToString()}' 
 AND Seq = '{this.CurrentMaintain["Seq"].ToString()}'
 AND Stage='3rd party'
 ");
-                    if (MyUtility.Convert.GetInt(InspectionCtn) > 0)
+                    if (MyUtility.Convert.GetInt(inspectionCtn) > 0)
                     {
                         MyUtility.Msg.WarningBox("There is 3rd party inspection record, can't change.");
                         this.chkForThird.Checked = true;
                         this.CurrentMaintain["CFAIs3rdInspect"] = true;
                     }
                 }
-
             }
         }
 
@@ -950,7 +945,7 @@ SELECT Packing2
 FROM Orders 
 WHERE ID='{this.CurrentMaintain["ID"]}'
 ");
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(content, "VAS/SHAS Instruction", false, null);
+            EditMemo callNextForm = new EditMemo(content, "VAS/SHAS Instruction", false, null);
             callNextForm.ShowDialog(this);
         }
 
@@ -962,41 +957,32 @@ WHERE ID='{this.CurrentMaintain["ID"]}'
 
         private void BtnByRecord_Click(object sender, EventArgs e)
         {
-
             P31_ByRecord form = new P31_ByRecord(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["Seq"].ToString());
             form.ShowDialog();
         }
 
         private void BtnCreateInsRecord_Click(object sender, EventArgs e)
         {
-            P32Header obj = new P32Header()
-            {
-                OrderID = this.CurrentMaintain["ID"].ToString(),
-                Seq = this.CurrentMaintain["Seq"].ToString(),
-                PO = this.disPO.Value.ToString(),
-                Style = this.CurrentMaintain["StyleID"].ToString(),
-                Brand = this.disBrand.Value.ToString(),
-                Season = MyUtility.GetValue.Lookup($@"
+            string cmdSeason = $@"
 SELECT  SeasonID
 FROM Orders 
 WHERE ID = '{this.CurrentMaintain["ID"].ToString()}'
-"),
+";
 
-                M = MyUtility.GetValue.Lookup($@"
+            string cmdM = $@"
 SELECT  MDivisionid
 FROM Orders 
 WHERE ID = '{this.CurrentMaintain["ID"].ToString()}'
-"),
-                Factory = this.CurrentMaintain["FactoryID"].ToString(),
-                BuyerDev = this.CurrentMaintain["BuyerDelivery"].ToString(),
-                OrderQty = this.CurrentMaintain["Qty"].ToString(),
-                Dest = MyUtility.GetValue.Lookup($@"
+";
+
+            string cmdDest = $@"
 SELECT c.Alias
 FROM Orders o
 INNER JOIN Country c ON o.Dest = c.ID
 WHERE o.ID = '{this.CurrentMaintain["ID"].ToString()}'
-"),
-                Article = MyUtility.GetValue.Lookup($@"
+";
+
+            string cmdArticle = $@"
 SELECT STUFF(
     (SELECT DISTINCT ','+Article 
     FROM Order_QtyShip_Detail 
@@ -1004,10 +990,24 @@ SELECT STUFF(
     FOR XML PATH('')
     )
 ,1,1,'')
-")
+";
+            P32Header obj = new P32Header()
+            {
+                OrderID = this.CurrentMaintain["ID"].ToString(),
+                Seq = this.CurrentMaintain["Seq"].ToString(),
+                PO = this.disPO.Value.ToString(),
+                Style = this.CurrentMaintain["StyleID"].ToString(),
+                Brand = this.disBrand.Value.ToString(),
+                Season = MyUtility.GetValue.Lookup(cmdSeason),
+                M = MyUtility.GetValue.Lookup(cmdM),
+                Factory = this.CurrentMaintain["FactoryID"].ToString(),
+                BuyerDev = this.CurrentMaintain["BuyerDelivery"].ToString(),
+                OrderQty = this.CurrentMaintain["Qty"].ToString(),
+                Dest = MyUtility.GetValue.Lookup(cmdDest),
+                Article = MyUtility.GetValue.Lookup(cmdArticle),
             };
 
-            Sci.Production.Quality.P32 p32 = new P32(new ToolStripMenuItem(), "1",sourceHeader: obj);
+            P32 p32 = new P32(new ToolStripMenuItem(), "1", sourceHeader: obj);
             p32.ShowDialog(this);
         }
     }

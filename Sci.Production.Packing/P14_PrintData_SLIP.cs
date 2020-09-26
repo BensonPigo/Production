@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Packing
 {
-    class P14_PrintData_SLIP
+    internal class P14_PrintData_SLIP
     {
         public string TTL_Qty { get; set; }
 
@@ -10,7 +10,7 @@
 
         public string PONo { get; set; }
 
-        public string ttlCtn { get; set; }
+        public string TtlCtn { get; set; }
 
         public string ClogLocationId { get; set; }
 

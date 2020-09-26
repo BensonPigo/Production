@@ -12,10 +12,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class P23 : Win.Tems.QueryForm
     {
         private DataTable dtDBSource;
 
+        /// <inheritdoc/>
         public P23(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -519,6 +521,7 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' and DisposeFromClog= 
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             if (this.listControlBindingSource.DataSource == null)
@@ -729,7 +732,7 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
             }
         }
 
-        private void grid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void Grid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (this.listControlBindingSource.DataSource == null || e.ColumnIndex != 0)
             {

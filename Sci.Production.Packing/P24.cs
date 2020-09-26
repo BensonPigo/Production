@@ -38,6 +38,7 @@ namespace Sci.Production.Packing
             this.gridicon.Visible = false;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["Ukey"]);
@@ -123,6 +124,7 @@ ORDER BY CAST(pd.CTNStartNo as int)
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings itemSelect = new DataGridViewGeneratorTextColumnSettings();
@@ -166,26 +168,27 @@ ORDER BY CAST(pd.CTNStartNo as int)
 
         private void Detailgrid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
-            //if (e.RowIndex < 0 || e.ColumnIndex < 8)
-            //{
+            // if (e.RowIndex < 0 || e.ColumnIndex < 8)
+            // {
             //    return;
-            //}
+            // }
 
-            //if (e.RowIndex > 0)
-            //{
+            // if (e.RowIndex > 0)
+            // {
             //    e.AdvancedBorderStyle.Top = DataGridViewAdvancedCellBorderStyle.None;
-            //}
+            // }
 
-            //if (this.IsTheSameCellValue(e.RowIndex))
-            //{
+            // if (this.IsTheSameCellValue(e.RowIndex))
+            // {
             //    e.AdvancedBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
-            //}
-            //else
-            //{
+            // }
+            // else
+            // {
             //    e.AdvancedBorderStyle.Bottom = this.detailgrid.AdvancedCellBorderStyle.Bottom;
-            //}
+            // }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -211,8 +214,8 @@ ORDER BY CAST(pd.CTNStartNo as int)
 
         private void ChangCell()
         {
-            //foreach (DataGridViewRow dr in this.detailgrid.Rows)
-            //{
+            // foreach (DataGridViewRow dr in this.detailgrid.Rows)
+            // {
             //    if (this.IsTheSameCellValueBefore(dr.Index))
             //    {
             //        //dr.Cells[8] = new DataGridViewTextBoxCell();
@@ -220,28 +223,28 @@ ORDER BY CAST(pd.CTNStartNo as int)
             //        dr.Cells[10] = new DataGridViewTextBoxCell();
             //        dr.Cells[11] = new DataGridViewTextBoxCell();
 
-            //        //dr.Cells[8].Style.ForeColor = Color.White;
+            // //dr.Cells[8].Style.ForeColor = Color.White;
             //        dr.Cells[9].Style.ForeColor = Color.White;
             //        dr.Cells[10].Style.ForeColor = Color.White;
             //        dr.Cells[11].Style.ForeColor = Color.White;
 
-            //        //dr.Cells[8].Style.SelectionForeColor = Color.White;
+            // //dr.Cells[8].Style.SelectionForeColor = Color.White;
             //        dr.Cells[9].Style.SelectionForeColor = Color.White;
             //        dr.Cells[10].Style.SelectionForeColor = Color.White;
             //        dr.Cells[11].Style.SelectionForeColor = Color.White;
 
-            //        //dr.Cells[8].Style.SelectionBackColor = Color.White;
+            // //dr.Cells[8].Style.SelectionBackColor = Color.White;
             //        dr.Cells[9].Style.SelectionBackColor = Color.White;
             //        dr.Cells[10].Style.SelectionBackColor = Color.White;
             //        dr.Cells[11].Style.SelectionBackColor = Color.White;
 
-            //        //dr.Cells[8].ReadOnly = true;
+            // //dr.Cells[8].ReadOnly = true;
             //        //dr.Cells[8].ReadOnly = true;
             //        dr.Cells[9].ReadOnly = true;
             //        dr.Cells[10].ReadOnly = true;
             //        dr.Cells[11].ReadOnly = true;
             //    }
-            //}
+            // }
         }
 
         private bool IsTheSameCellValue(int row)
@@ -308,7 +311,7 @@ ORDER BY CAST(pd.CTNStartNo as int)
                     ShippingMarkPicUkey = shippingMarkPicUkey,
                     ShippingMarkTypeUkey = shippingMarkTypeUkey,
                     Image = image,
-                    FileName = fileName
+                    FileName = fileName,
                 };
 
                 // 存入集合，若按下Save才寫入DB
@@ -358,21 +361,23 @@ ORDER BY CAST(pd.CTNStartNo as int)
             this.readToDelete.Add(body);
 
             this.CurrentDetailData["ShippingMark"] = false;
-
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             this.CurrentMaintain["EditName"] = string.Empty;
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtPackingListID.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (this.DetailDatas.Count() == 0)
@@ -393,6 +398,7 @@ ORDER BY CAST(pd.CTNStartNo as int)
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {/*
             List<string> updateCmds = new List<string>();
@@ -469,6 +475,7 @@ WHERE SCICtnNo='{body.SCICtnNo}' AND ShippingMarkPicUkey='{body.ShippingMarkPicU
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -540,7 +547,8 @@ WHERE SCICtnNo='{body.SCICtnNo}' /*AND ShippingMarkPicUkey='{body.ShippingMarkPi
                 {
                     transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
-                    //return new DualResult(false);
+
+                    // return new DualResult(false);
                 }
             }
 
@@ -548,6 +556,7 @@ WHERE SCICtnNo='{body.SCICtnNo}' /*AND ShippingMarkPicUkey='{body.ShippingMarkPi
             this.ChangCell();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDelete()
         {
             string sqldelete = $@"
@@ -578,6 +587,7 @@ delete ShippingMarkPic_Detail where ShippingMarkPicUkey = {this.CurrentMaintain[
             return DBProxy.Current.Execute(null, sqldelete);
         }
 
+        /// <inheritdoc/>
         protected override void ClickDeleteAfter()
         {
             base.ClickDeleteAfter();
@@ -711,7 +721,6 @@ AND NOT EXISTS(
 
                     this.CurrentMaintain["PackingListID"] = newPackingListID;
                 }
-
             }
         }
 
@@ -739,7 +748,7 @@ AND NOT EXISTS(
                 Color = MyUtility.Convert.GetString(s["Color"]),
                 SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
                 ShippingMarkTypeUkey = MyUtility.Convert.GetLong(s["ShippingMarkTypeUkey"]),
-                ShippingMarkType = MyUtility.Convert.GetString(s["ShippingMarkType"])
+                ShippingMarkType = MyUtility.Convert.GetString(s["ShippingMarkType"]),
             }).ToList();
 
             #region To Excel
@@ -844,7 +853,7 @@ AND NOT EXISTS(
                     SCICtnNo = MyUtility.Convert.GetString(s["SCI Ctn No."]),
                     ShippingMarkTypeUkey= MyUtility.Convert.GetLong(s["Sticker Type Ukey"]),
                     ShippingMarkType = MyUtility.Convert.GetString(s["Sticker Type"]),
-                    FileName = MyUtility.Convert.GetString(s["Shipping Mark Pic File Path"])
+                    FileName = MyUtility.Convert.GetString(s["Shipping Mark Pic File Path"]),
                 });
 
                 #region 寫入DB前檢查
@@ -1026,6 +1035,7 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
         /// <summary>
         /// Determine of specified type is nullable
         /// </summary>
+        /// <returns>bool</returns>
         public static bool IsNullable(Type t)
         {
             return !t.IsValueType || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
@@ -1034,6 +1044,7 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
         /// <summary>
         /// Return underlying type if type is Nullable otherwise return the type
         /// </summary>
+        /// <returns>Type</returns>
         public static Type GetCoreType(Type t)
         {
             if (t != null && IsNullable(t))
@@ -1059,8 +1070,6 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
             {
                 return;
             }
-
-            DualResult result;
             string firstDetailSP = string.Empty;
             DataRow drOrder = null;
             if (this.detailgrid.Rows.Count > 0)
@@ -1093,7 +1102,7 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
         /// <param name="isMixPack">要找混尺碼或非混尺碼</param>
         /// <param name="packingListID">packingListID</param>
         /// <returns>CTNStarNo清單</returns>
-        private List<string> GetCTNStartNo_IsMixed(bool isMixPack ,string packingListID)
+        private List<string> GetCTNStartNo_IsMixed(bool isMixPack, string packingListID)
         {
             string cmd = string.Empty;
             List<string> ctnStarNoList = new List<string>();
@@ -1133,7 +1142,6 @@ GROUP BY pd.ID,CTNStartNo
         /// <summary>
         /// 根據PackingListID + BrandID，找出 CustCD 貼標組合的設定
         /// </summary>
-        /// <param name="isMixPack">要找混尺碼或非混尺碼</param>
         /// <param name="packingListID">packingListID</param>
         /// <returns>CTNStarNo清單</returns>
         private DataTable GetCustCD_Default(string packingListID)
@@ -1181,6 +1189,8 @@ where p.ID ='{packingListID}'
         /// 透過packingListID 取得P24表身
         /// </summary>
         /// <param name="packingListID">packingListID</param>
+        /// <param name="notMixCTNStartNo">非混尺碼箱號</param>
+        /// <param name="mixCTNStartNo">混尺碼箱號</param>
         private void GetDetailBody(string packingListID, List<string> notMixCTNStartNo, List<string> mixCTNStartNo)
         {
             string cmd = string.Empty;
@@ -1481,14 +1491,19 @@ WHERE [Sticker Combination] IS NULL
 
     public class ShippingMarkPic_Detail
     {
+        /// <inheritdoc/>
         public string SCICtnNo { get; set; }
 
+        /// <inheritdoc/>
         public long ShippingMarkTypeUkey { get; set; }
 
+        /// <inheritdoc/>
         public long ShippingMarkPicUkey { get; set; }
 
+        /// <inheritdoc/>
         public byte[] Image { get; set; }
 
+        /// <inheritdoc/>
         public string FileName { get; set; }
     }
 }

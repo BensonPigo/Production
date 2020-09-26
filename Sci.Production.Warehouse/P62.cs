@@ -642,8 +642,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     foreach (DataRow tmp in datacheck.Rows)
                     {
                         ids += string.Format(
-                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than issue qty: {5}" + Environment.NewLine,
-                            tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
+                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than issue qty: {5}" + Environment.NewLine, tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
 
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
@@ -656,8 +655,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #region 更新表頭狀態資料
 
             sqlupd3 = string.Format(
-                @"update Issue set status='Confirmed', editname = '{0}' , editdate = GETDATE()
-                                where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
+                @"update Issue set status='Confirmed', editname = '{0}' , editdate = GETDATE() where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
 
@@ -680,11 +678,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty")),
+                           Poid = m.First().Field<string>("poid"),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
 
@@ -720,7 +718,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
-                    SentToGensong_AutoWHFabric();
+                    this.SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -861,11 +859,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty")),
+                           Poid = m.First().Field<string>("poid"),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
 
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
@@ -901,7 +899,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
-                    SentToGensong_AutoWHFabric();
+                    this.SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -928,7 +926,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
         private void SentToGensong_AutoWHFabric()
         {
-            if (true) return;// 暫未開放
+            if (true)
+            {
+                return; // 暫未開放
+            }
+
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
@@ -966,14 +968,14 @@ and exists(
 		where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 		and FabricType='F'
 	)
-and i.id = '{CurrentMaintain["ID"]}'
+and i.id = '{this.CurrentMaintain["ID"]}'
 
 ";
 
                 DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
                 if (!drResult)
                 {
-                    ShowErr(drResult);
+                    this.ShowErr(drResult);
                 }
 
                 Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))

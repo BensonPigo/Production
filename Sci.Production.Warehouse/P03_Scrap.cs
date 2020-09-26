@@ -19,6 +19,7 @@ this.dr["seq1"].ToString(),
 this.dr["seq2"].ToString());
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

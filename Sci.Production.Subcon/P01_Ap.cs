@@ -8,7 +8,7 @@ namespace Sci.Production.Subcon
 {
     public partial class P01_Ap : Win.Subs.Base
     {
-        DataRow dr;
+        private DataRow dr;
 
         public P01_Ap(DataRow data)
         {
@@ -16,6 +16,7 @@ namespace Sci.Production.Subcon
             this.dr = data;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -45,7 +46,7 @@ namespace Sci.Production.Subcon
                  .DateTime("apvdate", header: "Approve Date", width: Widths.AnsiChars(20));
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

@@ -48,6 +48,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -58,6 +60,8 @@ namespace Sci.Production.Warehouse
         }
 
         // delete前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             // DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
@@ -71,6 +75,8 @@ namespace Sci.Production.Warehouse
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -86,6 +92,8 @@ namespace Sci.Production.Warehouse
         }
 
         // save前檢查 & 取id
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -139,12 +147,16 @@ namespace Sci.Production.Warehouse
         }
 
         // grid 加工填值
+
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -170,6 +182,8 @@ where ID = '{0}'", this.CurrentMaintain["ID"].ToString()));
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
 
         // Detail Grid 設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region -- QTY 不可超過 On Road --
@@ -307,6 +321,8 @@ where	Junk != 1
         }
 
         // Confirm
+
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -410,7 +426,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            threadcolorid = m.First().Field<string>("threadcolorid"),
                            unitid = m.First().Field<string>("unitid"),
                            location = string.Join(",", m.Select(row => row["location"].ToString())),
-                           qty = m.Sum(w => w.Field<decimal>("qty")),
+                           Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
 
             sqlupd2.Append(@"
@@ -497,6 +513,8 @@ when not matched then
         }
 
         // Unconfirm
+
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -576,11 +594,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         into m
                        select new
                        {
-                           orderid = m.First().Field<string>("orderid"),
+                           Orderid = m.First().Field<string>("orderid"),
                            refno = m.First().Field<string>("refno"),
                            threadcolorid = m.First().Field<string>("threadcolorid"),
                            unitid = m.First().Field<string>("unitid"),
-                           qty = m.Sum(w => w.Field<decimal>("qty")),
+                           Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
 
             foreach (var item in bs1)
@@ -595,7 +613,7 @@ when matched then
 when not matched then
       insert (orderid,refno,threadcolorid,inqty,unitid) 
       values (s.orderid,s.refno,s.threadcolorid,0 - s.qty,s.unitid);",
-                    item.qty, item.orderid, item.refno, item.threadcolorid, item.unitid));
+                    item.Qty, item.Orderid, item.refno, item.threadcolorid, item.unitid));
             }
 
             #endregion 更新庫存數量  Local Inventory
@@ -667,6 +685,8 @@ join (select LocalPoId,LocalPo_detailukey
         }
 
         // 寫明細撈出的sql command
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -744,6 +764,7 @@ Where a.id = '{0}' ", masterID);
             this.txtTotal.Text = this.detailgrid.Rows.Cast<DataGridViewRow>().AsEnumerable().Sum(row => decimal.Parse(row.Cells["Qty"].Value.ToString())).ToString();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             DataRow row = this.CurrentDataRow;

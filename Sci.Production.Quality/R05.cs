@@ -11,12 +11,12 @@ namespace Sci.Production.Quality
 {
     public partial class R05 : Win.Tems.PrintForm
     {
-        DateTime? DateSCIStart; DateTime? DateSCIEnd;
-        List<SqlParameter> lis;
-        DataTable dtFabricDetail;
-        DataTable dtAccessoryDetail;
-        DataTable dtFabricSummary;
-        DataTable dtAccessorySummary;
+        private DateTime? DateSCIStart; private DateTime? DateSCIEnd;
+        private List<SqlParameter> lis;
+        private DataTable dtFabricDetail;
+        private DataTable dtAccessoryDetail;
+        private DataTable dtFabricSummary;
+        private DataTable dtAccessorySummary;
         private string cmdFabricDetail;
         private string cmdAccessoryDetail;
         private string str_Category;
@@ -32,7 +32,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
             this.comboCategory.SelectedIndex = 0;
             DualResult result;
-            DataTable Material = null;
+            DataTable material = null;
             string sqlM = @" 
                         SELECT distinct case fabrictype
                                when 'F' then 'Fabric' 
@@ -41,14 +41,14 @@ namespace Sci.Production.Quality
                         FROM Po_supp_detail WITH (NOLOCK) 
                         where fabrictype !='O'  AND fabrictype !=''
                         ";
-            if (!(result = DBProxy.Current.Select(string.Empty, sqlM, out Material)))
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlM, out material)))
             {
                 this.ShowErr(result);
             }
             else
             {
-                Material.DefaultView.Sort = "fabrictype";
-                this.comboMaterialType.DataSource = Material;
+                material.DefaultView.Sort = "fabrictype";
+                this.comboMaterialType.DataSource = material;
                 this.comboMaterialType.ValueMember = "fabrictype";
                 this.comboMaterialType.DisplayMember = "fabrictype";
                 this.comboMaterialType.SelectedIndex = 0;
@@ -59,6 +59,7 @@ namespace Sci.Production.Quality
             this.print.Enabled = false;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             bool dateSciDelivery_Empty = !this.dateSCIDelivery.HasValue, comboCategory_Empty = this.comboCategory.Text.Empty(), comboMaterial_Empty = this.comboMaterialType.Text.Empty(),
@@ -436,6 +437,7 @@ and ai.Status='Confirmed'
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res = new DualResult(false);
@@ -470,6 +472,7 @@ and ai.Status='Confirmed'
             return res;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             var saveDialog = Utility.Excel.MyExcelPrg.GetSaveFileDialog(Utility.Excel.MyExcelPrg.Filter_Excel);

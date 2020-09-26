@@ -28,21 +28,22 @@ namespace Sci.Production.Warehouse
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
 
-        public P33_AutoPick(string _issueid, string _poid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo, List<IssueQtyBreakdown> issueQtyBreakdownList)
+        public P33_AutoPick(string issueid, string poid, string orderid, DataTable dtIssueBreakDown, StringBuilder sbSizecode, bool combo, List<IssueQtyBreakdown> issueQtyBreakdownList)
         {
             this.InitializeComponent();
-            this.poid = _poid;
-            this.issueid = _issueid;
+            this.poid = poid;
+            this.issueid = issueid;
 
             // cutplanid = _cutplanid;
-            this.orderid = _orderid;
-            this.dtIssueBreakDown = _dtIssueBreakDown;
-            this.sbSizecode = _sbSizecode;
-            this.combo = _combo;
+            this.orderid = orderid;
+            this.dtIssueBreakDown = dtIssueBreakDown;
+            this.sbSizecode = sbSizecode;
+            this.combo = combo;
             this._IssueQtyBreakdownList = issueQtyBreakdownList;
             this.Text += string.Format(" ({0})", this.poid);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

@@ -37,6 +37,7 @@ namespace Sci.Production.Quality
             this.isShowHistory = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -82,6 +83,7 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void SetDetailEditByAndCreateBy(DataRow data)
         {
             if (data == null)
@@ -124,6 +126,7 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
             this.editby.Text = editBy;
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             bool detailCellHasEmpty = this.DetailDatas.Where(s => MyUtility.Check.Empty(s["SuppID"]) || MyUtility.Check.Empty(s["Refno"])).Any();
@@ -144,6 +147,7 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
             MyUtility.Msg.InfoBox("Confirmed success!");
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             string sqlUnConfirm = $"update ADIDASComplain set FtyApvName = '',FtyApvDate = null where ID = '{this.CurrentMaintain["ID"].ToString()}'";
@@ -157,6 +161,7 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
             MyUtility.Msg.InfoBox("UnConfirmed success!");
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
@@ -180,11 +185,13 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -248,7 +255,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 }
 
                 string sqlGetSupplier = this.GetSupplierSql(string.Empty, true);
-                SelectItem selectItem = new SelectItem(sqlGetSupplier,"10,50,5", string.Empty, string.Empty);
+                SelectItem selectItem = new SelectItem(sqlGetSupplier, "10,50,5", string.Empty, string.Empty);
                 selectItem.Width = 900;
                 DialogResult dialogResult = selectItem.ShowDialog();
                 if (dialogResult != DialogResult.OK)
@@ -440,9 +447,9 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
             }
         }
 
-        private string GetRefnoSql(string refno, bool IsRightClick = false)
+        private string GetRefnoSql(string refno, bool isRightClick = false)
         {
-            string whereRefno = IsRightClick ? string.Empty : $" AND p.Refno='{refno}' ";
+            string whereRefno = isRightClick ? string.Empty : $" AND p.Refno='{refno}' ";
             string sqlGetRefno = $@"
 SELECT DISTINCT p.Refno
 ,[FabricType]=  CASE WHEN p.FabricType = 'F' THEN 'Fabric'
@@ -469,10 +476,10 @@ WHERE o.ID = '{this.CurrentDetailData["OrderID"]}' {whereRefno}
             return sqlGetRefno;
         }
 
-        private string GetSupplierSql(string suppID, bool IsRightClick = false)
+        private string GetSupplierSql(string suppID, bool isRightClick = false)
         {
-            string whereSuppID = IsRightClick ? string.Empty : $"  AND p.SuppID='{suppID}' ";
-            string whereSuppID_subcon = IsRightClick ? string.Empty : $"  AND a.LocalSuppID='{suppID}' ";
+            string whereSuppID = isRightClick ? string.Empty : $"  AND p.SuppID='{suppID}' ";
+            string whereSuppID_subcon = isRightClick ? string.Empty : $"  AND a.LocalSuppID='{suppID}' ";
             string sqlGetSupplier = $@"
 SELECT DISTINCT p.SuppID ,[Supp Name]=Supp.NameEN,[Is Local Supp]='N'
 FROM PO_Supp p
@@ -541,6 +548,7 @@ WHERE a.Status IN ('Closed','Approved') {whereSuppID_subcon}
             }
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();

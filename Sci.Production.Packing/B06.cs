@@ -12,7 +12,6 @@ namespace Sci.Production.Packing
 {
     public partial class B06 : Sci.Win.Tems.Input6
     {
-
         private string oldBrand = string.Empty;
 
         public B06(ToolStripMenuItem menuitem)
@@ -38,6 +37,7 @@ WHERE Type ='PMS_ShipMarkCategory'
             this.comboCategory.DisplayMember = "Text";
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -54,6 +54,7 @@ WHERE Type ='PMS_ShipMarkCategory'
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterUkey = (e.Master == null) ? string.Empty : e.Master["Ukey"].ToString();
@@ -68,6 +69,7 @@ ORDER BY b.Seq
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -79,7 +81,6 @@ ORDER BY b.Seq
 
             if (this.EditMode)
             {
-
                 this.checkIsDefault.ReadOnly = false;
             }
             else
@@ -88,6 +89,7 @@ ORDER BY b.Seq
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (MyUtility.Convert.GetBool(this.CurrentMaintain["Junk"]))
@@ -99,6 +101,7 @@ ORDER BY b.Seq
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings shippingMarkTypeID = new DataGridViewGeneratorTextColumnSettings();
@@ -157,7 +160,6 @@ ORDER BY b.Seq
 
             shippingMarkTypeID.EditingMouseDown += (s, e) =>
             {
-
                 if (e.Button == MouseButtons.Right)
                 {
                     if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
@@ -188,12 +190,13 @@ ORDER BY b.Seq
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("Seq", header: "Seq", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: false)
-            .Text("ShippingMarkTypeID", header: "Sticker Type", width: Widths.AnsiChars(15), iseditingreadonly: false ,settings: shippingMarkTypeID)
+            .Text("ShippingMarkTypeID", header: "Sticker Type", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: shippingMarkTypeID)
             .CheckBox("IsSSCC", header: "Is SSCC", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             ;
             return base.OnGridSetup();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             this.CurrentMaintain["Category"] = "PIC";
@@ -208,11 +211,13 @@ ORDER BY b.Seq
             base.ClickNewAfter();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridAppendClick()
         {
             base.OnDetailGridAppendClick();
-            //DataRow newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
-            //newrow["Seq"] = 1;
+
+            // DataRow newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
+            // newrow["Seq"] = 1;
         }
 
         private void Txtbrand_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -225,14 +230,14 @@ ORDER BY b.Seq
                 // this.DetailDatas.Clear();
 
                 // 刪除表身重新匯入
-                foreach (DataRow del in DetailDatas)
+                foreach (DataRow del in this.DetailDatas)
                 {
                     del.Delete();
                 }
-
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickJunk()
         {
             base.ClickJunk();
@@ -251,6 +256,7 @@ ORDER BY b.Seq
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();
@@ -262,6 +268,7 @@ ORDER BY b.Seq
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             // 1.ShippingMarkCombination & Brand 不可為空
@@ -367,6 +374,7 @@ Please check to continue process.");
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();

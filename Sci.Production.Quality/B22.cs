@@ -11,6 +11,7 @@ namespace Sci.Production.Quality
             this.DefaultFilter = $"MDivisionID ='{Env.User.Keyword}'";
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -18,6 +19,7 @@ namespace Sci.Production.Quality
             this.chkJunk.ReadOnly = !this.Perm.Junk;
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -25,6 +27,7 @@ namespace Sci.Production.Quality
             this.chkJunk.ReadOnly = !this.Perm.Junk;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))

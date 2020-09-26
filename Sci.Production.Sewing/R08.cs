@@ -746,7 +746,7 @@ where f.Junk = 0",
                     pams = this.dataMode.ToList().Where(w => datelists.Contains(w.Date.ToString("yyyy/MM/dd"))).GroupBy(g => new { g.Date.Year, g.Date.Month }).
                         Select(s => new APIData
                         {
-                            yyyyMM = s.First().Date.ToString("yyyy/MM"),
+                            YyyyMM = s.First().Date.ToString("yyyy/MM"),
                             SewTtlManpower = s.Sum(c => c.SewTtlManpower),
                             SewTtlManhours = s.Sum(c => c.SewTtlManhours),
                         }).ToList();
@@ -768,10 +768,10 @@ where f.Junk = 0",
                 objArray[0, 7] = dr[7];
                 objArray[0, 8] = dr[8];
                 objArray[0, 9] = string.Format("=IF(I{0}=0,0,ROUND((C{0}/(I{0}*3600/1400))*100,1))", insertRow);
-                if (pams != null && pams.Where(w => w.yyyyMM.EqualString(dr["OutputMM"])).Count() > 0)
+                if (pams != null && pams.Where(w => w.YyyyMM.EqualString(dr["OutputMM"])).Count() > 0)
                 {
-                    objArray[0, 11] = pams.Where(w => w.yyyyMM.EqualString(dr["OutputMM"])).FirstOrDefault().SewTtlManpower;
-                    objArray[0, 12] = pams.Where(w => w.yyyyMM.EqualString(dr["OutputMM"])).FirstOrDefault().SewTtlManhours;
+                    objArray[0, 11] = pams.Where(w => w.YyyyMM.EqualString(dr["OutputMM"])).FirstOrDefault().SewTtlManpower;
+                    objArray[0, 12] = pams.Where(w => w.YyyyMM.EqualString(dr["OutputMM"])).FirstOrDefault().SewTtlManhours;
                 }
                 else
                 {

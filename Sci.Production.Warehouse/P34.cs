@@ -13,11 +13,13 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P34 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
 
+        /// <inheritdoc/>
         public P34(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -31,6 +33,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
+        /// <inheritdoc/>
         public P34(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -47,7 +50,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
-        // 新增時預設資料
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -58,7 +61,7 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
 
-        // delete前檢查
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -70,7 +73,7 @@ namespace Sci.Production.Warehouse
             return base.ClickDeleteBefore();
         }
 
-        // edit前檢查
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -82,7 +85,7 @@ namespace Sci.Production.Warehouse
             return base.ClickEditBefore();
         }
 
-        // save前檢查 & 取id
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -151,13 +154,13 @@ namespace Sci.Production.Warehouse
             return base.ClickSaveBefore();
         }
 
-        // grid 加工填值
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
         }
 
-        // refresh
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -169,12 +172,16 @@ namespace Sci.Production.Warehouse
         }
 
         // detail 新增時設定預設值
+
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
         }
 
         // Detail Grid 設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region -- Current Qty Vaild 判斷 --
@@ -286,7 +293,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             this.detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        // Confirm
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -387,11 +394,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("QtyAfter") - w.Field<decimal>("QtyBefore")),
+                           Poid = m.First().Field<string>("poid"),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = m.Sum(w => w.Field<decimal>("QtyAfter") - w.Field<decimal>("QtyBefore")),
                        }).ToList();
 
             upd_MD_8T.Append(Prgs.UpdateMPoDetail(8, data_MD_8T32T, true));
@@ -411,16 +418,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
                 try
                 {
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T32T, string.Empty, upd_MD_8T.ToString(), out resulttb,
-                        "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T32T, string.Empty, upd_MD_8T.ToString(), out resulttb, "#TmpSource")))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T32T, string.Empty, upd_MD_32T.ToString(), out resulttb,
-                        "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T32T, string.Empty, upd_MD_32T.ToString(), out resulttb, "#TmpSource")))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);
@@ -458,7 +463,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
             transactionscope = null;
         }
 
-        // Unconfirm
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -556,8 +561,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
             #region 更新表頭狀態資料
 
             sqlupd3 = string.Format(
-                @"update Adjust set status='New', editname = '{0}' , editdate = GETDATE()
-                                where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
+                @"update Adjust set status='New', editname = '{0}' , editdate = GETDATE() where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
             #region -- 更新 MdivisionPoDetail --
@@ -572,11 +576,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("QtyAfter") - w.Field<decimal>("QtyBefore")),
+                           Poid = m.First().Field<string>("poid"),
+                           Seq1 = m.First().Field<string>("seq1"),
+                           Seq2 = m.First().Field<string>("seq2"),
+                           Stocktype = m.First().Field<string>("stocktype"),
+                           Qty = -m.Sum(w => w.Field<decimal>("QtyAfter") - w.Field<decimal>("QtyBefore")),
                        }).ToList();
 
             upd_MD_8F.Append(Prgs.UpdateMPoDetail(8, data_MD_8F32F, false));
@@ -603,16 +607,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                 try
                 {
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F32F, string.Empty, upd_MD_8F.ToString(), out resulttb,
-                        "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F32F, string.Empty, upd_MD_8F.ToString(), out resulttb, "#TmpSource")))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
                     }
 
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F32F, string.Empty, upd_MD_32F.ToString(), out resulttb,
-                        "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F32F, string.Empty, upd_MD_32F.ToString(), out resulttb, "#TmpSource")))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);
@@ -651,6 +653,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
         }
 
         // 寫明細撈出的sql command
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();

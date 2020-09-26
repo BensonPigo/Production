@@ -38,6 +38,7 @@ namespace Sci.Production.Warehouse
             this.comboStockType.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -45,10 +46,7 @@ namespace Sci.Production.Warehouse
             // Combo DataSource設定
             DataTable dtReason;
             DualResult cbResult;
-            if (cbResult = DBProxy.Current.Select(null, @"
-select [ReasonDesc]='ALL','' as id
-union all
-select [ReasonDesc]=id+'-'+Description,ID  from WhseReason where Type='RR'", out dtReason))
+            if (cbResult = DBProxy.Current.Select(null, @"select [ReasonDesc]='ALL','' as id union all select [ReasonDesc]=id+'-'+Description,ID  from WhseReason where Type='RR'", out dtReason))
             {
                 this.comboReason.DataSource = dtReason;
                 this.comboReason.DisplayMember = "ReasonDesc";
@@ -61,6 +59,8 @@ select [ReasonDesc]=id+'-'+Description,ID  from WhseReason where Type='RR'", out
         }
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.issueDelivery1 = this.dateIssueDelivery.Value1;
@@ -76,6 +76,8 @@ select [ReasonDesc]=id+'-'+Description,ID  from WhseReason where Type='RR'", out
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             #region -- sql parameters declare --
@@ -198,6 +200,7 @@ where 1=1 ");
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (MyUtility.Check.Empty(this.printData) || this.printData.Rows.Count <= 0)

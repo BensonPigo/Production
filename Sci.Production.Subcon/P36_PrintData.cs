@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Subcon
 {
-    class P36_PrintData
+    internal class P36_PrintData
     {
         public string OrderID { get; set; }
 

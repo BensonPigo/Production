@@ -10,12 +10,12 @@ namespace Sci.Production.Packing
             this.InitializeComponent();
         }
 
-        private void btnLacking_Click(object sender, EventArgs e)
+        private void BtnLacking_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Yes;
         }
 
-        private void btnContinue_Click(object sender, EventArgs e)
+        private void BtnContinue_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.No;
         }

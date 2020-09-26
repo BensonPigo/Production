@@ -42,6 +42,7 @@ namespace Sci.Production.Warehouse
             this.displayTotalQty.Value = localPrice.ToString();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

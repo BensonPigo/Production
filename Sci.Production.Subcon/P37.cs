@@ -39,6 +39,7 @@ namespace Sci.Production.Subcon
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -47,6 +48,8 @@ namespace Sci.Production.Subcon
         }
 
         // Refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -69,6 +72,8 @@ namespace Sci.Production.Subcon
         }
 
         // Detail Grid 設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region 欄位設定
@@ -84,6 +89,8 @@ namespace Sci.Production.Subcon
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -97,6 +104,7 @@ namespace Sci.Production.Subcon
             this.dateFactoryVoucherDate.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -109,7 +117,7 @@ from debit_detail WITH (NOLOCK) Where debit_detail.id = '{0}' order by orderid "
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        private void btnDebitSchedule_Click(object sender, EventArgs e)
+        private void BtnDebitSchedule_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -122,6 +130,7 @@ from debit_detail WITH (NOLOCK) Where debit_detail.id = '{0}' order by orderid "
             this.RenewData();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();

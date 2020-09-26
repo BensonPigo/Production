@@ -11,12 +11,14 @@ namespace Sci.Production.Subcon
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtLocation.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))

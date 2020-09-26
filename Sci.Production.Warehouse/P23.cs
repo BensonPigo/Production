@@ -52,6 +52,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 新增時預設資料
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -63,6 +65,8 @@ namespace Sci.Production.Warehouse
         }
 
         // delete前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -75,6 +79,8 @@ namespace Sci.Production.Warehouse
         }
 
         // edit前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -87,6 +93,8 @@ namespace Sci.Production.Warehouse
         }
 
         // save前檢查 & 取id
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -149,12 +157,16 @@ namespace Sci.Production.Warehouse
         }
 
         // grid 加工填值
+
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -175,12 +187,16 @@ namespace Sci.Production.Warehouse
         }
 
         // detail 新增時設定預設值
+
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
         }
 
         // Detail Grid 設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
@@ -269,6 +285,8 @@ WHERE   StockType='{0}'
         }
 
         // Confirm
+
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -285,11 +303,12 @@ WHERE   StockType='{0}'
             }
             else
             {
-                SentToGensong_AutoWHFabric();
+                this.SentToGensong_AutoWHFabric();
                 MyUtility.Msg.InfoBox("Confirmed successful");
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -540,20 +559,20 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("frompoid"),
-                           seq1 = m.First().Field<string>("fromseq1"),
-                           seq2 = m.First().Field<string>("fromseq2"),
-                           stocktype = m.First().Field<string>("fromstocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty")),
+                           Poid = m.First().Field<string>("frompoid"),
+                           Seq1 = m.First().Field<string>("fromseq1"),
+                           Seq2 = m.First().Field<string>("fromseq2"),
+                           Stocktype = m.First().Field<string>("fromstocktype"),
+                           Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
 
             var data_MD_8F = data_MD_4F.Select(data => new Prgs_POSuppDetailData
             {
-                poid = data.poid,
-                seq1 = data.seq1,
-                seq2 = data.seq2,
-                stocktype = data.stocktype,
-                qty = -data.qty,
+                Poid = data.Poid,
+                Seq1 = data.Seq1,
+                Seq2 = data.Seq2,
+                Stocktype = data.Stocktype,
+                Qty = -data.Qty,
             }).ToList();
 
             #endregion
@@ -569,12 +588,12 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                         into m
                        select new Prgs_POSuppDetailData
                        {
-                           poid = m.First().Field<string>("Topoid"),
-                           seq1 = m.First().Field<string>("Toseq1"),
-                           seq2 = m.First().Field<string>("Toseq2"),
-                           stocktype = m.First().Field<string>("Tostocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty")),
-                           location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct()),
+                           Poid = m.First().Field<string>("Topoid"),
+                           Seq1 = m.First().Field<string>("Toseq1"),
+                           Seq2 = m.First().Field<string>("Toseq2"),
+                           Stocktype = m.First().Field<string>("Tostocktype"),
+                           Qty = -m.Sum(w => w.Field<decimal>("qty")),
+                           Location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct()),
                        }).ToList();
 
             #endregion
@@ -687,7 +706,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
-                    SentToGensong_AutoWHFabric();
+                    this.SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -704,17 +723,19 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
         private void SentToGensong_AutoWHFabric()
         {
-            // AutoWHFabric WebAPI for Gensong       
+            // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                DataTable dtMain = CurrentMaintain.Table.Clone();
-                dtMain.ImportRow(CurrentMaintain);
+                DataTable dtMain = this.CurrentMaintain.Table.Clone();
+                dtMain.ImportRow(this.CurrentMaintain);
                 Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
 
-        //寫明細撈出的sql command
+        // 寫明細撈出的sql command
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -801,6 +822,7 @@ Where a.id = '{0}'", masterID);
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             // DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());

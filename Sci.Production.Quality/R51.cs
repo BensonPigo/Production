@@ -46,6 +46,23 @@ namespace Sci.Production.Quality
                 return false;
             }
 
+            string formatCol;
+            string formatJoin;
+
+            if (this.radioSummary.Checked)
+            {
+                formatJoin = @"outer apply (select [val] = sum(SRD.DefectQty)
+                                            from SubProInsRecord_Defect SRD WITH(NOLOCK)
+		                                    where SR.Ukey=SRD.SubProInsRecordUkey ) DefectQty";
+                formatCol = "DefectQty.val,";
+            }
+            else
+            {
+                formatJoin = @"left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey";
+                formatCol = @"  SRD.DefectCode,
+                                SRD.DefectQty,";
+            }
+
             #region where
             StringBuilder sqlwhere1 = new StringBuilder();
             StringBuilder sqlwhere2 = new StringBuilder();
@@ -101,9 +118,9 @@ namespace Sci.Production.Quality
             }
             #endregion
 
-            this.Sqlcmd.Append(@"
+            this.Sqlcmd.Append($@"
 select
-	SR.AddDate,
+	Convert(date,SR.AddDate) as AddDate,
 	[RFT] = iif(isnull(BD.Qty, 0) = 0, 0, round((isnull(BD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BD.Qty as float),2)),
 	SR.SubProcessID,
 	SR.BundleNo,
@@ -115,8 +132,7 @@ select
 	BD.Qty,
 	SR.RejectQty,
 	SR.Machine,
-	DefectCode.DefectCode,
-	DefectQty.DefectQty,
+	{formatCol}
 	Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = SR.AddName),
 	SR.Remark,
     AddDate2 = SR.AddDate,
@@ -130,35 +146,18 @@ from SubProInsRecord SR
 Left join Bundle_Detail BD on SR.BundleNo=BD.BundleNo
 Left join Bundle B on BD.ID=B.ID
 Left join Orders O on B.OrderID=O.ID
-outer apply(
-	select DefectCode = STUFF((
-		select CONCAT(CHAR(10), DefectCode)
-		from SubProInsRecord_Defect SRD WITH(NOLOCK)
-		where SR.Ukey=SRD.SubProInsRecordUkey
-		order by SRD.Ukey
-		for XML path('')
-	),1,1,'')
-)DefectCode
-outer apply(
-	select DefectQty = STUFF((
-		select CONCAT(CHAR(10), DefectQty)
-		from SubProInsRecord_Defect SRD WITH(NOLOCK)
-		where SR.Ukey=SRD.SubProInsRecordUkey
-		order by SRD.Ukey
-		for XML path('')
-	),1,1,'')
-)DefectQty
+{formatJoin}
 outer apply(select ttlMINUTE = DATEDIFF(MINUTE, SR.AddDate, RepairedDatetime))ttlMINUTE
 outer apply(select ttlMINUTE_D = IIF(ttlMINUTE > 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
 outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D > 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
 Where 1=1
 ");
             this.Sqlcmd.Append(sqlwhere1);
-            this.Sqlcmd.Append(@"
+            this.Sqlcmd.Append($@"
 UNION
 
 select
-	SR.AddDate,
+	Convert(date,SR.AddDate) as AddDate,
 	[RFT] = iif(isnull(BRD.Qty, 0) = 0, 0, round((isnull(BRD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BRD.Qty as float),2)),
 	SR.SubProcessID,
 	SR.BundleNo,
@@ -170,8 +169,7 @@ select
 	BRD.Qty,
 	SR.RejectQty,
 	SR.Machine,
-	DefectCode.DefectCode,
-	DefectQty.DefectQty,
+	{formatCol}
 	Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = SR.AddName),
 	SR.Remark,
     AddDate2 = SR.AddDate,
@@ -184,24 +182,7 @@ from SubProInsRecord SR
 Left join BundleReplacement_Detail BRD on SR.BundleNo=BRD.BundleNo
 Left join BundleReplacement BR on BRD.ID=BR.ID
 Left join Orders O on BR.OrderID=O.ID
-outer apply(
-	select DefectCode = STUFF((
-		select CONCAT(CHAR(10), DefectCode)
-		from SubProInsRecord_Defect SRD WITH(NOLOCK)
-		where SR.Ukey=SRD.SubProInsRecordUkey
-		order by SRD.Ukey
-		for XML path('')
-	),1,1,'')
-)DefectCode
-outer apply(
-	select DefectQty = STUFF((
-		select CONCAT(CHAR(10), DefectQty)
-		from SubProInsRecord_Defect SRD WITH(NOLOCK)
-		where SR.Ukey=SRD.SubProInsRecordUkey
-		order by SRD.Ukey
-		for XML path('')
-	),1,1,'')
-)DefectQty
+{formatJoin}
 outer apply(select ttlMINUTE = DATEDIFF(MINUTE, SR.AddDate, RepairedDatetime))ttlMINUTE
 outer apply(select ttlMINUTE_D = IIF(ttlMINUTE > 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
 outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D > 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
@@ -243,7 +224,7 @@ drop table #tmp,#tmp2
 
             this.PrintData.Columns.Remove("BundleNoCT");
 
-            string filename = "Quality_R51.xltx";
+            string filename = this.radioSummary.Checked ? "Quality_R51_Summary.xltx" : "Quality_R51_Detail.xltx";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.PrintData, string.Empty, filename, 2, false, null, excelApp, wSheet: excelApp.Sheets[1]);
 

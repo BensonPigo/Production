@@ -143,7 +143,7 @@
             this.btnCancel.TabIndex = 5;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnBatchConfirmed
             // 
@@ -155,7 +155,7 @@
             this.btnBatchConfirmed.TabIndex = 4;
             this.btnBatchConfirmed.Text = "Batch Confirm";
             this.btnBatchConfirmed.UseVisualStyleBackColor = true;
-            this.btnBatchConfirmed.Click += new System.EventHandler(this.btnBatchConfirmed_Click);
+            this.btnBatchConfirmed.Click += new System.EventHandler(this.BtnBatchConfirmed_Click);
             // 
             // dateBuyerDelivery
             // 
@@ -188,7 +188,7 @@
             this.btnFindNow.TabIndex = 8;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
             // 
             // groupBox1
             // 

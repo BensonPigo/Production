@@ -379,7 +379,7 @@
             this.btnImportThread.TabIndex = 8;
             this.btnImportThread.Text = "Import Thread, Carton request";
             this.btnImportThread.UseVisualStyleBackColor = true;
-            this.btnImportThread.Click += new System.EventHandler(this.btnImportThread_Click);
+            this.btnImportThread.Click += new System.EventHandler(this.BtnImportThread_Click);
             // 
             // displayID
             // 
@@ -548,7 +548,7 @@
             this.dateDeliveryDate.Name = "dateDeliveryDate";
             this.dateDeliveryDate.Size = new System.Drawing.Size(130, 23);
             this.dateDeliveryDate.TabIndex = 6;
-            this.dateDeliveryDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateDeliveryDate_Validating);
+            this.dateDeliveryDate.Validating += new System.ComponentModel.CancelEventHandler(this.DateDeliveryDate_Validating);
             // 
             // label1
             // 
@@ -567,7 +567,7 @@
             this.btnBatchUpdateDellivery.TabIndex = 45;
             this.btnBatchUpdateDellivery.Text = "Batch update Delivery,Buyer";
             this.btnBatchUpdateDellivery.UseVisualStyleBackColor = true;
-            this.btnBatchUpdateDellivery.Click += new System.EventHandler(this.btnBatchUpdateDellivery_Click);
+            this.btnBatchUpdateDellivery.Click += new System.EventHandler(this.BtnBatchUpdateDellivery_Click);
             // 
             // groupBox1
             // 
@@ -590,8 +590,8 @@
             this.txtBuyer.Name = "txtBuyer";
             this.txtBuyer.Size = new System.Drawing.Size(78, 23);
             this.txtBuyer.TabIndex = 47;
-            this.txtBuyer.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtBuyer_PopUp);
-            this.txtBuyer.Validating += new System.ComponentModel.CancelEventHandler(this.txtBuyer_Validating);
+            this.txtBuyer.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtBuyer_PopUp);
+            this.txtBuyer.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBuyer_Validating);
             // 
             // label3
             // 
@@ -638,7 +638,7 @@
             this.btnIrrPriceReason.TabIndex = 49;
             this.btnIrrPriceReason.Text = "Irregular Price Reason";
             this.btnIrrPriceReason.UseVisualStyleBackColor = true;
-            this.btnIrrPriceReason.Click += new System.EventHandler(this.btnIrrPriceReason_Click);
+            this.btnIrrPriceReason.Click += new System.EventHandler(this.BtnIrrPriceReason_Click);
             // 
             // displayLockDate
             // 
@@ -699,7 +699,7 @@
             this.btnBatchApprove.TabIndex = 4;
             this.btnBatchApprove.Text = "Batch Approve";
             this.btnBatchApprove.UseVisualStyleBackColor = true;
-            this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
+            this.btnBatchApprove.Click += new System.EventHandler(this.BtnBatchApprove_Click);
             // 
             // txtLocalPurchaseItem
             // 
@@ -710,8 +710,8 @@
             this.txtLocalPurchaseItem.Name = "txtLocalPurchaseItem";
             this.txtLocalPurchaseItem.Size = new System.Drawing.Size(164, 23);
             this.txtLocalPurchaseItem.TabIndex = 58;
-            this.txtLocalPurchaseItem.TextChanged += new System.EventHandler(this.txtLocalPurchaseItem_TextChanged);
-            this.txtLocalPurchaseItem.Validated += new System.EventHandler(this.txtLocalPurchaseItem_Validated);
+            this.txtLocalPurchaseItem.TextChanged += new System.EventHandler(this.TxtLocalPurchaseItem_TextChanged);
+            this.txtLocalPurchaseItem.Validated += new System.EventHandler(this.TxtLocalPurchaseItem_Validated);
             // 
             // txtuserClose
             // 

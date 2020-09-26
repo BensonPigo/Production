@@ -16,6 +16,7 @@ namespace Sci.Production.Packing
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -49,6 +50,7 @@ namespace Sci.Production.Packing
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickJunk()
         {
             base.ClickJunk();
@@ -60,6 +62,7 @@ namespace Sci.Production.Packing
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();

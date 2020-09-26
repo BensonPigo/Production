@@ -19,6 +19,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

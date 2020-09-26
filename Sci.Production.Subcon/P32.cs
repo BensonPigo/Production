@@ -16,16 +16,16 @@ namespace Sci.Production.Subcon
     {
         protected DataTable dtGrid1;
         protected DataTable dtGrid2;
-        protected DataTable dtGrid_NoCarton; DataSet dataSet;
-        string SP1;
-        string SP2;
-        string M; string POID; string sqlWhere = string.Empty;
-        DateTime? sewingdate1;
-        DateTime? sewingdate2;
-        DateTime? scidate1;
-        DateTime? scidate2;
-        List<string> sqlWheres = new List<string>();
-        StringBuilder sqlcmd = new StringBuilder();
+        protected DataTable dtGrid_NoCarton; private DataSet dataSet;
+        private string SP1;
+        private string SP2;
+        private string M; private string POID; private string sqlWhere = string.Empty;
+        private DateTime? sewingdate1;
+        private DateTime? sewingdate2;
+        private DateTime? scidate1;
+        private DateTime? scidate2;
+        private List<string> sqlWheres = new List<string>();
+        private StringBuilder sqlcmd = new StringBuilder();
 
         public P32(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -93,7 +93,7 @@ namespace Sci.Production.Subcon
         }
 
         // Query
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             if (this.sqlcmd != null)
             {
@@ -325,17 +325,17 @@ drop table  #tmp,#tmp2
             this.dtGrid2.TableName = "dtGrid2";
             this.listControlBindingSource1.DataSource = this.dtGrid1;
             this.listControlBindingSource2.DataSource = this.dtGrid2;
-            this.listControlBindingSource1_PositionChanged(sender, e);
+            this.ListControlBindingSource1_PositionChanged(sender, e);
             this.grid1.AutoResizeColumns(); // 調整寬度
             this.grid2.AutoResizeColumns();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void listControlBindingSource1_PositionChanged(object sender, EventArgs e)
+        private void ListControlBindingSource1_PositionChanged(object sender, EventArgs e)
         {
             var parent = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
             if (parent == null)
@@ -348,7 +348,7 @@ drop table  #tmp,#tmp2
             this.grid2.AutoResizeColumns();
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             if (this.dataSet == null)
             {

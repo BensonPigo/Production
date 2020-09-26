@@ -17,6 +17,7 @@ namespace Sci.Production.Centralized
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -129,12 +130,14 @@ when not matched by target then
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtID.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (string.IsNullOrWhiteSpace(this.CurrentMaintain["ID"].ToString()))
@@ -147,6 +150,7 @@ when not matched by target then
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -156,6 +160,7 @@ when not matched by target then
             this.txtOperationtitle.Text = MyUtility.GetValue.Lookup(sqlCmd, "Production");
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             this.ShowWaitMessage("Processing...");

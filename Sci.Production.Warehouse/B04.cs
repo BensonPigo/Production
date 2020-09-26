@@ -14,6 +14,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 存檔前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             DataTable whseReasonDt;
@@ -52,6 +54,8 @@ namespace Sci.Production.Warehouse
         }
 
         // copy前清空id
+
+        /// <inheritdoc/>
         protected override void ClickCopyAfter()
         {
             this.CurrentMaintain["id"] = string.Empty;

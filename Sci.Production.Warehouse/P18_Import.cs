@@ -84,6 +84,7 @@ where a.status='Confirmed' and a.id='{0}'", transid));
             this.HideWaitMessage();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

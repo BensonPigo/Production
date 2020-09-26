@@ -14,7 +14,7 @@ namespace Sci.Production.Quality
         {
             this.InitializeComponent();
 
-            DataTable Year = null;
+            DataTable year = null;
             string cmd = @"
 declare @y Table (M int);
 
@@ -34,14 +34,14 @@ end
 select *
 from @y
 order by M desc";
-            DBProxy.Current.Select(string.Empty, cmd, out Year);
+            DBProxy.Current.Select(string.Empty, cmd, out year);
 
-            this.comboyear.DataSource = Year;
+            this.comboyear.DataSource = year;
             this.comboyear.ValueMember = "M";
             this.comboyear.DisplayMember = "M";
 
-            if (Year != null
-                && Year.Rows.Count > 0)
+            if (year != null
+                && year.Rows.Count > 0)
             {
                 this.comboyear.SelectedIndex = 0;
             }
@@ -58,11 +58,12 @@ order by M desc";
             this.print.Enabled = false;
         }
 
-        string Brand;
-        string Year;
-        string Month;
-        DataTable dt;
+        private string Brand;
+        private string Year;
+        private string Month;
+        private DataTable dt;
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.Brand = this.combobrand.Text.ToString();
@@ -71,6 +72,7 @@ order by M desc";
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> lis = new List<SqlParameter>();
@@ -141,6 +143,7 @@ left join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on d.ID=b.DefectMainID
             return result; // base.OnAsyncDataLoad(e);
             }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (this.dt == null || this.dt.Rows.Count == 0)

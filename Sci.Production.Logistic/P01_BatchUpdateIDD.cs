@@ -75,7 +75,6 @@ namespace Sci.Production.Logistic
 
         private void QueryData()
         {
-
             if (!this.dateSewingOffline.HasValue &&
                 !this.dateBuyerdelivery.HasValue &&
                 MyUtility.Check.Empty(this.txtSPFrom.Text) &&
@@ -290,5 +289,4 @@ select * from   #tmpExistsGB
             this.FormatGrid();
         }
     }
-
 }

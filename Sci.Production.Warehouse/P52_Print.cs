@@ -47,6 +47,7 @@ namespace Sci.Production.Warehouse
             this.ReportResourceAssembly = this.ReportResourceNamespace.Assembly;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.ReportResourceName = this.radioButtonBookQty.Checked ? (this.drP52Title["Type"].EqualString("F") ? "P52_StocktakingWithoutBookQty.rdlc" : "P52_StocktakingWithoutBookQtyBack.rdlc")
@@ -54,6 +55,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string strTitle = string.Empty;

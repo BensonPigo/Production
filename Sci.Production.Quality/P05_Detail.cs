@@ -25,14 +25,14 @@ namespace Sci.Production.Quality
         private bool newOven = false;
         private bool isModify = false;  // 註記[Test Date][Article][Inspector][Remark]是否修改
         private readonly bool isSee = false;
-        readonly bool canEdit = true;
+        private readonly bool canEdit = true;
 
-        public P05_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr, string Poid)
+        public P05_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr, string poid)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
             this.maindr = mainDr;
-            this.PoID = Poid.Trim();
+            this.PoID = poid.Trim();
             this.ID = id.Trim();
             this.canEdit = canedit;
             this.isSee = true;
@@ -44,6 +44,7 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -75,6 +76,7 @@ namespace Sci.Production.Quality
             this.btnToPDF.Enabled = !this.EditMode;
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             DataTable dt;
@@ -93,12 +95,13 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery(out DataTable datas)
         {
-            Dictionary<string, string> Result_RowSource = new Dictionary<string, string>();
-            Result_RowSource.Add("Pass", "Pass");
-            Result_RowSource.Add("Fail", "Fail");
-            this.comboResult.DataSource = new BindingSource(Result_RowSource, null);
+            Dictionary<string, string> result_RowSource = new Dictionary<string, string>();
+            result_RowSource.Add("Pass", "Pass");
+            result_RowSource.Add("Fail", "Fail");
+            this.comboResult.DataSource = new BindingSource(result_RowSource, null);
             this.comboResult.ValueMember = "Key";
             this.comboResult.DisplayMember = "Value";
             #region 表頭設定
@@ -152,6 +155,8 @@ namespace Sci.Production.Quality
         }
 
         // 重組grid view
+
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -230,6 +235,7 @@ and a.seq1=@seq1";
             return sqlInput;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
@@ -872,6 +878,7 @@ and a.seq1=@seq1";
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             if (MyUtility.Check.Empty(this.txtArticle.Text))
@@ -896,6 +903,7 @@ and a.seq1=@seq1";
             return base.OnSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
@@ -935,7 +943,7 @@ and a.seq1=@seq1";
                     continue;
                 }
 
-                string Today = DateTime.Now.ToShortDateString();
+                string today = DateTime.Now.ToShortDateString();
 
                 // 新增
                 if (dr.RowState == DataRowState.Added)
@@ -1006,6 +1014,7 @@ SET IDENTITY_INSERT oven off";
             return base.OnSave();
         }
 
+        /// <inheritdoc/>
         protected override void OnInsert()
         {
             DataTable dt;
@@ -1015,29 +1024,30 @@ SET IDENTITY_INSERT oven off";
 
             DataTable dtGrid_Max = (DataTable)this.gridbs.DataSource;
             DBProxy.Current.Select(null, string.Format("select  max(OvenGroup) as max from oven_detail WITH (NOLOCK) where id='{0}'", this.ID), out dtGrid_Max);
-            int Max = MyUtility.Convert.GetInt(dtGrid_Max.Rows[0]["max"]);
-            int Data_rows = dt.Rows.Count;
-            int Grid_rows = dtGrid.Rows.Count;
+            int max = MyUtility.Convert.GetInt(dtGrid_Max.Rows[0]["max"]);
+            int data_rows = dt.Rows.Count;
+            int grid_rows = dtGrid.Rows.Count;
             int intTen; // 判斷十位數
             base.OnInsert();
 
             // 新增detail
             // if (Data_rows <= 0)
             // {
-            if (Grid_rows == 0) // 第一筆0
+            // 第一筆0
+            if (grid_rows == 0)
                 {
-                    dtGrid.Rows[Grid_rows]["OvenGroup"] = "01";
+                    dtGrid.Rows[grid_rows]["OvenGroup"] = "01";
                     intTen = 0;
                     return;
                 }
 
-            int group = MyUtility.Convert.GetInt(dtGrid.Rows[Grid_rows - 1]["ovengroup"].ToString().Substring(1, 1));
-            int groupAll = MyUtility.Convert.GetInt(dtGrid.Rows[Grid_rows - 1]["ovengroup"]);
+            int group = MyUtility.Convert.GetInt(dtGrid.Rows[grid_rows - 1]["ovengroup"].ToString().Substring(1, 1));
+            int groupAll = MyUtility.Convert.GetInt(dtGrid.Rows[grid_rows - 1]["ovengroup"]);
 
             if (group == 9 && groupAll < 10)
                 {
                     intTen = 1;
-                    dtGrid.Rows[Grid_rows]["ovengroup"] = intTen.ToString() + "0";
+                    dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "0";
                     return;
                 }
                 else if (group == 9 && groupAll > 10)
@@ -1045,12 +1055,12 @@ SET IDENTITY_INSERT oven off";
                     if (groupAll == 99)
                     {
                         intTen = 0;
-                        dtGrid.Rows[Grid_rows]["ovengroup"] = intTen.ToString() + "1";
+                        dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "1";
                         return;
                     }
 
                     intTen = MyUtility.Convert.GetInt(groupAll.ToString().Substring(0, 1)) + 1;
-                    dtGrid.Rows[Grid_rows]["ovengroup"] = intTen.ToString() + "0";
+                    dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "0";
                     return;
                 }
 
@@ -1058,13 +1068,13 @@ SET IDENTITY_INSERT oven off";
                 {
                     intTen = 0;
                     group++;
-                    dtGrid.Rows[Grid_rows]["ovengroup"] = intTen.ToString() + group.ToString();
+                    dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + group.ToString();
                 }
                 else
                 {
                     intTen = MyUtility.Convert.GetInt(groupAll.ToString().Substring(0, 1));
                     group++;
-                    dtGrid.Rows[Grid_rows]["ovengroup"] = intTen.ToString() + group.ToString();
+                    dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + group.ToString();
                 }
         }
 
@@ -1229,24 +1239,24 @@ SET IDENTITY_INSERT oven off";
             }
 
             DataTable dtPo;
-            string StyleID;
-            string SeasonID;
+            string styleID;
+            string seasonID;
             string status;
-            string BrandID;
+            string brandID;
             DBProxy.Current.Select(null, string.Format("select * from PO WITH (NOLOCK) where id='{0}'", this.PoID), out dtPo);
             if (dtPo.Rows.Count == 0)
             {
-                 StyleID = string.Empty;
-                 SeasonID = string.Empty;
+                 styleID = string.Empty;
+                 seasonID = string.Empty;
                  status = string.Empty;
-                 BrandID = string.Empty;
+                 brandID = string.Empty;
             }
             else
             {
-                StyleID = dtPo.Rows[0]["StyleID"].ToString();
-                SeasonID = dtPo.Rows[0]["SeasonID"].ToString();
+                styleID = dtPo.Rows[0]["StyleID"].ToString();
+                seasonID = dtPo.Rows[0]["SeasonID"].ToString();
                 status = this.dtOven.Rows[0]["status"].ToString();
-                BrandID = dtPo.Rows[0]["BrandID"].ToString();
+                brandID = dtPo.Rows[0]["BrandID"].ToString();
             }
 
             string strXltName = Env.Cfg.XltPathDir + "\\Quality_P05_Detail_Report.xltx";
@@ -1259,30 +1269,30 @@ SET IDENTITY_INSERT oven off";
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[1, 2] = this.txtSP.Text.ToString();
-            worksheet.Cells[1, 4] = StyleID;
+            worksheet.Cells[1, 4] = styleID;
             worksheet.Cells[1, 6] = dtPo.Rows[0]["SeasonID"].ToString();
-            worksheet.Cells[1, 8] = SeasonID;
+            worksheet.Cells[1, 8] = seasonID;
             worksheet.Cells[1, 10] = this.txtNoofTest.Text.ToString();
             worksheet.Cells[2, 2] = status;
             worksheet.Cells[2, 4] = this.comboResult.Text;
             worksheet.Cells[2, 6] = this.dateTestDate.Text;
             worksheet.Cells[2, 8] = this.txtuserInspector.TextBox1.Text.ToString();
-            worksheet.Cells[2, 10] = BrandID;
+            worksheet.Cells[2, 10] = brandID;
 
-            int StartRow = 4;
+            int startRow = 4;
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                worksheet.Cells[StartRow + i, 1] = ret[i, 0];
-                worksheet.Cells[StartRow + i, 2] = ret[i, 1];
-                worksheet.Cells[StartRow + i, 3] = ret[i, 2];
-                worksheet.Cells[StartRow + i, 4] = ret[i, 3];
-                worksheet.Cells[StartRow + i, 5] = ret[i, 4];
-                worksheet.Cells[StartRow + i, 6] = ret[i, 5];
-                worksheet.Cells[StartRow + i, 7] = ret[i, 6];
-                worksheet.Cells[StartRow + i, 8] = ret[i, 7];
-                worksheet.Cells[StartRow + i, 9] = ret[i, 8];
-                worksheet.Cells[StartRow + i, 10] = ret[i, 9];
-                worksheet.Cells[StartRow + i, 11] = ret[i, 10];
+                worksheet.Cells[startRow + i, 1] = ret[i, 0];
+                worksheet.Cells[startRow + i, 2] = ret[i, 1];
+                worksheet.Cells[startRow + i, 3] = ret[i, 2];
+                worksheet.Cells[startRow + i, 4] = ret[i, 3];
+                worksheet.Cells[startRow + i, 5] = ret[i, 4];
+                worksheet.Cells[startRow + i, 6] = ret[i, 5];
+                worksheet.Cells[startRow + i, 7] = ret[i, 6];
+                worksheet.Cells[startRow + i, 8] = ret[i, 7];
+                worksheet.Cells[startRow + i, 9] = ret[i, 8];
+                worksheet.Cells[startRow + i, 10] = ret[i, 9];
+                worksheet.Cells[startRow + i, 11] = ret[i, 10];
             }
 
             worksheet.Cells.EntireColumn.AutoFit();
@@ -1325,11 +1335,11 @@ SET IDENTITY_INSERT oven off";
             }
 
             DataTable dtOrders;
-            string StyleUkey;
-            string StyleID;
-            string SeasonID;
-            string CustPONo;
-            string BrandID;
+            string styleUkey;
+            string styleID;
+            string seasonID;
+            string custPONo;
+            string brandID;
             if (!(result = DBProxy.Current.Select(null, string.Format("select * from Orders WITH (NOLOCK) where poid='{0}'", this.PoID), out dtOrders)))
             {
                 this.ShowErr(result);
@@ -1338,19 +1348,19 @@ SET IDENTITY_INSERT oven off";
 
             if (dtOrders.Rows.Count == 0)
             {
-                StyleUkey = string.Empty;
-                SeasonID = string.Empty;
-                CustPONo = string.Empty;
-                BrandID = string.Empty;
-                StyleID = string.Empty;
+                styleUkey = string.Empty;
+                seasonID = string.Empty;
+                custPONo = string.Empty;
+                brandID = string.Empty;
+                styleID = string.Empty;
             }
             else
             {
-                StyleUkey = dtOrders.Rows[0]["StyleUkey"].ToString();
-                StyleID = dtOrders.Rows[0]["StyleID"].ToString();
-                SeasonID = dtOrders.Rows[0]["SeasonID"].ToString();
-                CustPONo = dtOrders.Rows[0]["CustPONo"].ToString();
-                BrandID = dtOrders.Rows[0]["BrandID"].ToString();
+                styleUkey = dtOrders.Rows[0]["StyleUkey"].ToString();
+                styleID = dtOrders.Rows[0]["StyleID"].ToString();
+                seasonID = dtOrders.Rows[0]["SeasonID"].ToString();
+                custPONo = dtOrders.Rows[0]["CustPONo"].ToString();
+                brandID = dtOrders.Rows[0]["BrandID"].ToString();
             }
 
             string strXltName = Env.Cfg.XltPathDir + "\\Quality_P05_Detail_Report_ToPDF.xltx";
@@ -1376,12 +1386,12 @@ SET IDENTITY_INSERT oven off";
                 worksheet.Cells[4, 3] = dtdist.Rows[i]["submitDate"].ToString();
                 worksheet.Cells[4, 5] = this.dateTestDate.Text;
                 worksheet.Cells[4, 7] = this.txtSP.Text;
-                worksheet.Cells[4, 10] = BrandID;
-                worksheet.Cells[6, 3] = StyleID;
-                worksheet.Cells[6, 6] = CustPONo;
+                worksheet.Cells[4, 10] = brandID;
+                worksheet.Cells[6, 3] = styleID;
+                worksheet.Cells[6, 6] = custPONo;
                 worksheet.Cells[6, 9] = this.txtArticle.Text;
-                worksheet.Cells[7, 3] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where Ukey ='{StyleUkey}'", null));
-                worksheet.Cells[7, 6] = SeasonID;
+                worksheet.Cells[7, 3] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where Ukey ='{styleUkey}'", null));
+                worksheet.Cells[7, 6] = seasonID;
                 worksheet.Cells[10, 3] = this.numTemperature.Value + "˚C";
                 worksheet.Cells[10, 7] = this.numTime.Value + "hrs";
                 DataRow[] dr = dt.Select(MyUtility.Check.Empty(dtdist.Rows[i]["submitDate"]) ? $@"submitDate is null" : $"submitDate = '{dtdist.Rows[i]["submitDate"].ToString()}'");

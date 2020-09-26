@@ -9,7 +9,7 @@ namespace Sci.Production.Subcon
 {
     public partial class P01_BatchApprove : Win.Subs.Base
     {
-        Action delegateAct;
+        private Action delegateAct;
 
         public P01_BatchApprove(Action reload)
         {
@@ -18,6 +18,7 @@ namespace Sci.Production.Subcon
             this.delegateAct = reload;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -54,7 +55,7 @@ namespace Sci.Production.Subcon
             this.Query();
         }
 
-        private void btnRefresh_Click(object sender, EventArgs e)
+        private void BtnRefresh_Click(object sender, EventArgs e)
         {
             this.Query();
         }
@@ -123,12 +124,12 @@ namespace Sci.Production.Subcon
             this.gridArtworkPODetail.AutoResizeColumns();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnApprove_Click(object sender, EventArgs e)
+        private void BtnApprove_Click(object sender, EventArgs e)
         {
             DataSet ds = (DataSet)this.listControlBindingSource1.DataSource;
             DataTable dt = ds.Tables["Master"];
@@ -163,7 +164,7 @@ namespace Sci.Production.Subcon
             this.delegateAct();
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable printData;
             string sqlCmd = string.Format(@"

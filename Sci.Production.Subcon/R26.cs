@@ -26,39 +26,40 @@ namespace Sci.Production.Subcon
             this.checkShippingMark.Enabled = false;
         }
 
-        List<SqlParameter> lis;
-        string sqlWhere = string.Empty;
-        string all = string.Empty;
-        List<string> sqlWheres = new List<string>();
-        DataTable dtt;
-        DualResult result;
-        DataTable dt;
-        DataTable da;
-        DataTable shm;
-        DateTime? SCI_Delivery;
-        DateTime? SCI_Delivery2;
-        DateTime? Issue_Date1;
-        DateTime? Issue_Date2;
-        DateTime? Delivery_Date_start;
-        DateTime? Delivery_Date_end;
-        string SP;
-        string SP2;
-        string Location_Poid;
-        string Location_Poid2;
-        string Factory1;
-        string Category;
-        string Supplier;
-        string Report_Type;
-        string Shipping_Mark;
-        string date = DateTime.Now.ToShortDateString();
-        string id;
-        string name;
-        string A;
-        string B;
-        string C;
-        string D;
-        string sqlByPoOrder;
+        private List<SqlParameter> lis;
+        private string sqlWhere = string.Empty;
+        private string all = string.Empty;
+        private List<string> sqlWheres = new List<string>();
+        private DataTable dtt;
+        private DualResult result;
+        private DataTable dt;
+        private DataTable da;
+        private DataTable shm;
+        private DateTime? SCI_Delivery;
+        private DateTime? SCI_Delivery2;
+        private DateTime? Issue_Date1;
+        private DateTime? Issue_Date2;
+        private DateTime? Delivery_Date_start;
+        private DateTime? Delivery_Date_end;
+        private string SP;
+        private string SP2;
+        private string Location_Poid;
+        private string Location_Poid2;
+        private string Factory1;
+        private string Category;
+        private string Supplier;
+        private string Report_Type;
+        private string Shipping_Mark;
+        private string date = DateTime.Now.ToShortDateString();
+        private string id;
+        private string name;
+        private string A;
+        private string B;
+        private string C;
+        private string D;
+        private string sqlByPoOrder;
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (!this.dateSCIDelivery.HasValue && !this.dateIssueDate.HasValue && !this.dateDeliveryDate.HasValue)
@@ -258,6 +259,7 @@ drop table #temp";
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             if (this.Report_Type == "PO List")
@@ -389,8 +391,9 @@ drop table #tmp;
                 }
                 #endregion
             }
-            else // if (this.comboBox1.Text == "PO Form")
+            else
             {
+                // if (this.comboBox1.Text == "PO Form")
                 #region PO Form
                 this.result = DBProxy.Current.Select(string.Empty, @"
 select  e.NameEN [Title1] 
@@ -462,7 +465,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                             Total1 = row1["Total1"].ToString().Trim(),
                             Total2 = row1["Total2"].ToString().Trim(),
                             CurrencyId = row1["currencyid"].ToString().Trim(),
-                            vat = row1["VatRate"].ToString().Trim(),
+                            Vat = row1["VatRate"].ToString().Trim(),
                             Grand_Total = string.Format("{0}", Convert.ToDecimal(row1["AccuAmount"].ToString()) + Convert.ToDecimal(row1["Total1"].ToString())), // row1["Grand_Total"].ToString()
                         }).ToList();
 
@@ -498,6 +501,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             return this.result; // base.OnAsyncDataLoad(e);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.Report_Type == "PO List" && (this.dtt == null || this.dtt.Rows.Count == 0))
@@ -556,12 +560,14 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
 
                 List<string> lis = new List<string>();
                 List<string> listt = new List<string>();
+
+                // lis "不"包含 TheOrderID
                 foreach (DataRow row in this.da.Rows)
                 {
-                    string TheOrderID = row["TheOrderID"].ToString();
-                    if (!lis.Contains(TheOrderID)) // lis "不"包含 TheOrderID
+                    string theOrderID = row["TheOrderID"].ToString();
+                    if (!lis.Contains(theOrderID))
                     {
-                        lis.Add(TheOrderID);
+                        lis.Add(theOrderID);
                     }
                 }
 
@@ -571,11 +577,11 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
 
                 int idx = 0;
 
-                foreach (string TheOrderID in lis)
+                foreach (string theOrderID in lis)
                 {
                     string idxstr = idx.ToString(); // 為了讓第一筆idx是空值
 
-                    DataTable finalda = this.da.Select(string.Format("TheOrderID = '{0}'", TheOrderID)).CopyToDataTable();
+                    DataTable finalda = this.da.Select(string.Format("TheOrderID = '{0}'", theOrderID)).CopyToDataTable();
 
                     finalda.Columns.RemoveAt(2);
                     finalda.Columns.RemoveAt(1);
@@ -584,9 +590,9 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                     x1.ExcelApp.Cells[3, 1] = "##SP";
                     x1.ExcelApp.Cells[4, 1] = string.Empty;
 
-                    x1.DicDatas.Add("##LocalPOID" + idxstr, TheOrderID.Substring(4));
+                    x1.DicDatas.Add("##LocalPOID" + idxstr, theOrderID.Substring(4));
                     x1.DicDatas.Add("##Factory" + idxstr, this.Factory1);
-                    x1.DicDatas.Add("##theorderid" + idxstr, TheOrderID);
+                    x1.DicDatas.Add("##theorderid" + idxstr, theOrderID);
                     x1.DicDatas.Add("##date" + idxstr, this.date);
                     Utility.Excel.SaveXltReportCls.XltRptTable dt = new Utility.Excel.SaveXltReportCls.XltRptTable(finalda);
                     dt.BoAutoFitColumn = true;
@@ -622,7 +628,9 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                     this.C = row["C"].ToString();
                     this.D = row["D"].ToString();
                     string theorderid = row["theorderid"].ToString();
-                    if (!ls.Contains(theorderid)) // lis "不"包含 TheOrderID
+
+                    // lis "不"包含 TheOrderID
+                    if (!ls.Contains(theorderid))
                     {
                         ls.Add(theorderid);
                     }
@@ -644,7 +652,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             return true; // return base.OnToExcel(report);
         }
 
-        private void txtartworktype_ftyCategory_TextChanged(object sender, EventArgs e)
+        private void Txtartworktype_ftyCategory_TextChanged(object sender, EventArgs e)
         {
             this.checkShippingMark.Checked = false;
 
@@ -661,7 +669,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             }
         }
 
-        private void checkShippingMark_CheckedChanged(object sender, EventArgs e)
+        private void CheckShippingMark_CheckedChanged(object sender, EventArgs e)
         {
             if (this.comboReportType.Text == "PO Form")
             {
@@ -669,7 +677,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             }
         }
 
-        private void comboReportType_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboReportType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.comboReportType.Text == "PO List")
             {
@@ -692,7 +700,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             }
         }
 
-        private void checkBoxNoClosed_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxNoClosed_CheckedChanged(object sender, EventArgs e)
         {
             this.rdbtn_payment.Enabled = this.rdbtn_incoming.Enabled = this.rdbtn_PandI.Enabled = this.checkBoxNoClosed.Checked;
             if (!this.checkBoxNoClosed.Checked)

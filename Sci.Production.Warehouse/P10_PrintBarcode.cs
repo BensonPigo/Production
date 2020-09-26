@@ -26,6 +26,7 @@ namespace Sci.Production.Warehouse
             this.txtIssueIdTo.Text = inputIssueID;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.issueIdFrom = this.txtIssueIdFrom.Text;
@@ -33,6 +34,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DualResult result;
@@ -55,6 +57,7 @@ where isd.Id >= '{this.issueIdFrom}' and isd.Id <= '{this.issueIdTo}'";
             return result;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToPrint(ReportDefinition report)
         {
             if (this.printData == null || this.printData.Rows.Count == 0)

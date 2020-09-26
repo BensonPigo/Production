@@ -113,7 +113,7 @@
             this.btnToExcelCombo.TabIndex = 2;
             this.btnToExcelCombo.Text = "To Excel by combo";
             this.btnToExcelCombo.UseVisualStyleBackColor = true;
-            this.btnToExcelCombo.Click += new System.EventHandler(this.btnToExcelCombo_Click);
+            this.btnToExcelCombo.Click += new System.EventHandler(this.BtnToExcelCombo_Click);
             // 
             // btnToExcel
             // 

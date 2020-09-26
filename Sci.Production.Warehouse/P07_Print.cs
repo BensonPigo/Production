@@ -32,6 +32,7 @@ namespace Sci.Production.Warehouse
 
         private List<string> poidList;
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (this.ReportResourceName == "P07_Report2.rdlc")
@@ -46,6 +47,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;
@@ -219,6 +221,7 @@ where R.id = @ID";
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dt.Rows.Count <= 0)

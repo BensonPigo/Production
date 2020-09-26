@@ -12,22 +12,24 @@ namespace Sci.Production.Subcon
 {
     public partial class R52 : Win.Tems.PrintForm
    {
-      DataTable printData;
+      private DataTable printData;
 
       public R52(ToolStripMenuItem menuitem)
       {
          this.InitializeComponent();
       }
 
-      string SeasonID;
+      private string SeasonID;
 
-      protected override bool ValidateInput()
+        /// <inheritdoc/>
+        protected override bool ValidateInput()
       {
          this.SeasonID = this.txtseason.Text;
          return base.ValidateInput();
       }
 
-      protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
+        /// <inheritdoc/>
+        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
       {
          #region SQL Command
          string sqlcmd = string.Format(@"
@@ -100,7 +102,8 @@ Where	vSA.ArtworkTypeID = 'Printing'
          return base.OnAsyncDataLoad(e);
       }
 
-      protected override bool OnToExcel(ReportDefinition report)
+        /// <inheritdoc/>
+        protected override bool OnToExcel(ReportDefinition report)
       {
          #region Check Data
          if (MyUtility.Check.Empty(this.printData) || this.printData.Rows.Count == 0)

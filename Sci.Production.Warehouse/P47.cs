@@ -14,6 +14,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 表身資料SQL Command
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -39,6 +41,8 @@ where SL2.ID='{0}'
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -50,6 +54,8 @@ where SL2.ID='{0}'
         }
 
         // 表身資料設定
+
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region -- 欄位設定 --

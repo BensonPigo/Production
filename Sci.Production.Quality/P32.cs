@@ -30,8 +30,8 @@ namespace Sci.Production.Quality
             this._Type = type;
             this._sourceHeader = null;
 
-            string Isfinished = type == "1" ? "0" : "1";
-            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE Ftygroup='{Sci.Env.User.Factory}' AND Finished = {Isfinished} AND ID = CFAInspectionRecord.OrderID)";
+            string isfinished = type == "1" ? "0" : "1";
+            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE Ftygroup='{Sci.Env.User.Factory}' AND Finished = {isfinished} AND ID = CFAInspectionRecord.OrderID)";
             this.DefaultFilter = defaultFilter;
 
             if (type != "1")
@@ -57,8 +57,8 @@ namespace Sci.Production.Quality
             this._Type = type;
             this._sourceHeader = sourceHeader;
 
-            string Isfinished = type == "1" ? "0" : "1";
-            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE Ftygroup='{Sci.Env.User.Factory}' AND Finished = {Isfinished} AND ID = CFAInspectionRecord.OrderID)";
+            string isfinished = type == "1" ? "0" : "1";
+            string defaultFilter = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE Ftygroup='{Sci.Env.User.Factory}' AND Finished = {isfinished} AND ID = CFAInspectionRecord.OrderID)";
             this.DefaultFilter = defaultFilter;
 
             if (type != "1")
@@ -90,7 +90,6 @@ namespace Sci.Production.Quality
             {
                 this.DoNew();
             }
-
         }
 
         /// <inheritdoc/>
@@ -114,31 +113,33 @@ namespace Sci.Production.Quality
         {
             #region Defect Code 事件
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings DefectCodeSet = new DataGridViewGeneratorTextColumnSettings();
-            DefectCodeSet.EditingMouseDown += (s, e) =>
+            Ict.Win.DataGridViewGeneratorTextColumnSettings defectCodeSet = new DataGridViewGeneratorTextColumnSettings();
+            defectCodeSet.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataTable dt;
                     string sqlcmd = "SELECT ID , Description ,GarmentDefectTypeID FROM GarmentDefectCode WITH(NOLOCK)";
 
-
                     IList<DataRow> selectedDatas;
-                    DualResult Dresult;
-                    if (!(Dresult = DBProxy.Current.Select(null, sqlcmd, out dt)))
+                    DualResult dresult;
+                    if (!(dresult = DBProxy.Current.Select(null, sqlcmd, out dt)))
                     {
-                        this.ShowErr(sqlcmd, Dresult);
+                        this.ShowErr(sqlcmd, dresult);
                         return;
                     }
 
-
-                    Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt
-                            , "ID,Description,GarmentDefectTypeID"
-                            , "5,70,3", this.CurrentDetailData["GarmentDefectCodeID"].ToString()
-                            , "Defect Code,Description,Type");
+                    Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
+                        dt,
+                        "ID,Description,GarmentDefectTypeID",
+                        "5,70,3", this.CurrentDetailData["GarmentDefectCodeID"].ToString(),
+                        "Defect Code,Description,Type");
 
                     DialogResult result = selepoitem.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
 
                     selectedDatas = selepoitem.GetSelecteds();
 
@@ -150,11 +151,14 @@ namespace Sci.Production.Quality
                 }
             };
 
-            DefectCodeSet.CellValidating += (s, e) =>
+            defectCodeSet.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) return;
+                if (!this.EditMode)
+                {
+                    return;
+                }
 
-                if (String.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["GarmentDefectCodeID"].ToString()) != 0)
+                if (string.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["GarmentDefectCodeID"].ToString()) != 0)
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
@@ -170,13 +174,12 @@ namespace Sci.Production.Quality
                         paras.Add(new SqlParameter("@ID", e.FormattedValue));
                         string sqlcmd = $"SELECT ID , Description ,GarmentDefectTypeID FROM GarmentDefectCode WITH(NOLOCK) WHERE ID = @ID ";
 
-                        DualResult Dresult;
-                        if (!(Dresult = DBProxy.Current.Select(null, sqlcmd, paras, out dt)))
+                        DualResult dresult;
+                        if (!(dresult = DBProxy.Current.Select(null, sqlcmd, paras, out dt)))
                         {
-                            this.ShowErr(sqlcmd, Dresult);
+                            this.ShowErr(sqlcmd, dresult);
                             return;
                         }
-
 
                         if (dt == null || dt.Rows.Count == 0)
                         {
@@ -202,31 +205,34 @@ namespace Sci.Production.Quality
 
             #region Area Code 事件
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings AreaCodeSet = new DataGridViewGeneratorTextColumnSettings();
-            AreaCodeSet.EditingMouseDown += (s, e) =>
+            Ict.Win.DataGridViewGeneratorTextColumnSettings areaCodeSet = new DataGridViewGeneratorTextColumnSettings();
+            areaCodeSet.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataTable dt;
                     string sqlcmd = "SELECT ID , Description FROM CfaArea WITH(NOLOCK)";
 
-
                     IList<DataRow> selectedDatas;
-                    DualResult Dresult;
-                    if (!(Dresult = DBProxy.Current.Select(null, sqlcmd, out dt)))
+                    DualResult dresult;
+                    if (!(dresult = DBProxy.Current.Select(null, sqlcmd, out dt)))
                     {
-                        this.ShowErr(sqlcmd, Dresult);
+                        this.ShowErr(sqlcmd, dresult);
                         return;
                     }
 
-
-                    Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt
-                            , "ID,Description"
-                            , "5,70,3", this.CurrentDetailData["CFAAreaID"].ToString()
-                            , "Area Code,Area Desc");
+                    Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
+                        dt,
+                        "ID,Description",
+                        "5,70,3",
+                        this.CurrentDetailData["CFAAreaID"].ToString(),
+                        "Area Code,Area Desc");
 
                     DialogResult result = selepoitem.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
 
                     selectedDatas = selepoitem.GetSelecteds();
 
@@ -236,11 +242,14 @@ namespace Sci.Production.Quality
                     this.CurrentDetailData.EndEdit();
                 }
             };
-            AreaCodeSet.CellValidating += (s, e) =>
+            areaCodeSet.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) return;
+                if (!this.EditMode)
+                {
+                    return;
+                }
 
-                if (String.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["CFAAreaID"].ToString()) != 0)
+                if (string.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["CFAAreaID"].ToString()) != 0)
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
@@ -255,13 +264,12 @@ namespace Sci.Production.Quality
                         paras.Add(new SqlParameter("@ID", e.FormattedValue));
                         string sqlcmd = $"SELECT ID , Description FROM CfaArea WITH(NOLOCK) WHERE ID = @ID ";
 
-                        DualResult Dresult;
-                        if (!(Dresult = DBProxy.Current.Select(null, sqlcmd, paras, out dt)))
+                        DualResult dresult;
+                        if (!(dresult = DBProxy.Current.Select(null, sqlcmd, paras, out dt)))
                         {
-                            this.ShowErr(sqlcmd, Dresult);
+                            this.ShowErr(sqlcmd, dresult);
                             return;
                         }
-
 
                         if (dt == null || dt.Rows.Count == 0)
                         {
@@ -283,12 +291,14 @@ namespace Sci.Production.Quality
             };
             #endregion
 
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings defectSet = new DataGridViewGeneratorNumericColumnSettings();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings DefectSet = new DataGridViewGeneratorNumericColumnSettings();
-
-            DefectSet.CellValidating += (s, e) =>
+            defectSet.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) return;
+                if (!this.EditMode)
+                {
+                    return;
+                }
 
                 // 總DefectQty
                 this.CurrentDetailData["Qty"] = e.FormattedValue;
@@ -297,20 +307,18 @@ namespace Sci.Production.Quality
                 this.CauculateSQR();
             };
 
-
             #region -- 欄位設定 --
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("GarmentDefectTypeID", header: "Defect Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("GarmentDefectCodeid", header: "Defect Code", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: DefectCodeSet)
+            .Text("GarmentDefectCodeid", header: "Defect Code", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: defectCodeSet)
             .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
-            .Text("CFAAreaID", header: "Area Code", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: AreaCodeSet)
+            .Text("CFAAreaID", header: "Area Code", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: areaCodeSet)
             .Text("CfaAreaDesc", header: "Area Desc", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false)
-            .Numeric("Qty", header: "No.of" + Environment.NewLine + "Defects", width: Widths.AnsiChars(15), decimal_places: 0, integer_places: 10, iseditingreadonly: false, settings: DefectSet)
+            .Numeric("Qty", header: "No.of" + Environment.NewLine + "Defects", width: Widths.AnsiChars(15), decimal_places: 0, integer_places: 10, iseditingreadonly: false, settings: defectSet)
             .Text("Action", header: "Action", width: Widths.AnsiChars(15), iseditingreadonly: false)
             ;
             #endregion 欄位設定
-
 
             #region 可編輯欄位變色
             this.detailgrid.Columns["GarmentDefectCodeid"].DefaultCellStyle.BackColor = Color.Pink;
@@ -324,7 +332,7 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
 
             this.DetailSelectCommand = $@"
 SELECT 
@@ -357,10 +365,10 @@ WHERE a.ID ='{masterID}'
             this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             this.CurrentMaintain["CFA"] = Sci.Env.User.UserID;
-            this.CurrentMaintain["Stage"] = "";
-            this.CurrentMaintain["SewingLineID"] = "";
-            this.CurrentMaintain["Result"] = "";
-            this.CurrentMaintain["Team"] = "";
+            this.CurrentMaintain["Stage"] = string.Empty;
+            this.CurrentMaintain["SewingLineID"] = string.Empty;
+            this.CurrentMaintain["Result"] = string.Empty;
+            this.CurrentMaintain["Team"] = string.Empty;
             this.disInsCtn.Value = 0;
 
             this.ComboStage_Change(this.CurrentMaintain["Stage"].ToString());
@@ -374,12 +382,11 @@ WHERE a.ID ='{masterID}'
                 this.disBrand.Value = this._sourceHeader.Brand;
                 this.disSeason.Value = this._sourceHeader.Season;
                 this.CurrentMaintain["MDivisionid"] = this._sourceHeader.M;
-                this.CurrentMaintain["FactoryID"] = this._sourceHeader.Factory;
+                // this.CurrentMaintain["FactoryID"] = this._sourceHeader.Factory;
                 this.disOrderQty.Value = this._sourceHeader.OrderQty;
                 this.disDest.Value = this._sourceHeader.Dest;
                 this.disArticle.Value = this._sourceHeader.Article;
                 this.dateBuyerDev.Value = MyUtility.Convert.GetDate(this._sourceHeader.BuyerDev);
-
             }
 
             this.Reset_comboStage(this.CurrentMaintain["OrderID"].ToString());
@@ -532,17 +539,14 @@ BEGIN
         , CFA3rdInspectDate =  IIF((SELECT EditDate FROM #LastFail)='',NULL,(SELECT EditDate FROM #LastFail))
         , CFAIs3rdInspectHandle   = ISNULL( (SELECT EditName FROM #LastConfirm),'')
 ";
-
                 }
 
                 updateCmd += $@"    WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["Seq"]}'";
                 updateCmd += $@"
 END";
-
             }
             else
             {
-
                 updateCmd += $@"
 UPDATE CFAInspectionRecord SET Status='New',EditName='{Sci.Env.User.UserID}' ,EditDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' 
 
@@ -550,7 +554,6 @@ UPDATE Order_QtyShip
 SET CFAUpdateDate=GETDATE()
 WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["Seq"]}'
 ";
-
             }
 
             DualResult r;
@@ -559,7 +562,6 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
             {
                 this.ShowErr(r);
             }
-
 
             base.ClickUnconfirm();
         }
@@ -573,8 +575,7 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
                 MyUtility.Check.Empty(this.CurrentMaintain["AuditDate"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["Stage"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["Result"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["Team"])
-                )
+                MyUtility.Check.Empty(this.CurrentMaintain["Team"]))
             {
                 MyUtility.Msg.WarningBox("CFA、SP & SEQ、Audit Date、Inspection stage、Inspection result、Team can't be all empty!!");
                 return false;
@@ -637,14 +638,12 @@ AND StaggeredCFAInspectionRecordID <> ''
             {
                 MyUtility.Msg.WarningBox("Defects Qty can't more than Inspect Qty!!");
                 return false;
-
             }
 
             if (MyUtility.Convert.GetInt(this.CurrentMaintain["InspectQty"]) > MyUtility.Convert.GetInt(this.disOrderQty.Value))
             {
                 MyUtility.Msg.WarningBox("Inspect Qty can't more than Order Qty!!");
                 return false;
-
             }
 
             if ((this.CurrentMaintain["Stage"].ToString().ToLower() == "final" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party") && (this.CurrentMaintain["Result"].ToString().ToLower() == "pass" || this.CurrentMaintain["Result"].ToString().ToLower() == "fail but release"))
@@ -665,24 +664,23 @@ AND (Result='Pass' OR Result='Fail but release')
                 }
             }
 
-            //
             if (this.CurrentMaintain["Stage"].ToString() == "3rd party")
             {
-                bool CFAIs3rdInspect = MyUtility.Check.Seek($@"
+                bool cFAIs3rdInspect = MyUtility.Check.Seek($@"
 SELECT 1
 FROM Order_QtyShip WITH(NOLOCK)
 WHERE ID = '{this.CurrentMaintain["OrderID"]}'
 AND Seq = '{this.CurrentMaintain["Seq"]}'
 AND CFAIs3rdInspect = 1
 ");
-                if (!CFAIs3rdInspect)
+                if (!cFAIs3rdInspect)
                 {
                     MyUtility.Msg.InfoBox($"SP#:{this.CurrentMaintain["OrderID"]} 、Sep:{this.CurrentMaintain["Seq"]}   is not 3rd Inspect.");
                     return false;
                 }
             }
 
-            //Clog received %(By piece) 計算
+            // Clog received %(By piece) 計算
             this.CurrentMaintain["ClogReceivedPercentage"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"
 SELECT  CAST(ROUND( SUM(IIF( CFAReceiveDate IS NOT NULL OR ReceiveDate IS NOT NULL
 								,ShipQty
@@ -744,7 +742,6 @@ AND OrderShipmodeSeq ='{this.CurrentMaintain["Seq"]}'
 AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
 ;
 ";
-
             }
 
             if (!MyUtility.Check.Empty(cmd))
@@ -783,9 +780,8 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
                     bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanEdit");
                     bool canDelete = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanDelete");
 
-
-                    this.toolbar.cmdNew.Enabled = !this.EditMode  && canNew;
-                    this.toolbar.cmdEdit.Enabled = !this.EditMode &&  canEdit;
+                    this.toolbar.cmdNew.Enabled = !this.EditMode && canNew;
+                    this.toolbar.cmdEdit.Enabled = !this.EditMode && canEdit;
                     this.toolbar.cmdDelete.Enabled = !this.EditMode && canDelete;
 
                     this.toolbar.cmdConfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" && canConfrim;
@@ -802,10 +798,8 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
             }
             else
             {
-
                 this.toolbar.cmdConfirm.Enabled = false;
                 this.toolbar.cmdUnconfirm.Enabled = false;
-
 
                 this.toolbar.cmdConfirm.Visible = true;
                 this.toolbar.cmdUnconfirm.Visible = true;
@@ -850,23 +844,24 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
                 this.CalInsepectionCtn(this.IsDetailInserting);
             }
 
-            bool IsSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["OrderID"].ToString()}' "));
+            bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["OrderID"].ToString()}' "));
 
-            if (IsSample && this.comboStage.Items.Contains("Staggered"))
+            if (isSample && this.comboStage.Items.Contains("Staggered"))
             {
                 this.comboStage.Items.RemoveAt(2);
             }
-            else if(!IsSample)
+            else if (!isSample)
             {
                 this.comboStage.Items.Clear();
-                this.comboStage.Items.AddRange(new object[] {
-            "",
+                this.comboStage.Items.AddRange(new object[]
+                {
+            string.Empty,
             "Inline",
             "Staggered",
             "Final",
-            "3rd party"});
+            "3rd party",
+                });
             }
-
         }
 
         private void NumInspectQty_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -879,7 +874,7 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
         {
             if (this.CurrentMaintain != null)
             {
-                //this.CurrentMaintain["Team"] = this.comboTeam.SelectedItem.ToString();
+                // this.CurrentMaintain["Team"] = this.comboTeam.SelectedItem.ToString();
             }
         }
 
@@ -887,9 +882,8 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
         {
             if (this.CurrentMaintain != null)
             {
-                //this.CurrentMaintain["Result"] = this.comboResult.SelectedItem.ToString();
+                // this.CurrentMaintain["Result"] = this.comboResult.SelectedItem.ToString();
             }
-
         }
 
         private void TxtSewingLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -911,14 +905,14 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
         {
             if (this.EditMode && this.txtSewingLine.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Any())
             {
-                List<string> Lines = this.txtSewingLine.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Distinct().ToList();
+                List<string> lines = this.txtSewingLine.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Distinct().ToList();
                 List<string> errorLines = new List<string>();
-                foreach (var Line in Lines)
+                foreach (var line in lines)
                 {
                     DataTable dt;
                     string sqlCmd = $"SELECT 1 FROM SewingLine WITH(NOLOCK) WHERE FactoryID = '{Sci.Env.User.Factory}' AND ID = @ID";
                     List<SqlParameter> paras = new List<SqlParameter>();
-                    paras.Add(new SqlParameter("@ID", Line));
+                    paras.Add(new SqlParameter("@ID", line));
 
                     DualResult r = DBProxy.Current.Select(null, sqlCmd, paras, out dt);
                     if (!r)
@@ -929,10 +923,9 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
                     {
                         if (dt.Rows.Count == 0)
                         {
-                            errorLines.Add(Line);
+                            errorLines.Add(line);
                         }
                     }
-
                 }
 
                 if (errorLines.Count > 0)
@@ -942,11 +935,9 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
                 }
                 else
                 {
-                    this.CurrentMaintain["SewingLineID"] = Lines.JoinToString(",");
+                    this.CurrentMaintain["SewingLineID"] = lines.JoinToString(",");
                 }
-
             }
-
 
             if (!this.txtSewingLine.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Any())
             {
@@ -1129,13 +1120,11 @@ DROP TABLE #MixCTNStartNo
         {
             if (this.EditMode && this.txtInspectedCarton.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Any())
             {
-
-                List<string> Cartons = this.txtInspectedCarton.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Distinct().ToList();
+                List<string> cartons = this.txtInspectedCarton.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Distinct().ToList();
                 List<string> errorCartons = new List<string>();
 
-                foreach (var Carton in Cartons)
+                foreach (var carton in cartons)
                 {
-
                     DataTable dt;
                     string sqlCmd = $@"
 SELECT * 
@@ -1161,7 +1150,7 @@ AND CTNStartNo = @CTNStartNo
                     List<SqlParameter> paras = new List<SqlParameter>();
                     paras.Add(new SqlParameter("@OrderID", this.CurrentMaintain["OrderID"].ToString()));
                     paras.Add(new SqlParameter("@Seq", this.CurrentMaintain["Seq"].ToString()));
-                    paras.Add(new SqlParameter("@CTNStartNo", Carton));
+                    paras.Add(new SqlParameter("@CTNStartNo", carton));
                     paras.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()));
 
                     DualResult r = DBProxy.Current.Select(null, sqlCmd, paras, out dt);
@@ -1173,7 +1162,7 @@ AND CTNStartNo = @CTNStartNo
                     {
                         if (dt.Rows.Count == 0)
                         {
-                            errorCartons.Add(Carton);
+                            errorCartons.Add(carton);
                         }
                     }
                 }
@@ -1185,7 +1174,7 @@ AND CTNStartNo = @CTNStartNo
                 }
                 else
                 {
-                    this.CurrentMaintain["Carton"] = Cartons.JoinToString(",");
+                    this.CurrentMaintain["Carton"] = cartons.JoinToString(",");
                 }
             }
 
@@ -1236,27 +1225,28 @@ AND CTNStartNo = @CTNStartNo
             {
                 this.txtInspectedCarton.IsSupportEditMode = true;
                 this.txtInspectedCarton.ReadOnly = false;
+
                 // this.CurrentMaintain["Carton"] = string.Empty;
 
-                //this.CurrentMaintain["Shift"] = string.Empty;
-                //this.txtshift.Text = string.Empty;
-                //this.txtshift.IsSupportEditMode = false;
-                //this.txtshift.ReadOnly = true;
+                // this.CurrentMaintain["Shift"] = string.Empty;
+                // this.txtshift.Text = string.Empty;
+                // this.txtshift.IsSupportEditMode = false;
+                // this.txtshift.ReadOnly = true;
                 this.txtshift.IsSupportEditMode = true;
                 this.txtshift.ReadOnly = false;
             }
 
             // Stage若是3rd party則要檢查Order_QtyShip.CFAIs3rdInspect是否為1，若不是則不能存檔，並跳出警告視窗
-            if (stage == "3rd party" )
+            if (stage == "3rd party")
             {
-                bool CFAIs3rdInspect = MyUtility.Check.Seek($@"
+                bool cFAIs3rdInspect = MyUtility.Check.Seek($@"
 SELECT 1
 FROM Order_QtyShip WITH(NOLOCK)
 WHERE ID = '{this.CurrentMaintain["OrderID"]}'
 AND Seq = '{this.CurrentMaintain["Seq"]}'
 AND CFAIs3rdInspect = 1
 ");
-                if (!CFAIs3rdInspect)
+                if (!cFAIs3rdInspect)
                 {
                     MyUtility.Msg.InfoBox($"SP#:{this.CurrentMaintain["OrderID"]} 、Sep:{this.CurrentMaintain["Seq"]}   is not 3rd Inspect.");
 
@@ -1264,7 +1254,6 @@ AND CFAIs3rdInspect = 1
                     this.comboStage.SelectedIndex = 0;
                     this.CurrentMaintain["Stage"] = string.Empty;
                 }
-
             }
 
             // Final的時候Inspection result才能有Fail but release
@@ -1285,23 +1274,21 @@ AND CFAIs3rdInspect = 1
 
             this.CurrentMaintain["DefectQty"] = totalDefectQty;
 
-            decimal InspectQty = MyUtility.Convert.GetDecimal(this.CurrentMaintain["InspectQty"]);
+            decimal inspectQty = MyUtility.Convert.GetDecimal(this.CurrentMaintain["InspectQty"]);
 
             // 計算SQR
-            if (InspectQty == 0)
+            if (inspectQty == 0)
             {
                 this.numSQR.Value = null;
                 return;
             }
 
-            decimal SQR = (totalDefectQty / InspectQty * 100);
-            this.numSQR.Value = SQR;
-
+            decimal sQR = totalDefectQty / inspectQty * 100;
+            this.numSQR.Value = sQR;
         }
 
         private void AutoInsertBySP(string orderID, string seq)
         {
-
             this.disSeason.Value = MyUtility.GetValue.Lookup($@"
 SELECT  SeasonID
 FROM Orders  WITH(NOLOCK)
@@ -1337,7 +1324,6 @@ FROM Order_QtyShip  WITH(NOLOCK)
 WHERE ID = '{orderID}' AND Seq ='{seq}'
 "));
 
-
             this.disDest.Value = MyUtility.GetValue.Lookup($@"
 SELECT c.Alias
 FROM Orders o
@@ -1358,16 +1344,18 @@ SELECT STUFF(
 
         private void Reset_comboStage(string orderID)
         {
-            bool IsSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{orderID}' "));
+            bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{orderID}' "));
 
             this.comboStage.Items.Clear();
-            this.comboStage.Items.AddRange(new object[] {
-            "",
-            "Inline",
-            "Staggered",
-            "Final",
-            "3rd party"});
-            if (IsSample)
+            this.comboStage.Items.AddRange(new object[]
+            {
+                string.Empty,
+                "Inline",
+                "Staggered",
+                "Final",
+                "3rd party",
+            });
+            if (isSample)
             {
                 this.comboStage.Items.RemoveAt(2);
             }
@@ -1382,18 +1370,22 @@ SELECT STUFF(
             // Final的時候Inspection result才能有Fail but release
             if (!isFinal)
             {
-                this.comboResult.Items.AddRange(new object[] {
-                    "",
+                this.comboResult.Items.AddRange(new object[]
+                {
+                    string.Empty,
                     "Pass",
-                    "Fail"});
+                    "Fail",
+                });
             }
             else
             {
-                this.comboResult.Items.AddRange(new object[] {
-                    "",
+                this.comboResult.Items.AddRange(new object[]
+                {
+                    string.Empty,
                     "Pass",
                     "Fail",
-                    "Fail but release"});
+                    "Fail but release",
+                });
             }
 
             this.comboResult.SelectedItem = this.CurrentMaintain["Result"].ToString();
@@ -1417,7 +1409,7 @@ SELECT STUFF(
                 return;
             }
 
-                cmd = $@"
+            cmd = $@"
 SELECT COUNT(1) + 1
 FROM CFAInspectionRecord
 WHERE OrderID='{this.CurrentMaintain["OrderID"]}' AND SEQ='{this.CurrentMaintain["Seq"]}'

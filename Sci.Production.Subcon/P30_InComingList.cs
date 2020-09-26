@@ -10,12 +10,13 @@ namespace Sci.Production.Subcon
     {
         protected string Detailukey;
 
-        public P30_InComingList(string _detailukey)
+        public P30_InComingList(string detailukey)
         {
             this.InitializeComponent();
-            this.Detailukey = _detailukey;
+            this.Detailukey = detailukey;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -47,7 +48,7 @@ namespace Sci.Production.Subcon
                  .Date("adddate", header: "Create Date", width: Widths.AnsiChars(10));
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

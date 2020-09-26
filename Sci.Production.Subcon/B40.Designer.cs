@@ -172,8 +172,8 @@
             this.txtSewingLine.Name = "txtSewingLine";
             this.txtSewingLine.Size = new System.Drawing.Size(67, 23);
             this.txtSewingLine.TabIndex = 3;
-            this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSewingLine_PopUp);
-            this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtSewingLine_Validating);
+            this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLine_PopUp);
+            this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSewingLine_Validating);
             // 
             // contextMenuStrip1
             // 
@@ -285,7 +285,7 @@
             this.btnSetPanelCutcell.TabIndex = 13;
             this.btnSetPanelCutcell.Text = "Panel Cut Cell";
             this.btnSetPanelCutcell.UseVisualStyleBackColor = true;
-            this.btnSetPanelCutcell.Click += new System.EventHandler(this.btnSetPanelCutcell_Click);
+            this.btnSetPanelCutcell.Click += new System.EventHandler(this.BtnSetPanelCutcell_Click);
             // 
             // txtSubprocess
             // 
@@ -298,7 +298,7 @@
             this.txtSubprocess.ReadOnly = true;
             this.txtSubprocess.Size = new System.Drawing.Size(250, 23);
             this.txtSubprocess.TabIndex = 14;
-            this.txtSubprocess.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSubprocess_PopUp);
+            this.txtSubprocess.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSubprocess_PopUp);
             // 
             // B40
             // 

@@ -69,6 +69,7 @@ from FinishingProcess");
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void ClickJunk()
         {
             base.ClickJunk();

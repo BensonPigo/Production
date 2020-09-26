@@ -12,13 +12,13 @@ namespace Sci.Production.Quality
     public partial class P02 : Win.Tems.Input6
     {
         // 宣告Context Menu Item
-        ToolStripMenuItem edit;
+        private ToolStripMenuItem edit;
         private readonly string loginID = Env.User.UserID;
         private readonly string keyWord = Env.User.Keyword;
         private readonly bool boolFromP02;
-        string find = string.Empty;
-        int index;
-        DataRow[] find_dr;
+        private string find = string.Empty;
+        private int index;
+        private DataRow[] find_dr;
 
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -28,10 +28,10 @@ namespace Sci.Production.Quality
             this.boolFromP02 = false;
         }
 
-        public P02(string POID)
+        public P02(string pOID)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("ID = '{0}'", POID);
+            this.DefaultFilter = string.Format("ID = '{0}'", pOID);
             this.InsertDetailGridOnDoubleClick = false;
             this.IsSupportEdit = false;
             this.detailgrid.ContextMenuStrip = this.detailgridmenus;
@@ -39,6 +39,8 @@ namespace Sci.Production.Quality
         }
 
         // 表身額外的資料來源
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             this.find_dr = null;
@@ -102,6 +104,7 @@ Where a.poid='{0}' order by seq1,seq2
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -118,10 +121,10 @@ Where a.poid='{0}' order by seq1,seq2
                     return;
                 }
 
-                P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
-                DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
-                DoForm.ShowDialog(this);
-                DoForm.Close();
+                P02_Detail doForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
+                doForm.Set(false, this.DetailDatas, this.CurrentDetailData);
+                doForm.ShowDialog(this);
+                doForm.Close();
                 this.RenewData();
             };
             detail_Int.CellMouseDoubleClick += (s, e) =>
@@ -132,10 +135,10 @@ Where a.poid='{0}' order by seq1,seq2
                     return;
                 }
 
-                P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
-                DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
-                DoForm.ShowDialog(this);
-                DoForm.Close();
+                P02_Detail doForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
+                doForm.Set(false, this.DetailDatas, this.CurrentDetailData);
+                doForm.ShowDialog(this);
+                doForm.Close();
                 this.RenewData();
             };
 
@@ -175,6 +178,7 @@ Where a.poid='{0}' order by seq1,seq2
 
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
@@ -208,9 +212,10 @@ Where a.poid='{0}' order by seq1,seq2
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
-            this.ContextMenuStrip();
+            this.ContextMenuStripSet();
             base.OnDetailEntered();
             this.detailgrid.AutoResizeColumns();
 
@@ -325,6 +330,7 @@ Where a.poid='{0}' order by seq1,seq2
             this.chkInspAutoLockAcc.Checked = MyUtility.Convert.GetBool(strInspAutoLockAcc);
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             // 因為表頭是PO不能覆蓋其他資料，必需自行存檔
@@ -332,38 +338,38 @@ Where a.poid='{0}' order by seq1,seq2
             string save_po_cmd = string.Format("update po set AIRRemark = '{0}' where id = '{1}';", this.editRemark.Text.ToString(), this.CurrentMaintain["ID"]);
 
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, save_po_cmd)))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return upResult;
                     }
 
                     // 更新PO.AIRInspPercent
                     if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIR','{this.CurrentMaintain["ID"]}'")))
                     {
-                        _transactionscope.Dispose();
+                        transactionscope.Dispose();
                         return upResult;
                     }
 
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
+                    transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
                     return Ict.Result.True;
                 }
             }
 
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            transactionscope.Dispose();
+            transactionscope = null;
 
             return Ict.Result.True;
         }
@@ -453,11 +459,11 @@ Where a.poid='{0}' order by seq1,seq2
                 return;
             }
 
-            P02_Detail DoForm = new P02_Detail(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
-            DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
-            DoForm.Text = "Accessory Inspection- SP+SEQ+Detail(Modify)";
-            DoForm.ShowDialog(this);
-            DoForm.Close();
+            P02_Detail doForm = new P02_Detail(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
+            doForm.Set(false, this.DetailDatas, this.CurrentDetailData);
+            doForm.Text = "Accessory Inspection- SP+SEQ+Detail(Modify)";
+            doForm.ShowDialog(this);
+            doForm.Close();
             this.RenewData();
             this.OnDetailEntered();
 
@@ -476,10 +482,10 @@ Where a.poid='{0}' order by seq1,seq2
             }
 
             this.detailgrid.SelectRowTo(rowindex);
-            this.ContextMenuStrip();
+            this.ContextMenuStripSet();
         }
 
-        private void ContextMenuStrip()
+        private void ContextMenuStripSet()
         {
             var dr = this.CurrentDetailData;
             this.edit.Enabled = true;
@@ -491,9 +497,10 @@ Where a.poid='{0}' order by seq1,seq2
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridRowChanged()
         {
-            this.ContextMenuStrip();
+            this.ContextMenuStripSet();
             base.OnDetailGridRowChanged();
         }
 

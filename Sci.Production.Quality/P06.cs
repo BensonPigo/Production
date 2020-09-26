@@ -12,13 +12,13 @@ namespace Sci.Production.Quality
     public partial class P06 : Win.Tems.Input6
     {
         // 宣告Context Menu Item
-        ToolStripMenuItem add;
+        private ToolStripMenuItem add;
 
         // 宣告Context Menu Item
-        ToolStripMenuItem edit;
+        private ToolStripMenuItem edit;
 
         // 宣告Context Menu Item
-        ToolStripMenuItem delete;
+        private ToolStripMenuItem delete;
         private new readonly bool IsSupportEdit = true;
 
         public P06(ToolStripMenuItem menuitem)
@@ -29,6 +29,8 @@ namespace Sci.Production.Quality
         }
 
         // refresh
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             List<SqlParameter> spam = new List<SqlParameter>();
@@ -84,11 +86,11 @@ namespace Sci.Production.Quality
             string inspnum = "0";
             DataTable articleDT = (DataTable)this.detailgridbs.DataSource;
 
-            DateTime CompDate;
+            DateTime compDate;
             if (inspnum == "100")
             {
-                CompDate = (DateTime)articleDT.Compute("Max(Inspdate)", string.Empty);
-                this.dateCompletionDate.Value = CompDate;
+                compDate = (DateTime)articleDT.Compute("Max(Inspdate)", string.Empty);
+                this.dateCompletionDate.Value = compDate;
             }
             else
             {
@@ -96,11 +98,12 @@ namespace Sci.Production.Quality
             }
 
             // 判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
-            this.ContextMenuStrip();
+            this.ContextMenuStripSet();
 
             base.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorNumericColumnSettings testNoCell = new DataGridViewGeneratorNumericColumnSettings();
@@ -201,11 +204,13 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseClick(MouseEventArgs e)
         {
             base.OnMouseClick(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
@@ -216,6 +221,7 @@ namespace Sci.Production.Quality
             base.OnFormLoaded();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
             string sqlcmd = string.Empty;
@@ -309,26 +315,29 @@ namespace Sci.Production.Quality
                 }
             }
 
-            this.ContextMenuStrip();
+            this.ContextMenuStripSet();
             this.RenewData();
             this.OnDetailEntered();
         }
 
-        private void ContextMenuStrip()
+        private void ContextMenuStripSet()
         {
             var dr = this.CurrentDetailData;
             DataTable dtCheck;
             DataTable dtCheckDelete;
             this.add.Enabled = true;
-            if (dr == null) // ColorFastness 空的
+
+            // ColorFastness 空的
+            if (dr == null)
             {
                 this.add.Enabled = true;
                 this.edit.Enabled = false;
                 this.delete.Enabled = false;
                 return;
             }
-            else // ColorFastness 有東西
+            else
             {
+                // ColorFastness 有東西
                 DBProxy.Current.Select(null, string.Format("select * from ColorFastness WITH (NOLOCK) where id='{0}'", this.CurrentDetailData["ID"].ToString()), out dtCheck);
                 DBProxy.Current.Select(null, string.Format("select * from ColorFastness WITH (NOLOCK) where POID='{0}'", this.displaySP.Text.ToString()), out dtCheckDelete);
                 if (dtCheck.Rows.Count <= 0)
@@ -370,6 +379,7 @@ namespace Sci.Production.Quality
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             DataTable dt = (DataTable)e.Details;
@@ -390,9 +400,10 @@ namespace Sci.Production.Quality
             return base.OnRenewDataDetailPost(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridRowChanged()
         {
-            this.ContextMenuStrip();
+            this.ContextMenuStripSet();
             base.OnDetailGridRowChanged();
         }
     }

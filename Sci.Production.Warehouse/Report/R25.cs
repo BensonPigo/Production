@@ -75,6 +75,7 @@ namespace Sci.Production.Warehouse
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (MyUtility.Check.Empty(this.datekPIETA.Value1) &&
@@ -142,6 +143,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region Set SQL Command & SQLParameter
@@ -296,6 +298,7 @@ and ed.PoType = 'G'
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (this.dataTable != null && this.dataTable.Rows.Count > 0)

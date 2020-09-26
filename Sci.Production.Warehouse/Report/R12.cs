@@ -25,6 +25,7 @@ namespace Sci.Production.Warehouse
             this.cbRequestType.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if (!this.dateRangeIssueDate.HasValue)
@@ -109,12 +110,14 @@ order by il.IssueDate,il.Id,ild.POID,ild.Seq1,ild.Seq2,ild.Roll,ild.Dyelot
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DualResult result = DBProxy.Current.Select(null, this.sqlCmd, this.listSqlPar, out this.dtResult);
             return result;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.SetCount(this.dtResult.Rows.Count);

@@ -45,6 +45,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             if ((MyUtility.Check.Empty(this.dateCFMDate.Value1) && MyUtility.Check.Empty(this.dateCFMDate.Value2))
@@ -83,6 +85,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 非同步取資料
+
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
@@ -284,6 +288,8 @@ where 1=1 "));
         }
 
         // 產生Excel
+
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

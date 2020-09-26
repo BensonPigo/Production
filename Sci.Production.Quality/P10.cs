@@ -18,7 +18,7 @@ namespace Sci.Production.Quality
         private readonly string loginID = Env.User.UserID;
         private readonly string Factory = Env.User.Keyword;
         private int ReportNoCount = 0;
-        ToolStripMenuItem edit;
+        private ToolStripMenuItem edit;
 
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -27,6 +27,7 @@ namespace Sci.Production.Quality
             this.detailgrid.ContextMenuStrip = this.detailgridmenus;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
@@ -59,6 +60,7 @@ namespace Sci.Production.Quality
             this.OnDetailEntered();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
@@ -165,25 +167,26 @@ where sd.id='{0}' order by sd.No
             this.CurrentMaintain["Deadline"] = deadLine;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorDateColumnSettings inspDateCell = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings inspectorCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings CommentsCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings SendCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings SenderCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ReceiveCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ReceiverCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorComboBoxColumnSettings ResultValid = new DataGridViewGeneratorComboBoxColumnSettings();
-            DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings commentsCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings sendCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings senderCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings receiveCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings receiverCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings resultValid = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings resultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings mtlTypeIDComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
 
-            Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
-            ResultCombo.Add("Pass", "Pass");
-            ResultCombo.Add("Fail", "Fail");
-            ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
-            ResultComboCell.ValueMember = "Key";
-            ResultComboCell.DisplayMember = "Value";
+            Dictionary<string, string> resultCombo = new Dictionary<string, string>();
+            resultCombo.Add("Pass", "Pass");
+            resultCombo.Add("Fail", "Fail");
+            resultComboCell.DataSource = new BindingSource(resultCombo, null);
+            resultComboCell.ValueMember = "Key";
+            resultComboCell.DisplayMember = "Value";
 
             Dictionary<string, string> mtlTypeCombo = new Dictionary<string, string>();
             mtlTypeCombo.Add(string.Empty, string.Empty);
@@ -319,10 +322,10 @@ where sd.id='{0}' order by sd.No
             .Text("ReportNo", header: "ReportNo", width: Widths.AnsiChars(15))
             .ComboBox("MtlTypeID", header: "Material" + Environment.NewLine + "Type", width: Widths.AnsiChars(10), settings: mtlTypeIDComboCell)
             .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell)
-            .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultComboCell)
+            .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: resultComboCell)
             .Text("Technician", header: "Technician", width: Widths.AnsiChars(10), settings: inspectorCell)
             .Text("TechnicianName", header: "Technician Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("Remark", header: "Comments", width: Widths.AnsiChars(10), settings: CommentsCell)
+            .Text("Remark", header: "Comments", width: Widths.AnsiChars(10), settings: commentsCell)
             .Button("Send", null, header: "Send", width: Widths.AnsiChars(5), onclick: this.BtnSend)
             .Text("Sender", header: "Sender", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("SendDate", header: "Send Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -333,27 +336,28 @@ where sd.id='{0}' order by sd.No
             .Text("LastEditName", header: "Last Edit Name", width: Widths.AnsiChars(25), iseditingreadonly: true); // editName + editDate
         }
 
-        void Update_detailgrid_CellValidated(int RowIndex)
+        private void Update_detailgrid_CellValidated(int rowIndex)
         {
-            this.detailgrid.InvalidateRow(RowIndex);
+            this.detailgrid.InvalidateRow(rowIndex);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = 1)
         {
             base.OnDetailGridInsert(index);
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-            int MaxNo;
+            int maxNo;
             if (dt.Rows.Count == 0)
             {
-                MaxNo = 0;
+                maxNo = 0;
                 base.OnDetailGridInsert(0);
-                this.CurrentDetailData["No"] = MaxNo + 1;
+                this.CurrentDetailData["No"] = maxNo + 1;
             }
             else
             {
-                MaxNo = Convert.ToInt32(dt.Compute("Max(No)", string.Empty));
-                this.CurrentDetailData["No"] = MaxNo + 1;
+                maxNo = Convert.ToInt32(dt.Compute("Max(No)", string.Empty));
+                this.CurrentDetailData["No"] = maxNo + 1;
 
                 string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "GM", "SampleGarmentTest_Detail", DateTime.Today, 2, "ReportNo", null);
                 string head = tmpId.Substring(0, 9);
@@ -369,6 +373,7 @@ where sd.id='{0}' order by sd.No
             this.CurrentDetailData["Remark"] = string.Empty;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             DataTable detail_dt = (DataTable)this.detailgridbs.DataSource;
@@ -448,6 +453,7 @@ where sd.id='{0}' order by sd.No
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             DualResult upResult = new DualResult(true);
@@ -570,6 +576,7 @@ values (@ID,@NO,'Appearance of garment after wash',8)
                     }
 
                     #region 寫入GarmentTest_Detail_FGWT
+
                     // 取Location
                     List<string> locations = MyUtility.GetValue.Lookup($@"
 
@@ -772,17 +779,17 @@ INSERT INTO SampleGarmentTest_Detail_FGPT
 
                 if (dt.Select(where).Count() > 0)
                 {
-                    DataRow DetailRow = dt.Select(where)[0];
-                    this.CurrentMaintain["Result"] = DetailRow["Result"];
-                    this.CurrentMaintain["Inspdate"] = DetailRow["Inspdate"];
-                    this.CurrentMaintain["Remark"] = DetailRow["remark"];
+                    DataRow detailRow = dt.Select(where)[0];
+                    this.CurrentMaintain["Result"] = detailRow["Result"];
+                    this.CurrentMaintain["Inspdate"] = detailRow["Inspdate"];
+                    this.CurrentMaintain["Remark"] = detailRow["remark"];
                 }
 
                 if (string.IsNullOrEmpty(this.CurrentMaintain["AddDate"].ToString()) && dt.Select("NO='1'").Count() > 0)
                 {
-                    DataRow DetailRow = dt.Select(where)[0];
-                    this.CurrentMaintain["AddDate"] = DetailRow["AddDate"];
-                    this.CurrentMaintain["AddName"] = DetailRow["AddName"];
+                    DataRow detailRow = dt.Select(where)[0];
+                    this.CurrentMaintain["AddDate"] = detailRow["AddDate"];
+                    this.CurrentMaintain["AddName"] = detailRow["AddName"];
                 }
             }
             else
@@ -795,6 +802,7 @@ INSERT INTO SampleGarmentTest_Detail_FGPT
             return base.ClickSave();
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             this.ReportNoCount = 0;

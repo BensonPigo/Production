@@ -11,11 +11,11 @@ namespace Sci.Production.Warehouse
         private DataRow dr;
         private string stocktype;
 
-        public P03_BulkLocation(DataRow data, string _stocktype)
+        public P03_BulkLocation(DataRow data, string stocktype)
         {
             this.InitializeComponent();
             this.dr = data;
-            this.stocktype = _stocktype;
+            this.stocktype = stocktype;
 
             switch (this.stocktype)
             {
@@ -35,6 +35,7 @@ this.dr["seq1"].ToString(),
 this.dr["seq2"].ToString());
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

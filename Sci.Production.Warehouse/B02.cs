@@ -37,6 +37,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 編輯狀態限制
+
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -44,6 +46,7 @@ namespace Sci.Production.Warehouse
             this.comboStockType.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -52,6 +55,8 @@ namespace Sci.Production.Warehouse
         }
 
         // 存檔前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (this.CurrentMaintain["ID"].ToString().IndexOfAny(new char[] { ',' }, 0) > -1)
@@ -94,6 +99,7 @@ namespace Sci.Production.Warehouse
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -101,10 +107,10 @@ namespace Sci.Production.Warehouse
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                if (string.Compare(CurrentMaintain["StockType"].ToString(), "B", true) == 0)
+                if (string.Compare(this.CurrentMaintain["StockType"].ToString(), "B", true) == 0)
                 {
-                    DataTable dtMain = CurrentMaintain.Table.Clone();
-                    dtMain.ImportRow(CurrentMaintain);
+                    DataTable dtMain = this.CurrentMaintain.Table.Clone();
+                    dtMain.ImportRow(this.CurrentMaintain);
                     Task.Run(() => new Gensong_AutoWHFabric().SentMtlLocationToGensongAutoWHFabric(dtMain))
                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }

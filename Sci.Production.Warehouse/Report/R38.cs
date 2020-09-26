@@ -58,6 +58,7 @@ namespace Sci.Production.Warehouse
             this.txtMdivision.Text = Env.User.Keyword;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.strSp1 = this.txtSPNoStart.Text.Trim();
@@ -69,6 +70,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSPNoStart.Text.Trim()) || MyUtility.Check.Empty(this.txtSPNoEnd.Text.Trim()))
@@ -181,6 +183,7 @@ select	fi.POID
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (this.dataTable != null && this.dataTable.Rows.Count > 0)

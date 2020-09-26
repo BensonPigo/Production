@@ -29,6 +29,7 @@ namespace Sci.Production.Subcon
             this.listControlBindingSource1.DataSource = this.dt;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -93,8 +94,8 @@ namespace Sci.Production.Subcon
 
             #endregion
             #region  PadRefno
-            DataGridViewGeneratorTextColumnSettings PadRefno = new DataGridViewGeneratorTextColumnSettings();
-            PadRefno.EditingMouseDown += (s, e) =>
+            DataGridViewGeneratorTextColumnSettings padRefno = new DataGridViewGeneratorTextColumnSettings();
+            padRefno.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -122,7 +123,7 @@ namespace Sci.Production.Subcon
                     dr.EndEdit();
                 }
             };
-            PadRefno.CellValidating += (s, e) =>
+            padRefno.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -147,7 +148,7 @@ namespace Sci.Production.Subcon
             #region -- Grid 設定 --
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("Buyer", header: "Buyer", width: Widths.AnsiChars(15), settings: buyer)
-            .Text("PadRefno", header: "Pad Refno", width: Widths.AnsiChars(15), settings: PadRefno)
+            .Text("PadRefno", header: "Pad Refno", width: Widths.AnsiChars(15), settings: padRefno)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(10))
             .DateTime("AddDate", header: "Create Date", iseditingreadonly: true, iseditable: false)
             .Text("AddName", header: "Create Name", iseditingreadonly: true, iseditable: false)
@@ -157,6 +158,7 @@ namespace Sci.Production.Subcon
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
@@ -263,7 +265,7 @@ and not exists(select 1 from #tmp t where t.Refno = '{this.masterrow["refno"]}' 
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             if (this.EditMode)
             {
@@ -276,7 +278,7 @@ and not exists(select 1 from #tmp t where t.Refno = '{this.masterrow["refno"]}' 
             }
         }
 
-        private void btnAppend_Click(object sender, EventArgs e)
+        private void BtnAppend_Click(object sender, EventArgs e)
         {
             DataRow dr = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
             dr["Refno"] = this.masterrow["Refno"];
@@ -284,7 +286,7 @@ and not exists(select 1 from #tmp t where t.Refno = '{this.masterrow["refno"]}' 
             ((DataTable)this.listControlBindingSource1.DataSource).Rows.Add(dr);
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void BtnDelete_Click(object sender, EventArgs e)
         {
             if (this.listControlBindingSource1.Position != -1)
             {

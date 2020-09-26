@@ -32,6 +32,7 @@ namespace Sci.Production.Warehouse
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.ConfirmedDate1 = this.dateConfirmedDate.Value1;
@@ -54,6 +55,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             #region where
@@ -150,6 +152,7 @@ where L.status='Confirmed'
             return DBProxy.Current.Select(null, sqlcmd, lis, out this.dt);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.ShowWaitMessage("Excel Processing...");

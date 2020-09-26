@@ -22,6 +22,7 @@ namespace Sci.Production.Sewing
         private string Sqlcmd;
         private DataTable printData;
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             string where = string.Empty;
@@ -119,11 +120,13 @@ drop table #tmp
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             return DBProxy.Current.Select(null, this.Sqlcmd, out this.printData);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.printData.Rows.Count == 0)

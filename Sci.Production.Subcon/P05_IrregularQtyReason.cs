@@ -15,23 +15,24 @@ namespace Sci.Production.Subcon
 {
     public partial class P05_IrregularQtyReason : Win.Subs.Base
     {
-        DataRow _masterData;
-        DataTable _detailDatas;
-        DataTable dtLoad;
-        string _ArtWorkReq_ID = string.Empty;
-        Ict.Win.UI.DataGridViewTextBoxColumn txt_SubReason;
+        private DataRow _masterData;
+        private DataTable _detailDatas;
+        private DataTable dtLoad;
+        private string _ArtWorkReq_ID = string.Empty;
+        private Ict.Win.UI.DataGridViewTextBoxColumn txt_SubReason;
         private P05 p05;
-        Func<string, string> sqlGetBuyBackDeduction;
-        public P05_IrregularQtyReason(string ArtWorkReq_ID, DataRow masterData, DataTable detailDatas, Func<string, string> SqlGetBuyBackDeduction)
+        private Func<string, string> sqlGetBuyBackDeduction;
+        public P05_IrregularQtyReason(string artWorkReq_ID, DataRow masterData, DataTable detailDatas, Func<string, string> sqlGetBuyBackDeduction)
         {
             this.InitializeComponent();
             this.EditMode = false;
             this._masterData = masterData;
-            this._ArtWorkReq_ID = ArtWorkReq_ID;
+            this._ArtWorkReq_ID = artWorkReq_ID;
             this._detailDatas = detailDatas;
-            this.sqlGetBuyBackDeduction = SqlGetBuyBackDeduction;
+            this.sqlGetBuyBackDeduction = sqlGetBuyBackDeduction;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             this.p05 = (P05)this.ParentIForm;
@@ -96,7 +97,7 @@ namespace Sci.Production.Subcon
             }
         }
 
-        private void combo_SelectionChangeCommitted(object sender, EventArgs e)
+        private void Combo_SelectionChangeCommitted(object sender, EventArgs e)
         {
             string newValue = ((Ict.Win.UI.DataGridViewComboBoxEditingControl)sender).EditingControlFormattedValue.ToString();
             DataRow dr = this.gridIrregularQty.GetDataRow(this.listControlBindingSource1.Position);
@@ -116,55 +117,55 @@ namespace Sci.Production.Subcon
 
         private void Query()
         {
-            this.listControlBindingSource1.DataSource = this.getData();
+            this.listControlBindingSource1.DataSource = this.GetData();
         }
 
         public DataTable Check_Irregular_Qty()
         {
-            DataTable dt = this.getData();
+            DataTable dt = this.GetData();
             this.listControlBindingSource1.DataSource = dt;
 
             return dt;
         }
 
-        private void btnEdit_Click(object sender, EventArgs e)
+        private void BtnEdit_Click(object sender, EventArgs e)
         {
             if (this.EditMode)
             {
-                DataTable ModifyTable = (DataTable)this.listControlBindingSource1.DataSource;
+                DataTable modifyTable = (DataTable)this.listControlBindingSource1.DataSource;
 
                 StringBuilder sqlcmd = new StringBuilder();
 
-                var Insert_Or_Update = this.dtLoad.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() != string.Empty);
+                var insert_Or_Update = this.dtLoad.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() != string.Empty);
 
                 var deleteTmp = this.dtLoad.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() == string.Empty);
 
                 foreach (var item in deleteTmp)
                 {
-                    string OrderID = item["OrderID"].ToString();
-                    string ArtworkType = item["ArtworkTypeID"].ToString();
-                    sqlcmd.Append($@"delete from ArtworkReq_IrregularQty where OrderID = '{OrderID}' and ArtworkTypeID = '{ArtworkType}'" + Environment.NewLine);
+                    string orderID = item["OrderID"].ToString();
+                    string artworkType = item["ArtworkTypeID"].ToString();
+                    sqlcmd.Append($@"delete from ArtworkReq_IrregularQty where OrderID = '{orderID}' and ArtworkTypeID = '{artworkType}'" + Environment.NewLine);
                 }
 
-                foreach (var item in Insert_Or_Update)
+                foreach (var item in insert_Or_Update)
                 {
-                    string OrderID = item["OrderID"].ToString();
-                    string ArtworkType = item["ArtworkTypeID"].ToString();
-                    string SubconReasonID = item["SubconReasonID"].ToString();
-                    decimal StandardQty = MyUtility.Convert.GetDecimal(item["StandardQty"]);
-                    decimal ReqQty = MyUtility.Convert.GetDecimal(item["ReqQty"]);
+                    string orderID = item["OrderID"].ToString();
+                    string artworkType = item["ArtworkTypeID"].ToString();
+                    string subconReasonID = item["SubconReasonID"].ToString();
+                    decimal standardQty = MyUtility.Convert.GetDecimal(item["StandardQty"]);
+                    decimal reqQty = MyUtility.Convert.GetDecimal(item["ReqQty"]);
 
                     DataTable dt;
 
-                    DualResult result = DBProxy.Current.Select(null, $@"SELECT * FROM ArtworkReq_IrregularQty WHERE OrderID='{OrderID}' AND ArtworkTypeID='{ArtworkType}'", out dt);
+                    DualResult result = DBProxy.Current.Select(null, $@"SELECT * FROM ArtworkReq_IrregularQty WHERE OrderID='{orderID}' AND ArtworkTypeID='{artworkType}'", out dt);
                     if (result)
                     {
                         if (dt.Rows.Count > 0)
                         {
-                            if (dt.Rows[0]["SubconReasonID"].ToString() != SubconReasonID && !string.IsNullOrEmpty(SubconReasonID))
+                            if (dt.Rows[0]["SubconReasonID"].ToString() != subconReasonID && !string.IsNullOrEmpty(subconReasonID))
                             {
-                                sqlcmd.Append($"UPDATE [ArtworkReq_IrregularQty] SET [SubconReasonID]='{SubconReasonID}',EditDate=GETDATE(),EditName='{Env.User.UserID}'" + Environment.NewLine);
-                                sqlcmd.Append($"                                  WHERE OrderID='{OrderID}' AND [ArtworkTypeID]='{ArtworkType}'" + Environment.NewLine);
+                                sqlcmd.Append($"UPDATE [ArtworkReq_IrregularQty] SET [SubconReasonID]='{subconReasonID}',EditDate=GETDATE(),EditName='{Env.User.UserID}'" + Environment.NewLine);
+                                sqlcmd.Append($"                                  WHERE OrderID='{orderID}' AND [ArtworkTypeID]='{artworkType}'" + Environment.NewLine);
                             }
                         }
                         else
@@ -172,7 +173,7 @@ namespace Sci.Production.Subcon
                             sqlcmd.Append(@"
 INSERT INTO [ArtworkReq_IrregularQty]([OrderID],[ArtworkTypeID],[StandardQty],[ReqQty],[SubconReasonID],[AddDate],[AddName])" + Environment.NewLine);
                             sqlcmd.Append($@"
-VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GETDATE(),'{Env.User.UserID}')" + Environment.NewLine);
+VALUES ('{orderID}','{artworkType}',{standardQty},{reqQty},'{subconReasonID}',GETDATE(),'{Env.User.UserID}')" + Environment.NewLine);
                         }
                     }
                 }
@@ -218,7 +219,7 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
             this.btnClose.Text = this.EditMode ? "Undo" : "Close";
         }
 
-        private DataTable getData()
+        private DataTable GetData()
         {
             string sqlcmd = string.Empty;
 
@@ -359,7 +360,7 @@ drop table #tmpCurrent,#tmpFinal,#tmpDB
             return this.dtLoad;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             if (this.btnClose.Text == "Close")
             {
