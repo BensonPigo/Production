@@ -102,7 +102,7 @@ BEGIN
 				where smp.PackingListID = @PackingListID
 						and smpd.SCICtnNo = @SCICtnNo
 						and smpd.ShippingMarkTypeUkey = smtl.ShippingMarkTypeUkey
-						and smpd.image is not null
+						and DATALENGTH(smpd.image) > 0
 			)
 
 	if (@CheckBasicSetting = @PictureUploadNotYet)
