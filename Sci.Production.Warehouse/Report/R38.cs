@@ -88,6 +88,7 @@ select	fi.POID
         ,'Locked' Lock
         ,fi.LockDate
         ,LockName  = (select id+'-'+name from dbo.pass1 WITH (NOLOCK) where id=fi.LockName) 
+        ,fi.Remark
         ,fi.InQty
         ,fi.OutQty
         ,fi.AdjustQty
