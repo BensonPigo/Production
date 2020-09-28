@@ -433,6 +433,7 @@ WHERE   StockType='{0}'
             .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 6
             .Numeric("stockqty", header: "Receiving Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 7
             .Text("Location", header: "Bulk Location", settings: ts2, iseditingreadonly: false) // 8
+            .EditText("Remark", header: "Remark", width: Widths.AnsiChars(10))
             ;
 
             cbb_Roll.MaxLength = 8;
@@ -891,6 +892,7 @@ select  a.id
         , a.StockType
         , a.Location
         , a.ukey 
+        , a.Remark
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 Where a.id = '{0}' ", masterID);
 
@@ -935,6 +937,12 @@ Where a.id = '{0}' ", masterID);
             P08_Import form = new P08_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             form.ShowDialog(this);
             this.RenewData();
+        }
+
+        private void BtnPrintFabricSitcker_Click(object sender, EventArgs e)
+        {
+            var frm = new P08_PrintFabircSticker(this.CurrentMaintain["ID"].ToString());
+            frm.ShowDialog(this);
         }
     }
 }
