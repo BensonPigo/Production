@@ -53,7 +53,7 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
-            // gridAccumulatedQty
+            // grid
             // 
             this.grid.AllowUserToAddRows = false;
             this.grid.AllowUserToDeleteRows = false;
@@ -67,7 +67,7 @@
             this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid.Location = new System.Drawing.Point(0, 0);
-            this.grid.Name = "gridAccumulatedQty";
+            this.grid.Name = "grid";
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
@@ -98,6 +98,7 @@
             // 
             // btnPrint
             // 
+            this.btnPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPrint.Location = new System.Drawing.Point(615, 12);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(80, 30);
@@ -113,7 +114,7 @@
             this.Controls.Add(this.panel2);
             this.Name = "P08_PrintFabircSticker";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
-            this.Text = "P08. Accumulated Qty";
+            this.Text = "P08. Print Fabric Sticker";
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             this.panel1.ResumeLayout(false);

@@ -6,13 +6,13 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>2.01052cm</Width>
+              <Width>2.03698cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.85401cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.16927cm</Width>
+              <Width>1.98406cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.85719cm</Width>
@@ -130,7 +130,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -159,7 +159,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!SP.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -188,7 +190,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.70583cm</Height>
+              <Height>0.9175cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -206,7 +208,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -235,7 +237,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Ref.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -268,11 +272,13 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Color</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -301,7 +307,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Color.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -327,7 +335,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.66096cm</Height>
+              <Height>0.84617cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -345,7 +353,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -374,7 +382,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Qty.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -413,7 +423,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -442,7 +452,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Roll.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -468,7 +480,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.883cm</Height>
+              <Height>1.03321cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -486,7 +498,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -550,11 +562,13 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Dyelot</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -583,7 +597,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Dyelot.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -609,7 +625,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.75926cm</Height>
+              <Height>1.02384cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -627,7 +643,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -656,7 +672,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!CutWidth.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -689,11 +707,13 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Cut Type</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -723,7 +743,7 @@
                             <TextRun>
                               <Value>=Fields!CutType.Value</Value>
                               <Style>
-                                <FontSize>8pt</FontSize>
+                                <FontSize>9pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -750,7 +770,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.6cm</Height>
+              <Height>0.93592cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -768,7 +788,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -797,7 +817,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!ExpSlice.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -830,11 +852,13 @@
                           <TextRuns>
                             <TextRun>
                               <Value>ACT.SLICE#</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -863,7 +887,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!ActSlice.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1044,10 +1070,9 @@
         </TablixRowHierarchy>
         <KeepTogether>true</KeepTogether>
         <DataSetName>DataSet1</DataSetName>
-        <Top>0.30946cm</Top>
-        <Left>0.26458cm</Left>
-        <Height>4.69334cm</Height>
-        <Width>9.89099cm</Width>
+        <Left>0.60854cm</Left>
+        <Height>5.84093cm</Height>
+        <Width>9.73224cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1058,13 +1083,13 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>2.01052cm</Width>
+              <Width>2.03698cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.85401cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.16927cm</Width>
+              <Width>1.98406cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.85719cm</Width>
@@ -1115,7 +1140,6 @@
                       </Style>
                     </Textbox>
                     <ColSpan>3</ColSpan>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell />
@@ -1183,7 +1207,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -1212,7 +1236,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!SP.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1241,7 +1267,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.70583cm</Height>
+              <Height>0.9175cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1259,7 +1285,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -1288,7 +1314,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Ref.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1321,11 +1349,13 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Color</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -1354,7 +1384,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Color.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1380,7 +1412,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.66096cm</Height>
+              <Height>0.84617cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1398,7 +1430,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -1427,7 +1459,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Qty.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1466,7 +1500,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -1495,7 +1529,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Roll.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1521,7 +1557,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.883cm</Height>
+              <Height>1.03321cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1539,7 +1575,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -1603,11 +1639,13 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Dyelot</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -1636,7 +1674,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Dyelot.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1662,7 +1702,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.75926cm</Height>
+              <Height>1.02384cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1680,7 +1720,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -1709,7 +1749,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!CutWidth.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1742,11 +1784,13 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Cut Type</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -1776,7 +1820,7 @@
                             <TextRun>
                               <Value>=Fields!CutType.Value</Value>
                               <Style>
-                                <FontSize>8pt</FontSize>
+                                <FontSize>9pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -1803,7 +1847,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.6cm</Height>
+              <Height>0.93592cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1821,7 +1865,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -1850,7 +1894,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!ExpSlice.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1883,11 +1929,13 @@
                           <TextRuns>
                             <TextRun>
                               <Value>ACT.SLICE#</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -1916,7 +1964,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!ActSlice.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -2061,7 +2111,7 @@
                     <FilterExpression>=Fields!Idx.Value Mod 2</FilterExpression>
                     <Operator>Equal</Operator>
                     <FilterValues>
-                      <FilterValue DataType="Integer">0</FilterValue>
+                      <FilterValue DataType="Integer">1</FilterValue>
                     </FilterValues>
                   </Filter>
                 </Filters>
@@ -2097,10 +2147,9 @@
         </TablixRowHierarchy>
         <KeepTogether>true</KeepTogether>
         <DataSetName>DataSet1</DataSetName>
-        <Top>0.30946cm</Top>
-        <Left>10.79325cm</Left>
-        <Height>4.69334cm</Height>
-        <Width>9.89099cm</Width>
+        <Left>10.71388cm</Left>
+        <Height>5.84093cm</Height>
+        <Width>9.73224cm</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>

@@ -45,7 +45,7 @@
             this.labelRemark = new Sci.Win.UI.Label();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.btnImport = new Sci.Win.UI.Button();
-            this.btnPrintFabricSitcker = new Sci.Win.UI.Button();
+            this.btnPrintFabricSticker = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -62,7 +62,7 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.btnPrintFabricSitcker);
+            this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.labelRemark);
@@ -97,7 +97,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSitcker, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
             // 
             // detailpanel
             // 
@@ -333,15 +333,15 @@
             // 
             // btnPrintFabricSitcker
             // 
-            this.btnPrintFabricSitcker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnPrintFabricSitcker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPrintFabricSitcker.Location = new System.Drawing.Point(758, 116);
-            this.btnPrintFabricSitcker.Name = "btnPrintFabricSitcker";
-            this.btnPrintFabricSitcker.Size = new System.Drawing.Size(145, 31);
-            this.btnPrintFabricSitcker.TabIndex = 61;
-            this.btnPrintFabricSitcker.Text = "Print Fabric Sitcker";
-            this.btnPrintFabricSitcker.UseVisualStyleBackColor = true;
-            this.btnPrintFabricSitcker.Click += new System.EventHandler(this.BtnPrintFabricSitcker_Click);
+            this.btnPrintFabricSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnPrintFabricSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnPrintFabricSticker.Location = new System.Drawing.Point(758, 116);
+            this.btnPrintFabricSticker.Name = "btnPrintFabricSitcker";
+            this.btnPrintFabricSticker.Size = new System.Drawing.Size(145, 31);
+            this.btnPrintFabricSticker.TabIndex = 61;
+            this.btnPrintFabricSticker.Text = "Print Fabric Sticker";
+            this.btnPrintFabricSticker.UseVisualStyleBackColor = true;
+            this.btnPrintFabricSticker.Click += new System.EventHandler(this.BtnPrintFabricSitcker_Click);
             // 
             // P08
             // 
@@ -405,6 +405,6 @@
         private Win.UI.EditBox editRemark;
         private Win.UI.Label labelRemark;
         private Win.UI.Button btnImport;
-        private Win.UI.Button btnPrintFabricSitcker;
+        private Win.UI.Button btnPrintFabricSticker;
     }
 }
