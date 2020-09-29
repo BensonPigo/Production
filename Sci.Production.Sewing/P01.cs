@@ -1790,35 +1790,35 @@ sd.Combotype = '{dr["ComboType"]}'
             #region 若SP為(Orders.junk=1 and Orders.NeedProduction=1)需檢查"已報產出的數量"+"此次報的數量"+"已轉出的數量"是否超過原訂單數量
             string checkOrderNeedProduction = $@"
 select
-t.OrderID,
-t.Article,
-t.SizeCode,
-t.Combotype,
-t.QAQty,
-[OrderQty] = oq.Qty,
-[OtherSewingOutputQty] = isnull(sum(isnull(sodd.QAQty, 0)), 0)  ,
-[TransOutQty] = isnull(sum(isnull(sotd.TransferQty, 0)), 0)
+    t.OrderID,
+    t.Article,
+    t.SizeCode,
+    t.Combotype,
+    t.QAQty,
+    [OrderQty] = oq.Qty,
+    [OtherSewingOutputQty] = 
+	    isnull((
+		    select sum(sodd.QAQty)
+		    from SewingOutput_detail_detail sodd with (nolock)
+		    where sodd.OrderID = t.OrderID and
+		    sodd.Article = t.Article and
+		    sodd.SizeCode = t.SizeCode and
+		    sodd.Combotype = t.Combotype and
+		    sodd.ID <> isnull(t.ID, '')), 0)  ,
+    [TransOutQty] = 
+	    isnull((
+		    select sum(sotd.TransferQty)
+		    from SewingOutputTransfer_detail sotd with (nolock)
+		    where sotd.FromOrderID = t.OrderID and
+		    sotd.Article = t.Article and
+		    sotd.SizeCode = t.SizeCode and
+		    sotd.FromComboType = t.Combotype), 0)
 into #checkResult
 from #tmp t
 inner join Order_Qty oq with (nolock) on oq.ID = t.OrderID and oq.Article = t.Article and oq.SizeCode = t.SizeCode
-left join SewingOutput_detail_detail sodd with (nolock) on   sodd.OrderID = t.OrderID and
-                                                                sodd.Article = t.Article and
-                                                                sodd.SizeCode = t.SizeCode and
-                                                                sodd.Combotype = t.Combotype and
-                                                                sodd.ID <> isnull(t.ID, '')
-left join SewingOutputTransfer_detail sotd with (nolock) on  sotd.FromOrderID = t.OrderID and
-                                                             sotd.Article = t.Article and
-                                                             sotd.SizeCode = t.SizeCode and
-                                                             sotd.FromComboType = t.Combotype
 where exists( select 1 from Orders o with (nolock) 
                         where o.ID = t.OrderID and 
                               o.junk = 1 and o.NeedProduction = 1 AND o.Category='B')
-group by    t.OrderID,
-            t.Article,
-            t.SizeCode,
-            t.Combotype,
-            t.QAQty,
-            oq.Qty
 
 select  OrderID,
         Article,
