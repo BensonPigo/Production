@@ -2232,7 +2232,7 @@
             <param name="offsetRows">指定要跳過幾列</param>
             <returns></returns>
         </member>
-        <member name="M:Sci.Utility.Report.ExcelCOM.Formating(System.Data.DataTable,System.Int32,System.Int32)">
+        <member name="M:Sci.Utility.Report.ExcelCOM.Formating(System.Data.DataTable,System.Int32,System.Int32,Sci.Win.StandardReport)">
             <summary>
             依 DataTable 的 DataColumn 型別指定儲存格格式 , string 則指定為文字 , DataTime則指定為 yyyy/MM/dd ; 
             </summary>
@@ -2240,7 +2240,7 @@
             <param name="firstRow">啟始列</param>
             <param name="firstCol">啟始欄</param>
         </member>
-        <member name="M:Sci.Utility.Report.ExcelCOM.WriteHeader(System.Data.DataTable,System.Int32,System.Int32)">
+        <member name="M:Sci.Utility.Report.ExcelCOM.WriteHeader(System.Data.DataTable,System.Int32,System.Int32,Sci.Win.StandardReport)">
             <summary>
             將 DataTable 的 DataColumns 作為標題列 印在 Sheet 上
             </summary>
@@ -2258,6 +2258,14 @@
             <param name="firstCol"></param>
             <param name="needHeader">是否要用DataTable的Colmns name來加印標題列</param>
             <returns>代表貼上data 內容的動作是否成功</returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.WriteTable(System.Data.DataTable,Sci.Win.StandardReport)">
+            <summary>
+            for custimized Report
+            </summary>
+            <param name="data">data</param>
+            <param name="detail">detail</param>
+            <returns>DualResult</returns>
         </member>
         <member name="M:Sci.Utility.Report.ExcelCOM.WriteQuery(System.String,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.Int32,System.Int32,System.Int32,System.Data.SqlClient.SqlConnection)">
             <summary>
@@ -3967,6 +3975,16 @@
             <param name="version">version</param>
             <returns>StandardReport</returns>
         </member>
+        <member name="M:Sci.Win.PrivReportUtils.CreateCustomizedExcelByDataTable(System.Data.DataTable,Sci.Win.StandardReport,System.Boolean,Microsoft.Office.Interop.Excel.Application@)">
+            <summary>
+            DataTable To Excel
+            </summary>
+            <param name="customizedTable">CustomizedTable</param>
+            <param name="source">source</param>
+            <param name="checkUseCustomized">checkUseCustomized</param>
+            <param name="excelAPP">excelAPP</param>
+            <returns>excel</returns>
+        </member>
         <member name="T:Sci.Win.IGridDefinition">
             <summary>
             Interface of Grid property definitions.
@@ -4253,9 +4271,9 @@
             <param name="dir">Path dir of Clip.</param>
             <returns>result of the method is executed.</returns>
         </member>
-        <member name="M:Sci.Win.PrivUtils.DeleteClip(Sci.Win.SYS.CLIPRow)">
+        <member name="M:Sci.Win.PrivUtils.DeleteClipRow(Sci.Win.SYS.CLIPRow)">
             <summary>
-            Delete Clip file.
+            Delete Clip Row
             </summary>
             <param name="data">DataRow of Clip information.</param>
             <returns>result of the method is executed.</returns>
@@ -4357,6 +4375,14 @@
             <param name="ukey">ukey</param>
             <returns>Result of process.</returns>
         </member>
+        <member name="M:Sci.Win.PrivUtils.GetManeger(System.String,System.Collections.Generic.IList{System.String}@)">
+            <summary>
+            取得自己與主管ID
+            </summary>
+            <param name="userID">查詢人員</param>
+            <param name="managerList">結果清單</param>
+            <returns>DualResult</returns>
+        </member>
         <member name="M:Sci.Win.PrivUtils.GetGridColumns(System.String,System.Nullable{System.Int64},System.Collections.Generic.IList{Sci.Win.IGridColumn}@)">
             <summary>
             Get grid column definition from database.
@@ -4375,6 +4401,11 @@
         <member name="M:Sci.Win.PrivUtils.OpenOnLineHelp(System.String)">
             <summary>
             打開 Help.http:\\misap:8063?onlinehelpID='{OnLineHelpID}'
+            </summary>
+        </member>
+        <member name="T:Sci.Win.CloneHelper">
+            <summary>
+            將Grid複製到另一個Grid，連同事件一同複製
             </summary>
         </member>
         <member name="T:Sci.Win.QueryBuilderOperator">
@@ -12432,11 +12463,6 @@
             
             </summary>
         </member>
-        <member name="P:Sci.Win.Tools.Clip.ClipRootDir">
-            <summary>
-            should be Sci.Env.Cfg.ClipPath
-            </summary>
-        </member>
         <member name="M:Sci.Win.Tools.Clip.GetClipDirYYYYMM(Sci.Win.SYS.CLIPRow,System.String@,System.String)">
             <summary>
             
@@ -12647,7 +12673,7 @@
         </member>
         <member name="M:Sci.Win.Tools.Clip.DeleteClip(System.String,System.String)">
             <summary>
-            隨單號 + tableName刪除其所有的副擋
+            input 1 隨單號 + tableName刪除其所有的副擋
             </summary>
             <param name="tableName">tableName</param>
             <param name="uniqueID">單號</param>
@@ -12734,7 +12760,7 @@
         <member name="M:Sci.Win.Tools.Clip01.#ctor">
             <inheritdoc />
         </member>
-        <member name="M:Sci.Win.Tools.Clip01.#ctor(System.String,System.String,System.String)">
+        <member name="M:Sci.Win.Tools.Clip01.#ctor(System.String,System.String,System.String,System.String)">
             <inheritdoc />
         </member>
         <member name="M:Sci.Win.Tools.Clip01.OnFormLoaded">
@@ -12822,7 +12848,7 @@
             CustomizeView
             </summary>
         </member>
-        <member name="M:Sci.Win.Tools.CustomizeView.#ctor(System.Collections.Generic.IList{Sci.Win.StandardReport})">
+        <member name="M:Sci.Win.Tools.CustomizeView.#ctor(System.Collections.Generic.IList{Sci.Win.StandardReport},System.Boolean)">
             <summary>
             CustomizeView
             </summary>
@@ -14947,7 +14973,7 @@
             </summary>
             <param name="columnsWidth"></param>
         </member>
-        <member name="M:Sci.Win.Tools.BaseSelectItem.SetFilterColumns(System.String,System.String)">
+        <member name="M:Sci.Win.Tools.BaseSelectItem.SetFilterColumns(System.String,System.String,Sci.Win.UI.Label,System.Windows.Forms.ComboBox)">
             <summary>
             set filter columns
             </summary>
