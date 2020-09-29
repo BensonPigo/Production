@@ -11,9 +11,15 @@ BEGIN
 	SET NOCOUNT ON;
 
     declare @poapprovename varchar(10),
-		@poapproveday tinyint
+		@poapproveday tinyint,
+		@MiscPOApproveName varchar(10),
+		@MiscPOApproveDay tinyint
 
-	select @poapprovename = POApproveName,@poapproveday = POApproveDay from System
+	select	@poapprovename = POApproveName,
+			@poapproveday = POApproveDay ,
+			@MiscPOApproveName = MiscPOApproveName,
+			@MiscPOApproveDay = MiscPOApproveDay 
+			from System
 
 	IF @poapprovename  != ''
 	BEGIN 
@@ -22,10 +28,14 @@ BEGIN
 
 		update ArtworkPO set LockName = @poapprovename, LockDate = GETDATE(),ApvName = @poapprovename, ApvDate = GETDATE(), Status = 'Approved'
 		where ApvDate is null and IssueDate <= DATEADD(DAY,0-@poapproveday,GETDATE()) and Status in ('NEW','Locked')
-
-		update SciMachine_MiscPO set LockName = @poapprovename, LockDate = GETDATE(),Approve = @poapprovename, ApproveDate = GETDATE(), Status = 'Approved'
-		where ApproveDate is null and CDate <= DATEADD(DAY,0-@poapproveday,GETDATE()) and PurchaseFrom = 'L' and Status in ('NEW','Locked')
+		
 	END
+
+	if @MiscPOApproveName != ''
+	begin
+		update SciMachine_MiscPO set LockName = @MiscPOApproveName, LockDate = GETDATE(),Approve = @MiscPOApproveName, ApproveDate = GETDATE(), Status = 'Approved'
+			where ApproveDate is null and CDate <= DATEADD(DAY,0-@MiscPOApproveDay,GETDATE()) and PurchaseFrom = 'L' and Status in ('NEW','Locked')
+	end
 
 END
 
