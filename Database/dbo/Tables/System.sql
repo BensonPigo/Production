@@ -56,8 +56,8 @@
     [AutomationAutoRunTime]      TINYINT        CONSTRAINT [DF_System_AutomationAutoRunTime] DEFAULT ((0)) NOT NULL,
     [CanReviseDailyLockData]     BIT            DEFAULT ((0)) NOT NULL,
     [AutoGenerateByTone]         BIT            CONSTRAINT [DF_System_AutoGenerateByTone] DEFAULT ((0)) NOT NULL,
-    [MiscPOApproveName] VARCHAR(10) CONSTRAINT [DF_System_MiscPOApproveName] DEFAULT ('') NOT NULL, 
-    [MiscPOApproveDay] TINYINT CONSTRAINT [DF_System_MiscPOApproveDay] DEFAULT ((0)) NOT NULL, 
+    [MiscPOApproveName] VARCHAR(10) CONSTRAINT [DF_System_MiscPOApproveName] DEFAULT ('') NULL, 
+    [MiscPOApproveDay] TINYINT CONSTRAINT [DF_System_MiscPOApproveDay] DEFAULT ((0)) NULL, 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
