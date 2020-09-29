@@ -56,28 +56,18 @@
     [AutomationAutoRunTime]      TINYINT        CONSTRAINT [DF_System_AutomationAutoRunTime] DEFAULT ((0)) NOT NULL,
     [CanReviseDailyLockData]     BIT            DEFAULT ((0)) NOT NULL,
     [AutoGenerateByTone]         BIT            CONSTRAINT [DF_System_AutoGenerateByTone] DEFAULT ((0)) NOT NULL,
+    [MiscPOApproveName] VARCHAR(10) CONSTRAINT [DF_System_MiscPOApproveName] DEFAULT ('') NULL, 
+    [MiscPOApproveDay] TINYINT CONSTRAINT [DF_System_MiscPOApproveDay] DEFAULT ((0)) NULL, 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Misc Local Purchase Approve Name', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'MiscPOApproveName';
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Misc Local Purchase 自動Approve的天數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'MiscPOApproveDay';
 
 
 GO
