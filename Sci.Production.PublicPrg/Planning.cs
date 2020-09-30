@@ -283,7 +283,6 @@ outer apply (
 	) QtyBySubprocess
 	group by bunD.Patterncode,bunD.PatternDesc
 ) CutpartCount
-WHERE Patterncode IS NOT NULL
 
 ----整理出標準：根據EachCons需要有哪些PatternPanel+FabricPanelCode組合，以及這些組合底下共有幾個部位(Patterncode)
 ----總共要檢查：1. Bundle的PatternPanel+FabricPanelCode組合，是否跟EachCons的一樣
@@ -326,7 +325,7 @@ select
 	, sub.InOutRule
 	, sub.IsRFIDDefault
 	, IsLackPatternPanel = IsLackPatternPanel.Ctn
-	, StdCtn = Std.Ctn
+	, StdCtn = isnull(Std.Ctn,0)
 into #QtyBySetPerCutpart2{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st0
 inner join SubProcess sub WITH (NOLOCK) on sub.ID = '{subprocessIDtmp}'
@@ -395,7 +394,7 @@ OUTER APPLY(  --取得這個bundle no的指定加工段
     FROM Bundle_Detail_Art bda 
     WHERE bda.BundleNo = bunD.BundleNo and bda.SubProcessId = st0.SubprocessId
 )BundleArt
-where (st0.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0) AND bunD.BundleGroup IS NOT NULL
+where (st0.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
  {(subprocessIDtmp != "Sorting" && subprocessIDtmp != "Loading" && subprocessIDtmp != "SewingLine" ? $"and BundleArt.SubprocessId='{subprocessIDtmp}'" : string.Empty)}
 
 select
@@ -443,17 +442,17 @@ select	Orderid
 		, PatternPanel
 		, FabricPanelCode
 		, PatternCode
-		, InQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
+		, InQty = FLOOR(sum( Case when PostSewingSubProcess_SL = 1 Then Qty
 							when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then Qty--不判斷InComing,直接計算數量
 					   else iif(I_Judge.v = 1, Qty, 0)
 					   End
-					 ) / IsPair.M
+					 ) / IsPair.M)
 
-		, OutQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
+		, OutQty = FLOOR(sum( Case when PostSewingSubProcess_SL = 1 Then Qty
 							 when NoBundleCardAfterSubprocess=1 and InOutRule = 3 Then Qty--不判斷OutGoing,直接計算數量
 						else iif(O_Judge.v = 1, Qty, 0)
 						End 
-					  ) / IsPair.M
+					  ) / IsPair.M)
 
 		, OriInQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
 							   when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then Qty--不判斷InComing,直接計算數量
@@ -467,7 +466,7 @@ select	Orderid
 						   End 
 					  ) --原始裁片數總和
 
-		, FinishedQty = sum(case when PostSewingSubProcess_SL = 1 Then Qty
+		, FinishedQty = FLOOR(sum(case when PostSewingSubProcess_SL = 1 Then Qty
 								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 1 Then Qty-- 不判斷InComing
 								 when InOutRule = 1 then iif(I_Judge.v = 1,Qty,0)
 								 when InOutRule = 2 then iif(O_Judge.v = 1,Qty,0)
@@ -475,7 +474,7 @@ select	Orderid
 								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 4 Then iif(O_Judge.v = 1,Qty,0)-- 忽略InComing, 只判斷OutGoing
 								 else iif(O_Judge.v = 1 and I_Judge.v = 1 ,Qty,0)
 							end) 
-						/ IsPair.M
+						/ IsPair.M)
         , InStartDate,InEndDate,OutStartDate,OutEndDate
 into #BundleInOutQty{subprocessIDtmp}
 from #BundleInOutDetail{subprocessIDtmp} bt
