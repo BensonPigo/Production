@@ -134,12 +134,14 @@ namespace Sci.Production.Warehouse
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15))
                  .Text("LastRemark", header: "Last P26 Remark data", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .DateTime("LastEditDate", header: "Last Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .Numeric("rid", header: "rid", width: Widths.AnsiChars(8), decimal_places: 0, iseditingreadonly: true)
                  ;
 
             this.gridReceiving.Columns["Location"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["ActualWeight"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["CutShadebandTime"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridReceiving.Columns["rid"].Visible = false;
         }
 
         private void DifferentialColorChange(int rowIndex)
@@ -275,148 +277,152 @@ Name
 into #tmpStockType
 from DropDownList WITH (NOLOCK) where Type = 'Pms_StockType'
 
-select
-[select] = 0,
-r.ExportID,
-rd.Id,
-rd.PoId,
-[Seq] = rd.Seq1 + ' ' + rd.Seq2,
-rd.Roll,
-rd.Dyelot,
-[Description] = dbo.getmtldesc(rd.POID, rd.Seq1, rd.Seq2, 2, 0),
-[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' , psd.SuppColor, psd.ColorID),
-rd.StockQty,
-[StockTypeDesc] = st.Name,
-rd.StockType,
---rd.Location,
---[OldLocation] = rd.Location,
-[Location]=Location.MtlLocationID ,
-[OldLocation] = Location.MtlLocationID ,
-rd.Weight,
-rd.ActualWeight,
-[OldActualWeight] = rd.ActualWeight,
-[Differential] = rd.ActualWeight - rd.Weight,
-[FtyInventoryUkey] = fi.Ukey,
-[FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty,
-rd.Seq1,
-rd.Seq2
-,[Remark]=''
-,[LastRemark] = LastEditDate.Remark
-,[LastEditDate]=LastEditDate.EditDate
-,[ReceivingSource]='Receiving'
-,[CutShadebandTime]=cutTime.CutTime
-,[OldCutShadebandTime]=cutTime.CutTime
-from  Receiving r with (nolock)
-inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
-inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
-inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
-inner join Ftyinventory  fi with (nolock) on    rd.POID = fi.POID and
-                                                rd.Seq1 = fi.Seq1 and
-                                                rd.Seq2 = fi.Seq2 and
-                                                rd.Roll = fi.Roll and
-                                                rd.Dyelot  = fi.Dyelot and
-                                                rd.StockType = fi.StockType
-left join #tmpStockType st with (nolock) on st.ID = rd.StockType
-OUTER APPLY(
-	SELECT top 1 lt.EditDate, lt.Remark
-	FROM LocationTrans lt
-	INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
-	WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
-    order by lt.EditDate desc
-)LastEditDate
-OUTER APPLY(
+select r.*
+    , [rid] = cast(ROW_NUMBER() over(order by ExportID, id, PoId) as int)
+from
+(
+    select
+        [select] = 0
+        ,r.ExportID
+        ,rd.Id
+        ,rd.PoId
+        ,[Seq] = rd.Seq1 + ' ' + rd.Seq2
+        ,rd.Roll
+        ,rd.Dyelot
+        ,[Description] = dbo.getmtldesc(rd.POID, rd.Seq1, rd.Seq2, 2, 0)
+        ,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' , psd.SuppColor, psd.ColorID)
+        ,rd.StockQty
+        ,[StockTypeDesc] = st.Name
+        ,rd.StockType
+        --,rd.Location
+        --,[OldLocation] = rd.Location
+        ,[Location]=Location.MtlLocationID
+        ,[OldLocation] = Location.MtlLocationID
+        ,rd.Weight
+        ,rd.ActualWeight
+        ,[OldActualWeight] = rd.ActualWeight
+        ,[Differential] = rd.ActualWeight - rd.Weight
+        ,[FtyInventoryUkey] = fi.Ukey
+        ,[FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty
+        ,rd.Seq1
+        ,rd.Seq2
+        ,psd.refno
+        ,[Remark]=''
+        ,[LastRemark] = LastEditDate.Remark
+        ,[LastEditDate]=LastEditDate.EditDate
+        ,[ReceivingSource]='Receiving'
+        ,[CutShadebandTime]=cutTime.CutTime
+        ,[OldCutShadebandTime]=cutTime.CutTime
+    from  Receiving r with (nolock)
+    inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
+    inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+    inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
+    inner join Ftyinventory  fi with (nolock) on    rd.POID = fi.POID and
+                                                    rd.Seq1 = fi.Seq1 and
+                                                    rd.Seq2 = fi.Seq2 and
+                                                    rd.Roll = fi.Roll and
+                                                    rd.Dyelot  = fi.Dyelot and
+                                                    rd.StockType = fi.StockType
+    left join #tmpStockType st with (nolock) on st.ID = rd.StockType
+    OUTER APPLY(
+	    SELECT top 1 lt.EditDate, lt.Remark
+	    FROM LocationTrans lt
+	    INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
+	    WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
+        order by lt.EditDate desc
+    )LastEditDate
+    OUTER APPLY(
 
-	SELECT [MtlLocationID] = STUFF(
-			(
-			SELECT DISTINCT IIF(fid.MtlLocationID IS NULL OR fid.MtlLocationID = '' ,'' , ','+fid.MtlLocationID)
-			FROM FtyInventory_Detail fid
-			WHERE fid.Ukey = fi.Ukey
-			FOR XML PATH('') )
-			, 1, 1, '')
-)Location
-OUTER APPLY(
-	SELECT  fs.CutTime
-	FROM FIR f
-	INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
-	WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
-)cutTime
+	    SELECT [MtlLocationID] = STUFF(
+			    (
+			    SELECT DISTINCT IIF(fid.MtlLocationID IS NULL OR fid.MtlLocationID = '' ,'' , ','+fid.MtlLocationID)
+			    FROM FtyInventory_Detail fid
+			    WHERE fid.Ukey = fi.Ukey
+			    FOR XML PATH('') )
+			    , 1, 1, '')
+    )Location
+    OUTER APPLY(
+	    SELECT  fs.CutTime
+	    FROM FIR f
+	    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
+	    WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
+    )cutTime
 
-where r.MDivisionID  = '{Env.User.Keyword}'
-AND psd.FabricType ='F'
-{sqlWhere}
+    where r.MDivisionID  = '{Env.User.Keyword}'
+    AND psd.FabricType ='F'
+    {sqlWhere}
 
-UNION 
+    UNION 
 
-SELECT 
-[select] = 0
-,ExportID=''
-,ID=t.ID
-,td.PoId
-,[Seq] = td.Seq1 + ' ' + td.Seq2
-,td.Roll
-,td.Dyelot
-,[Description] = dbo.getmtldesc(td.POID, td.Seq1, td.Seq2, 2, 0)
-,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' , psd.SuppColor, psd.ColorID)
-,[StockQty]=td.Qty
-,[StockTypeDesc] = st.Name
-,td.StockType
-,[Location]=Location.MtlLocationID 
-,[OldLocation] = Location.MtlLocationID 
-,[Weight]=td.Weight
-,ActualWeight=td.ActualWeight
-,[OldActualWeight] = td.ActualWeight
-,[Differential] = td.ActualWeight - td.Weight,
-[FtyInventoryUkey] = fi.Ukey,
-[FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty,
-td.Seq1,
-td.Seq2
-,[Remark]=''
-,[LastRemark] = LastEditDate.Remark
-,[LastEditDate]=LastEditDate.EditDate
-,[ReceivingSource]='TransferIn'
-,[CutShadebandTime]=cutTime.CutTime
-,[OldCutShadebandTime]=cutTime.CutTime
-FROM TransferIn t with (nolock)
-INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
-INNER JOIN PO_Supp_Detail psd with (nolock) on td.PoId = psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
-INNER JOIN Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
-INNER JOIN Ftyinventory  fi with (nolock) on    td.POID = fi.POID and
-                                                td.Seq1 = fi.Seq1 and
-                                                td.Seq2 = fi.Seq2 and
-                                                td.Roll = fi.Roll and
-                                                td.Dyelot  = fi.Dyelot and
-                                                td.StockType = fi.StockType
-INNER JOIN #tmpStockType st with (nolock) on st.ID = td.StockType
-OUTER APPLY(
+    SELECT 
+        [select] = 0
+        ,ExportID=''
+        ,ID=t.ID
+        ,td.PoId
+        ,[Seq] = td.Seq1 + ' ' + td.Seq2
+        ,td.Roll
+        ,td.Dyelot
+        ,[Description] = dbo.getmtldesc(td.POID, td.Seq1, td.Seq2, 2, 0)
+        ,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' , psd.SuppColor, psd.ColorID)
+        ,[StockQty]=td.Qty
+        ,[StockTypeDesc] = st.Name
+        ,td.StockType
+        ,[Location]=Location.MtlLocationID 
+        ,[OldLocation] = Location.MtlLocationID 
+        ,[Weight]=td.Weight
+        ,ActualWeight=td.ActualWeight
+        ,[OldActualWeight] = td.ActualWeight
+        ,[Differential] = td.ActualWeight - td.Weight
+        ,[FtyInventoryUkey] = fi.Ukey
+        ,[FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty
+        ,td.Seq1
+        ,td.Seq2
+        ,psd.refno
+        ,[Remark]=''
+        ,[LastRemark] = LastEditDate.Remark
+        ,[LastEditDate]=LastEditDate.EditDate
+        ,[ReceivingSource]='TransferIn'
+        ,[CutShadebandTime]=cutTime.CutTime
+        ,[OldCutShadebandTime]=cutTime.CutTime
+    FROM TransferIn t with (nolock)
+    INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
+    INNER JOIN PO_Supp_Detail psd with (nolock) on td.PoId = psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
+    INNER JOIN Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
+    INNER JOIN Ftyinventory  fi with (nolock) on    td.POID = fi.POID and
+                                                    td.Seq1 = fi.Seq1 and
+                                                    td.Seq2 = fi.Seq2 and
+                                                    td.Roll = fi.Roll and
+                                                    td.Dyelot  = fi.Dyelot and
+                                                    td.StockType = fi.StockType
+    INNER JOIN #tmpStockType st with (nolock) on st.ID = td.StockType
+    OUTER APPLY(
 
-	SELECT [MtlLocationID] = STUFF(
-			(
-			SELECT DISTINCT IIF(fid.MtlLocationID IS NULL OR fid.MtlLocationID = '' ,'' , ','+fid.MtlLocationID)
-			FROM FtyInventory_Detail fid
-			WHERE fid.Ukey = fi.Ukey
-			FOR XML PATH('') )
-			, 1, 1, '')
-)Location
-OUTER APPLY(
-	SELECT top 1 lt.EditDate, lt.Remark
-	FROM LocationTrans lt
-	INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
-	WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
-    order by lt.EditDate desc
-)LastEditDate
-OUTER APPLY(
-	SELECT  fs.CutTime
-	FROM FIR f
-	INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
-	WHERE  t.id = f.ReceivingID and td.PoId = F.POID and td.Seq1 = F.SEQ1 and td.Seq2 = F.SEQ2 AND td.Roll = fs.Roll and td.Dyelot = fs.Dyelot
-)cutTime
-
-
-
-WHERE t.Status='Confirmed' 
-AND t.MDivisionID  = '{Env.User.Keyword}'
-AND psd.FabricType ='F'
-{sqlWhere2}
+	    SELECT [MtlLocationID] = STUFF(
+			    (
+			    SELECT DISTINCT IIF(fid.MtlLocationID IS NULL OR fid.MtlLocationID = '' ,'' , ','+fid.MtlLocationID)
+			    FROM FtyInventory_Detail fid
+			    WHERE fid.Ukey = fi.Ukey
+			    FOR XML PATH('') )
+			    , 1, 1, '')
+    )Location
+    OUTER APPLY(
+	    SELECT top 1 lt.EditDate, lt.Remark
+	    FROM LocationTrans lt
+	    INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
+	    WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
+        order by lt.EditDate desc
+    )LastEditDate
+    OUTER APPLY(
+	    SELECT  fs.CutTime
+	    FROM FIR f
+	    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
+	    WHERE  t.id = f.ReceivingID and td.PoId = F.POID and td.Seq1 = F.SEQ1 and td.Seq2 = F.SEQ2 AND td.Roll = fs.Roll and td.Dyelot = fs.Dyelot
+    )cutTime
+    WHERE t.Status='Confirmed' 
+    AND t.MDivisionID  = '{Env.User.Keyword}'
+    AND psd.FabricType ='F'
+    {sqlWhere2}
+)r
 
 DROP TABLE #tmpStockType
 ";
@@ -827,6 +833,80 @@ WHERE  f.ReceivingID='{updateItem["ID"]}'
                 {
                     item["CutShadebandTime"] = dateTime;
                 }
+            }
+        }
+
+        private void BtnFind_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.gridReceiving.DataSource))
+            {
+                return;
+            }
+
+            if (this.txtLocateSP.Text.Empty() &&
+                this.txtLocateSeq.Seq1.Empty() &&
+                this.txtLocateSeq.Seq2.Empty() &&
+                this.txtLocateRef.Text.Empty() &&
+                this.txtLocateColor.Text.Empty() &&
+                this.txtLocateRoll.Text.Empty() &&
+                this.txtLocateDyelot.Text.Empty())
+            {
+                return;
+            }
+
+            DataTable dt = (DataTable)this.gridReceiving.DataSource;
+            List<DataRow> drs = dt.AsEnumerable().ToList();
+            if (!this.txtLocateSP.Text.Empty() && drs.Any())
+            {
+                drs = drs.Where(x => x.Field<string>("poid").EqualString(this.txtLocateSP.Text.ToString())).ToList();
+            }
+
+            if (!this.txtLocateSeq.Seq1.Empty() && drs.Any())
+            {
+                drs = drs.Where(x => x.Field<string>("Seq1").EqualString(this.txtLocateSeq.Seq1.ToString())).ToList();
+            }
+
+            if (!this.txtLocateSeq.Seq2.Empty() && drs.Any())
+            {
+                drs = drs.Where(x => x.Field<string>("Seq2").EqualString(this.txtLocateSeq.Seq2.ToString())).ToList();
+            }
+
+            if (!this.txtLocateRef.Text.Empty() && drs.Any())
+            {
+                drs = drs.Where(x => x.Field<string>("refno").EqualString(this.txtLocateRef.Text.ToString())).ToList();
+            }
+
+            if (!this.txtLocateColor.Text.Empty() && drs.Any())
+            {
+                drs = drs.Where(x => x.Field<string>("Color").EqualString(this.txtLocateColor.Text.ToString())).ToList();
+            }
+
+            if (!this.txtLocateRoll.Text.Empty() && drs.Any())
+            {
+                drs = drs.Where(x => x.Field<string>("Roll").EqualString(this.txtLocateRoll.Text.ToString())).ToList();
+            }
+
+            if (!this.txtLocateDyelot.Text.Empty() && drs.Any())
+            {
+                drs = drs.Where(x => x.Field<string>("Dyelot").EqualString(this.txtLocateDyelot.Text.ToString())).ToList();
+            }
+
+            if (drs.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data was not found!!");
+                return;
+            }
+
+            int index = drs.Select(x => x.Field<int>("rid")).FirstOrDefault();
+            DataGridViewRow row = this.gridReceiving.Rows.Cast<DataGridViewRow>().Where(r => r.Cells["rid"].Value.ToString().Equals(index.ToString())).FirstOrDefault();
+
+            if (index <= 0 || row == null)
+            {
+                MyUtility.Msg.WarningBox("Data was not found!!");
+            }
+            else
+            {
+                this.gridReceiving.CurrentCell = this.gridReceiving.Rows[row.Index].Cells["POID"];
             }
         }
     }
