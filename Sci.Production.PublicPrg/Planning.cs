@@ -283,7 +283,6 @@ outer apply (
 	) QtyBySubprocess
 	group by bunD.Patterncode,bunD.PatternDesc
 ) CutpartCount
-WHERE Patterncode IS NOT NULL
 
 ----整理出標準：根據EachCons需要有哪些PatternPanel+FabricPanelCode組合，以及這些組合底下共有幾個部位(Patterncode)
 ----總共要檢查：1. Bundle的PatternPanel+FabricPanelCode組合，是否跟EachCons的一樣
@@ -326,7 +325,7 @@ select
 	, sub.InOutRule
 	, sub.IsRFIDDefault
 	, IsLackPatternPanel = IsLackPatternPanel.Ctn
-	, StdCtn = Std.Ctn
+	, StdCtn = isnull(Std.Ctn,0)
 into #QtyBySetPerCutpart2{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st0
 inner join SubProcess sub WITH (NOLOCK) on sub.ID = '{subprocessIDtmp}'
@@ -395,7 +394,7 @@ OUTER APPLY(  --取得這個bundle no的指定加工段
     FROM Bundle_Detail_Art bda 
     WHERE bda.BundleNo = bunD.BundleNo and bda.SubProcessId = st0.SubprocessId
 )BundleArt
-where (st0.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0) AND bunD.BundleGroup IS NOT NULL
+where (st0.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
  {(subprocessIDtmp != "Sorting" && subprocessIDtmp != "Loading" && subprocessIDtmp != "SewingLine" ? $"and BundleArt.SubprocessId='{subprocessIDtmp}'" : string.Empty)}
 
 select
