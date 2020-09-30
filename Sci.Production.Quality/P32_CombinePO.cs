@@ -58,6 +58,7 @@ namespace Sci.Production.Quality
 SELECT 1 
 FROM Orders o
 WHERE o.ID=@ID 
+AND o.Finished = 0
 AND o.Category IN('B', 'S', 'G')",
                         paras);
                     if (!exists)
@@ -235,7 +236,7 @@ WHERE ID = @ID AND Seq = @Seq
 SELECT [OrderID]=o.ID ,oq.Seq
 FROM Orders o 
 INNER JOIN Order_QtyShip oq ON o.ID =oq.ID
-WHERE 
+WHERE o.Finished = 0 AND
 EXISTS
 (
 	SELECT 1

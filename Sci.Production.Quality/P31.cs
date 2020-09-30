@@ -89,23 +89,29 @@ EXISTS (
             this.txtSpSeq.TextBoxSP.ReadOnly = true;
             this.txtSpSeq.TextBoxSeq.ReadOnly = true;
 
-            this.disFinalCtn.Value = MyUtility.GetValue.Lookup($@"
-select COUNT(1)
-from CFAInspectionRecord
-where Status='Confirmed'
-AND Stage='Final'
-AND OrderID='{this.CurrentMaintain["ID"].ToString()}'
-AND Seq='{this.CurrentMaintain["Seq"].ToString()}'
-");
+            string query = $@"
+select COUNT(DISTINCT a.ID)
+from CFAInspectionRecord a
+INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
+where a.Status='Confirmed'
+AND a.Stage='Final'
+AND b.OrderID='{this.CurrentMaintain["ID"].ToString()}'
+AND b.Seq='{this.CurrentMaintain["Seq"].ToString()}'
+";
 
-            this.dis3rdPartyCtn.Value = MyUtility.GetValue.Lookup($@"
-select COUNT(1)
-from CFAInspectionRecord
-where Status='Confirmed'
-AND Stage='3rd party'
-AND OrderID='{this.CurrentMaintain["ID"].ToString()}'
-AND Seq='{this.CurrentMaintain["Seq"].ToString()}'
-");
+            this.disFinalCtn.Value = MyUtility.GetValue.Lookup(query);
+
+            query = $@"
+select COUNT(DISTINCT a.ID)
+from CFAInspectionRecord a
+INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
+where a.Status='Confirmed'
+AND a.Stage='Final'
+AND b.OrderID='{this.CurrentMaintain["ID"].ToString()}'
+AND b.Seq='{this.CurrentMaintain["Seq"].ToString()}'
+";
+
+            this.dis3rdPartyCtn.Value = MyUtility.GetValue.Lookup(query);
 
             this.disPO.Value = MyUtility.GetValue.Lookup($@"
 SELECT  CustPoNo
@@ -143,7 +149,7 @@ SELECT  dbo.getMinCompleteSewQty('{this.CurrentMaintain["ID"].ToString()}',NULL,
             this.disCFAStaggeredQty.Value = MyUtility.GetValue.Lookup($@"
 SELECT ISNULL(Sum(ISNULL(ShipQty,0)),0)
 From PackingList_Detail P
-Inner join CFAInspectionRecord CFA on P.StaggeredCFAInspectionRecordID=P.ID
+Inner join CFAInspectionRecord CFA on P.StaggeredCFAInspectionRecordID=CFA.ID
 Where CFA.Status='Confirmed' 
 and CFA.Stage='Staggered' 
 and P.OrderID='{this.CurrentMaintain["ID"].ToString()}' 
@@ -922,10 +928,11 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
                 if (!this.chkForThird.Checked)
                 {
                     string inspectionCtn = MyUtility.GetValue.Lookup($@"
-SELECT COUNT(ID)
-FROM CFAInspectionRecord
-WHERE ID = '{this.CurrentMaintain["ID"].ToString()}' 
-AND Seq = '{this.CurrentMaintain["Seq"].ToString()}'
+SELECT COUNT(DISTINCT b.ID)
+FROM CFAInspectionRecord a
+INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
+WHERE b.OrderID = '{this.CurrentMaintain["ID"].ToString()}' 
+AND b.Seq = '{this.CurrentMaintain["Seq"].ToString()}'
 AND Stage='3rd party'
 ");
                     if (MyUtility.Convert.GetInt(inspectionCtn) > 0)

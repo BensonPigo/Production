@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataSourceCtnSummary = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.dataSourceQtyBreakdown = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label2 = new Sci.Win.UI.Label();
@@ -217,7 +217,8 @@
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(1020, 285);
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
+            this.gridicon.Location = new System.Drawing.Point(845, 290);
             // 
             // detailgridcont
             // 
@@ -776,7 +777,7 @@
             // 
             this.disInsCtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disInsCtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disInsCtn.Location = new System.Drawing.Point(717, 64);
+            this.disInsCtn.Location = new System.Drawing.Point(714, 64);
             this.disInsCtn.Name = "disInsCtn";
             this.disInsCtn.Size = new System.Drawing.Size(33, 23);
             this.disInsCtn.TabIndex = 72;
@@ -817,22 +818,22 @@
             this.gridSpSeq.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSpSeq.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSpSeq.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSpSeq.Location = new System.Drawing.Point(752, 35);
+            this.gridSpSeq.Location = new System.Drawing.Point(749, 35);
             this.gridSpSeq.Name = "gridSpSeq";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSpSeq.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSpSeq.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridSpSeq.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSpSeq.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSpSeq.RowTemplate.Height = 24;
             this.gridSpSeq.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSpSeq.ShowCellToolTips = false;
-            this.gridSpSeq.Size = new System.Drawing.Size(197, 250);
+            this.gridSpSeq.Size = new System.Drawing.Size(200, 250);
             this.gridSpSeq.TabIndex = 75;
             // 
             // P32

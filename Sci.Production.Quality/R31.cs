@@ -210,20 +210,22 @@ OUTER APPLY(
 	)
 )LastReceived 
 OUTER APPLY (
-	select Val=COUNT(1)
-	from CFAInspectionRecord
+	select Val=COUNT(DISTINCT a.ID)
+	from CFAInspectionRecord a
+    INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID= b.ID
 	where Status='Confirmed'
 		AND Stage='Final'
-		AND OrderID=oq.Id
-		AND Seq=oq.Seq
+		AND b.OrderID=oq.Id
+		AND b.Seq=oq.Seq
 )FinalInsCtn
 OUTER APPLY (
-	select Val=COUNT(1)
-	from CFAInspectionRecord
+	select Val=COUNT(DISTINCT a.ID)
+	from CFAInspectionRecord a
+    INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID= b.ID
 	where Status='Confirmed'
 		AND Stage='3rd party'
-		AND OrderID=oq.Id
-		AND Seq=oq.Seq
+		AND b.OrderID=oq.Id
+		AND b.Seq=oq.Seq
 )ThirdInsCtn
 WHERE 1=1
 ");
@@ -240,13 +242,17 @@ WHERE 1=1
             if (!MyUtility.Check.Empty(this.sp1))
             {
                 sqlCmd.Append($"AND oq.ID >= @sp1" + Environment.NewLine);
-                paramList.Add(new SqlParameter("@sp1", this.sp1));
+                SqlParameter p = new SqlParameter("@sp1", SqlDbType.VarChar);
+                p.Value = this.sp1;
+                paramList.Add(p);
             }
 
             if (!MyUtility.Check.Empty(this.sp2))
             {
                 sqlCmd.Append($"AND oq.ID <= @sp2" + Environment.NewLine);
-                paramList.Add(new SqlParameter("@sp2", this.sp1));
+                SqlParameter p = new SqlParameter("@sp2", SqlDbType.VarChar);
+                p.Value = this.sp2;
+                paramList.Add(p);
             }
 
             if (!MyUtility.Check.Empty(this.MDivisionID))

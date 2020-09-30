@@ -86,7 +86,8 @@ namespace Sci.Production.Class
                 $@"
 SELECT 1 
 FROM Orders o
-WHERE o.ID=@ID 
+WHERE o.ID=@ID
+AND o.Finished = 0
 AND o.Category IN('B', 'S', 'G')",
                 paras);
             if (!exists)
