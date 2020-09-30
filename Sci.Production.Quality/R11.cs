@@ -28,9 +28,9 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (this.dateArriveWHDate.Value1.Empty() || this.dateArriveWHDate.Value2.Empty() || this.txtSP1.Text.Empty() || this.txtSP2.Text.Empty())
+            if (this.dateArriveWHDate.Value1.Empty() && this.txtSP1.Text.Empty() && this.txtSP2.Text.Empty())
             {
-                MyUtility.Msg.WarningBox("Arrive W/H Date and SP can't empty!");
+                MyUtility.Msg.WarningBox("Arrive W/H Date and SP can't all empty!");
                 return false;
             }
 
@@ -45,6 +45,10 @@ namespace Sci.Production.Quality
                 where2 += $"and T.IssueDate between @Date1 and @Date2" + Environment.NewLine;
                 this.parameters.Add(new SqlParameter("@wDate1", this.dateArriveWHDate.Value1));
                 this.parameters.Add(new SqlParameter("@wDate2", this.dateArriveWHDate.Value2));
+                this.Sqlcmd.Append($@"
+declare @Date1 date = @wDate1
+declare @Date2 date = @wDate2
+");
             }
 
             if (!this.txtSP1.Text.Empty())
@@ -77,8 +81,6 @@ namespace Sci.Production.Quality
             }
 
             this.Sqlcmd.Append($@"
-declare @Date1 date = @wDate1
-declare @Date2 date = @wDate2
 
 select
 	Supplier = concat(PS.ID,'-'+ S.AbbEN),
@@ -372,8 +374,12 @@ drop table #tmp1,#tmp2
             string excelName = "Quality_R11";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             MyUtility.Excel.CopyToXls(this.PrintData[0], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
-            MyUtility.Excel.CopyToXls(this.PrintData[1], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[2]);
-            MyUtility.Excel.CopyToXls(this.PrintData[2], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[3]);
+            if (this.PrintData[1].Rows.Count > 1)
+            {
+                MyUtility.Excel.CopyToXls(this.PrintData[1], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[2]);
+                MyUtility.Excel.CopyToXls(this.PrintData[2], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[3]);
+            }
+
             excelApp.Visible = true;
 
             string strExcelName = Class.MicrosoftFile.GetName(excelName);

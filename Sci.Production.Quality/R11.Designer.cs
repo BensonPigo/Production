@@ -88,7 +88,6 @@
             this.dateArriveWHDate.DateBox2.Name = "";
             this.dateArriveWHDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateArriveWHDate.DateBox2.TabIndex = 1;
-            this.dateArriveWHDate.IsRequired = false;
             this.dateArriveWHDate.Location = new System.Drawing.Point(126, 12);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.Size = new System.Drawing.Size(280, 23);
