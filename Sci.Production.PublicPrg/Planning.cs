@@ -433,7 +433,6 @@ outer apply(
 	order by st5.AddDate desc
 )TopIsPair
 
---#BundleInOutQty... 在 WebApi 有使用到, 變更時注意
 select	Orderid
 		, SubprocessId
 		, BundleGroup
@@ -476,7 +475,7 @@ select	Orderid
 							end) 
 						/ IsPair.M)
         , InStartDate,InEndDate,OutStartDate,OutEndDate
-into #BundleInOutQty{subprocessIDtmp}
+into #beforeBundleInOutDetail{subprocessIDtmp}
 from #BundleInOutDetail{subprocessIDtmp} bt
 outer  apply(
     select distinct InStartDate,InEndDate,OutStartDate,OutEndDate
@@ -487,6 +486,13 @@ outer apply(select v = iif(OutGoing is not null and (x.OutStartDate is null or x
 outer apply(select M = iif(IsPair=1,2,1) )IsPair--此處判斷後才放入group by 欄位中 
 group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair.m
     , InStartDate,InEndDate,OutStartDate,OutEndDate
+
+--#BundleInOutQty... 在 WebApi 有使用到, 變更時注意
+select *
+into #BundleInOutQty{subprocessIDtmp}
+from #beforeBundleInOutDetail{subprocessIDtmp} t
+where BundleGroup is not null 
+or (BundleGroup is null and not exists(select 1 from #beforeBundleInOutDetail{subprocessIDtmp} b where b.Orderid = t.Orderid and b.Size = t.Size and b.Article= t.Article and b.PatternPanel = t. PatternPanel and b.BundleGroup is not null))
 ";
 
                 if (isNeedCombinBundleGroup)
