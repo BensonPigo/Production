@@ -19,6 +19,10 @@ BEGIN
 
 		declare @inputStyleKey varchar(max)
 		SELECT @inputStyleKey =  Stuff((select concat( ',',ID + '`' + SeasonID + '`' + BrandID)   from AutomationStyle FOR XML PATH('')),1,1,'') 
+
+		if @inputStyleKey is null
+		set @inputStyleKey = ''
+		
 		exec SentStyleFPSSettingToFinishingProcesses @inputStyleKey
 	end
 	
