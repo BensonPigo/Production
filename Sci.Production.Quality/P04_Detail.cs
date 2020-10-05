@@ -12,6 +12,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using static Sci.Production.PublicPrg.Prgs;
 
@@ -3732,11 +3733,30 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
 
         private void BtnGenerateFGWT_Click(object sender, EventArgs e)
         {
+            string washType = string.Empty;
+            string fibresType = string.Empty;
+
             if (this.rdbtnLine.Checked)
             {
-
+                washType = "Line";
+            }
+            else if (this.rdbtnTumble.Checked)
+            {
+                washType = "Tumnle";
+            }
+            else if (this.rdbtnHand.Checked)
+            {
+                washType = "Hand";
             }
 
+            if (this.radioNaturalFibres.Checked)
+            {
+                fibresType = "Natural";
+            }
+            else if (this.radioSyntheticFibres.Checked)
+            {
+                fibresType = "Synthetic";
+            }
 
             List<string> locations = MyUtility.GetValue.Lookup($@"
 
@@ -3758,18 +3778,95 @@ SELECT STUFF(
             // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
             if (containsT && containsB)
             {
-                fGWTs = GetDefaultFGWT(false, false, true, mtlTypeID);
+                fGWTs = GetDefaultFGWT(false, false, true, mtlTypeID, washType ,fibresType);
             }
             else if (containsT)
             {
-                fGWTs = GetDefaultFGWT(containsT, false, false, mtlTypeID);
+                fGWTs = GetDefaultFGWT(containsT, false, false, mtlTypeID, washType, fibresType);
             }
             else
             {
-                fGWTs = GetDefaultFGWT(false, containsB, false, mtlTypeID);
+                fGWTs = GetDefaultFGWT(false, containsB, false, mtlTypeID, washType, fibresType);
             }
 
+            string garmentTest_Detail_ID = MyUtility.Convert.GetString(this.Deatilrow["ID"]);
+            string garmentTest_Detail_No = MyUtility.Convert.GetString(this.Deatilrow["NO"]);
 
+            StringBuilder insertCmd = new StringBuilder();
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            int idx = 0;
+
+            // 組合INSERT SQL
+            foreach (var fGWT in fGWTs)
+            {
+                string location = string.Empty;
+
+                switch (fGWT.Location)
+                {
+                    case "Top":
+                        location = "T";
+                        break;
+                    case "Bottom":
+                        location = "B";
+                        break;
+                    case "Top+Bottom":
+                        location = "S";
+                        break;
+                    default:
+                        break;
+                }
+
+                if (fGWT.Scale == null)
+                {
+                    insertCmd.Append($@"
+
+INSERT INTO GarmentTest_Detail_FGWT
+           (ID, No, Location, Type ,TestDetail ,Criteria ,Criteria2 )
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx}
+           , @TestDetail{idx}
+           , @Criteria{idx} 
+           , @Criteria2{idx}  )
+
+");
+                }
+                else
+                {
+                    insertCmd.Append($@"
+
+INSERT INTO GarmentTest_Detail_FGWT
+           (ID, No, Location, Type ,Scale,TestDetail)
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx}
+           , ''
+           , @TestDetail{idx})
+
+");
+                }
+
+                parameters.Add(new SqlParameter($"@Location{idx}", location));
+                parameters.Add(new SqlParameter($"@Type{idx}", fGWT.Type));
+                parameters.Add(new SqlParameter($"@TestDetail{idx}", fGWT.TestDetail));
+                parameters.Add(new SqlParameter($"@Criteria{idx}", fGWT.Criteria));
+                parameters.Add(new SqlParameter($"@Criteria2{idx}", fGWT.Criteria2));
+                idx++;
+            }
+
+            // 找不到才Insert
+            if (!MyUtility.Check.Seek($"SELECT 1 FROM GarmentTest_Detail_FGWT WHERE ID ='{garmentTest_Detail_ID}' AND NO='{garmentTest_Detail_No}'"))
+            {
+                DualResult r = DBProxy.Current.Execute(null, insertCmd.ToString(), parameters);
+                if (!r)
+                {
+                    this.ShowErr(r);
+                }
+            }
         }
     }
 }

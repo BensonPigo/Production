@@ -805,15 +805,15 @@ SELECT STUFF(
                     // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
                     if (containsT && containsB)
                     {
-                        fGWTs = GetDefaultFGWT(false, false, true, mtlTypeID);
+                        fGWTs = GetDefaultFGWT_Old(false, false, true, mtlTypeID);
                     }
                     else if (containsT)
                     {
-                        fGWTs = GetDefaultFGWT(containsT, false, false, mtlTypeID);
+                        fGWTs = GetDefaultFGWT_Old(containsT, false, false, mtlTypeID);
                     }
                     else
                     {
-                        fGWTs = GetDefaultFGWT(false, containsB, false, mtlTypeID);
+                        fGWTs = GetDefaultFGWT_Old(false, containsB, false, mtlTypeID);
                     }
 
                     string garmentTest_Detail_ID = MyUtility.Convert.GetString(dr["ID"]);
