@@ -188,6 +188,7 @@ VALUES ('{orderID}','{artworkType}',{standardQty},{reqQty},'{subconReasonID}',GE
                             upResult = DBProxy.Current.Execute(null, sqlcmd.ToString());
                             if (!upResult)
                             {
+                                scope.Dispose();
                                 this.ShowErr(sqlcmd.ToString(), upResult);
                                 return;
                             }

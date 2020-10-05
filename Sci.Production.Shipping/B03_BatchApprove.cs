@@ -319,6 +319,7 @@ when matched then update set
             {
                 if (!(upResult = MyUtility.Tool.ProcessWithDatatable(dt, "ID,Ukey,NewSupp,NewCurrency,NewPrice,CanvassDate1", mergeSql, out dt)))
                 {
+                    scope.Dispose();
                     this.ShowErr(upResult);
                     return false;
                 }

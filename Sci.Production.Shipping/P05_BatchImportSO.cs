@@ -204,11 +204,13 @@ VALUES (
                 }
                 else
                 {
+                    transactionScope.Dispose();
                     MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
                 }
             }
             catch (Exception ex)
             {
+                transactionScope.Dispose();
                 this.ShowErr("Commit transaction error.", ex);
             }
             finally

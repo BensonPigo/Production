@@ -150,6 +150,7 @@ FROM SewingOutput s WHERE ID IN (SELECT ID FROM #tmp)
                 {
                     if (!(upResult = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out dt2)))
                     {
+                        scope.Dispose();
                         this.ShowErr(upResult);
                         return;
                     }
