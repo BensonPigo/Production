@@ -50,7 +50,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1112, 16);
+            this.panel1.Size = new System.Drawing.Size(1008, 16);
             this.panel1.TabIndex = 1;
             // 
             // panel2
@@ -61,12 +61,13 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 518);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1112, 43);
+            this.panel2.Size = new System.Drawing.Size(1008, 43);
             this.panel2.TabIndex = 2;
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(1018, 6);
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Location = new System.Drawing.Point(916, 6);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 30);
             this.btnCancel.TabIndex = 2;
@@ -76,7 +77,8 @@
             // 
             // btnUpload
             // 
-            this.btnUpload.Location = new System.Drawing.Point(932, 6);
+            this.btnUpload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpload.Location = new System.Drawing.Point(830, 6);
             this.btnUpload.Name = "btnUpload";
             this.btnUpload.Size = new System.Drawing.Size(80, 30);
             this.btnUpload.TabIndex = 1;
@@ -86,7 +88,8 @@
             // 
             // btnImport
             // 
-            this.btnImport.Location = new System.Drawing.Point(802, 6);
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Location = new System.Drawing.Point(700, 6);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(124, 30);
             this.btnImport.TabIndex = 0;
@@ -105,7 +108,7 @@
             // panel4
             // 
             this.panel4.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel4.Location = new System.Drawing.Point(1098, 16);
+            this.panel4.Location = new System.Drawing.Point(994, 16);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(14, 502);
             this.panel4.TabIndex = 4;
@@ -116,7 +119,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(14, 16);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1084, 502);
+            this.panel5.Size = new System.Drawing.Size(980, 502);
             this.panel5.TabIndex = 5;
             // 
             // grid
@@ -147,7 +150,7 @@
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(1084, 502);
+            this.grid.Size = new System.Drawing.Size(980, 502);
             this.grid.TabIndex = 0;
             this.grid.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.Grid_ColumnHeaderMouseClick);
             // 
@@ -163,7 +166,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1112, 561);
+            this.ClientSize = new System.Drawing.Size(1008, 561);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);

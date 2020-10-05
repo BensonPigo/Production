@@ -708,7 +708,7 @@ on t.id=s.ID
 where ( CONVERT(date, t.AddDate) > CONVERT(date, DATEADD(MONTH,-3, GETDATE()))
 	or (CONVERT(date, t.EditDate) > CONVERT(date, DATEADD(MONTH,-3, GETDATE()))))
 
---07-1. PackingList_Detail (PIC) 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天，更新 PicSetting
+--07. PackingList_Detail (PIC) 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天，更新 PicSetting
 MERGE PackingList_Detail AS T
 USING(
 	SELECT pd.ID, pd.SCICtnNo, pd.CustCTN, p.PulloutDate, pd.OrderID, pd.OrderShipmodeSeq
@@ -721,10 +721,12 @@ USING(
 	,[PackingCTN] = pd.id + pd.CTNStartNo
 	,[IsMixPacking]= IIF( isnull(MixCount.val, 0) > 1 , 1 ,0)
 	,[PicSetting]= [FPS].[dbo].CheckShippingMarkPicSetting(p.ID,pd.SCICtnNo,pd.RefNO, IIF( isnull(MixCount.val, 0) > 1 , 1 ,0),p.CustCDID,p.BrandID)
+	,[HTMLSetting] = [FPS].[dbo].CheckShippingMarkHTMLSetting(p.ID,pd.SCICtnNo,pd.RefNO, p.CustCDID,p.BrandID)
 	FROM Production.dbo.PackingList p
 	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
 	left join  Production.dbo.ShipPlan sp on sp.id=p.ShipPlanID
 	LEFT JOIN Production.dbo.ShippingMarkPic pic ON pic.PackingListID = p.ID
+	LEFT JOIN Production.dbo.ShippingMarkStamp stamp ON stamp.PackingListID = p.ID
 	OUTER APPLY(
 		SELECT fp2.id
 		FROM FPS.dbo.PackingList fp1
@@ -748,78 +750,6 @@ USING(
 	where (convert(date,p.AddDate) = @cDate or convert(date,p.EditDate) = @cDate
 		or convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate
 		or convert(date,pic.AddDate) = @cDate or convert(date,pic.EditDate) = @cDate
-	)
-) as S
-on T.SCICtnNo = S.SCICtnNo and T.Article = s.Article and T.SizeCode = s.Sizecode
-AND T.OrderID = S.OrderID AND T.OrderShipmodeSeq = S.OrderShipmodeSeq
-WHEN MATCHED THEN
-UPDATE SET
-	t.ID = s.id,
-	t.CustCTN = iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN),
-	t.PulloutDate = s.PulloutDate,
-	t.ShipQty = s.ShipQty,
-	t.Barcode = s.Barcode,
-	t.GW = s.GW,
-	t.CtnRefno = s.CtnRefno,
-	t.CtnLength = s.CtnLength,
-	t.CtnWidth = s.CtnWidth,
-	t.CtnHeight = s.CtnHeight,
-	t.CtnUnit = s.CtnUnit,
-	t.junk = s.junk,
-	t.CmdTime = s.CmdTime,
-	t.SunriseUpdated = s.SunriseUpdated,
-	t.GenSongUpdated = s.GenSongUpdated,
-	t.PackingCTN = s.PackingCTN,
-	t.IsMixPacking = s.IsMixPacking,
-	t.PicSetting = s.PicSetting
-WHEN NOT MATCHED BY TARGET THEN
-INSERT(  ID, SCICtnNo
-, CustCTN
-,  PulloutDate,  OrderID, OrderShipmodeSeq, Article, SizeCode
-		, ShipQty, Barcode, GW, CtnRefno, CtnLength, CtnWidth, CtnHeight, CtnUnit
-	,Junk	,CmdTime, SunriseUpdated, GenSongUpdated,PackingCTN ,IsMixPacking ,PicSetting) 
-VALUES(s.ID, s.SCICtnNo, 
-iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
-, s.PulloutDate, s.OrderID, s.OrderShipmodeSeq, s.Article, s.SizeCode
-		, s.ShipQty, s.Barcode, s.GW, s.CtnRefno, s.CtnLength, s.CtnWidth, s.CtnHeight, s.CtnUnit
-	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN ,s.IsMixPacking ,s.PicSetting)
-WHEN NOT MATCHED BY SOURCE 
-	AND exists(	select 1 from #tmpPackingList where id = t.id) THEN
-	UPDATE SET
-	t.Junk = 1	;
-		
---07-2. PackingList_Detail (HTML) 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天，更新 HTMLSetting
-MERGE PackingList_Detail AS T
-USING(
-	SELECT pd.ID, pd.SCICtnNo, pd.CustCTN, p.PulloutDate, pd.OrderID, pd.OrderShipmodeSeq
-	,pd.Article, pd.SizeCode, pd.ShipQty, pd.Barcode, pd.GW, [CtnRefno] = pd.RefNo
-	,LocalItem.CtnLength, LocalItem.CtnWidth, LocalItem.CtnHeight
-	,LocalItem.CtnUnit
-	,[Junk] = iif(fpsPacking.ID is not null,1,0)
-	,[CmdTime] = GetDate()
-	,[SunriseUpdated] = 0
-	,[GenSongUpdated] = 0
-	,[PackingCTN] = pd.id + pd.CTNStartNo
-	,[IsMixPacking]= 0
-	,[HTMLSetting] = [FPS].[dbo].CheckShippingMarkHTMLSetting(p.ID,pd.SCICtnNo,pd.RefNO, p.CustCDID,p.BrandID)
-	FROM Production.dbo.PackingList p
-	inner join Production.dbo.PackingList_Detail pd on p.ID=pd.ID
-	left join  Production.dbo.ShipPlan sp on sp.id=p.ShipPlanID
-	LEFT JOIN Production.dbo.ShippingMarkStamp stamp ON stamp.PackingListID = p.ID
-	OUTER APPLY(
-		SELECT fp2.id
-		FROM FPS.dbo.PackingList fp1
-		inner join FPS.dbo.PackingList_Detail fp2 on fp1.id=fp2.id
-		where fp1.id = p.id
-		and fp1.junk=1 and fp2.SunriseUpdated = 0 and fp2.GenSongUpdated = 0
-	) fpsPacking
-	outer apply(
-		select * 
-		from  Production.dbo.LocalItem l
-		where l.RefNo=pd.RefNo
-	) LocalItem	
-	where (convert(date,p.AddDate) = @cDate or convert(date,p.EditDate) = @cDate
-		or convert(date,sp.AddDate) = @cDate or convert(date,sp.EditDate) = @cDate
 		or convert(date,stamp.AddDate) = @cDate or convert(date,stamp.EditDate) = @cDate
 	)
 ) as S
@@ -844,17 +774,19 @@ UPDATE SET
 	t.GenSongUpdated = s.GenSongUpdated,
 	t.PackingCTN = s.PackingCTN,
 	t.IsMixPacking = s.IsMixPacking,
+	t.PicSetting = s.PicSetting,
 	t.HTMLSetting = s.HTMLSetting
 WHEN NOT MATCHED BY TARGET THEN
-INSERT(  ID, SCICtnNo, CustCTN
-, PulloutDate, OrderID, OrderShipmodeSeq, Article, SizeCode, ShipQty, Barcode, GW,
-	CtnRefno, CtnLength, CtnWidth, CtnHeight, CtnUnit, Junk, CmdTime, SunriseUpdated, GenSongUpdated, PackingCTN, IsMixPacking, HTMLSetting) 
-VALUES(
-s.ID, s.SCICtnNo, 
+INSERT(  ID, SCICtnNo
+, CustCTN
+,  PulloutDate,  OrderID, OrderShipmodeSeq, Article, SizeCode
+		, ShipQty, Barcode, GW, CtnRefno, CtnLength, CtnWidth, CtnHeight, CtnUnit
+	,Junk	,CmdTime, SunriseUpdated, GenSongUpdated,PackingCTN ,IsMixPacking ,PicSetting ,HTMLSetting) 
+VALUES(s.ID, s.SCICtnNo, 
 iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 , s.PulloutDate, s.OrderID, s.OrderShipmodeSeq, s.Article, s.SizeCode
 		, s.ShipQty, s.Barcode, s.GW, s.CtnRefno, s.CtnLength, s.CtnWidth, s.CtnHeight, s.CtnUnit
-	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN ,s.IsMixPacking ,s.HTMLSetting)
+	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN ,s.IsMixPacking ,s.PicSetting ,s.HTMLSetting)
 WHEN NOT MATCHED BY SOURCE 
 	AND exists(	select 1 from #tmpPackingList where id = t.id) THEN
 	UPDATE SET

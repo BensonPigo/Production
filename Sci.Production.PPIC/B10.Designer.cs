@@ -71,7 +71,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1300, 102);
+            this.panel1.Size = new System.Drawing.Size(1008, 102);
             this.panel1.TabIndex = 1;
             // 
             // btnUploadFromMercury
@@ -231,13 +231,13 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(10, 541);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1290, 13);
+            this.panel3.Size = new System.Drawing.Size(998, 13);
             this.panel3.TabIndex = 3;
             // 
             // panel4
             // 
             this.panel4.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel4.Location = new System.Drawing.Point(1290, 102);
+            this.panel4.Location = new System.Drawing.Point(998, 102);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(10, 439);
             this.panel4.TabIndex = 3;
@@ -248,7 +248,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 102);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1280, 439);
+            this.panel5.Size = new System.Drawing.Size(988, 439);
             this.panel5.TabIndex = 4;
             // 
             // grid
@@ -279,14 +279,14 @@
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(1280, 439);
+            this.grid.Size = new System.Drawing.Size(988, 439);
             this.grid.TabIndex = 0;
             // 
             // B10
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1300, 554);
+            this.ClientSize = new System.Drawing.Size(1008, 554);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
