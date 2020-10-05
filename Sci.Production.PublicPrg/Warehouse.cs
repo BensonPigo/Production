@@ -1707,8 +1707,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                     #region MDivisionPoDetail
                     upd_MD_8T.Append(UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn));
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T.ToString(), out resulttb,
-                        "#TmpSource", conn: sqlConn)))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T.ToString(), out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
                         MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
@@ -1716,8 +1715,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     }
 
                     upd_MD_0F = UpdateMPoDetail(0, data_MD_0F, false, sqlConn: sqlConn);
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_0F, string.Empty, upd_MD_0F.ToString(), out resulttb,
-                        "#TmpSource", conn: sqlConn)))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_0F, string.Empty, upd_MD_0F.ToString(), out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
                         MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
@@ -2129,15 +2127,13 @@ when matched then
                     upd_MD_8T = UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn);
                     upd_MD_2T = UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
 
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4T, string.Empty, upd_MD_4T, out resulttb,
-                        "#TmpSource", conn: sqlConn)))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4T, string.Empty, upd_MD_4T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
                         return result;
                     }
 
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T, out resulttb,
-                        "#TmpSource", conn: sqlConn)))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
                         return result;
@@ -2534,15 +2530,13 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
                     upd_MD_16T = UpdateMPoDetail(16, null, true, sqlConn: sqlConn);
                     upd_MD_0F = UpdateMPoDetail(0, data_MD_0F, true, sqlConn: sqlConn);
 
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T.ToString(), out resulttb,
-                        "#TmpSource", conn: sqlConn)))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T.ToString(), out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
                         return result;
                     }
 
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4T, string.Empty, upd_MD_4T.ToString(), out resulttb,
-                        "#TmpSource", conn: sqlConn)))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4T, string.Empty, upd_MD_4T.ToString(), out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
                         return result;

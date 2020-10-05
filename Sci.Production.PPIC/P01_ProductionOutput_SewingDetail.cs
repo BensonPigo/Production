@@ -77,6 +77,17 @@ group by s.OutputDate,s.SewingLineID,sdd.ComboType",
                     this.article,
                     this.sizeCode);
             }
+            else if (this.type == "combo")
+            {
+                sqlCmd = $@"
+select s.OutputDate,s.SewingLineID,sd.ComboType,sum(sd.QAQty) as QAQty
+from SewingOutput_Detail sd WITH (NOLOCK) 
+inner join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
+inner join Orders o with(nolock) on o.ID = sd.OrderId
+where o.POID = '{this.orderID}'
+group by s.OutputDate,s.SewingLineID,sd.ComboType
+";
+            }
             else
             {
                 sqlCmd = string.Format(

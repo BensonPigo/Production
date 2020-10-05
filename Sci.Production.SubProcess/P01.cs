@@ -892,6 +892,7 @@ where id = '{1}'",
                 DualResult upResult;
                 if (!(upResult = DBProxy.Current.Execute(null, sql_updata_status)))
                 {
+                    scope.Dispose();
                     this.ShowErr(upResult);
                     return;
                 }
@@ -921,6 +922,7 @@ where id = '{1}'",
                 DualResult upResult;
                 if (!(upResult = DBProxy.Current.Execute(null, sql_updata_status)))
                 {
+                    scope.Dispose();
                     this.ShowErr(upResult);
                     return;
                 }
