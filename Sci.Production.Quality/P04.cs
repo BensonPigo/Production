@@ -884,6 +884,7 @@ INSERT INTO GarmentTest_Detail_FGWT
                     }
 
                     // 找不到才Insert
+                    /*
                     if (!MyUtility.Check.Seek($"SELECT 1 FROM GarmentTest_Detail_FGWT WHERE ID ='{garmentTest_Detail_ID}' AND NO='{garmentTest_Detail_No}'"))
                     {
                         DualResult r = DBProxy.Current.Execute(null, insertCmd.ToString(), parameters);
@@ -892,6 +893,7 @@ INSERT INTO GarmentTest_Detail_FGWT
                             this.ShowErr(r);
                         }
                     }
+                    */
                     #endregion
 
                     #region 寫入GarmentTest_Detail_FGPT

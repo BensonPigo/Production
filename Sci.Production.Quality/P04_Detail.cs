@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Quality
 {
@@ -928,6 +929,15 @@ ex: 150.423");
             this.txtFibreComposition.Text = MyUtility.Convert.GetString(this.Deatilrow["Composition"]);
             this.comboNeck.Text = MyUtility.Convert.GetBool(this.Deatilrow["Neck"]) ? "YES" : "No";
             this.comboResult.Text = MyUtility.Convert.GetString(this.Deatilrow["Result"]) == "P" ? "Pass" : "Fail";
+
+            this.radioNaturalFibres.Checked = MyUtility.Convert.GetBool(this.Deatilrow["Above50NaturalFibres"]);
+            this.radioSyntheticFibres.Checked = MyUtility.Convert.GetBool(this.Deatilrow["Above50SyntheticFibres"]);
+
+            // 如果兩個都未勾選，設選擇 synthetic fibres
+            if (!this.radioNaturalFibres.Checked && !this.radioSyntheticFibres.Checked)
+            {
+                this.radioSyntheticFibres.Checked = true;
+            }
         }
 
         private DataTable dtShrinkage;
@@ -1118,6 +1128,15 @@ order by LocationText DESC";
 
             DBProxy.Current.Select(null, sqlFGPT, out this.dtFGPT);
             this.gridFGPT.DataSource = this.dtFGPT;
+
+            if (this.dtFGPT.Rows.Count > 0 && !this.EditMode)
+            {
+                this.btnGenerateFGWT.Enabled = false;
+            }
+            else
+            {
+                this.btnGenerateFGWT.Enabled = true;
+            }
         }
 
         private void Tab4Save()
@@ -1282,6 +1301,8 @@ update GarmentTest_Detail set
     HandWash =  '{this.rdbtnHand.Checked}',
     Composition =  '{this.txtFibreComposition.Text}',
     Neck ='{MyUtility.Convert.GetString(this.comboNeck.Text).EqualString("YES")}'
+    Above50NaturalFibres =  {(this.radioNaturalFibres.Checked ? "1" : "0")},
+    Above50SyntheticFibres =  {(this.radioSyntheticFibres.Checked ? "1" : "0")}
 where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
 ";
                 DualResult dr = DBProxy.Current.Execute(null, updateGarmentTest_Detail);
@@ -1356,6 +1377,9 @@ where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
             this.btnToReport.Enabled = !this.EditMode;
             this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
             this.btnDelete.Visible = this.tabControl1.SelectedTab.Name == "tabFGPT" && this.EditMode;
+            this.radioNaturalFibres.Enabled = this.EditMode;
+            this.radioSyntheticFibres.Enabled = this.EditMode;
+            this.btnGenerateFGWT.Enabled = !this.EditMode;
         }
 
         private void Tab2ShrinkageSave()
@@ -1446,6 +1470,8 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
             this.rdbtnLine.Enabled = this.EditMode;
             this.rdbtnTumble.Enabled = this.EditMode;
             this.rdbtnHand.Enabled = this.EditMode;
+            this.radioNaturalFibres.Enabled = this.EditMode;
+            this.radioSyntheticFibres.Enabled = this.EditMode;
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -3702,6 +3728,48 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
             {
                 this.gridFGPT.CurrentDataRow.Delete();
             }
+        }
+
+        private void BtnGenerateFGWT_Click(object sender, EventArgs e)
+        {
+            if (this.rdbtnLine.Checked)
+            {
+
+            }
+
+
+            List<string> locations = MyUtility.GetValue.Lookup($@"
+
+SELECT STUFF(
+	(select DISTINCT ',' + sl.Location
+	from Style s
+	INNER JOIN Style_Location sl ON s.Ukey = sl.StyleUkey 
+	where s.id='{this.MasterRow["StyleID"]}' AND s.BrandID='{this.MasterRow["BrandID"]}' AND s.SeasonID='{this.MasterRow["SeasonID"]}'
+	FOR XML PATH('')
+	) 
+,1,1,'')").Split(',').ToList();
+
+            string mtlTypeID = MyUtility.Convert.GetString(this.Deatilrow["MtlTypeID"]);
+
+            List<FGWT> fGWTs = new List<FGWT>();
+            bool containsT = locations.Contains("T");
+            bool containsB = locations.Contains("B");
+
+            // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
+            if (containsT && containsB)
+            {
+                fGWTs = GetDefaultFGWT(false, false, true, mtlTypeID);
+            }
+            else if (containsT)
+            {
+                fGWTs = GetDefaultFGWT(containsT, false, false, mtlTypeID);
+            }
+            else
+            {
+                fGWTs = GetDefaultFGWT(false, containsB, false, mtlTypeID);
+            }
+
+
         }
     }
 }
