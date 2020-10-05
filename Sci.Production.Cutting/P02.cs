@@ -507,7 +507,9 @@ where WorkOrderUkey={0}", masterID);
             this.btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
             #region 取得 LeadTime 和 Subprocess
-            var orders = this.distqtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["OrderID"])).Distinct().ToList();
+            var orders = this.distqtyTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
+                .Select(s => MyUtility.Convert.GetString(s["OrderID"])).Distinct().ToList();
+
             var leadTimeList = Prgs.GetLeadTimeList(orders, out string annotationStr);
             this.dispSubprocess.Text = annotationStr;
             this.numLeadTime.Value = leadTimeList.Count > 0 ? leadTimeList[0].LeadTimeDay : 0;
