@@ -389,7 +389,7 @@ where oq.id = '{this.masterData["ID"]}'
             this.Helper.Controls.Grid.Generator(this.gridComboSP)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15))
                  .Text("Article", header: "Colorway", width: Widths.AnsiChars(8))
-                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8))
+                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(7))
                  .Numeric("OrderQty", header: "Order Q'ty", width: Widths.AnsiChars(6))
                  .Numeric("SewQty", header: "Sewing Q'ty", width: Widths.AnsiChars(6), settings: this.sewingqtyCombo)
                  .Numeric("T", header: "Top", width: Widths.AnsiChars(6), settings: this.t_combo)
@@ -446,7 +446,7 @@ with SewQty as (
 			, ComboType = sl.Location
 			, QAQty = isnull(sum(sdd.QAQty),0)
 	from Orders o WITH (NOLOCK) 
-	inner join Order_Location  sl WITH (NOLOCK) on sl.OrderId = o.id -- OrderLocation 
+    inner join {locationTable}
 	inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
 	left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = o.ID 
 															  and sdd.Article = oq.Article 
@@ -478,17 +478,16 @@ left join minSewQty m on m.Article = p.Article and m.SizeCode = p.SizeCode
 
 select * from #tmp
 
-select LastSewingDate = LastSewingDate.value	
-,OrderQty = sum(t.OrderQty)
-,SewQty = sum(t.SewQty)
+select LastSewingDate = max(LastSewingDate.value)
+,OrderQty = isnull(sum(t.OrderQty),0)
+,SewQty = isnull(sum(t.SewQty),0)
 from #tmp t
 outer apply(
-	select value =Max(s.OutputDate)
+	select value =(s.OutputDate)
 	from SewingOutput_Detail sd WITH (NOLOCK) 
 	inner join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
-	and sd.OrderId = '{this.masterData["Poid"].ToString()}'
+	and sd.OrderId = t.OrderID
 )LastSewingDate
-group by LastSewingDate.value	
 
 drop table #tmp
 
