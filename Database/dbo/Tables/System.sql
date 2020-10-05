@@ -58,6 +58,7 @@
     [AutoGenerateByTone]         BIT            CONSTRAINT [DF_System_AutoGenerateByTone] DEFAULT ((0)) NOT NULL,
     [MiscPOApproveName] VARCHAR(10) CONSTRAINT [DF_System_MiscPOApproveName] DEFAULT ('') NULL, 
     [MiscPOApproveDay] TINYINT CONSTRAINT [DF_System_MiscPOApproveDay] DEFAULT ((0)) NULL, 
+    [ShippingMarkTemplatePath] VARCHAR(80)  NOT NULL CONSTRAINT [DF_System_ShippingMarkPath] DEFAULT(''), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -262,3 +263,11 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'驗布機延遲時間(秒)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'QCMachineDelayTime';
 
+Go
+
+
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'標籤範本檔路徑'
+	, @level0type = N'SCHEMA', @level0name = N'dbo'
+	, @level1type = N'TABLE', @level1name = N'System'
+	, @level2type = N'COLUMN', @level2name = N'ShippingMarkTemplatePath';
+GO

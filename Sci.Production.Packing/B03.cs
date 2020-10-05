@@ -100,6 +100,33 @@ FROM ShippingMarkCombination WITH(NOLOCK)
 WHERE Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
 
 "));
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "HTML")
+            {
+                this.chkIsMixPack.Enabled = false;
+            }
+            else
+            {
+                this.chkIsMixPack.Enabled = true;
+            }
+
+            if (this.IsDetailInserting)
+            {
+                this.comboCategory.ReadOnly = false;
+            }
+            else
+            {
+                this.comboCategory.ReadOnly = true;
+            }
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain))
+            {
+                this.ChangeVisible(MyUtility.Convert.GetString(this.CurrentMaintain["Category"]));
+            }
+            else
+            {
+                this.ChangeVisible("PIC");
+            }
         }
 
         /// <inheritdoc/>
@@ -177,13 +204,13 @@ AND Junk = 1
             };
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("ShippingMarkTypeID", header: "Sticker Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("ShippingMarkTypeID", header: "Mark Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("Seq", header: "Seq", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: true)
                 .CheckBox("IsSSCC", header: "SSCC", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
                 .ComboBox("Side", header: "Side", width: Widths.AnsiChars(10), settings: sideComboCell)
                 .Numeric("FromRight", header: "From Right (mm)", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: false)
                 .Numeric("FromBottom", header: "From Bottom  (mm)", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: false)
-                .ComboBox("StickerSizeID", header: "Sticker Size", width: Widths.AnsiChars(20), settings: stickerSizeCell)
+                .ComboBox("StickerSizeID", header: "Mark Size", width: Widths.AnsiChars(20), settings: stickerSizeCell)
                 .CheckBox("Is2Side", header: "Is 2 Side", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .CheckBox("IsHorizontal", header: "Is Horizontal", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             ;
@@ -241,17 +268,29 @@ AND CTNRefno='{this.CurrentMaintain["CTNRefno"]}'
 AND Ukey <> {this.CurrentMaintain["Ukey"]}
 ";
 
-            if (MyUtility.Check.Seek(cmd))
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "PIC")
             {
-                MyUtility.Msg.WarningBox($"Brand {this.CurrentMaintain["BrandID"]}, Category {this.comboCategory.Text}, Combination {this.txtStickerComb.Text}, CTN Refon {this.CurrentMaintain["CTNRefno"]} already exists.");
-                return false;
+                if (MyUtility.Check.Seek(cmd))
+                {
+                    MyUtility.Msg.WarningBox($"Sticker : Brand {this.CurrentMaintain["BrandID"]}, Category {this.comboCategory.Text}, Combination {this.txtStickerComb.Text}, CTN Refon {this.CurrentMaintain["CTNRefno"]} already exists.");
+                    return false;
+                }
+            }
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "HTML")
+            {
+                if (MyUtility.Check.Seek(cmd))
+                {
+                    MyUtility.Msg.WarningBox($"Stamp : Brand {this.CurrentMaintain["BrandID"]}, Category {this.comboCategory.Text}, Combination {this.txtStickerComb.Text}, CTN Refon {this.CurrentMaintain["CTNRefno"]} already exists.");
+                    return false;
+                }
             }
 
             foreach (DataRow row in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(row["StickerSizeID"]))
                 {
-                    MyUtility.Msg.WarningBox("Sticker Size cannot be empty.");
+                    MyUtility.Msg.WarningBox("Mark Size cannot be empty.");
                     return false;
                 }
             }
@@ -326,7 +365,7 @@ AND Junk=0";
 SELECT  Ukey ,IsMixPack
 FROM ShippingMarkCombination
 WHERE BrandID='{this.CurrentMaintain["BrandID"]}'
-AND Category='PIC'
+AND Category='{this.CurrentMaintain["Category"]}'
 AND Junk=0
 AND ID = '{item.GetSelectedString()}'
 ";
@@ -428,7 +467,7 @@ SELECT c.ID,b.Seq,c.IsSSCC ,a.IsMixPack ,c.Ukey
 FROM ShippingMarkCombination a
 INNER JOIN ShippingMarkCombination_Detail b ON a.Ukey = b.ShippingMarkCombinationUkey
 INNER JOIN ShippingMarkType c ON b.ShippingMarkTypeUkey = c.Ukey
-WHERE a.Ukey = '{ this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
+WHERE a.Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
 ";
 
             DataTable dt;
@@ -496,6 +535,41 @@ WHERE a.Ukey = '{ this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
                 }
 
                 this.CurrentMaintain["BrandID"] = newBrandID;
+            }
+        }
+
+        private void ComboCategory_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            this.CurrentMaintain["Category"] = this.comboCategory.SelectedValue;
+            if (this.EditMode)
+            {
+                this.CurrentMaintain["ShippingMarkCombinationUkey"] = DBNull.Value;
+                this.txtStickerComb.Text = string.Empty;
+
+                // 刪除表身重新匯入
+                foreach (DataRow del in this.DetailDatas)
+                {
+                    del.Delete();
+                }
+            }
+
+            this.ChangeVisible(MyUtility.Convert.GetString(this.CurrentMaintain["Category"]));
+        }
+
+        private void ChangeVisible(string category)
+        {
+            if (category == "HTML")
+            {
+                this.detailgrid.Columns["IsSSCC"].Visible = false;
+                this.detailgrid.Columns["Is2Side"].Visible = false;
+                this.detailgrid.Columns["IsHorizontal"].Visible = false;
+            }
+
+            if (category == "PIC")
+            {
+                this.detailgrid.Columns["IsSSCC"].Visible = true;
+                this.detailgrid.Columns["Is2Side"].Visible = true;
+                this.detailgrid.Columns["IsHorizontal"].Visible = true;
             }
         }
     }

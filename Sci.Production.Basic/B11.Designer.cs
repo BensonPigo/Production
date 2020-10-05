@@ -69,6 +69,8 @@
             this.label5 = new Sci.Win.UI.Label();
             this.txtStickerComb = new Sci.Win.UI.TextBox();
             this.txtStickerCombMix = new Sci.Win.UI.TextBox();
+            this.label6 = new Sci.Win.UI.Label();
+            this.txtStampComb = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -83,6 +85,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtStampComb);
+            this.detailcont.Controls.Add(this.label6);
             this.detailcont.Controls.Add(this.txtStickerCombMix);
             this.detailcont.Controls.Add(this.txtStickerComb);
             this.detailcont.Controls.Add(this.label5);
@@ -220,7 +224,7 @@
             // 
             // labelBulk
             // 
-            this.labelBulk.Location = new System.Drawing.Point(82, 300);
+            this.labelBulk.Location = new System.Drawing.Point(82, 293);
             this.labelBulk.Name = "labelBulk";
             this.labelBulk.Size = new System.Drawing.Size(93, 23);
             this.labelBulk.TabIndex = 8;
@@ -228,7 +232,7 @@
             // 
             // labelSample
             // 
-            this.labelSample.Location = new System.Drawing.Point(82, 330);
+            this.labelSample.Location = new System.Drawing.Point(82, 320);
             this.labelSample.Name = "labelSample";
             this.labelSample.Size = new System.Drawing.Size(93, 23);
             this.labelSample.TabIndex = 9;
@@ -236,7 +240,7 @@
             // 
             // labelExcludeFactories
             // 
-            this.labelExcludeFactories.Location = new System.Drawing.Point(27, 360);
+            this.labelExcludeFactories.Location = new System.Drawing.Point(27, 347);
             this.labelExcludeFactories.Name = "labelExcludeFactories";
             this.labelExcludeFactories.Size = new System.Drawing.Size(148, 23);
             this.labelExcludeFactories.TabIndex = 10;
@@ -244,7 +248,7 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Location = new System.Drawing.Point(27, 390);
+            this.labelDestination.Location = new System.Drawing.Point(27, 375);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(148, 23);
             this.labelDestination.TabIndex = 11;
@@ -252,7 +256,7 @@
             // 
             // labelConsignee
             // 
-            this.labelConsignee.Location = new System.Drawing.Point(27, 420);
+            this.labelConsignee.Location = new System.Drawing.Point(27, 404);
             this.labelConsignee.Name = "labelConsignee";
             this.labelConsignee.Size = new System.Drawing.Size(148, 23);
             this.labelConsignee.TabIndex = 12;
@@ -333,7 +337,7 @@
             this.displayExcludeFactories.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayExcludeFactories.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Factories", true));
             this.displayExcludeFactories.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayExcludeFactories.Location = new System.Drawing.Point(186, 360);
+            this.displayExcludeFactories.Location = new System.Drawing.Point(186, 347);
             this.displayExcludeFactories.Name = "displayExcludeFactories";
             this.displayExcludeFactories.Size = new System.Drawing.Size(378, 23);
             this.displayExcludeFactories.TabIndex = 10;
@@ -344,7 +348,7 @@
             this.txtDestination.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtDestination.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Dest", true));
             this.txtDestination.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDestination.Location = new System.Drawing.Point(186, 390);
+            this.txtDestination.Location = new System.Drawing.Point(186, 375);
             this.txtDestination.Name = "txtDestination";
             this.txtDestination.Size = new System.Drawing.Size(318, 23);
             this.txtDestination.TabIndex = 11;
@@ -354,7 +358,7 @@
             this.editConsignee.BackColor = System.Drawing.Color.White;
             this.editConsignee.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Consignee", true));
             this.editConsignee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editConsignee.Location = new System.Drawing.Point(186, 420);
+            this.editConsignee.Location = new System.Drawing.Point(186, 404);
             this.editConsignee.Multiline = true;
             this.editConsignee.Name = "editConsignee";
             this.editConsignee.Size = new System.Drawing.Size(336, 90);
@@ -424,7 +428,7 @@
             // 
             this.txtPaytermarSample.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARIDSample", true));
             this.txtPaytermarSample.DisplayBox1Binding = "";
-            this.txtPaytermarSample.Location = new System.Drawing.Point(186, 330);
+            this.txtPaytermarSample.Location = new System.Drawing.Point(186, 320);
             this.txtPaytermarSample.Name = "txtPaytermarSample";
             this.txtPaytermarSample.Size = new System.Drawing.Size(336, 23);
             this.txtPaytermarSample.TabIndex = 9;
@@ -434,7 +438,7 @@
             // 
             this.txtPaytermarBulk.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARIDBulk", true));
             this.txtPaytermarBulk.DisplayBox1Binding = "";
-            this.txtPaytermarBulk.Location = new System.Drawing.Point(186, 300);
+            this.txtPaytermarBulk.Location = new System.Drawing.Point(186, 293);
             this.txtPaytermarBulk.Name = "txtPaytermarBulk";
             this.txtPaytermarBulk.Size = new System.Drawing.Size(336, 23);
             this.txtPaytermarBulk.TabIndex = 8;
@@ -455,7 +459,7 @@
             this.editBox1.BackColor = System.Drawing.Color.White;
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BIRShipTo", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(665, 420);
+            this.editBox1.Location = new System.Drawing.Point(665, 404);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(336, 90);
@@ -463,7 +467,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(567, 420);
+            this.label1.Location = new System.Drawing.Point(567, 404);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(95, 23);
             this.label1.TabIndex = 19;
@@ -471,7 +475,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(27, 518);
+            this.label2.Location = new System.Drawing.Point(27, 500);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(148, 23);
             this.label2.TabIndex = 20;
@@ -479,7 +483,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(27, 550);
+            this.label3.Location = new System.Drawing.Point(27, 529);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(148, 23);
             this.label3.TabIndex = 21;
@@ -491,7 +495,7 @@
             this.txt.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txt.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DiamondCustCD", true));
             this.txt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt.Location = new System.Drawing.Point(186, 518);
+            this.txt.Location = new System.Drawing.Point(186, 500);
             this.txt.MaxLength = 4;
             this.txt.Name = "txt";
             this.txt.Size = new System.Drawing.Size(48, 23);
@@ -503,7 +507,7 @@
             this.txtDiamondCity.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtDiamondCity.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DiamondCity", true));
             this.txtDiamondCity.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDiamondCity.Location = new System.Drawing.Point(186, 550);
+            this.txtDiamondCity.Location = new System.Drawing.Point(186, 529);
             this.txtDiamondCity.MaxLength = 30;
             this.txtDiamondCity.Name = "txtDiamondCity";
             this.txtDiamondCity.Size = new System.Drawing.Size(336, 23);
@@ -511,7 +515,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(567, 518);
+            this.label4.Location = new System.Drawing.Point(567, 500);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(254, 23);
             this.label4.TabIndex = 22;
@@ -519,7 +523,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(567, 550);
+            this.label5.Location = new System.Drawing.Point(567, 529);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(254, 23);
             this.label5.TabIndex = 23;
@@ -530,7 +534,7 @@
             this.txtStickerComb.BackColor = System.Drawing.Color.White;
             this.txtStickerComb.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtStickerComb.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtStickerComb.Location = new System.Drawing.Point(824, 518);
+            this.txtStickerComb.Location = new System.Drawing.Point(824, 500);
             this.txtStickerComb.MaxLength = 30;
             this.txtStickerComb.Name = "txtStickerComb";
             this.txtStickerComb.Size = new System.Drawing.Size(177, 23);
@@ -543,13 +547,34 @@
             this.txtStickerCombMix.BackColor = System.Drawing.Color.White;
             this.txtStickerCombMix.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtStickerCombMix.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtStickerCombMix.Location = new System.Drawing.Point(824, 550);
+            this.txtStickerCombMix.Location = new System.Drawing.Point(824, 529);
             this.txtStickerCombMix.MaxLength = 30;
             this.txtStickerCombMix.Name = "txtStickerCombMix";
             this.txtStickerCombMix.Size = new System.Drawing.Size(177, 23);
             this.txtStickerCombMix.TabIndex = 22;
             this.txtStickerCombMix.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStickerCombMix_PopUp);
             this.txtStickerCombMix.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStickerCombMix_Validating);
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(567, 557);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(254, 23);
+            this.label6.TabIndex = 24;
+            this.label6.Text = "Shipping Stamp Combination";
+            // 
+            // txtStampComb
+            // 
+            this.txtStampComb.BackColor = System.Drawing.Color.White;
+            this.txtStampComb.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtStampComb.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStampComb.Location = new System.Drawing.Point(824, 557);
+            this.txtStampComb.MaxLength = 30;
+            this.txtStampComb.Name = "txtStampComb";
+            this.txtStampComb.Size = new System.Drawing.Size(177, 23);
+            this.txtStampComb.TabIndex = 25;
+            this.txtStampComb.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStampComb_PopUp);
+            this.txtStampComb.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStampComb_Validating);
             // 
             // B11
             // 
@@ -622,5 +647,7 @@
         private Win.UI.TextBox txtStickerComb;
         private Win.UI.Label label5;
         private Win.UI.Label label4;
+        private Win.UI.TextBox txtStampComb;
+        private Win.UI.Label label6;
     }
 }
