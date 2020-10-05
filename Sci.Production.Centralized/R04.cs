@@ -30,6 +30,7 @@ namespace Sci.Production.Centralized
         private string shift;
         private bool show_Accumulate_output;
         private bool where_reason;
+        private bool exclude_NonRevenue;
 
         /// <summary>
         /// R04
@@ -72,6 +73,7 @@ namespace Sci.Production.Centralized
             this.shift = this.comboShift.Text;
             this.show_Accumulate_output = this.chk_Accumulate_output.Checked;
             this.where_reason = this.chkSewingReasonID.Checked;
+            this.exclude_NonRevenue = this.chkExcludeNonRevenue.Checked;
 
             return base.ValidateInput();
         }
@@ -132,6 +134,7 @@ select s.id
     ,[SewingReasonDesc] = isnull(sr.SewingReasonDesc,'')
 	,[Remark] = isnull(ssd.SewingOutputRemark,'')
     ,o.SciDelivery 
+    ,[NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
     ,Cancel=iif(o.Junk=1,'Y','' )
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
@@ -209,6 +212,11 @@ where 1=1
                 sqlCmd.Append($@" and o.Junk = 1 " + Environment.NewLine);
             }
 
+            if (this.exclude_NonRevenue)
+            {
+                sqlCmd.Append($@" and o.NonRevenue = 0 " + Environment.NewLine);
+            }
+
             if (!MyUtility.Check.Empty(this.shift))
             {
                 switch (this.shift)
@@ -269,6 +277,7 @@ select distinct OutputDate
     ,SubConOutContractNumber
     ,SubconInType
     ,SewingReasonDesc
+    ,NonRevenue
     ,Remark
     ,Cancel
 into #tmpSewingGroup

@@ -46,22 +46,35 @@
             this.comboM = new Sci.Win.UI.ComboBox();
             this.labelM = new Sci.Win.UI.Label();
             this.checkSampleFty = new Sci.Win.UI.CheckBox();
+            this.chkExcludeNonRevenue = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(355, 12);
+            this.print.Location = new System.Drawing.Point(420, 6);
             this.print.TabIndex = 10;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(355, 48);
+            this.toexcel.Location = new System.Drawing.Point(420, 42);
             this.toexcel.TabIndex = 11;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(355, 84);
+            this.close.Location = new System.Drawing.Point(420, 78);
             this.close.TabIndex = 12;
+            // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.Location = new System.Drawing.Point(337, 123);
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Location = new System.Drawing.Point(373, 126);
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(393, 124);
             // 
             // labelDate
             // 
@@ -248,9 +261,21 @@
             this.checkSampleFty.Text = "Exclude Sample Factory";
             this.checkSampleFty.UseVisualStyleBackColor = true;
             // 
+            // chkExcludeNonRevenue
+            // 
+            this.chkExcludeNonRevenue.AutoSize = true;
+            this.chkExcludeNonRevenue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludeNonRevenue.Location = new System.Drawing.Point(241, 162);
+            this.chkExcludeNonRevenue.Name = "chkExcludeNonRevenue";
+            this.chkExcludeNonRevenue.Size = new System.Drawing.Size(167, 21);
+            this.chkExcludeNonRevenue.TabIndex = 109;
+            this.chkExcludeNonRevenue.Text = "Exclude Non Revenue";
+            this.chkExcludeNonRevenue.UseVisualStyleBackColor = true;
+            // 
             // R02
             // 
-            this.ClientSize = new System.Drawing.Size(447, 299);
+            this.ClientSize = new System.Drawing.Size(512, 299);
+            this.Controls.Add(this.chkExcludeNonRevenue);
             this.Controls.Add(this.checkSampleFty);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.labelM);
@@ -273,7 +298,11 @@
             this.DefaultControlForEdit = "dateDateStart";
             this.IsSupportToPrint = false;
             this.Name = "R02";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R02. Monthly Production output Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelDate, 0);
             this.Controls.SetChildIndex(this.labelSewingLine, 0);
             this.Controls.SetChildIndex(this.labelReportType, 0);
@@ -295,6 +324,7 @@
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.checkSampleFty, 0);
+            this.Controls.SetChildIndex(this.chkExcludeNonRevenue, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -320,5 +350,6 @@
         private Win.UI.ComboBox comboM;
         private Win.UI.Label labelM;
         private Win.UI.CheckBox checkSampleFty;
+        private Win.UI.CheckBox chkExcludeNonRevenue;
     }
 }

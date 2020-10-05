@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
 
 namespace Sci.Production.Sewing
 {
@@ -23,6 +23,7 @@ namespace Sci.Production.Sewing
         private string cdcode;
         private string shift;
         private bool show_Accumulate_output;
+        private bool exclude_NonRevenue;
 
         /// <summary>
         /// R04
@@ -56,15 +57,16 @@ namespace Sci.Production.Sewing
             this.cdcode = this.txtCDCode.Text;
             this.shift = this.comboShift.Text;
             this.show_Accumulate_output = this.chk_Accumulate_output.Checked;
+            this.exclude_NonRevenue = this.chkExcludeNonRevenue.Checked;
             return base.ValidateInput();
         }
 
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-         DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
-         StringBuilder sqlCmd = new StringBuilder();
-         sqlCmd.Append(string.Format(@"--根據條件撈基本資料
+            DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
+            StringBuilder sqlCmd = new StringBuilder();
+            sqlCmd.Append(string.Format(@"--根據條件撈基本資料
 select s.id
 	,s.OutputDate
 	,s.Category
@@ -114,6 +116,7 @@ select s.id
     ,[SewingReasonDesc] = isnull(sr.SewingReasonDesc,'')
 	,[Remark] = isnull(ssd.SewingOutputRemark,'')
     ,o.SciDelivery 
+    ,[NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
     ,Cancel=iif(o.Junk=1,'Y','' )
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
@@ -149,42 +152,47 @@ outer apply( select BrandID from orders o1 WITH (NOLOCK) where o.CustPONo=o1.id 
 outer apply( select top 1 BrandID from Style WITH (NOLOCK) where id=o.StyleID and SeasonID=o.SeasonID and BrandID!='SUBCON-I' )StyleBrand
 where 1=1 "));
 
-         if (!MyUtility.Check.Empty(this.date1))
+            if (!MyUtility.Check.Empty(this.date1))
             {
                 sqlCmd.Append(string.Format(" and s.OutputDate >= '{0}' " + Environment.NewLine, Convert.ToDateTime(this.date1).ToString("yyyyMMdd")));
             }
 
-         if (!MyUtility.Check.Empty(this.date2))
+            if (!MyUtility.Check.Empty(this.date2))
             {
                 sqlCmd.Append(string.Format(" and s.OutputDate <= '{0}' " + Environment.NewLine, Convert.ToDateTime(this.date2).ToString("yyyyMMdd")));
             }
 
-         if (!MyUtility.Check.Empty(this.mDivision))
+            if (!MyUtility.Check.Empty(this.mDivision))
             {
                 sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'" + Environment.NewLine, this.mDivision));
             }
 
-         if (!MyUtility.Check.Empty(this.factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'" + Environment.NewLine, this.factory));
             }
 
-         if (!MyUtility.Check.Empty(this.category) && this.category.ToUpper() == "MOCKUP")
+            if (!MyUtility.Check.Empty(this.category) && this.category.ToUpper() == "MOCKUP")
             {
                 sqlCmd.Append(" and s.Category = 'M'" + Environment.NewLine);
             }
 
-         if (this.chkExcludeSampleFty.Checked)
+            if (this.chkExcludeSampleFty.Checked)
             {
                 sqlCmd.Append($@" and f.Type != 'S'" + Environment.NewLine);
             }
 
-         if (this.chkOnlyCancelOrder.Checked)
+            if (this.chkOnlyCancelOrder.Checked)
             {
                 sqlCmd.Append($@" and o.Junk = 1 " + Environment.NewLine);
             }
 
-         if (!MyUtility.Check.Empty(this.shift))
+            if (this.exclude_NonRevenue)
+            {
+                sqlCmd.Append($@" and o.NonRevenue = 0 " + Environment.NewLine);
+            }
+
+            if (!MyUtility.Check.Empty(this.shift))
             {
                 switch (this.shift)
                 {
@@ -200,7 +208,7 @@ where 1=1 "));
                 }
             }
 
-         sqlCmd.Append(@"--By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 WorkHour,QAQty,InlineQty
+            sqlCmd.Append(@"--By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 WorkHour,QAQty,InlineQty
 select distinct OutputDate
 	,Category
 	,Shift
@@ -244,6 +252,7 @@ select distinct OutputDate
     ,SubConOutContractNumber
     ,SubconInType
     ,SewingReasonDesc
+    ,NonRevenue
     ,Remark
     ,Cancel
 into #tmpSewingGroup
@@ -265,7 +274,7 @@ from #tmpSewingGroup t
 left join Factory f on t.FactoryID = f.ID
 left join Orders o on t.OrderId = o.ID
 where 1=1");
-         if (!MyUtility.Check.Empty(this.category) && this.category != "Mockup")
+            if (!MyUtility.Check.Empty(this.category) && this.category != "Mockup")
             {
                 if (this.category == "Bulk")
                 {
@@ -293,17 +302,17 @@ where 1=1");
                 }
             }
 
-         if (!MyUtility.Check.Empty(this.brand))
+            if (!MyUtility.Check.Empty(this.brand))
             {
                 sqlCmd.Append(string.Format(" and (t.OrderBrandID = '{0}' or t.MockupBrandID = '{0}')", this.brand));
             }
 
-         if (!MyUtility.Check.Empty(this.cdcode))
+            if (!MyUtility.Check.Empty(this.cdcode))
             {
                 sqlCmd.Append(string.Format(" and (t.OrderCdCodeID = '{0}' or t.MockupCDCodeID = '{0}')", this.cdcode));
             }
 
-         sqlCmd.Append($@"-----Artwork
+            sqlCmd.Append($@"-----Artwork
 {(this.chk_Include_Artwork.Checked ? @"select ID,Seq,ArtworkUnit,ProductionUnit
 into #AT
 from ArtworkType WITH (NOLOCK)
@@ -369,7 +378,7 @@ declare @TTLZ nvarchar(max) =
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
 {(this.chk_Include_Artwork.Checked ?
-@"select orderid,SubconOutFty,FactoryID,Team,OutputDate,SewingLineID,LastShift,Category,ComboType,qaqty '+@NameZ+N'
+   @"select orderid,SubconOutFty,FactoryID,Team,OutputDate,SewingLineID,LastShift,Category,ComboType,qaqty '+@NameZ+N'
 into #oid_at
 from
 (
@@ -428,21 +437,22 @@ select * from(
 		,CumulateDate
 		,DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
 		,InlineQty");
-         if (this.show_Accumulate_output == true)
+            if (this.show_Accumulate_output == true)
             {
                 sqlCmd.Append(@",acc_output.value
                                 ,Balance =  t.OrderQty -  acc_output.value 
                             ");
             }
 
-         sqlCmd.Append($@",Diff = t.QAQty-InlineQty
+            sqlCmd.Append($@",Diff = t.QAQty-InlineQty
 		,rate
         ,t.Remark        
         ,t.SewingReasonDesc
         ,t.SPFactory
+        ,t.NonRevenue
 		{(this.chk_Include_Artwork.Checked ? "'+@TTLZ+N'" : " ")}
     from #tmp1stFilter t");
-         if (this.show_Accumulate_output == true)
+            if (this.show_Accumulate_output == true)
             {
                 sqlCmd.Append(@"
                                     outer  apply(select value = Sum(SD.QAQty)
@@ -453,7 +463,7 @@ select * from(
                                                and S.OutputDate <= t.OutputDate) acc_output");
             }
 
-         if (this.chk_Include_Artwork.Checked)
+            if (this.chk_Include_Artwork.Checked)
             {
                 sqlCmd.Append(@" left join #oid_at o on o.orderid = t.OrderId and 
                            o.FactoryID = t.FactoryID and
@@ -466,7 +476,7 @@ select * from(
                            o.SubconOutFty = t.SubconOutFty");
             }
 
-         sqlCmd.Append($@" )a
+            sqlCmd.Append($@" )a
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId
 
 drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup
@@ -474,15 +484,15 @@ drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup
 '
 EXEC sp_executesql @lastSql
 ");
-         DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
-         if (!result)
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+            if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
 
-         DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
-         return Ict.Result.True;
+            DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>

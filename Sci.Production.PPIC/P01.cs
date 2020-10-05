@@ -601,37 +601,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 }
                 #endregion
 
-                // 檢查是否幫姊妹廠代工
-                List<SqlParameter> cmds = new List<SqlParameter>
-                {
-                    new SqlParameter("@ProgramID", this.CurrentMaintain["ProgramID"].ToString()),
-                    new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"].ToString()),
-                    new SqlParameter("@M", this.CurrentMaintain["MDivisionID"].ToString()),
-                };
-                string sqlCmd = @"select ID from SCIFty WITH (NOLOCK) where ID = @programid";
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out System.Data.DataTable sCIFtyData);
-                if (result && sCIFtyData.Rows.Count < 1)
-                {
-                    this.CurrentMaintain["SubconInType"] = 3;
-                    this.CurrentMaintain["SubconInSisterFty"] = 0;
-                }
-                else
-                {
-                    sqlCmd = @"
-select ID from SCIFty s WITH (NOLOCK)
-where id = @ProgramID
-and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDivisionID)";
-                    if (MyUtility.Check.Seek(sqlCmd, cmds, null))
-                    {
-                        this.CurrentMaintain["SubconInType"] = 1;
-                    }
-                    else
-                    {
-                        this.CurrentMaintain["SubconInType"] = 2;
-                    }
-
-                    this.CurrentMaintain["SubconInSisterFty"] = 1;
-                }
+                this.Check_Sister();
 
                 string strUpd_QtyShip_BuyerDelivery = string.Format(
                     @"
@@ -1731,6 +1701,142 @@ and p.Type in ('L', 'B')
                     e.Cancel = true;
                     return;
                 }
+            }
+        }
+
+        private void TxtProgram_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            if (!this.EditMode || !MyUtility.Convert.GetBool(this.CurrentMaintain["LocalOrder"]))
+            {
+                return;
+            }
+
+            string cmd = $@"
+select id as [Local Supplier Code]
+, abb as [Abbreviation]
+, Name as [Local Supplier Name]
+, (case when IsFactory =1 then 'Y' else 'N' end) as [Is Factory]
+, (case when IsSubcon =1 then 'Y' else 'N' end) as [Is Subcon Supplier]
+from LocalSupp ls
+where 1=1
+and (IsFactory =1 or IsSubcon =1)
+and ls.ID <> '{Env.User.Factory}' 
+and ls.abb <> '{Env.User.Factory}'
+order by id";
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(cmd, "5,10,15,10,10", this.txtProgram.Text);
+
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.CurrentMaintain["ProgramID"] = MyUtility.Convert.GetString(item.GetSelecteds()[0]["Abbreviation"]);
+            this.txtProgram.Text = MyUtility.Convert.GetString(item.GetSelecteds()[0]["Abbreviation"]);
+
+            this.CurrentMaintain["NonRevenue"] = false;
+        }
+
+        private void TxtProgram_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.EditMode)
+            {
+                if (!MyUtility.Convert.GetBool(this.CurrentMaintain["LocalOrder"]))
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(this.txtProgram.Text))
+                {
+                    this.CurrentMaintain["ProgramID"] = string.Empty;
+                    this.CurrentMaintain["NonRevenue"] = false;
+                    return;
+                }
+
+                this.CurrentMaintain["ProgramID"] = this.txtProgram.Text;
+
+                // 若登入工廠為所輸入的Program，則直接勾選"non revenue"
+                if (this.txtProgram.Text == Sci.Env.User.Factory)
+                {
+                    this.CurrentMaintain["NonRevenue"] = true;
+                    return;
+                }
+
+                // 根據ProgramID，更新姊妹廠資訊(SubconInType、SubconInSisterFty)
+                this.Check_Sister();
+
+                // 若為SubconInType、SubconInSisterFty = 1或2則不打勾
+                if (MyUtility.Convert.GetInt(this.CurrentMaintain["SubconInType"]) == 1 || MyUtility.Convert.GetInt(this.CurrentMaintain["SubconInType"]) == 2)
+                {
+                    this.CurrentMaintain["NonRevenue"] = false;
+                    return;
+                }
+
+                // 私接外面訂單 或 工廠做給自己做(例如: uniform, mask)，則適用以下判斷
+                List<SqlParameter> parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@abb", this.txtProgram.Text),
+                };
+
+                string cmd = $@"
+select id as [Local Supplier Code]
+, abb as [Abbreviation]
+, Name as [Local Supplier Name]
+, (case when IsFactory =1 then 'Y' else 'N' end) as [Is Factory]
+, (case when IsSubcon =1 then 'Y' else 'N' end) as [Is Subcon Supplier]
+from LocalSupp ls
+where 1=1
+and (IsFactory =1 or IsSubcon =1)
+and ls.ID <> '{Env.User.Factory}' 
+and ls.abb <> '{Env.User.Factory}'
+AND abb = @abb
+order by id";
+
+                if (MyUtility.Check.Seek(cmd, parameters))
+                {
+                    this.CurrentMaintain["NonRevenue"] = false;
+                }
+                else
+                {
+                    this.CurrentMaintain["NonRevenue"] = true;
+                }
+            }
+        }
+
+        // 檢查是否幫姊妹廠代工，並更新SubconInType和SubconInSisterFty
+        private void Check_Sister()
+        {
+            // 檢查是否幫姊妹廠代工
+            List<SqlParameter> cmds = new List<SqlParameter>
+                {
+                    new SqlParameter("@ProgramID", this.CurrentMaintain["ProgramID"].ToString()),
+                    new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"].ToString()),
+                    new SqlParameter("@M", this.CurrentMaintain["MDivisionID"].ToString()),
+                };
+            string sqlCmd = @"select ID from SCIFty WITH (NOLOCK) where ID = @programid";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out System.Data.DataTable sCIFtyData);
+            if (result && sCIFtyData.Rows.Count < 1)
+            {
+                this.CurrentMaintain["SubconInType"] = 3;
+                this.CurrentMaintain["SubconInSisterFty"] = 0;
+            }
+            else
+            {
+                sqlCmd = @"
+select ID from SCIFty s WITH (NOLOCK)
+where id = @ProgramID
+and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDivisionID)";
+                if (MyUtility.Check.Seek(sqlCmd, cmds, null))
+                {
+                    this.CurrentMaintain["SubconInType"] = 1;
+                }
+                else
+                {
+                    this.CurrentMaintain["SubconInType"] = 2;
+                }
+
+                this.CurrentMaintain["SubconInSisterFty"] = 1;
             }
         }
     }

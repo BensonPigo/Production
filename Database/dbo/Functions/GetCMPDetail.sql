@@ -118,6 +118,8 @@ where	s.MDivisionID = isnull(@M, s.MDivisionID) and
         and ((LastShift.Value <> 'I') or ( LastShift.Value = 'I' and o.SubconInSisterFty <> 0 ))   
 		--將ArtworkType為'SP_THREAD'部分，排除掉是台北買線的部分。
 		AND (  (NOT EXISTS (SELECT 1 FROm @TPEtmp WHERE ID = o.POID )AND att.ID = 'SP_THREAD')   OR   isnull(att.ID,'') <> 'SP_THREAD' ) 
+		AND o.NonRevenue = 0
+
 group by  s.OutputDate
 		, sd.OrderId
 		, s.FactoryID
