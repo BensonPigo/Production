@@ -183,6 +183,18 @@
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
     </Compile>
+    <Compile Include="B10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B10.Designer.cs">
+      <DependentUpon>B10.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B10_UploadFromMercury.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B10_UploadFromMercury.Designer.cs">
+      <DependentUpon>B10_UploadFromMercury.cs</DependentUpon>
+    </Compile>
     <Compile Include="DualDisposableResult.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="P01.cs">
@@ -753,6 +765,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B09.resx">
       <DependentUpon>B09.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B10.resx">
+      <DependentUpon>B10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B10_UploadFromMercury.resx">
+      <DependentUpon>B10_UploadFromMercury.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>

@@ -10,10 +10,12 @@ using System.Linq;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class B06 : Sci.Win.Tems.Input6
     {
         private string oldBrand = string.Empty;
 
+        /// <inheritdoc/>
         public B06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -59,7 +61,7 @@ WHERE Type ='PMS_ShipMarkCategory'
         {
             string masterUkey = (e.Master == null) ? string.Empty : e.Master["Ukey"].ToString();
             this.DetailSelectCommand = $@"
-SELECT b.Seq ,b.ShippingMarkCombinationUkey ,b.ShippingMarkTypeUkey ,[ShippingMarkTypeID]=c.ID ,c.IsSSCC
+SELECT b.Seq ,b.ShippingMarkCombinationUkey ,b.ShippingMarkTypeUkey ,[ShippingMarkTypeID]=c.ID ,c.IsSSCC ,c.FromTemplate
 FROM ShippingMarkCombination a
 INNER JOIN ShippingMarkCombination_Detail b ON a.Ukey = b.ShippingMarkCombinationUkey
 INNER JOIN ShippingMarkType c ON b.ShippingMarkTypeUkey = c.Ukey
@@ -105,6 +107,7 @@ ORDER BY b.Seq
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings shippingMarkTypeID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings col_IsSSCC = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             shippingMarkTypeID.CellValidating += (s, e) =>
             {
@@ -143,15 +146,18 @@ ORDER BY b.Seq
                         currentRow.EndEdit();
                         e.Cancel = true;
                         currentRow["IsSSCC"] = false;
+                        currentRow["FromTemplate"] = false;
                         MyUtility.Msg.WarningBox("Data not found !!");
                         return;
                     }
                     else
                     {
                         bool isSSCC = MyUtility.Convert.GetBool(dt.Rows[0]["IsSSCC"]);
+                        bool fromTemplate = MyUtility.Convert.GetBool(dt.Rows[0]["FromTemplate"]);
                         currentRow["ShippingMarkTypeUkey"] = MyUtility.Convert.GetInt(dt.Rows[0]["Ukey"]);
                         currentRow["ShippingMarkTypeID"] = typeID;
                         currentRow["IsSSCC"] = isSSCC;
+                        currentRow["FromTemplate"] = fromTemplate;
 
                         currentRow.EndEdit();
                     }
@@ -169,10 +175,28 @@ ORDER BY b.Seq
                     }
 
                     DataRow currentRow = this.detailgrid.GetDataRow(e.RowIndex);
-                    string cmd = $@"SELECT [Shipping Mark Type ID]=ID,[IsSSCC] = IIF(IsSSCC=1,'Y',''),Ukey FROM ShippingMarkType WITH(NOLOCK) WHERE BrandID = '{this.CurrentMaintain["BrandID"]}' AND Category = '{this.CurrentMaintain["Category"]}' AND Junk = 0";
+                    string cmd = string.Empty; // $@"SELECT [Shipping Mark Type ID]=ID,[IsSSCC] = IIF(IsSSCC=1,'Y',''),[FromTemplate] = IIF(FromTemplate=1,'Y',''),Ukey FROM ShippingMarkType WITH(NOLOCK) WHERE BrandID = '{this.CurrentMaintain["BrandID"]}' AND Category = '{this.CurrentMaintain["Category"]}' AND Junk = 0";
+
+                    string columns = string.Empty;
+                    string columnWidth = string.Empty;
+
+                    if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "PIC")
+                    {
+                        cmd = $@"SELECT [Shipping Mark Type ID]=ID,[IsSSCC] = IIF(IsSSCC=1,'Y',''),[FromTemplate] = IIF(FromTemplate=1,'Y',''),Ukey FROM ShippingMarkType WITH(NOLOCK) WHERE BrandID = '{this.CurrentMaintain["BrandID"]}' AND Category = '{this.CurrentMaintain["Category"]}' AND Junk = 0";
+                        columns = "Shipping Mark Type ID,IsSSCC,FromTemplate";
+                        columnWidth = "10,10,10";
+                    }
+
+                    if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "HTML")
+                    {
+                        cmd = $@"SELECT [Shipping Mark Type ID]=ID,[FromTemplate] = IIF(FromTemplate=1,'Y',''),Ukey FROM ShippingMarkType WITH(NOLOCK) WHERE BrandID = '{this.CurrentMaintain["BrandID"]}' AND Category = '{this.CurrentMaintain["Category"]}' AND Junk = 0";
+                        columns = "Shipping Mark Type ID,FromTemplate";
+                        columnWidth = "10,10";
+                    }
+
                     DataTable dt;
                     DBProxy.Current.Select(null, cmd, out dt);
-                    SelectItem item = new SelectItem(dt, "Shipping Mark Type ID,IsSSCC", "10,10", currentRow["ShippingMarkTypeUkey"].ToString());
+                    SelectItem item = new SelectItem(dt, columns, columnWidth, currentRow["ShippingMarkTypeUkey"].ToString());
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -181,17 +205,40 @@ ORDER BY b.Seq
 
                     IList<DataRow> selectedData = item.GetSelecteds();
                     currentRow["ShippingMarkTypeID"] = item.GetSelectedString();
-                    currentRow["IsSSCC"] = selectedData[0]["IsSSCC"].ToString() == "Y" ? true : false;
+
+                    if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "PIC")
+                    {
+                        currentRow["IsSSCC"] = selectedData[0]["IsSSCC"].ToString() == "Y" ? true : false;
+                    }
+
+                    currentRow["FromTemplate"] = selectedData[0]["FromTemplate"].ToString() == "Y" ? true : false;
+
                     currentRow["ShippingMarkTypeUkey"] = MyUtility.Convert.GetInt(selectedData[0]["Ukey"]);
 
                     currentRow.EndEdit();
                 }
             };
 
+            col_IsSSCC.CellEditable += (s, e) =>
+            {
+                DataRow dr = this.grid.GetDataRow(e.RowIndex);
+
+                // Category 為 Stamp (HTML) 時無法編輯
+                if (MyUtility.Convert.GetString(dr["Category"]) == "HTML")
+                {
+                    e.IsEditable = false;
+                }
+                else
+                {
+                    e.IsEditable = true;
+                }
+            };
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("Seq", header: "Seq", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: false)
-            .Text("ShippingMarkTypeID", header: "Sticker Type", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: shippingMarkTypeID)
-            .CheckBox("IsSSCC", header: "Is SSCC", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+            .Text("ShippingMarkTypeID", header: "Mark Type", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: shippingMarkTypeID)
+            .CheckBox("IsSSCC", header: "Is SSCC", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0, settings: col_IsSSCC)
+            .CheckBox("FromTemplate", header: "From Template", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             ;
             return base.OnGridSetup();
         }
@@ -215,11 +262,9 @@ ORDER BY b.Seq
         protected override void OnDetailGridAppendClick()
         {
             base.OnDetailGridAppendClick();
-
-            // DataRow newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
-            // newrow["Seq"] = 1;
         }
 
+        /// <inheritdoc/>
         private void Txtbrand_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             string newBrand = this.txtbrand.Text;
@@ -314,38 +359,40 @@ ORDER BY b.Seq
                 }
             }
 
-            // 若Category = PIC，同品牌 + IsMixPack 只允許出現 1 個 Default
-            cmd = $@"SELECT * FROM ShippingMarkCombination 
+            // Category為PIC
+            if (this.CurrentMaintain["Category"].ToString() == "PIC")
+            {
+                // 找出Category = PIC，同品牌 + IsMixPack 的IsDefault
+                cmd = $@"SELECT * FROM ShippingMarkCombination 
 WHERE BrandID='{this.CurrentMaintain["BrandID"]}' 
 AND IsMixPack='{(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "1" : "0")}' 
 AND IsDefault=1 
+AND Category ='PIC'
 AND Ukey <> {this.CurrentMaintain["UKey"]}
 ";
-            DataTable dt;
-            DualResult r = DBProxy.Current.Select(null, cmd, out dt);
+                DataTable repeat_Data;
+                DualResult r = DBProxy.Current.Select(null, cmd, out repeat_Data);
 
-            if (!r)
-            {
-                this.ShowErr(r);
-                return false;
-            }
+                if (!r)
+                {
+                    this.ShowErr(r);
+                    return false;
+                }
 
-            if (this.CurrentMaintain["Category"].ToString() == "PIC")
-            {
                 if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]))
                 {
                     // 若有已勾選資料，詢問是否覆蓋
-                    if (dt.Rows.Count > 0)
+                    if (repeat_Data.Rows.Count > 0)
                     {
-                        string otherBrand = dt.Rows[0]["BrandID"].ToString();
-                        string otherIDd = dt.Rows[0]["ID"].ToString();
+                        string otherBrand = repeat_Data.Rows[0]["BrandID"].ToString();
+                        string otherIDd = repeat_Data.Rows[0]["ID"].ToString();
 
-                        DialogResult diaR = MyUtility.Msg.QuestionBox($@"Brand {otherBrand} IsMixPack (True/False) Shipping Mark Combination {otherIDd}, already ticked ‘Is Default’, system will auto untick ‘Is Default’ for Shipping Mark Combination {this.CurrentMaintain["ID"]}.
+                        DialogResult diaR = MyUtility.Msg.WarningBox($@"Sticker : Brand {otherBrand} IsMixPack ({(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "True" : "False")}) Shipping Mark Combination {otherIDd}, already ticked ‘Is Default’, system will auto untick ‘Is Default’ for Shipping Mark Combination {this.CurrentMaintain["ID"]}.
 Please check to continue process.");
 
-                        if (diaR == DialogResult.Yes)
+                        if (diaR == DialogResult.OK)
                         {
-                            cmd = $@"UPDATE ShippingMarkCombination SET IsDefault = 0 WHERE BrandID='{otherBrand}' AND ID = '{otherIDd}'AND IsDefault = 1 ";
+                            cmd = $@"UPDATE ShippingMarkCombination SET IsDefault = 0 WHERE BrandID='{otherBrand}' AND Category='{this.CurrentMaintain["Category"]}'  AND IsMixPack='{(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "1" : "0")}' AND IsDefault = 1 ";
                             r = DBProxy.Current.Execute(null, cmd);
                             if (!r)
                             {
@@ -361,11 +408,69 @@ Please check to continue process.");
                 }
                 else
                 {
-                    // 若該品牌沒有 IsDefault=1的資料，則將該筆資料設定為 IsDefault
+                    // 若該Category + 品牌 + IsMixPack 沒有 IsDefault=1的資料，則將該筆資料設定為 IsDefault
                     // 同一品牌中，『混尺碼 / 單尺碼』各至少要有一組貼標 Shipping Mark Combination 為預設
-                    if (dt.Rows.Count == 0)
+                    if (repeat_Data.Rows.Count == 0)
                     {
-                        MyUtility.Msg.InfoBox($"Brand {this.CurrentMaintain["BrandID"]} IsMixPack (True/False) not yet set default, system will auto tick 'Is Default' for this Shipping Mark Combination.");
+                        MyUtility.Msg.InfoBox($"Sticker : Brand {this.CurrentMaintain["BrandID"]} IsMixPack ({(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "True" : "False")}) not yet set default, system will auto tick 'Is Default' for this Shipping Mark Combination.");
+                        this.CurrentMaintain["IsDefault"] = true;
+                    }
+                }
+            }
+
+            // Category為HTML
+            if (this.CurrentMaintain["Category"].ToString() == "HTML")
+            {
+                // 找出Category = HTML，同品牌 的IsDefault
+                cmd = $@"SELECT * FROM ShippingMarkCombination 
+WHERE BrandID='{this.CurrentMaintain["BrandID"]}' 
+AND IsDefault=1 
+AND Category ='HTML'
+AND Ukey <> {this.CurrentMaintain["UKey"]}
+";
+                DataTable repeat_Data;
+                DualResult r = DBProxy.Current.Select(null, cmd, out repeat_Data);
+
+                if (!r)
+                {
+                    this.ShowErr(r);
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]))
+                {
+                    // 若有已勾選資料，詢問是否覆蓋
+                    if (repeat_Data.Rows.Count > 0)
+                    {
+                        string otherBrand = repeat_Data.Rows[0]["BrandID"].ToString();
+                        string otherIDd = repeat_Data.Rows[0]["ID"].ToString();
+
+                        DialogResult diaR = MyUtility.Msg.WarningBox($@"Stamp : Brand {otherBrand} Shipping Mark Combination {otherIDd}, already ticked ‘Is Default’, system will auto untick ‘Is Default’ for Shipping Mark Combination {this.CurrentMaintain["ID"]}.
+Please check to continue process.");
+
+                        if (diaR == DialogResult.OK)
+                        {
+                            cmd = $@"UPDATE ShippingMarkCombination SET IsDefault = 0 WHERE BrandID='{otherBrand}' AND Category='{this.CurrentMaintain["Category"]}' AND IsDefault = 1 ";
+                            r = DBProxy.Current.Execute(null, cmd);
+                            if (!r)
+                            {
+                                this.ShowErr(r);
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    // 若該Category + 品牌 + IsMixPack 沒有 IsDefault=1的資料，則將該筆資料設定為 IsDefault
+                    // 同一品牌中，『混尺碼 / 單尺碼』各至少要有一組貼標 Shipping Mark Combination 為預設
+                    if (repeat_Data.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.InfoBox($"Stamp  : Brand {this.CurrentMaintain["BrandID"]} not yet set default, system will auto tick 'Is Default' for this Shipping Mark Combination.");
                         this.CurrentMaintain["IsDefault"] = true;
                     }
                 }
@@ -381,6 +486,7 @@ Please check to continue process.");
             this.Reload();
         }
 
+        /// <inheritdoc/>
         public void Reload()
         {
             if (this.CurrentDataRow != null)
@@ -400,6 +506,41 @@ Please check to continue process.");
                 {
                     this.gridbs.Position = this.gridbs.Find("Ukey", idIndex);
                 }
+            }
+        }
+
+        private void ComboCategory_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            if (this.EditMode)
+            {
+                this.CurrentMaintain["Category"] = this.comboCategory.SelectedValue.ToString();
+
+                if (this.comboCategory.SelectedValue.ToString() == "HTML")
+                {
+                    this.CurrentMaintain["IsMixPack"] = false;
+                    this.chkIsMixPack.ReadOnly = true;
+                }
+
+                if (this.comboCategory.SelectedValue.ToString() == "PIC")
+                {
+                    this.chkIsMixPack.ReadOnly = false;
+                }
+
+                // 刪除表身重新匯入
+                foreach (DataRow del in this.DetailDatas)
+                {
+                    del.Delete();
+                }
+            }
+
+            if (this.comboCategory.SelectedValue.ToString() == "HTML")
+            {
+                this.detailgrid.Columns["IsSSCC"].Visible = false;
+            }
+
+            if (this.comboCategory.SelectedValue.ToString() == "PIC")
+            {
+                this.detailgrid.Columns["IsSSCC"].Visible = true;
             }
         }
     }

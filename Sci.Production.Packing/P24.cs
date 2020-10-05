@@ -127,9 +127,6 @@ ORDER BY CAST(pd.CTNStartNo as int)
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings itemSelect = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings fromLeft = new DataGridViewGeneratorNumericColumnSettings();
-
             this.detailgrid.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(16), iseditingreadonly: true)

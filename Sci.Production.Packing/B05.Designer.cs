@@ -35,6 +35,9 @@
             this.checkIsSSCC = new Sci.Win.UI.CheckBox();
             this.txtID = new Sci.Win.UI.TextBox();
             this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.chkIsTemplate = new Sci.Win.UI.CheckBox();
+            this.btnTemplateUpload = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,6 +52,9 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnTemplateUpload);
+            this.detailcont.Controls.Add(this.chkIsTemplate);
+            this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.comboCategory);
             this.detailcont.Controls.Add(this.txtID);
             this.detailcont.Controls.Add(this.checkIsSSCC);
@@ -144,6 +150,39 @@
             this.comboCategory.TabIndex = 2;
             this.comboCategory.SelectedIndexChanged += new System.EventHandler(this.ComboCategory_SelectedIndexChanged);
             // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(35, 157);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(133, 23);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Shipping Mark From";
+            // 
+            // chkIsTemplate
+            // 
+            this.chkIsTemplate.AutoSize = true;
+            this.chkIsTemplate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromTemplate", true));
+            this.chkIsTemplate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.chkIsTemplate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsTemplate.IsSupportEditMode = false;
+            this.chkIsTemplate.Location = new System.Drawing.Point(171, 157);
+            this.chkIsTemplate.Name = "chkIsTemplate";
+            this.chkIsTemplate.ReadOnly = true;
+            this.chkIsTemplate.Size = new System.Drawing.Size(94, 24);
+            this.chkIsTemplate.TabIndex = 16;
+            this.chkIsTemplate.Text = "Template";
+            this.chkIsTemplate.UseVisualStyleBackColor = true;
+            // 
+            // btnTemplateUpload
+            // 
+            this.btnTemplateUpload.Location = new System.Drawing.Point(171, 187);
+            this.btnTemplateUpload.Name = "btnTemplateUpload";
+            this.btnTemplateUpload.Size = new System.Drawing.Size(140, 30);
+            this.btnTemplateUpload.TabIndex = 17;
+            this.btnTemplateUpload.Text = "Template Upload";
+            this.btnTemplateUpload.UseVisualStyleBackColor = true;
+            this.btnTemplateUpload.Click += new System.EventHandler(this.BtnTemplateUpload_Click);
+            // 
             // B05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -182,5 +221,8 @@
         private Win.UI.CheckBox checkIsSSCC;
         private Win.UI.ComboBox comboCategory;
         private Win.UI.TextBox txtID;
+        private Win.UI.CheckBox chkIsTemplate;
+        private Win.UI.Label label4;
+        private Win.UI.Button btnTemplateUpload;
     }
 }
