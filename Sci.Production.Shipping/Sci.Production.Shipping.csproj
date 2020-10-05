@@ -161,6 +161,18 @@
     <Compile Include="B49.Designer.cs">
       <DependentUpon>B49.cs</DependentUpon>
     </Compile>
+    <Compile Include="B51_KH.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B51_KH.Designer.cs">
+      <DependentUpon>B51_KH.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B52_KH.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B52_KH.Designer.cs">
+      <DependentUpon>B52_KH.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_FTYRegularSendingSchedule.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -915,6 +927,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B49.resx">
       <DependentUpon>B49.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B51_KH.resx">
+      <DependentUpon>B51_KH.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B52_KH.resx">
+      <DependentUpon>B52_KH.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_FTYRegularSendingSchedule.resx">
       <DependentUpon>P02_FTYRegularSendingSchedule.cs</DependentUpon>
