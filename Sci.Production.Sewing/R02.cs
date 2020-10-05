@@ -250,6 +250,11 @@ where s.OutputDate between '{0}' and '{1}' and (o.CateGory NOT IN ('G','A') or s
                 sqlCmd.Append(" and f.type <> 'S' ");
             }
 
+            if (this.chkExcludeNonRevenue.Checked)
+            {
+                sqlCmd.Append(" and o.NonRevenue = 0");
+            }
+
             sqlCmd.Append(@"
 select OutputDate,Category
 	   , Shift

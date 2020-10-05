@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.lblReceivingID = new Sci.Win.UI.Label();
             this.lblWK = new Sci.Win.UI.Label();
             this.lblArriveWHDate = new Sci.Win.UI.Label();
@@ -58,7 +58,21 @@
             this.btnUpdateTime = new Sci.Win.UI.Button();
             this.dateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
+            this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.lbLocateSP = new Sci.Win.UI.Label();
+            this.txtLocateSeq = new Sci.Production.Class.TxtSeq();
+            this.txtLocateSP = new Sci.Win.UI.TextBox();
+            this.txtLocateRoll = new Sci.Win.UI.TextBox();
+            this.lbLocateRoll = new Sci.Win.UI.Label();
+            this.txtLocateColor = new Sci.Win.UI.TextBox();
+            this.lbLocateColor = new Sci.Win.UI.Label();
+            this.txtLocateDyelot = new Sci.Win.UI.TextBox();
+            this.lbLocateDyelot = new Sci.Win.UI.Label();
+            this.lbLocateRef = new Sci.Win.UI.Label();
+            this.txtLocateRef = new Sci.Win.UI.TextBox();
+            this.btnFind = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblReceivingID
@@ -146,22 +160,22 @@
             this.gridReceiving.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridReceiving.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridReceiving.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridReceiving.Location = new System.Drawing.Point(9, 102);
+            this.gridReceiving.Location = new System.Drawing.Point(9, 152);
             this.gridReceiving.Name = "gridReceiving";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReceiving.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReceiving.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridReceiving.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReceiving.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReceiving.RowTemplate.Height = 24;
             this.gridReceiving.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridReceiving.ShowCellToolTips = false;
-            this.gridReceiving.Size = new System.Drawing.Size(988, 313);
+            this.gridReceiving.Size = new System.Drawing.Size(988, 302);
             this.gridReceiving.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridReceiving.TabIndex = 26;
             this.gridReceiving.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridReceiving_ColumnHeaderMouseClick);
@@ -170,7 +184,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(917, 423);
+            this.btnClose.Location = new System.Drawing.Point(917, 462);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 25;
@@ -181,7 +195,7 @@
             // btnUpdate
             // 
             this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdate.Location = new System.Drawing.Point(818, 423);
+            this.btnUpdate.Location = new System.Drawing.Point(818, 462);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(80, 30);
             this.btnUpdate.TabIndex = 24;
@@ -343,7 +357,7 @@
             // btnUpdateTime
             // 
             this.btnUpdateTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnUpdateTime.Location = new System.Drawing.Point(220, 423);
+            this.btnUpdateTime.Location = new System.Drawing.Point(220, 462);
             this.btnUpdateTime.Name = "btnUpdateTime";
             this.btnUpdateTime.Size = new System.Drawing.Size(222, 30);
             this.btnUpdateTime.TabIndex = 42;
@@ -355,7 +369,7 @@
             // 
             this.dateTimePicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.dateTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateTimePicker.Location = new System.Drawing.Point(9, 425);
+            this.dateTimePicker.Location = new System.Drawing.Point(9, 464);
             this.dateTimePicker.Name = "dateTimePicker";
             this.dateTimePicker.Size = new System.Drawing.Size(200, 23);
             this.dateTimePicker.TabIndex = 43;
@@ -365,17 +379,148 @@
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.Color.Red;
-            this.label1.Location = new System.Drawing.Point(643, 431);
+            this.label1.Location = new System.Drawing.Point(643, 470);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(163, 17);
             this.label1.TabIndex = 44;
             this.label1.Text = "Display Fabric data only.";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnFind);
+            this.groupBox1.Controls.Add(this.txtLocateRoll);
+            this.groupBox1.Controls.Add(this.txtLocateSeq);
+            this.groupBox1.Controls.Add(this.lbLocateRoll);
+            this.groupBox1.Controls.Add(this.lbLocateSP);
+            this.groupBox1.Controls.Add(this.txtLocateColor);
+            this.groupBox1.Controls.Add(this.txtLocateSP);
+            this.groupBox1.Controls.Add(this.lbLocateColor);
+            this.groupBox1.Controls.Add(this.lbLocateRef);
+            this.groupBox1.Controls.Add(this.txtLocateDyelot);
+            this.groupBox1.Controls.Add(this.txtLocateRef);
+            this.groupBox1.Controls.Add(this.lbLocateDyelot);
+            this.groupBox1.Location = new System.Drawing.Point(9, 102);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(987, 44);
+            this.groupBox1.TabIndex = 45;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Locate";
+            // 
+            // lbLocateSP
+            // 
+            this.lbLocateSP.Location = new System.Drawing.Point(3, 18);
+            this.lbLocateSP.Name = "lbLocateSP";
+            this.lbLocateSP.Size = new System.Drawing.Size(37, 23);
+            this.lbLocateSP.TabIndex = 46;
+            this.lbLocateSP.Text = "SP#";
+            // 
+            // txtLocateSeq
+            // 
+            this.txtLocateSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtLocateSeq.Location = new System.Drawing.Point(158, 18);
+            this.txtLocateSeq.Name = "txtLocateSeq";
+            this.txtLocateSeq.Seq1 = "";
+            this.txtLocateSeq.Seq2 = "";
+            this.txtLocateSeq.Size = new System.Drawing.Size(61, 23);
+            this.txtLocateSeq.TabIndex = 47;
+            // 
+            // txtLocateSP
+            // 
+            this.txtLocateSP.BackColor = System.Drawing.Color.White;
+            this.txtLocateSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateSP.Location = new System.Drawing.Point(43, 18);
+            this.txtLocateSP.Name = "txtLocateSP";
+            this.txtLocateSP.Size = new System.Drawing.Size(112, 23);
+            this.txtLocateSP.TabIndex = 46;
+            // 
+            // txtLocateRoll
+            // 
+            this.txtLocateRoll.BackColor = System.Drawing.Color.White;
+            this.txtLocateRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateRoll.IsSupportEditMode = false;
+            this.txtLocateRoll.Location = new System.Drawing.Point(524, 18);
+            this.txtLocateRoll.Name = "txtLocateRoll";
+            this.txtLocateRoll.Size = new System.Drawing.Size(60, 23);
+            this.txtLocateRoll.TabIndex = 48;
+            // 
+            // lbLocateRoll
+            // 
+            this.lbLocateRoll.Location = new System.Drawing.Point(482, 18);
+            this.lbLocateRoll.Name = "lbLocateRoll";
+            this.lbLocateRoll.Size = new System.Drawing.Size(39, 23);
+            this.lbLocateRoll.TabIndex = 52;
+            this.lbLocateRoll.Text = "Roll";
+            // 
+            // txtLocateColor
+            // 
+            this.txtLocateColor.BackColor = System.Drawing.Color.White;
+            this.txtLocateColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateColor.IsSupportEditMode = false;
+            this.txtLocateColor.Location = new System.Drawing.Point(409, 18);
+            this.txtLocateColor.Name = "txtLocateColor";
+            this.txtLocateColor.Size = new System.Drawing.Size(70, 23);
+            this.txtLocateColor.TabIndex = 47;
+            // 
+            // lbLocateColor
+            // 
+            this.lbLocateColor.Location = new System.Drawing.Point(355, 18);
+            this.lbLocateColor.Name = "lbLocateColor";
+            this.lbLocateColor.Size = new System.Drawing.Size(51, 23);
+            this.lbLocateColor.TabIndex = 51;
+            this.lbLocateColor.Text = "Color";
+            // 
+            // txtLocateDyelot
+            // 
+            this.txtLocateDyelot.BackColor = System.Drawing.Color.White;
+            this.txtLocateDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateDyelot.IsSupportEditMode = false;
+            this.txtLocateDyelot.Location = new System.Drawing.Point(640, 18);
+            this.txtLocateDyelot.Name = "txtLocateDyelot";
+            this.txtLocateDyelot.Size = new System.Drawing.Size(65, 23);
+            this.txtLocateDyelot.TabIndex = 49;
+            // 
+            // lbLocateDyelot
+            // 
+            this.lbLocateDyelot.Location = new System.Drawing.Point(586, 18);
+            this.lbLocateDyelot.Name = "lbLocateDyelot";
+            this.lbLocateDyelot.Size = new System.Drawing.Size(51, 23);
+            this.lbLocateDyelot.TabIndex = 53;
+            this.lbLocateDyelot.Text = "Dyelot";
+            // 
+            // lbLocateRef
+            // 
+            this.lbLocateRef.Location = new System.Drawing.Point(222, 18);
+            this.lbLocateRef.Name = "lbLocateRef";
+            this.lbLocateRef.Size = new System.Drawing.Size(40, 23);
+            this.lbLocateRef.TabIndex = 50;
+            this.lbLocateRef.Text = "Ref#";
+            // 
+            // txtLocateRef
+            // 
+            this.txtLocateRef.BackColor = System.Drawing.Color.White;
+            this.txtLocateRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateRef.IsSupportEditMode = false;
+            this.txtLocateRef.Location = new System.Drawing.Point(265, 18);
+            this.txtLocateRef.Name = "txtLocateRef";
+            this.txtLocateRef.Size = new System.Drawing.Size(87, 23);
+            this.txtLocateRef.TabIndex = 46;
+            // 
+            // btnFind
+            // 
+            this.btnFind.Location = new System.Drawing.Point(711, 14);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(98, 30);
+            this.btnFind.TabIndex = 46;
+            this.btnFind.Text = "Find";
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
+            // 
             // P21
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 462);
+            this.ClientSize = new System.Drawing.Size(1008, 501);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dateTimePicker);
             this.Controls.Add(this.btnUpdateTime);
@@ -435,7 +580,10 @@
             this.Controls.SetChildIndex(this.btnUpdateTime, 0);
             this.Controls.SetChildIndex(this.dateTimePicker, 0);
             this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.groupBox1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -471,5 +619,18 @@
         private Win.UI.Button btnUpdateTime;
         private System.Windows.Forms.DateTimePicker dateTimePicker;
         private System.Windows.Forms.Label label1;
+        private Win.UI.GroupBox groupBox1;
+        private Win.UI.TextBox txtLocateRoll;
+        private Class.TxtSeq txtLocateSeq;
+        private Win.UI.Label lbLocateRoll;
+        private Win.UI.Label lbLocateSP;
+        private Win.UI.TextBox txtLocateColor;
+        private Win.UI.TextBox txtLocateSP;
+        private Win.UI.Label lbLocateColor;
+        private Win.UI.Label lbLocateRef;
+        private Win.UI.TextBox txtLocateDyelot;
+        private Win.UI.TextBox txtLocateRef;
+        private Win.UI.Label lbLocateDyelot;
+        private Win.UI.Button btnFind;
     }
 }

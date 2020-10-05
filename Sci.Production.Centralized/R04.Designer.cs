@@ -48,6 +48,7 @@
             this.comboShift = new Sci.Win.UI.ComboBox();
             this.lbShift = new Sci.Win.UI.Label();
             this.chkOnlyCancelOrder = new Sci.Win.UI.CheckBox();
+            this.chkExcludeNonRevenue = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -267,9 +268,21 @@
             this.chkOnlyCancelOrder.Text = "Only Cancel Order";
             this.chkOnlyCancelOrder.UseVisualStyleBackColor = true;
             // 
+            // chkExcludeNonRevenue
+            // 
+            this.chkExcludeNonRevenue.AutoSize = true;
+            this.chkExcludeNonRevenue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludeNonRevenue.Location = new System.Drawing.Point(291, 254);
+            this.chkExcludeNonRevenue.Name = "chkExcludeNonRevenue";
+            this.chkExcludeNonRevenue.Size = new System.Drawing.Size(167, 21);
+            this.chkExcludeNonRevenue.TabIndex = 232;
+            this.chkExcludeNonRevenue.Text = "Exclude Non Revenue";
+            this.chkExcludeNonRevenue.UseVisualStyleBackColor = true;
+            // 
             // R04
             // 
-            this.ClientSize = new System.Drawing.Size(568, 298);
+            this.ClientSize = new System.Drawing.Size(568, 318);
+            this.Controls.Add(this.chkExcludeNonRevenue);
             this.Controls.Add(this.chkOnlyCancelOrder);
             this.Controls.Add(this.comboShift);
             this.Controls.Add(this.lbShift);
@@ -320,6 +333,7 @@
             this.Controls.SetChildIndex(this.lbShift, 0);
             this.Controls.SetChildIndex(this.comboShift, 0);
             this.Controls.SetChildIndex(this.chkOnlyCancelOrder, 0);
+            this.Controls.SetChildIndex(this.chkExcludeNonRevenue, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -346,5 +360,6 @@
         private Win.UI.ComboBox comboShift;
         private Win.UI.Label lbShift;
         private Win.UI.CheckBox chkOnlyCancelOrder;
+        private Win.UI.CheckBox chkExcludeNonRevenue;
     }
 }

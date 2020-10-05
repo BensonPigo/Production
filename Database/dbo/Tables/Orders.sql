@@ -169,6 +169,7 @@
     [IsBuyBackCrossArticle] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossArticle] DEFAULT (0), 
     [IsBuyBackCrossSizeCode] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossSizeCode] DEFAULT (0), 
     [KpiEachConsCheck] DATE NULL, 
+	[NonRevenue] bit NOT NULL CONSTRAINT [DF_Orders_NonRevenue] DEFAULT ((0)),
     [CAB] Varchar(10) NOT NULL CONSTRAINT [DF_Orders_CAB] DEFAULT(''), 
     [FinalDest] Varchar(50) NOT NULL CONSTRAINT [DF_Orders_FinalDest] DEFAULT(''), 
     [Customer_PO] Varchar(50) NOT NULL CONSTRAINT [DF_Orders_Customer_PO] DEFAULT(''), 
@@ -847,6 +848,18 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Orders',
     @level2type = N'COLUMN',
     @level2name = N'KpiEachConsCheck'
+
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'排除此訂單生產成本，1:排除，0不排除',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'Orders',
+	@level2type = N'COLUMN',
+	@level2name = N'NonRevenue'
+
 	;
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nike - Mercury - CAB'
@@ -872,4 +885,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nike - Merc
 	, @level1type = N'TABLE', @level1name = N'Orders'
 	, @level2type = N'COLUMN', @level2name = N'AFS_STOCK_CATEGORY';
 ;
+
 GO
