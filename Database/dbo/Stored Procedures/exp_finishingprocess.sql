@@ -790,7 +790,10 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 WHEN NOT MATCHED BY SOURCE 
 	AND exists(	select 1 from #tmpPackingList where id = t.id) THEN
 	UPDATE SET
-	t.Junk = 1	;
+	t.Junk = 1,
+	GenSongUpdated = 0,
+	SunriseUpdated = 0
+	;
 
 --08. 轉出區間 [Production].[dbo]. [ClogReturn].AddDate=今天
 MERGE ClogReturn AS T
