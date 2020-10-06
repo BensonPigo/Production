@@ -705,23 +705,11 @@ OPTION (RECOMPILE)"
         private void Layout1_Click(object sender, EventArgs e)
         {
             this.PrintBarcode(1);
-            int pos = this.listControlBindingSource1.Position;
-            this.Query();
-            if (this.listControlBindingSource1.Count >= pos + 1)
-            {
-                this.listControlBindingSource1.Position = pos;
-            }
         }
 
         private void Layout2_Click(object sender, EventArgs e)
         {
             this.PrintBarcode(2);
-            int pos = this.listControlBindingSource1.Position;
-            this.Query();
-            if (this.listControlBindingSource1.Count >= pos + 1)
-            {
-                this.listControlBindingSource1.Position = pos;
-            }
         }
 
         private void PrintBarcode(int layout)
@@ -867,6 +855,13 @@ where bd.BundleNo = '{item.Barcode}'");
                 {
                     this.ShowErr("Update PrintDate Error!", result);
                     return;
+                }
+
+                int pos = this.listControlBindingSource1.Position;
+                this.Query();
+                if (this.listControlBindingSource1.Count >= pos + 1)
+                {
+                    this.listControlBindingSource1.Position = pos;
                 }
             }
 
