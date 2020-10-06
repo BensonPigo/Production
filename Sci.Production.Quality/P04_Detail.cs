@@ -1078,9 +1078,9 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         ,[Result]=IIF(f.Scale IS NOT NULL
 	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
 	        ,IIF( f.BeforeWash IS NOT NULL AND f.AfterWash IS NOT NULL AND f.Criteria IS NOT NULL AND f.Shrinkage IS NOT NULL
-					,( IIF( TestDetail ='%'
+					,( IIF( TestDetail LIKE'%'
 								---- 百分比 判斷方式
-								,IIF( ISNULL(f.Criteria,0) * -1 <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria,0)
+								,IIF( ISNULL(f.Criteria,0)  <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria2,0)
 									, 'Pass'
 									, 'Fail'
 								)
@@ -1096,6 +1096,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         )
 		,gd.MtlTypeID
 		,f.Criteria
+		,f.Criteria2
 from GarmentTest_Detail_FGWT f 
 LEFT JOIN GarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
@@ -1103,6 +1104,15 @@ order by LocationText DESC";
 
             DBProxy.Current.Select(null, sqlFGWT, out this.dtFGWT);
             this.gridFGWT.DataSource = this.dtFGWT;
+
+            if (this.dtFGWT.Rows.Count > 0 || this.EditMode)
+            {
+                this.btnGenerateFGWT.Enabled = false;
+            }
+            else
+            {
+                this.btnGenerateFGWT.Enabled = true;
+            }
         }
 
         private DataTable dtFGPT;
@@ -1129,15 +1139,6 @@ order by LocationText DESC";
 
             DBProxy.Current.Select(null, sqlFGPT, out this.dtFGPT);
             this.gridFGPT.DataSource = this.dtFGPT;
-
-            if (this.dtFGPT.Rows.Count > 0 && !this.EditMode)
-            {
-                this.btnGenerateFGWT.Enabled = false;
-            }
-            else
-            {
-                this.btnGenerateFGWT.Enabled = true;
-            }
         }
 
         private void Tab4Save()
@@ -1301,7 +1302,7 @@ update GarmentTest_Detail set
     Machine =  '{this.comboMachineModel.Text}',
     HandWash =  '{this.rdbtnHand.Checked}',
     Composition =  '{this.txtFibreComposition.Text}',
-    Neck ='{MyUtility.Convert.GetString(this.comboNeck.Text).EqualString("YES")}'
+    Neck ='{MyUtility.Convert.GetString(this.comboNeck.Text).EqualString("YES")}' ,
     Above50NaturalFibres =  {(this.radioNaturalFibres.Checked ? "1" : "0")},
     Above50SyntheticFibres =  {(this.radioSyntheticFibres.Checked ? "1" : "0")}
 where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
@@ -1380,7 +1381,15 @@ where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
             this.btnDelete.Visible = this.tabControl1.SelectedTab.Name == "tabFGPT" && this.EditMode;
             this.radioNaturalFibres.Enabled = this.EditMode;
             this.radioSyntheticFibres.Enabled = this.EditMode;
-            this.btnGenerateFGWT.Enabled = !this.EditMode;
+
+            if (this.dtFGWT.Rows.Count > 0 || this.EditMode)
+            {
+                this.btnGenerateFGWT.Enabled = false;
+            }
+            else
+            {
+                this.btnGenerateFGWT.Enabled = true;
+            }
         }
 
         private void Tab2ShrinkageSave()
@@ -3733,6 +3742,22 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
 
         private void BtnGenerateFGWT_Click(object sender, EventArgs e)
         {
+            // 避免多位使用者同時使用
+            bool dataExists = MyUtility.Check.Seek($"SELECT 1 FROM GarmentTest_Detail_FGWT WHERE ID = {this.Deatilrow["ID"]}AND NO = {this.Deatilrow["No"]} ");
+
+            if (dataExists)
+            {
+                MyUtility.Msg.InfoBox("Data already exists!!");
+                this.Tab4Load();
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.Deatilrow["MtlTypeID"]))
+            {
+                MyUtility.Msg.InfoBox("Please set Material Type first!!");
+                return;
+            }
+
             string washType = string.Empty;
             string fibresType = string.Empty;
 
@@ -3776,17 +3801,25 @@ SELECT STUFF(
             bool containsB = locations.Contains("B");
 
             // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
-            if (containsT && containsB)
+            // 若為Hand只寫入第88項
+            if (washType != "Hand")
             {
-                fGWTs = GetDefaultFGWT(false, false, true, mtlTypeID, washType ,fibresType);
-            }
-            else if (containsT)
-            {
-                fGWTs = GetDefaultFGWT(containsT, false, false, mtlTypeID, washType, fibresType);
+                if (containsT && containsB)
+                {
+                    fGWTs = GetDefaultFGWT(false, false, true, mtlTypeID, washType, fibresType);
+                }
+                else if (containsT)
+                {
+                    fGWTs = GetDefaultFGWT(containsT, false, false, mtlTypeID, washType, fibresType);
+                }
+                else
+                {
+                    fGWTs = GetDefaultFGWT(false, containsB, false, mtlTypeID, washType, fibresType);
+                }
             }
             else
             {
-                fGWTs = GetDefaultFGWT(false, containsB, false, mtlTypeID, washType, fibresType);
+                fGWTs = GetDefaultFGWT(false, false, false, mtlTypeID, washType, fibresType, isAll: false);
             }
 
             string garmentTest_Detail_ID = MyUtility.Convert.GetString(this.Deatilrow["ID"]);
@@ -3829,7 +3862,7 @@ INSERT INTO GarmentTest_Detail_FGWT
            , @Type{idx}
            , @TestDetail{idx}
            , @Criteria{idx} 
-           , @Criteria2{idx}  )
+           , @Criteria2_{idx}  )
 
 ");
                 }
@@ -3854,7 +3887,7 @@ INSERT INTO GarmentTest_Detail_FGWT
                 parameters.Add(new SqlParameter($"@Type{idx}", fGWT.Type));
                 parameters.Add(new SqlParameter($"@TestDetail{idx}", fGWT.TestDetail));
                 parameters.Add(new SqlParameter($"@Criteria{idx}", fGWT.Criteria));
-                parameters.Add(new SqlParameter($"@Criteria2{idx}", fGWT.Criteria2));
+                parameters.Add(new SqlParameter($"@Criteria2_{idx}", fGWT.Criteria2));
                 idx++;
             }
 
@@ -3865,6 +3898,11 @@ INSERT INTO GarmentTest_Detail_FGWT
                 if (!r)
                 {
                     this.ShowErr(r);
+                }
+                else
+                {
+                    MyUtility.Msg.InfoBox("Success!!");
+                    this.Tab4Load();
                 }
             }
         }

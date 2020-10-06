@@ -29,22 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabDetail = new System.Windows.Forms.TabPage();
-            this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.radioSyntheticFibres = new Sci.Win.UI.RadioButton();
-            this.radioNaturalFibres = new Sci.Win.UI.RadioButton();
-            this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.rdbtnLine = new System.Windows.Forms.RadioButton();
-            this.rdbtnTumble = new System.Windows.Forms.RadioButton();
-            this.rdbtnHand = new System.Windows.Forms.RadioButton();
             this.btnGenerateFGWT = new Sci.Win.UI.Button();
             this.txtLotoFactory = new Sci.Win.UI.TextBox();
             this.label40 = new Sci.Win.UI.Label();
@@ -137,10 +127,18 @@
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnToReport = new Sci.Win.UI.Button();
             this.btnDelete = new Sci.Win.UI.Button();
+            this.panel8 = new Sci.Win.UI.Panel();
+            this.radioSyntheticFibres = new Sci.Win.UI.RadioButton();
+            this.radioNaturalFibres = new Sci.Win.UI.RadioButton();
+            this.panel9 = new Sci.Win.UI.Panel();
+            this.label8 = new Sci.Win.UI.Label();
+            this.label12 = new Sci.Win.UI.Label();
+            this.label13 = new Sci.Win.UI.Label();
+            this.rdbtnLine = new System.Windows.Forms.RadioButton();
+            this.rdbtnTumble = new System.Windows.Forms.RadioButton();
+            this.rdbtnHand = new System.Windows.Forms.RadioButton();
             this.tabControl1.SuspendLayout();
             this.tabDetail.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.tabShrinkage.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridActualShrinkage)).BeginInit();
@@ -159,6 +157,8 @@
             this.tabFGPT.SuspendLayout();
             this.panel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridFGPT)).BeginInit();
+            this.panel8.SuspendLayout();
+            this.panel9.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -180,8 +180,8 @@
             // 
             // tabDetail
             // 
-            this.tabDetail.Controls.Add(this.groupBox2);
-            this.tabDetail.Controls.Add(this.groupBox1);
+            this.tabDetail.Controls.Add(this.panel9);
+            this.tabDetail.Controls.Add(this.panel8);
             this.tabDetail.Controls.Add(this.btnGenerateFGWT);
             this.tabDetail.Controls.Add(this.txtLotoFactory);
             this.tabDetail.Controls.Add(this.label40);
@@ -220,107 +220,6 @@
             this.tabDetail.Size = new System.Drawing.Size(1051, 480);
             this.tabDetail.TabIndex = 0;
             this.tabDetail.Text = "Detail";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.radioSyntheticFibres);
-            this.groupBox2.Controls.Add(this.radioNaturalFibres);
-            this.groupBox2.Location = new System.Drawing.Point(381, 236);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(381, 60);
-            this.groupBox2.TabIndex = 46;
-            this.groupBox2.TabStop = false;
-            // 
-            // radioSyntheticFibres
-            // 
-            this.radioSyntheticFibres.AutoSize = true;
-            this.radioSyntheticFibres.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioSyntheticFibres.Location = new System.Drawing.Point(5, 33);
-            this.radioSyntheticFibres.Name = "radioSyntheticFibres";
-            this.radioSyntheticFibres.Size = new System.Drawing.Size(365, 21);
-            this.radioSyntheticFibres.TabIndex = 48;
-            this.radioSyntheticFibres.TabStop = true;
-            this.radioSyntheticFibres.Text = "All basic Fabrics ≥ 50% synthetic fibres (ex. polyester)";
-            this.radioSyntheticFibres.UseVisualStyleBackColor = true;
-            // 
-            // radioNaturalFibres
-            // 
-            this.radioNaturalFibres.AutoSize = true;
-            this.radioNaturalFibres.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioNaturalFibres.Location = new System.Drawing.Point(5, 12);
-            this.radioNaturalFibres.Name = "radioNaturalFibres";
-            this.radioNaturalFibres.Size = new System.Drawing.Size(259, 21);
-            this.radioNaturalFibres.TabIndex = 47;
-            this.radioNaturalFibres.TabStop = true;
-            this.radioNaturalFibres.Text = "All basic Fabrics ≥ 50% natural fibres";
-            this.radioNaturalFibres.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.label12);
-            this.groupBox1.Controls.Add(this.label13);
-            this.groupBox1.Controls.Add(this.rdbtnLine);
-            this.groupBox1.Controls.Add(this.rdbtnTumble);
-            this.groupBox1.Controls.Add(this.rdbtnHand);
-            this.groupBox1.Location = new System.Drawing.Point(3, 161);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(649, 39);
-            this.groupBox1.TabIndex = 45;
-            this.groupBox1.TabStop = false;
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(4, 11);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(119, 23);
-            this.label8.TabIndex = 16;
-            this.label8.Text = "Line Dry";
-            // 
-            // label12
-            // 
-            this.label12.Location = new System.Drawing.Point(256, 11);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(119, 23);
-            this.label12.TabIndex = 21;
-            this.label12.Text = "Tumble Dry";
-            // 
-            // label13
-            // 
-            this.label13.Location = new System.Drawing.Point(497, 11);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(84, 23);
-            this.label13.TabIndex = 23;
-            this.label13.Text = "Hand Wash";
-            // 
-            // rdbtnLine
-            // 
-            this.rdbtnLine.AutoSize = true;
-            this.rdbtnLine.Checked = true;
-            this.rdbtnLine.Location = new System.Drawing.Point(151, 14);
-            this.rdbtnLine.Name = "rdbtnLine";
-            this.rdbtnLine.Size = new System.Drawing.Size(14, 13);
-            this.rdbtnLine.TabIndex = 35;
-            this.rdbtnLine.TabStop = true;
-            this.rdbtnLine.UseVisualStyleBackColor = true;
-            // 
-            // rdbtnTumble
-            // 
-            this.rdbtnTumble.AutoSize = true;
-            this.rdbtnTumble.Location = new System.Drawing.Point(403, 14);
-            this.rdbtnTumble.Name = "rdbtnTumble";
-            this.rdbtnTumble.Size = new System.Drawing.Size(14, 13);
-            this.rdbtnTumble.TabIndex = 36;
-            this.rdbtnTumble.UseVisualStyleBackColor = true;
-            // 
-            // rdbtnHand
-            // 
-            this.rdbtnHand.AutoSize = true;
-            this.rdbtnHand.Location = new System.Drawing.Point(602, 14);
-            this.rdbtnHand.Name = "rdbtnHand";
-            this.rdbtnHand.Size = new System.Drawing.Size(14, 13);
-            this.rdbtnHand.TabIndex = 37;
-            this.rdbtnHand.UseVisualStyleBackColor = true;
             // 
             // btnGenerateFGWT
             // 
@@ -375,7 +274,7 @@
             this.comboNeck.Items.AddRange(new object[] {
             "Yes",
             "No"});
-            this.comboNeck.Location = new System.Drawing.Point(405, 343);
+            this.comboNeck.Location = new System.Drawing.Point(405, 329);
             this.comboNeck.Name = "comboNeck";
             this.comboNeck.OldText = "";
             this.comboNeck.Size = new System.Drawing.Size(121, 24);
@@ -393,7 +292,7 @@
             this.comboMachineModel.Items.AddRange(new object[] {
             "Top Load",
             "Front Load"});
-            this.comboMachineModel.Location = new System.Drawing.Point(129, 300);
+            this.comboMachineModel.Location = new System.Drawing.Point(129, 286);
             this.comboMachineModel.Name = "comboMachineModel";
             this.comboMachineModel.OldText = "";
             this.comboMachineModel.Size = new System.Drawing.Size(121, 24);
@@ -415,7 +314,7 @@
             "40",
             "50",
             "60"});
-            this.comboTemperature.Location = new System.Drawing.Point(129, 206);
+            this.comboTemperature.Location = new System.Drawing.Point(129, 195);
             this.comboTemperature.Name = "comboTemperature";
             this.comboTemperature.OldText = "";
             this.comboTemperature.Size = new System.Drawing.Size(121, 24);
@@ -425,7 +324,7 @@
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label18.Location = new System.Drawing.Point(10, 347);
+            this.label18.Location = new System.Drawing.Point(10, 333);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(389, 20);
             this.label18.TabIndex = 33;
@@ -435,7 +334,7 @@
             // 
             this.txtRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtRemark.Location = new System.Drawing.Point(381, 300);
+            this.txtRemark.Location = new System.Drawing.Point(381, 286);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.ReadOnly = true;
             this.txtRemark.Size = new System.Drawing.Size(492, 23);
@@ -445,14 +344,14 @@
             // 
             this.txtFibreComposition.BackColor = System.Drawing.Color.White;
             this.txtFibreComposition.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFibreComposition.Location = new System.Drawing.Point(381, 207);
+            this.txtFibreComposition.Location = new System.Drawing.Point(381, 196);
             this.txtFibreComposition.Name = "txtFibreComposition";
             this.txtFibreComposition.Size = new System.Drawing.Size(312, 23);
             this.txtFibreComposition.TabIndex = 31;
             // 
             // label17
             // 
-            this.label17.Location = new System.Drawing.Point(259, 300);
+            this.label17.Location = new System.Drawing.Point(259, 286);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(119, 23);
             this.label17.TabIndex = 28;
@@ -460,7 +359,7 @@
             // 
             // label16
             // 
-            this.label16.Location = new System.Drawing.Point(259, 207);
+            this.label16.Location = new System.Drawing.Point(259, 196);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(119, 23);
             this.label16.TabIndex = 27;
@@ -468,7 +367,7 @@
             // 
             // label15
             // 
-            this.label15.Location = new System.Drawing.Point(7, 300);
+            this.label15.Location = new System.Drawing.Point(7, 286);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(119, 23);
             this.label15.TabIndex = 26;
@@ -476,7 +375,7 @@
             // 
             // label14
             // 
-            this.label14.Location = new System.Drawing.Point(7, 207);
+            this.label14.Location = new System.Drawing.Point(7, 196);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(119, 23);
             this.label14.TabIndex = 25;
@@ -694,14 +593,14 @@
             this.gridActualShrinkage.Location = new System.Drawing.Point(0, 0);
             this.gridActualShrinkage.Name = "gridActualShrinkage";
             this.gridActualShrinkage.ReadOnly = true;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridActualShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridActualShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.gridActualShrinkage.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridActualShrinkage.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridActualShrinkage.RowTemplate.Height = 24;
@@ -1332,14 +1231,14 @@
             this.gridAppearance.Location = new System.Drawing.Point(6, 21);
             this.gridAppearance.Name = "gridAppearance";
             this.gridAppearance.ReadOnly = true;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAppearance.RowTemplate.Height = 24;
@@ -1383,14 +1282,14 @@
             this.gridFGWT.Location = new System.Drawing.Point(0, 0);
             this.gridFGWT.Name = "gridFGWT";
             this.gridFGWT.ReadOnly = true;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridFGWT.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridFGWT.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFGWT.RowTemplate.Height = 24;
@@ -1434,14 +1333,14 @@
             this.gridFGPT.Location = new System.Drawing.Point(0, 0);
             this.gridFGPT.Name = "gridFGPT";
             this.gridFGPT.ReadOnly = true;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridFGPT.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridFGPT.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.gridFGPT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridFGPT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFGPT.RowTemplate.Height = 24;
@@ -1517,6 +1416,105 @@
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
+            // panel8
+            // 
+            this.panel8.Controls.Add(this.radioSyntheticFibres);
+            this.panel8.Controls.Add(this.radioNaturalFibres);
+            this.panel8.Location = new System.Drawing.Point(381, 223);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(381, 60);
+            this.panel8.TabIndex = 47;
+            // 
+            // radioSyntheticFibres
+            // 
+            this.radioSyntheticFibres.AutoSize = true;
+            this.radioSyntheticFibres.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSyntheticFibres.Location = new System.Drawing.Point(4, 30);
+            this.radioSyntheticFibres.Name = "radioSyntheticFibres";
+            this.radioSyntheticFibres.Size = new System.Drawing.Size(365, 21);
+            this.radioSyntheticFibres.TabIndex = 50;
+            this.radioSyntheticFibres.TabStop = true;
+            this.radioSyntheticFibres.Text = "All basic Fabrics ≥ 50% synthetic fibres (ex. polyester)";
+            this.radioSyntheticFibres.UseVisualStyleBackColor = true;
+            // 
+            // radioNaturalFibres
+            // 
+            this.radioNaturalFibres.AutoSize = true;
+            this.radioNaturalFibres.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioNaturalFibres.Location = new System.Drawing.Point(4, 9);
+            this.radioNaturalFibres.Name = "radioNaturalFibres";
+            this.radioNaturalFibres.Size = new System.Drawing.Size(259, 21);
+            this.radioNaturalFibres.TabIndex = 49;
+            this.radioNaturalFibres.TabStop = true;
+            this.radioNaturalFibres.Text = "All basic Fabrics ≥ 50% natural fibres";
+            this.radioNaturalFibres.UseVisualStyleBackColor = true;
+            // 
+            // panel9
+            // 
+            this.panel9.Controls.Add(this.label8);
+            this.panel9.Controls.Add(this.label12);
+            this.panel9.Controls.Add(this.label13);
+            this.panel9.Controls.Add(this.rdbtnLine);
+            this.panel9.Controls.Add(this.rdbtnTumble);
+            this.panel9.Controls.Add(this.rdbtnHand);
+            this.panel9.Location = new System.Drawing.Point(7, 162);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(649, 33);
+            this.panel9.TabIndex = 48;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(3, 4);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(119, 23);
+            this.label8.TabIndex = 38;
+            this.label8.Text = "Line Dry";
+            // 
+            // label12
+            // 
+            this.label12.Location = new System.Drawing.Point(255, 4);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(119, 23);
+            this.label12.TabIndex = 39;
+            this.label12.Text = "Tumble Dry";
+            // 
+            // label13
+            // 
+            this.label13.Location = new System.Drawing.Point(496, 4);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(84, 23);
+            this.label13.TabIndex = 40;
+            this.label13.Text = "Hand Wash";
+            // 
+            // rdbtnLine
+            // 
+            this.rdbtnLine.AutoSize = true;
+            this.rdbtnLine.Checked = true;
+            this.rdbtnLine.Location = new System.Drawing.Point(150, 7);
+            this.rdbtnLine.Name = "rdbtnLine";
+            this.rdbtnLine.Size = new System.Drawing.Size(14, 13);
+            this.rdbtnLine.TabIndex = 41;
+            this.rdbtnLine.TabStop = true;
+            this.rdbtnLine.UseVisualStyleBackColor = true;
+            // 
+            // rdbtnTumble
+            // 
+            this.rdbtnTumble.AutoSize = true;
+            this.rdbtnTumble.Location = new System.Drawing.Point(402, 7);
+            this.rdbtnTumble.Name = "rdbtnTumble";
+            this.rdbtnTumble.Size = new System.Drawing.Size(14, 13);
+            this.rdbtnTumble.TabIndex = 42;
+            this.rdbtnTumble.UseVisualStyleBackColor = true;
+            // 
+            // rdbtnHand
+            // 
+            this.rdbtnHand.AutoSize = true;
+            this.rdbtnHand.Location = new System.Drawing.Point(601, 7);
+            this.rdbtnHand.Name = "rdbtnHand";
+            this.rdbtnHand.Size = new System.Drawing.Size(14, 13);
+            this.rdbtnHand.TabIndex = 43;
+            this.rdbtnHand.UseVisualStyleBackColor = true;
+            // 
             // P04_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1059, 572);
@@ -1534,10 +1532,6 @@
             this.tabControl1.ResumeLayout(false);
             this.tabDetail.ResumeLayout(false);
             this.tabDetail.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.tabShrinkage.ResumeLayout(false);
             this.tabShrinkage.PerformLayout();
             this.panel5.ResumeLayout(false);
@@ -1561,6 +1555,10 @@
             this.tabFGPT.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridFGPT)).EndInit();
+            this.panel8.ResumeLayout(false);
+            this.panel8.PerformLayout();
+            this.panel9.ResumeLayout(false);
+            this.panel9.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1584,12 +1582,9 @@
         private Win.UI.Label label16;
         private Win.UI.Label label15;
         private Win.UI.Label label14;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
         private Win.UI.Label label11;
         private Win.UI.Label label10;
         private Win.UI.Label label9;
-        private Win.UI.Label label8;
         private System.Windows.Forms.Label label7;
         private Win.UI.Label label6;
         private Win.UI.NumericBox numArriveQty;
@@ -1605,9 +1600,6 @@
         private Win.UI.TextBox txtSP;
         private Win.UI.TextBox txtStyle;
         private Win.UI.Label label1;
-        private System.Windows.Forms.RadioButton rdbtnHand;
-        private System.Windows.Forms.RadioButton rdbtnTumble;
-        private System.Windows.Forms.RadioButton rdbtnLine;
         private Win.UI.ComboBox comboNeck;
         private Win.UI.ComboBox comboMachineModel;
         private Win.UI.NumericBox numTopL;
@@ -1667,9 +1659,15 @@
         private Win.UI.Button btnToReport;
         private Win.UI.Button btnDelete;
         private Win.UI.Button btnGenerateFGWT;
-        private Win.UI.GroupBox groupBox2;
-        private Win.UI.GroupBox groupBox1;
+        private Win.UI.Panel panel8;
         private Win.UI.RadioButton radioSyntheticFibres;
         private Win.UI.RadioButton radioNaturalFibres;
+        private Win.UI.Panel panel9;
+        private Win.UI.Label label8;
+        private Win.UI.Label label12;
+        private Win.UI.Label label13;
+        private System.Windows.Forms.RadioButton rdbtnLine;
+        private System.Windows.Forms.RadioButton rdbtnTumble;
+        private System.Windows.Forms.RadioButton rdbtnHand;
     }
 }

@@ -29,21 +29,29 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnGenerateFGWT = new Sci.Win.UI.Button();
+            this.panel13 = new Sci.Win.UI.Panel();
+            this.radioSyntheticFibres = new Sci.Win.UI.RadioButton();
+            this.radioNaturalFibres = new Sci.Win.UI.RadioButton();
+            this.panel12 = new Sci.Win.UI.Panel();
+            this.label10 = new Sci.Win.UI.Label();
+            this.label12 = new Sci.Win.UI.Label();
+            this.label13 = new Sci.Win.UI.Label();
+            this.rdbtnLine = new System.Windows.Forms.RadioButton();
+            this.rdbtnTumble = new System.Windows.Forms.RadioButton();
+            this.rdbtnHand = new System.Windows.Forms.RadioButton();
             this.txtLotoFactory = new Sci.Win.UI.TextBox();
             this.label40 = new Sci.Win.UI.Label();
             this.comboResult = new Sci.Win.UI.ComboBox();
             this.txtReportDate = new Sci.Win.UI.DateBox();
             this.comboNeck = new Sci.Win.UI.ComboBox();
             this.comboMachineModel = new Sci.Win.UI.ComboBox();
-            this.rdbtnHand = new System.Windows.Forms.RadioButton();
-            this.rdbtnTumble = new System.Windows.Forms.RadioButton();
-            this.rdbtnLine = new System.Windows.Forms.RadioButton();
             this.comboTemperature = new Sci.Win.UI.ComboBox();
             this.label18 = new System.Windows.Forms.Label();
             this.txtRemark = new Sci.Win.UI.TextBox();
@@ -52,9 +60,6 @@
             this.label16 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
             this.label14 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
@@ -132,13 +137,15 @@
             this.btnEncode = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
+            this.btnDelete = new Sci.Win.UI.Button();
             this.btnToReport = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.btnDelete = new Sci.Win.UI.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.panel13.SuspendLayout();
+            this.panel12.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.panel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridShrinkage)).BeginInit();
@@ -180,15 +187,15 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.btnGenerateFGWT);
+            this.tabPage1.Controls.Add(this.panel13);
+            this.tabPage1.Controls.Add(this.panel12);
             this.tabPage1.Controls.Add(this.txtLotoFactory);
             this.tabPage1.Controls.Add(this.label40);
             this.tabPage1.Controls.Add(this.comboResult);
             this.tabPage1.Controls.Add(this.txtReportDate);
             this.tabPage1.Controls.Add(this.comboNeck);
             this.tabPage1.Controls.Add(this.comboMachineModel);
-            this.tabPage1.Controls.Add(this.rdbtnHand);
-            this.tabPage1.Controls.Add(this.rdbtnTumble);
-            this.tabPage1.Controls.Add(this.rdbtnLine);
             this.tabPage1.Controls.Add(this.comboTemperature);
             this.tabPage1.Controls.Add(this.label18);
             this.tabPage1.Controls.Add(this.txtRemark);
@@ -197,9 +204,6 @@
             this.tabPage1.Controls.Add(this.label16);
             this.tabPage1.Controls.Add(this.label15);
             this.tabPage1.Controls.Add(this.label14);
-            this.tabPage1.Controls.Add(this.label13);
-            this.tabPage1.Controls.Add(this.label12);
-            this.tabPage1.Controls.Add(this.label10);
             this.tabPage1.Controls.Add(this.label8);
             this.tabPage1.Controls.Add(this.label7);
             this.tabPage1.Controls.Add(this.label6);
@@ -223,6 +227,116 @@
             this.tabPage1.Size = new System.Drawing.Size(1134, 420);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Detail";
+            // 
+            // btnGenerateFGWT
+            // 
+            this.btnGenerateFGWT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnGenerateFGWT.Location = new System.Drawing.Point(992, 384);
+            this.btnGenerateFGWT.Name = "btnGenerateFGWT";
+            this.btnGenerateFGWT.Size = new System.Drawing.Size(136, 30);
+            this.btnGenerateFGWT.TabIndex = 61;
+            this.btnGenerateFGWT.Text = "Generate FGWT";
+            this.btnGenerateFGWT.UseVisualStyleBackColor = true;
+            this.btnGenerateFGWT.Click += new System.EventHandler(this.BtnGenerateFGWT_Click);
+            // 
+            // panel13
+            // 
+            this.panel13.Controls.Add(this.radioSyntheticFibres);
+            this.panel13.Controls.Add(this.radioNaturalFibres);
+            this.panel13.Location = new System.Drawing.Point(377, 232);
+            this.panel13.Name = "panel13";
+            this.panel13.Size = new System.Drawing.Size(381, 60);
+            this.panel13.TabIndex = 60;
+            // 
+            // radioSyntheticFibres
+            // 
+            this.radioSyntheticFibres.AutoSize = true;
+            this.radioSyntheticFibres.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSyntheticFibres.Location = new System.Drawing.Point(4, 30);
+            this.radioSyntheticFibres.Name = "radioSyntheticFibres";
+            this.radioSyntheticFibres.Size = new System.Drawing.Size(365, 21);
+            this.radioSyntheticFibres.TabIndex = 50;
+            this.radioSyntheticFibres.TabStop = true;
+            this.radioSyntheticFibres.Text = "All basic Fabrics ≥ 50% synthetic fibres (ex. polyester)";
+            this.radioSyntheticFibres.UseVisualStyleBackColor = true;
+            // 
+            // radioNaturalFibres
+            // 
+            this.radioNaturalFibres.AutoSize = true;
+            this.radioNaturalFibres.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioNaturalFibres.Location = new System.Drawing.Point(4, 9);
+            this.radioNaturalFibres.Name = "radioNaturalFibres";
+            this.radioNaturalFibres.Size = new System.Drawing.Size(259, 21);
+            this.radioNaturalFibres.TabIndex = 49;
+            this.radioNaturalFibres.TabStop = true;
+            this.radioNaturalFibres.Text = "All basic Fabrics ≥ 50% natural fibres";
+            this.radioNaturalFibres.UseVisualStyleBackColor = true;
+            // 
+            // panel12
+            // 
+            this.panel12.Controls.Add(this.label10);
+            this.panel12.Controls.Add(this.label12);
+            this.panel12.Controls.Add(this.label13);
+            this.panel12.Controls.Add(this.rdbtnLine);
+            this.panel12.Controls.Add(this.rdbtnTumble);
+            this.panel12.Controls.Add(this.rdbtnHand);
+            this.panel12.Location = new System.Drawing.Point(3, 170);
+            this.panel12.Name = "panel12";
+            this.panel12.Size = new System.Drawing.Size(649, 33);
+            this.panel12.TabIndex = 59;
+            // 
+            // label10
+            // 
+            this.label10.Location = new System.Drawing.Point(2, 6);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(119, 23);
+            this.label10.TabIndex = 40;
+            this.label10.Text = "Line Dry";
+            // 
+            // label12
+            // 
+            this.label12.Location = new System.Drawing.Point(254, 6);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(119, 23);
+            this.label12.TabIndex = 41;
+            this.label12.Text = "Tumble Dry";
+            // 
+            // label13
+            // 
+            this.label13.Location = new System.Drawing.Point(495, 6);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(84, 23);
+            this.label13.TabIndex = 42;
+            this.label13.Text = "Hand Wash";
+            // 
+            // rdbtnLine
+            // 
+            this.rdbtnLine.AutoSize = true;
+            this.rdbtnLine.Checked = true;
+            this.rdbtnLine.Location = new System.Drawing.Point(149, 9);
+            this.rdbtnLine.Name = "rdbtnLine";
+            this.rdbtnLine.Size = new System.Drawing.Size(14, 13);
+            this.rdbtnLine.TabIndex = 51;
+            this.rdbtnLine.TabStop = true;
+            this.rdbtnLine.UseVisualStyleBackColor = true;
+            // 
+            // rdbtnTumble
+            // 
+            this.rdbtnTumble.AutoSize = true;
+            this.rdbtnTumble.Location = new System.Drawing.Point(401, 9);
+            this.rdbtnTumble.Name = "rdbtnTumble";
+            this.rdbtnTumble.Size = new System.Drawing.Size(14, 13);
+            this.rdbtnTumble.TabIndex = 52;
+            this.rdbtnTumble.UseVisualStyleBackColor = true;
+            // 
+            // rdbtnHand
+            // 
+            this.rdbtnHand.AutoSize = true;
+            this.rdbtnHand.Location = new System.Drawing.Point(600, 9);
+            this.rdbtnHand.Name = "rdbtnHand";
+            this.rdbtnHand.Size = new System.Drawing.Size(14, 13);
+            this.rdbtnHand.TabIndex = 53;
+            this.rdbtnHand.UseVisualStyleBackColor = true;
             // 
             // txtLotoFactory
             // 
@@ -273,7 +387,7 @@
             this.comboNeck.Items.AddRange(new object[] {
             "Yes",
             "No"});
-            this.comboNeck.Location = new System.Drawing.Point(398, 310);
+            this.comboNeck.Location = new System.Drawing.Point(404, 335);
             this.comboNeck.Name = "comboNeck";
             this.comboNeck.OldText = "";
             this.comboNeck.Size = new System.Drawing.Size(121, 24);
@@ -291,40 +405,11 @@
             this.comboMachineModel.Items.AddRange(new object[] {
             "Top Load",
             "Front Load"});
-            this.comboMachineModel.Location = new System.Drawing.Point(121, 271);
+            this.comboMachineModel.Location = new System.Drawing.Point(127, 296);
             this.comboMachineModel.Name = "comboMachineModel";
             this.comboMachineModel.OldText = "";
             this.comboMachineModel.Size = new System.Drawing.Size(121, 24);
             this.comboMachineModel.TabIndex = 54;
-            // 
-            // rdbtnHand
-            // 
-            this.rdbtnHand.AutoSize = true;
-            this.rdbtnHand.Location = new System.Drawing.Point(597, 191);
-            this.rdbtnHand.Name = "rdbtnHand";
-            this.rdbtnHand.Size = new System.Drawing.Size(14, 13);
-            this.rdbtnHand.TabIndex = 53;
-            this.rdbtnHand.UseVisualStyleBackColor = true;
-            // 
-            // rdbtnTumble
-            // 
-            this.rdbtnTumble.AutoSize = true;
-            this.rdbtnTumble.Location = new System.Drawing.Point(398, 191);
-            this.rdbtnTumble.Name = "rdbtnTumble";
-            this.rdbtnTumble.Size = new System.Drawing.Size(14, 13);
-            this.rdbtnTumble.TabIndex = 52;
-            this.rdbtnTumble.UseVisualStyleBackColor = true;
-            // 
-            // rdbtnLine
-            // 
-            this.rdbtnLine.AutoSize = true;
-            this.rdbtnLine.Checked = true;
-            this.rdbtnLine.Location = new System.Drawing.Point(146, 191);
-            this.rdbtnLine.Name = "rdbtnLine";
-            this.rdbtnLine.Size = new System.Drawing.Size(14, 13);
-            this.rdbtnLine.TabIndex = 51;
-            this.rdbtnLine.TabStop = true;
-            this.rdbtnLine.UseVisualStyleBackColor = true;
             // 
             // comboTemperature
             // 
@@ -342,7 +427,7 @@
             "40",
             "50",
             "60"});
-            this.comboTemperature.Location = new System.Drawing.Point(121, 227);
+            this.comboTemperature.Location = new System.Drawing.Point(125, 205);
             this.comboTemperature.Name = "comboTemperature";
             this.comboTemperature.OldText = "";
             this.comboTemperature.Size = new System.Drawing.Size(121, 24);
@@ -352,7 +437,7 @@
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label18.Location = new System.Drawing.Point(3, 314);
+            this.label18.Location = new System.Drawing.Point(9, 339);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(389, 20);
             this.label18.TabIndex = 49;
@@ -362,7 +447,7 @@
             // 
             this.txtRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtRemark.Location = new System.Drawing.Point(373, 271);
+            this.txtRemark.Location = new System.Drawing.Point(377, 296);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.ReadOnly = true;
             this.txtRemark.Size = new System.Drawing.Size(492, 23);
@@ -372,14 +457,14 @@
             // 
             this.txtFibreComposition.BackColor = System.Drawing.Color.White;
             this.txtFibreComposition.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFibreComposition.Location = new System.Drawing.Point(373, 228);
+            this.txtFibreComposition.Location = new System.Drawing.Point(377, 206);
             this.txtFibreComposition.Name = "txtFibreComposition";
             this.txtFibreComposition.Size = new System.Drawing.Size(312, 23);
             this.txtFibreComposition.TabIndex = 47;
             // 
             // label17
             // 
-            this.label17.Location = new System.Drawing.Point(251, 271);
+            this.label17.Location = new System.Drawing.Point(257, 296);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(119, 23);
             this.label17.TabIndex = 46;
@@ -387,7 +472,7 @@
             // 
             // label16
             // 
-            this.label16.Location = new System.Drawing.Point(251, 228);
+            this.label16.Location = new System.Drawing.Point(255, 206);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(119, 23);
             this.label16.TabIndex = 45;
@@ -395,7 +480,7 @@
             // 
             // label15
             // 
-            this.label15.Location = new System.Drawing.Point(-1, 271);
+            this.label15.Location = new System.Drawing.Point(5, 296);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(119, 23);
             this.label15.TabIndex = 44;
@@ -403,35 +488,11 @@
             // 
             // label14
             // 
-            this.label14.Location = new System.Drawing.Point(-1, 228);
+            this.label14.Location = new System.Drawing.Point(3, 206);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(119, 23);
             this.label14.TabIndex = 43;
             this.label14.Text = "Temperature (°C)";
-            // 
-            // label13
-            // 
-            this.label13.Location = new System.Drawing.Point(492, 188);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(84, 23);
-            this.label13.TabIndex = 42;
-            this.label13.Text = "Hand Wash";
-            // 
-            // label12
-            // 
-            this.label12.Location = new System.Drawing.Point(251, 188);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(119, 23);
-            this.label12.TabIndex = 41;
-            this.label12.Text = "Tumble Dry";
-            // 
-            // label10
-            // 
-            this.label10.Location = new System.Drawing.Point(-1, 188);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(119, 23);
-            this.label10.TabIndex = 40;
-            this.label10.Text = "Line Dry";
             // 
             // label8
             // 
@@ -626,14 +687,14 @@
             this.gridShrinkage.Location = new System.Drawing.Point(0, 0);
             this.gridShrinkage.Name = "gridShrinkage";
             this.gridShrinkage.ReadOnly = true;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridShrinkage.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridShrinkage.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridShrinkage.RowTemplate.Height = 24;
@@ -1265,14 +1326,14 @@
             this.gridAppearance.Location = new System.Drawing.Point(0, 0);
             this.gridAppearance.Name = "gridAppearance";
             this.gridAppearance.ReadOnly = true;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAppearance.RowTemplate.Height = 24;
@@ -1317,14 +1378,14 @@
             this.gridFGWT.Location = new System.Drawing.Point(0, 0);
             this.gridFGWT.Name = "gridFGWT";
             this.gridFGWT.ReadOnly = true;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridFGWT.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridFGWT.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFGWT.RowTemplate.Height = 24;
@@ -1336,10 +1397,10 @@
             // tabFGPT
             // 
             this.tabFGPT.Controls.Add(this.panel10);
-            this.tabFGPT.Location = new System.Drawing.Point(4, 25);
+            this.tabFGPT.Location = new System.Drawing.Point(4, 22);
             this.tabFGPT.Name = "tabFGPT";
             this.tabFGPT.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFGPT.Size = new System.Drawing.Size(1134, 420);
+            this.tabFGPT.Size = new System.Drawing.Size(1134, 423);
             this.tabFGPT.TabIndex = 3;
             this.tabFGPT.Text = "FGPT";
             // 
@@ -1349,7 +1410,7 @@
             this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel10.Location = new System.Drawing.Point(3, 3);
             this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(1128, 414);
+            this.panel10.Size = new System.Drawing.Size(1128, 417);
             this.panel10.TabIndex = 1;
             // 
             // gridFGPT
@@ -1368,20 +1429,20 @@
             this.gridFGPT.Location = new System.Drawing.Point(0, 0);
             this.gridFGPT.Name = "gridFGPT";
             this.gridFGPT.ReadOnly = true;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridFGPT.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridFGPT.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridFGPT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridFGPT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFGPT.RowTemplate.Height = 24;
             this.gridFGPT.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridFGPT.ShowCellToolTips = false;
-            this.gridFGPT.Size = new System.Drawing.Size(1128, 414);
+            this.gridFGPT.Size = new System.Drawing.Size(1128, 417);
             this.gridFGPT.TabIndex = 1;
             this.gridFGPT.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridFGPT_EditingKeyProcessing);
             // 
@@ -1445,6 +1506,17 @@
             this.radioPanel2.Size = new System.Drawing.Size(1142, 35);
             this.radioPanel2.TabIndex = 9;
             // 
+            // btnDelete
+            // 
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDelete.Location = new System.Drawing.Point(6, 2);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(97, 30);
+            this.btnDelete.TabIndex = 12;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
+            // 
             // btnToReport
             // 
             this.btnToReport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1487,17 +1559,6 @@
             this.panel3.Size = new System.Drawing.Size(1142, 449);
             this.panel3.TabIndex = 10;
             // 
-            // btnDelete
-            // 
-            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnDelete.Location = new System.Drawing.Point(6, 2);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(97, 30);
-            this.btnDelete.TabIndex = 12;
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
-            // 
             // P10_Detail
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -1515,6 +1576,10 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.panel13.ResumeLayout(false);
+            this.panel13.PerformLayout();
+            this.panel12.ResumeLayout(false);
+            this.panel12.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.panel9.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridShrinkage)).EndInit();
@@ -1651,5 +1716,10 @@
         private Win.UI.Grid gridFGPT;
         private Win.UI.Button btnToReport;
         private Win.UI.Button btnDelete;
+        private Win.UI.Panel panel12;
+        private Win.UI.Panel panel13;
+        private Win.UI.RadioButton radioSyntheticFibres;
+        private Win.UI.RadioButton radioNaturalFibres;
+        private Win.UI.Button btnGenerateFGWT;
     }
 }
