@@ -85,7 +85,8 @@ from (
         ,b.FabricPanelCode
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-    inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
+    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
+    inner join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
     left join brand WITH (NOLOCK) on brand.id = c.brandid
     outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
     outer apply
@@ -129,7 +130,8 @@ from (
         ,b.FabricPanelCode
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-    inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
+    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
+    inner join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
     left join brand WITH (NOLOCK) on brand.id = c.brandid
     left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
     outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
@@ -190,7 +192,8 @@ from (
         ,b.FabricPanelCode
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
+    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
+	inner join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
     left join brand WITH (NOLOCK) on brand.id = c.brandid
 	outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
 	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
@@ -228,7 +231,8 @@ from (
         ,b.FabricPanelCode
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	inner join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
+    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
+	inner join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
     left join brand WITH (NOLOCK) on brand.id = c.brandid
 	outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
 	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
@@ -295,7 +299,8 @@ from (
 		,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
+    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
+	left join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
 	outer apply( select a.PatternCode [Cutpart] )[qq]
 	outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 														from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
@@ -324,7 +329,8 @@ from (
 		,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
+    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
+	left join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
 	left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
 	outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
 	outer apply(select Artwork = '' )as Artwork
@@ -368,7 +374,8 @@ from (
 			,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
+    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
+	left join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
 	outer apply ( select a.PatternCode [Cutpart] ) [qq]
 	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 															from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
@@ -397,7 +404,8 @@ from (
 			,a.Qty [Qty]
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID = b.MDivisionID 
+    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
+	left join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
 	outer apply ( select a.PatternCode [Cutpart] ) [qq]
 	outer apply ( select Artwork = '')as Artwork
 	where a.ID= @ID and a.Patterncode = 'ALLPARTS'
