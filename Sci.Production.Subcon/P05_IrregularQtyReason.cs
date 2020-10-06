@@ -284,7 +284,7 @@ o.FactoryID
 ,o.StyleID
 ,o.BrandID
 ,[StandardQty] = sum(oq.Qty)
-,[ReqQty] = ReqQty.value + PoQty.value + s.ReqQty + tbbd.BuyBackArtworkReq
+,[ReqQty] = ReqQty.value + PoQty.value + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0)
 ,[SubconReasonID] = ''
 ,[ReasonDesc] = ''
 ,[CreateBy] = ''
@@ -294,7 +294,7 @@ o.FactoryID
 ,s.ArtworkID
 ,s.PatternCode
 ,s.PatternDesc
-,tbbd.BuyBackArtworkReq
+,[BuyBackArtworkReq] = isnull(tbbd.BuyBackArtworkReq,0)
 into #tmpCurrent
 from  orders o WITH (NOLOCK) 
 inner join order_qty oq WITH (NOLOCK) on oq.id = o.ID
@@ -333,8 +333,8 @@ where not exists(
 	where orderID = o.ID and ArtworkTypeID like '{this._masterData["ArtworkTypeID"]}%'
 )
 group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
-,s.ArtworkID,s.PatternCode,s.PatternDesc,tbbd.BuyBackArtworkReq
-having ReqQty.value + PoQty.value + s.ReqQty + tbbd.BuyBackArtworkReq > sum(oq.Qty) 
+,s.ArtworkID,s.PatternCode,s.PatternDesc,isnull(tbbd.BuyBackArtworkReq,0)
+having ReqQty.value + PoQty.value + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0) > sum(oq.Qty) 
 
 select * 
 ,row = ROW_NUMBER() over(partition by orderid,ArtworkTypeID order by  ReqQty desc)
