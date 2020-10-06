@@ -81,6 +81,11 @@ namespace Sci.Production.Cutting
 
         private void BtnQuery_Click(object sender, EventArgs e)
         {
+            this.Query();
+        }
+
+        private void Query()
+        {
             if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty()
                 && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty()
                 && this.txtPOID.Text.Empty()
@@ -669,225 +674,6 @@ OPTION (RECOMPILE)"
         private void BtnBundleCard_Click(object sender, EventArgs e)
         {
             this.contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
-
-            #region report RDLC 先不刪除 過段不知道要多久的時間, 再來刪除
-
-            // bool checkone = false;
-            // for (int i = 0; i < this.grid1.Rows.Count; i++)
-            // {
-            //    if (!MyUtility.Check.Empty(this.grid1[0, i].Value)
-            //        && (bool)this.grid1[0, i].Value == true)
-            //    {
-            //        checkone = true;
-            //    }
-            // }
-
-            // if (!checkone)
-            // {
-            //    this.grid1.Focus();
-            //    MyUtility.Msg.ErrorBox("Grid must be chose one");
-            //    return;
-            // }
-
-            // DataTable dtSelect;
-
-            // dtSelect = this.dtt.DefaultView.ToTable()
-            //    .AsEnumerable()
-            //    .Where(row => (bool)row["selected"])
-            //    .CopyToDataTable();
-
-            // List<P12_PrintData> data = new List<P12_PrintData>();
-            // bool changeGroup = true;
-            // for (int i = 0; i < dtSelect.Rows.Count;)
-            // {
-            //    string thisGroupCut;
-            //    if (this.checkChangepagebyCut.Checked)
-            //    {
-            //        thisGroupCut = MyUtility.Convert.GetString(dtSelect.Rows[i]["Comb"]) + MyUtility.Convert.GetString(dtSelect.Rows[i]["Cut"]);
-            //    }
-            //    else
-            //    {
-            //        thisGroupCut = "1";
-            //    }
-
-            // string tmpCut = "-1";
-            //    var pdata = new P12_PrintData();
-            //    data.Add(pdata);
-            //    int j = 0;
-            //    for (; j < 3 && i + j < dtSelect.Rows.Count; j++)
-            //    {
-            //        DataRow dr = dtSelect.Rows[i + j];
-            //        if (this.checkChangepagebyCut.Checked)
-            //        {
-            //            tmpCut = MyUtility.Convert.GetString(dr["Comb"]) + MyUtility.Convert.GetString(dr["cut"]);
-            //        }
-            //        else
-            //        {
-            //            tmpCut = "1";
-            //        }
-
-            // if (changeGroup && tmpCut != thisGroupCut)
-            //        {
-            //            break;
-            //        }
-
-            // if (j == 0)
-            //        {
-            //            pdata.Group_right = dr["Group"].ToString();
-            //            pdata.Group_left = dr["left"].ToString();
-            //            pdata.Line = dr["Line"].ToString();
-            //            pdata.Cell = dr["Cell"].ToString();
-            //            pdata.SP = dr["SP"].ToString();
-            //            pdata.Style = dr["Style"].ToString();
-            //            pdata.Item = dr["Item"].ToString();
-            //            pdata.Parts = dr["Parts"].ToString();
-            //            pdata.Color = dr["Color2"].ToString();
-            //            pdata.Size = dr["Size"].ToString();
-            //            pdata.SizeSpec = dr["SizeSpec"].ToString();
-            //            pdata.Desc = dr["Description"].ToString();
-            //            pdata.Qty = dr["Qty"].ToString();
-            //            pdata.Barcode = dr["Bundle"].ToString();
-            //            pdata.Patterncode = dr["Patterncode"].ToString();
-            //            pdata.MarkerNo = dr["MarkerNo"].ToString();
-            //            pdata.Season = dr["Seasonid"].ToString();
-            //            pdata.brand = dr["brand"].ToString();
-            //            pdata.item = dr["item"].ToString();
-            //            pdata.EXCESS1 = dr["IsEXCESS"].ToString();
-            //            pdata.CutRef = tmpCut;
-            //            pdata.NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)";
-
-            // pdata.SubProcess = dr["SubProcess"].ToString();
-            //            pdata.Body_Cut = dr["Body_Cut"].ToString();
-            //        }
-            //        else if (j == 1)
-            //        {
-            //            pdata.Group_right2 = dr["Group"].ToString();
-            //            pdata.Group_left2 = dr["left"].ToString();
-            //            pdata.Line2 = dr["Line"].ToString();
-            //            pdata.Cell2 = dr["Cell"].ToString();
-            //            pdata.SP2 = dr["SP"].ToString();
-            //            pdata.Style2 = dr["Style"].ToString();
-            //            pdata.Item2 = dr["Item"].ToString();
-            //            pdata.Body_Cut2 = dr["Body_Cut"].ToString();
-            //            pdata.Parts2 = dr["Parts"].ToString();
-            //            pdata.Color2 = dr["Color2"].ToString();
-            //            pdata.Size2 = dr["Size"].ToString();
-            //            pdata.SizeSpec2 = dr["SizeSpec"].ToString();
-            //            pdata.Desc2 = dr["Description"].ToString();
-            //            pdata.SubProcess2 = dr["SubProcess"].ToString();
-            //            pdata.Qty2 = dr["Qty"].ToString();
-            //            pdata.Barcode2 = dr["Bundle"].ToString();
-            //            pdata.Patterncode2 = dr["Patterncode"].ToString();
-            //            pdata.MarkerNo2 = dr["MarkerNo"].ToString();
-            //            pdata.Season2 = dr["Seasonid"].ToString();
-            //            pdata.brand2 = dr["brand"].ToString();
-            //            pdata.item2 = dr["item"].ToString();
-            //            pdata.EXCESS2 = dr["IsEXCESS"].ToString();
-            //            pdata.CutRef2 = tmpCut;
-            //            pdata.NoBundleCardAfterSubprocess2 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)";
-            //        }
-            //        else
-            //        {
-            //            pdata.Group_right3 = dr["Group"].ToString();
-            //            pdata.Group_left3 = dr["left"].ToString();
-            //            pdata.Line3 = dr["Line"].ToString();
-            //            pdata.Cell3 = dr["Cell"].ToString();
-            //            pdata.SP3 = dr["SP"].ToString();
-            //            pdata.Style3 = dr["Style"].ToString();
-            //            pdata.Item3 = dr["Item"].ToString();
-            //            pdata.Body_Cut3 = dr["Body_Cut"].ToString();
-            //            pdata.Parts3 = dr["Parts"].ToString();
-            //            pdata.Color3 = dr["Color2"].ToString();
-            //            pdata.Size3 = dr["Size"].ToString();
-            //            pdata.SizeSpec3 = dr["SizeSpec"].ToString();
-            //            pdata.Desc3 = dr["Description"].ToString();
-            //            pdata.SubProcess3 = dr["SubProcess"].ToString();
-            //            pdata.Qty3 = dr["Qty"].ToString();
-            //            pdata.Barcode3 = dr["Bundle"].ToString();
-            //            pdata.Patterncode3 = dr["Patterncode"].ToString();
-            //            pdata.MarkerNo3 = dr["MarkerNo"].ToString();
-            //            pdata.Season3 = dr["Seasonid"].ToString();
-            //            pdata.brand3 = dr["brand"].ToString();
-            //            pdata.item3 = dr["item"].ToString();
-            //            pdata.EXCESS3 = dr["IsEXCESS"].ToString();
-            //            pdata.CutRef3 = tmpCut;
-            //            pdata.NoBundleCardAfterSubprocess3 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)";
-            //        }
-            //    }
-
-            // if (changeGroup && tmpCut != thisGroupCut)
-            //    {
-            //        i += j;
-            //    }
-            //    else
-            //    {
-            //        i += 3;
-            //    }
-            // }
-
-            // var res = data;
-
-            //// 指定是哪個 RDLC
-            // Type reportResourceNamespace = typeof(P12_PrintData);
-            // Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
-            // string reportResourceName = "P12_Print.rdlc";
-            // if (!(this.result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
-            // {
-            //    this.ShowException(this.result);
-            //    return;
-            // }
-
-            // ReportDefinition report = new ReportDefinition
-            // {
-            //    ReportDataSource = res,
-            //    ReportResource = reportresource,
-            // };
-
-            //// 開啟 report view
-            // var frm = new Win.Subs.ReportView(report);
-
-            // 有按才更新列印日期printdate。
-            //            var res2 = this.dtt.AsEnumerable()
-            //                .Where(row => (bool)row["selected"])
-            //            .Select(row1 => new P12_PrintData()
-            //            {
-            //                SP = row1["SP"].ToString(),
-            //                Barcode = row1["Bundle"].ToString(),
-            //            }).ToList();
-            //            StringBuilder ups = new StringBuilder();
-            //            foreach (var item in res2)
-            //            {
-            //                ups.Append(string.Format(
-            //                    @"
-            // update bd
-            // set bd.PrintDate = GETDATE()
-            // from Bundle_Detail bd WITH (NOLOCK)
-            // where bd.BundleNo = '{0}'",
-            //                    item.Barcode));
-
-            // ups.Append(string.Format(
-            //                    @"
-            //                            update b
-            //                            set b.PrintDate = GETDATE()
-            //                            from Bundle b WITH (NOLOCK)
-            //                            inner join Bundle_Detail bd WITH (NOLOCK) on b.id=bd.ID
-            //                            where bd.BundleNo = '{1}'",
-            //                    item.SP,
-            //                    item.Barcode));
-            //            }
-
-            // frm.viewer.Print += (s, eArgs) =>
-            //            {
-            //                var result3 = DBProxy.Current.Execute(null, ups.ToString());
-            //            };
-            //            if (this.MdiParent != null)
-            //            {
-            //                frm.MdiParent = this.MdiParent;
-            //            }
-
-            // frm.Show();
-            // return;
-            #endregion
         }
 
         private void BtnToExcel_Click(object sender, EventArgs e)
@@ -919,11 +705,23 @@ OPTION (RECOMPILE)"
         private void Layout1_Click(object sender, EventArgs e)
         {
             this.PrintBarcode(1);
+            int pos = this.listControlBindingSource1.Position;
+            this.Query();
+            if (this.listControlBindingSource1.Count >= pos + 1)
+            {
+                this.listControlBindingSource1.Position = pos;
+            }
         }
 
         private void Layout2_Click(object sender, EventArgs e)
         {
             this.PrintBarcode(2);
+            int pos = this.listControlBindingSource1.Position;
+            this.Query();
+            if (this.listControlBindingSource1.Count >= pos + 1)
+            {
+                this.listControlBindingSource1.Position = pos;
+            }
         }
 
         private void PrintBarcode(int layout)
