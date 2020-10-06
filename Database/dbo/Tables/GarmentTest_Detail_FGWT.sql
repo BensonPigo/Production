@@ -3,7 +3,7 @@
 	No int NOT NULL,
 	Location	 varchar (1) NOT NULL,
 	Type	  varchar (150) NOT NULL,
-	TestDetail	 varchar (10) NOT NULL CONSTRAINT [DF_GarmentTest_Detail_FGWT_TestDetail] DEFAULT(''),
+	TestDetail	 varchar (15) NOT NULL CONSTRAINT [DF_GarmentTest_Detail_FGWT_TestDetail] DEFAULT(''),
 	BeforeWash	 Numeric(11, 2) NULL ,
 	SizeSpec	 Numeric(11, 2) NULL ,
 	AfterWash	 Numeric(11, 2) NULL ,
