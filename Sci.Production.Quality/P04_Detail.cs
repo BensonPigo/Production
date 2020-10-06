@@ -3802,7 +3802,11 @@ SELECT STUFF(
 
             // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
             // 若為Hand只寫入第88項
-            if (washType != "Hand")
+            if (washType == "Hand" && mtlTypeID != "WOVEN")
+            {
+                fGWTs = GetDefaultFGWT(false, false, false, mtlTypeID, washType, fibresType);
+            }
+            else
             {
                 if (containsT && containsB)
                 {
@@ -3816,10 +3820,6 @@ SELECT STUFF(
                 {
                     fGWTs = GetDefaultFGWT(false, containsB, false, mtlTypeID, washType, fibresType);
                 }
-            }
-            else
-            {
-                fGWTs = GetDefaultFGWT(false, false, false, mtlTypeID, washType, fibresType, isAll: false);
             }
 
             string garmentTest_Detail_ID = MyUtility.Convert.GetString(this.Deatilrow["ID"]);
