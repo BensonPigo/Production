@@ -2111,7 +2111,7 @@
                     <FilterExpression>=Fields!Idx.Value Mod 2</FilterExpression>
                     <Operator>Equal</Operator>
                     <FilterValues>
-                      <FilterValue DataType="Integer">1</FilterValue>
+                      <FilterValue DataType="Integer">0</FilterValue>
                     </FilterValues>
                   </Filter>
                 </Filters>
