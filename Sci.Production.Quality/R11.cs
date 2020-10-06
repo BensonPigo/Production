@@ -83,7 +83,7 @@ declare @Date2 date = @wDate2
             this.Sqlcmd.Append($@"
 
 select
-	Supplier = concat(PS.ID,'-'+ S.AbbEN),
+	Supplier = concat(PS.SuppID,'-'+ S.AbbEN),
 	PSD.Refno,
 	PSD.ColorID,
 	Fabric.WeaveTypeID,
@@ -122,7 +122,7 @@ Inner join Orders O on F.POID=O.ID
 Left join FIR_Physical FP on F.ID=FP.ID and FP.Roll=RD.Roll and FP.Dyelot=RD.Dyelot
 outer apply(
 	select Composition = STUFF((
-		select CONCAT('+', fc.percentage, '%')
+		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
 		from Fabric_Content fc
 		where fc.SCIRefno = Fabric.SCIRefno
 		for xml path('')
@@ -133,7 +133,7 @@ Where 1=1
 {where1}
 
 select
-	Supplier = concat(PS.ID,'-'+ S.AbbEN),
+	Supplier = concat(PS.SuppID,'-'+ S.AbbEN),
 	PSD.Refno,
 	PSD.ColorID,
 	Fabric.WeaveTypeID,
@@ -169,7 +169,7 @@ Inner join Orders O on F.POID=O.ID
 Left join FIR_Physical FP on F.ID=FP.ID and FP.Roll=TD.Roll and FP.Dyelot=TD.Dyelot
 outer apply(
 	select Composition = STUFF((
-		select CONCAT('+', fc.percentage, '%')
+		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
 		from Fabric_Content fc
 		where fc.SCIRefno = Fabric.SCIRefno
 		for xml path('')
@@ -251,7 +251,7 @@ select
 	Defectrate = case when isnull(t.TicketYds, 0) = 0 then 0
 		when t.BrandID = 'LLL' and ISNULL(t.width, 0) = 0 then 0
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
-		else isnull(Defect.point,  0) / t.TicketYds * 100
+		else isnull(Defect.point,  0) / t.TicketYds
 		end
 from #tmp1 t
 outer apply(
@@ -262,7 +262,7 @@ outer apply(
 	group by SUBSTRING(x.Data,1,1)
 )Defect
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
-where t.InspDate is not null
+where Defect.DefectRecord is not null or fd.Type is not null
 
 union all
 select
@@ -300,7 +300,7 @@ outer apply(
 	group by SUBSTRING(x.Data,1,1)
 )Defect
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
-where t.InspDate is not null
+where Defect.DefectRecord is not null or fd.Type is not null
 
 --Lacking yard分頁
 select
