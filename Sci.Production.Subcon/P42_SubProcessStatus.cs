@@ -107,7 +107,7 @@ from Order_Qty oq  with(nolock)
 {where}
 ";
 
-            string[] subprocessIDs = new string[] { "Loading", };
+            string[] subprocessIDs = new string[] { "SewingLine", "Loading" };
             string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
 
             sqlcmd += qtyBySetPerSubprocess + $@"
@@ -116,10 +116,12 @@ select oq.Orderid,oq.Article,oq.SizeCode,
 	[Accu. Ready Qty]=a.InQtyBySet,
 	[Ready - to Load Qty]=a.InQtyBySet-a.OutQtyBySet,
 	[Loading Follow-up Qty]=oq.Qty-a.InQtyBySet,
-	a.OutQtyBySet
+	a.OutQtyBySet,
+    wbin = s.InQtyBySet
 into #tmp
 from #enn oq
 left join #QtyBySetPerSubprocessLoading a on oq.Orderid = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode
+left join #QtyBySetPerSubprocessSewingLine s on oq.Orderid = s.OrderID and oq.Article = s.Article and oq.SizeCode = s.SizeCode
 
 ; with SewQty as (
 	select	oq.Article
@@ -151,7 +153,7 @@ select
 	Qty=sum(Qty),
 	[Accu. Ready Qty]=sum([Accu. Ready Qty]),
 	[Accu. Output Qty]=sum(b.QAQty),
-	[Current WIP]=sum(a.OutQtyBySet)-sum(b.QAQty),
+	[Current WIP]=sum(a.wbin)-sum(b.QAQty),
 	[Ready - to Load Qty]=sum([Ready - to Load Qty]),
 	[Loading Follow-up Qty]=sum([Loading Follow-up Qty])
 from #tmp a
@@ -163,7 +165,7 @@ drop table #tmp,#tmp2
             else
             {
                 sqlcmd += $@"
-select a.*,[Accu. Output Qty]=b.QAQty,[Current WIP]=a.OutQtyBySet-b.QAQty
+select a.*,[Accu. Output Qty]=b.QAQty,[Current WIP]=a.wbin-b.QAQty
 from #tmp a
 left join #tmp2 b on a.Article= b.Article and a.SizeCode = b.SizeCode
 
@@ -278,15 +280,23 @@ drop table #tmpSubProcessID
             string where;
             if (this.SummarType == 0)
             {
-                where = $@" where oq.ID='{this.DataRow["OrderID"]}' ";
+                where = $@"where oq.id = '{this.DataRow["OrderID"]}'";
             }
             else
             {
-                where = $@"
-where oq.ID='{this.DataRow["OrderID"]}' and oq.Article ='{this.DataRow["Article"]}' and oq.SizeCode ='{this.DataRow["SizeCode"]}' ";
+                where = $@"where oq.id = '{this.DataRow["OrderID"]}' and oq.Article ='{this.DataRow["Article"]}' and oq.SizeCode ='{this.DataRow["SizeCode"]}' ";
             }
 
             string sqlcmd = $@"
+select Orderid = oq.ID,oq.Article,oq.SizeCode,oq.Qty, InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
+into #enn
+from Order_Qty oq  with(nolock)
+{where}
+";
+            string[] subprocessIDs = new string[] { "Sorting", };
+            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
+
+            sqlcmd += qtyBySetPerSubprocess + $@"
 select oq.ID,oq.Article,oq.SizeCode,Colorid='',FabricCombo='=',oq.Qty,OutQty=cast(null as int),variance=cast(null as int)
 into #tmp
 from Order_Qty oq with(nolock)
@@ -301,8 +311,7 @@ outer apply(
 	left join WorkOrder w with(nolock) on w.Ukey = wd.WorkOrderUkey
 	where wd.OrderID = oq.ID and wd.Article = oq.Article and wd.SizeCode = oq.SizeCode
 )w
-left join dbo.[QtyBySetPerSubprocess_PatternPanel]('{this.DataRow["OrderID"]}','Sorting',default,default,default,default,1,default)a
-	on oq.id = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode and w.FabricCombo = a.PatternPanel
+left join #QtyBySetPerSubprocess_PatternPanelSorting a on oq.id = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode and w.FabricCombo = a.PatternPanel
 {where}
 
 
