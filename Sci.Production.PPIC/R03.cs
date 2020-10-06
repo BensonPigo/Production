@@ -573,6 +573,7 @@ tmpFilterZone as (
             , o.CustPONo
             , o.CustCDID
             , o.ProgramID
+            , [NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
             , o.CdCodeID
             , o.CPU
             , o.Qty
