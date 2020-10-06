@@ -75,7 +75,7 @@ namespace Sci.Production.Quality
 
             sqlCmd.Append($@"
 SELECT c.*,co.OrderID,co.SEQ
-INTO #MainData
+INTO #MainData1
 FROm CFAInspectionRecord  c
 INNER JOIN CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
 INNER JOIN Orders O ON o.ID = co.OrderID
@@ -139,6 +139,13 @@ WHERE 1=1
             #endregion
 
             sqlCmd.Append($@"
+
+SELECT c.*,co.OrderID,co.SEQ
+INTO #MainData
+FROm CFAInspectionRecord  c
+INNER JOIN CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
+WHERE c.ID IN (SELECT ID FROM #MainData1)
+
 SELECT 
 	 c.AuditDate
 	,BuyerDelivery = (SELECT BuyerDelivery FROM Orders WHERE ID = c.OrderID)
@@ -186,6 +193,7 @@ SELECT
 	,[NoOfDefect] = (SELECT SUM(Qty) FROM CFAInspectionRecord_Detail WHERE ID = c.ID)
 	,c.Remark
 	,c.ID
+	,c.IsCombinePO
 	,[InsCtn]=IIF(c.stage = 'Final' OR c.Stage ='3rd party',
 	( 
 		SELECT [Val]= COUNT(DISTINCT cr.ID) + 1
@@ -243,7 +251,7 @@ SELECT  t.ID
 		,Carton
 		,CFA
 		,Stage
-		,InsCtn
+		,InsCtn = IIF(IsCombinePO=1,NULL,InsCtn)
 		,Result
 		,InspectQty
 		,DefectQty
@@ -266,7 +274,7 @@ OUTER APPLY(
 	WHERE pd.StaggeredCFAInspectionRecordID= t.ID
 )InspectedPoQty
 
-DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2
+DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
 ");
             }
 
@@ -297,7 +305,7 @@ SELECT  t.ID
 		,Carton
 		,CFA
 		,Stage
-		,InsCtn
+		,InsCtn = IIF(IsCombinePO=1,NULL,InsCtn)
 		,Result
 		,InspectQty
 		,DefectQty
@@ -324,7 +332,7 @@ OUTER APPLY(
 	WHERE pd.StaggeredCFAInspectionRecordID= t.ID
 )InspectedPoQty
 
-DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2
+DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
 ");
             }
 

@@ -224,6 +224,8 @@ WHERE ID = @ID AND Seq = @Seq
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_OrderID)
             .Text("Seq", header: "SEQ", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: col_Seq)
             ;
+
+            this.EditModeToggle();
         }
 
         private void OpenWindow(int rowIndex)
@@ -294,6 +296,7 @@ EXISTS
                 this.SaveClick();
                 this.grid.DataSource = null;
                 this.grid.DataSource = this.MasterCFAInspectionRecord_OrderSEQ.Copy();
+                this.Close();
             }
         }
 
@@ -305,8 +308,9 @@ EXISTS
                     this.Close();
                     break;
                 case "Undo":
-                    this.EditModeToggle();
-                    this.UndoClick();
+                    // this.EditModeToggle();
+                    // this.UndoClick();
+                    this.Close();
                     break;
                 default:
                     break;
