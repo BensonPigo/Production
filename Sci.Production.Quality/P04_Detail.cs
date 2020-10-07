@@ -231,7 +231,7 @@ namespace Sci.Production.Quality
                 }
 
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
-                if (!MyUtility.Check.Empty(dr["Criteria"]))
+                if (dr["Criteria"] != DBNull.Value && dr["Criteria2"] != DBNull.Value)
                 {
                     eve.IsEditable = true;
                 }
@@ -627,7 +627,7 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value || MyUtility.Check.Empty(dr["Criteria"]))
+                if (dr["Scale"] != DBNull.Value || (dr["Criteria"] == DBNull.Value && dr["Criteria2"] == DBNull.Value))
                 {
                     eve.IsEditable = false;
                 }

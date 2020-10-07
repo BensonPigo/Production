@@ -445,13 +445,13 @@ ex: 150.423");
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value || MyUtility.Check.Empty(dr["Criteria"]))
+                if (dr["Criteria"] != DBNull.Value && dr["Criteria2"] != DBNull.Value)
                 {
-                    eve.IsEditable = false;
+                    eve.IsEditable = true;
                 }
                 else
                 {
-                    eve.IsEditable = true;
+                    eve.IsEditable = false;
                 }
             };
 
@@ -521,7 +521,7 @@ ex: 150.423");
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value || MyUtility.Check.Empty(dr["Criteria"]))
+                if (dr["Scale"] != DBNull.Value || (dr["Criteria"] == DBNull.Value && dr["Criteria2"] == DBNull.Value))
                 {
                     eve.IsEditable = false;
                 }
