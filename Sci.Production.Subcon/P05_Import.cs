@@ -423,7 +423,7 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
             strSQLCmd = $@"
 --因為Planning B03(Style_Artwork)會有同一個Artwork多筆報價關係，所以這邊distinct避免資料發散
 select  distinct
-        [LocalSuppId] = isnull(sao.LocalSuppId, '')
+        [LocalSuppId] = iif(o.category = 'S', '{this.dr_artworkReq["LocalSuppId"]}', isnull(sao.LocalSuppId, ''))
 		, [orderID] = o.ID
         , oq.Article
         , oq.SizeCode
