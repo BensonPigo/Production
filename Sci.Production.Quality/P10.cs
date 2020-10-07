@@ -486,6 +486,8 @@ where sd.id='{0}' order by sd.No
 Delete SampleGarmentTest_Detail_Shrinkage  where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
 Delete SampleGarmentTest_Detail_Twisting where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
 Delete SampleGarmentTest_Detail_Appearance where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete SampleGarmentTest_Detail_FGWT where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete SampleGarmentTest_Detail_FGPT where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
 ";
                     DBProxy.Current.Execute(null, delete3sub);
                 }
@@ -680,7 +682,7 @@ INSERT INTO SampleGarmentTest_Detail_FGPT
 
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-            if (dt.Rows.Count > 0)
+            if (dt.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).Any())
             {
                 string maxNo = dt.Compute("MAX(NO)", string.Empty).ToString();
                 string where = string.Format("NO='{0}'", maxNo);
