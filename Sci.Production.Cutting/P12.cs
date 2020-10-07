@@ -289,7 +289,8 @@ select
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
+inner join dbo.Orders c WITH (NOLOCK) on c.id = bdo.OrderID and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
@@ -373,7 +374,8 @@ select
     ,b.FabricPanelCode
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
+inner join dbo.Orders c WITH (NOLOCK) on c.id = bdo.OrderID and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
@@ -503,7 +505,8 @@ select
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
+inner join dbo.Orders c WITH (NOLOCK) on c.id = bdo.Orderid and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
@@ -587,7 +590,8 @@ select
     ,b.FabricPanelCode
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
+outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
+inner join dbo.Orders c WITH (NOLOCK) on c.id = bdo.OrderID and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
