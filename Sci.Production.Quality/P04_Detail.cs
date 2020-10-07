@@ -231,7 +231,7 @@ namespace Sci.Production.Quality
                 }
 
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
-                if (dr["Criteria"] != DBNull.Value && dr["Criteria2"] != DBNull.Value)
+                if (dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value)
                 {
                     eve.IsEditable = true;
                 }
@@ -613,13 +613,13 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value || MyUtility.Check.Empty(dr["Criteria"]))
+                if (dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value)
                 {
-                    eve.IsEditable = false;
+                    eve.IsEditable = true;
                 }
                 else
                 {
-                    eve.IsEditable = true;
+                    eve.IsEditable = false;
                 }
             };
 
@@ -627,13 +627,13 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value || (dr["Criteria"] == DBNull.Value && dr["Criteria2"] == DBNull.Value))
+                if (dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value)
                 {
-                    eve.IsEditable = false;
+                    eve.IsEditable = true;
                 }
                 else
                 {
-                    eve.IsEditable = true;
+                    eve.IsEditable = false;
                 }
             };
 
@@ -3851,7 +3851,42 @@ SELECT STUFF(
 
                 if (fGWT.Scale == null)
                 {
-                    insertCmd.Append($@"
+                    if (fGWT.TestDetail.ToUpper() == "CM")
+                    {
+                        insertCmd.Append($@"
+
+INSERT INTO GarmentTest_Detail_FGWT
+           (ID, No, Location, Type ,TestDetail ,Criteria)
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx}
+           , @TestDetail{idx}
+           , @Criteria{idx}  )
+
+");
+                    }
+                    else
+                    {
+                        if (fGWT.Type.ToUpper() == "DIMENSIONAL CHANGE: FLAT MADE-UP TEXTILE ARTICLES A) OVERALL LENGTH" || fGWT.Type.ToUpper() == "DIMENSIONAL CHANGE: FLAT MADE-UP TEXTILE ARTICLES B) OVERALL WIDTH")
+                        {
+                            insertCmd.Append($@"
+
+INSERT INTO GarmentTest_Detail_FGWT
+           (ID, No, Location, Type ,TestDetail )
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx}
+           , @TestDetail{idx}  )
+
+");
+                        }
+                        else
+                        {
+                            insertCmd.Append($@"
 
 INSERT INTO GarmentTest_Detail_FGWT
            (ID, No, Location, Type ,TestDetail ,Criteria ,Criteria2 )
@@ -3865,6 +3900,8 @@ INSERT INTO GarmentTest_Detail_FGWT
            , @Criteria2_{idx}  )
 
 ");
+                        }
+                    }
                 }
                 else
                 {

@@ -483,7 +483,7 @@ namespace Sci.Production.PublicPrg
                 new FGWT() { Location = string.Empty, TestDetail = "Range%", Type = "dimensional change: flat made-up textile articles a) overall length" }, // ISP20201331僅顯示，但系統不能輸入資料
                 new FGWT() { Location = string.Empty, TestDetail = "Range%", Type = "dimensional change: flat made-up textile articles b) overall width" }, // ISP20201331僅顯示，但系統不能輸入資料
                 new FGWT() { Location = string.Empty, TestDetail = "Range%", Type = "spirality: Garment - in percentage (average)", Criteria = criteria_Min_Item85, Criteria2 = criteria_Max_Item85 },
-                new FGWT() { Location = string.Empty, TestDetail = "cm", Type = "spirality: Garment - hem opening in cm", Criteria = cmMin, Criteria2 = cmMax },
+                new FGWT() { Location = string.Empty, TestDetail = "cm", Type = "spirality: Garment - hem opening in cm", Criteria = cmMax },
                 new FGWT() { Location = string.Empty, TestDetail = "grade", Type = "appearance after laundering: Garment - colour change", Scale = string.Empty },
                 new FGWT() { Location = string.Empty, TestDetail = "grade", Type = "appearance after laundering: Garment - staining", Scale = string.Empty },
                 new FGWT() { Location = string.Empty, TestDetail = "pass/fail", Type = "appearance after laundering: Garment - physical changes", Scale = string.Empty },
