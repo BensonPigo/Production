@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci.Data;
 using System.Transactions;
-using Sci.Production.PublicPrg;
+using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
@@ -36,7 +36,6 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
             DataGridViewGeneratorTextColumnSettings ctnno = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings receiver = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
             // CTNNo要Trim掉空白字元
             ctnno.CellValidating += (s, e) =>
@@ -51,7 +50,7 @@ namespace Sci.Production.Shipping
             this.gridImport.IsEditingReadOnly = false;
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out Ict.Win.UI.DataGridViewCheckBoxColumn col_chk)
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Seq1", header: "Seq1#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Seq2", header: "Seq2#", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -115,8 +114,7 @@ where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a",
                 MyUtility.Check.Empty(this.txtSEQ1.Text) ? string.Empty : " and psd.SEQ1 = '" + this.txtSEQ1.Text + "'",
                 MyUtility.Check.Empty(this.txtSEQ2.Text) ? string.Empty : " and psd.SEQ2 = '" + this.txtSEQ2.Text + "'");
 
-            DataTable selectData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable selectData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query error." + result.ToString());
@@ -145,82 +143,26 @@ where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a",
             }
 
             DataRow[] selectedRow = dt.Select("Selected = 1");
-            if (selectedRow.Length <= 0)
+            if (selectedRow.Length == 0)
             {
-                MyUtility.Msg.WarningBox("No data need to update!!");
+                MyUtility.Msg.WarningBox("Please select datas first!!");
                 return;
             }
 
-            if (MyUtility.Check.Empty(this.txtRemark.Text))
-            {
-                this.txtRemark.Focus();
-                MyUtility.Msg.WarningBox("Remark can't empty!!");
-                return;
-            }
-
-            // 該單Approved / Junk都不允許調整資料
-            if (!Prgs.CheckP02Status(this.masterData["ID"].ToString()))
+            DataTable sourcedt = selectedRow.CopyToDataTable();
+            if (!this.BeforeUpdate(sourcedt))
             {
                 return;
             }
 
-            DataTable checkData;
-
-            // 檢查重複資料
-            try
-            {
-                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,ID,Seq1,Seq2", string.Format("select e.ID,e.Seq1,e.Seq2 from #tmp e inner join Express_Detail ed on ed.ID = '{0}' and ed.OrderID = e.ID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2 where e.Selected = 1", MyUtility.Convert.GetString(this.masterData["ID"])), out checkData);
-            }
-            catch (Exception ex)
-            {
-                MyUtility.Msg.ErrorBox("Check duplicate data error.\r\n" + ex.ToString());
-                return;
-            }
-
-            if (checkData.Rows.Count > 0)
-            {
-                StringBuilder msgStr = new StringBuilder();
-                foreach (DataRow dr in checkData.Rows)
-                {
-                    msgStr.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
-                }
-
-                msgStr.Append("Data already exists!!");
-                MyUtility.Msg.WarningBox(msgStr.ToString());
-                return;
-            }
-
-            StringBuilder chkQty = new StringBuilder();
             IList<string> insertCmds = new List<string>();
-
             foreach (DataRow dr in selectedRow)
             {
-                if (MyUtility.Check.Empty(dr["Receiver"]))
-                {
-                    MyUtility.Msg.WarningBox("Receiver can't empty!!");
-                    return;
-                }
-
-                if (MyUtility.Check.Empty(dr["CTNNo"]))
-                {
-                    MyUtility.Msg.WarningBox("CTN No. can't empty!!");
-                    return;
-                }
-
-                if (MyUtility.Check.Empty(dr["NW"]))
-                {
-                    MyUtility.Msg.WarningBox("N.W. (kg) can't empty!!");
-                    return;
-                }
-
-                if (MyUtility.Check.Empty(dr["Qty"]))
-                {
-                    chkQty.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
-                }
-
                 insertCmds.Add(string.Format(
-                    @"insert into Express_Detail(ID,OrderID,Seq1,Seq2,Qty,NW,CTNNo,Category,SuppID,Price,UnitID,Receiver,BrandID,Leader,Remark,InCharge,AddName,AddDate)
- values('{0}','{1}','{2}','{3}',{4},{5},'{6}','4','{7}',{8},'{9}','{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
+                    @"
+insert into Express_Detail(ID,OrderID,Seq1,Seq2,Qty,NW,CTNNo,Category,SuppID,Price,UnitID,Receiver,BrandID,Leader,Remark,InCharge,AddName,AddDate)
+ values('{0}','{1}','{2}','{3}',{4},{5},'{6}','4','{7}',{8},'{9}','{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());
+",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     MyUtility.Convert.GetString(dr["ID"]),
                     MyUtility.Convert.GetString(dr["Seq1"]),
@@ -238,70 +180,27 @@ where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a",
                     Env.User.UserID));
             }
 
-            // Qty不可為0
-            if (chkQty.Length > 0)
-            {
-                MyUtility.Msg.WarningBox("Q'ty can't be 0!!\r\n" + chkQty.ToString());
-                return;
-            }
-
-            // 檢查Total Qty是否有超過PO Qty
-            try
-            {
-                MyUtility.Tool.ProcessWithDatatable(
-                    dt,
-                    "Selected,ID,Seq1,Seq2,Qty,POQty",
-                    string.Format(@"select a.ID,a.Seq1,a.Seq2
-from (
-select e.ID,e.Seq1,e.Seq2,e.POQty,
-e.Qty+(select isnull(sum(ed.Qty),0) as Qty from Express_Detail ed WITH (NOLOCK) where ed.OrderID = e.ID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2) as TtlQty
-from #tmp e
-where e.Selected = 1) a
-where a.TtlQty > a.POQty"),
-                    out checkData);
-            }
-            catch (Exception ex)
-            {
-                MyUtility.Msg.ErrorBox("Check total qty error.\r\n" + ex.ToString());
-                return;
-            }
-
-            if (checkData == null || checkData.Rows.Count > 0)
-            {
-                StringBuilder msgStr = new StringBuilder();
-                foreach (DataRow dr in checkData.Rows)
-                {
-                    msgStr.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
-                }
-
-                msgStr.Append("Total Qty > PO Qty, pls check!!");
-                MyUtility.Msg.WarningBox(msgStr.ToString());
-                return;
-            }
-
-            DualResult result1, result2;
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
                 {
-                    result1 = DBProxy.Current.Executes(null, insertCmds);
-                    result2 = DBProxy.Current.Execute(null, Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.masterData["ID"])));
-                    if (result1 && result2)
-                    {
-                        transactionScope.Complete();
-                    }
-                    else
+                    DualResult result = DBProxy.Current.Executes(null, insertCmds);
+                    if (!result)
                     {
                         transactionScope.Dispose();
-
-                        string errorMsg = (!result1 ? result1.GetException().Message : string.Empty)
-                            + Environment.NewLine + Environment.NewLine +
-                            (!result2 ? result1.GetException().Message : string.Empty)
-                            ;
-
-                        MyUtility.Msg.WarningBox("Update failed, Pleaes re-try." + Environment.NewLine + errorMsg);
+                        this.ShowErr(result);
                         return;
                     }
+
+                    result = DBProxy.Current.Execute(null, Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.masterData["ID"])));
+                    if (!result)
+                    {
+                        transactionScope.Dispose();
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    transactionScope.Complete();
                 }
                 catch (Exception ex)
                 {
@@ -312,6 +211,123 @@ where a.TtlQty > a.POQty"),
             }
 
             MyUtility.Msg.InfoBox("Update complete!!");
+        }
+
+        private bool BeforeUpdate(DataTable sourcedt)
+        {
+            if (MyUtility.Check.Empty(this.txtRemark.Text))
+            {
+                this.txtRemark.Focus();
+                MyUtility.Msg.WarningBox("Remark can't empty!!");
+                return false;
+            }
+
+            // 該單Approved / Junk都不允許調整資料
+            if (!Prgs.CheckP02Status(this.masterData["ID"].ToString()))
+            {
+                return false;
+            }
+
+            StringBuilder chkQty = new StringBuilder();
+            foreach (DataRow dr in sourcedt.Rows)
+            {
+                if (MyUtility.Check.Empty(dr["Receiver"]))
+                {
+                    MyUtility.Msg.WarningBox("Receiver can't empty!!");
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(dr["CTNNo"]))
+                {
+                    MyUtility.Msg.WarningBox("CTN No. can't empty!!");
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(dr["NW"]))
+                {
+                    MyUtility.Msg.WarningBox("N.W. (kg) can't empty!!");
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(dr["Qty"]))
+                {
+                    chkQty.Append($"SP#:{MyUtility.Convert.GetString(dr["ID"])}, Seq1#:{MyUtility.Convert.GetString(dr["Seq1"])}, Seq2#:{MyUtility.Convert.GetString(dr["Seq2"])}\r\n");
+                }
+            }
+
+            // Qty不可為0
+            if (chkQty.Length > 0)
+            {
+                MyUtility.Msg.WarningBox("Q'ty can't be 0!!\r\n" + chkQty.ToString());
+                return false;
+            }
+
+            // ISP20201574 檢查 SP#, Seq1, Seq2, CTN No., Category = (DB 固定 4, 顯示 Material) 重複. A.勾選重複, B.DB與勾選重複
+            string sqlcmd = $@"
+select t.ID,t.Seq1,t.Seq2,t.CTNNo from #tmp t group by t.ID,t.Seq1,t.Seq2,t.CTNNo having count(1) >1
+
+union
+select t.ID, t.Seq1, t.Seq2, t.CTNNo
+from #tmp t
+inner join Express_Detail ed on ed.OrderID = t.ID and ed.Seq1 = t.Seq1 and ed.Seq2 = t.Seq2 and ed.CTNNo = t.CTNNo
+where ed.Category = '4'
+";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(sourcedt, string.Empty, sqlcmd, out DataTable checkData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (checkData.Rows.Count > 0)
+            {
+                StringBuilder msgStr = new StringBuilder();
+                msgStr.Append("Data can't duplicate!!\r\n");
+                foreach (DataRow dr in checkData.Rows)
+                {
+                    msgStr.Append($"SP#:{dr["ID"]}, Seq1#:{dr["Seq1"]}, Seq2#:{dr["Seq2"]}, CTN No.:{dr["CTNNo"]}, Category:Material\r\n");
+                }
+
+                MyUtility.Msg.WarningBox(msgStr.ToString());
+                return false;
+            }
+
+            // 檢查Total Qty是否有超過PO Qty
+            sqlcmd = @"
+select a.ID,a.Seq1,a.Seq2
+from (
+    select e.ID,e.Seq1,e.Seq2,e.POQty,
+    e.Qty +
+        isnull((
+            select sum(ed.Qty)
+            from Express_Detail ed WITH (NOLOCK)
+            where ed.OrderID = e.ID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2
+        ), 0) as TtlQty
+    from #tmp e
+) a
+where a.TtlQty > a.POQty
+";
+            result = MyUtility.Tool.ProcessWithDatatable(sourcedt, string.Empty, sqlcmd, out checkData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (checkData.Rows.Count > 0)
+            {
+                StringBuilder msgStr = new StringBuilder();
+                foreach (DataRow dr in checkData.Rows)
+                {
+                    msgStr.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
+                }
+
+                msgStr.Append("Total Qty > PO Qty, pls check!!");
+                MyUtility.Msg.WarningBox(msgStr.ToString());
+                return false;
+            }
+
+            return true;
         }
     }
 }

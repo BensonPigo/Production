@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Win;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using Sci.Win.Tools;
-using Sci.Win;
-using System.Reflection;
-using System.Linq;
-using System.Drawing;
 
 namespace Sci.Production.Shipping
 {
@@ -39,15 +39,9 @@ namespace Sci.Production.Shipping
         /// </summary>
         protected string CarrierID
         {
-            get
-            {
-                return this.carrierID;
-            }
+            get => this.carrierID;
 
-            set
-            {
-                this.carrierID = value;
-            }
+            set => this.carrierID = value;
         }
 
         /// <summary>
@@ -131,9 +125,9 @@ namespace Sci.Production.Shipping
                 }
 
                 result_dt = (from r in after_dt.AsEnumerable()
-                                 join id in idsNotInB
-                                 on r.Field<string>("ID") + r.Field<string>("OrderID") + r.Field<string>("Seq1") + r.Field<string>("Seq2") + r.Field<string>("Category") equals id
-                                 select r).CopyToDataTable();
+                             join id in idsNotInB
+                             on r.Field<string>("ID") + r.Field<string>("OrderID") + r.Field<string>("Seq1") + r.Field<string>("Seq2") + r.Field<string>("Category") equals id
+                             select r).CopyToDataTable();
             }
             else
             {
@@ -282,8 +276,7 @@ and not exists (select 1 from Express_Detail ed WITH (NOLOCK) where ec.ID = ed.I
 select * from NewCtn
 union
 select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DataTable cTNData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out cTNData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable cTNData);
             if (!result)
             {
                 this.ShowErr(result);
@@ -404,8 +397,7 @@ and not exists (select 1 from Express_Detail ed WITH (NOLOCK) where ec.ID = ed.I
 select * from NewCtn
 union
 select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DataTable cTNData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out cTNData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable cTNData);
             if (!result)
             {
                 this.ShowErr(result);
@@ -456,9 +448,8 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
         private void Print(DataRow[] drlist, bool print_flag)
         {
             DualResult result;
-            IReportResource reportresource;
             ReportDefinition rd = new ReportDefinition();
-            if (!(result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(this.GetType()), this.GetType(), "P02_DetailPrint.rdlc", out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(this.GetType()), this.GetType(), "P02_DetailPrint.rdlc", out IReportResource reportresource)))
             {
                 MyUtility.Msg.ErrorBox(result.ToString());
             }
@@ -479,16 +470,18 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
                 P02_PrintData data_item;
                 foreach (DataRow dr in drlist)
                 {
-                    data_item = new P02_PrintData();
-                    data_item.BarCode = '*' + MyUtility.Convert.GetString(dr["ID"]) + MyUtility.Convert.GetString(dr["OrderID"]) + MyUtility.Convert.GetString(dr["Seq1"]) + MyUtility.Convert.GetString(dr["Seq2"]) + MyUtility.Convert.GetString(dr["Category"]) + '*';
-                    data_item.From = (MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "1" ? "Factory" : "Brand") + "(" + MyUtility.Convert.GetString(this.CurrentMaintain["FromSite"]) + ")";
-                    data_item.To = (MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "3" ? "Supplier" : "Brand") + "(" + MyUtility.Convert.GetString(this.CurrentMaintain["ToSite"]) + ")";
-                    data_item.HcNo = MyUtility.Convert.GetString(dr["ID"]);
-                    data_item.SerialNo = MyUtility.Convert.GetString(dr["OrderID"]) + "-" + MyUtility.Convert.GetString(dr["Seq1"]) + "-" + MyUtility.Convert.GetString(dr["Seq2"]);
-                    data_item.Brand = MyUtility.Convert.GetString(dr["BrandID"]);
-                    data_item.Incharge = MyUtility.GetValue.Lookup(string.Format("select Name+ iif(ExtNo <> '',' #' + ExtNo,'') as Incharge from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(dr["InCharge"])));
-                    data_item.TeamLeader = MyUtility.Convert.GetString(dr["LeaderName"]);
-                    data_item.Receiver = MyUtility.Convert.GetString(dr["ReceiverName"]);
+                    data_item = new P02_PrintData
+                    {
+                        BarCode = '*' + MyUtility.Convert.GetString(dr["ID"]) + MyUtility.Convert.GetString(dr["OrderID"]) + MyUtility.Convert.GetString(dr["Seq1"]) + MyUtility.Convert.GetString(dr["Seq2"]) + MyUtility.Convert.GetString(dr["Category"]) + '*',
+                        From = (MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "1" ? "Factory" : "Brand") + "(" + MyUtility.Convert.GetString(this.CurrentMaintain["FromSite"]) + ")",
+                        To = (MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "3" ? "Supplier" : "Brand") + "(" + MyUtility.Convert.GetString(this.CurrentMaintain["ToSite"]) + ")",
+                        HcNo = MyUtility.Convert.GetString(dr["ID"]),
+                        SerialNo = MyUtility.Convert.GetString(dr["OrderID"]) + "-" + MyUtility.Convert.GetString(dr["Seq1"]) + "-" + MyUtility.Convert.GetString(dr["Seq2"]),
+                        Brand = MyUtility.Convert.GetString(dr["BrandID"]),
+                        Incharge = MyUtility.GetValue.Lookup(string.Format("select Name+ iif(ExtNo <> '',' #' + ExtNo,'') as Incharge from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(dr["InCharge"]))),
+                        TeamLeader = MyUtility.Convert.GetString(dr["LeaderName"]),
+                        Receiver = MyUtility.Convert.GetString(dr["ReceiverName"]),
+                    };
                     data.Add(data_item);
                 }
 
@@ -948,11 +941,8 @@ Order by CTNNo,Seq1,Seq2", masterID);
                         break;
                 }
 
-                string sqlcmd = string.Empty;
-                DataRow dr;
-
                 // 存在FactoryExpress_SendingSchedule
-                sqlcmd = $@"
+                string sqlcmd = $@"
 select 
 [IsSpecialSending] = 
 case when Date.value = '1' and s.MON=1 then 0 
@@ -971,7 +961,7 @@ and ToID='{countryCode}'
 and s.BeginDate <= CONVERT(datetime,'{dateShipDate}')
 and s.junk = 0
 ";
-                if (MyUtility.Check.Seek(sqlcmd, out dr))
+                if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
                 {
                     this.CurrentMaintain["IsSpecialSending"] = dr["IsSpecialSending"];
                 }
@@ -1046,12 +1036,6 @@ outer apply (
         }
 
         /// <inheritdoc/>
-        protected override DualResult ClickSavePost()
-        {
-            return base.ClickSavePost();
-        }
-
-        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
@@ -1083,11 +1067,11 @@ outer apply (
                 return;
             }
 
-            string sqlCmd = string.Empty;
             SelectItem item;
+            string sqlCmd;
             if (MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "1")
             {
-                sqlCmd = "select ID from Factory WITH (NOLOCK) where Junk = 0 and ExpressGroup <> ''";
+                sqlCmd = "select ID from Factory WITH (NOLOCK) where Junk = 0 and ExpressGroup <> '' and Foundry <> 1";
                 item = new SelectItem(sqlCmd, "10", this.txtFrom.Text);
             }
             else
@@ -1127,14 +1111,15 @@ outer apply (
                     // sql參數
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", this.txtFrom.Text);
 
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                    cmds.Add(sp1);
+                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                    {
+                        sp1,
+                    };
 
                     if (MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "1")
                     {
-                        DataTable factoryData;
                         string sqlCmd = "select ID from Factory WITH (NOLOCK) where Junk = 0 and ExpressGroup <> '' and ID = @id";
-                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out factoryData);
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable factoryData);
                         if (!result || factoryData.Rows.Count <= 0)
                         {
                             if (!result)
@@ -1162,9 +1147,8 @@ outer apply (
                     {
                         if (MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "2")
                         {
-                            DataTable brandData;
                             string sqlCmd = "select NameEN from Brand WITH (NOLOCK) where Junk = 0 and ID = @id";
-                            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out brandData);
+                            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable brandData);
 
                             if (!result || brandData.Rows.Count <= 0)
                             {
@@ -1214,8 +1198,8 @@ outer apply (
                 return;
             }
 
-            string sqlCmd = string.Empty;
             SelectItem item;
+            string sqlCmd;
             if (this.CurrentMaintain["ToTag"].ToString() == "2")
             {
                 sqlCmd = "select ID from SCIFty WITH (NOLOCK) where Junk = 0 AND ExpressGroup <> ''";
@@ -1279,13 +1263,14 @@ and IsFactory=0";
                     // sql參數
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", this.txtTO.Text);
 
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                    cmds.Add(sp1);
+                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                    {
+                        sp1,
+                    };
                     if (MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "2")
                     {
-                        DataTable sCIFtyData;
                         string sqlCmd = "select ID,ExpressGroup,CountryID,PortAir from SCIFty WITH (NOLOCK) where Junk = 0 AND ExpressGroup <> '' and ID = @id";
-                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out sCIFtyData);
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable sCIFtyData);
 
                         if (!result || sCIFtyData.Rows.Count <= 0)
                         {
@@ -1320,7 +1305,6 @@ and IsFactory=0";
                     {
                         if (MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "3")
                         {
-                            DataTable suppData;
                             string sqlCmd = @"
 select ID,AbbCH,AbbEN 
 from Supp s WITH (NOLOCK) where s.Junk = 0 
@@ -1331,7 +1315,7 @@ select ID,AbbCH = Abb,AbbEN = Abb
 from LocalSupp WITH (NOLOCK) where Junk = 0
 and IsFactory=0
 and ID = @id ";
-                            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out suppData);
+                            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable suppData);
 
                             if (!result || suppData.Rows.Count <= 0)
                             {
@@ -1361,9 +1345,8 @@ and ID = @id ";
                         {
                             if (MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "4")
                             {
-                                DataTable brandData;
                                 string sqlCmd = "select NameEN,CountryID from Brand WITH (NOLOCK) where Junk = 0 and ID = @id";
-                                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out brandData);
+                                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable brandData);
 
                                 if (!result || brandData.Rows.Count <= 0)
                                 {
@@ -1543,8 +1526,7 @@ and not exists (select 1 from Express_Detail ed WITH (NOLOCK) where ec.ID = ed.I
 select * from NewCtn
 union
 select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DataTable cTNData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out cTNData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable cTNData);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Query Ctn data fail, please try again.\r\n" + result.ToString());
@@ -1666,8 +1648,9 @@ update Express set Status = 'New', StatusUpdateDate = GETDATE(), EditName = '{0}
                 return;
             }
 
-            IList<string> updateCmds = new List<string>();
-            updateCmds.Add(string.Format(
+            IList<string> updateCmds = new List<string>
+            {
+                string.Format(
                 @"
 insert into Express_History([ID], [OldValue], [NewValue], [AddName], [AddDate])
 select ID, Status, 'Junk', '{0}', GETDATE()
@@ -1676,9 +1659,10 @@ where ID = '{1}';
 
 update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'",
                 Env.User.UserID,
-                MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-            updateCmds.Add(string.Format("update PackingList set pulloutdate=null where ExpressID = '{0}' and Type = 'F'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-            updateCmds.Add(string.Format("update PackingList set ExpressID = '' where ExpressID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"])),
+                string.Format("update PackingList set pulloutdate=null where ExpressID = '{0}' and Type = 'F'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])),
+                string.Format("update PackingList set ExpressID = '' where ExpressID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])),
+            };
 
             DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -1788,8 +1772,7 @@ inner join PackingList pl on pl.ID = ed.PackingListID and pl.Type = 'F'
 inner join Pullout p on p.ID = pl.PulloutID
 where ed.ID = '{this.CurrentMaintain["ID"]}' and p.Status in ('Confirmed','Locked')
 ";
-            DataTable dtchk;
-            DualResult result1 = DBProxy.Current.Select(null, sqlchk, out dtchk);
+            DualResult result1 = DBProxy.Current.Select(null, sqlchk, out DataTable dtchk);
             if (!result1)
             {
                 this.ShowErr(result1);
@@ -1815,9 +1798,9 @@ where ed.ID = '{this.CurrentMaintain["ID"]}' and p.Status in ('Confirmed','Locke
                 return;
             }
 
-            IList<string> updateCmds = new List<string>();
-
-            updateCmds.Add(string.Format(
+            IList<string> updateCmds = new List<string>
+            {
+                string.Format(
                 @"
 insert into Express_History([ID], [OldValue], [NewValue], [AddName], [AddDate])
 select ID, Status, 'Sent', '{0}', GETDATE()
@@ -1826,9 +1809,10 @@ where ID = '{1}';
 
 update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'",
                 Env.User.UserID,
-                MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"])),
 
-            updateCmds.Add(string.Format("update PackingList set pulloutdate=null where ExpressID = '{0}' and Type = 'F'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+                string.Format("update PackingList set pulloutdate=null where ExpressID = '{0}' and Type = 'F'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])),
+            };
 
             DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -1847,8 +1831,7 @@ update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0
         // Mail to
         private void SendMail()
         {
-            DataRow dr;
-            if (MyUtility.Check.Seek("select * from MailTo WITH (NOLOCK) where ID = '003'", out dr))
+            if (MyUtility.Check.Seek("select * from MailTo WITH (NOLOCK) where ID = '003'", out DataRow dr))
             {
                 string mailto = MyUtility.Convert.GetString(dr["ToAddress"]);
                 string cc = MyUtility.Convert.GetString(dr["CcAddress"]);
@@ -1922,8 +1905,7 @@ and pl.ExpressID = '{this.CurrentMaintain["ID"]}'
 ";
             }
 
-            DataTable pkdt;
-            DualResult result = DBProxy.Current.Select(null, sqlchk, out pkdt);
+            DualResult result = DBProxy.Current.Select(null, sqlchk, out DataTable pkdt);
             if (!result)
             {
                 this.ShowErr(result);
