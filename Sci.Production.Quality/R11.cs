@@ -289,7 +289,7 @@ select
 	Defectrate = case when isnull(t.TicketYds, 0) = 0 then 0
 		when t.BrandID = 'LLL' and ISNULL(t.width, 0) = 0 then 0
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
-		else isnull(Defect.point,  0) / t.TicketYds * 100
+		else isnull(Defect.point,  0) / t.TicketYds 
 		end
 from #tmp2 t
 outer apply(
