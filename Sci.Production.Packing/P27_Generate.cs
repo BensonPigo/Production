@@ -59,7 +59,7 @@ namespace Sci.Production.Packing
               .Text("ID", header: "Packing No", width: Widths.AnsiChars(15), iseditingreadonly: true)
               .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
               .Numeric("CTNQty", header: "CTN Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-              .Numeric("CompleteCtn", header: "CTN Qty" + Environment.NewLine + "Stamp Setting Cmplt", width: Widths.AnsiChars(10), iseditingreadonly: false)
+              .Numeric("CompleteCtn", header: "CTN Qty" + Environment.NewLine + "Stamp Setting Cmplt", width: Widths.AnsiChars(10), iseditingreadonly: true)
               .CheckBox("AlreadyGenerateStampFile", header: "Already Generate Stamp File", width: Widths.AnsiChars(20), iseditable: false)
           ;
         }
