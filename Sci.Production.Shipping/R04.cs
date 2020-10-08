@@ -228,7 +228,7 @@ namespace Sci.Production.Shipping
 		,LocalMR = o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo 
 										   from Pass1 WITH (NOLOCK) 
 										   where ID = o.LocalMR), '')
-        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(V:V,ROW()) = INDEX(AA:AA,ROW()), ""True"", """")'
+        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(W:W,ROW()) = INDEX(AB:AB,ROW()), ""True"", """")'
 		,[ReturnedQtyBySeq] = [dbo].getInvAdjQty(o.ID,oq.Seq)
 		,[HC] = pkExpressID.ExpressID
 		,[HCStatus] = pkExpressStatus.ExpressStatus
@@ -455,7 +455,7 @@ select 	oq.BuyerDelivery
 		,LocalMR = o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo 
 										   from Pass1 WITH (NOLOCK) 
 										   where ID = o.LocalMR), '')
-        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(V:V,ROW()) = INDEX(AA:AA,ROW()), ""True"", """")'
+        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(W:W,ROW()) = INDEX(AB:AB,ROW()), ""True"", """")'
 		,[ReturnedQtyBySeq] = [dbo].getInvAdjQty(o.ID, oq.Seq)
 		,NULL
 		,NULL
@@ -550,7 +550,7 @@ and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
 		,LocalMR = o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo 
 										   from Pass1 WITH (NOLOCK) 
 										   where ID = o.LocalMR), '')
-        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(V:V,ROW()) = INDEX(AA:AA,ROW()), ""True"", """")'
+        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(W:W,ROW()) = INDEX(AB:AB,ROW()), ""True"", """")'
 		,[ReturnedQtyBySeq] = [dbo].getInvAdjQty(o.ID,oq.Seq)
 		,[HC] = p.ExpressID
 		,[HCStatus] = p.ExpressStatus
@@ -670,7 +670,7 @@ select oq.BuyerDelivery
 		,LocalMR = o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo
                                            from Pass1 WITH (NOLOCK)
                                            where ID = o.LocalMR), '')
-        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(V:V,ROW()) = INDEX(AA:AA,ROW()), ""True"", """")'
+        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(W:W,ROW()) = INDEX(AB:AB,ROW()), ""True"", """")'
 		,[ReturnedQtyBySeq] = [dbo].getInvAdjQty(o.ID, oq.Seq)
 		,NULL
 		,NULL
