@@ -238,6 +238,7 @@ namespace Sci.Production.Centralized
 		,ShipQty = (select isnull(sum(ShipQty), 0) 
 					from Pullout_Detail WITH (NOLOCK) 
 					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq)
+        ,FOCBalQty = isnull(dbo.GetFocStockByOrder(o.ID),0)
 		,OrderTtlQty=o.Qty
 		,ShipTtlQty=isnull(plds.ShipQty,0)
         ,plds.CTNQty
@@ -281,7 +282,7 @@ namespace Sci.Production.Centralized
 		,LocalMR = o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo 
 										   from Pass1 WITH (NOLOCK) 
 										   where ID = o.LocalMR), '')
-        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(V:V,ROW()) = INDEX(AA:AA,ROW()), ""True"", """")'
+        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(W:W,ROW()) = INDEX(AB:AB,ROW()), ""True"", """")'
 		,[ReturnedQtyBySeq] = [dbo].getInvAdjQty(o.ID,oq.Seq)
 		,[HC] = pkExpressID.ExpressID
 		,[HCStatus] = pkExpressStatus.ExpressStatus
@@ -461,6 +462,7 @@ select 	oq.BuyerDelivery
 		,o.SeasonID
 		,oq.Qty
 		,ShipQty = isnull(ShipQty.ShipQty,0)
+        ,FOCBalQty = isnull(dbo.GetFocStockByOrder(o.ID),0)
 		,OrderTtlQty=o.Qty
 		,NULL
 		,NULL
@@ -504,7 +506,7 @@ select 	oq.BuyerDelivery
 		,LocalMR = o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo 
 										   from Pass1 WITH (NOLOCK) 
 										   where ID = o.LocalMR), '')
-        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(V:V,ROW()) = INDEX(AA:AA,ROW()), ""True"", """")'
+        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(W:W,ROW()) = INDEX(AB:AB,ROW()), ""True"", """")'
 		,[ReturnedQtyBySeq] = [dbo].getInvAdjQty(o.ID, oq.Seq)
 		,NULL
 		,NULL
@@ -555,6 +557,7 @@ and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
 		,ShipQty = (select isnull(sum(ShipQty), 0) 
 					from Pullout_Detail WITH (NOLOCK) 
 					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq)
+        ,FOCBalQty = isnull(dbo.GetFocStockByOrder(o.ID),0)
 		,OrderTtlQty=o.Qty
 		,ShipTtlQty=isnull(plds.ShipQty,0)
         ,plds.CTNQty
@@ -598,7 +601,7 @@ and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
 		,LocalMR = o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo 
 										   from Pass1 WITH (NOLOCK) 
 										   where ID = o.LocalMR), '')
-        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(V:V,ROW()) = INDEX(AA:AA,ROW()), ""True"", """")'
+        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(W:W,ROW()) = INDEX(AB:AB,ROW()), ""True"", """")'
 		,[ReturnedQtyBySeq] = [dbo].getInvAdjQty(o.ID,oq.Seq)
 		,[HC] = p.ExpressID
 		,[HCStatus] = p.ExpressStatus
@@ -668,6 +671,7 @@ select oq.BuyerDelivery
 		,o.SeasonID
 		,oq.Qty
 		,ShipQty.ShipQty
+        ,FOCBalQty = isnull(dbo.GetFocStockByOrder(o.ID),0)
 		,OrderTtlQty = o.Qty
 		,ShipTtlQty=isnull(plds.ShipQty,0)
         ,plds.CTNQty
@@ -713,7 +717,7 @@ select oq.BuyerDelivery
 		,LocalMR = o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo
                                            from Pass1 WITH (NOLOCK)
                                            where ID = o.LocalMR), '')
-        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(V:V,ROW()) = INDEX(AA:AA,ROW()), ""True"", """")'
+        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(W:W,ROW()) = INDEX(AB:AB,ROW()), ""True"", """")'
 		,[ReturnedQtyBySeq] = [dbo].getInvAdjQty(o.ID, oq.Seq)
 		,NULL
 		,NULL
