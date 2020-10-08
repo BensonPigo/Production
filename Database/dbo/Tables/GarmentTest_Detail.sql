@@ -16,6 +16,8 @@
     [OldUkey]     VARCHAR (10)   CONSTRAINT [DF__tmp_ms_xx__OldUk__560B68B9] DEFAULT ('') NULL,
     [LOtoFactory] VARCHAR(100) NOT NULL  CONSTRAINT DF_GarmentTest_Detail_LOtoFactory DEFAULT('') , 
     [FGWTMtlTypeID] VARCHAR(20) NOT NULL  CONSTRAINT DF_GarmentTest_Detail_FGWTMtlTypeID DEFAULT('') , 
+    [Above50NaturalFibres] BIT NOT NULL CONSTRAINT [DF_GarmentTest_Detail_Above50NaturalFibres] DEFAULT 0, 
+    [Above50SyntheticFibres] BIT NOT NULL CONSTRAINT [DF_GarmentTest_Detail_Above50SyntheticFibres] DEFAULT 0, 
     CONSTRAINT [PK_GarmentTest_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC)
 );
 
@@ -81,3 +83,15 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯者',
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentTest_Detail', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+GO
+
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'All basic Fabrics ≥ 50% natural fibres ; 布料 50% (含) 以上是天然纖維', @level0type = N'SCHEMA', @level0name = N'dbo'
+	, @level1type = N'TABLE', @level1name = N'GarmentTest_Detail'
+	, @level2type = N'COLUMN', @level2name = N'Above50NaturalFibres';
+	;
+GO
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'All basic Fabrics ≥ 50% synthetic fibres (ex. polyester) ; 布料 50% (含)以上是合成纖維 (e.x. 聚酯纖維)', @level0type = N'SCHEMA', @level0name = N'dbo'
+	, @level1type = N'TABLE', @level1name = N'GarmentTest_Detail'
+	, @level2type = N'COLUMN', @level2name = N'Above50SyntheticFibres';
+	;
+GO

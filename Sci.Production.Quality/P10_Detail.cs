@@ -12,7 +12,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
+using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Quality
 {
@@ -443,13 +445,13 @@ ex: 150.423");
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value || MyUtility.Check.Empty(dr["Criteria"]))
+                if (dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value)
                 {
-                    eve.IsEditable = false;
+                    eve.IsEditable = true;
                 }
                 else
                 {
-                    eve.IsEditable = true;
+                    eve.IsEditable = false;
                 }
             };
 
@@ -481,13 +483,13 @@ ex: 150.423");
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value || MyUtility.Check.Empty(dr["Criteria"]))
+                if (dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value)
                 {
-                    eve.IsEditable = false;
+                    eve.IsEditable = true;
                 }
                 else
                 {
-                    eve.IsEditable = true;
+                    eve.IsEditable = false;
                 }
             };
 
@@ -519,13 +521,13 @@ ex: 150.423");
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value || MyUtility.Check.Empty(dr["Criteria"]))
+                if (dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value)
                 {
-                    eve.IsEditable = false;
+                    eve.IsEditable = true;
                 }
                 else
                 {
-                    eve.IsEditable = true;
+                    eve.IsEditable = false;
                 }
             };
 
@@ -925,6 +927,9 @@ ex: 150.423");
             this.numTwisTingBottom.ReadOnly = true;
             this.numTwisTingInner.ReadOnly = true;
             this.numTwisTingOuter.ReadOnly = true;
+
+            this.radioNaturalFibres.Enabled = this.EditMode;
+            this.radioSyntheticFibres.Enabled = this.EditMode;
         }
 
         #region tab載入
@@ -987,6 +992,15 @@ and st.Article = '{this.MasterRow["Article"]}'
             this.comboMachineModel.Text = MyUtility.Convert.GetString(dr["Machine"]);
             this.txtFibreComposition.Text = MyUtility.Convert.GetString(dr["Composition"]);
             this.comboNeck.Text = MyUtility.Convert.GetBool(dr["Neck"]) ? "YES" : "No";
+
+            this.radioNaturalFibres.Checked = MyUtility.Convert.GetBool(this.Deatilrow["Above50NaturalFibres"]);
+            this.radioSyntheticFibres.Checked = MyUtility.Convert.GetBool(this.Deatilrow["Above50SyntheticFibres"]);
+
+            // 如果兩個都未勾選，設選擇 synthetic fibres
+            if (!this.radioNaturalFibres.Checked && !this.radioSyntheticFibres.Checked)
+            {
+                this.radioSyntheticFibres.Checked = true;
+            }
         }
 
         private DataTable dtShrinkage;
@@ -1151,14 +1165,14 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         ,[Result]=IIF(f.Scale IS NOT NULL
 	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
 	        ,IIF( f.BeforeWash IS NOT NULL AND f.AfterWash IS NOT NULL AND f.Criteria IS NOT NULL AND f.Shrinkage IS NOT NULL
-					,( IIF( TestDetail ='%'
+					,( IIF( TestDetail = '%' OR TestDetail = 'Range%'   -- % 為ISP20201331舊資料、Range% 為ISP20201606加上的新資料，兩者都視作百分比
 								---- 百分比 判斷方式
-								,IIF( ISNULL(f.Criteria,0) * -1 <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria,0)
+								,IIF( ISNULL(f.Criteria,0)  <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria2,0)
 									, 'Pass'
 									, 'Fail'
 								)
 								---- 非百分比 判斷方式
-								,IIF( ISNULL(f.AfterWash,0) - ISNULL(f.BeforeWash,0) < ISNULL(f.Criteria,0)
+								,IIF( ISNULL(f.AfterWash,0) - ISNULL(f.BeforeWash,0) <= ISNULL(f.Criteria,0)
 									,'Pass'
 									,'Fail'
 								)
@@ -1169,6 +1183,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         )
 		,gd.MtlTypeID
 		,f.Criteria
+		,f.Criteria2
 from SampleGarmentTest_Detail_FGWT f 
 LEFT JOIN SampleGarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
@@ -1176,6 +1191,15 @@ order by LocationText DESC";
 
             DBProxy.Current.Select(null, sqlFGWT, out this.dtFGWT);
             this.gridFGWT.DataSource = this.dtFGWT;
+
+            if (this.dtFGWT.Rows.Count > 0 || this.EditMode)
+            {
+                this.btnGenerateFGWT.Enabled = false;
+            }
+            else
+            {
+                this.btnGenerateFGWT.Enabled = true;
+            }
         }
 
         private void Tab4Save()
@@ -1213,14 +1237,14 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         ,[Result]=IIF(f.Scale IS NOT NULL
 	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
 	        ,IIF( f.BeforeWash IS NOT NULL AND f.AfterWash IS NOT NULL AND f.Criteria IS NOT NULL AND f.Shrinkage IS NOT NULL
-					,( IIF( TestDetail ='%'
+					,( IIF( TestDetail = '%' OR TestDetail = 'Range%'   -- % 為ISP20201331舊資料、Range% 為ISP20201606加上的新資料，兩者都視作百分比
 								---- 百分比 判斷方式
-								,IIF( ISNULL(f.Criteria,0) * -1 <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria,0)
+								,IIF( ISNULL(f.Criteria,0)  <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria2,0)
 									, 'Pass'
 									, 'Fail'
 								)
 								---- 非百分比 判斷方式
-								,IIF( ISNULL(f.AfterWash,0) - ISNULL(f.BeforeWash,0) < ISNULL(f.Criteria,0)
+								,IIF( ISNULL(f.AfterWash,0) - ISNULL(f.BeforeWash,0) <= ISNULL(f.Criteria,0)
 									,'Pass'
 									,'Fail'
 								)
@@ -1231,6 +1255,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         )
 		,gd.MtlTypeID
 		,f.Criteria
+		,f.Criteria2
 from SampleGarmentTest_Detail_FGWT f 
 LEFT JOIN SampleGarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
@@ -1344,7 +1369,9 @@ order by LocationText DESC
                             Temperature =  {this.comboTemperature.Text},
                             Machine =  '{this.comboMachineModel.Text}',
                             Composition =  '{this.txtFibreComposition.Text}',
-                            Neck ='{MyUtility.Convert.GetString(this.comboNeck.Text).EqualString("YES")}'
+                            Neck ='{MyUtility.Convert.GetString(this.comboNeck.Text).EqualString("YES")}',
+                            Above50NaturalFibres =  {(this.radioNaturalFibres.Checked ? "1" : "0")},
+                            Above50SyntheticFibres =  {(this.radioSyntheticFibres.Checked ? "1" : "0")}
                         where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
                         ";
                 DualResult dr = DBProxy.Current.Execute(null, updateGarmentTest_Detail);
@@ -1417,6 +1444,7 @@ order by LocationText DESC
                 this.numTwisTingBottom.ReadOnly = false;
                 this.numTwisTingInner.ReadOnly = false;
                 this.numTwisTingOuter.ReadOnly = false;
+
             }
 
             this.EditMode = !this.EditMode;
@@ -1430,6 +1458,17 @@ order by LocationText DESC
             this.btnToReport.Enabled = !this.EditMode;
             this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
             this.btnDelete.Visible = this.tabControl1.SelectedTab.Name == "tabFGPT" && this.EditMode;
+            this.radioNaturalFibres.Enabled = this.EditMode;
+            this.radioSyntheticFibres.Enabled = this.EditMode;
+
+            if (this.dtFGWT.Rows.Count > 0 || this.EditMode)
+            {
+                this.btnGenerateFGWT.Enabled = false;
+            }
+            else
+            {
+                this.btnGenerateFGWT.Enabled = true;
+            }
         }
 
         private void Tab2ShrinkageSave()
@@ -3470,6 +3509,210 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             if (this.gridFGPT.CurrentDataRow != null)
             {
                 this.gridFGPT.CurrentDataRow.Delete();
+            }
+        }
+
+        private void BtnGenerateFGWT_Click(object sender, EventArgs e)
+        {
+            // 避免多位使用者同時使用
+            bool dataExists = MyUtility.Check.Seek($"SELECT 1 FROM SampleGarmentTest_Detail_FGWT WHERE ID = {this.Deatilrow["ID"]}AND NO = {this.Deatilrow["No"]} ");
+
+            if (dataExists)
+            {
+                MyUtility.Msg.InfoBox("Data already exists!!");
+                this.Tab4Load();
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.Deatilrow["MtlTypeID"]))
+            {
+                MyUtility.Msg.InfoBox("Please set Material Type first!!");
+                return;
+            }
+
+            string washType = string.Empty;
+            string fibresType = string.Empty;
+
+            if (this.rdbtnLine.Checked)
+            {
+                washType = "Line";
+            }
+            else if (this.rdbtnTumble.Checked)
+            {
+                washType = "Tumnle";
+            }
+            else if (this.rdbtnHand.Checked)
+            {
+                washType = "Hand";
+            }
+
+            if (this.radioNaturalFibres.Checked)
+            {
+                fibresType = "Natural";
+            }
+            else if (this.radioSyntheticFibres.Checked)
+            {
+                fibresType = "Synthetic";
+            }
+
+            List<string> locations = MyUtility.GetValue.Lookup($@"
+
+SELECT STUFF(
+	(select DISTINCT ',' + sl.Location
+	from Style s
+	INNER JOIN Style_Location sl ON s.Ukey = sl.StyleUkey 
+	where s.id='{this.MasterRow["StyleID"]}' AND s.BrandID='{this.MasterRow["BrandID"]}' AND s.SeasonID='{this.MasterRow["SeasonID"]}'
+	FOR XML PATH('')
+	) 
+,1,1,'')").Split(',').ToList();
+
+            string mtlTypeID = MyUtility.Convert.GetString(this.Deatilrow["MtlTypeID"]);
+
+            List<FGWT> fGWTs = new List<FGWT>();
+            bool containsT = locations.Contains("T");
+            bool containsB = locations.Contains("B");
+
+            // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
+            // 若為Hand只寫入第88項
+            if (washType == "Hand" && mtlTypeID != "WOVEN")
+            {
+                fGWTs = GetDefaultFGWT(false, false, false, mtlTypeID, washType, fibresType);
+            }
+            else
+            {
+                if (containsT && containsB)
+                {
+                    fGWTs = GetDefaultFGWT(false, false, true, mtlTypeID, washType, fibresType);
+                }
+                else if (containsT)
+                {
+                    fGWTs = GetDefaultFGWT(containsT, false, false, mtlTypeID, washType, fibresType);
+                }
+                else
+                {
+                    fGWTs = GetDefaultFGWT(false, containsB, false, mtlTypeID, washType, fibresType);
+                }
+            }
+
+            string garmentTest_Detail_ID = MyUtility.Convert.GetString(this.Deatilrow["ID"]);
+            string garmentTest_Detail_No = MyUtility.Convert.GetString(this.Deatilrow["NO"]);
+
+            StringBuilder insertCmd = new StringBuilder();
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            int idx = 0;
+
+            // 組合INSERT SQL
+            foreach (var fGWT in fGWTs)
+            {
+                string location = string.Empty;
+
+                switch (fGWT.Location)
+                {
+                    case "Top":
+                        location = "T";
+                        break;
+                    case "Bottom":
+                        location = "B";
+                        break;
+                    case "Top+Bottom":
+                        location = "S";
+                        break;
+                    default:
+                        break;
+                }
+
+                if (fGWT.Scale == null)
+                {
+                    if (fGWT.TestDetail.ToUpper() == "CM")
+                    {
+                        insertCmd.Append($@"
+
+INSERT INTO SampleGarmentTest_Detail_FGWT
+           (ID, No, Location, Type ,TestDetail ,Criteria)
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx}
+           , @TestDetail{idx} 
+           , @Criteria{idx}  )
+
+");
+                    }
+                    else
+                    {
+                        if (fGWT.Type.ToUpper() == "DIMENSIONAL CHANGE: FLAT MADE-UP TEXTILE ARTICLES A) OVERALL LENGTH" || fGWT.Type.ToUpper() == "DIMENSIONAL CHANGE: FLAT MADE-UP TEXTILE ARTICLES B) OVERALL WIDTH")
+                        {
+                            insertCmd.Append($@"
+
+INSERT INTO SampleGarmentTest_Detail_FGWT
+           (ID, No, Location, Type ,TestDetail )
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx}
+           , @TestDetail{idx}  )
+
+");
+                        }
+                        else
+                        {
+                            insertCmd.Append($@"
+
+INSERT INTO SampleGarmentTest_Detail_FGWT
+           (ID, No, Location, Type ,TestDetail ,Criteria ,Criteria2 )
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx}
+           , @TestDetail{idx}
+           , @Criteria{idx} 
+           , @Criteria2_{idx}  )
+
+");
+                        }
+                    }
+                }
+                else
+                {
+                    insertCmd.Append($@"
+
+INSERT INTO SampleGarmentTest_Detail_FGWT
+           (ID, No, Location, Type ,Scale,TestDetail)
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx}
+           , ''
+           , @TestDetail{idx})
+
+");
+                }
+
+                parameters.Add(new SqlParameter($"@Location{idx}", location));
+                parameters.Add(new SqlParameter($"@Type{idx}", fGWT.Type));
+                parameters.Add(new SqlParameter($"@TestDetail{idx}", fGWT.TestDetail));
+                parameters.Add(new SqlParameter($"@Criteria{idx}", fGWT.Criteria));
+                parameters.Add(new SqlParameter($"@Criteria2_{idx}", fGWT.Criteria2));
+                idx++;
+            }
+
+            // 找不到才Insert
+            if (!MyUtility.Check.Seek($"SELECT 1 FROM SampleGarmentTest_Detail_FGWT WHERE ID ='{garmentTest_Detail_ID}' AND NO='{garmentTest_Detail_No}'"))
+            {
+                DualResult r = DBProxy.Current.Execute(null, insertCmd.ToString(), parameters);
+                if (!r)
+                {
+                    this.ShowErr(r);
+                }
+                else
+                {
+                    MyUtility.Msg.InfoBox("Success!!");
+                    this.Tab4Load();
+                }
             }
         }
     }

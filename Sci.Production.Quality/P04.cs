@@ -709,6 +709,9 @@ namespace Sci.Production.Quality
 Delete GarmentTest_Detail_Shrinkage  where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
 Delete GarmentTest_Detail_Twisting where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
 Delete GarmentTest_Detail_Apperance where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete GarmentTest_Detail_Apperance where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete GarmentTest_Detail_FGWT where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete GarmentTest_Detail_FGPT where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
 ";
                     DBProxy.Current.Execute(null, delete3sub);
                 }
@@ -782,7 +785,7 @@ values (@ID,@NO,'Appearance of garment after wash',8)
                         DBProxy.Current.Execute(null, insertShrinkage, spam);
                     }
 
-                    #region 寫入GarmentTest_Detail_FGWT
+                    #region 寫入GarmentTest_Detail_FGPT
 
                     // 取Location
                     List<string> locations = MyUtility.GetValue.Lookup($@"
@@ -796,106 +799,14 @@ SELECT STUFF(
 	) 
 ,1,1,'')").Split(',').ToList();
 
-                    List<FGWT> fGWTs = new List<FGWT>();
-
-                    string mtlTypeID = MyUtility.Convert.GetString(dr["MtlTypeID"]);
                     bool containsT = locations.Contains("T");
                     bool containsB = locations.Contains("B");
-
-                    // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
-                    if (containsT && containsB)
-                    {
-                        fGWTs = GetDefaultFGWT(false, false, true, mtlTypeID);
-                    }
-                    else if (containsT)
-                    {
-                        fGWTs = GetDefaultFGWT(containsT, false, false, mtlTypeID);
-                    }
-                    else
-                    {
-                        fGWTs = GetDefaultFGWT(false, containsB, false, mtlTypeID);
-                    }
 
                     string garmentTest_Detail_ID = MyUtility.Convert.GetString(dr["ID"]);
                     string garmentTest_Detail_No = MyUtility.Convert.GetString(dr["NO"]);
 
                     StringBuilder insertCmd = new StringBuilder();
                     List<SqlParameter> parameters = new List<SqlParameter>();
-                    int idx = 0;
-
-                    // 組合INSERT SQL
-                    foreach (var fGWT in fGWTs)
-                    {
-                        string location = string.Empty;
-
-                        switch (fGWT.Location)
-                        {
-                            case "Top":
-                                location = "T";
-                                break;
-                            case "Bottom":
-                                location = "B";
-                                break;
-                            case "Top+Bottom":
-                                location = "S";
-                                break;
-                            default:
-                                break;
-                        }
-
-                        if (fGWT.Scale == null)
-                        {
-                            insertCmd.Append($@"
-
-INSERT INTO GarmentTest_Detail_FGWT
-           (ID, No, Location, Type ,TestDetail ,Criteria )
-     VALUES
-           ( {garmentTest_Detail_ID}
-           , {garmentTest_Detail_No}
-           , @Location{idx}
-           , @Type{idx}
-           , @TestDetail{idx}
-           , @Criteria{idx} )
-
-");
-                        }
-                        else
-                        {
-                            insertCmd.Append($@"
-
-INSERT INTO GarmentTest_Detail_FGWT
-           (ID, No, Location, Type ,Scale,TestDetail)
-     VALUES
-           ( {garmentTest_Detail_ID}
-           , {garmentTest_Detail_No}
-           , @Location{idx}
-           , @Type{idx}
-           , ''
-           , @TestDetail{idx})
-
-");
-                        }
-
-                        parameters.Add(new SqlParameter($"@Location{idx}", location));
-                        parameters.Add(new SqlParameter($"@Type{idx}", fGWT.Type));
-                        parameters.Add(new SqlParameter($"@TestDetail{idx}", fGWT.TestDetail));
-                        parameters.Add(new SqlParameter($"@Criteria{idx}", fGWT.Criteria));
-                        idx++;
-                    }
-
-                    // 找不到才Insert
-                    if (!MyUtility.Check.Seek($"SELECT 1 FROM GarmentTest_Detail_FGWT WHERE ID ='{garmentTest_Detail_ID}' AND NO='{garmentTest_Detail_No}'"))
-                    {
-                        DualResult r = DBProxy.Current.Execute(null, insertCmd.ToString(), parameters);
-                        if (!r)
-                        {
-                            this.ShowErr(r);
-                        }
-                    }
-                    #endregion
-
-                    #region 寫入GarmentTest_Detail_FGPT
-
                     List<FGPT> fGPTs = new List<FGPT>();
 
                     bool isRugbyFootBall = MyUtility.Check.Seek($@"select 1 from Style s where s.id='{this.CurrentMaintain["StyleID"]}' AND s.BrandID='{this.CurrentMaintain["BrandID"]}' AND s.SeasonID='{this.CurrentMaintain["SeasonID"]}' AND s.ProgramID like '%FootBall%'");
@@ -915,9 +826,7 @@ INSERT INTO GarmentTest_Detail_FGWT
                         fGPTs = GetDefaultFGPT(false, containsB, false, isRugbyFootBall, isLining, "B");
                     }
 
-                    insertCmd.Clear();
-                    parameters.Clear();
-                    idx = 0;
+                    int idx = 0;
 
                     foreach (var fGPT in fGPTs)
                     {
@@ -978,7 +887,7 @@ INSERT INTO GarmentTest_Detail_FGPT
 
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-            if (dt.Rows.Count > 0)
+            if (dt.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).Any())
             {
                 string maxNo = dt.Compute("MAX(NO)", string.Empty).ToString();
                 string where = string.Format("NO='{0}'", maxNo);
