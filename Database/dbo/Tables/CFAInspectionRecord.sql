@@ -2,8 +2,6 @@
 
 CREATE TABLE [dbo].[CFAInspectionRecord](
 	[ID] [varchar](13) NOT NULL,
-	[OrderID] [varchar](13) NOT NULL,
-	[SEQ] [varchar](2) NOT NULL,
 	[AuditDate] [date] NULL,
 	[FactoryID] [varchar](8) NOT NULL,
 	[MDivisionid] [varchar](8) NOT NULL,
@@ -23,18 +21,15 @@ CREATE TABLE [dbo].[CFAInspectionRecord](
 	[AddDate] [datetime] NULL,
 	[EditName] [varchar](10) NOT NULL,
 	[EditDate] [datetime] NULL,
+	IsCombinePO Bit NOT NULL CONSTRAINT [DF_CFAInspectionRecord_IsCombinePO] DEFAULT 0,
 	CONSTRAINT [PK_CFAInspectionRecord] PRIMARY KEY CLUSTERED 
 	(
 		[ID] ASC
 	)
 ) 
+GO
 ;
 
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [OrderID]
-GO
-
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [SEQ]
-GO
 
 ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [FactoryID]
 GO
