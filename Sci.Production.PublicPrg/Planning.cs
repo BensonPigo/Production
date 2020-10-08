@@ -135,14 +135,21 @@ Select distinct
 	oq.Article,
 	oq.SizeCode,
 	occ.PatternPanel,
-	cons.FabricCombo
-into #beforeAllO
+	cons.FabricCombo,
+	occ.FabricCode,
+	ColorID
+into #beforeAllO1
 from Order_qty oq WITH (NOLOCK)
 inner join Orders o WITH (NOLOCK) on o.ID=oq.ID
 inner join Order_ColorCombo occ WITH (NOLOCK) on o.poid = occ.id and occ.Article = oq.Article and occ.FabricCode is not null and occ.FabricCode <> ''
 inner join order_Eachcons cons WITH (NOLOCK) on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.FabricPanelCode = occ.FabricPanelCode and cons.CuttingPiece='0'
 inner join Order_BOF bof WITH (NOLOCK) on bof.Id = cons.Id and bof.FabricCode = cons.FabricCode and bof.Kind = 1
 where exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 0) --非local單
+
+select x.*,x2.PatternPanel,x2.FabricCombo
+into #beforeAllO
+from (select distinct Orderid,POID,Article,SizeCode,FabricCode,ColorID from #beforeAllO1) x
+outer apply(select top 1 * from #beforeAllO1 where Orderid = x.Orderid and POID = x.POID and Article = x.Article and SizeCode = x.SizeCode and FabricCode = x.FabricCode and ColorID = x.ColorID order by PatternPanel)x2
 
 select distinct t.Orderid,t.POID,t.Article,t.SizeCode,t.PatternPanel,b.FabricPanelCode
 into #AllOrders
