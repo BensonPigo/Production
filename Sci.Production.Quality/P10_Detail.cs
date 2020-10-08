@@ -1237,14 +1237,14 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         ,[Result]=IIF(f.Scale IS NOT NULL
 	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
 	        ,IIF( f.BeforeWash IS NOT NULL AND f.AfterWash IS NOT NULL AND f.Criteria IS NOT NULL AND f.Shrinkage IS NOT NULL
-					,( IIF( TestDetail ='%'
+					,( IIF( TestDetail = '%' OR TestDetail = 'Range%'   -- % 為ISP20201331舊資料、Range% 為ISP20201606加上的新資料，兩者都視作百分比
 								---- 百分比 判斷方式
 								,IIF( ISNULL(f.Criteria,0) * -1 <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria,0)
 									, 'Pass'
 									, 'Fail'
 								)
 								---- 非百分比 判斷方式
-								,IIF( ISNULL(f.AfterWash,0) - ISNULL(f.BeforeWash,0) < ISNULL(f.Criteria,0)
+								,IIF( ISNULL(f.AfterWash,0) - ISNULL(f.BeforeWash,0) <= ISNULL(f.Criteria,0)
 									,'Pass'
 									,'Fail'
 								)

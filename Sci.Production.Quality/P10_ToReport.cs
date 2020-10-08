@@ -1823,7 +1823,8 @@ namespace Sci.Production.Quality
                 {
                     if (dr["BeforeWash"] != DBNull.Value && dr["AfterWash"] != DBNull.Value && dr["Shrinkage"] != DBNull.Value)
                     {
-                        if (MyUtility.Convert.GetString(dr["TestDetail"]) == "%")
+                        // TestDetail  % 或Range% 視作相同
+                        if (MyUtility.Convert.GetString(dr["TestDetail"]).Contains("%"))
                         {
                             worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetDouble(dr["Shrinkage"]);
                         }
