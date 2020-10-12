@@ -1719,7 +1719,6 @@ select id as [Local Supplier Code]
 , (case when IsSubcon =1 then 'Y' else 'N' end) as [Is Subcon Supplier]
 from LocalSupp ls
 where 1=1
-and (IsFactory =1 or IsSubcon =1)
 and ls.ID <> '{Env.User.Factory}' 
 and ls.abb <> '{Env.User.Factory}'
 order by id";
@@ -1787,7 +1786,6 @@ select id as [Local Supplier Code]
 , (case when IsSubcon =1 then 'Y' else 'N' end) as [Is Subcon Supplier]
 from LocalSupp ls
 where 1=1
-and (IsFactory =1 or IsSubcon =1)
 and ls.ID <> '{Env.User.Factory}' 
 and ls.abb <> '{Env.User.Factory}'
 AND abb = @abb
