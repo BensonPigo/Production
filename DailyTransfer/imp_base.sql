@@ -2063,7 +2063,9 @@ SET
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
       ,a.Junk	      =b.Junk	
-
+      ,a.Name	      =b.Name	
+      ,a.AirPort	  =b.AirPort	
+      ,a.SeaPort	  =b.SeaPort
 from Production.dbo.Port as a inner join Trade_To_Pms.dbo.Port as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Port(
@@ -2075,10 +2077,12 @@ ID
       ,EditName
       ,EditDate
       ,Junk
+      ,Name
+      ,AirPort
+      ,SeaPort
 
 )
-select 
-ID
+select ID
       ,CountryID
       ,Remark
       ,AddName
@@ -2086,6 +2090,9 @@ ID
       ,EditName
       ,EditDate
       ,Junk
+      ,Name
+      ,AirPort
+      ,SeaPort
 from Trade_To_Pms.dbo.Port as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Port as a WITH (NOLOCK) where a.id = b.id)
 
@@ -3827,6 +3834,52 @@ where not exists(
 	from Trade_To_Pms.dbo.SubProDefectCode tar
 	where tar.SubProcessID	 = S.SubProcessID	
 	and tar.DefectCode	 = S.DefectCode	)
+
+-----PortByBrandShipmode -----
+update t SET
+	   t.Remark = s.Remark
+      ,t.Junk = s.Junk
+      ,t.AddDate = s.AddDate
+      ,t.AddName = s.AddName
+      ,t.EditDate = s.EditDate
+      ,t.EditName = s.EditName
+from Trade_To_Pms.dbo.PortByBrandShipmode  s
+inner join Production.dbo.PortByBrandShipmode t on t.PortID = S.PortID and t.BrandID = S.BrandID
+
+
+INSERT INTO Production.dbo.PortByBrandShipmode
+           (PortID
+           ,BrandID
+           ,Remark
+           ,Junk
+           ,AddDate
+           ,AddName
+           ,EditDate
+           ,EditName)
+SELECT PortID
+      ,BrandID
+      ,Remark
+      ,Junk
+      ,AddDate
+      ,AddName
+      ,EditDate
+      ,EditName
+FROM Trade_To_Pms.dbo.PortByBrandShipmode  s
+WHERE NOT EXISTS(
+	SELECT 1
+	FROM Production.dbo.PortByBrandShipmode t
+	WHERE t.PortID = S.PortID and t.BrandID = S.BrandID
+)
+
+DELETE s
+from Production.dbo.PortByBrandShipmode s
+WHERE NOT EXISTS(
+	SELECT 1
+	FROM Trade_To_Pms.dbo.PortByBrandShipmode t
+	WHERE t.PortID = S.PortID and t.BrandID = S.BrandID
+)
+
+
 END
 
 

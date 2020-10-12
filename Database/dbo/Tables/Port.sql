@@ -7,6 +7,9 @@
     [EditName]  VARCHAR (10)   CONSTRAINT [DF_Port_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME       NULL,
     [Junk]      BIT            CONSTRAINT [DF_Port_Junk] DEFAULT ((0)) NULL,
+    [Name]  [varchar](50) NOT NULL CONSTRAINT [DF_Port_Name] DEFAULT (''),
+    [AirPort]      BIT            CONSTRAINT [DF_Port_AirPort] DEFAULT ((0)) NOT NULL,
+    [SeaPort]      BIT            CONSTRAINT [DF_Port_SeaPort] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Port] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
