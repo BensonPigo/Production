@@ -113,7 +113,6 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
             this.detailbtm.Size = new System.Drawing.Size(907, 38);
             // 
             // browse
@@ -139,7 +138,6 @@
             // 
             // labelStartDate
             // 
-            this.labelStartDate.Lines = 0;
             this.labelStartDate.Location = new System.Drawing.Point(14, 10);
             this.labelStartDate.Name = "labelStartDate";
             this.labelStartDate.Size = new System.Drawing.Size(70, 23);
@@ -148,7 +146,6 @@
             // 
             // labelEndDate
             // 
-            this.labelEndDate.Lines = 0;
             this.labelEndDate.Location = new System.Drawing.Point(14, 37);
             this.labelEndDate.Name = "labelEndDate";
             this.labelEndDate.Size = new System.Drawing.Size(70, 23);
@@ -157,7 +154,6 @@
             // 
             // labelCDCNo
             // 
-            this.labelCDCNo.Lines = 0;
             this.labelCDCNo.Location = new System.Drawing.Point(14, 64);
             this.labelCDCNo.Name = "labelCDCNo";
             this.labelCDCNo.Size = new System.Drawing.Size(70, 23);
@@ -192,7 +188,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(352, 10);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(54, 23);
@@ -235,6 +230,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "B51";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "B51. CDC";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";

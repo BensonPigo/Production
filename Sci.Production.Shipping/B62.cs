@@ -10,11 +10,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class B52_KH : Sci.Win.Tems.Input6
+    public partial class B62 : Sci.Win.Tems.Input6
     {
-        public B52_KH()
+        public B62(ToolStripMenuItem menuitem)
+            : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void TxtRefno_Validating(object sender, CancelEventArgs e)
@@ -50,7 +51,7 @@ namespace Sci.Production.Shipping
         {
             string sqlcmd = @"
 select  Refno , Description
-from view_KHImportItem ";
+from view_KHImportItem where 1=1";
             switch (this.comboCustomsType.Text)
             {
                 case "Fabric":
@@ -82,7 +83,7 @@ from view_KHImportItem ";
             if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode)
             {
                 string sqlcmd = this.GetRefNoSqlCmd();
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "Refno ,Description", "20,35", this.CurrentMaintain["Refno"].ToString(), "Refno,Description");
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "30,50", this.CurrentMaintain["Refno"].ToString(), "Refno,Description");
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
@@ -124,7 +125,7 @@ from view_KHImportItem ";
                 if (e.Button == MouseButtons.Right)
                 {
                     string sqlcmd = @"select ID, Name from Port where CountryID ='KH' and Junk =0 ";
-                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "ID, Name", "20,35", this.CurrentDetailData["Port"].ToString(), "ID, Name");
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "15,20", this.CurrentDetailData["Port"].ToString(), "ID, Name");
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -142,7 +143,7 @@ from view_KHImportItem ";
                     return;
                 }
 
-                DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 string sqlcmd = $@"select ID, Name from Port where CountryID ='KH' and id ='{dr["Port"]}' and Junk =0 ";
 
                 if (!MyUtility.Check.Seek(sqlcmd))
@@ -162,11 +163,50 @@ from view_KHImportItem ";
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Port", header: "Port", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: col_Port)
-                .Numeric("Ratio", header: "1 CDC Unit : Purchase Unit", width: Widths.AnsiChars(28), decimal_places: 4, integer_places: 8, iseditingreadonly: false)
+                .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(14), iseditingreadonly: false)
                 ;
             #endregion
 
-
         }
+
+        protected override bool ClickSaveBefore()
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["RefNo"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["KHCustomsDescriptionID"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["CDCUnitPrice"]))
+            {
+                MyUtility.Msg.WarningBox(@"< Ref#>, < Customer Description >, <CDC Unit Price(USD)>cannot be empty.");
+                return false;
+            }
+
+            string sqlcmd = $@"select 1 from KHCustomsItem where RefNo='{this.CurrentMaintain["RefNo"]}' and CustomsType='{this.CurrentMaintain["CustomsType"]}' and ukey != '{this.CurrentMaintain["ukey"]}'";
+            if (MyUtility.Check.Seek(sqlcmd))
+            {
+                MyUtility.Msg.WarningBox(@"Save failed. [Customs Type]:xxx [Refno#]: xxx has already existed.");
+                return false;
+            }
+
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                // Port HSCode不可為空值
+                if (MyUtility.Check.Empty(dr["Port"]) || MyUtility.Check.Empty(dr["HSCode"]))
+                {
+                    MyUtility.Msg.WarningBox("[Port] and [HS Code] cannot be empty!");
+                    return false;
+                }
+
+
+                // 判斷Port,HSCOde是否重複
+                DataRow[] drCheck = ((DataTable)this.detailgridbs.DataSource).Select($@"Port = '{dr["Port"]}' and HSCode = '{dr["HSCode"]}'");
+                if (drCheck.Length >= 2)
+                {
+                    MyUtility.Msg.WarningBox(@"Save failed. Multiple same [Port] and [HS Code]");
+                    return false;
+                }
+            }
+
+            return base.ClickSaveBefore();
+        }
+
     }
 }

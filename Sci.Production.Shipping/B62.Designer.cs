@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Shipping
 {
-    partial class B52_KH
+    partial class B62
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -136,6 +136,7 @@
             // 
             this.txtCDCUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtCDCUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtCDCUnit.IsSupportEditMode = false;
             this.txtCDCUnit.Location = new System.Drawing.Point(462, 22);
             this.txtCDCUnit.Name = "txtCDCUnit";
             this.txtCDCUnit.ReadOnly = true;
@@ -156,7 +157,6 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.IsSupportEditMode = false;
             this.checkJunk.Location = new System.Drawing.Point(612, 21);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
@@ -172,6 +172,7 @@
             this.txtCustomsDesc.IsSupportEditMode = false;
             this.txtCustomsDesc.Location = new System.Drawing.Point(172, 83);
             this.txtCustomsDesc.Name = "txtCustomsDesc";
+            this.txtCustomsDesc.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtCustomsDesc.ReadOnly = true;
             this.txtCustomsDesc.Size = new System.Drawing.Size(151, 23);
             this.txtCustomsDesc.TabIndex = 6;
@@ -189,6 +190,7 @@
             // comboCustomsType
             // 
             this.comboCustomsType.BackColor = System.Drawing.Color.White;
+            this.comboCustomsType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CustomsType", true));
             this.comboCustomsType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCustomsType.FormattingEnabled = true;
             this.comboCustomsType.IsSupportUnselect = true;
@@ -283,14 +285,17 @@
             this.labCDCPrice.Text = "CDC Unit Price";
             this.labCDCPrice.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // B52_KH
+            // B62
             // 
             this.ClientSize = new System.Drawing.Size(783, 527);
             this.GridAlias = "KHCustomsItem_Detail";
-            this.KeyField1 = "ukey";
-            this.Name = "B52_KH";
+            this.IsSupportDelete = false;
+            this.IsSupportPrint = false;
+            this.KeyField1 = "Ukey";
+            this.KeyField2 = "KHCustomsItemUkey";
+            this.Name = "B62";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.Text = "() () () ";
+            this.Text = "B62. KH Customer Item";
             this.WorkAlias = "KHCustomsItem";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();

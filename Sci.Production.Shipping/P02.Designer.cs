@@ -254,7 +254,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.refresh.Location = new System.Drawing.Point(7322, 8);
+            this.refresh.Location = new System.Drawing.Point(7375, 8);
             // 
             // detailgridcont
             // 
@@ -304,7 +304,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(998, 668);
+            this.browse.Size = new System.Drawing.Size(998, 562);
             // 
             // tabs
             // 

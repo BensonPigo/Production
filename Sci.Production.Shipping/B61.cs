@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class B51_KH : Sci.Win.Tems.Input6
+    public partial class B61 : Sci.Win.Tems.Input6
 	{
-		public B51_KH(ToolStripMenuItem menuitem)
+		public B61(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
 			InitializeComponent();
@@ -77,6 +77,7 @@ namespace Sci.Production.Shipping
             {
                 this.checkJunk.ReadOnly = false;
             }
+
             base.ClickEditAfter();
         }
 

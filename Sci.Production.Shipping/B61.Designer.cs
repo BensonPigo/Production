@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Shipping
 {
-	partial class B51_KH
+	partial class B61
 	{
 	        /// <summary>
 	        /// 設計工具所需的變數。
@@ -179,7 +179,7 @@
             this.labCDCUnit.Text = "CDC Unit";
             this.labCDCUnit.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // B51_KH
+            // B61
             // 
             this.ClientSize = new System.Drawing.Size(732, 449);
             this.DefaultControl = "txtCustomsDesc";
@@ -190,9 +190,9 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
-            this.Name = "B51_KH";
+            this.Name = "B61";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.Text = "B51. KH Customs Description";
+            this.Text = "B61. KH Customs Description";
             this.UniqueExpress = "ID";
             this.WorkAlias = "KHCustomsDescription";
             this.Controls.SetChildIndex(this.tabs, 0);
