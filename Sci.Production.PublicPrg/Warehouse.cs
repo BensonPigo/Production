@@ -353,7 +353,7 @@ when not matched then
                     {
                         sqlcmd += @"
 select distinct location,[ukey] = f.ukey
-into #tmp_L_K s
+into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
 						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
