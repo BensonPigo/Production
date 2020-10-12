@@ -395,6 +395,7 @@ UPDATE t set
 	,[Vessel]			=s.[Vessel]
 	,[ETD]				=s.[ETD]
 	,[FinalShipmodeID]	=s.[FinalShipmodeID]
+	,[SuppID]			=s.[SuppID]
 	,[AddName]			=s.[AddName]
 	,[AddDate]			=s.[AddDate]
 from Trade_To_Pms.dbo.POShippingList s
@@ -425,6 +426,7 @@ INSERT INTO [dbo].[POShippingList]
            ,[Vessel]
            ,[ETD]
            ,[FinalShipmodeID]
+		   ,[SuppID]
            ,[AddName]
            ,[AddDate])
 select
@@ -450,6 +452,7 @@ select
 	,s.[Vessel]
 	,s.[ETD]
 	,s.[FinalShipmodeID]
+	,s.[SuppID]
 	,s.[AddName]
 	,s.[AddDate]
 from Trade_To_Pms.dbo.POShippingList s

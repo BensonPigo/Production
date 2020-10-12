@@ -21,10 +21,13 @@
     [Vessel]          NVARCHAR (30) NULL,
     [ETD]             DATE          NULL,
     [FinalShipmodeID] VARCHAR (10)  NULL,
+    [SuppID]          VARCHAR (6)   NULL,
     [AddName]         VARCHAR (10)  NULL,
     [AddDate]         DATETIME      NULL,
     CONSTRAINT [PK_POShippingList] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
