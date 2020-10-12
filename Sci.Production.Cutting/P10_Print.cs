@@ -47,16 +47,21 @@ namespace Sci.Production.Cutting
 
                 List<SqlParameter> pars = new List<SqlParameter>
                 {
-                    new SqlParameter("@ID", id),
-                    new SqlParameter("@CutRef", this.CurrentDataRow["cutref"].ToString()),
-                    new SqlParameter("@POID", this.CurrentDataRow["POID"].ToString()),
-                    new SqlParameter("@extend", this.checkExtendAllParts.Checked ? "1" : "0"),
+                    new SqlParameter("@ID_p", id),
+                    new SqlParameter("@CutRef_p", this.CurrentDataRow["cutref"].ToString()),
+                    new SqlParameter("@POID_p", this.CurrentDataRow["POID"].ToString()),
+                    new SqlParameter("@extend_p", this.checkExtendAllParts.Checked ? "1" : "0"),
                 };
 
                 string scmd;
                 if (this.checkExtendAllParts.Checked)
                 {
                     scmd = string.Format(@"
+declare @extend varchar(1) = @extend_p
+,@POID varchar(13) = @POID_p
+,@Cutref varchar(8) = @CutRef_p
+,@ID varchar(13) = @ID_p
+
 select distinct *
 from (
     select a.BundleGroup [Group_right]
@@ -163,6 +168,11 @@ order by x.[Barcode]");
                 else
                 {
                     scmd = string.Format(@"
+declare @extend varchar(1) = @extend_p
+,@POID varchar(13) = @POID_p
+,@Cutref varchar(8) = @CutRef_p
+,@ID varchar(13) = @ID_p
+
 select distinct *
 from (
 	select a.BundleGroup [Group_right]
@@ -270,14 +280,17 @@ order by x.[Barcode]");
                 string id = this.CurrentDataRow["ID"].ToString();
                 List<SqlParameter> lis = new List<SqlParameter>
                 {
-                    new SqlParameter("@ID", id),
-                    new SqlParameter("@extend", this.checkExtendAllParts.Checked ? "1" : "0"),
+                    new SqlParameter("@ID_p", id),
+                    new SqlParameter("@extend_p", this.checkExtendAllParts.Checked ? "1" : "0"),
                 };
 
                 string sqlcmd;
                 if (this.checkExtendAllParts.Checked)
                 {
                     sqlcmd = string.Format(@"
+declare @extend varchar(1) = @extend_p
+,@ID varchar(13) = @ID_p
+
 select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
 from (
 	select b.id [Bundle_ID]
