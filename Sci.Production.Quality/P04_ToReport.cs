@@ -2172,7 +2172,8 @@ namespace Sci.Production.Quality
                 {
                     if (dr["BeforeWash"] != DBNull.Value && dr["AfterWash"] != DBNull.Value && dr["Shrinkage"] != DBNull.Value)
                     {
-                        if (MyUtility.Convert.GetString(dr["TestDetail"]) == "%")
+                        // TestDetail  % 或Range% 視作相同
+                        if (MyUtility.Convert.GetString(dr["TestDetail"]).Contains("%"))
                         {
                             worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetDouble(dr["Shrinkage"]);
                         }
@@ -2184,7 +2185,7 @@ namespace Sci.Production.Quality
                 }
 
                 // Test Details
-                worksheet.Cells[startRowIndex, 5] = MyUtility.Convert.GetString(dr["TestDetail"]);
+                worksheet.Cells[startRowIndex, 5] = MyUtility.Convert.GetString(dr["TestDetail"]) == "Range%" ? "%" : MyUtility.Convert.GetString(dr["TestDetail"]);
 
                 // adidas pass
                 worksheet.Cells[startRowIndex, 6] = MyUtility.Convert.GetString(dr["Result"]);
@@ -2319,7 +2320,7 @@ namespace Sci.Production.Quality
             worksheet.Cells[150, 4] = MyUtility.Convert.GetString(testName_3.FirstOrDefault()["TestResult"]);
 
             // Test Details
-            worksheet.Cells[150, 5] = MyUtility.Convert.GetString(testName_3.FirstOrDefault()["TestDetail"]);
+            worksheet.Cells[150, 5] = MyUtility.Convert.GetString(testName_3.FirstOrDefault()["TestDetail"]) == "Range%" ? "%" : MyUtility.Convert.GetString(testName_3.FirstOrDefault()["TestDetail"]);
 
             // adidas pass
             worksheet.Cells[150, 6] = MyUtility.Convert.GetString(testName_3.FirstOrDefault()["Result"]);
@@ -2371,7 +2372,7 @@ namespace Sci.Production.Quality
                 worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetString(dr["TestResult"]);
 
                 // Test Details
-                worksheet.Cells[startRowIndex, 5] = MyUtility.Convert.GetString(dr["TestDetail"]);
+                worksheet.Cells[startRowIndex, 5] = MyUtility.Convert.GetString(dr["TestDetail"]) == "Range%" ? "%" : MyUtility.Convert.GetString(dr["TestDetail"]);
 
                 // adidas pass
                 worksheet.Cells[startRowIndex, 6] = MyUtility.Convert.GetString(dr["Result"]);
@@ -2392,7 +2393,7 @@ namespace Sci.Production.Quality
                 worksheet.Cells[startRowIndex, 4] = MyUtility.Convert.GetString(dr["TestResult"]);
 
                 // Test Details
-                worksheet.Cells[startRowIndex, 5] = MyUtility.Convert.GetString(dr["TestDetail"]);
+                worksheet.Cells[startRowIndex, 5] = MyUtility.Convert.GetString(dr["TestDetail"]) == "Range%" ? "%" : MyUtility.Convert.GetString(dr["TestDetail"]);
 
                 // adidas pass
                 worksheet.Cells[startRowIndex, 6] = MyUtility.Convert.GetString(dr["Result"]);

@@ -49,8 +49,9 @@ SELECt AuditDate
 		,Status			
 		,AddDate			
 		,EditDate
-FROM CFAInspectionRecord  
-WHERE OrderID= '{this._OrderID}'  and SEQ='{this._OrderShipmodeSeq}'
+FROM CFAInspectionRecord   a
+INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID= b.ID
+WHERE b.OrderID= '{this._OrderID}'  and b.SEQ='{this._OrderShipmodeSeq}'
 ";
 
             res = DBProxy.Current.Select(null, cmd, out dt);

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Data;
-using Ict;
+﻿using Ict;
 using Sci.Data;
+using System;
+using System.Data;
 using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
@@ -19,9 +19,9 @@ namespace Sci.Production.Shipping
         private string managerName;
         private string destination;
         private string carrier;
-        private string mdivisionName;
-        private string mdivisionAddr;
-        private string mdivisionTel;
+        private string factoryName;
+        private string factoryAddr;
+        private string factoryTel;
         private string messrs;
         private string courierAWB;
         private string shipmentPort;
@@ -58,11 +58,6 @@ namespace Sci.Production.Shipping
                 this.reportType = "3";
             }
 
-            if (this.rdbtnDHLcustomsclearance.Checked)
-            {
-                this.reportType = "4";
-            }
-
             return base.ValidateInput();
         }
 
@@ -78,18 +73,17 @@ namespace Sci.Production.Shipping
             }
             else if (this.reportType == "2" || this.reportType == "3")
             {
-                DataRow dr;
-                if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Factory WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["MDivisionID"])), out dr))
+                if (MyUtility.Check.Seek($"select NameEN,AddressEN,Tel from Factory WITH (NOLOCK) where ID = '{this.masterData["FromSite"]}'", out DataRow dr))
                 {
-                    this.mdivisionName = MyUtility.Convert.GetString(dr["NameEN"]);
-                    this.mdivisionAddr = MyUtility.Convert.GetString(dr["AddressEN"]);
-                    this.mdivisionTel = MyUtility.Convert.GetString(dr["Tel"]);
+                    this.factoryName = MyUtility.Convert.GetString(dr["NameEN"]);
+                    this.factoryAddr = MyUtility.Convert.GetString(dr["AddressEN"]);
+                    this.factoryTel = MyUtility.Convert.GetString(dr["Tel"]);
                 }
                 else
                 {
-                    this.mdivisionName = string.Empty;
-                    this.mdivisionAddr = string.Empty;
-                    this.mdivisionTel = string.Empty;
+                    this.factoryName = string.Empty;
+                    this.factoryAddr = string.Empty;
+                    this.factoryTel = string.Empty;
                 }
 
                 this.messrs = string.Empty;
@@ -116,17 +110,14 @@ namespace Sci.Production.Shipping
                 }
 
                 this.courierAWB = string.Format("{0}# {1}", MyUtility.GetValue.Lookup(string.Format("select AbbEN from Supp where ID = (select SuppID from Carrier WITH (NOLOCK) where ID = '{0}')", MyUtility.Convert.GetString(this.masterData["CarrierID"]))), MyUtility.Convert.GetString(this.masterData["BLNo"]));
-                this.shipmentPort = MyUtility.Convert.GetString(this.masterData["FromTag"]) == "1" ? MyUtility.GetValue.Lookup(string.Format("select PortAir+', '+CountryID from SCIFty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["FromSite"]))) : string.Empty;
+                this.shipmentPort = MyUtility.Convert.GetString(this.masterData["FromTag"]) == "1" ? MyUtility.GetValue.Lookup($"select PortAir+', '+CountryID from SCIFty WITH (NOLOCK) where ID = '{this.masterData["FromSite"]}'") : string.Empty;
                 this.destinationPort = MyUtility.Convert.GetString(this.masterData["ToTag"]) == "2" ? MyUtility.GetValue.Lookup(string.Format("select PortAir+', '+CountryID from SCIFty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ToSite"]))) : string.Empty;
 
                 string sqlCmd = string.Format(
                     @"select sum(Qty) as ttlQty,UnitID,sum(Qty*Price) as TtlAmount 
 from Express_Detail WITH (NOLOCK) where ID = '{0}'
 group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.detailSummary);
-            }
-            else if (this.reportType == "4")
-            {
+                DBProxy.Current.Select(null, sqlCmd, out this.detailSummary);
             }
 
             return Ict.Result.True;
@@ -220,9 +211,9 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
 
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-                worksheet.Cells[1, 1] = this.mdivisionName;
-                worksheet.Cells[2, 1] = this.mdivisionAddr;
-                worksheet.Cells[3, 1] = this.mdivisionTel;
+                worksheet.Cells[1, 1] = this.factoryName;
+                worksheet.Cells[2, 1] = this.factoryAddr;
+                worksheet.Cells[3, 1] = this.factoryTel;
                 worksheet.Cells[5, 4] = "Date: " + (MyUtility.Check.Empty(this.masterData["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["ShipDate"]).ToString(string.Format("{0}", Env.Cfg.DateStringFormat)));
                 worksheet.Cells[6, 1] = this.messrs;
                 worksheet.Cells[6, 2] = "Invoice No.:" + MyUtility.Convert.GetString(this.masterData["FtyInvNo"]);
@@ -279,7 +270,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
 
                 rownum++;
                 worksheet.Cells[rownum, 1] = "Samples of No Commercial Value, the value for Customs Purpose only.";
-                rownum = rownum + 3;
+                rownum += 3;
                 worksheet.Cells[rownum, 1] = "Total Carton Qty: " + MyUtility.Convert.GetString(this.masterData["CTNQty"]);
                 worksheet.Cells[rownum + 1, 1] = "Total N.W.: " + MyUtility.Convert.GetString(this.masterData["NW"]);
                 worksheet.Cells[rownum + 2, 1] = "Total G.W.: " + MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(this.masterData["NW"]) + MyUtility.Convert.GetDecimal(this.masterData["CTNNW"]));
@@ -314,18 +305,13 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
             else if (this.reportType == "3")
             {
                 #region Detail Packing List
-                string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DetailPackingList.xltx";
+                string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P02_Print_Invoice + PackingList.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-                if (excel == null)
-                {
-                    return false;
-                }
-
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-                worksheet.Cells[1, 1] = this.mdivisionName;
-                worksheet.Cells[2, 1] = this.mdivisionAddr;
-                worksheet.Cells[3, 1] = this.mdivisionTel;
+                worksheet.Cells[1, 1] = this.factoryName;
+                worksheet.Cells[2, 1] = this.factoryAddr;
+                worksheet.Cells[3, 1] = this.factoryTel;
                 worksheet.Cells[5, 9] = "Date: " + (MyUtility.Check.Empty(this.masterData["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["ShipDate"]).ToString(string.Format("{0}", Env.Cfg.DateStringFormat)));
                 worksheet.Cells[6, 1] = this.messrs;
                 worksheet.Cells[6, 9] = "Invoice No.:" + MyUtility.Convert.GetString(this.masterData["FtyInvNo"]);
@@ -333,36 +319,30 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Cells[8, 9] = MyUtility.Check.Empty(this.masterData["ETD"]) ? string.Empty : Convert.ToDateTime(this.masterData["ETD"]).ToString("d");
                 worksheet.Cells[9, 9] = MyUtility.Convert.GetString(this.masterData["ID"]);
                 worksheet.Cells[11, 1] = this.shipmentPort;
-                worksheet.Cells[11, 7] = this.destinationPort;
+                worksheet.Cells[11, 7] = this.masterData["PortAir"];
 
                 int rownum = 14;
                 object[,] objArray = new object[1, 12];
                 foreach (DataRow dr in this.detailData.Rows)
                 {
-                    string sSeq1 = MyUtility.Convert.GetString(dr["Seq1"]);
-                    string sSeq2 = MyUtility.Convert.GetString(dr["Seq2"]);
                     int iCategory = MyUtility.Convert.GetInt(dr["Category"]);
-                    bool bQty = MyUtility.Check.Empty(dr["Qty"]);
-                    bool bPrice = MyUtility.Check.Empty(dr["Price"]);
-                    decimal decQty = bQty ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
-                    decimal decPrice = bPrice ? 0 : MyUtility.Convert.GetDecimal(dr["Price"]);
-
                     objArray[0, 0] = dr["CTNNo"];
-                    objArray[0, 1] = string.Format("{0}-{1}", sSeq1, sSeq2);
+                    objArray[0, 1] = $"{dr["Seq1"]}-{dr["Seq2"]}";
                     objArray[0, 2] = this.CategoryName(iCategory);
                     objArray[0, 3] = dr["StyleID"];
                     objArray[0, 4] = dr["RefNo"];
                     objArray[0, 5] = iCategory == 4 || iCategory == 9 ? dr["MtlDesc"] : dr["Description"];
-                    objArray[0, 6] = bQty ? string.Empty : dr["Qty"];
+                    objArray[0, 6] = dr["Qty"];
                     objArray[0, 7] = dr["UnitID"];
                     objArray[0, 8] = "$";
-                    objArray[0, 9] = bPrice ? string.Empty : dr["Price"];
+                    objArray[0, 9] = dr["Price"];
                     objArray[0, 10] = "$";
-                    objArray[0, 11] = bQty || bPrice ? string.Empty : MyUtility.Convert.GetString(decQty * decPrice);
+                    objArray[0, 11] = $"=G{rownum}*J{rownum}";
                     worksheet.Range[string.Format("A{0}:L{0}", rownum)].Value2 = objArray;
                     rownum++;
                 }
 
+                int lastdetailrow = rownum - 1;
                 if (this.detailSummary != null && this.detailSummary.Rows.Count > 0)
                 {
                     int count = 1;
@@ -380,8 +360,8 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
 
                         worksheet.Cells[rownum, 7] = MyUtility.Convert.GetString(dr["ttlQty"]);
                         worksheet.Cells[rownum, 8] = MyUtility.Convert.GetString(dr["UnitID"]);
-                        worksheet.Cells[rownum, 11] = MyUtility.Check.Empty(dr["TtlAmount"]) ? string.Empty : "$";
-                        worksheet.Cells[rownum, 12] = MyUtility.Check.Empty(dr["TtlAmount"]) ? string.Empty : MyUtility.Convert.GetString(dr["TtlAmount"]);
+                        worksheet.Cells[rownum, 11] = "$";
+                        worksheet.Cells[rownum, 12] = $"=sumif(H14:H{lastdetailrow},H{rownum},L14:L{lastdetailrow})";
                         rownum++;
                     }
                 }
@@ -393,7 +373,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
 
                 rownum++;
                 worksheet.Cells[rownum, 1] = "Samples of No Commercial Value, the value for Customs Purpose only.";
-                rownum = rownum + 3;
+                rownum += 3;
                 worksheet.Cells[rownum, 1] = "Total Carton Qty: " + MyUtility.Convert.GetString(this.masterData["CTNQty"]);
                 worksheet.Cells[rownum + 1, 1] = "Total N.W.: " + MyUtility.Convert.GetString(this.masterData["NW"]);
                 worksheet.Cells[rownum + 2, 1] = "Total G.W.: " + MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(this.masterData["NW"]) + MyUtility.Convert.GetDecimal(this.masterData["CTNNW"]));
@@ -413,33 +393,15 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Cells[rownum + 4, 8] = "            BY:";
                 worksheet.Range[string.Format("J{0}:K{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
                 worksheet.Range[string.Format("J{0}:K{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
-
-                #region Save & Show Excel
-                string strExcelName = Class.MicrosoftFile.GetName("Shipping_P02_Print_DetailPackingList");
-                excel.ActiveWorkbook.SaveAs(strExcelName);
-                excel.Quit();
-                Marshal.ReleaseComObject(excel);
-                Marshal.ReleaseComObject(worksheet);
-
-                strExcelName.OpenFile();
                 #endregion
-                #endregion
-            }
-            else if (this.reportType == "4")
-            {
-                string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DHL_XCCA.xltx";
-                Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-                if (excel == null)
-                {
-                    return false;
-                }
 
-                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+                #region DHL (sheet 2)
+                worksheet = excel.ActiveWorkbook.Worksheets[2];
 
                 worksheet.Cells[2, 2] = MyUtility.Convert.GetString(this.masterData["BLNo"]);
                 worksheet.Cells[4, 10] = MyUtility.Convert.GetDecimal(this.masterData["NW"]) + MyUtility.Convert.GetDecimal(this.masterData["CTNNW"]);
 
-                int rownum = 6;
+                rownum = 6;
 
                 // 表身有資料才需要重新排序 ISP20191502
                 if (this.detailData.Rows.Count > 0)
@@ -459,8 +421,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
 
                     worksheet.Cells[rownum, 1] = MyUtility.Convert.GetString(dr["OrderNumber"]);
                     worksheet.Cells[rownum, 2] = MyUtility.Convert.GetString(dr["CategoryNameFromDD"]);
-                    bool isnDescription = false;
-                    worksheet.Cells[rownum, 3] = this.GetDescription(iCategory, dr, out isnDescription);
+                    worksheet.Cells[rownum, 3] = this.GetDescription(iCategory, dr, out bool isnDescription);
                     if (isnDescription)
                     {
                         worksheet.Cells[rownum, 3].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Yellow);
@@ -486,13 +447,12 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Rows.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Class.MicrosoftFile.GetName("Shipping_P02_Print_DHL_XCCA");
+                string strExcelName = Class.MicrosoftFile.GetName("Shipping_P02_Print_Invoice + Packing List");
                 excel.ActiveWorkbook.SaveAs(strExcelName);
-                excel.Quit();
+                excel.Visible = true;
                 Marshal.ReleaseComObject(excel);
                 Marshal.ReleaseComObject(worksheet);
-
-                strExcelName.OpenFile();
+                #endregion
                 #endregion
             }
 
@@ -501,7 +461,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
 
         private string CategoryName(int iCategory)
         {
-            string rtnStr = string.Empty;
+            string rtnStr;
             switch (iCategory)
             {
                 case 1:
@@ -541,7 +501,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
 
         private string GetDescription(int iCategory, DataRow dr, out bool isnDescription)
         {
-            string sql = string.Empty;
+            string sql;
             if (iCategory == 4 || iCategory == 9)
             {
                 sql = $@"select Description = dbo.getMtlDesc('{dr["OrderID"]}', '{dr["Seq1"]}', '{dr["Seq2"]}', 1, 0)";
@@ -549,16 +509,25 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
             else
             {
                 sql = $@"
-select Description = dbo.getBOFMtlDesc(isnull(
+select Description =concat(
+        (select 'ITEM:'+ Description from Style with(nolock) where id='{dr["StyleID"]}' and BrandID='{dr["BrandID"]}' and SeasonID ='{dr["SeasonID"]}'),
+        char(10),
+        dbo.getBOFMtlDesc(isnull(
 		(select o.StyleUkey from orders o with(nolock) where o.id ='{dr["OrderID"]}'),
 		(select ukey from Style with(nolock) where id='{dr["StyleID"]}' and BrandID='{dr["BrandID"]}' and SeasonID ='{dr["SeasonID"]}')
 	)) 
+)
 ";
             }
 
             string findDescription = MyUtility.GetValue.Lookup(sql);
             isnDescription = MyUtility.Check.Empty(findDescription);
             return MyUtility.Check.Empty(findDescription) ? MyUtility.Convert.GetString(dr["nDescription"]) : findDescription;
+        }
+
+        private void P02_Print_FormClosed(object sender, System.Windows.Forms.FormClosedEventArgs e)
+        {
+            this.Dispose();
         }
     }
 }

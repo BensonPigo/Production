@@ -72,17 +72,17 @@ SELECT * FROM (
     SELECT   pd.CTNStartNo
 		    ,pd.Article 
 		    ,pd.SizeCode 
-			,[ShipQty]=SUM(pd.ShipQty)
+			,[ShipQty]=pd.ShipQty
 		    ,[Result]=IIF(ResultPass.Data IS NOT NULL , 'Pass',IIF(ResultFail.Data IS NOT NULL ,'Fail',''))
 			,[InsCtn]=InsCtn.Val
 		    ,[ReceiveDate]=Max(pd.ReceiveDate)	
 	FROM PackingList_Detail pd
-    LEFT JOIN CFAInspectionRecord  CFA  ON pd.OrderID=cfa.OrderID AND pd.OrderShipmodeSeq = cfa.SEQ AND CFA.Carton = pd.CTNStartNo AND CFA.Status='Confirmed' 
     OUTER APPLY (
 		SELECT Data from dbo.SplitString((
 			SELECT TOP 1 Carton 
 			FROM CFAInspectionRecord cfa2 
-			WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
+			INNER JOIN CFAInspectionRecord_OrderSEQ CfAd2 ON cfa2.ID = CfAd2.ID
+			WHERE CfAd2.OrderID=pd.OrderID AND CfAd2.Seq=pd.OrderShipmodeSeq 
 			AND Status='Confirmed' AND Result='Pass'  AND (
 				   Carton = pd.CTNStartNo 
 				OR Carton LIKE pd.CTNStartNo +',%' 
@@ -95,7 +95,8 @@ SELECT * FROM (
 		SELECT Data from dbo.SplitString((
 			SELECT TOP 1 Carton 
 			FROM CFAInspectionRecord cfa2 
-			WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
+			INNER JOIN CFAInspectionRecord_OrderSEQ CfAd2 ON cfa2.ID = CfAd2.ID
+			WHERE CfAd2.OrderID=pd.OrderID AND CfAd2.Seq=pd.OrderShipmodeSeq 
 			AND Status='Confirmed' AND Result='Fail'  AND (
 				   Carton = pd.CTNStartNo 
 				OR Carton LIKE pd.CTNStartNo +',%' 
@@ -107,7 +108,8 @@ SELECT * FROM (
 	OUTER APPLY(
 		SELECT [Val]=COUNT(1)
 		FROM CFAInspectionRecord cfa2
-		WHERE cfa2.OrderID=pd.OrderID AND cfa2.Seq=pd.OrderShipmodeSeq AND cfa2.Status='Confirmed' 
+		INNER JOIN CFAInspectionRecord_OrderSEQ CfAd2 ON cfa2.ID = CfAd2.ID
+		WHERE CfAd2.OrderID=pd.OrderID AND CfAd2.Seq=pd.OrderShipmodeSeq AND cfa2.Status='Confirmed' 
 		AND (cfa2.Carton Like pd.CTNStartNo+',%' OR cfa2.Carton Like '%,'+pd.CTNStartNo+',%' OR cfa2. Carton Like'%,'+pd.CTNStartNo OR cfa2.Carton = pd.CTNStartNo )
 	)InsCtn
 	WHERE pd.OrderID= '{this._OrderID}'
@@ -118,7 +120,7 @@ SELECT * FROM (
 		WHERE t.ID = pd.ID AND t.OrderID = pd.OrderID 
 		AND t.OrderShipmodeSeq=pd.OrderShipmodeSeq AND t.CTNStartNo=pd.CTNStartNo
 	)
-	GROUP BY CTNStartNo,Article ,SizeCode ,ResultPass.Data ,ResultFail.Data ,InsCtn.Val
+	GROUP BY CTNStartNo,Article ,SizeCode ,ResultPass.Data ,ResultFail.Data ,InsCtn.Val, pd.ShipQty
 	UNION
     ----混尺碼分開處理
 	SELECt t.CTNStartNo
@@ -166,12 +168,14 @@ SELECT * FROM (
 
 		SELECT   [Result]=IIF(ResultPass.Data IS NOT NULL , 'Pass',IIF(ResultFail.Data IS NOT NULL ,'Fail',''))
 		FROM PackingList_Detail pd
-		LEFT JOIN CFAInspectionRecord  CFA  ON pd.OrderID=cfa.OrderID AND pd.OrderShipmodeSeq = cfa.SEQ AND CFA.Carton = pd.CTNStartNo AND CFA.Status='Confirmed' 
+		LEFT JOIN CFAInspectionRecord  CFA  ON CFA.Carton = pd.CTNStartNo AND CFA.Status='Confirmed'
+		LEFT JOIN CFAInspectionRecord_OrderSEQ CfAd ON CFA.ID = CfAd.ID AND CfAd.OrderID = pd.OrderID AND CfAd.Seq = pd.OrderShipmodeSeq 
 		OUTER APPLY (
 			SELECT Data from dbo.SplitString((
 				SELECT TOP 1 Carton 
 				FROM CFAInspectionRecord cfa2 
-				WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
+				INNER JOIN CFAInspectionRecord_OrderSEQ CfAd2 ON cfa2.ID = CfAd2.ID
+				WHERE CfAd2.OrderID=pd.OrderID AND CfAd2.Seq=pd.OrderShipmodeSeq 
 				AND Status='Confirmed' AND Result='Pass' AND (
 				                                            Carton = pd.CTNStartNo 
 				                                            OR Carton LIKE pd.CTNStartNo +',%' 
@@ -184,7 +188,8 @@ SELECT * FROM (
 			SELECT Data from dbo.SplitString((
 				SELECT TOP 1 Carton 
 				FROM CFAInspectionRecord cfa2 
-				WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
+				INNER JOIN CFAInspectionRecord_OrderSEQ CfAd2 ON cfa2.ID = CfAd2.ID
+				WHERE CfAd2.OrderID=pd.OrderID AND CfAd2.Seq=pd.OrderShipmodeSeq 
 				AND Status='Confirmed' AND Result='Fail'  AND (
 				                                            Carton = pd.CTNStartNo 
 				                                            OR Carton LIKE pd.CTNStartNo +',%' 
@@ -200,7 +205,9 @@ SELECT * FROM (
 	OUTER APPLY(
 		SELECT [Val]=COUNT(1)
 		FROM CFAInspectionRecord cfa2
-		WHERE cfa2.OrderID=t.OrderID AND cfa2.Seq=t.OrderShipmodeSeq AND cfa2.Status='Confirmed' 
+		INNER JOIN CFAInspectionRecord_OrderSEQ CfAd2 ON cfa2.ID = CfAd2.ID
+		WHERE CfAd2.OrderID=t.OrderID AND CfAd2.Seq=t.OrderShipmodeSeq 
+		AND cfa2.Status='Confirmed' 
 		AND (cfa2.Carton Like t.CTNStartNo+',%' OR cfa2.Carton Like '%,'+t.CTNStartNo+',%' OR cfa2. Carton Like'%,'+t.CTNStartNo OR cfa2.Carton = t.CTNStartNo )
 	)InsCtn
 ) a

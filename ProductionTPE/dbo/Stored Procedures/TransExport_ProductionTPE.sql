@@ -89,6 +89,10 @@ BEGIN
 	-------------SubProDefectCode-------------------
 	RAISERROR('SubProDefectCode  - Starts',0,0)
 	select * into dbo.SubProDefectCode from (select * from ProductionTPE.dbo.SubProDefectCode ) as tmp
+	
+	-------------PortByBrandShipmode-------------------
+	RAISERROR('PortByBrandShipmode  - Starts',0,0)
+	select * into dbo.PortByBrandShipmode from (select * from ProductionTPE.dbo.PortByBrandShipmode ) as tmp
 
 	set transaction isolation level read committed
 END

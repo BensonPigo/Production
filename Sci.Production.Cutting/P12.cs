@@ -81,6 +81,11 @@ namespace Sci.Production.Cutting
 
         private void BtnQuery_Click(object sender, EventArgs e)
         {
+            this.Query();
+        }
+
+        private void Query()
+        {
             if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty()
                 && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty()
                 && this.txtPOID.Text.Empty()
@@ -854,6 +859,13 @@ where bd.BundleNo = '{item.Barcode}'");
                 {
                     this.ShowErr("Update PrintDate Error!", result);
                     return;
+                }
+
+                int pos = this.listControlBindingSource1.Position;
+                this.Query();
+                if (this.listControlBindingSource1.Count >= pos + 1)
+                {
+                    this.listControlBindingSource1.Position = pos;
                 }
             }
 

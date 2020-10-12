@@ -462,8 +462,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
                 }
                 catch (Exception ex)
                 {
-                    result = new DualResult(false, string.Join("Commit transaction error.", Environment.NewLine, ex));
                     transactionscope.Dispose();
+                    result = new DualResult(false, string.Join("Commit transaction error.", Environment.NewLine, ex));
                 }
             }
 
@@ -654,8 +654,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                 }
                 catch (Exception ex)
                 {
-                    result = new DualResult(false, string.Join("Commit transaction error.", Environment.NewLine, ex));
                     transactionscope.Dispose();
+                    result = new DualResult(false, string.Join("Commit transaction error.", Environment.NewLine, ex));
                 }
             }
 

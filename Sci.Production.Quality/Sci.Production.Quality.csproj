@@ -522,6 +522,12 @@
     <Compile Include="P31_ByCarton.Designer.cs">
       <DependentUpon>P31_ByCarton.cs</DependentUpon>
     </Compile>
+    <Compile Include="P32_CombinePO.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P32_CombinePO.Designer.cs">
+      <DependentUpon>P32_CombinePO.cs</DependentUpon>
+    </Compile>
     <Compile Include="P40.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -558,6 +564,12 @@
     </Compile>
     <Compile Include="R01.Designer.cs">
       <DependentUpon>R01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R11.Designer.cs">
+      <DependentUpon>R11.cs</DependentUpon>
     </Compile>
     <Compile Include="R51.cs">
       <SubType>Form</SubType>
@@ -906,6 +918,9 @@
     <EmbeddedResource Include="P31_ByCarton.resx">
       <DependentUpon>P31_ByCarton.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P32_CombinePO.resx">
+      <DependentUpon>P32_CombinePO.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P40.resx">
       <DependentUpon>P40.cs</DependentUpon>
     </EmbeddedResource>
@@ -914,6 +929,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R11.resx">
+      <DependentUpon>R11.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R51.resx">
       <DependentUpon>R51.cs</DependentUpon>
