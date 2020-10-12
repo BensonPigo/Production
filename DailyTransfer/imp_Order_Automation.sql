@@ -109,7 +109,7 @@ else
 	--訂單已轉到其他工廠（此部分就是目前使用 OrderComparisonList 的部分）
 	if(isnull(@Url, '') <> '')
 	begin
-		select a.OrderID into #tmpDeleteOrder
+		select a.OrderID into #tmpDeleteOrder_Gensong
 		from (select [OrderID] = a.ID
 				from orders a with (nolock)
 				inner join  Factory f on a.FactoryID = f.ID
@@ -136,21 +136,21 @@ else
 										(EditDate >= @DateStart and EditDate < @DateEnd) or
 										(PulloutCmplDate >= @DateStart and PulloutCmplDate < @DateEnd)) 
 										and 
-										not exists (select 1 from #tmpDeleteOrder t where t.OrderID = Orders.ID)
+										not exists (select 1 from #tmpDeleteOrder_Gensong t where t.OrderID = Orders.ID)
 								FOR XML PATH('')),1,1,'') 
 		if(@orderList is not null and @orderList <> '')
 		begin
-			exec dbo.SentOrdersToFinishingProcesses @orderList,'Orders,Order_QtyShip'
+			exec dbo.SentOrdersToFinishingProcesses_Gensong @orderList,'Orders,Order_QtyShip'
 		end
 		
 
-		SELECT @orderList =  Stuff((select concat( ',',OrderId) from #tmpDeleteOrder FOR XML PATH('')),1,1,'') 
+		SELECT @orderList =  Stuff((select concat( ',',OrderId) from #tmpDeleteOrder_Gensong FOR XML PATH('')),1,1,'') 
 
 		if(@orderList is not null and @orderList <> '')
 		begin
-			exec dbo.SentOrdersToFinishingProcesses @orderList,'Order_Delete'
+			exec dbo.SentOrdersToFinishingProcesses_Gensong @orderList,'Order_Delete'
 		end
 
-		drop table #tmpDeleteOrder
+		drop table #tmpDeleteOrder_Gensong
 	end
 END
