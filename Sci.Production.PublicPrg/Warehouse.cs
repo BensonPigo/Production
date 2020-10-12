@@ -352,7 +352,7 @@ when not matched then
                     if (encoded)
                     {
                         sqlcmd += @"
-select location,[ukey] = f.ukey
+select distinct location,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
@@ -433,7 +433,7 @@ when not matched then
                     if (encoded)
                     {
                         sqlcmd += @"
-select location,[ukey] = f.ukey
+select distinct location,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f WITH (NOLOCK) on poid = s.poid 
@@ -493,7 +493,7 @@ alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column roll varchar(15)
 
-select tolocation,[ukey] = f.ukey
+select distinct tolocation,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
@@ -521,7 +521,7 @@ alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column roll varchar(15)
 
-select tolocation,[ukey] = f.ukey
+select distinct tolocation,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
