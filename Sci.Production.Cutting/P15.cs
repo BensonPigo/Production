@@ -1898,7 +1898,7 @@ Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.Si
                     {
                         // 若 dup, tone 相同 寫入Bundle_Detail 時 PatternCode = ALLPARTS 合為一筆 Qty 數量加起來. 且標記已準備
                         var selDTAPList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0 && pattern.PatternCode.Equals("ALLPARTS")).ToList();
-                        var selptternDTAllPartList = selpatternList.Where(w => selDTAPList.Select(s => s.Iden).Contains(w.Iden)).ToList();
+                        var selptternDTAllPartList = selpatternList.Where(w => selDTAPList.Select(s => s.Iden).Contains(w.Iden) && w.PatternCode.Equals("ALLPARTS")).ToList();
                         if (selptternDTAllPartList.Where(w => !w.Ran).Count() > 1)
                         {
                             pattern.Ran = true;
