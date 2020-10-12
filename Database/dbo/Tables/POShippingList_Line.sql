@@ -17,7 +17,7 @@
     [Thickness]           VARCHAR (20)    NULL,
     [ThicknessUnitID]     VARCHAR (8)     NULL,
     [SizeSpec]            VARCHAR (15)    NULL,
-    [Price]               NUMERIC (16, 4) NULL,
+    [Price]               VARCHAR (20)    NULL,
     [BatchNo]             VARCHAR (50)    NULL,
     [PackageNo]           VARCHAR (50)    NULL,
     [ShipQty]             NUMERIC (12, 2) NULL,
