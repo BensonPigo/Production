@@ -827,14 +827,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="ttlCtn">
+                    <Textbox Name="TtlCtn">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!ttlCtn.Value</Value>
+                              <Value>=Fields!TtlCtn.Value</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                               </Style>
@@ -843,7 +843,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>ttlCtn</rd:DefaultName>
+                      <rd:DefaultName>TtlCtn</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -2137,8 +2137,8 @@
           <DataField>TTL_Qty</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ttlCtn">
-          <DataField>ttlCtn</DataField>
+        <Field Name="TtlCtn">
+          <DataField>TtlCtn</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
