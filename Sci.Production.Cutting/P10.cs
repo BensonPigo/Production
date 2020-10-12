@@ -575,6 +575,12 @@ INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty])
 VALUES('{this.CurrentMaintain["ID"]}','{dr["BundleNo"]}','{this.CurrentMaintain["OrderID"]}','{dr["Qty"]}');
 ";
                 }
+
+                if (dr.RowState == DataRowState.Modified)
+                {
+                    qty_cmd1 += $@"
+update [Bundle_Detail_Order] set qty = {dr["qty"]} where BundleNo ='{dr["BundleNo"]}' and (select count(1) from Bundle_Detail_Order where  BundleNo ='{dr["BundleNo"]}') = 1;";
+                }
             }
             #endregion
 
