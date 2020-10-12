@@ -244,7 +244,227 @@ AND t.Export_Detail_Ukey IN (
 	,s.[EditName],s.[EditDate])
 	when not matched by source and exists (select ID from @T where id = t.id)then
 	  		delete;
+			
+-----------------------POShippingList_Line-----------------------------
+--刪除:存在Trade_To_Pms.Export_Detail不存在Trade_To_Pms.POShippingList_Line
+delete t
+from Production.dbo.POShippingList_Line t
+where exists (select 1 from Trade_To_Pms.dbo.Export_Detail s where s.Ukey = t.Export_Detail_Ukey)
+and not exists (select 1 from Trade_To_Pms.dbo.POShippingList_Line s where s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line)
 
+--更新:存在Trade_To_Pms.Export_Detail存在Production.POShippingList_Line
+update t set
+	 [Export_Detail_Ukey]	=s.[Export_Detail_Ukey]
+	,[RefNo]				=s.[RefNo]
+	,[Description]			=s.[Description]
+	,[MaterialColor]		=s.[MaterialColor]
+	,[Weight]				=s.[Weight]
+	,[WeightUnitID]			=s.[WeightUnitID]
+	,[Width]				=s.[Width]
+	,[WidthUnitID]			=s.[WidthUnitID]
+	,[Length]				=s.[Length]
+	,[LengthUnitID]			=s.[LengthUnitID]
+	,[Height]				=s.[Height]
+	,[HeightUnitID]			=s.[HeightUnitID]
+	,[Thickness]			=s.[Thickness]
+	,[ThicknessUnitID]		=s.[ThicknessUnitID]
+	,[SizeSpec]				=s.[SizeSpec]
+	,[Price]				=s.[Price]
+	,[BatchNo]				=s.[BatchNo]
+	,[PackageNo]			=s.[PackageNo]
+	,[ShipQty]				=s.[ShipQty]
+	,[ShipQtyUnitID]		=s.[ShipQtyUnitID]
+	,[FOC]					=s.[FOC]
+	,[FOCUnitID]			=s.[FOCUnitID]
+	,[NW]					=s.[NW]
+	,[NWUnitID]				=s.[NWUnitID]
+	,[GW]					=s.[GW]
+	,[GWUnitID]				=s.[GWUnitID]
+	,[AdditionalOptional1]	=s.[AdditionalOptional1]
+	,[AdditionalOptional2]	=s.[AdditionalOptional2]
+	,[AdditionalOptional3]	=s.[AdditionalOptional3]
+	,[AdditionalOptional4]	=s.[AdditionalOptional4]
+	,[AdditionalOptional5]	=s.[AdditionalOptional5]
+	,[AddName]				=s.[AddName]
+	,[AddDate]				=s.[AddDate]
+from Trade_To_Pms.dbo.POShippingList_Line s
+inner join Production.dbo.POShippingList_Line t on s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line
+where exists (select 1 from Trade_To_Pms.dbo.Export_Detail s where s.Ukey = t.Export_Detail_Ukey)
+
+--刪除:存在Trade_To_Pms.Export_Detail不存在Production.POShippingList_Line
+INSERT INTO [dbo].[POShippingList_Line]
+           ([POShippingList_Ukey]
+           ,[Export_Detail_Ukey]
+           ,[QRCode]
+           ,[Line]
+           ,[RefNo]
+           ,[Description]
+           ,[MaterialColor]
+           ,[Weight]
+           ,[WeightUnitID]
+           ,[Width]
+           ,[WidthUnitID]
+           ,[Length]
+           ,[LengthUnitID]
+           ,[Height]
+           ,[HeightUnitID]
+           ,[Thickness]
+           ,[ThicknessUnitID]
+           ,[SizeSpec]
+           ,[Price]
+           ,[BatchNo]
+           ,[PackageNo]
+           ,[ShipQty]
+           ,[ShipQtyUnitID]
+           ,[FOC]
+           ,[FOCUnitID]
+           ,[NW]
+           ,[NWUnitID]
+           ,[GW]
+           ,[GWUnitID]
+           ,[AdditionalOptional1]
+           ,[AdditionalOptional2]
+           ,[AdditionalOptional3]
+           ,[AdditionalOptional4]
+           ,[AdditionalOptional5]
+           ,[AddName]
+           ,[AddDate])
+select
+	 s.[POShippingList_Ukey]
+	,s.[Export_Detail_Ukey]
+	,s.[QRCode]
+	,s.[Line]
+	,s.[RefNo]
+	,s.[Description]
+	,s.[MaterialColor]
+	,s.[Weight]
+	,s.[WeightUnitID]
+	,s.[Width]
+	,s.[WidthUnitID]
+	,s.[Length]
+	,s.[LengthUnitID]
+	,s.[Height]
+	,s.[HeightUnitID]
+	,s.[Thickness]
+	,s.[ThicknessUnitID]
+	,s.[SizeSpec]
+	,s.[Price]
+	,s.[BatchNo]
+	,s.[PackageNo]
+	,s.[ShipQty]
+	,s.[ShipQtyUnitID]
+	,s.[FOC]
+	,s.[FOCUnitID]
+	,s.[NW]
+	,s.[NWUnitID]
+	,s.[GW]
+	,s.[GWUnitID]
+	,s.[AdditionalOptional1]
+	,s.[AdditionalOptional2]
+	,s.[AdditionalOptional3]
+	,s.[AdditionalOptional4]
+	,s.[AdditionalOptional5]
+	,s.[AddName]
+	,s.[AddDate]
+from Trade_To_Pms.dbo.POShippingList_Line s
+left join Production.dbo.POShippingList_Line t on s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line
+where exists (select 1 from Trade_To_Pms.dbo.Export_Detail s where s.Ukey = t.Export_Detail_Ukey)
+and t.POShippingList_Ukey is null
+
+-----------------------POShippingList-----------------------------
+--更新: 存在表身 Production.dbo.POShippingList_Line, 表頭存在
+UPDATE t set
+	 [IssueDate]		=s.[IssueDate]
+	,[POID]				=s.[POID]
+	,[Seq1]				=s.[Seq1]
+	,[T1Name]			=s.[T1Name]
+	,[T1MR]				=s.[T1MR]
+	,[T1FtyName]		=s.[T1FtyName]
+	,[T1FtyBrandCode]	=s.[T1FtyBrandCode]
+	,[T2Name]			=s.[T2Name]
+	,[T2SuppName]		=s.[T2SuppName]
+	,[T2SuppBrandCode]	=s.[T2SuppBrandCode]
+	,[T2SuppCountry]	=s.[T2SuppCountry]
+	,[BrandID]			=s.[BrandID]
+	,[CurrencyID]		=s.[CurrencyID]
+	,[PackingNo]		=s.[PackingNo]
+	,[PackingDate]		=s.[PackingDate]
+	,[InvoiceNo]		=s.[InvoiceNo]
+	,[InvoiceDate]		=s.[InvoiceDate]
+	,[CloseDate]		=s.[CloseDate]
+	,[Vessel]			=s.[Vessel]
+	,[ETD]				=s.[ETD]
+	,[FinalShipmodeID]	=s.[FinalShipmodeID]
+	,[SuppID]			=s.[SuppID]
+	,[AddName]			=s.[AddName]
+	,[AddDate]			=s.[AddDate]
+from Trade_To_Pms.dbo.POShippingList s
+inner join Production.dbo.POShippingList t on s.Ukey = t.Ukey
+and exists(select 1 from Production.dbo.POShippingList_Line where POShippingList_Ukey = s.Ukey)
+
+--新增: 存在表身 Production.dbo.POShippingList_Line, 表頭不存在
+INSERT INTO [dbo].[POShippingList]
+           ([Ukey]
+           ,[IssueDate]
+           ,[POID]
+           ,[Seq1]
+           ,[T1Name]
+           ,[T1MR]
+           ,[T1FtyName]
+           ,[T1FtyBrandCode]
+           ,[T2Name]
+           ,[T2SuppName]
+           ,[T2SuppBrandCode]
+           ,[T2SuppCountry]
+           ,[BrandID]
+           ,[CurrencyID]
+           ,[PackingNo]
+           ,[PackingDate]
+           ,[InvoiceNo]
+           ,[InvoiceDate]
+           ,[CloseDate]
+           ,[Vessel]
+           ,[ETD]
+           ,[FinalShipmodeID]
+		   ,[SuppID]
+           ,[AddName]
+           ,[AddDate])
+select
+	 s.[Ukey]
+	,s.[IssueDate]
+	,s.[POID]
+	,s.[Seq1]
+	,s.[T1Name]
+	,s.[T1MR]
+	,s.[T1FtyName]
+	,s.[T1FtyBrandCode]
+	,s.[T2Name]
+	,s.[T2SuppName]
+	,s.[T2SuppBrandCode]
+	,s.[T2SuppCountry]
+	,s.[BrandID]
+	,s.[CurrencyID]
+	,s.[PackingNo]
+	,s.[PackingDate]
+	,s.[InvoiceNo]
+	,s.[InvoiceDate]
+	,s.[CloseDate]
+	,s.[Vessel]
+	,s.[ETD]
+	,s.[FinalShipmodeID]
+	,s.[SuppID]
+	,s.[AddName]
+	,s.[AddDate]
+from Trade_To_Pms.dbo.POShippingList s
+left join Production.dbo.POShippingList t on s.Ukey = t.Ukey
+where t.Ukey is null
+and exists(select 1 from Production.dbo.POShippingList_Line where POShippingList_Ukey = s.Ukey)
+
+--刪除: 上面做完後,表身為空,表頭刪除
+delete pl
+from Production.dbo.POShippingList pl
+left join Production.dbo.POShippingList_Line pll on pl.ukey = pll.POShippingList_Ukey
+where pll.POShippingList_Ukey is null
 
 -----------------------Export_Container-----------------------------
 	RAISERROR('Import Export_Container - Starts',0,0)

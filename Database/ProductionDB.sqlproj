@@ -2549,6 +2549,8 @@
     <Build Include="dbo\Functions\Get_ShippingMarkTemplate_DefineColumn.sql" />
     <Build Include="dbo\Functions\CheckShippingMarkHTMLSetting.sql" />
     <Build Include="dbo\Tables\CFAInspectionRecord_OrderSEQ.sql" />
+    <Build Include="dbo\Tables\POShippingList_Line.sql" />
+    <Build Include="dbo\Tables\POShippingList.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
