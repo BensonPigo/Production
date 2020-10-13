@@ -900,6 +900,18 @@
     <Compile Include="R43.Designer.cs">
       <DependentUpon>R43.cs</DependentUpon>
     </Compile>
+    <Compile Include="R61.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R61.Designer.cs">
+      <DependentUpon>R61.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R62.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R62.Designer.cs">
+      <DependentUpon>R62.cs</DependentUpon>
+    </Compile>
     <Compile Include="Shipping.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1328,6 +1340,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R43.resx">
       <DependentUpon>R43.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R61.resx">
+      <DependentUpon>R61.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R62.resx">
+      <DependentUpon>R62.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

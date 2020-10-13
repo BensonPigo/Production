@@ -19,7 +19,7 @@ namespace Sci.Production.Shipping
         public P62(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         /// <inheritdoc/>
@@ -193,6 +193,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 if (MyUtility.Check.Seek(sqlcmd))
                 {
                     MyUtility.Msg.WarningBox($@"The <Shipper> of <Invoice NO.>: {dr["INVNo"]} is not belong to this [Shipper]");
+                    return false;
                 }
 
                 // 判斷表身[Invoice NO.]的BrandID對應Buyer與表頭Buyer相同
@@ -200,6 +201,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 if (MyUtility.Check.Seek(sqlcmd))
                 {
                     MyUtility.Msg.WarningBox($@"The [Brand] of <Invoice NO.> : {dr["INVNo"]} is not belong to this [Brand].");
+                    return false;
                 }
 
                 // 判斷表身[Invoice NO.]的ShipmodeID和表頭Shipmode相同
@@ -207,6 +209,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 if (MyUtility.Check.Seek(sqlcmd))
                 {
                     MyUtility.Msg.WarningBox($@"The <Shipmode> of <Invoice NO.>: {dr["INVNo"]} is not belong to this [Shipmode]");
+                    return false;
                 }
 
                 // 判斷表身[Invoice NO.]的CustCDID和表頭CustCD相同
@@ -214,6 +217,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 if (MyUtility.Check.Seek(sqlcmd))
                 {
                     MyUtility.Msg.WarningBox($@"The <CustCD> of <Invoice NO.>: {dr["INVNo"]} is not belong to this [CustCD]");
+                    return false;
                 }
 
                 // 判斷表身[Invoice NO.]的Dest和表頭Destination相同
@@ -221,6 +225,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 if (MyUtility.Check.Seek(sqlcmd))
                 {
                     MyUtility.Msg.WarningBox($@"The <Destination> of <Invoice NO.>: {dr["INVNo"]} is not belong to this [Destination]");
+                    return false;
                 }
             }
 
@@ -272,21 +277,25 @@ where id = '{this.CurrentMaintain["ID"]}'
         {
             // Status=New, 可以編輯
             bool isNewStatus = false;
-            if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
+            if (this.CurrentMaintain["Status"].EqualString("NEW"))
             {
                 isNewStatus = true;
             }
 
             this.comboShipper.ReadOnly = readOnly;
+            this.txtcountry.TextBox1.ReadOnly = readOnly;
             this.dateDeclarationDate.ReadOnly = isNewStatus ? false : readOnly;
             this.txtDeclaration.ReadOnly = isNewStatus ? false : readOnly;
             this.txtbuyer.ReadOnly = readOnly;
             this.txtshipmode.ReadOnly = readOnly;
             this.txtcustcd.ReadOnly = readOnly;
-            this.txtDeclaration.ReadOnly = readOnly;
             this.dateETD.ReadOnly = readOnly;
             this.txtForwarder.TextBox1.ReadOnly = isNewStatus ? false : readOnly;
             this.txtLoadingPort.ReadOnly = readOnly;
+            this.btnBatchImport.Enabled = isNewStatus ? true : false;
+            this.gridicon.Enabled = isNewStatus ? true : false;
+            this.detailgrid.IsEditable = isNewStatus ? true : false;
+            this.InsertDetailGridOnDoubleClick = isNewStatus ? true : false;
         }
 
         private void BtnBatchImport_Click(object sender, EventArgs e)

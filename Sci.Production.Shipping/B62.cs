@@ -10,8 +10,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class B62 : Sci.Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public B62(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -27,21 +29,22 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode && !MyUtility.Check.Empty(this.CurrentMaintain["Refno"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode && !MyUtility.Check.Empty(this.txtRefno.Text))
             {
                 DataRow dr;
                 string sqlcmd = this.GetRefNoSqlCmd();
-                sqlcmd += Environment.NewLine + $" and RefNo= '{this.CurrentMaintain["Refno"]}'";
+                sqlcmd += Environment.NewLine + $" and RefNo= '{this.txtRefno.Text}'";
 
                 if (!MyUtility.Check.Seek(sqlcmd, out dr))
                 {
                     MyUtility.Msg.WarningBox("Cannot find this [Ref#].");
+                    this.txtRefno.Select();
                     e.Cancel = true;
                     return;
                 }
                 else
                 {
-                    this.CurrentMaintain["Refno"] = dr["Refno"];
+                    this.CurrentMaintain["Refno"] = this.txtRefno.Text;
                     this.CurrentMaintain["Description"] = dr["Description"];
                 }
             }
@@ -112,6 +115,7 @@ from view_KHImportItem where 1=1";
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings col_Port = new DataGridViewGeneratorTextColumnSettings();
@@ -155,20 +159,20 @@ from view_KHImportItem where 1=1";
 
                 dr["Port"] = e.FormattedValue;
                 dr.EndEdit();
-
             };
 
             base.OnDetailGridSetup();
             #region 欄位設定
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("Port", header: "Port", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: col_Port)
+                .Text("Port", header: "Port", width: Widths.AnsiChars(12), iseditingreadonly: false, settings: col_Port)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(14), iseditingreadonly: false)
                 ;
             #endregion
 
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["RefNo"]) ||
@@ -195,7 +199,6 @@ from view_KHImportItem where 1=1";
                     return false;
                 }
 
-
                 // 判斷Port,HSCOde是否重複
                 DataRow[] drCheck = ((DataTable)this.detailgridbs.DataSource).Select($@"Port = '{dr["Port"]}' and HSCode = '{dr["HSCode"]}'");
                 if (drCheck.Length >= 2)
@@ -207,6 +210,5 @@ from view_KHImportItem where 1=1";
 
             return base.ClickSaveBefore();
         }
-
     }
 }

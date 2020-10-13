@@ -613,6 +613,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1008, 550);
+            this.DefaultControl = "comboShipper";
+            this.DefaultControlForEdit = "txtbuyer";
             this.Grid2New = 0;
             this.GridAlias = "KHExportDeclaration_Detail";
             this.GridNew = 0;

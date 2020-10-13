@@ -137,7 +137,7 @@
             this.txtCDCUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtCDCUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtCDCUnit.IsSupportEditMode = false;
-            this.txtCDCUnit.Location = new System.Drawing.Point(462, 22);
+            this.txtCDCUnit.Location = new System.Drawing.Point(462, 15);
             this.txtCDCUnit.Name = "txtCDCUnit";
             this.txtCDCUnit.ReadOnly = true;
             this.txtCDCUnit.Size = new System.Drawing.Size(114, 23);
@@ -145,7 +145,7 @@
             // 
             // labCDCUnit
             // 
-            this.labCDCUnit.Location = new System.Drawing.Point(352, 22);
+            this.labCDCUnit.Location = new System.Drawing.Point(352, 15);
             this.labCDCUnit.Name = "labCDCUnit";
             this.labCDCUnit.Size = new System.Drawing.Size(107, 23);
             this.labCDCUnit.TabIndex = 10;
@@ -157,7 +157,7 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.Location = new System.Drawing.Point(612, 21);
+            this.checkJunk.Location = new System.Drawing.Point(612, 14);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 8;
@@ -170,7 +170,7 @@
             this.txtCustomsDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "KHCustomsDescriptionID", true));
             this.txtCustomsDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtCustomsDesc.IsSupportEditMode = false;
-            this.txtCustomsDesc.Location = new System.Drawing.Point(172, 83);
+            this.txtCustomsDesc.Location = new System.Drawing.Point(172, 76);
             this.txtCustomsDesc.Name = "txtCustomsDesc";
             this.txtCustomsDesc.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtCustomsDesc.ReadOnly = true;
@@ -180,7 +180,7 @@
             // 
             // labCustomsDesc
             // 
-            this.labCustomsDesc.Location = new System.Drawing.Point(25, 83);
+            this.labCustomsDesc.Location = new System.Drawing.Point(25, 76);
             this.labCustomsDesc.Name = "labCustomsDesc";
             this.labCustomsDesc.Size = new System.Drawing.Size(144, 23);
             this.labCustomsDesc.TabIndex = 9;
@@ -199,7 +199,7 @@
             "Accessory",
             "Machine",
             "Chemical "});
-            this.comboCustomsType.Location = new System.Drawing.Point(172, 21);
+            this.comboCustomsType.Location = new System.Drawing.Point(172, 14);
             this.comboCustomsType.Name = "comboCustomsType";
             this.comboCustomsType.OldText = "";
             this.comboCustomsType.Size = new System.Drawing.Size(151, 24);
@@ -207,7 +207,7 @@
             // 
             // labCustomsType
             // 
-            this.labCustomsType.Location = new System.Drawing.Point(25, 23);
+            this.labCustomsType.Location = new System.Drawing.Point(25, 16);
             this.labCustomsType.Name = "labCustomsType";
             this.labCustomsType.Size = new System.Drawing.Size(144, 23);
             this.labCustomsType.TabIndex = 18;
@@ -216,7 +216,7 @@
             // 
             // labRef
             // 
-            this.labRef.Location = new System.Drawing.Point(25, 53);
+            this.labRef.Location = new System.Drawing.Point(25, 46);
             this.labRef.Name = "labRef";
             this.labRef.Size = new System.Drawing.Size(144, 23);
             this.labRef.TabIndex = 19;
@@ -228,7 +228,7 @@
             this.txtRefno.BackColor = System.Drawing.Color.White;
             this.txtRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "RefNo", true));
             this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno.Location = new System.Drawing.Point(172, 53);
+            this.txtRefno.Location = new System.Drawing.Point(172, 46);
             this.txtRefno.Name = "txtRefno";
             this.txtRefno.Size = new System.Drawing.Size(151, 23);
             this.txtRefno.TabIndex = 20;
@@ -240,7 +240,7 @@
             this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtDesc.Location = new System.Drawing.Point(172, 114);
+            this.txtDesc.Location = new System.Drawing.Point(172, 107);
             this.txtDesc.Name = "txtDesc";
             this.txtDesc.ReadOnly = true;
             this.txtDesc.Size = new System.Drawing.Size(462, 23);
@@ -248,7 +248,7 @@
             // 
             // labDesc
             // 
-            this.labDesc.Location = new System.Drawing.Point(25, 114);
+            this.labDesc.Location = new System.Drawing.Point(25, 107);
             this.labDesc.Name = "labDesc";
             this.labDesc.Size = new System.Drawing.Size(144, 23);
             this.labDesc.TabIndex = 22;
@@ -261,7 +261,7 @@
             this.numUnitPrice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDCUnitPrice", true));
             this.numUnitPrice.DecimalPlaces = 3;
             this.numUnitPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numUnitPrice.Location = new System.Drawing.Point(462, 53);
+            this.numUnitPrice.Location = new System.Drawing.Point(462, 46);
             this.numUnitPrice.Name = "numUnitPrice";
             this.numUnitPrice.NullValue = new decimal(new int[] {
             0,
@@ -278,7 +278,7 @@
             // 
             // labCDCPrice
             // 
-            this.labCDCPrice.Location = new System.Drawing.Point(352, 53);
+            this.labCDCPrice.Location = new System.Drawing.Point(352, 46);
             this.labCDCPrice.Name = "labCDCPrice";
             this.labCDCPrice.Size = new System.Drawing.Size(107, 23);
             this.labCDCPrice.TabIndex = 82;
@@ -288,6 +288,8 @@
             // B62
             // 
             this.ClientSize = new System.Drawing.Size(783, 527);
+            this.DefaultControl = "comboCustomsType";
+            this.DefaultControlForEdit = "comboCustomsType";
             this.GridAlias = "KHCustomsItem_Detail";
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;

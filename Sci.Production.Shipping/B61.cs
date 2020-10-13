@@ -10,14 +10,17 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class B61 : Sci.Win.Tems.Input6
-	{
-		public B61(ToolStripMenuItem menuitem)
+    {
+        /// <inheritdoc/>
+        public B61(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-			InitializeComponent();
-		}
+            this.InitializeComponent();
+        }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings col_PurchaseUnit = new DataGridViewGeneratorTextColumnSettings();
@@ -52,6 +55,7 @@ namespace Sci.Production.Shipping
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             this.txtCustomsDesc.ReadOnly = false;
@@ -59,6 +63,7 @@ namespace Sci.Production.Shipping
             base.ClickNewAfter();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             this.txtCustomsDesc.ReadOnly = true;
@@ -70,6 +75,7 @@ namespace Sci.Production.Shipping
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             this.txtCustomsDesc.ReadOnly = true;
@@ -81,6 +87,7 @@ namespace Sci.Production.Shipping
             base.ClickEditAfter();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUndo()
         {
             this.txtCustomsDesc.ReadOnly = true;
@@ -88,6 +95,7 @@ namespace Sci.Production.Shipping
             base.ClickUndo();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             this.txtCustomsDesc.ReadOnly = true;
@@ -95,6 +103,7 @@ namespace Sci.Production.Shipping
             return base.ClickSave();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.txtCDCUnit.Text) || MyUtility.Check.Empty(this.txtCustomsDesc.Text))
@@ -113,6 +122,7 @@ namespace Sci.Production.Shipping
                     }
                 }
             }
+
             return base.ClickSaveBefore();
         }
     }

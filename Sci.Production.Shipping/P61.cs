@@ -114,8 +114,8 @@ where id2.id = '{masterID}'
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ShipMode_setting = new DataGridViewGeneratorTextColumnSettings();
-            ShipMode_setting.CellValidating += (s, e) =>
+            Ict.Win.DataGridViewGeneratorTextColumnSettings shipMode_setting = new DataGridViewGeneratorTextColumnSettings();
+            shipMode_setting.CellValidating += (s, e) =>
             {
                 if (!this.EditMode || this.CurrentDetailData == null || MyUtility.Check.Empty(e.FormattedValue))
                 {
@@ -136,7 +136,7 @@ where id2.id = '{masterID}'
                 dr.EndEdit();
             };
 
-            ShipMode_setting.EditingMouseDown += (s, e) =>
+            shipMode_setting.EditingMouseDown += (s, e) =>
             {
                 if (this.CurrentDetailData == null || !this.EditMode || this.col_ShipMode.IsEditingReadOnly)
                 {
@@ -159,8 +159,8 @@ where id2.id = '{masterID}'
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings Port_setting = new DataGridViewGeneratorTextColumnSettings();
-            Port_setting.CellValidating += (s, e) =>
+            Ict.Win.DataGridViewGeneratorTextColumnSettings port_setting = new DataGridViewGeneratorTextColumnSettings();
+            port_setting.CellValidating += (s, e) =>
             {
                 if (!this.EditMode || this.CurrentDetailData == null || MyUtility.Check.Empty(e.FormattedValue))
                 {
@@ -181,7 +181,7 @@ where id2.id = '{masterID}'
                 dr.EndEdit();
             };
 
-            Port_setting.EditingMouseDown += (s, e) =>
+            port_setting.EditingMouseDown += (s, e) =>
             {
                 if (this.CurrentDetailData == null || !this.EditMode || this.col_Port.IsEditingReadOnly)
                 {
@@ -204,8 +204,8 @@ where id2.id = '{masterID}'
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings Refno_setting = new DataGridViewGeneratorTextColumnSettings();
-            Refno_setting.CellValidating += (s, e) =>
+            Ict.Win.DataGridViewGeneratorTextColumnSettings refno_setting = new DataGridViewGeneratorTextColumnSettings();
+            refno_setting.CellValidating += (s, e) =>
             {
                 if (!this.EditMode || this.CurrentDetailData == null || MyUtility.Check.Empty(e.FormattedValue))
                 {
@@ -237,7 +237,6 @@ where RefNo='{e.FormattedValue}' and junk=0
                 sqlcmd = $@"
 Select kd.CDCUnit, Ki.CDCUnitPrice,ki.CustomsType
 ,[CustomsDescription] = ki.KHCustomsDescriptionID  
-, [CDCQty] = kdd.Ratio * 1 --沒來源Qty
 , [CDCUnit] = kd.CDCUnit  
 , [CDCUnitPrice] = ki.CDCUnitPrice  
 from view_KHImportItem vk
@@ -250,7 +249,6 @@ where vk.Refno = '{e.FormattedValue}'
                 {
                     dr["CustomsType"] = drSeek["CustomsType"];
                     dr["CustomsDescription"] = drSeek["CustomsDescription"];
-                    dr["CDCQty"] = drSeek["CDCQty"];
                     dr["CDCUnit"] = drSeek["CDCUnit"];
                     dr["CDCUnitPrice"] = drSeek["CDCUnitPrice"];
                 }
@@ -258,7 +256,6 @@ where vk.Refno = '{e.FormattedValue}'
                 {
                     dr["CustomsType"] = string.Empty;
                     dr["CustomsDescription"] = string.Empty;
-                    dr["CDCQty"] = 0;
                     dr["CDCUnit"] = string.Empty;
                     dr["CDCUnitPrice"] = 0;
                 }
@@ -267,7 +264,7 @@ where vk.Refno = '{e.FormattedValue}'
                 dr.EndEdit();
             };
 
-            Refno_setting.EditingMouseDown += (s, e) =>
+            refno_setting.EditingMouseDown += (s, e) =>
             {
                 if (this.CurrentDetailData == null || !this.EditMode || this.col_Refno.IsEditingReadOnly)
                 {
@@ -289,6 +286,49 @@ where vk.Refno = '{e.FormattedValue}'
                     dr.EndEdit();
                 }
             };
+
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings qty_setting = new DataGridViewGeneratorNumericColumnSettings();
+            qty_setting.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode || this.CurrentDetailData == null)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    dr["Qty"] = 0;
+                    dr["CDCQty"] = 0;
+                    dr["CDCAmount"] = 0;
+                    dr.EndEdit();
+                }
+
+                DataRow drSeek;
+                decimal qty = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                string sqlcmd = $@"
+Select [CDCQty] = kdd.Ratio * {qty} 
+, [CDCAmount] = kdd.Ratio * {qty} * ki.CDCUnitPrice  
+from view_KHImportItem vk
+inner join KHCustomsItem ki on vk.Refno=Ki.Refno and vk.CustomsType = ki.CustomsType
+inner join KHCustomsDescription kd on  kd.id=ki.KHCustomsDescriptionID 
+inner join KHCustomsDescription_Detail kdd on  kd.id=kdd.id and kdd.PurchaseUnit = vk.Unit
+where vk.Refno = '{dr["Refno"]}'
+";
+                if (MyUtility.Check.Seek(sqlcmd, out drSeek))
+                {
+                    dr["CDCQty"] = drSeek["CDCQty"];
+                    dr["CDCAmount"] = drSeek["CDCAmount"];
+                }
+                else
+                {
+                    dr["CDCQty"] = 0;
+                    dr["CDCAmount"] = 0;
+                }
+
+                dr["Qty"] = e.FormattedValue;
+                dr.EndEdit();
+            };
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -298,12 +338,12 @@ where vk.Refno = '{e.FormattedValue}'
            .Date("ETA", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_ETA) // Edit on AddRow by hand
            .Date("PortArrival", header: "Arrival Port Date", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_PortDate) // Edit on AddRow by hand
            .Date("WhseArrival", header: "Arrival WH Date", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_WHDate) // Edit on AddRow by hand
-           .Text("ShipModeID", header: "ShipMode", width: Widths.AnsiChars(10), settings: ShipMode_setting, iseditingreadonly: true).Get(out this.col_ShipMode) // Edit on AddRow by hand
+           .Text("ShipModeID", header: "ShipMode", width: Widths.AnsiChars(10), settings: shipMode_setting, iseditingreadonly: true).Get(out this.col_ShipMode) // Edit on AddRow by hand
            .Text("Vessel", header: "Vessel", width: Widths.AnsiChars(25), iseditingreadonly: true).Get(out this.col_Vessel) // Edit on AddRow by hand
-           .Text("ExportPort", header: "Loading (Port)", width: Widths.AnsiChars(15), settings: Port_setting, iseditingreadonly: true).Get(out this.col_Port) // Edit on AddRow by hand
-           .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(23), settings: Refno_setting, iseditingreadonly: true).Get(out this.col_Refno) // Edit on AddRow by hand
+           .Text("ExportPort", header: "Loading (Port)", width: Widths.AnsiChars(15), settings: port_setting, iseditingreadonly: true).Get(out this.col_Port) // Edit on AddRow by hand
+           .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(23), settings: refno_setting, iseditingreadonly: true).Get(out this.col_Refno) // Edit on AddRow by hand
            .Text("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
-           .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true).Get(out this.col_Qty) // Edit on AddRow by hand
+           .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, settings: qty_setting, iseditingreadonly: true).Get(out this.col_Qty) // Edit on AddRow by hand
            .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
            .Numeric("NetKg", header: "N.W.", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true).Get(out this.col_NW) // Edit on AddRow by hand
            .Numeric("WeightKg", header: "G.W.", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true).Get(out this.col_GW) // Edit on AddRow by hand
@@ -343,125 +383,15 @@ where vk.Refno = '{e.FormattedValue}'
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
         }
 
-        private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0 || this.EditMode == false)
-            {
-                return;
-            }
-
-            var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
-            if (data == null)
-            {
-                return;
-            }
-
-            // Unoriginal= true 非原生資料行, Roll,Dyelot不能編輯
-            if (MyUtility.Check.Empty(data["ExportID"]))
-            {
-                this.col_Fty.IsEditingReadOnly = false;
-                this.col_ShipMode.IsEditingReadOnly = false;
-                this.col_Vessel.IsEditingReadOnly = false;
-                this.col_Port.IsEditingReadOnly = false;
-                this.col_Refno.IsEditingReadOnly = false;
-                this.col_ETA.IsEditingReadOnly = false;
-                this.col_PortDate.IsEditingReadOnly = false;
-                this.col_WHDate.IsEditingReadOnly = false;
-                this.col_Qty.IsEditingReadOnly = false;
-                this.col_NW.IsEditingReadOnly = false;
-                this.col_GW.IsEditingReadOnly = false;
-            }
-            else
-            {
-                this.col_Fty.IsEditingReadOnly = true;
-                this.col_ShipMode.IsEditingReadOnly = true;
-                this.col_Vessel.IsEditingReadOnly = true;
-                this.col_Port.IsEditingReadOnly = true;
-                this.col_Refno.IsEditingReadOnly = true;
-                this.col_ETA.IsEditingReadOnly = true;
-                this.col_PortDate.IsEditingReadOnly = true;
-                this.col_WHDate.IsEditingReadOnly = true;
-                this.col_Qty.IsEditingReadOnly = true;
-                this.col_NW.IsEditingReadOnly = true;
-                this.col_GW.IsEditingReadOnly = true;
-            }
-        }
-
-        private void TxtImportPort_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode)
-            {
-                string sqlcmd = @"select ID, Name from Port where CountryID ='KH' and Junk =0";
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "15,20", this.CurrentMaintain["ImportPort"].ToString(), "ID,Name");
-                DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel)
-                {
-                    return;
-                }
-
-                this.CurrentMaintain["ImportPort"] = item.GetSelecteds()[0]["ID"];
-            }
-        }
-
-        private void TxtImportPort_Validating(object sender, CancelEventArgs e)
-        {
-            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode && !MyUtility.Check.Empty(this.CurrentMaintain["ImportPort"]))
-            {
-                DataRow dr;
-                string sqlcmd = $@"select ID, Name from Port where CountryID ='KH' and Junk =0 and id ='{this.CurrentMaintain["ImportPort"]}'";
-                if (!MyUtility.Check.Seek(sqlcmd, out dr))
-                {
-                    MyUtility.Msg.WarningBox("Cannot find this [Discharge(Port)].");
-                    e.Cancel = true;
-                    return;
-                }
-                else
-                {
-                    this.CurrentMaintain["ImportPort"] = dr["ID"];
-                }
-            }
-        }
-
-        private void TxtBLNo_Validating(object sender, CancelEventArgs e)
-        {
-            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode && !MyUtility.Check.Empty(this.txtBLNo.Text))
-            {
-                DataRow dr;
-                string sqlcmd = $@"select DeclareNo from KHImportDeclaration where Blno = '{this.txtBLNo.Text}'";
-                if (MyUtility.Check.Seek(sqlcmd, out dr))
-                {
-                    MyUtility.Msg.WarningBox($"<B/L No> has <Declaration#>: {dr["DeclareNo"]}");
-                    e.Cancel = true;
-                    return;
-                }
-
-                sqlcmd = this.GetDetailData();
-                DataTable dt;
-                DualResult result;
-                if (result = DBProxy.Current.Select(null, sqlcmd, out dt))
-                {
-                    foreach (DataRow item in dt.Rows)
-                    {
-                        item.SetAdded();
-                        ((DataTable)this.detailgridbs.DataSource).ImportRow(item);
-                    }
-                }
-                else
-                {
-                    this.ShowErr(result);
-                    return;
-                }
-            }
-        }
-
         private string GetDetailData()
         {
-            string BlNo = this.txtBLNo.Text;
+            string blNo = this.txtBLNo.Text;
             string sqlcmd = $@"
-declare @BLNo varchar(30) = '{BlNo}'
+declare @BLNo varchar(30) = '{blNo}'
 
 select *
   from (select [ExportID] = e.ID
+             , [BlNo] = e.Blno
              , [Consignee] = e.Consignee 
              , [FactoryID] = e.FactoryID
              , [ETA] = e.Eta
@@ -489,7 +419,8 @@ select *
              , [ActAmount] = (ed.Qty*kdd.Ratio)*kc.CDCUnitPrice  
              , [NWDiff] = (ed.NetKg-ed.NetKg)  
              , [HSCode] = kcd.HSCode  
-             , [ActHSCode] = kcd.HSCode               
+             , [ActHSCode] = kcd.HSCode     
+             , [KHCustomsItemUkey] = kc.Ukey
           from Export e 
           inner join Export_Detail ed on e.id=ed.ID 
           left  join KHCustomsItem kc on kc.RefNo=ed.Refno and CustomsType in ('Fabric', 'Accessory', 'Machine')
@@ -501,6 +432,7 @@ select *
            and e.Blno =@BLNo
          union ALL 
         select [ExportID] = FE.ID  
+             , [BlNo] = fe.Blno
              , [Consignee] = FE.Consignee  
              , [FactoryID] = ''  
              , [ETA] = null  
@@ -529,11 +461,11 @@ select *
              , [NWDiff] = (fed.NetKg-fed.NetKg)  
              , [HSCode] = kcd.HSCode  
              , [ActHSCode] = kcd.HSCode  
-			 
+			 , [KHCustomsItemUkey] = kc.Ukey
           from FtyExport fe 
           inner join FtyExport_Detail fed on fed.id=fe.ID 
           inner join Fabric f2 on f2.SCIRefno =fed.SCIRefno 
-          left  join KHCustomsItem kc on kc.RefNo=fed.Refno and CustomsType in ('Fabric', 'Accessory')
+          left  join KHCustomsItem kc on kc.RefNo=fed.SCIRefno and CustomsType in ('Fabric', 'Accessory')
           left  join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Port=fe.ImportPort        
           left  join KHCustomsDescription kd on kd.ID = kc.KHCustomsDescriptionID          
           left  join KHCustomsDescription_Detail kdd on kd.id=kdd.id and kdd.PurchaseUnit = fed.UnitId 
@@ -571,7 +503,6 @@ select *
             this.numTtlAmount.Value = ttlAmount;
             this.numTtlCDCAmount.Value = ttlCDCAmount;
             this.numDeclAmount.Value = ttlDecAmount;
-
         }
 
         /// <inheritdoc/>
@@ -676,6 +607,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             base.ClickNewAfter();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             // !EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
@@ -717,6 +649,119 @@ where id = '{this.CurrentMaintain["ID"]}'
         {
             this.txtBLNo.ReadOnly = readOnly;
             this.txtImportPort.ReadOnly = readOnly;
+        }
+
+        private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || this.EditMode == false)
+            {
+                return;
+            }
+
+            var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null)
+            {
+                return;
+            }
+
+            // Unoriginal= true 非原生資料行, Roll,Dyelot不能編輯
+            if (MyUtility.Check.Empty(data["ExportID"]))
+            {
+                this.col_Fty.IsEditingReadOnly = false;
+                this.col_ShipMode.IsEditingReadOnly = false;
+                this.col_Vessel.IsEditingReadOnly = false;
+                this.col_Port.IsEditingReadOnly = false;
+                this.col_Refno.IsEditingReadOnly = false;
+                this.col_ETA.IsEditingReadOnly = false;
+                this.col_PortDate.IsEditingReadOnly = false;
+                this.col_WHDate.IsEditingReadOnly = false;
+                this.col_Qty.IsEditingReadOnly = false;
+                this.col_NW.IsEditingReadOnly = false;
+                this.col_GW.IsEditingReadOnly = false;
+            }
+            else
+            {
+                this.col_Fty.IsEditingReadOnly = true;
+                this.col_ShipMode.IsEditingReadOnly = true;
+                this.col_Vessel.IsEditingReadOnly = true;
+                this.col_Port.IsEditingReadOnly = true;
+                this.col_Refno.IsEditingReadOnly = true;
+                this.col_ETA.IsEditingReadOnly = true;
+                this.col_PortDate.IsEditingReadOnly = true;
+                this.col_WHDate.IsEditingReadOnly = true;
+                this.col_Qty.IsEditingReadOnly = true;
+                this.col_NW.IsEditingReadOnly = true;
+                this.col_GW.IsEditingReadOnly = true;
+            }
+        }
+
+        private void TxtImportPort_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode)
+            {
+                string sqlcmd = @"select ID, Name from Port where CountryID ='KH' and Junk =0";
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "15,20", this.CurrentMaintain["ImportPort"].ToString(), "ID,Name");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.CurrentMaintain["ImportPort"] = item.GetSelecteds()[0]["ID"];
+            }
+        }
+
+        private void TxtImportPort_Validating(object sender, CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode && !MyUtility.Check.Empty(this.txtImportPort.Text))
+            {
+                DataRow dr;
+                string sqlcmd = $@"select ID, Name from Port where CountryID ='KH' and Junk =0 and id ='{this.txtImportPort.Text}'";
+                if (!MyUtility.Check.Seek(sqlcmd, out dr))
+                {
+                    MyUtility.Msg.WarningBox("Cannot find this [Discharge(Port)].");
+                    this.txtImportPort.Select();
+                    e.Cancel = true;
+                    return;
+                }
+                else
+                {
+                    this.CurrentMaintain["ImportPort"] = this.txtImportPort.Text;
+                }
+            }
+        }
+
+        private void TxtBLNo_Validating(object sender, CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode && !MyUtility.Check.Empty(this.txtBLNo.Text))
+            {
+                DataRow dr;
+                string sqlcmd = $@"select DeclareNo from KHImportDeclaration where Blno = '{this.txtBLNo.Text}'";
+                if (MyUtility.Check.Seek(sqlcmd, out dr))
+                {
+                    MyUtility.Msg.WarningBox($"<B/L No> has <Declaration#>: {dr["DeclareNo"]}");
+                    this.txtBLNo.Select();
+                    e.Cancel = true;
+                    return;
+                }
+
+                sqlcmd = this.GetDetailData();
+                DataTable dt;
+                DualResult result;
+                if (result = DBProxy.Current.Select(null, sqlcmd, out dt))
+                {
+                    foreach (DataRow item in dt.Rows)
+                    {
+                        item.SetAdded();
+                        ((DataTable)this.detailgridbs.DataSource).ImportRow(item);
+                    }
+                }
+                else
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+            }
         }
     }
 }

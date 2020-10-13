@@ -2543,6 +2543,15 @@
     <Build Include="dbo\CLR Store Procedures\SentSubprocessToAGV.sql" />
     <Build Include="dbo\CLR Store Procedures\SentJsonToAGV.sql" />
     <Build Include="dbo\CLR Store Procedures\SentJsonFromAutomationErrMsg.sql" />
+    <Build Include="dbo\Tables\KHImportDeclaration_Detail.sql" />
+    <Build Include="dbo\Tables\KHImportDeclaration.sql" />
+    <Build Include="dbo\Tables\KHExportDeclaration_Detail.sql" />
+    <Build Include="dbo\Tables\KHExportDeclaration.sql" />
+    <Build Include="dbo\Tables\KHCustomsItem_Detail.sql" />
+    <Build Include="dbo\Tables\KHCustomsItem.sql" />
+    <Build Include="dbo\Tables\KHCustomsDescription_Detail.sql" />
+    <Build Include="dbo\Tables\KHCustomsDescription.sql" />
+    <Build Include="dbo\Views\view_KHImportItem.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

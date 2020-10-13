@@ -98,7 +98,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labID);
             this.masterpanel.Controls.Add(this.dateCDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 161);
+            this.masterpanel.Size = new System.Drawing.Size(892, 161);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labID, 0);
@@ -131,7 +131,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 161);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 297);
+            this.detailpanel.Size = new System.Drawing.Size(892, 188);
             // 
             // gridicon
             // 
@@ -139,7 +139,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 297);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 188);
             // 
             // detail2
             // 
@@ -152,19 +152,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1000, 496);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 458);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 458);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
@@ -202,7 +189,7 @@
             this.txtBLNo.Name = "txtBLNo";
             this.txtBLNo.ReadOnly = true;
             this.txtBLNo.Size = new System.Drawing.Size(114, 23);
-            this.txtBLNo.TabIndex = 6;
+            this.txtBLNo.TabIndex = 0;
             this.txtBLNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBLNo_Validating);
             // 
             // labBLNo
@@ -221,7 +208,7 @@
             this.txtDeclareNo.Location = new System.Drawing.Point(138, 90);
             this.txtDeclareNo.Name = "txtDeclareNo";
             this.txtDeclareNo.Size = new System.Drawing.Size(114, 23);
-            this.txtDeclareNo.TabIndex = 11;
+            this.txtDeclareNo.TabIndex = 2;
             // 
             // labDeclareNo
             // 
@@ -241,7 +228,7 @@
             this.txtImportPort.Name = "txtImportPort";
             this.txtImportPort.ReadOnly = true;
             this.txtImportPort.Size = new System.Drawing.Size(114, 23);
-            this.txtImportPort.TabIndex = 13;
+            this.txtImportPort.TabIndex = 4;
             this.txtImportPort.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtImportPort_PopUp);
             this.txtImportPort.Validating += new System.ComponentModel.CancelEventHandler(this.TxtImportPort_Validating);
             // 
@@ -279,7 +266,7 @@
             0});
             this.numTtlNW.ReadOnly = true;
             this.numTtlNW.Size = new System.Drawing.Size(69, 23);
-            this.numTtlNW.TabIndex = 46;
+            this.numTtlNW.TabIndex = 5;
             this.numTtlNW.Value = new decimal(new int[] {
             0,
             0,
@@ -309,7 +296,7 @@
             0});
             this.numTtlDeclNW.ReadOnly = true;
             this.numTtlDeclNW.Size = new System.Drawing.Size(69, 23);
-            this.numTtlDeclNW.TabIndex = 48;
+            this.numTtlDeclNW.TabIndex = 7;
             this.numTtlDeclNW.Value = new decimal(new int[] {
             0,
             0,
@@ -339,7 +326,7 @@
             0});
             this.numTtlAmount.ReadOnly = true;
             this.numTtlAmount.Size = new System.Drawing.Size(90, 23);
-            this.numTtlAmount.TabIndex = 50;
+            this.numTtlAmount.TabIndex = 9;
             this.numTtlAmount.Value = new decimal(new int[] {
             0,
             0,
@@ -369,7 +356,7 @@
             0});
             this.numDeclAmount.ReadOnly = true;
             this.numDeclAmount.Size = new System.Drawing.Size(90, 23);
-            this.numDeclAmount.TabIndex = 52;
+            this.numDeclAmount.TabIndex = 10;
             this.numDeclAmount.Value = new decimal(new int[] {
             0,
             0,
@@ -399,7 +386,7 @@
             0});
             this.numTtlCDCAmount.ReadOnly = true;
             this.numTtlCDCAmount.Size = new System.Drawing.Size(90, 23);
-            this.numTtlCDCAmount.TabIndex = 54;
+            this.numTtlCDCAmount.TabIndex = 11;
             this.numTtlCDCAmount.Value = new decimal(new int[] {
             0,
             0,
@@ -429,7 +416,7 @@
             0});
             this.numTtlGW.ReadOnly = true;
             this.numTtlGW.Size = new System.Drawing.Size(72, 23);
-            this.numTtlGW.TabIndex = 57;
+            this.numTtlGW.TabIndex = 6;
             this.numTtlGW.Value = new decimal(new int[] {
             0,
             0,
@@ -442,7 +429,7 @@
             this.label2.Location = new System.Drawing.Point(578, 38);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(16, 23);
-            this.label2.TabIndex = 58;
+            this.label2.TabIndex = 12;
             this.label2.Text = "/";
             this.label2.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             this.label2.TextStyle.Color = System.Drawing.Color.Black;
@@ -453,7 +440,7 @@
             this.label3.Location = new System.Drawing.Point(578, 64);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(16, 23);
-            this.label3.TabIndex = 60;
+            this.label3.TabIndex = 13;
             this.label3.Text = "/";
             this.label3.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             this.label3.TextStyle.Color = System.Drawing.Color.Black;
@@ -473,7 +460,7 @@
             0});
             this.numTtlDeclGW.ReadOnly = true;
             this.numTtlDeclGW.Size = new System.Drawing.Size(72, 23);
-            this.numTtlDeclGW.TabIndex = 59;
+            this.numTtlDeclGW.TabIndex = 8;
             this.numTtlDeclGW.Value = new decimal(new int[] {
             0,
             0,
@@ -496,7 +483,7 @@
             this.txtRemark.Location = new System.Drawing.Point(138, 116);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(460, 23);
-            this.txtRemark.TabIndex = 61;
+            this.txtRemark.TabIndex = 3;
             // 
             // labDecDate
             // 
@@ -512,18 +499,19 @@
             this.dateCDate.Location = new System.Drawing.Point(138, 64);
             this.dateCDate.Name = "dateCDate";
             this.dateCDate.Size = new System.Drawing.Size(110, 23);
-            this.dateCDate.TabIndex = 64;
+            this.dateCDate.TabIndex = 1;
             // 
             // P61
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1008, 558);
+            this.DefaultControl = "txtBLNo";
+            this.DefaultControlForEdit = "dateCDate";
             this.Grid2New = 0;
             this.GridAlias = "KHImportDeclaration_Detail";
             this.GridNew = 0;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
