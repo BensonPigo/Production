@@ -1838,6 +1838,7 @@ INNER JOIN ShippingMarkCombination comb ON comb.Ukey = s.ShippingMarkCombination
 WHERE p.ID = '{item.PackingListID}'
 AND pd.RefNo = '{item.RefNo}'
 AND comb.IsMixPack=0
+AND comb.Category='PIC'
 AND NOT EXISTS (SELECT 1 FROM #MixCarton0 WHERE PackingListID=p.ID AND Ukey=pd.Ukey)
 UNION
 SELECT DISTINCT [StickerCombinationUkey]=s.ShippingMarkCombinationUkey,p.BrandID,pd.RefNo, [PackingListID]=p.ID
@@ -1848,6 +1849,7 @@ INNER JOIN ShippingMarkCombination comb ON comb.Ukey = s.ShippingMarkCombination
 WHERE p.ID = '{item.PackingListID}'
 AND pd.RefNo = '{item.RefNo}'
 AND comb.IsMixPack=1
+AND comb.Category='PIC'
 AND EXISTS (SELECT 1 FROM #MixCarton0 WHERE PackingListID=p.ID AND Ukey=pd.Ukey)
 
 ----寫入ShippingMarkPic 表頭
@@ -2230,7 +2232,7 @@ SELECT DISTINCT [StickerCombinationUkey]=ISNULL(c.StickerCombinationUkey_MixPack
 ,	(
 	SELECT Ukey 
 	FROM ShippingMarkCombination
-	WHERE BrandID = p.BrandID AND Category='PIC'  AND IsDefault = 1 AND IsMixPack = 1
+	WHERE BrandID = p.BrandID AND IsDefault = 1 AND IsMixPack = 1 AND Category='PIC'
 	)
 ),[IsMixPack]=1 ,p.BrandID,p.RefNo
 INTO #tmp
@@ -2317,7 +2319,7 @@ SELECT DISTINCT [StickerCombinationUkey]=ISNULL(c.StickerCombinationUkey
 ,	(
 	SELECT Ukey 
 	FROM ShippingMarkCombination
-	WHERE BrandID = p.BrandID AND IsDefault = 1 AND IsMixPack = 0
+	WHERE BrandID = p.BrandID AND IsDefault = 1 AND IsMixPack = 0 AND Category='PIC'
 	)
 ),[IsMixPack]=0 ,p.BrandID,p.RefNo
 INTO #tmp
