@@ -263,7 +263,7 @@ namespace Sci.Production.Cutting
                         if (!returnResult)
                         {
                             transactionscope.Dispose();
-                            this.ShowErr(upResult);
+                            this.ShowErr(returnResult);
                             return;
                         }
                     }
@@ -340,7 +340,7 @@ namespace Sci.Production.Cutting
                     if (!returnResult)
                     {
                         transactionscope.Dispose();
-                        this.ShowErr(upResult);
+                        this.ShowErr(returnResult);
                         return;
                     }
 
