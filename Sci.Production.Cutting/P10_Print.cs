@@ -366,6 +366,9 @@ order by x.[Bundle]");
                 else
                 {
                     sqlcmd = string.Format(@"
+declare @extend varchar(1) = @extend_p
+,@ID varchar(13) = @ID_p
+
 select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
 from (
 	select b.id [Bundle_ID]
