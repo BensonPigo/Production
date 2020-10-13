@@ -1145,6 +1145,13 @@ AND s.ShipGroup <> (
         {
             base.ClickUnconfirm();
 
+            string sqlchk = $@"select 1 from Express where status = 'Approved' and id = '{this.CurrentMaintain["ExpressID"]}'";
+            if (MyUtility.Check.Seek(sqlchk))
+            {
+                MyUtility.Msg.WarningBox("HC No. Already confirm, This P/L can't be unconfirm.");
+                return;
+            }
+
             // 如果Pullout Report已被Confirmed就不可以做UnConfirm
             this.sqlCmd = string.Format(
                 @"select p.Status
