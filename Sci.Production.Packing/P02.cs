@@ -2862,6 +2862,7 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
                 {
                     if (!result)
                     {
+                        transaction.Dispose();
                         throw result.GetException();
                     }
 
@@ -2869,18 +2870,21 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
                     result = Prgs.UpdateOrdersCTN(this.CurrentMaintain["OrderID"].ToString());
                     if (!result)
                     {
+                        transaction.Dispose();
                         throw result.GetException();
                     }
 
                     result = Prgs.CreateOrderCTNData(this.CurrentMaintain["ID"].ToString());
                     if (!result)
                     {
+                        transaction.Dispose();
                         throw result.GetException();
                     }
 
                     result = Prgs.PackingP02CreateSCICtnNo(this.CurrentMaintain["ID"].ToString());
                     if (!result)
                     {
+                        transaction.Dispose();
                         throw result.GetException();
                     }
 
@@ -2889,6 +2893,7 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
                     result = Prgs.UpdPackingListCTNBookingAndArrive(this.CurrentMaintain["ID"].ToString(), dtBooking, dtArrived);
                     if (!result)
                     {
+                        transaction.Dispose();
                         throw result.GetException();
                     }
 
@@ -2897,6 +2902,7 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
                 }
                 catch (Exception ex)
                 {
+                    transaction.Dispose();
                     result = new DualResult(false, "Commit transaction error.", ex);
                 }
             }

@@ -551,6 +551,7 @@ where SCICtnNo = '{dr["SCICtnNo"]}'
                 }
 
                 transactionScope.Complete();
+                transactionScope.Dispose();
                 MyUtility.Msg.InfoBox("Repack success.\r\n New PackID:" + newPackID);
                 this.DialogResult = DialogResult.Yes;
                 this.Close();

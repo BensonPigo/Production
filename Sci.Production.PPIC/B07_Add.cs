@@ -114,7 +114,6 @@ Values('{0}','{1}','{2}','{3}','{4}','{5}');",
                         if (insertReturnResult)
                         {
                             transactionScope.Complete();
-                            transactionScope.Dispose();
                             this.DialogResult = System.Windows.Forms.DialogResult.OK;
                         }
                         else

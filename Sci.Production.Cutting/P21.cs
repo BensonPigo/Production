@@ -395,7 +395,9 @@ WHERE 1=0
                     returnResult = DBProxy.Current.Inserts(null, tableSchema, noEmptyData);
                     if (!returnResult)
                     {
-                        throw new Exception(returnResult.Messages.ToString());
+                        transactionscope.Dispose();
+                        this.ShowErr(returnResult);
+                        return;
                     }
 
                     transactionscope.Complete();

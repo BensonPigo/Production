@@ -281,8 +281,8 @@ insert into PackErrTransfer(TransferDate,MDivisionID,OrderID,PackingListID,CTNSt
                         updateResult = DBProxy.Current.Execute(null, saveSql);
                         if (!updateResult)
                         {
-                            this.ShowErr(updateResult);
                             updateScope.Dispose();
+                            this.ShowErr(updateResult);
                             this.HideWaitMessage();
                             return;
                         }
@@ -293,8 +293,8 @@ insert into PackErrTransfer(TransferDate,MDivisionID,OrderID,PackingListID,CTNSt
                             bool isOkUpdateOrdersCTN = PublicPrg.Prgs.UpdateOrdersCTN(orderID);
                             if (!isOkUpdateOrdersCTN)
                             {
-                                MyUtility.Msg.WarningBox("Update OrdersCTN Fail..");
                                 updateScope.Dispose();
+                                MyUtility.Msg.WarningBox("Update OrdersCTN Fail..");
                                 this.HideWaitMessage();
                                 return;
                             }
@@ -308,6 +308,7 @@ insert into PackErrTransfer(TransferDate,MDivisionID,OrderID,PackingListID,CTNSt
                         this.dtPackErrTransfer.Rows.Remove(item);
                     }
 
+                    updateScope.Dispose();
                     MyUtility.Msg.InfoBox("Save successfully");
                     this.HideWaitMessage();
                 }

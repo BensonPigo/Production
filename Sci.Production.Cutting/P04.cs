@@ -243,61 +243,47 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
             #endregion
             #region transaction
             DualResult upResult;
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
+            using (TransactionScope transactionscope = new TransactionScope())
             {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, updSql)))
-                    {
-                        throw new Exception(upResult.Messages.ToString());
-                    }
-
-                    if (!(upResult = DBProxy.Current.Execute(null, insert_cons)))
-                    {
-                        throw new Exception(upResult.Messages.ToString());
-                    }
-
-                    if (insertmk != string.Empty)
-                    {
-                        if (!(upResult = DBProxy.Current.Execute(null, insertmk)))
-                        {
-                            throw new Exception(upResult.Messages.ToString());
-                        }
-                    }
-
-                    if (insert_mark2 != string.Empty)
-                    {
-                        if (!(upResult = DBProxy.Current.Execute(null, insert_mark2)))
-                        {
-                            throw new Exception(upResult.Messages.ToString());
-                        }
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                    this.SentToGensong_AutoWHFabric();
-                }
-                catch (Exception ex)
+                if (!(upResult = DBProxy.Current.Execute(null, updSql)))
                 {
                     transactionscope.Dispose();
-                    upResult = new DualResult(false, "Commit transaction error.", ex);
+                    this.ShowErr(upResult);
+                    return;
                 }
+
+                if (!(upResult = DBProxy.Current.Execute(null, insert_cons)))
+                {
+                    transactionscope.Dispose();
+                    this.ShowErr(upResult);
+                    return;
+                }
+
+                if (insertmk != string.Empty)
+                {
+                    if (!(upResult = DBProxy.Current.Execute(null, insertmk)))
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(upResult);
+                        return;
+                    }
+                }
+
+                if (insert_mark2 != string.Empty)
+                {
+                    if (!(upResult = DBProxy.Current.Execute(null, insert_mark2)))
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(upResult);
+                        return;
+                    }
+                }
+
+                transactionscope.Complete();
             }
 
-            if (!upResult)
-            {
-                this.ShowErr(upResult);
-                return;
-            }
-            else
-            {
-                MyUtility.Msg.InfoBox("Successfully");
-            }
-
-            transactionscope.Dispose();
-            transactionscope = null;
-
+            this.SentToGensong_AutoWHFabric();
+            MyUtility.Msg.InfoBox("Successfully");
             #endregion
         }
 
@@ -339,38 +325,20 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
             #endregion
             string updSql = string.Format("Delete cutplan_Detail_Cons where id ='{1}';update Cutplan set Status = 'New', editdate = getdate(), editname = '{0}' Where id='{1}'", this.loginID, this.CurrentMaintain["ID"]);
             DualResult upResult;
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
+            using (TransactionScope transactionscope = new TransactionScope())
             {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, updSql)))
-                    {
-                        throw new Exception(upResult.Messages.ToString());
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                    this.SentToGensong_AutoWHFabric();
-                }
-                catch (Exception ex)
+                if (!(upResult = DBProxy.Current.Execute(null, updSql)))
                 {
                     transactionscope.Dispose();
-                    upResult = new DualResult(false, "Commit transaction error.", ex);
+                    this.ShowErr(upResult);
+                    return;
                 }
+
+                transactionscope.Complete();
             }
 
-            if (!upResult)
-            {
-                this.ShowErr(upResult);
-            }
-            else
-            {
-                MyUtility.Msg.WarningBox("Successfully");
-            }
-
-            transactionscope.Dispose();
-            transactionscope = null;
+            this.SentToGensong_AutoWHFabric();
+            MyUtility.Msg.WarningBox("Successfully");
         }
 
         private void SentToGensong_AutoWHFabric()

@@ -272,11 +272,7 @@ where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and m
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
             {
-                if (!(upResult = DBProxy.Current.Execute(null, iu)))
-                {
-                    transactionscope.Dispose();
-                }
-                else
+                if (upResult = DBProxy.Current.Execute(null, iu))
                 {
                     transactionscope.Complete();
                 }

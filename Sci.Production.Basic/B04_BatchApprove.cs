@@ -259,15 +259,16 @@ when matched then update set
 ;
 ";
 
-            using (TransactionScope scope = new TransactionScope())
+            using (TransactionScope transactionscope = new TransactionScope())
             {
                 if (!(upResult = MyUtility.Tool.ProcessWithDatatable(dt, "ID,PKey", updSql, out dt)))
                 {
+                    transactionscope.Dispose();
                     this.ShowErr(upResult);
                     return;
                 }
 
-                scope.Complete();
+                transactionscope.Complete();
             }
 
             MyUtility.Msg.InfoBox("Success!");

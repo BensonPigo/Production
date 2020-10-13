@@ -238,7 +238,6 @@ where Ukey in (select PackingList_Detail_Ukey from #tmp)
                     }
                 }
 
-                transactionscope = null;
                 #endregion
 
                 // this.Query();

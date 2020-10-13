@@ -584,9 +584,6 @@ on cutting.id = f.ID",
                     return;
                 }
             }
-
-            transactionscope.Dispose();
-            transactionscope = null;
             #endregion
             #region 找出需新增或update 的Cutting
             DataTable cuttingtb;

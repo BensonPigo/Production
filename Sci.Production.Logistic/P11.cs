@@ -215,8 +215,8 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
                     result = DBProxy.Current.Execute(null, updateCMD);
                     if (!result)
                     {
-                        this.ShowErr(result);
                         transactionScope.Dispose();
+                        this.ShowErr(result);
                         return;
                     }
 
@@ -233,20 +233,22 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
                     result = Prgs.UpdateOrdersCTN(dtOrderID);
                     if (!result)
                     {
-                        this.ShowErr(result);
                         transactionScope.Dispose();
+                        this.ShowErr(result);
                         return;
                     }
 
                     transactionScope.Complete();
-                    MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
                     transactionScope.Dispose();
                     this.ShowErr(ex);
+                    return;
                 }
             }
+
+            MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
         /// <inheritdoc/>
@@ -292,14 +294,16 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
                     }
 
                     transactionScope.Complete();
-                    MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
                 {
                     transactionScope.Dispose();
                     this.ShowErr(ex);
+                    return;
                 }
             }
+
+            MyUtility.Msg.InfoBox("UnConfirmed successful");
         }
 
         private void BtnImport_Click(object sender, EventArgs e)

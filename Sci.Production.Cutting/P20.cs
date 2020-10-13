@@ -610,19 +610,10 @@ and a.MDivisionId = '{Env.User.Keyword}'
             };
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt))
             {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, update)))
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr(upResult);
-                        return;
-                    }
-                }
-                catch (Exception ex)
+                if (!(upResult = DBProxy.Current.Execute(null, update)))
                 {
                     transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
+                    this.ShowErr(upResult);
                     return;
                 }
 
@@ -655,19 +646,10 @@ and a.MDivisionId = '{Env.User.Keyword}'
             };
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt))
             {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, update)))
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr(upResult);
-                        return;
-                    }
-                }
-                catch (Exception ex)
+                if (!(upResult = DBProxy.Current.Execute(null, update)))
                 {
                     transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
+                    this.ShowErr(upResult);
                     return;
                 }
 

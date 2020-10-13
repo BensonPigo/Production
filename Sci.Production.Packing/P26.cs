@@ -1768,13 +1768,13 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                 }
                 catch (Exception ex)
                 {
+                    transactionscope.Dispose();
                     DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
                     foreach (DataRow dr in dt.Rows)
                     {
                         dr["Result"] = "Fail";
                     }
 
-                    transactionscope.Dispose();
                     this.ShowErr(ex);
                 }
             }
