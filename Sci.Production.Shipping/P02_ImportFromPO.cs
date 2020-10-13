@@ -266,9 +266,11 @@ insert into Express_Detail(ID,OrderID,Seq1,Seq2,Qty,NW,CTNNo,Category,SuppID,Pri
 
             // ISP20201574 檢查 SP#, Seq1, Seq2, CTN No., Category = (DB 固定 4, 顯示 Material) 重複. A.勾選重複, B.DB與勾選重複
             string sqlcmd = $@"
-select ID,Seq1,Seq2,CTNNo
+select distinct ID,Seq1,Seq2,CTNNo
 from(
     select t.ID,t.Seq1,t.Seq2,t.CTNNo from #tmp t
+    group by ID,Seq1,Seq2,CTNNo
+    having count(1) >1
 
     union
     select t.ID, t.Seq1, t.Seq2, t.CTNNo
@@ -277,8 +279,6 @@ from(
         and t.expressID = ed.id
     where ed.Category = '4'
 )x
-group by ID,Seq1,Seq2,CTNNo
-having count(1) >1
 ";
             DualResult result = MyUtility.Tool.ProcessWithDatatable(sourcedt, string.Empty, sqlcmd, out DataTable checkData);
             if (!result)
