@@ -245,72 +245,74 @@ select
 	,t.ExportId
 	,t.InvNo
 	,t.WhseArrival
-	,SUM(t.StockQty) AS StockQty1
-    ,[InvStock] = SUM(t.InvStock)
-    ,[BulkStock] = SUM(t.BulkStock)
-	,[BalanceQty]=IIF(BalanceQty.BalanceQty=0,NULL,BalanceQty.BalanceQty)
-	,t.TotalRollsCalculated
+	,[StockQty1] = t.StockQty
+    ,[InvStock] = t.InvStock
+    ,[BulkStock] = t.BulkStock
+	,[BalanceQty] = IIF(BalanceQty.BalanceQty=0,NULL,BalanceQty.BalanceQty)
+	,[TotalRollsCalculated] = t.TotalRollsCalculated
     ,mp.ALocation
     ,LT.BulkLocationDate
 	,mp.BLocation	
 	,[MinSciDelivery] = (SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))
-	,[MinBuyerDelivery] = (SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category)),
-	F.Refno,C.Description,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier,
-	C.WeaveTypeID,
-	IIF(F.Nonphysical = 1,'Y',' ')[N/A Physical],
-	F.Result,
-	F.Physical,
-	[PhysicalInspector] = (select name from Pass1 where id = f.PhysicalInspector),
-	F.PhysicalDate,
-	fta.ActualYds,
-    [InspectionRate] = ROUND(iif(SUM(t.StockQty) = 0,0,CAST (fta.ActualYds/SUM(t.StockQty) AS FLOAT)) ,3),
-	ftp.TotalPoint,
-	F.Weight,
-	[WeightInspector] = (select name from Pass1 where id = f.WeightInspector),
-	F.WeightDate,
-	F.ShadeBond,
-	[ShadeboneInspector] = (select name from Pass1 where id = f.ShadeboneInspector),
-	F.ShadeBondDate,
-	F.Continuity,
-	[ContinuityInspector] = (select name from Pass1 where id = f.ContinuityInspector),
-	F.ContinuityDate,
-	F.Odor,
-	[OdorInspector] = (select name from Pass1 where id = f.OdorInspector),
-	F.OdorDate,
-	L.Result AS Result2,
-	IIF(L.nonCrocking=1,'Y',' ')[N/A Crocking],
-	LC.Crocking,
-	fl.CrockingInspector,
-	LC.CrockingDate,
-	IIF(L.nonHeat=1,'Y',' ')[N/A Heat Shrinkage],
-	LH.Heat,
-	fl.HeatInspector,
-	LH.HeatDate,
-	IIF(L.nonWash=1,'Y',' ' )[N/A Wash Shrinkage],
-	LW.Wash,
-	fl.WashInspector,
-	LW.WashDate,
-	V.Result AS RESULT3,
-	[OvenInspector] = v.Name,
-	CFD.Result AS RESULT4,
-	[CFInspector] = cfd.Name,
-    ps1.LocalMR
+	,[MinBuyerDelivery] = (SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category))
+	,F.Refno,C.Description,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier
+	,C.WeaveTypeID
+	,[N/A Physical] = IIF(F.Nonphysical = 1,'Y',' ')
+	,F.Result
+	,F.Physical
+	,[PhysicalInspector] = (select name from Pass1 where id = f.PhysicalInspector)
+	,F.PhysicalDate
+	,fta.ActualYds
+	,[InspectionRate] = ROUND(iif(t.StockQty = 0,0,CAST (fta.ActualYds/t.StockQty AS FLOAT)) ,3)
+	,ftp.TotalPoint
+	,F.Weight
+	,[WeightInspector] = (select name from Pass1 where id = f.WeightInspector)
+	,F.WeightDate
+	,F.ShadeBond
+	,[ShadeboneInspector] = (select name from Pass1 where id = f.ShadeboneInspector)
+	,F.ShadeBondDate
+	,F.Continuity
+	,[ContinuityInspector] = (select name from Pass1 where id = f.ContinuityInspector)
+	,F.ContinuityDate
+	,F.Odor
+	,[OdorInspector] = (select name from Pass1 where id = f.OdorInspector)
+	,F.OdorDate
+	,[Result2] = L.Result
+	,[N/A Crocking] = IIF(L.nonCrocking=1,'Y',' ')
+	,LC.Crocking
+	,fl.CrockingInspector
+	,LC.CrockingDate
+	,[N/A Heat Shrinkage] = IIF(L.nonHeat=1,'Y',' ')
+	,LH.Heat
+	,fl.HeatInspector
+	,LH.HeatDate
+	,[N/A Wash Shrinkage] = IIF(L.nonWash=1,'Y',' ' )
+	,LW.Wash
+	,fl.WashInspector
+	,LW.WashDate
+	,RESULT3 = V.Result
+	,[OvenInspector] = v2.Name
+	,RESULT4 = CFD.Result
+	,[CFInspector] = cfd2.Name
+	,ps1.LocalMR
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
 cross apply(
-    select rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty,
-			TotalRollsCalculated=sum(iif(RD.StockQty>0,1,0)) over (partition by rd.id,rd.PoId,RD.seq1,RD.seq2,rd.ExportId),
-            [InvStock] = iif(rd.StockType = 'I', RD.StockQty, 0),
-            [BulkStock] = iif(rd.StockType = 'B', RD.StockQty, 0)
-    --into #AllReceivingDetail
-    from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
-    where rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Id=F.ReceivingID
-        {rWhere.Replace("where", "AND")}
+	select rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2
+	,[StockQty] = sum(RD.StockQty)
+	,[InvStock] = iif(rd.StockType = 'I', sum(RD.StockQty), 0)
+	,[BulkStock] = iif(rd.StockType = 'B', sum(RD.StockQty), 0)
+    ,TotalRollsCalculated = count(1)
+	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
+	where rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Id=F.ReceivingID
+    {rWhere.Replace("where", "AND")}
+    group by rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,rd.StockType
 ) t
---inner join #AllReceivingDetail t  on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2 AND T.Id=F.ReceivingID
-inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id from dbo.Orders o WITH (NOLOCK)  
-            {oWhere}
-		    ) O on O.id = F.POID
+inner join (
+    select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id 
+    from dbo.Orders o WITH (NOLOCK)  
+    {oWhere}
+) O on O.id = F.POID
 inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
 inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
 inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
@@ -339,17 +341,61 @@ OUTER APPLY(
 		AND L.ID = F.ID AND L.SEQ1 = F.SEQ1 AND L.SEQ2 = F.SEQ2
 		)LW
 OUTER APPLY(
-        select od.Result, pass1.name from dbo.Oven ov WITH (NOLOCK) 
-        inner join dbo.Oven_Detail od WITH (NOLOCK) on od.ID = ov.ID
-        left join pass1 WITH (NOLOCK) on pass1.id = ov.Inspector
-        where ov.POID=F.POID and od.SEQ1=F.Seq1 and seq2=F.Seq2 and ov.Status='Confirmed'
-        )V
+select Result = Stuff((
+		select concat(',',Result)
+		from (
+			select distinct od.Result 
+			from dbo.Oven ov WITH (NOLOCK) 
+			inner join dbo.Oven_Detail od WITH (NOLOCK) on od.ID = ov.ID
+			left join pass1 WITH (NOLOCK) on pass1.id = ov.Inspector
+			where ov.POID=F.POID and od.SEQ1=F.Seq1 and seq2=F.Seq2 
+			and ov.Status='Confirmed'
+		) s
+		for xml path ('')
+	) , 1, 1, '')
+)V
 OUTER APPLY(
-        select distinct cd.Result, pass1.name from dbo.ColorFastness CF WITH (NOLOCK) 
-        inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
-        left join pass1 WITH (NOLOCK) on pass1.id = cf.Inspector
-        where CF.Status = 'Confirmed' and CF.POID=F.POID and cd.SEQ1=F.Seq1 and cd.seq2=F.Seq2
-        )CFD
+select [name ]= Stuff((
+		select concat(',',name)
+		from (
+			select distinct pass1.name 
+			from dbo.Oven ov WITH (NOLOCK) 
+			inner join dbo.Oven_Detail od WITH (NOLOCK) on od.ID = ov.ID
+			left join pass1 WITH (NOLOCK) on pass1.id = ov.Inspector
+			where ov.POID=F.POID and od.SEQ1=F.Seq1 and seq2=F.Seq2 
+			and ov.Status='Confirmed'
+		) s
+		for xml path ('')
+	) , 1, 1, '')
+)V2
+OUTER APPLY(
+select Result = Stuff((
+		select concat(',',Result)
+		from (
+			select distinct cd.Result
+			from dbo.ColorFastness CF WITH (NOLOCK) 
+			inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
+			left join pass1 WITH (NOLOCK) on pass1.id = cf.Inspector
+			where CF.Status = 'Confirmed' 
+			and CF.POID=F.POID and cd.SEQ1=F.Seq1 and cd.seq2=F.Seq2
+		) s
+		for xml path ('')
+	) , 1, 1, '')
+)CFD
+OUTER APPLY(
+select Name = Stuff((
+		select concat(',',Name)
+		from (
+			select distinct Pass1.Name
+			from dbo.ColorFastness CF WITH (NOLOCK) 
+			inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
+			left join pass1 WITH (NOLOCK) on pass1.id = cf.Inspector
+			where CF.Status = 'Confirmed' 
+			and CF.POID=F.POID and cd.SEQ1=F.Seq1 and cd.seq2=F.Seq2
+		) s
+		for xml path ('')
+	) , 1, 1, '')
+)CFD2
 Outer apply(
 	select (A.id+' - '+ A.name + ' #'+A.extno) LocalMR 
     from orders od 
@@ -372,21 +418,6 @@ outer apply
 	AND b.Poid=f.POID and b.Seq1=f.SEQ1 and b.Seq2=f.SEQ2
 )LT
 {sqlWhere} 
-GROUP BY 
-F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
-t.ExportId,t.InvNo,t.WhseArrival,
-F.Refno,C.Description,P.ColorID,C.WeaveTypeID,O.Category
-,F.Result,F.Physical,F.PhysicalDate,
-F.TotalInspYds,fta.ActualYds,F.Weight,F.WeightDate,F.ShadeBond,F.ShadeBondDate,F.Continuity,
-F.ContinuityDate,L.Result,LC.Crocking,
-LC.CrockingDate,LH.Heat,LH.HeatDate,
-LW.Wash,LW.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCrocking,L.nonHeat,L.nonWash,ps1.LocalMR,
-ftp.TotalPoint,F.Odor,F.OdorDate,f.PhysicalInspector,f.WeightInspector
-,f.ShadeboneInspector,f.ContinuityInspector,f.OdorInspector
-,fl.CrockingInspector,fl.HeatInspector,fl.WashInspector,v.Name,cfd.Name
-,t.TotalRollsCalculated
-,BalanceQty.BalanceQty
-,mp.ALocation,mp.BLocation,LT.BulkLocationDate
 ORDER BY POID,SEQ
 OPTION (OPTIMIZE FOR UNKNOWN)
 
@@ -455,6 +486,7 @@ select
 	,tf.CFInspector
     ,tf.LocalMR
 from #tmpFinal tf
+ORDER BY POID,SEQ
 
 ";
             #endregion
