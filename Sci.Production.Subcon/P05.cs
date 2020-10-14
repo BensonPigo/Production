@@ -322,12 +322,12 @@ outer apply (
 where f.IsProduceFty=1
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and ot.ArtworkTypeID like '{this.CurrentMaintain["artworktypeid"]}%' 
+and ot.ArtworkTypeID = '{this.CurrentMaintain["artworktypeid"]}' 
 and o.Junk=0
 and o.id = '{dr["OrderID"]}'
 and isnull(oa.PatternCode,'') = '{dr["PatternCode"]}'
 and isnull(oa.PatternDesc,'') = '{dr["PatternDesc"]}'
-and isnull(oa.ArtworkID,ot.ArtworkTypeID) like '{dr["ArtworkId"]}%'
+and isnull(oa.ArtworkID,ot.ArtworkTypeID) = '{dr["ArtworkId"]}'
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 group by ReqQty.value,PoQty.value";
                         #endregion
@@ -490,22 +490,31 @@ group by ReqQty.value,PoQty.value";
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            DataTable dtDelete = ((DataTable)this.detailgridbs.DataSource).Clone();
+            DataTable dtCheck = ((DataTable)this.detailgridbs.DataSource).Clone();
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
+                DataRow drCheck = dtCheck.NewRow();
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    DataRow drDelete = dtDelete.NewRow();
-                    drDelete["OrderID"] = dr["OrderID", DataRowVersion.Original];
-                    drDelete["ArtworkID"] = dr["ArtworkID", DataRowVersion.Original];
-                    drDelete["PatternCode"] = dr["PatternCode", DataRowVersion.Original];
-                    drDelete["PatternDesc"] = dr["PatternDesc", DataRowVersion.Original];
-                    drDelete["ReqQty"] = 0;
-                    dtDelete.Rows.Add(drDelete);
+                    drCheck["OrderID"] = dr["OrderID", DataRowVersion.Original];
+                    drCheck["ArtworkID"] = dr["ArtworkID", DataRowVersion.Original];
+                    drCheck["PatternCode"] = dr["PatternCode", DataRowVersion.Original];
+                    drCheck["PatternDesc"] = dr["PatternDesc", DataRowVersion.Original];
+                    drCheck["ReqQty"] = 0;
                 }
+                else
+                {
+                    drCheck["OrderID"] = dr["OrderID"];
+                    drCheck["ArtworkID"] = dr["ArtworkID"];
+                    drCheck["PatternCode"] = dr["PatternCode"];
+                    drCheck["PatternDesc"] = dr["PatternDesc"];
+                    drCheck["ReqQty"] = dr["ReqQty"];
+                }
+
+                dtCheck.Rows.Add(drCheck);
             }
 
-            DualResult result = this.UpdateIrregularStatusByDelete(dtDelete);
+            DualResult result = this.UpdateIrregularStatusByDelete(dtCheck);
             if (!result)
             {
                 return result;
