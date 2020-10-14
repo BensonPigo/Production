@@ -68,6 +68,10 @@
             this.btnInspectedallpass = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
             this.btnPrintFormatReport8 = new System.Windows.Forms.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.displNoofRoll = new Sci.Win.UI.DisplayBox();
+            this.displNoofDyelot = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -95,8 +99,8 @@
             // 
             // gridcont
             // 
-            this.gridcont.Location = new System.Drawing.Point(12, 163);
-            this.gridcont.Size = new System.Drawing.Size(984, 520);
+            this.gridcont.Location = new System.Drawing.Point(12, 172);
+            this.gridcont.Size = new System.Drawing.Size(984, 511);
             // 
             // append
             // 
@@ -504,9 +508,49 @@
             this.btnPrintFormatReport8.UseVisualStyleBackColor = true;
             this.btnPrintFormatReport8.Click += new System.EventHandler(this.BtnPrintFormatReport_Click);
             // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label1.Location = new System.Drawing.Point(15, 146);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(61, 23);
+            this.label1.TabIndex = 231;
+            this.label1.Text = "# of Roll";
+            // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label2.Location = new System.Drawing.Point(216, 146);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.TabIndex = 232;
+            this.label2.Text = "# of Dyelot";
+            // 
+            // displNoofRoll
+            // 
+            this.displNoofRoll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displNoofRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displNoofRoll.Location = new System.Drawing.Point(82, 146);
+            this.displNoofRoll.Name = "displNoofRoll";
+            this.displNoofRoll.Size = new System.Drawing.Size(77, 23);
+            this.displNoofRoll.TabIndex = 233;
+            // 
+            // displNoofDyelot
+            // 
+            this.displNoofDyelot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displNoofDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displNoofDyelot.Location = new System.Drawing.Point(294, 148);
+            this.displNoofDyelot.Name = "displNoofDyelot";
+            this.displNoofDyelot.Size = new System.Drawing.Size(78, 23);
+            this.displNoofDyelot.TabIndex = 234;
+            // 
             // P01_ShadeBond
             // 
             this.ClientSize = new System.Drawing.Size(1008, 733);
+            this.Controls.Add(this.displNoofDyelot);
+            this.Controls.Add(this.displNoofRoll);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtShadeboneInspector);
             this.Controls.Add(this.labinspector);
             this.Controls.Add(this.dateArriveWHDate);
@@ -587,6 +631,10 @@
             this.Controls.SetChildIndex(this.dateArriveWHDate, 0);
             this.Controls.SetChildIndex(this.labinspector, 0);
             this.Controls.SetChildIndex(this.txtShadeboneInspector, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.displNoofRoll, 0);
+            this.Controls.SetChildIndex(this.displNoofDyelot, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -637,5 +685,9 @@
         private Win.UI.Button btnInspectedallpass;
         private Win.UI.Button button1;
         private System.Windows.Forms.Button btnPrintFormatReport8;
+        private Win.UI.Label label1;
+        private Win.UI.Label label2;
+        private Win.UI.DisplayBox displNoofRoll;
+        private Win.UI.DisplayBox displNoofDyelot;
     }
 }

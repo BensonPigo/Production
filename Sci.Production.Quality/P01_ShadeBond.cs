@@ -1,18 +1,18 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
+using Sci.Win;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.Windows.Forms;
-using Sci.Win;
-using Sci.Data;
-using System.Transactions;
-using Sci.Win.Tools;
-using System.Runtime.InteropServices;
-using System.Reflection;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
@@ -144,6 +144,8 @@ namespace Sci.Production.Quality
                 dr["SEQ1"] = this.maindr["SEQ1"];
                 dr["SEQ2"] = this.maindr["SEQ2"];
             }
+
+            this.CalRollandDyelot(datas);
         }
 
         /// <inheritdoc/>
@@ -353,13 +355,6 @@ namespace Sci.Production.Quality
         {
             string updatesql = string.Empty;
             DataTable gridTb = (DataTable)this.gridbs.DataSource;
-
-            // 2018/12/13 ISP20181179 移除沒有資料沒法encode的判斷
-            // if (MyUtility.Check.Empty(CurrentData) && this.btnEncode.Text=="Encode")
-            // {
-            //    MyUtility.Msg.WarningBox("Data not found! ");
-            //    return;
-            // }
 
             // 改為判斷 Result欄位是否全部 = ''
             if (this.btnEncode.Text == "Encode")
@@ -983,6 +978,21 @@ select Roll,Dyelot,TicketYds,Scale,Result
                 item["Inspdate"] = DateTime.Now.ToShortDateString();
                 item["Inspector"] = this.loginID;
                 item["Name"] = MyUtility.GetValue.Lookup("Name", this.loginID, "Pass1", "ID");
+            }
+        }
+
+        private void CalRollandDyelot(DataTable dt)
+        {
+            if (dt != null)
+            {
+                this.displNoofRoll.Text = dt.AsEnumerable().Select(s => new
+                {
+                    roll = MyUtility.Convert.GetString(s["Roll"]),
+                    dyelot = MyUtility.Convert.GetString(s["Dyelot"]),
+                }).Distinct().Count().ToString();
+
+                this.displNoofDyelot.Text = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["Dyelot"])).Distinct()
+                    .Count().ToString();
             }
         }
     }
