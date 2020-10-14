@@ -352,11 +352,13 @@ when not matched then
                     if (encoded)
                     {
                         sqlcmd += @"
-select distinct location,[ukey] = f.ukey
+select distinct [location] = location.[Data] ,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
 						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
+cross apply (select [Data] from [dbo].[SplitString](s.Location,',')) location
+
 merge dbo.ftyinventory_detail as t 
 using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
 when not matched then
@@ -433,11 +435,13 @@ when not matched then
                     if (encoded)
                     {
                         sqlcmd += @"
-select distinct location,[ukey] = f.ukey
+select distinct [location] = location.[Data] ,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
-left join ftyinventory f WITH (NOLOCK) on poid = s.poid 
-                         and seq1 = s.seq1 and seq2 = s.seq2 and roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
+left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
+						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
+cross apply (select [Data] from [dbo].[SplitString](s.Location,',')) location
+
 merge dbo.ftyinventory_detail as t
 using #tmp_L_K as s on t.ukey = s.ukey and t.mtllocationid = s.location
 when not matched then
@@ -493,11 +497,12 @@ alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct tolocation,[ukey] = f.ukey
+select distinct [tolocation] = location.[Data] ,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
-                                           and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
+						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
+cross apply (select [Data] from [dbo].[SplitString](s.tolocation,',')) location
 
 delete t from FtyInventory_Detail t
 where  t.ukey = (select distinct ukey from #tmp_L_K where t.Ukey = Ukey)                                          
@@ -521,11 +526,12 @@ alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct tolocation,[ukey] = f.ukey
+select distinct [tolocation] = location.[Data] ,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
-                                           and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
+						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
+cross apply (select [Data] from [dbo].[SplitString](s.tolocation,',')) location
 
 --delete t from FtyInventory_Detail t
 --where  t.ukey = (select distinct ukey from #tmp_L_K where t.Ukey = Ukey)                                          
@@ -1634,31 +1640,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                                    dyelot = m.Field<string>("fromdyelot"),
                                }).ToList();
 
-            DataTable newDt = dt.Clone();
-            foreach (DataRow dtr in dt.Rows)
-            {
-                string[] dtrLocation = dtr["ToLocation"].ToString().Split(',');
-                dtrLocation = dtrLocation.Distinct().ToArray();
-
-                if (dtrLocation.Length == 1)
-                {
-                    DataRow newDr = newDt.NewRow();
-                    newDr.ItemArray = dtr.ItemArray;
-                    newDt.Rows.Add(newDr);
-                }
-                else
-                {
-                    foreach (string location in dtrLocation)
-                    {
-                        DataRow newDr = newDt.NewRow();
-                        newDr.ItemArray = dtr.ItemArray;
-                        newDr["ToLocation"] = location;
-                        newDt.Rows.Add(newDr);
-                    }
-                }
-            }
-
-            var data_Fty_2T = (from b in newDt.AsEnumerable()
+            var data_Fty_2T = (from b in dt.AsEnumerable()
                                select new
                                {
                                    poid = b.Field<string>("topoid"),
@@ -2031,31 +2013,7 @@ Where a.id = '{subTransfer_ID}'";
                                    dyelot = g.Key.dyelot,
                                }).ToList();
 
-            DataTable newDt = dtSubTransfer_Detail.Clone();
-            foreach (DataRow dtr in dtSubTransfer_Detail.Rows)
-            {
-                string[] dtrLocation = dtr["ToLocation"].ToString().Split(',');
-                dtrLocation = dtrLocation.Distinct().ToArray();
-
-                if (dtrLocation.Length == 1)
-                {
-                    DataRow newDr = newDt.NewRow();
-                    newDr.ItemArray = dtr.ItemArray;
-                    newDt.Rows.Add(newDr);
-                }
-                else
-                {
-                    foreach (string location in dtrLocation)
-                    {
-                        DataRow newDr = newDt.NewRow();
-                        newDr.ItemArray = dtr.ItemArray;
-                        newDr["ToLocation"] = location;
-                        newDt.Rows.Add(newDr);
-                    }
-                }
-            }
-
-            var data_Fty_2T = (from b in newDt.AsEnumerable()
+            var data_Fty_2T = (from b in dtSubTransfer_Detail.AsEnumerable()
                                select new
                                {
                                    poid = b.Field<string>("topoid"),
@@ -2380,31 +2338,7 @@ Where a.id = '{subTransfer_ID}'";
                                    dyelot = m.Field<string>("fromdyelot"),
                                }).ToList();
 
-            DataTable newDt = dtSubTransfer_Detail.Clone();
-            foreach (DataRow dtr in dtSubTransfer_Detail.Rows)
-            {
-                string[] dtrLocation = dtr["ToLocation"].ToString().Split(',');
-                dtrLocation = dtrLocation.Distinct().ToArray();
-
-                if (dtrLocation.Length == 1)
-                {
-                    DataRow newDr = newDt.NewRow();
-                    newDr.ItemArray = dtr.ItemArray;
-                    newDt.Rows.Add(newDr);
-                }
-                else
-                {
-                    foreach (string location in dtrLocation)
-                    {
-                        DataRow newDr = newDt.NewRow();
-                        newDr.ItemArray = dtr.ItemArray;
-                        newDr["ToLocation"] = location;
-                        newDt.Rows.Add(newDr);
-                    }
-                }
-            }
-
-            var data_Fty_2T = (from m in newDt.AsEnumerable()
+            var data_Fty_2T = (from m in dtSubTransfer_Detail.AsEnumerable()
                                select new
                                {
                                    poid = m.Field<string>("topoid"),
@@ -3262,31 +3196,7 @@ AND Seq1='{Seq1}' AND Seq2='{Seq2}'
 
             #region 更新庫存數量 ftyinventory
 
-            DataTable newDt = detailDatas[0].Table.Clone();
-            foreach (DataRow dtr in detailDatas)
-            {
-                string[] dtrLocation = dtr["ToLocation"].ToString().Split(',');
-                dtrLocation = dtrLocation.Distinct().ToArray();
-
-                if (dtrLocation.Length == 1)
-                {
-                    DataRow newDr = newDt.NewRow();
-                    newDr.ItemArray = dtr.ItemArray;
-                    newDt.Rows.Add(newDr);
-                }
-                else
-                {
-                    foreach (string location in dtrLocation)
-                    {
-                        DataRow newDr = newDt.NewRow();
-                        newDr.ItemArray = dtr.ItemArray;
-                        newDr["ToLocation"] = location;
-                        newDt.Rows.Add(newDr);
-                    }
-                }
-            }
-
-            var data_Fty_26F = (from b in newDt.AsEnumerable()
+            var data_Fty_26F = (from b in detailDatas
                                 select new
                                 {
                                     poid = b.Field<string>("poid"),
