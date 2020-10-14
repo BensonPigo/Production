@@ -2959,6 +2959,7 @@ SELECT Seq FROM (
 	FROM ShippingMarkPic_Detail sd 
 	INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
 	INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
+	INNER JOIN PackingList p ON p.ID = s.PackingListID
 	where sd.FileName='{fileName}'
 )a
 WHERE Rank={seq}
