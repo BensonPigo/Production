@@ -486,6 +486,7 @@ select
 	,tf.CFInspector
     ,tf.LocalMR
 from #tmpFinal tf
+ORDER BY POID,SEQ
 
 ";
             #endregion
