@@ -1,12 +1,14 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 using TECIT.TFORMer;
@@ -349,6 +351,18 @@ WHERE td.TemplateName <> ''
 
             if (success)
             {
+                #region ISP20201607 資料交換 - Gensong
+                //string packingListID = tList.Select(o => o.PackingListID).Distinct().JoinToString(",");
+
+                foreach (var packingListID in tList.Select(o => o.PackingListID).Distinct())
+                {
+                    // 不透過Call API的方式，自己組合，傳送API
+                    Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(packingListID, string.Empty))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
+                #endregion
+
                 MyUtility.Msg.InfoBox("Success!!");
                 this.Query();
             }

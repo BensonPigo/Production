@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using Ict.Win;
 using Sci.Data;
 using System.IO;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Logistic
 {
@@ -247,6 +249,15 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
                     this.ShowErr(ex);
                 }
             }
+
+            #region ISP20201607 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                // 不透過Call API的方式，自己組合，傳送API
+                Task.Run(() => new Gensong_FinishingProcesses().SentClogGarmentDisposeToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -300,6 +311,15 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
                     this.ShowErr(ex);
                 }
             }
+
+            #region ISP20201607 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                // 不透過Call API的方式，自己組合，傳送API
+                Task.Run(() => new Gensong_FinishingProcesses().SentClogGarmentDisposeToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
         }
 
         private void BtnImport_Click(object sender, EventArgs e)

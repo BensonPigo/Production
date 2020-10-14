@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Production.Automation;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -152,6 +153,20 @@ ORDER BY CAST(pd.CTNStartNo as int)
             P27_Generate form = new P27_Generate();
             form.ShowDialog();
             this.Reload();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickDelete()
+        {
+            #region ISP20201607 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                // 不透過Call API的方式，自己組合，傳送API
+                Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(this.CurrentMaintain["PackingListID"].ToString(), string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
+            return base.ClickDelete();
         }
 
         /// <inheritdoc/>

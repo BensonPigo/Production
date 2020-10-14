@@ -2913,6 +2913,13 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
             Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             #endregion
+
+            #region ISP20201607 資料交換 - Gensong
+
+            // 不透過Call API的方式，自己組合，傳送API
+            Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
         }
 
         // Packing Method

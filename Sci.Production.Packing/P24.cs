@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Data.SqlClient;
 using Sci.Win.Tools;
 using System.Transactions;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Packing
 {
@@ -549,6 +550,15 @@ WHERE SCICtnNo='{body.SCICtnNo}' /*AND ShippingMarkPicUkey='{body.ShippingMarkPi
                 }
             }
 
+            #region ISP20201607 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                // 不透過Call API的方式，自己組合，傳送API
+                Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(this.CurrentMaintain["PackingListID"].ToString(), string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
+
             this.RenewData();
             this.ChangCell();
         }
@@ -587,6 +597,14 @@ delete ShippingMarkPic_Detail where ShippingMarkPicUkey = {this.CurrentMaintain[
         /// <inheritdoc/>
         protected override void ClickDeleteAfter()
         {
+            #region ISP20201607 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                // 不透過Call API的方式，自己組合，傳送API
+                Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(this.CurrentMaintain["PackingListID"].ToString(), string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
             base.ClickDeleteAfter();
             this.ReloadDatas();
         }

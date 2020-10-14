@@ -737,6 +737,15 @@ namespace Sci.Production.Packing
                 }
                 #endregion
 
+                #region ISP20201607 資料交換 - Gensong
+
+                // 不透過Call API的方式，自己組合，傳送API
+                if (listPackingID.Count > 0)
+                {
+                    Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(listPackingID.Distinct().JoinToString(","), string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+                #endregion
                 this.HideWaitMessage();
                 #endregion
 

@@ -12,6 +12,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Shipping
 {
@@ -1753,6 +1755,25 @@ update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName =
                 MyUtility.Msg.WarningBox("Approve data faile.\r\n" + result.ToString());
                 return;
             }
+
+            #region ISP20201607 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                string cmd = $@"
+ SELECT STUFF((
+ SELECT  ','+ID
+ FROM PackingList
+ WHERE ExpressID='{this.CurrentMaintain["ID"]}' AND Type = 'F'
+ FOR XML PATH('')),1,1,'')
+";
+
+                string packingListIDs = MyUtility.GetValue.Lookup(cmd);
+
+                // 不透過Call API的方式，自己組合，傳送API
+                Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(packingListIDs, string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -1820,6 +1841,24 @@ update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0
                 MyUtility.Msg.WarningBox("Unapprove data faile.\r\n" + result.ToString());
                 return;
             }
+
+            #region ISP20201607 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                string cmd = $@"
+ SELECT STUFF((
+ SELECT  ','+ID
+ FROM PackingList
+ WHERE ExpressID='{this.CurrentMaintain["ID"]}' AND Type = 'F'
+ FOR XML PATH('')),1,1,'')
+";
+                string packingListIDs = MyUtility.GetValue.Lookup(cmd);
+
+                // 不透過Call API的方式，自己組合，傳送API
+                Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(packingListIDs, string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
         }
 
         // Mail to
