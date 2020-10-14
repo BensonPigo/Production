@@ -94,6 +94,14 @@ BEGIN
 	RAISERROR('PortByBrandShipmode  - Starts',0,0)
 	select * into dbo.PortByBrandShipmode from (select * from ProductionTPE.dbo.PortByBrandShipmode ) as tmp
 
+	-------------SubProDefectCode-------------------
+	RAISERROR('MachineTypeTPE  - Starts',0,0)
+	select * into dbo.MachineTypeTPE from (select * from ProductionTPE.dbo.MachineTypeTPE ) as tmp
+	
+	-------------SubProDefectCode-------------------
+	RAISERROR('ArtworkType_FTY  - Starts',0,0)
+	select * into dbo.ArtworkType_FTY from (select * from ProductionTPE.dbo.ArtworkType_FTY ) as tmp
+
 	set transaction isolation level read committed
 END
 

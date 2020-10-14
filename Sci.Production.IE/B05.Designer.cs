@@ -43,6 +43,7 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.btnThreadRatio = new Sci.Win.UI.Button();
             this.checkThreadcons = new Sci.Win.UI.CheckBox();
+            this.chkIsDesignatedArea = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -57,6 +58,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIsDesignatedArea);
             this.detailcont.Controls.Add(this.checkThreadcons);
             this.detailcont.Controls.Add(this.btnThreadRatio);
             this.detailcont.Controls.Add(this.checkJunk);
@@ -262,6 +264,18 @@
             this.checkThreadcons.Text = "Calculate Thread cons.";
             this.checkThreadcons.UseVisualStyleBackColor = true;
             // 
+            // chkIsDesignatedArea
+            // 
+            this.chkIsDesignatedArea.AutoSize = true;
+            this.chkIsDesignatedArea.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsDesignatedArea", true));
+            this.chkIsDesignatedArea.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsDesignatedArea.Location = new System.Drawing.Point(293, 30);
+            this.chkIsDesignatedArea.Name = "chkIsDesignatedArea";
+            this.chkIsDesignatedArea.Size = new System.Drawing.Size(133, 21);
+            this.chkIsDesignatedArea.TabIndex = 17;
+            this.chkIsDesignatedArea.Text = "Designated Area";
+            this.chkIsDesignatedArea.UseVisualStyleBackColor = true;
+            // 
             // B05
             // 
             this.ClientSize = new System.Drawing.Size(837, 457);
@@ -309,5 +323,6 @@
         private Win.UI.Label labelCode;
         private Win.UI.Button btnThreadRatio;
         private Win.UI.CheckBox checkThreadcons;
+        private Win.UI.CheckBox chkIsDesignatedArea;
     }
 }
