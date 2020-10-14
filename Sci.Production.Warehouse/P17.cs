@@ -772,32 +772,7 @@ on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.S
 where f.lock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
             DBProxy.Current.Select(null, sqlcmd, out locationTable);
 
-            DataTable newDt = locationTable.Clone();
-
-            foreach (DataRow item in locationTable.Rows)
-            {
-                string[] dtrLocation = item["ToLocation"].ToString().Split(',');
-                dtrLocation = dtrLocation.Distinct().ToArray();
-
-                if (dtrLocation.Length == 1)
-                {
-                    DataRow newDr = newDt.NewRow();
-                    newDr.ItemArray = item.ItemArray;
-                    newDt.Rows.Add(newDr);
-                }
-                else
-                {
-                    foreach (string location in dtrLocation)
-                    {
-                        DataRow newDr = newDt.NewRow();
-                        newDr.ItemArray = item.ItemArray;
-                        newDr["ToLocation"] = location;
-                        newDt.Rows.Add(newDr);
-                    }
-                }
-            }
-
-            var data_Fty_26F = (from b in newDt.AsEnumerable()
+            var data_Fty_26F = (from b in locationTable.AsEnumerable()
                                 select new
                                 {
                                     poid = b.Field<string>("poid"),

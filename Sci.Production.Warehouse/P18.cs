@@ -1176,32 +1176,9 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
             #endregion
             #region -- 更新庫存數量  ftyinventory --
-            DataTable newDt = ((DataTable)this.detailgridbs.DataSource).Clone();
-            foreach (DataRow dtr in ((DataTable)this.detailgridbs.DataSource).Rows)
-            {
-                string[] dtrLocation = dtr["Location"].ToString().Split(',');
-                dtrLocation = dtrLocation.Distinct().ToArray();
-
-                if (dtrLocation.Length == 1)
-                {
-                    DataRow newDr = newDt.NewRow();
-                    newDr.ItemArray = dtr.ItemArray;
-                    newDt.Rows.Add(newDr);
-                }
-                else
-                {
-                    foreach (string location in dtrLocation)
-                    {
-                        DataRow newDr = newDt.NewRow();
-                        newDr.ItemArray = dtr.ItemArray;
-                        newDr["Location"] = location;
-                        newDt.Rows.Add(newDr);
-                    }
-                }
-            }
 
             int mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system")) ? 1 : 0;
-            var data_Fty_2T = (from b in newDt.AsEnumerable()
+            var data_Fty_2T = (from b in this.DetailDatas
                                select new
                                {
                                    poid = b.Field<string>("poid"),

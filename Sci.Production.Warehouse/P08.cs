@@ -580,31 +580,8 @@ drop table #tmp2
             #endregion
 
             #region 更新庫存數量  ftyinventory
-            DataTable newDt = ((DataTable)this.detailgridbs.DataSource).Clone();
-            foreach (DataRow dtr in ((DataTable)this.detailgridbs.DataSource).Rows)
-            {
-                string[] dtrLocation = dtr["Location"].ToString().Split(',');
-                dtrLocation = dtrLocation.Distinct().ToArray();
 
-                if (dtrLocation.Length == 1)
-                {
-                    DataRow newDr = newDt.NewRow();
-                    newDr.ItemArray = dtr.ItemArray;
-                    newDt.Rows.Add(newDr);
-                }
-                else
-                {
-                    foreach (string location in dtrLocation)
-                    {
-                        DataRow newDr = newDt.NewRow();
-                        newDr.ItemArray = dtr.ItemArray;
-                        newDr["location"] = location;
-                        newDt.Rows.Add(newDr);
-                    }
-                }
-            }
-
-            var data_Fty_2T = (from b in newDt.AsEnumerable()
+            var data_Fty_2T = (from b in this.DetailDatas
                          select new
                          {
                              poid = b.Field<string>("poid"),
