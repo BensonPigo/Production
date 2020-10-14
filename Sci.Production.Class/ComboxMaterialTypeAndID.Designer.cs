@@ -36,17 +36,17 @@
             // comboMaterialType
             // 
             this.comboMaterialType.FormattingEnabled = true;
-            this.comboMaterialType.Location = new System.Drawing.Point(117, 3);
+            this.comboMaterialType.Location = new System.Drawing.Point(78, 3);
             this.comboMaterialType.Name = "comboMaterialType";
             this.comboMaterialType.OldText = "";
-            this.comboMaterialType.Size = new System.Drawing.Size(121, 20);
+            this.comboMaterialType.Size = new System.Drawing.Size(103, 20);
             this.comboMaterialType.TabIndex = 0;
             this.comboMaterialType.SelectedIndexChanged += new System.EventHandler(this.ComboMaterialType_SelectedIndexChanged);
             // 
             // comboMtlTypeID
             // 
             this.comboMtlTypeID.FormattingEnabled = true;
-            this.comboMtlTypeID.Location = new System.Drawing.Point(244, 3);
+            this.comboMtlTypeID.Location = new System.Drawing.Point(187, 3);
             this.comboMtlTypeID.Name = "comboMtlTypeID";
             this.comboMtlTypeID.OldText = "";
             this.comboMtlTypeID.Size = new System.Drawing.Size(121, 20);
@@ -56,7 +56,7 @@
             // 
             this.labelMaterialType.Location = new System.Drawing.Point(0, 3);
             this.labelMaterialType.Name = "labelMaterialType";
-            this.labelMaterialType.Size = new System.Drawing.Size(114, 20);
+            this.labelMaterialType.Size = new System.Drawing.Size(75, 20);
             this.labelMaterialType.TabIndex = 129;
             this.labelMaterialType.Text = "Material Type";
             // 
@@ -68,7 +68,7 @@
             this.Controls.Add(this.comboMtlTypeID);
             this.Controls.Add(this.comboMaterialType);
             this.Name = "ComboxMaterialTypeAndID";
-            this.Size = new System.Drawing.Size(486, 30);
+            this.Size = new System.Drawing.Size(317, 25);
             this.ResumeLayout(false);
 
         }

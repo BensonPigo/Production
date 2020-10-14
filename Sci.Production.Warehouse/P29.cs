@@ -38,7 +38,6 @@ namespace Sci.Production.Warehouse
         {
             this.InitializeComponent();
             this.comboCategory.SelectedIndex = 0;
-            this.comboFabricType.SelectedIndex = 0;
 
             #region -- Grid1 設定 --
             this.gridComplete.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
@@ -313,7 +312,8 @@ WHERE   StockType='{dr["tostocktype"]}'
             this.listControlBindingSource2.DataSource = null;
 
             int selectindex = this.comboCategory.SelectedIndex;
-            int selectindex2 = this.comboFabricType.SelectedIndex;
+            string mT = this.comboxMaterialTypeAndID.comboMaterialType.SelectedValue.ToString();
+            string mtlTypeID = this.comboxMaterialTypeAndID.comboMtlTypeID.SelectedValue.ToString();
             string cuttingInline_b, cuttingInline_e, orderCfmDate_b, orderCfmDate_e, invCfmDate_s, invCfmDate_e, sP1, sP2, stockSP1, stockSP2, projectID, factory;
             cuttingInline_b = null;
             cuttingInline_e = null;
@@ -455,6 +455,7 @@ WHERE 1=1
     inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
     inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
     inner join dbo.Factory checkProduceFty With (NoLock) on o.FactoryID = checkProduceFty.ID 
+    left join Fabric WITH (NOLOCK) on pd.SCIRefno = fabric.SCIRefno
     outer apply (
         select  count(1) cnt 
         from FtyInventory fi WITH (NOLOCK) 
@@ -526,18 +527,17 @@ WHERE 1=1
                     break;
             }
 
-            switch (selectindex2)
+            if (!MyUtility.Check.Empty(mT))
             {
-                case 0:
-                    sqlcmd.Append(@" 
-            AND pd.FabricType ='F'");
-                    break;
-                case 1:
-                    sqlcmd.Append(@" 
-            AND pd.FabricType ='A'");
-                    break;
-                case 2:
-                    break;
+                if (mT != "All")
+                {
+                    sqlcmd.Append(string.Format(" and pd.FabricType = '{0}'", mT));
+                }
+            }
+
+            if (!MyUtility.Check.Empty(mtlTypeID))
+            {
+                sqlcmd.Append(string.Format(" and fabric.MtlTypeID = '{0}'", mtlTypeID));
             }
 
             if (!MyUtility.Check.Empty(sP1))

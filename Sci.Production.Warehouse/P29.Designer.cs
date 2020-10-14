@@ -43,8 +43,6 @@
             this.txtmfactory = new Sci.Production.Class.Txtfactory();
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.labelCategory = new Sci.Win.UI.Label();
-            this.comboFabricType = new Sci.Win.UI.ComboBox();
-            this.labelFabricType = new Sci.Win.UI.Label();
             this.dateOrderCfmDate = new Sci.Win.UI.DateRange();
             this.dateCuttingInline = new Sci.Win.UI.DateRange();
             this.txtProjectID = new Sci.Win.UI.TextBox();
@@ -64,6 +62,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridComplete = new Sci.Win.UI.Grid();
             this.gridRel = new Sci.Win.UI.Grid();
+            this.comboxMaterialTypeAndID = new Sci.Production.Class.ComboxMaterialTypeAndID();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -78,6 +77,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.comboxMaterialTypeAndID);
             this.panel1.Controls.Add(this.dateInventoryCfm);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
@@ -89,8 +89,6 @@
             this.panel1.Controls.Add(this.txtmfactory);
             this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.labelCategory);
-            this.panel1.Controls.Add(this.comboFabricType);
-            this.panel1.Controls.Add(this.labelFabricType);
             this.panel1.Controls.Add(this.dateOrderCfmDate);
             this.panel1.Controls.Add(this.dateCuttingInline);
             this.panel1.Controls.Add(this.txtProjectID);
@@ -105,7 +103,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1078, 107);
+            this.panel1.Size = new System.Drawing.Size(1188, 107);
             this.panel1.TabIndex = 1;
             // 
             // dateInventoryCfm
@@ -229,30 +227,6 @@
             this.labelCategory.TabIndex = 15;
             this.labelCategory.Text = "Category";
             // 
-            // comboFabricType
-            // 
-            this.comboFabricType.BackColor = System.Drawing.Color.White;
-            this.comboFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFabricType.FormattingEnabled = true;
-            this.comboFabricType.IsSupportUnselect = true;
-            this.comboFabricType.Items.AddRange(new object[] {
-            "Fabric",
-            "Accessory",
-            "All"});
-            this.comboFabricType.Location = new System.Drawing.Point(860, 8);
-            this.comboFabricType.Name = "comboFabricType";
-            this.comboFabricType.OldText = "";
-            this.comboFabricType.Size = new System.Drawing.Size(121, 24);
-            this.comboFabricType.TabIndex = 4;
-            // 
-            // labelFabricType
-            // 
-            this.labelFabricType.Location = new System.Drawing.Point(768, 8);
-            this.labelFabricType.Name = "labelFabricType";
-            this.labelFabricType.Size = new System.Drawing.Size(89, 23);
-            this.labelFabricType.TabIndex = 14;
-            this.labelFabricType.Text = "Fabric Type";
-            // 
             // dateOrderCfmDate
             // 
             // 
@@ -315,7 +289,7 @@
             // 
             // btnAutoPick
             // 
-            this.btnAutoPick.Location = new System.Drawing.Point(989, 38);
+            this.btnAutoPick.Location = new System.Drawing.Point(1096, 70);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
             this.btnAutoPick.TabIndex = 13;
@@ -325,7 +299,7 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(989, 5);
+            this.btnQuery.Location = new System.Drawing.Point(1096, 37);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 12;
@@ -382,7 +356,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 548);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1078, 53);
+            this.panel2.Size = new System.Drawing.Size(1188, 53);
             this.panel2.TabIndex = 3;
             // 
             // checkOnly
@@ -400,7 +374,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(986, 11);
+            this.btnClose.Location = new System.Drawing.Point(1096, 11);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 17;
@@ -412,7 +386,7 @@
             // btnCreate
             // 
             this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreate.Location = new System.Drawing.Point(833, 11);
+            this.btnCreate.Location = new System.Drawing.Point(943, 11);
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(147, 30);
             this.btnCreate.TabIndex = 16;
@@ -423,7 +397,7 @@
             // btnExcel
             // 
             this.btnExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExcel.Location = new System.Drawing.Point(747, 11);
+            this.btnExcel.Location = new System.Drawing.Point(857, 11);
             this.btnExcel.Name = "btnExcel";
             this.btnExcel.Size = new System.Drawing.Size(80, 30);
             this.btnExcel.TabIndex = 15;
@@ -444,8 +418,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.gridRel);
-            this.splitContainer1.Size = new System.Drawing.Size(1078, 441);
-            this.splitContainer1.SplitterDistance = 610;
+            this.splitContainer1.Size = new System.Drawing.Size(1188, 441);
+            this.splitContainer1.SplitterDistance = 672;
             this.splitContainer1.TabIndex = 4;
             // 
             // gridComplete
@@ -468,7 +442,7 @@
             this.gridComplete.RowTemplate.Height = 24;
             this.gridComplete.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridComplete.ShowCellToolTips = false;
-            this.gridComplete.Size = new System.Drawing.Size(610, 441);
+            this.gridComplete.Size = new System.Drawing.Size(672, 441);
             this.gridComplete.TabIndex = 0;
             this.gridComplete.TabStop = false;
             this.gridComplete.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.GridComplete_RowEnter);
@@ -493,14 +467,21 @@
             this.gridRel.RowTemplate.Height = 24;
             this.gridRel.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridRel.ShowCellToolTips = false;
-            this.gridRel.Size = new System.Drawing.Size(464, 441);
+            this.gridRel.Size = new System.Drawing.Size(512, 441);
             this.gridRel.TabIndex = 0;
             this.gridRel.TabStop = false;
             this.gridRel.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.GridRel_CellFormatting);
             // 
+            // comboxMaterialTypeAndID
+            // 
+            this.comboxMaterialTypeAndID.Location = new System.Drawing.Point(766, 5);
+            this.comboxMaterialTypeAndID.Name = "comboxMaterialTypeAndID";
+            this.comboxMaterialTypeAndID.Size = new System.Drawing.Size(413, 33);
+            this.comboxMaterialTypeAndID.TabIndex = 152;
+            // 
             // P29
             // 
-            this.ClientSize = new System.Drawing.Size(1078, 601);
+            this.ClientSize = new System.Drawing.Size(1188, 601);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -553,8 +534,6 @@
         private Class.Txtfactory txtmfactory;
         private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelCategory;
-        private Win.UI.ComboBox comboFabricType;
-        private Win.UI.Label labelFabricType;
         private Win.UI.Grid gridComplete;
         private Win.UI.Grid gridRel;
         private Win.UI.CheckBox checkOnly;
@@ -566,5 +545,6 @@
         private Win.UI.TextBox txtIssueSP2;
         private Win.UI.DateRange dateInventoryCfm;
         private Win.UI.Label label3;
+        private Class.ComboxMaterialTypeAndID comboxMaterialTypeAndID;
     }
 }
