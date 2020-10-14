@@ -116,7 +116,7 @@
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.dateDeclarationDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 212);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 219);
             this.masterpanel.Controls.SetChildIndex(this.dateDeclarationDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -157,16 +157,16 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 212);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 238);
+            this.detailpanel.Location = new System.Drawing.Point(0, 219);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 231);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(892, 174);
+            this.gridicon.Location = new System.Drawing.Point(892, 181);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 238);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 231);
             // 
             // detail2
             // 
@@ -240,7 +240,7 @@
             this.dateDeclarationDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDate", true));
             this.dateDeclarationDate.Location = new System.Drawing.Point(420, 11);
             this.dateDeclarationDate.Name = "dateDeclarationDate";
-            this.dateDeclarationDate.Size = new System.Drawing.Size(110, 23);
+            this.dateDeclarationDate.Size = new System.Drawing.Size(136, 23);
             this.dateDeclarationDate.TabIndex = 5;
             // 
             // labShipper
@@ -427,7 +427,7 @@
             this.comboShipper.Name = "comboShipper";
             this.comboShipper.OldText = "";
             this.comboShipper.ReadOnly = true;
-            this.comboShipper.Size = new System.Drawing.Size(105, 24);
+            this.comboShipper.Size = new System.Drawing.Size(113, 24);
             this.comboShipper.TabIndex = 0;
             // 
             // txtbuyer
@@ -437,7 +437,7 @@
             this.txtbuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbuyer.Location = new System.Drawing.Point(140, 65);
             this.txtbuyer.Name = "txtbuyer";
-            this.txtbuyer.Size = new System.Drawing.Size(105, 23);
+            this.txtbuyer.Size = new System.Drawing.Size(113, 23);
             this.txtbuyer.TabIndex = 1;
             // 
             // txtshipmode
@@ -450,7 +450,7 @@
             this.txtshipmode.Location = new System.Drawing.Point(140, 92);
             this.txtshipmode.Name = "txtshipmode";
             this.txtshipmode.OldText = "";
-            this.txtshipmode.Size = new System.Drawing.Size(105, 24);
+            this.txtshipmode.Size = new System.Drawing.Size(113, 24);
             this.txtshipmode.TabIndex = 2;
             this.txtshipmode.UseFunction = null;
             // 
@@ -462,7 +462,7 @@
             this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcustcd.Location = new System.Drawing.Point(140, 122);
             this.txtcustcd.Name = "txtcustcd";
-            this.txtcustcd.Size = new System.Drawing.Size(105, 23);
+            this.txtcustcd.Size = new System.Drawing.Size(113, 23);
             this.txtcustcd.TabIndex = 77;
             // 
             // txtcountry
@@ -490,7 +490,7 @@
             this.dateETD.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ETD", true));
             this.dateETD.Location = new System.Drawing.Point(420, 65);
             this.dateETD.Name = "dateETD";
-            this.dateETD.Size = new System.Drawing.Size(110, 23);
+            this.dateETD.Size = new System.Drawing.Size(136, 23);
             this.dateETD.TabIndex = 7;
             // 
             // txtForwarder
@@ -594,7 +594,7 @@
             this.editRemark.Location = new System.Drawing.Point(140, 177);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(450, 23);
+            this.editRemark.Size = new System.Drawing.Size(461, 23);
             this.editRemark.TabIndex = 4;
             // 
             // btnBatchImport

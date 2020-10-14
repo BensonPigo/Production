@@ -29,17 +29,17 @@
         private void InitializeComponent()
         {
             this.dateDecDate = new Sci.Win.UI.DateRange();
-            this.labDecDate = new Sci.Win.UI.Label();
             this.dateETA = new Sci.Win.UI.DateRange();
-            this.labETA = new Sci.Win.UI.Label();
             this.dateArrivWHDate = new Sci.Win.UI.DateRange();
-            this.labArrivWHDate = new Sci.Win.UI.Label();
             this.comboshipmode = new Sci.Production.Class.Txtshipmode();
             this.LabShippMode = new Sci.Win.UI.Label();
             this.txtDecNo1 = new Sci.Win.UI.TextBox();
             this.labDecNo = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.txtDecNo2 = new Sci.Win.UI.TextBox();
+            this.labETA = new Sci.Win.UI.Label();
+            this.labArrivWHDate = new Sci.Win.UI.Label();
+            this.labDecDate = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -88,19 +88,10 @@
             this.dateDecDate.DateBox2.Name = "";
             this.dateDecDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateDecDate.DateBox2.TabIndex = 1;
-            this.dateDecDate.IsRequired = false;
             this.dateDecDate.Location = new System.Drawing.Point(138, 14);
             this.dateDecDate.Name = "dateDecDate";
             this.dateDecDate.Size = new System.Drawing.Size(280, 23);
             this.dateDecDate.TabIndex = 0;
-            // 
-            // labDecDate
-            // 
-            this.labDecDate.Location = new System.Drawing.Point(9, 14);
-            this.labDecDate.Name = "labDecDate";
-            this.labDecDate.Size = new System.Drawing.Size(124, 23);
-            this.labDecDate.TabIndex = 9;
-            this.labDecDate.Text = "Declaration Date";
             // 
             // dateETA
             // 
@@ -118,19 +109,10 @@
             this.dateETA.DateBox2.Name = "";
             this.dateETA.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateETA.DateBox2.TabIndex = 1;
-            this.dateETA.IsRequired = false;
             this.dateETA.Location = new System.Drawing.Point(138, 43);
             this.dateETA.Name = "dateETA";
             this.dateETA.Size = new System.Drawing.Size(280, 23);
             this.dateETA.TabIndex = 1;
-            // 
-            // labETA
-            // 
-            this.labETA.Location = new System.Drawing.Point(9, 43);
-            this.labETA.Name = "labETA";
-            this.labETA.Size = new System.Drawing.Size(124, 23);
-            this.labETA.TabIndex = 10;
-            this.labETA.Text = "ETA";
             // 
             // dateArrivWHDate
             // 
@@ -148,19 +130,10 @@
             this.dateArrivWHDate.DateBox2.Name = "";
             this.dateArrivWHDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateArrivWHDate.DateBox2.TabIndex = 1;
-            this.dateArrivWHDate.IsRequired = false;
             this.dateArrivWHDate.Location = new System.Drawing.Point(138, 72);
             this.dateArrivWHDate.Name = "dateArrivWHDate";
             this.dateArrivWHDate.Size = new System.Drawing.Size(280, 23);
             this.dateArrivWHDate.TabIndex = 2;
-            // 
-            // labArrivWHDate
-            // 
-            this.labArrivWHDate.Location = new System.Drawing.Point(9, 72);
-            this.labArrivWHDate.Name = "labArrivWHDate";
-            this.labArrivWHDate.Size = new System.Drawing.Size(124, 23);
-            this.labArrivWHDate.TabIndex = 11;
-            this.labArrivWHDate.Text = "Arrived WH Date";
             // 
             // comboshipmode
             // 
@@ -221,9 +194,54 @@
             this.txtDecNo2.Size = new System.Drawing.Size(125, 23);
             this.txtDecNo2.TabIndex = 4;
             // 
+            // labETA
+            // 
+            this.labETA.Location = new System.Drawing.Point(9, 43);
+            this.labETA.Name = "labETA";
+            this.labETA.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labETA.RectStyle.BorderWidth = 1F;
+            this.labETA.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labETA.RectStyle.ExtBorderWidth = 1F;
+            this.labETA.Size = new System.Drawing.Size(124, 23);
+            this.labETA.TabIndex = 99;
+            this.labETA.Text = "ETA";
+            this.labETA.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labETA.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // labArrivWHDate
+            // 
+            this.labArrivWHDate.Location = new System.Drawing.Point(9, 72);
+            this.labArrivWHDate.Name = "labArrivWHDate";
+            this.labArrivWHDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labArrivWHDate.RectStyle.BorderWidth = 1F;
+            this.labArrivWHDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labArrivWHDate.RectStyle.ExtBorderWidth = 1F;
+            this.labArrivWHDate.Size = new System.Drawing.Size(124, 23);
+            this.labArrivWHDate.TabIndex = 100;
+            this.labArrivWHDate.Text = "Arrived WH Date";
+            this.labArrivWHDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labArrivWHDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // labDecDate
+            // 
+            this.labDecDate.Location = new System.Drawing.Point(9, 14);
+            this.labDecDate.Name = "labDecDate";
+            this.labDecDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labDecDate.RectStyle.BorderWidth = 1F;
+            this.labDecDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labDecDate.RectStyle.ExtBorderWidth = 1F;
+            this.labDecDate.Size = new System.Drawing.Size(124, 23);
+            this.labDecDate.TabIndex = 101;
+            this.labDecDate.Text = "Declaration Date";
+            this.labDecDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labDecDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R61
             // 
-            this.ClientSize = new System.Drawing.Size(581, 198);
+            this.ClientSize = new System.Drawing.Size(581, 193);
+            this.Controls.Add(this.labDecDate);
+            this.Controls.Add(this.labArrivWHDate);
+            this.Controls.Add(this.labETA);
             this.Controls.Add(this.txtDecNo2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtDecNo1);
@@ -231,11 +249,8 @@
             this.Controls.Add(this.comboshipmode);
             this.Controls.Add(this.LabShippMode);
             this.Controls.Add(this.dateArrivWHDate);
-            this.Controls.Add(this.labArrivWHDate);
             this.Controls.Add(this.dateETA);
-            this.Controls.Add(this.labETA);
             this.Controls.Add(this.dateDecDate);
-            this.Controls.Add(this.labDecDate);
             this.Name = "R61";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R61. KH Import Declaration Report";
@@ -245,11 +260,8 @@
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
-            this.Controls.SetChildIndex(this.labDecDate, 0);
             this.Controls.SetChildIndex(this.dateDecDate, 0);
-            this.Controls.SetChildIndex(this.labETA, 0);
             this.Controls.SetChildIndex(this.dateETA, 0);
-            this.Controls.SetChildIndex(this.labArrivWHDate, 0);
             this.Controls.SetChildIndex(this.dateArrivWHDate, 0);
             this.Controls.SetChildIndex(this.LabShippMode, 0);
             this.Controls.SetChildIndex(this.comboshipmode, 0);
@@ -257,6 +269,9 @@
             this.Controls.SetChildIndex(this.txtDecNo1, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.txtDecNo2, 0);
+            this.Controls.SetChildIndex(this.labETA, 0);
+            this.Controls.SetChildIndex(this.labArrivWHDate, 0);
+            this.Controls.SetChildIndex(this.labDecDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -265,16 +280,16 @@
         #endregion
 
         private Win.UI.DateRange dateDecDate;
-        private Win.UI.Label labDecDate;
         private Win.UI.DateRange dateETA;
-        private Win.UI.Label labETA;
         private Win.UI.DateRange dateArrivWHDate;
-        private Win.UI.Label labArrivWHDate;
         private Class.Txtshipmode comboshipmode;
         private Win.UI.Label LabShippMode;
         private Win.UI.TextBox txtDecNo1;
         private Win.UI.Label labDecNo;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtDecNo2;
+        private Win.UI.Label labETA;
+        private Win.UI.Label labArrivWHDate;
+        private Win.UI.Label labDecDate;
     }
 }

@@ -33,13 +33,13 @@
             this.txtDecNo1 = new Sci.Win.UI.TextBox();
             this.labDecNo = new Sci.Win.UI.Label();
             this.dateETD = new Sci.Win.UI.DateRange();
-            this.labETD = new Sci.Win.UI.Label();
             this.dateDecDate = new Sci.Win.UI.DateRange();
-            this.labDecDate = new Sci.Win.UI.Label();
             this.txtInvNo2 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.txtInvNo1 = new Sci.Win.UI.TextBox();
             this.labInvNo = new Sci.Win.UI.Label();
+            this.labDecDate = new Sci.Win.UI.Label();
+            this.labETD = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -76,7 +76,7 @@
             // 
             this.txtDecNo2.BackColor = System.Drawing.Color.White;
             this.txtDecNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDecNo2.Location = new System.Drawing.Point(289, 70);
+            this.txtDecNo2.Location = new System.Drawing.Point(281, 75);
             this.txtDecNo2.Name = "txtDecNo2";
             this.txtDecNo2.Size = new System.Drawing.Size(125, 23);
             this.txtDecNo2.TabIndex = 3;
@@ -85,7 +85,7 @@
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("標楷體", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.Location = new System.Drawing.Point(260, 74);
+            this.label1.Location = new System.Drawing.Point(252, 79);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(36, 23);
             this.label1.TabIndex = 0;
@@ -97,16 +97,16 @@
             // 
             this.txtDecNo1.BackColor = System.Drawing.Color.White;
             this.txtDecNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDecNo1.Location = new System.Drawing.Point(138, 70);
+            this.txtDecNo1.Location = new System.Drawing.Point(130, 75);
             this.txtDecNo1.Name = "txtDecNo1";
             this.txtDecNo1.Size = new System.Drawing.Size(125, 23);
             this.txtDecNo1.TabIndex = 2;
             // 
             // labDecNo
             // 
-            this.labDecNo.Location = new System.Drawing.Point(9, 70);
+            this.labDecNo.Location = new System.Drawing.Point(13, 75);
             this.labDecNo.Name = "labDecNo";
-            this.labDecNo.Size = new System.Drawing.Size(124, 23);
+            this.labDecNo.Size = new System.Drawing.Size(113, 23);
             this.labDecNo.TabIndex = 11;
             this.labDecNo.Text = "Declaration#";
             // 
@@ -126,19 +126,10 @@
             this.dateETD.DateBox2.Name = "";
             this.dateETD.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateETD.DateBox2.TabIndex = 1;
-            this.dateETD.IsRequired = false;
-            this.dateETD.Location = new System.Drawing.Point(138, 41);
+            this.dateETD.Location = new System.Drawing.Point(130, 46);
             this.dateETD.Name = "dateETD";
             this.dateETD.Size = new System.Drawing.Size(280, 23);
             this.dateETD.TabIndex = 1;
-            // 
-            // labETD
-            // 
-            this.labETD.Location = new System.Drawing.Point(9, 41);
-            this.labETD.Name = "labETD";
-            this.labETD.Size = new System.Drawing.Size(124, 23);
-            this.labETD.TabIndex = 10;
-            this.labETD.Text = "ETA";
             // 
             // dateDecDate
             // 
@@ -156,25 +147,16 @@
             this.dateDecDate.DateBox2.Name = "";
             this.dateDecDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateDecDate.DateBox2.TabIndex = 1;
-            this.dateDecDate.IsRequired = false;
-            this.dateDecDate.Location = new System.Drawing.Point(138, 12);
+            this.dateDecDate.Location = new System.Drawing.Point(130, 17);
             this.dateDecDate.Name = "dateDecDate";
             this.dateDecDate.Size = new System.Drawing.Size(280, 23);
             this.dateDecDate.TabIndex = 0;
-            // 
-            // labDecDate
-            // 
-            this.labDecDate.Location = new System.Drawing.Point(9, 12);
-            this.labDecDate.Name = "labDecDate";
-            this.labDecDate.Size = new System.Drawing.Size(124, 23);
-            this.labDecDate.TabIndex = 9;
-            this.labDecDate.Text = "Declaration Date";
             // 
             // txtInvNo2
             // 
             this.txtInvNo2.BackColor = System.Drawing.Color.White;
             this.txtInvNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInvNo2.Location = new System.Drawing.Point(289, 101);
+            this.txtInvNo2.Location = new System.Drawing.Point(281, 106);
             this.txtInvNo2.Name = "txtInvNo2";
             this.txtInvNo2.Size = new System.Drawing.Size(125, 23);
             this.txtInvNo2.TabIndex = 5;
@@ -183,7 +165,7 @@
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("標楷體", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label2.Location = new System.Drawing.Point(260, 105);
+            this.label2.Location = new System.Drawing.Point(252, 110);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(36, 23);
             this.label2.TabIndex = 1;
@@ -195,22 +177,52 @@
             // 
             this.txtInvNo1.BackColor = System.Drawing.Color.White;
             this.txtInvNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInvNo1.Location = new System.Drawing.Point(138, 101);
+            this.txtInvNo1.Location = new System.Drawing.Point(130, 106);
             this.txtInvNo1.Name = "txtInvNo1";
             this.txtInvNo1.Size = new System.Drawing.Size(125, 23);
             this.txtInvNo1.TabIndex = 4;
             // 
             // labInvNo
             // 
-            this.labInvNo.Location = new System.Drawing.Point(9, 101);
+            this.labInvNo.Location = new System.Drawing.Point(13, 106);
             this.labInvNo.Name = "labInvNo";
-            this.labInvNo.Size = new System.Drawing.Size(124, 23);
+            this.labInvNo.Size = new System.Drawing.Size(113, 23);
             this.labInvNo.TabIndex = 12;
             this.labInvNo.Text = "Invoice No.";
             // 
+            // labDecDate
+            // 
+            this.labDecDate.Location = new System.Drawing.Point(13, 17);
+            this.labDecDate.Name = "labDecDate";
+            this.labDecDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labDecDate.RectStyle.BorderWidth = 1F;
+            this.labDecDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labDecDate.RectStyle.ExtBorderWidth = 1F;
+            this.labDecDate.Size = new System.Drawing.Size(113, 23);
+            this.labDecDate.TabIndex = 97;
+            this.labDecDate.Text = "Declaration Date";
+            this.labDecDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labDecDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // labETD
+            // 
+            this.labETD.Location = new System.Drawing.Point(13, 46);
+            this.labETD.Name = "labETD";
+            this.labETD.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labETD.RectStyle.BorderWidth = 1F;
+            this.labETD.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labETD.RectStyle.ExtBorderWidth = 1F;
+            this.labETD.Size = new System.Drawing.Size(113, 23);
+            this.labETD.TabIndex = 98;
+            this.labETD.Text = "ETD";
+            this.labETD.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labETD.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R62
             // 
-            this.ClientSize = new System.Drawing.Size(590, 172);
+            this.ClientSize = new System.Drawing.Size(590, 173);
+            this.Controls.Add(this.labETD);
+            this.Controls.Add(this.labDecDate);
             this.Controls.Add(this.txtInvNo2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtInvNo1);
@@ -220,9 +232,7 @@
             this.Controls.Add(this.txtDecNo1);
             this.Controls.Add(this.labDecNo);
             this.Controls.Add(this.dateETD);
-            this.Controls.Add(this.labETD);
             this.Controls.Add(this.dateDecDate);
-            this.Controls.Add(this.labDecDate);
             this.Name = "R62";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R62. KH Export Declaration Report";
@@ -232,9 +242,7 @@
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
-            this.Controls.SetChildIndex(this.labDecDate, 0);
             this.Controls.SetChildIndex(this.dateDecDate, 0);
-            this.Controls.SetChildIndex(this.labETD, 0);
             this.Controls.SetChildIndex(this.dateETD, 0);
             this.Controls.SetChildIndex(this.labDecNo, 0);
             this.Controls.SetChildIndex(this.txtDecNo1, 0);
@@ -244,6 +252,8 @@
             this.Controls.SetChildIndex(this.txtInvNo1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.txtInvNo2, 0);
+            this.Controls.SetChildIndex(this.labDecDate, 0);
+            this.Controls.SetChildIndex(this.labETD, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -256,12 +266,12 @@
         private Win.UI.TextBox txtDecNo1;
         private Win.UI.Label labDecNo;
         private Win.UI.DateRange dateETD;
-        private Win.UI.Label labETD;
         private Win.UI.DateRange dateDecDate;
-        private Win.UI.Label labDecDate;
         private Win.UI.TextBox txtInvNo2;
         private Win.UI.Label label2;
         private Win.UI.TextBox txtInvNo1;
         private Win.UI.Label labInvNo;
+        private Win.UI.Label labDecDate;
+        private Win.UI.Label labETD;
     }
 }

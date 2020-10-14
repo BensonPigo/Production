@@ -50,7 +50,7 @@ namespace Sci.Production.Shipping
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("PurchaseUnit", header: "Purchase Unit", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: col_PurchaseUnit)
-                .Numeric("Ratio", header: "1 CDC Unit : Purchase Unit", width: Widths.AnsiChars(28), decimal_places: 4, integer_places: 8, iseditingreadonly: false)
+                .Numeric("Ratio", header: "1 CDC Unit : Purchase Unit", width: Widths.AnsiChars(24), decimal_places: 4, integer_places: 8, iseditingreadonly: false)
                 ;
             #endregion
         }
@@ -90,8 +90,17 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override void ClickUndo()
         {
-            this.txtCustomsDesc.ReadOnly = true;
-            this.checkJunk.ReadOnly = true;
+            if (this.IsDetailInserting)
+            {
+                this.txtCustomsDesc.ReadOnly = false;
+                this.checkJunk.ReadOnly = true;
+            }
+            else
+            {
+                this.txtCustomsDesc.ReadOnly = true;
+                this.checkJunk.ReadOnly = true;
+            }
+
             base.ClickUndo();
         }
 

@@ -42,8 +42,8 @@ namespace Sci.Production.Shipping
                .Text("Brand", header: "Brand", iseditingreadonly: true, width: Widths.AnsiChars(8))
                .Text("ShipModeID", header: "Shipmode", iseditingreadonly: true, width: Widths.AnsiChars(8))
                .Numeric("POPrice", header: "FOB", width: Widths.AnsiChars(9), decimal_places: 4, integer_places: 5, iseditingreadonly: true)
-               .Numeric("ShipModeSeqQty", header: "Qty", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
                .Numeric("CTNQty", header: "CTN", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
+               .Numeric("ShipModeSeqQty", header: "Qty", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
                .Numeric("NetKg", header: "N.W.", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 7, iseditingreadonly: true)
                .Numeric("WeightKg", header: "G.W.", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 7, iseditingreadonly: true)
                .Text("Forwarder", header: "Forwarder", iseditingreadonly: true, width: Widths.AnsiChars(8))
@@ -134,7 +134,7 @@ group by g.ID,pld.OrderID,o.StyleID,s.Description,g.BrandID,g.ShipModeID,o.PoPri
             DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
             if (dr2.Length == 0)
             {
-                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
+                MyUtility.Msg.WarningBox("Please select at least one.", "Warnning");
                 return;
             }
 

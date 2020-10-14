@@ -89,7 +89,15 @@ where ked2.id = '{masterID}'
         /// <inheritdoc/>
         protected override void ClickUndo()
         {
-            this.InitReadOnly(true);
+            if (this.IsDetailInserting)
+            {
+                this.InitReadOnly(false);
+            }
+            else
+            {
+                this.InitReadOnly(true);
+            }
+
             base.ClickUndo();
         }
 
