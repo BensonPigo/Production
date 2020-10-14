@@ -2548,6 +2548,7 @@
     <Build Include="dbo\Tables\ShippingMarkStamp_Detail.sql" />
     <Build Include="dbo\Functions\Get_ShippingMarkTemplate_DefineColumn.sql" />
     <Build Include="dbo\Functions\CheckShippingMarkHTMLSetting.sql" />
+    <Build Include="dbo\Functions\GetPassName.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

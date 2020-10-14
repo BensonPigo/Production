@@ -16,6 +16,8 @@ namespace Sci.Production.PPIC
         private DataTable _printData;
         private DateTime? _sciDate1;
         private DateTime? _sciDate2;
+        private DateTime? _buyerDelDate1;
+        private DateTime? _buyerDelDate2;
         private string _mDivision;
         private string _orderType;
         private string _factory;
@@ -24,6 +26,8 @@ namespace Sci.Production.PPIC
         private string _SPEnd;
         private int _excludeReplacement;
         private int _complection;
+        private bool sewingMaterialComplete;
+        private bool packingMaterialComplete;
 
         /// <summary>
         /// R06
@@ -70,12 +74,16 @@ namespace Sci.Production.PPIC
             this._SPEnd = this.textSPEnd.Text;
             this._sciDate1 = this.dateSCIDelivery.Value1;
             this._sciDate2 = this.dateSCIDelivery.Value2;
+            this._buyerDelDate1 = this.dateBuyerDelivery.Value1;
+            this._buyerDelDate2 = this.dateBuyerDelivery.Value2;
             this._mDivision = this.comboM.Text;
             this._orderType = this.comboOrderType.SelectedIndex == -1 ? string.Empty : this.comboOrderType.SelectedIndex == 0 ? "B" : this.comboOrderType.SelectedIndex == 1 ? "S" : this.comboOrderType.SelectedIndex == 2 ? "BS" : "M";
             this._excludeReplacement = this.checkExcludedReplacementItem.Checked ? 1 : 0;
             this._complection = this.checkPOMaterialCompletion.Checked ? 1 : 0;
             this._factory = this.comboFactory.Text;
             this._category = this.comboOrderType.Text;
+            this.sewingMaterialComplete = this.chkSewingMaterialComplete.Checked;
+            this.packingMaterialComplete = this.chkPackingMaterialComplete.Checked;
             return base.ValidateInput();
         }
 
@@ -119,8 +127,9 @@ Category =
         WHEN o.Category = 'M' THEN 'Material'
         WHEN o.Category = 'T' THEN 'SMTL'
         END)
-    ,o.SeasonID,o.SewInLine,o.LETA,o.KPILETA,o.BuyerDelivery,o.SciDelivery,
-    o.BrandID,o.CPU,o.SewETA,o.PackETA,o.MDivisionID,o.FactoryID,dbo.getPass1(o.LocalMR) as LocalMR,
+    ,o.SeasonID,o.SewInLine,o.LETA,o.KPILETA,o.BuyerDelivery,o.SciDelivery,o.BrandID,o.CPU
+    ,[ttlCPU] = o.Qty * o.CPU
+    ,o.SewETA,o.PackETA,o.MDivisionID,o.FactoryID,dbo.getPass1(o.LocalMR) as LocalMR,
     dbo.getTPEPass1(o.MCHandle) as MCHandle,dbo.getTPEPass1(o.MRHandle) as MRHandle,
     dbo.getTPEPass1(o.SMR) as SMR,dbo.getTPEPass1(p.POSMR) as POSMR,
     dbo.getTPEPass1(p.POHandle) as POHandle,o.Qty,o.CPU*o.Qty*o.CPUFactor as tCPU,o.MTLComplete,
@@ -129,6 +138,8 @@ Category =
     , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
     , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
     , Order_Qty.Article  
+	, [SewingMtlComplt] = isnull(f.SewingMtlComplt, '')
+	, [PackingMtlComplt] = isnull(f.PackingMtlComplt, '')
 from Orders o WITH (NOLOCK) 
 left join PO p WITH (NOLOCK) on p.ID = o.POID
 outer apply(
@@ -140,6 +151,33 @@ outer apply(
 		    for xml path('')
 	),1,1,'')
 )Order_Qty
+outer apply (
+	select 
+		[PackingMtlComplt] = max([PackingMtlComplt])
+		, [SewingMtlComplt] = max([SewingMtlComplt])
+	from 
+	(
+		select  f.ProductionType
+			, [PackingMtlComplt] = iif(f.ProductionType = 'Packing' and sum(iif(f.ProductionType = 'Packing', 1, 0)) = sum(iif(f.ProductionType = 'Packing' and f.Complete = 1, 1, 0)), 'Y', '')
+			, [SewingMtlComplt] = iif(f.ProductionType <> 'Packing' and sum(iif(f.ProductionType <> 'Packing', 1, 0)) = sum(iif(f.ProductionType <> 'Packing' and f.Complete = 1, 1, 0)), 'Y', '')
+		from 
+		(
+			select f.ProductionType
+				, psd.Complete
+			from PO_Supp_Detail psd
+			inner join PO_Supp_Detail_OrderList psdo on psd.ID = psdo.ID and psd.SEQ1 = psdo.SEQ1 and psd.SEQ2 = psdo.SEQ2
+			outer apply (
+				select [ProductionType] = iif(m.ProductionType = 'Packing', 'Packing', 'Sewing')
+				from Fabric f
+				left join MtlType m on f.MtlTypeID = m.ID
+				where f.SCIRefno = psd.SCIRefno
+			)f  
+			where psdo.OrderID	= o.ID
+			and psd.Junk = 0
+		)f
+		group by f.ProductionType
+	)f
+)f
 where 1=1", this._excludeReplacement == 1 ? "and psd.SEQ1 not between '50' and '69'" : string.Empty));
 
             if (!MyUtility.Check.Empty(this._sciDate1))
@@ -150,6 +188,16 @@ where 1=1", this._excludeReplacement == 1 ? "and psd.SEQ1 not between '50' and '
             if (!MyUtility.Check.Empty(this._sciDate2))
             {
                 sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this._sciDate2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this._buyerDelDate1))
+            {
+                sqlCmd.Append(string.Format(@" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this._buyerDelDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this._buyerDelDate2))
+            {
+                sqlCmd.Append(string.Format(@" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this._buyerDelDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this._mDivision))
@@ -185,6 +233,16 @@ where 1=1", this._excludeReplacement == 1 ? "and psd.SEQ1 not between '50' and '
                 {
                     sqlCmd.Append(" and (o.Category = 'B' or o.Category ='S')");
                 }
+            }
+
+            if (this.sewingMaterialComplete)
+            {
+                sqlCmd.Append(" and f.SewingMtlComplt = 'Y'");
+            }
+
+            if (this.packingMaterialComplete)
+            {
+                sqlCmd.Append(" and f.PackingMtlComplt = 'Y'");
             }
 
             sqlCmd.Append(" order by o.ID");
@@ -230,7 +288,7 @@ where 1=1", this._excludeReplacement == 1 ? "and psd.SEQ1 not between '50' and '
 
             // 填內容值
             int intRowsStart = 4;
-            object[,] objArray = new object[1, 30];
+            object[,] objArray = new object[1, 33];
             foreach (DataRow dr in this._printData.Rows)
             {
                 objArray[0, 0] = dr["ID"];
@@ -245,25 +303,28 @@ where 1=1", this._excludeReplacement == 1 ? "and psd.SEQ1 not between '50' and '
                 objArray[0, 9] = dr["SciDelivery"];
                 objArray[0, 10] = dr["BrandID"];
                 objArray[0, 11] = dr["CPU"];
-                objArray[0, 12] = dr["SeqNo"];
-                objArray[0, 13] = dr["Seq3rd"];
-                objArray[0, 14] = dr["SewETA"];
-                objArray[0, 15] = dr["PackETA"];
-                objArray[0, 16] = dr["Fab_ETA"];
-                objArray[0, 17] = dr["Acc_ETA"];
-                objArray[0, 18] = dr["MDivisionID"];
-                objArray[0, 19] = dr["FactoryID"];
-                objArray[0, 20] = dr["LocalMR"];
-                objArray[0, 21] = dr["MCHandle"];
-                objArray[0, 22] = dr["MRHandle"];
-                objArray[0, 23] = dr["SMR"];
-                objArray[0, 24] = dr["POHandle"];
-                objArray[0, 25] = dr["POSMR"];
-                objArray[0, 26] = dr["Qty"];
-                objArray[0, 27] = dr["tCPU"];
-                objArray[0, 28] = this._complection == 1 && MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : MyUtility.Check.Empty(dr["SeqNo"]) && MyUtility.Check.Empty(dr["Seq3rd"]) ? "Y" : "N";
-                objArray[0, 29] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "FALSE" ? string.Empty : "Y";
-                worksheet.Range[string.Format("A{0}:AB{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 12] = dr["ttlCPU"];
+                objArray[0, 13] = dr["SeqNo"];
+                objArray[0, 14] = dr["Seq3rd"];
+                objArray[0, 15] = dr["SewETA"];
+                objArray[0, 16] = dr["PackETA"];
+                objArray[0, 17] = dr["Fab_ETA"];
+                objArray[0, 18] = dr["Acc_ETA"];
+                objArray[0, 19] = dr["MDivisionID"];
+                objArray[0, 20] = dr["FactoryID"];
+                objArray[0, 21] = dr["LocalMR"];
+                objArray[0, 22] = dr["MCHandle"];
+                objArray[0, 23] = dr["MRHandle"];
+                objArray[0, 24] = dr["SMR"];
+                objArray[0, 25] = dr["POHandle"];
+                objArray[0, 26] = dr["POSMR"];
+                objArray[0, 27] = dr["Qty"];
+                objArray[0, 28] = dr["tCPU"];
+                objArray[0, 29] = this._complection == 1 && MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : MyUtility.Check.Empty(dr["SeqNo"]) && MyUtility.Check.Empty(dr["Seq3rd"]) ? "Y" : "N";
+                objArray[0, 30] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "FALSE" ? string.Empty : "Y";
+                objArray[0, 31] = dr["SewingMtlComplt"];
+                objArray[0, 32] = dr["PackingMtlComplt"];
+                worksheet.Range[string.Format("A{0}:AG{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
