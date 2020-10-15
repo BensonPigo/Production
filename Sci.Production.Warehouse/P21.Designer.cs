@@ -59,18 +59,24 @@
             this.dateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.lbLocateSP = new Sci.Win.UI.Label();
-            this.txtLocateSeq = new Sci.Production.Class.TxtSeq();
-            this.txtLocateSP = new Sci.Win.UI.TextBox();
-            this.txtLocateRoll = new Sci.Win.UI.TextBox();
-            this.lbLocateRoll = new Sci.Win.UI.Label();
-            this.txtLocateColor = new Sci.Win.UI.TextBox();
-            this.lbLocateColor = new Sci.Win.UI.Label();
-            this.txtLocateDyelot = new Sci.Win.UI.TextBox();
-            this.lbLocateDyelot = new Sci.Win.UI.Label();
-            this.lbLocateRef = new Sci.Win.UI.Label();
-            this.txtLocateRef = new Sci.Win.UI.TextBox();
             this.btnFind = new Sci.Win.UI.Button();
+            this.txtLocateRoll = new Sci.Win.UI.TextBox();
+            this.txtLocateSeq = new Sci.Production.Class.TxtSeq();
+            this.lbLocateRoll = new Sci.Win.UI.Label();
+            this.lbLocateSP = new Sci.Win.UI.Label();
+            this.txtLocateColor = new Sci.Win.UI.TextBox();
+            this.txtLocateSP = new Sci.Win.UI.TextBox();
+            this.lbLocateColor = new Sci.Win.UI.Label();
+            this.lbLocateRef = new Sci.Win.UI.Label();
+            this.txtLocateDyelot = new Sci.Win.UI.TextBox();
+            this.txtLocateRef = new Sci.Win.UI.TextBox();
+            this.lbLocateDyelot = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label8 = new Sci.Win.UI.Label();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
+            this.label3 = new Sci.Win.UI.Label();
+            this.txtuserCutShadeband = new Sci.Production.Class.Txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -85,7 +91,7 @@
             // 
             // lblWK
             // 
-            this.lblWK.Location = new System.Drawing.Point(9, 43);
+            this.lblWK.Location = new System.Drawing.Point(9, 38);
             this.lblWK.Name = "lblWK";
             this.lblWK.Size = new System.Drawing.Size(90, 23);
             this.lblWK.TabIndex = 16;
@@ -101,7 +107,7 @@
             // 
             // lblSP
             // 
-            this.lblSP.Location = new System.Drawing.Point(220, 43);
+            this.lblSP.Location = new System.Drawing.Point(220, 38);
             this.lblSP.Name = "lblSP";
             this.lblSP.Size = new System.Drawing.Size(107, 23);
             this.lblSP.TabIndex = 17;
@@ -120,7 +126,7 @@
             // 
             this.txtWK.BackColor = System.Drawing.Color.White;
             this.txtWK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtWK.Location = new System.Drawing.Point(102, 43);
+            this.txtWK.Location = new System.Drawing.Point(102, 38);
             this.txtWK.Name = "txtWK";
             this.txtWK.Size = new System.Drawing.Size(114, 23);
             this.txtWK.TabIndex = 4;
@@ -129,7 +135,7 @@
             // 
             this.txtSP.BackColor = System.Drawing.Color.White;
             this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP.Location = new System.Drawing.Point(330, 43);
+            this.txtSP.Location = new System.Drawing.Point(330, 38);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(112, 23);
             this.txtSP.TabIndex = 5;
@@ -137,10 +143,10 @@
             // btnQuery
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery.Location = new System.Drawing.Point(877, 7);
+            this.btnQuery.Location = new System.Drawing.Point(877, 91);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(119, 30);
-            this.btnQuery.TabIndex = 11;
+            this.btnQuery.TabIndex = 14;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
@@ -160,7 +166,7 @@
             this.gridReceiving.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridReceiving.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridReceiving.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridReceiving.Location = new System.Drawing.Point(9, 152);
+            this.gridReceiving.Location = new System.Drawing.Point(9, 174);
             this.gridReceiving.Name = "gridReceiving";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
@@ -175,7 +181,7 @@
             this.gridReceiving.RowTemplate.Height = 24;
             this.gridReceiving.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridReceiving.ShowCellToolTips = false;
-            this.gridReceiving.Size = new System.Drawing.Size(988, 302);
+            this.gridReceiving.Size = new System.Drawing.Size(988, 280);
             this.gridReceiving.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridReceiving.TabIndex = 26;
             this.gridReceiving.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridReceiving_ColumnHeaderMouseClick);
@@ -206,7 +212,7 @@
             // txtSeq
             // 
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq.Location = new System.Drawing.Point(445, 43);
+            this.txtSeq.Location = new System.Drawing.Point(445, 38);
             this.txtSeq.Name = "txtSeq";
             this.txtSeq.Seq1 = "";
             this.txtSeq.Seq2 = "";
@@ -215,7 +221,7 @@
             // 
             // labelRef
             // 
-            this.labelRef.Location = new System.Drawing.Point(513, 43);
+            this.labelRef.Location = new System.Drawing.Point(513, 38);
             this.labelRef.Name = "labelRef";
             this.labelRef.Size = new System.Drawing.Size(40, 23);
             this.labelRef.TabIndex = 18;
@@ -226,7 +232,7 @@
             this.txtRef.BackColor = System.Drawing.Color.White;
             this.txtRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRef.IsSupportEditMode = false;
-            this.txtRef.Location = new System.Drawing.Point(556, 43);
+            this.txtRef.Location = new System.Drawing.Point(556, 38);
             this.txtRef.Name = "txtRef";
             this.txtRef.Size = new System.Drawing.Size(87, 23);
             this.txtRef.TabIndex = 7;
@@ -236,14 +242,14 @@
             this.txtRoll.BackColor = System.Drawing.Color.White;
             this.txtRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRoll.IsSupportEditMode = false;
-            this.txtRoll.Location = new System.Drawing.Point(815, 43);
+            this.txtRoll.Location = new System.Drawing.Point(815, 38);
             this.txtRoll.Name = "txtRoll";
             this.txtRoll.Size = new System.Drawing.Size(60, 23);
             this.txtRoll.TabIndex = 9;
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(773, 43);
+            this.label6.Location = new System.Drawing.Point(773, 38);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(39, 23);
             this.label6.TabIndex = 20;
@@ -254,14 +260,14 @@
             this.txtColor.BackColor = System.Drawing.Color.White;
             this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtColor.IsSupportEditMode = false;
-            this.txtColor.Location = new System.Drawing.Point(700, 43);
+            this.txtColor.Location = new System.Drawing.Point(700, 38);
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(70, 23);
             this.txtColor.TabIndex = 8;
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(646, 43);
+            this.label5.Location = new System.Drawing.Point(646, 38);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(51, 23);
             this.label5.TabIndex = 19;
@@ -272,14 +278,14 @@
             this.txtDyelot.BackColor = System.Drawing.Color.White;
             this.txtDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtDyelot.IsSupportEditMode = false;
-            this.txtDyelot.Location = new System.Drawing.Point(931, 43);
+            this.txtDyelot.Location = new System.Drawing.Point(931, 38);
             this.txtDyelot.Name = "txtDyelot";
             this.txtDyelot.Size = new System.Drawing.Size(65, 23);
             this.txtDyelot.TabIndex = 10;
             // 
             // labelDyelot
             // 
-            this.labelDyelot.Location = new System.Drawing.Point(877, 43);
+            this.labelDyelot.Location = new System.Drawing.Point(877, 38);
             this.labelDyelot.Name = "labelDyelot";
             this.labelDyelot.Size = new System.Drawing.Size(51, 23);
             this.labelDyelot.TabIndex = 21;
@@ -309,7 +315,7 @@
             // 
             // labSelectCnt
             // 
-            this.labSelectCnt.Location = new System.Drawing.Point(9, 73);
+            this.labSelectCnt.Location = new System.Drawing.Point(9, 95);
             this.labSelectCnt.Name = "labSelectCnt";
             this.labSelectCnt.Size = new System.Drawing.Size(139, 23);
             this.labSelectCnt.TabIndex = 22;
@@ -320,7 +326,7 @@
             this.numSelectCnt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numSelectCnt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numSelectCnt.IsSupportEditMode = false;
-            this.numSelectCnt.Location = new System.Drawing.Point(151, 73);
+            this.numSelectCnt.Location = new System.Drawing.Point(151, 95);
             this.numSelectCnt.Name = "numSelectCnt";
             this.numSelectCnt.NullValue = new decimal(new int[] {
             0,
@@ -399,111 +405,12 @@
             this.groupBox1.Controls.Add(this.txtLocateDyelot);
             this.groupBox1.Controls.Add(this.txtLocateRef);
             this.groupBox1.Controls.Add(this.lbLocateDyelot);
-            this.groupBox1.Location = new System.Drawing.Point(9, 102);
+            this.groupBox1.Location = new System.Drawing.Point(9, 124);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(987, 44);
             this.groupBox1.TabIndex = 45;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Locate";
-            // 
-            // lbLocateSP
-            // 
-            this.lbLocateSP.Location = new System.Drawing.Point(3, 18);
-            this.lbLocateSP.Name = "lbLocateSP";
-            this.lbLocateSP.Size = new System.Drawing.Size(37, 23);
-            this.lbLocateSP.TabIndex = 46;
-            this.lbLocateSP.Text = "SP#";
-            // 
-            // txtLocateSeq
-            // 
-            this.txtLocateSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtLocateSeq.Location = new System.Drawing.Point(158, 18);
-            this.txtLocateSeq.Name = "txtLocateSeq";
-            this.txtLocateSeq.Seq1 = "";
-            this.txtLocateSeq.Seq2 = "";
-            this.txtLocateSeq.Size = new System.Drawing.Size(61, 23);
-            this.txtLocateSeq.TabIndex = 47;
-            // 
-            // txtLocateSP
-            // 
-            this.txtLocateSP.BackColor = System.Drawing.Color.White;
-            this.txtLocateSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocateSP.Location = new System.Drawing.Point(43, 18);
-            this.txtLocateSP.Name = "txtLocateSP";
-            this.txtLocateSP.Size = new System.Drawing.Size(112, 23);
-            this.txtLocateSP.TabIndex = 46;
-            // 
-            // txtLocateRoll
-            // 
-            this.txtLocateRoll.BackColor = System.Drawing.Color.White;
-            this.txtLocateRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocateRoll.IsSupportEditMode = false;
-            this.txtLocateRoll.Location = new System.Drawing.Point(524, 18);
-            this.txtLocateRoll.Name = "txtLocateRoll";
-            this.txtLocateRoll.Size = new System.Drawing.Size(60, 23);
-            this.txtLocateRoll.TabIndex = 48;
-            // 
-            // lbLocateRoll
-            // 
-            this.lbLocateRoll.Location = new System.Drawing.Point(482, 18);
-            this.lbLocateRoll.Name = "lbLocateRoll";
-            this.lbLocateRoll.Size = new System.Drawing.Size(39, 23);
-            this.lbLocateRoll.TabIndex = 52;
-            this.lbLocateRoll.Text = "Roll";
-            // 
-            // txtLocateColor
-            // 
-            this.txtLocateColor.BackColor = System.Drawing.Color.White;
-            this.txtLocateColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocateColor.IsSupportEditMode = false;
-            this.txtLocateColor.Location = new System.Drawing.Point(409, 18);
-            this.txtLocateColor.Name = "txtLocateColor";
-            this.txtLocateColor.Size = new System.Drawing.Size(70, 23);
-            this.txtLocateColor.TabIndex = 47;
-            // 
-            // lbLocateColor
-            // 
-            this.lbLocateColor.Location = new System.Drawing.Point(355, 18);
-            this.lbLocateColor.Name = "lbLocateColor";
-            this.lbLocateColor.Size = new System.Drawing.Size(51, 23);
-            this.lbLocateColor.TabIndex = 51;
-            this.lbLocateColor.Text = "Color";
-            // 
-            // txtLocateDyelot
-            // 
-            this.txtLocateDyelot.BackColor = System.Drawing.Color.White;
-            this.txtLocateDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocateDyelot.IsSupportEditMode = false;
-            this.txtLocateDyelot.Location = new System.Drawing.Point(640, 18);
-            this.txtLocateDyelot.Name = "txtLocateDyelot";
-            this.txtLocateDyelot.Size = new System.Drawing.Size(65, 23);
-            this.txtLocateDyelot.TabIndex = 49;
-            // 
-            // lbLocateDyelot
-            // 
-            this.lbLocateDyelot.Location = new System.Drawing.Point(586, 18);
-            this.lbLocateDyelot.Name = "lbLocateDyelot";
-            this.lbLocateDyelot.Size = new System.Drawing.Size(51, 23);
-            this.lbLocateDyelot.TabIndex = 53;
-            this.lbLocateDyelot.Text = "Dyelot";
-            // 
-            // lbLocateRef
-            // 
-            this.lbLocateRef.Location = new System.Drawing.Point(222, 18);
-            this.lbLocateRef.Name = "lbLocateRef";
-            this.lbLocateRef.Size = new System.Drawing.Size(40, 23);
-            this.lbLocateRef.TabIndex = 50;
-            this.lbLocateRef.Text = "Ref#";
-            // 
-            // txtLocateRef
-            // 
-            this.txtLocateRef.BackColor = System.Drawing.Color.White;
-            this.txtLocateRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocateRef.IsSupportEditMode = false;
-            this.txtLocateRef.Location = new System.Drawing.Point(265, 18);
-            this.txtLocateRef.Name = "txtLocateRef";
-            this.txtLocateRef.Size = new System.Drawing.Size(87, 23);
-            this.txtLocateRef.TabIndex = 46;
             // 
             // btnFind
             // 
@@ -515,11 +422,176 @@
             this.btnFind.UseVisualStyleBackColor = true;
             this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
+            // txtLocateRoll
+            // 
+            this.txtLocateRoll.BackColor = System.Drawing.Color.White;
+            this.txtLocateRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateRoll.IsSupportEditMode = false;
+            this.txtLocateRoll.Location = new System.Drawing.Point(524, 18);
+            this.txtLocateRoll.Name = "txtLocateRoll";
+            this.txtLocateRoll.Size = new System.Drawing.Size(60, 23);
+            this.txtLocateRoll.TabIndex = 48;
+            // 
+            // txtLocateSeq
+            // 
+            this.txtLocateSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtLocateSeq.Location = new System.Drawing.Point(158, 18);
+            this.txtLocateSeq.Name = "txtLocateSeq";
+            this.txtLocateSeq.Seq1 = "";
+            this.txtLocateSeq.Seq2 = "";
+            this.txtLocateSeq.Size = new System.Drawing.Size(61, 23);
+            this.txtLocateSeq.TabIndex = 47;
+            // 
+            // lbLocateRoll
+            // 
+            this.lbLocateRoll.Location = new System.Drawing.Point(482, 18);
+            this.lbLocateRoll.Name = "lbLocateRoll";
+            this.lbLocateRoll.Size = new System.Drawing.Size(39, 23);
+            this.lbLocateRoll.TabIndex = 52;
+            this.lbLocateRoll.Text = "Roll";
+            // 
+            // lbLocateSP
+            // 
+            this.lbLocateSP.Location = new System.Drawing.Point(3, 18);
+            this.lbLocateSP.Name = "lbLocateSP";
+            this.lbLocateSP.Size = new System.Drawing.Size(37, 23);
+            this.lbLocateSP.TabIndex = 46;
+            this.lbLocateSP.Text = "SP#";
+            // 
+            // txtLocateColor
+            // 
+            this.txtLocateColor.BackColor = System.Drawing.Color.White;
+            this.txtLocateColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateColor.IsSupportEditMode = false;
+            this.txtLocateColor.Location = new System.Drawing.Point(409, 18);
+            this.txtLocateColor.Name = "txtLocateColor";
+            this.txtLocateColor.Size = new System.Drawing.Size(70, 23);
+            this.txtLocateColor.TabIndex = 47;
+            // 
+            // txtLocateSP
+            // 
+            this.txtLocateSP.BackColor = System.Drawing.Color.White;
+            this.txtLocateSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateSP.Location = new System.Drawing.Point(43, 18);
+            this.txtLocateSP.Name = "txtLocateSP";
+            this.txtLocateSP.Size = new System.Drawing.Size(112, 23);
+            this.txtLocateSP.TabIndex = 46;
+            // 
+            // lbLocateColor
+            // 
+            this.lbLocateColor.Location = new System.Drawing.Point(355, 18);
+            this.lbLocateColor.Name = "lbLocateColor";
+            this.lbLocateColor.Size = new System.Drawing.Size(51, 23);
+            this.lbLocateColor.TabIndex = 51;
+            this.lbLocateColor.Text = "Color";
+            // 
+            // lbLocateRef
+            // 
+            this.lbLocateRef.Location = new System.Drawing.Point(222, 18);
+            this.lbLocateRef.Name = "lbLocateRef";
+            this.lbLocateRef.Size = new System.Drawing.Size(40, 23);
+            this.lbLocateRef.TabIndex = 50;
+            this.lbLocateRef.Text = "Ref#";
+            // 
+            // txtLocateDyelot
+            // 
+            this.txtLocateDyelot.BackColor = System.Drawing.Color.White;
+            this.txtLocateDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateDyelot.IsSupportEditMode = false;
+            this.txtLocateDyelot.Location = new System.Drawing.Point(640, 18);
+            this.txtLocateDyelot.Name = "txtLocateDyelot";
+            this.txtLocateDyelot.Size = new System.Drawing.Size(65, 23);
+            this.txtLocateDyelot.TabIndex = 49;
+            // 
+            // txtLocateRef
+            // 
+            this.txtLocateRef.BackColor = System.Drawing.Color.White;
+            this.txtLocateRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateRef.IsSupportEditMode = false;
+            this.txtLocateRef.Location = new System.Drawing.Point(265, 18);
+            this.txtLocateRef.Name = "txtLocateRef";
+            this.txtLocateRef.Size = new System.Drawing.Size(87, 23);
+            this.txtLocateRef.TabIndex = 46;
+            // 
+            // lbLocateDyelot
+            // 
+            this.lbLocateDyelot.Location = new System.Drawing.Point(586, 18);
+            this.lbLocateDyelot.Name = "lbLocateDyelot";
+            this.lbLocateDyelot.Size = new System.Drawing.Size(51, 23);
+            this.lbLocateDyelot.TabIndex = 53;
+            this.lbLocateDyelot.Text = "Dyelot";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(9, 67);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(139, 23);
+            this.label2.TabIndex = 46;
+            this.label2.Text = "Cut Shadeband Time";
+            // 
+            // label8
+            // 
+            this.label8.BackColor = System.Drawing.SystemColors.Control;
+            this.label8.Location = new System.Drawing.Point(330, 67);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(20, 23);
+            this.label8.TabIndex = 142;
+            this.label8.Text = "~";
+            this.label8.TextStyle.Alignment = System.Drawing.ContentAlignment.BottomCenter;
+            this.label8.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Checked = false;
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker1.Location = new System.Drawing.Point(151, 67);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.ShowCheckBox = true;
+            this.dateTimePicker1.Size = new System.Drawing.Size(176, 23);
+            this.dateTimePicker1.TabIndex = 11;
+            this.dateTimePicker1.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
+            this.dateTimePicker1.ValueChanged += new System.EventHandler(this.DateTimePicker_ValueChanged);
+            // 
+            // dateTimePicker2
+            // 
+            this.dateTimePicker2.Checked = false;
+            this.dateTimePicker2.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker2.Location = new System.Drawing.Point(354, 67);
+            this.dateTimePicker2.Name = "dateTimePicker2";
+            this.dateTimePicker2.ShowCheckBox = true;
+            this.dateTimePicker2.Size = new System.Drawing.Size(176, 23);
+            this.dateTimePicker2.TabIndex = 12;
+            this.dateTimePicker2.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
+            this.dateTimePicker2.ValueChanged += new System.EventHandler(this.DateTimePicker_ValueChanged);
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(533, 67);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(139, 23);
+            this.label3.TabIndex = 147;
+            this.label3.Text = "Cut Shadeband By";
+            // 
+            // txtuserCutShadeband
+            // 
+            this.txtuserCutShadeband.DisplayBox1Binding = "";
+            this.txtuserCutShadeband.Location = new System.Drawing.Point(675, 67);
+            this.txtuserCutShadeband.Name = "txtuserCutShadeband";
+            this.txtuserCutShadeband.Size = new System.Drawing.Size(300, 23);
+            this.txtuserCutShadeband.TabIndex = 13;
+            this.txtuserCutShadeband.TextBox1Binding = "";
+            // 
             // P21
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 501);
+            this.Controls.Add(this.txtuserCutShadeband);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.dateTimePicker2);
+            this.Controls.Add(this.dateTimePicker1);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dateTimePicker);
@@ -581,6 +653,12 @@
             this.Controls.SetChildIndex(this.dateTimePicker, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.groupBox1, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.label8, 0);
+            this.Controls.SetChildIndex(this.dateTimePicker1, 0);
+            this.Controls.SetChildIndex(this.dateTimePicker2, 0);
+            this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.txtuserCutShadeband, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -632,5 +710,11 @@
         private Win.UI.TextBox txtLocateRef;
         private Win.UI.Label lbLocateDyelot;
         private Win.UI.Button btnFind;
+        private Win.UI.Label label2;
+        private Win.UI.Label label8;
+        private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private System.Windows.Forms.DateTimePicker dateTimePicker2;
+        private Win.UI.Label label3;
+        private Class.Txtuser txtuserCutShadeband;
     }
 }

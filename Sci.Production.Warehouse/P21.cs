@@ -13,10 +13,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P21 : Win.Tems.QueryForm
     {
         private DataTable dtReceiving = new DataTable();
 
+        /// <inheritdoc/>
         public P21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -35,6 +37,9 @@ namespace Sci.Production.Warehouse
 
             this.dateTimePicker.CustomFormat = "yyyy/MM/dd HH:mm:ss";
             this.dateTimePicker.Text = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+            this.dateTimePicker1.Format = DateTimePickerFormat.Custom;
+            this.dateTimePicker2.Format = DateTimePickerFormat.Custom;
+            this.ChangeCutShadebandTime();
 
             DataGridViewGeneratorNumericColumnSettings cellActWeight = new DataGridViewGeneratorNumericColumnSettings();
             cellActWeight.CellValidating += (s, e) =>
@@ -127,6 +132,7 @@ namespace Sci.Production.Warehouse
                  .Numeric("StockQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                  .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .DateTime("CutShadebandTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(20), iseditingreadonly: false)
+                 .Text("CutBy", header: "Cut Shadeband By", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Location", header: "Location", width: Widths.AnsiChars(12), settings: cellLocation)
                  .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
                  .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(8), decimal_places: 2, settings: cellActWeight)
@@ -264,6 +270,22 @@ and exists(
 )";
             }
 
+            if (this.dateTimePicker1.Checked)
+            {
+                sqlWhere += $@"
+and cutTime.cutTime between '{this.dateTimePicker1.Text}' and '{this.dateTimePicker2.Text}'";
+                sqlWhere2 += $@"
+and cutTime.cutTime between '{this.dateTimePicker1.Text}' and '{this.dateTimePicker2.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtuserCutShadeband.TextBox1.Text))
+            {
+                sqlWhere += $@"
+and cutTime.CutBy = '{this.txtuserCutShadeband.TextBox1.Text}'";
+                sqlWhere2 += $@"
+and cutTime.CutBy = '{this.txtuserCutShadeband.TextBox1.Text}'";
+            }
+
             if (MyUtility.Check.Empty(sqlWhere))
             {
                 MyUtility.Msg.WarningBox("The criteria can't all be empty.");
@@ -313,6 +335,7 @@ from
         ,[ReceivingSource]='Receiving'
         ,[CutShadebandTime]=cutTime.CutTime
         ,[OldCutShadebandTime]=cutTime.CutTime
+        ,cutTime.CutBy
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
@@ -342,7 +365,7 @@ from
 			    , 1, 1, '')
     )Location
     OUTER APPLY(
-	    SELECT  fs.CutTime
+	    SELECT  fs.CutTime,fs.CutBy
 	    FROM FIR f
 	    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 	    WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
@@ -384,6 +407,7 @@ from
         ,[ReceivingSource]='TransferIn'
         ,[CutShadebandTime]=cutTime.CutTime
         ,[OldCutShadebandTime]=cutTime.CutTime
+        ,cutTime.CutBy
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN PO_Supp_Detail psd with (nolock) on td.PoId = psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
@@ -413,7 +437,7 @@ from
         order by lt.EditDate desc
     )LastEditDate
     OUTER APPLY(
-	    SELECT  fs.CutTime
+	    SELECT  fs.CutTime,fs.CutBy
 	    FROM FIR f
 	    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 	    WHERE  t.id = f.ReceivingID and td.PoId = F.POID and td.Seq1 = F.SEQ1 and td.Seq2 = F.SEQ2 AND td.Roll = fs.Roll and td.Dyelot = fs.Dyelot
@@ -669,21 +693,24 @@ Insert into LocationTrans_Detail(   ID,
             string sqlUpdateFIR_Shadebone = string.Empty;
             foreach (var updateItem in drArryCutShadebandTime)
             {
-                string cutTime = MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).HasValue ? "'" + MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).Value.ToString("yyyy/MM/dd HH:mm:ss") + "'" : "NULL";
-
-                sqlUpdateFIR_Shadebone += $@"
+                if (!MyUtility.Check.Empty(updateItem["CutShadebandTime"]))
+                {
+                    string cutTime = MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
+                    sqlUpdateFIR_Shadebone += $@"
 UPDATE fs
-SET  fs.CutTime = {cutTime}
+SET  fs.CutTime = '{cutTime}', Cutby = '{Sci.Env.User.UserID}'
 FROM FIR f
 INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 WHERE  f.ReceivingID='{updateItem["ID"]}'
-    AND f.PoId = '{updateItem["PoId"]}'
-    AND f.Seq1 = '{updateItem["Seq1"]}'
-    AND f.Seq2 ='{updateItem["Seq2"]}'
-    AND fs.Roll = '{updateItem["Roll"]}'
-    AND fs.Dyelot = '{updateItem["Dyelot"]}'
+AND f.PoId = '{updateItem["PoId"]}'
+AND f.Seq1 = '{updateItem["Seq1"]}'
+AND f.Seq2 ='{updateItem["Seq2"]}'
+AND fs.Roll = '{updateItem["Roll"]}'
+AND fs.Dyelot = '{updateItem["Dyelot"]}'
+AND isnull(fs.CutTime,'1900/01/01') <> '{cutTime}'
 ;
 ";
+                }
             }
 
             Exception errMsg = null;
@@ -907,6 +934,41 @@ WHERE  f.ReceivingID='{updateItem["ID"]}'
             else
             {
                 this.gridReceiving.CurrentCell = this.gridReceiving.Rows[row.Index].Cells["POID"];
+            }
+        }
+
+        private bool oldDateChecked = false;
+
+        private void DateTimePicker_ValueChanged(object sender, EventArgs e)
+        {
+            if (((DateTimePicker)sender).Checked != this.oldDateChecked)
+            {
+                this.oldDateChecked = ((DateTimePicker)sender).Checked;
+                this.ChangeCutShadebandTime(((DateTimePicker)sender).Checked);
+            }
+        }
+
+        private void ChangeCutShadebandTime(bool chk = false)
+        {
+            this.dateTimePicker1.Checked = this.dateTimePicker2.Checked = chk;
+            this.ChangeDateTimepickCheck(this.dateTimePicker1);
+            this.ChangeDateTimepickCheck(this.dateTimePicker2);
+            if (chk)
+            {
+                this.dateTimePicker1.Text = DateTime.Now.ToString("yyyy/MM/dd 00:00:00");
+                this.dateTimePicker2.Text = DateTime.Now.ToString("yyyy/MM/dd 23:59:59");
+            }
+        }
+
+        private void ChangeDateTimepickCheck(DateTimePicker dateTimePicker)
+        {
+            if (dateTimePicker.Checked)
+            {
+                dateTimePicker.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+            }
+            else
+            {
+                dateTimePicker.CustomFormat = " ";
             }
         }
     }
