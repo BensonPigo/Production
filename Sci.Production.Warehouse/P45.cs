@@ -376,6 +376,7 @@ select  ad.POID
 	, [AdjustQty] = ad.QtyBefore - ad.QtyAfter
 	, psd.StockUnit
 	, [Location] = dbo.Getlocation(fi.ukey)
+    , [Total]=sum(ad.QtyBefore - ad.QtyAfter) OVER (PARTITION BY ad.POID ,ad.Seq1,ad.Seq2 )    
 from Adjust a
 inner join Adjust_Detail ad on a.ID = ad.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd.SEQ2 = ad.Seq2
@@ -409,6 +410,7 @@ and a.Status = 'Confirmed'
                     AdjustQty = row1["AdjustQty"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     Location = row1["Location"].ToString().Trim(),
+                    Total = row1["Total"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;
