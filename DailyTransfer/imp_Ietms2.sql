@@ -210,6 +210,15 @@ ID
 
 from Trade_To_Pms.dbo.Mold as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Mold as a WITH (NOLOCK) where a.id = b.id)
+---------------------------
+update m
+	set m.IsAttachment = mt.IsAttachment,
+		m.IsTemplate = mt.IsTemplate
+from Production.dbo.Mold m
+inner join Trade_To_Pms.dbo.MoldTPE mt on m.ID = mt.ID
+where (m.IsAttachment <> mt.IsAttachment 
+or m.IsTemplate <> mt.IsTemplate)
+---------------------------
 --aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 --SMNotice
 --SMNotice

@@ -9,6 +9,7 @@ using Ict;
 using Sci.Data;
 using System.Linq;
 using Sci.Production.Class;
+using System.Data.SqlClient;
 
 namespace Sci.Production.IE
 {
@@ -127,6 +128,7 @@ select  ld.OriNO
 	, ld.TotalCycle
 	, ld.GSD
 	, ld.Cycle
+    , ld.OperationID
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -442,9 +444,17 @@ order by ld.No, ld.GroupKey",
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    string sqlcmd = "select ID,Description from SewingMachineAttachment WITH (NOLOCK) where Junk = 0";
+                    string sqlcmd = @"
+select ID,DescEN 
+from Mold WITH (NOLOCK) 
+where Junk = 0
+and IsAttachment = 1
+union all
+select ID, Description
+from SewingMachineAttachment WITH (NOLOCK) 
+where Junk = 0";
 
-                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null)
+                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null)
                     {
                         Width = 666,
                     };
@@ -460,37 +470,78 @@ order by ld.No, ld.GroupKey",
 
             attachment.CellValidating += (s, e) =>
             {
-                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                if (this.EditMode)
                 {
-                    this.CurrentDetailData["Attachment"] = e.FormattedValue;
-                    string sqlcmd = "select ID,Description from SewingMachineAttachment WITH (NOLOCK) where Junk = 0";
-                    DataTable dt;
-                    DBProxy.Current.Select(null, sqlcmd, out dt);
-                    string[] getLocation = this.CurrentDetailData["Attachment"].ToString().Split(',').Distinct().ToArray();
-                    bool selectId = true;
-                    List<string> errAttachment = new List<string>();
-                    List<string> trueAttachment = new List<string>();
-                    foreach (string item in getLocation)
+                    List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
+                    string sqlcmd = "select o.MoldID from Operation o WITH (NOLOCK) where o.ID = @OperationID";
+                    DataTable dtOperation;
+                    DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtOperation);
+                    List<string> operationList = new List<string>();
+                    if (!result)
                     {
-                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(item)) && !item.EqualString(string.Empty))
+                        this.CurrentDetailData["Attachment"] = string.Empty;
+                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
+                    }
+                    else
+                    {
+                        var query = dtOperation.AsEnumerable().Select(x => x.Field<string>("MoldID"));
+                        if (query.Any())
                         {
-                            selectId &= false;
-                            errAttachment.Add(item);
-                        }
-                        else if (!item.EqualString(string.Empty))
-                        {
-                            trueAttachment.Add(item);
+                            operationList = query.FirstOrDefault().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
                         }
                     }
 
-                    if (!selectId)
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        if (operationList.Any())
+                        {
+                            this.CurrentDetailData["Attachment"] = string.Join(",", operationList.ToList());
+                        }
+
+                        return;
+                    }
+
+                    sqlcmd = @"
+select ID 
+from Mold WITH (NOLOCK) 
+where Junk = 0
+and IsAttachment = 1
+union all
+select ID
+from SewingMachineAttachment WITH (NOLOCK) 
+where Junk = 0";
+                    DataTable dtMold;
+                    result = DBProxy.Current.Select(null, sqlcmd, out dtMold);
+                    if (!result)
+                    {
+                        this.CurrentDetailData["Attachment"] = string.Empty;
+                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
+                    }
+
+                    // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
+                    List<string> getMold = e.FormattedValue.ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
+
+                    // 不存在 operation
+                    var existsOperation = operationList.Except(getMold);
+                    if (existsOperation.Any() && operationList.Any())
                     {
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errAttachment.ToArray()) + "  Data not found !!", "Data not found");
+                        this.CurrentDetailData["Attachment"] = string.Join(",", getMold.Except(existsOperation).ToList());
+                        MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsOperation.ToList()) + "  need include in Operation setting !!", "Data need include in setting");
+                        return;
                     }
 
-                    trueAttachment.Sort();
-                    this.CurrentDetailData["Attachment"] = string.Join(",", trueAttachment.ToArray());
+                    // 不存在 Mold
+                    var existsMold = getMold.Except(dtMold.AsEnumerable().Select(x => x.Field<string>("ID")).ToList());
+                    if (existsMold.Any())
+                    {
+                        e.Cancel = true;
+                        this.CurrentDetailData["Attachment"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).ToList());
+                        MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsMold.ToList()) + "  need include in Mold setting !!", "Data need include in setting");
+                        return;
+                    }
+
+                    this.CurrentDetailData["Attachment"] = string.Join(",", getMold.ToList());
                 }
             };
             #endregion
@@ -499,9 +550,18 @@ order by ld.No, ld.GroupKey",
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
+                    string sqlcmd = @"
+select ID,DescEN 
+from Mold WITH (NOLOCK) 
+where Junk = 0
+and IsTemplate = 1
+union all
+select ID, Description
+from SewingMachineTemplate WITH (NOLOCK) 
+where Junk = 0
+";
 
-                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
+                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
                         Width = 666,
                     };
@@ -520,7 +580,17 @@ order by ld.No, ld.GroupKey",
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
                     this.CurrentDetailData["Template"] = e.FormattedValue;
-                    string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
+                    string sqlcmd = @"
+select ID,DescEN 
+from Mold WITH (NOLOCK) 
+where Junk = 0
+and IsTemplate = 1
+union all
+select ID, Description
+from SewingMachineTemplate WITH (NOLOCK) 
+where Junk = 0
+";
+
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = this.CurrentDetailData["Template"].ToString().Split(',').Distinct().ToArray();
@@ -633,7 +703,6 @@ order by ld.No, ld.GroupKey",
             this.detailgrid.Columns["EmployeeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["EmployeeName"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["EmployeeSkill"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-
             this.detailgrid.RowPrePaint += (s, e) =>
             {
                 if (e.RowIndex < 0)

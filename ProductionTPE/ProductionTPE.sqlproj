@@ -83,5 +83,6 @@
     <Build Include="dbo\Tables\MachineTypeTPE.sql" />
     <Build Include="dbo\Tables\ArtworkType_FTY.sql" />
     <Build Include="dbo\Stored Procedures\TransExport_ProductionTPE.sql" />
+    <Build Include="dbo\Tables\MoldTPE.sql" />
   </ItemGroup>
 </Project>
