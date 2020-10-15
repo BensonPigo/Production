@@ -57,7 +57,7 @@ namespace Sci.Production.Automation
         {
             dynamic newBodyObject = bodyObject;
             newBodyObject.APItags = apiTag;
-            newBodyObject.CmdTime = DateTime.Now;
+            newBodyObject.CmdTime = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
             return newBodyObject;
         }
 
