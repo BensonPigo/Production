@@ -103,12 +103,12 @@ namespace Sci.Production.Shipping
 
             if (!MyUtility.Check.Empty(this.ETD1))
             {
-                where += $" g.ETD >= '{((DateTime)this.ETD1).ToString("yyyy/MM/dd")}' ";
+                where += $" and g.ETD >= '{((DateTime)this.ETD1).ToString("yyyy/MM/dd")}' ";
             }
 
             if (!MyUtility.Check.Empty(this.ETD2))
             {
-                where += $" g.ETD <=  '{((DateTime)this.ETD2).ToString("yyyy/MM/dd")}' ";
+                where += $" and g.ETD <=  '{((DateTime)this.ETD2).ToString("yyyy/MM/dd")}' ";
             }
 
             if (!MyUtility.Check.Empty(this.ShipMode))
