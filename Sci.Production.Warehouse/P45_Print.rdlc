@@ -11,7 +11,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>1.24534cm</Height>
+              <Height>1.30708cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -322,7 +322,7 @@
                                 </TablixCells>
                               </TablixRow>
                               <TablixRow>
-                                <Height>0.6cm</Height>
+                                <Height>0.66174cm</Height>
                                 <TablixCells>
                                   <TablixCell>
                                     <CellContents>
@@ -332,13 +332,79 @@
                                             <Top>0.3cm</Top>
                                             <Left>0.42333cm</Left>
                                             <Height>0cm</Height>
-                                            <Width>19.84469cm</Width>
+                                            <Width>15.06043cm</Width>
                                             <Style>
                                               <Border>
                                                 <Style>Dashed</Style>
                                               </Border>
                                             </Style>
                                           </Line>
+                                          <Textbox Name="Textbox2">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>Total:</Value>
+                                                    <Style>
+                                                      <TextDecoration>None</TextDecoration>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Right</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox1</rd:DefaultName>
+                                            <Top>0.10583cm</Top>
+                                            <Left>15.3515cm</Left>
+                                            <Height>0.55591cm</Height>
+                                            <Width>2.03257cm</Width>
+                                            <ZIndex>1</ZIndex>
+                                            <Style>
+                                              <Border>
+                                                <Style>None</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                          <Textbox Name="Total2">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=First(Fields!Total.Value)</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Right</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Total</rd:DefaultName>
+                                            <Top>0.10583cm</Top>
+                                            <Left>17.38406cm</Left>
+                                            <Height>0.55591cm</Height>
+                                            <Width>2.79897cm</Width>
+                                            <ZIndex>2</ZIndex>
+                                            <Style>
+                                              <Border>
+                                                <Style>None</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
                                         </ReportItems>
                                         <KeepTogether>true</KeepTogether>
                                         <Style>
@@ -383,7 +449,7 @@
                             </TablixMembers>
                           </TablixRowHierarchy>
                           <DataSetName>DataSet1</DataSetName>
-                          <Height>1.24534cm</Height>
+                          <Height>1.30708cm</Height>
                           <Width>20.63433cm</Width>
                           <Style>
                             <Border>
@@ -416,7 +482,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DataSet1</DataSetName>
-        <Height>1.24534cm</Height>
+        <Height>1.30708cm</Height>
         <Width>20.63433cm</Width>
         <Style>
           <Border>
@@ -425,7 +491,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>0.49029in</Height>
+    <Height>0.5146in</Height>
     <Style />
   </Body>
   <Width>8.14459in</Width>
@@ -1249,6 +1315,10 @@
         </Field>
         <Field Name="Location">
           <DataField>Location</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="POID">

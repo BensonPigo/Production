@@ -49,5 +49,10 @@
         /// Getlocation
         /// </summary>
         public string Location { get; set; }
+
+        /// <summary>
+        /// Total
+        /// </summary>
+        public string Total { get; set; }
     }
 }
