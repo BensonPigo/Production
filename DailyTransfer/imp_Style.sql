@@ -894,7 +894,6 @@ a.FabricCode	= b.FabricCode
 ,a.AddDate	= b.AddDate
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
-,a.Style_BOFUkey	= b.Style_BOFUkey
 ,a.QTWidth	= b.QTWidth
 from Production.dbo.Style_FabricCode as a 
 inner join Trade_To_Pms.dbo.Style_FabricCode as b ON a.StyleUkey = b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode
@@ -909,7 +908,6 @@ StyleUkey
 ,AddDate
 ,EditName
 ,EditDate
-,Style_BOFUkey
 ,QTWidth
 )
 select 
@@ -921,7 +919,6 @@ select
 ,b.AddDate
 ,b.EditName
 ,b.EditDate
-,b.Style_BOFUkey
 ,b.QTWidth
 from Trade_To_Pms.dbo.Style_FabricCode as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_FabricCode as a WITH (NOLOCK) where a.StyleUkey = b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode)
