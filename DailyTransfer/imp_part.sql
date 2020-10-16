@@ -698,7 +698,10 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 					 t.AddDate= s.AddDate,
 					 t.EditName= s.EditName,
 					 t.EditDate= s.EditDate,
-					 t.MasterGroupID = s.MasterGroupID
+					 t.MasterGroupID = s.MasterGroupID,
+					 t.IsBD= s.IsBD,
+					 t.IsSew= s.IsSew,
+					 t.IsDP= s.IsDP
 		from dbo.MachineGroup t
 		inner join dbo.SciTrade_To_Pms_MachineGroup s on t.id=s.id AND t.MasterGroupID = s.MasterGroupID
 
@@ -713,7 +716,10 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 				,AddDate
 				,EditName
 				,EditDate
-				,MasterGroupID)
+				,MasterGroupID
+				,IsBD
+				,IsSew
+				,IsDP)
 				select s.ID,
 				s.Description,
 				s.DescriptionCH,
@@ -725,7 +731,10 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 				s.AddDate,
 				s.EditName,
 				s.EditDate,
-				s.MasterGroupID
+				s.MasterGroupID,
+				s.IsBD,
+				s.IsSew,
+				s.IsDP
 				from dbo.SciTrade_To_Pms_MachineGroup s
 				where not exists(select 1 from dbo.MachineGroup t where t.id=s.id AND t.MasterGroupID = s.MasterGroupID)
 		
