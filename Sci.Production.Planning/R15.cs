@@ -883,11 +883,10 @@ outer apply(
 		select concat('+',ArtworkTypeID)
 		from(
 			SELECT DISTINCT [ArtworkTypeId]=IIF(s1.ArtworkTypeId='',s1.ID,s1.ArtworkTypeId)
-			FROM Bundle b1
-			INNER JOIN Bundle_Detail bd1 WITH (NOLOCK) ON b1.ID = bd1.iD
+			FROM Bundle_Detail_Order bd1 WITH (NOLOCK)
 			INNER JOIN Bundle_Detail_Art bda1 WITH (NOLOCK) ON bd1.BundleNo = bda1.Bundleno
 			INNER JOIN Subprocess s1 WITH (NOLOCK) ON s1.ID=bda1.SubprocessId
-			WHERE b1.Orderid=t.OrderID
+			WHERE bd1.Orderid=t.OrderID
 		)tmpartwork
 		for xml path('')
 	),1,1,'')
@@ -1517,10 +1516,10 @@ outer apply(
 		from(
 			SELECT DISTINCT [ArtworkTypeId]=IIF(s1.ArtworkTypeId='',s1.ID,s1.ArtworkTypeId)
 			FROM Bundle b1
-			INNER JOIN Bundle_Detail bd1 WITH (NOLOCK) ON b1.ID = bd1.iD
+			INNER JOIN Bundle_Detail_Order bd1 WITH (NOLOCK) ON b1.ID = bd1.iD
 			INNER JOIN Bundle_Detail_Art bda1 WITH (NOLOCK) ON bd1.BundleNo = bda1.Bundleno
 			INNER JOIN Subprocess s1 WITH (NOLOCK) ON s1.ID=bda1.SubprocessId
-			WHERE b1.Orderid=t.OrderID AND b1.Article=t.Article AND bd1.SizeCode=t.SizeCode
+			WHERE bd1.Orderid=t.OrderID AND b1.Article=t.Article AND b1.SizeCode=t.SizeCode
 		)tmpartwork
 		for xml path('')
 	),1,1,'')
