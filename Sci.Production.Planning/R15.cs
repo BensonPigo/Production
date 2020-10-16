@@ -697,6 +697,7 @@ select t.MDivisionID
        , IDD.val
        , t.BrandID
        , t.OrderID
+       , t.POID
 	   , [Cancelled] = IIF(t.Junk=1 ,'Y' ,'')  ------------------
        , Dest = Country.Alias
        , t.StyleID
@@ -1316,6 +1317,7 @@ select t.MDivisionID
        , IDD.val
        , t.BrandID
        , t.OrderID
+       , t.POID
 	   , [Cancelled] = IIF(t.Junk=1 ,'Y' ,'')  ------------------
        , Dest = Country.Alias
        , t.StyleID
