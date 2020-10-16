@@ -563,7 +563,8 @@ DROP TABLE #tmpStockType
                 // Remark有資料要分開寫入到P26 不同ID
                 foreach (var item in drArryExistRemark)
                 {
-                    if (item["Remark"].ToString().Length >= (60 - 19)) // 預設要填入---Create from P21.，因此要扣掉這個文字長度
+                    // 預設要填入---Create from P21.，因此要扣掉這個文字長度
+                    if (item["Remark"].ToString().Length >= (60 - 19))
                     {
                         MyUtility.Msg.WarningBox("Remark is too long!");
                         return;
@@ -781,7 +782,7 @@ AND isnull(fs.CutTime,'1900/01/01') <> '{cutTime}'
         /// 檢查表身Location,ActualWeight是否有被修改過(跟DB資料比較)
         /// 有被修改過,就自動勾選資料
         /// </summary>
-        /// <param name="rowIndex"></param>
+        /// <inheritdoc/>
         private void SelectModify(int rowIndex)
         {
             DataRow dr = this.gridReceiving.GetDataRow(rowIndex);
@@ -885,7 +886,7 @@ AND isnull(fs.CutTime,'1900/01/01') <> '{cutTime}'
             List<DataRow> drs = dt.AsEnumerable().ToList();
             if (!this.txtLocateSP.Text.Empty() && drs.Any())
             {
-                drs = drs.Where(x => x.Field<string>("poid").EqualString(this.txtLocateSP.Text.ToString())).ToList();
+                drs = drs.Where(x => x.Field<string>("poid").Contains(this.txtLocateSP.Text.ToString())).ToList();
             }
 
             if (!this.txtLocateSeq.Seq1.Empty() && drs.Any())
@@ -910,7 +911,7 @@ AND isnull(fs.CutTime,'1900/01/01') <> '{cutTime}'
 
             if (!this.txtLocateRoll.Text.Empty() && drs.Any())
             {
-                drs = drs.Where(x => x.Field<string>("Roll").EqualString(this.txtLocateRoll.Text.ToString())).ToList();
+                drs = drs.Where(x => x.Field<string>("Roll").Contains(this.txtLocateRoll.Text.ToString())).ToList();
             }
 
             if (!this.txtLocateDyelot.Text.Empty() && drs.Any())
