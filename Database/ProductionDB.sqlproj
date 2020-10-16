@@ -2552,6 +2552,7 @@
     <Build Include="dbo\Tables\POShippingList_Line.sql" />
     <Build Include="dbo\Tables\POShippingList.sql" />
     <Build Include="dbo\Tables\PortByBrandShipmode.sql" />
+    <Build Include="dbo\Functions\GetPassName.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
