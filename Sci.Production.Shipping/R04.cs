@@ -374,8 +374,6 @@ outer apply(
 	),1,1,'')
 )pkExpressStatus
 where ((isnull(ot.IsGMTMaster,0) != 1
-	and oq.Qty <>( (select isnull(sum(ShipQty), 0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) 
-					- [dbo].getInvAdjQty(o.ID,oq.Seq) )
 	and o.PulloutComplete=0 and o.Qty > 0
 	and not exists (select 1 from Order_Finish Where ID = o.ID))
 or ( 
@@ -469,10 +467,6 @@ left join Brand b WITH (NOLOCK) on o.BrandID= b.id
 outer apply(select ShipQty = isnull(sum(ShipQty), 0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) ShipQty
 
 where 1=1 and isnull(ot.IsGMTMaster,0) != 1
-
-AND oq.Qty<>((select isnull(sum(ShipQty), 0) from Pullout_Detail WITH(NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) 
-				- [dbo].getInvAdjQty(o.ID, oq.Seq) )
-
 and o.PulloutComplete=0
 and o.Qty > 0
 and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
@@ -587,8 +581,6 @@ outer apply
 	where gb.id = p.INVNo
 )gb 
 where ((isnull(ot.IsGMTMaster,0) != 1
-	and oq.Qty <>( (select isnull(sum(ShipQty), 0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) 
-					- [dbo].getInvAdjQty(o.ID,oq.Seq) )
 	and o.PulloutComplete=0 and o.Qty > 0
 	and not exists (select 1 from Order_Finish Where ID = o.ID))
 or ( 
@@ -689,8 +681,6 @@ outer apply(
 )plds
 
 where ((isnull(ot.IsGMTMaster,0) != 1
-	and oq.Qty <>( (select isnull(sum(ShipQty), 0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) 
-					- [dbo].getInvAdjQty(o.ID,oq.Seq) )
 	and o.PulloutComplete=0 and o.Qty > 0
 	and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
 	and not exists (select 1 from Order_Finish Where ID = o.ID))
