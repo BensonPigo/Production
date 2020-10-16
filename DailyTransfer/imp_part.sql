@@ -701,7 +701,7 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 					 t.MasterGroupID = s.MasterGroupID,
 					 t.IsBD= s.IsBD,
 					 t.IsSew= s.IsSew,
-					 t.IsDP= s.IsDP,
+					 t.IsDP= s.IsDP
 		from dbo.MachineGroup t
 		inner join dbo.SciTrade_To_Pms_MachineGroup s on t.id=s.id AND t.MasterGroupID = s.MasterGroupID
 
