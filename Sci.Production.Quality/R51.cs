@@ -142,10 +142,10 @@ select
 			IIF(ttlMINUTE_D > 60, ttlMINUTE_D / 60, 0), ':',
 			isnull(ttlMINUTE_D_HR, 0)))
 into #tmp
-from SubProInsRecord SR 
-Left join Bundle_Detail BD on SR.BundleNo=BD.BundleNo
-Left join Bundle B on BD.ID=B.ID
-Left join Orders O on B.OrderID=O.ID
+from SubProInsRecord SR WITH (NOLOCK)
+Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
+Left join Bundle B WITH (NOLOCK) on BD.ID=B.ID
+Left join Orders O WITH (NOLOCK) on B.OrderID=O.ID
 {formatJoin}
 outer apply(select ttlMINUTE = DATEDIFF(MINUTE, SR.AddDate, RepairedDatetime))ttlMINUTE
 outer apply(select ttlMINUTE_D = IIF(ttlMINUTE > 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
@@ -178,10 +178,10 @@ select
 		concat(IIF(ttlMINUTE > 1440, ttlMINUTE / 1440, 0), ' ',
 			IIF(ttlMINUTE_D > 60, ttlMINUTE_D / 60, 0), ':',
 			isnull(ttlMINUTE_D_HR, 0)))
-from SubProInsRecord SR 
-Left join BundleReplacement_Detail BRD on SR.BundleNo=BRD.BundleNo
-Left join BundleReplacement BR on BRD.ID=BR.ID
-Left join Orders O on BR.OrderID=O.ID
+from SubProInsRecord SR WITH (NOLOCK)
+Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
+Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
+Left join Orders O WITH (NOLOCK) on BR.OrderID=O.ID
 {formatJoin}
 outer apply(select ttlMINUTE = DATEDIFF(MINUTE, SR.AddDate, RepairedDatetime))ttlMINUTE
 outer apply(select ttlMINUTE_D = IIF(ttlMINUTE > 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
