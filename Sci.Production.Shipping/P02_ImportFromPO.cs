@@ -97,7 +97,8 @@ namespace Sci.Production.Shipping
             }
 
             string sqlCmd = string.Format(
-                @"select 0 as Selected, a.*, iif(a.POQty-a.ExpressQty>0,a.POQty-a.ExpressQty,0) as Qty
+                @"select 0 as Selected, a.*, iif(a.POQty-a.ExpressQty>0,a.POQty-a.ExpressQty,0) as Qty, 
+		expressID = '{3}'
 from (
 select psd.ID,psd.SEQ1,psd.SEQ2,psd.Price,psd.POUnit as UnitID,isnull(o.BrandID,'') as BrandID,
 isnull(t.Name,'') as Leader, o.SMR  as LeaderID,ps.SuppID,ps.SuppID+'-'+s.AbbEN as Supplier,psd.Qty as POQty,
@@ -112,7 +113,8 @@ left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
 where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a",
                 this.txtSPNo.Text,
                 MyUtility.Check.Empty(this.txtSEQ1.Text) ? string.Empty : " and psd.SEQ1 = '" + this.txtSEQ1.Text + "'",
-                MyUtility.Check.Empty(this.txtSEQ2.Text) ? string.Empty : " and psd.SEQ2 = '" + this.txtSEQ2.Text + "'");
+                MyUtility.Check.Empty(this.txtSEQ2.Text) ? string.Empty : " and psd.SEQ2 = '" + this.txtSEQ2.Text + "'",
+                this.masterData["ID"]);
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable selectData);
             if (!result)
@@ -264,13 +266,19 @@ insert into Express_Detail(ID,OrderID,Seq1,Seq2,Qty,NW,CTNNo,Category,SuppID,Pri
 
             // ISP20201574 檢查 SP#, Seq1, Seq2, CTN No., Category = (DB 固定 4, 顯示 Material) 重複. A.勾選重複, B.DB與勾選重複
             string sqlcmd = $@"
-select t.ID,t.Seq1,t.Seq2,t.CTNNo from #tmp t group by t.ID,t.Seq1,t.Seq2,t.CTNNo having count(1) >1
+select distinct ID,Seq1,Seq2,CTNNo
+from(
+    select t.ID,t.Seq1,t.Seq2,t.CTNNo from #tmp t
+    group by ID,Seq1,Seq2,CTNNo
+    having count(1) >1
 
-union
-select t.ID, t.Seq1, t.Seq2, t.CTNNo
-from #tmp t
-inner join Express_Detail ed on ed.OrderID = t.ID and ed.Seq1 = t.Seq1 and ed.Seq2 = t.Seq2 and ed.CTNNo = t.CTNNo
-where ed.Category = '4'
+    union
+    select t.ID, t.Seq1, t.Seq2, t.CTNNo
+    from #tmp t
+    inner join Express_Detail ed on ed.OrderID = t.ID and ed.Seq1 = t.Seq1 and ed.Seq2 = t.Seq2 and ed.CTNNo = t.CTNNo
+        and t.expressID = ed.id
+    where ed.Category = '4'
+)x
 ";
             DualResult result = MyUtility.Tool.ProcessWithDatatable(sourcedt, string.Empty, sqlcmd, out DataTable checkData);
             if (!result)

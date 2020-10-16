@@ -117,11 +117,12 @@ select
 				,null,sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ))
 	,[SubVaniance]=R.ShipQty - R.ActualQty
 	,R.Remark		
-    ,ColorName=(select name from color where color.id = p.colorid and color.BrandId = p.BrandId )
+    ,ColorName = c.Name
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
 left join orders o WITH (NOLOCK) on o.ID = r.PoId
 LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
+LEFT JOIN color c on c.id = p.colorid and c.BrandId = p.BrandId 
 OUTER APPLY(
  SELECT [Value]=
 	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN p.SuppColor
