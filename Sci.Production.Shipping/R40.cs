@@ -10,6 +10,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Data.SqlClient;
+using System.ComponentModel;
+using Ict.Win;
 
 namespace Sci.Production.Shipping
 {
@@ -24,23 +27,12 @@ namespace Sci.Production.Shipping
         private List<string> FactoryList;
         private bool liguidationonly;
         private DataTable Summary;
-        private DataTable OnRoadMaterial;
-        private DataTable WHDetail;
-        private DataTable WIPDetail;
-        private DataTable ProdDetail;
-        private DataTable OnRoadProduction;
-        private DataTable ScrapDetail;
-        private DataTable Outstanding;
-        private DataTable WarehouseNotClose;
-        private DataTable AlreadySewingOutput;
-        private DataTable WIPSewingOutputList;
-        private DataTable WIPSewingOutputConsumption;
-        private DataTable ProdStockList;
-        private DataTable ProdStockListConsumption;
         private DataTable dtImportEcusData = new DataTable();
         private string strGenerateDate;
         private List<ExcelStatus> listTask;
-        private Action refreshGrid;
+        private Action<string, string> refreshGrid;
+        private SqlConnection connQueryData;
+
         /// <summary>
         /// R40
         /// </summary>
@@ -53,16 +45,28 @@ namespace Sci.Production.Shipping
             this.dtImportEcusData.Columns.Add("NLCode", typeof(string));
             this.dtImportEcusData.Columns.Add("StockQty", typeof(decimal));
             this.dateGenerate.Value = DateTime.Now;
+            this.refreshGrid = this.RefreshStatusGrid;
             this.gridExcelStatus.AutoGenerateColumns = true;
-            this.refreshGrid = () =>
+        }
+
+        private void RefreshStatusGrid(string excelMSg, string status)
+        {
+            lock (this.listTask)
             {
-                this.gridExcelStatus.DataSource = this.listTask.Select(s => new
+                foreach (ExcelStatus item in this.listTask)
                 {
-                    s.ExcelName,
-                    Status = s.CreateExcelTask.Status.ToString(),
-                }).ToList();
+                    if (item.ExcelName == excelMSg)
+                    {
+                        item.Status = status;
+                    }
+                }
+            }
+
+            lock (this.gridExcelStatus)
+            {
+                this.gridExcelStatus.DataSource = this.listTask.Select(s => new { s.ExcelName, s.Status }).ToList();
                 this.gridExcelStatus.AutoResizeColumns();
-            };
+            }
         }
 
         /// <inheritdoc/>
@@ -181,22 +185,6 @@ DECLARE @contract VARCHAR(15)
 SET @contract = '{0}';
 SET @mdivision = '{1}';
 SET @GenerateDate = '{2}'
-
---先取得VNConsumption中單一Style中Season最近的設定
-select StyleID, BrandID,SeasonID = MAX(SeasonID)
-into #tmpDistinctStyle
-from VNConsumption with (nolock)
-where VNContractID = @contract
-group by StyleID, BrandID
-
-select *
-into #tmpVNConsumption
-from VNConsumption v with (nolock)
-where VNContractID = @contract and
-	  exists(select 1 from #tmpDistinctStyle tps 
-				where	v.StyleID = tps.StyleID and
-						v.BrandID = tps.BrandID and
-						v.SeasonID = tps.SeasonID)
 
 --撈合約資料
 select 	HSCode
@@ -391,14 +379,14 @@ select 	 v.ID
         , vdd.StockUnit
         , vd.Waste
 into #tmpCustomSP
-from #tmpVNConsumption v WITH (NOLOCK) 
+from VNConsumption v WITH (NOLOCK) 
 inner join (
 	select 	vc.StyleID
 			,vc.BrandID
 			,vc.Category
             ,vc.sizecode
 			,MAX(vc.CustomSP) as CustomSP
-	from #tmpVNConsumption vc WITH (NOLOCK) 
+	from VNConsumption vc WITH (NOLOCK) 
 	where vc.VNContractID = @contract
 	group by vc.StyleID,vc.BrandID,vc.Category,vc.sizecode
 ) vc on vc.CustomSP = v.CustomSP
@@ -504,7 +492,7 @@ full outer join (
 -- 01在途物料(已報關但還在途)(On Road Material Qty新增報表)-----
 ----------------------------------------------------------------
 Declare @EtaRange date = dateadd(day,-31, @GenerateDate)
-select * 
+select  * 
 into #tmpOnRoadMaterial
 from (
 	select  [HSCode] = f.HSCode
@@ -1352,6 +1340,36 @@ from #tmpIssueQty1 a
 where a.StockQty  != 0
 group by a.id, a.POID, a.FactoryID, a.Refno, a.Color, a.Description, a.NLCode, a.CustomsUnit, a.StockUnit,a.MaterialType,a.HSCode,a.StyleID
 
+select  TransactionID
+        , TransactionName
+        , StyleID
+        , POID
+        , FactoryID
+        , Seq
+        , Refno
+        , Color
+        , Description
+        , NLCode
+        , Qty = sum (Qty)
+        , CustomsUnit
+        , StockQty = sum (StockQty)
+        , StockUnit
+into #WarehouseNotClose
+from #tmpIssueQty1
+where Qty != 0 
+group by TransactionID
+        , TransactionName
+        , StyleID
+        , POID
+        , FactoryID
+        , Seq
+        , Refno
+        , Color
+        , Description
+        , NLCode
+        , CustomsUnit
+        , StockUnit
+order by POID
 ----------------------------------------------------------------
 -------- 09 WIP - 未WH關單 已SewingOutput數量 ------------------
 ----------------------------------------------------------------
@@ -1564,6 +1582,7 @@ full outer join #tmpSPNotCloseSewingOutput_forwip3 tw on tw.POID = ti.POID
                                                      and tw.Refno = ti.Refno 
                                                      and tw.MaterialType = ti.MaterialType 
                                                      and ti.CustomsUnit = tw.CustomsUnit 
+                                                     and ti.StockUnit = tw.StockUnit
 order by IIF(tw.POID is null,ti.POID,tw.POID)
 
 ----------------------------------------------------------------
@@ -1715,7 +1734,7 @@ select max(vdd.customsp)customsp,vd.id,vc.sizecode
 into #tmpmax
 from VNExportDeclaration vd WITH (NOLOCK)
 inner join VNExportDeclaration_Detail vdd WITH (NOLOCK) on vd.id=vdd.id
-inner join #tmpVNConsumption vc WITH (NOLOCK) on vc.StyleID = vdd.StyleID 
+inner join VNConsumption vc WITH (NOLOCK) on vc.StyleID = vdd.StyleID 
                                                 and vc.BrandID=vdd.BrandID
 		                                        and vc.SeasonID=vdd.SeasonID 
                                                 and vc.category=vdd.category 
@@ -1745,9 +1764,8 @@ select [SP#] = vdd.OrderId
 INTO #OnRoadProductQty
 from VNExportDeclaration vd WITH (NOLOCK)
 inner join VNExportDeclaration_Detail vdd WITH (NOLOCK) on vd.id=vdd.id
-inner join #tmpVNConsumption vc on vc.StyleID = vdd.StyleID 
+inner join VNConsumption vc on vc.StyleID = vdd.StyleID 
                                 and vc.BrandID=vdd.BrandID
-							    and vc.SeasonID=vdd.SeasonID 
                                 and vc.category=vdd.category 
 							    and vc.sizecode=vdd.sizecode 
                                 and vc.customsp=vdd.customsp
@@ -2308,30 +2326,157 @@ where 1 = 1 ");
                     sqlCmd.Append(string.Format(" and a.NLCode = '{0}'", this.nlcode));
                 }
 
-                sqlCmd.Append(string.Format(
+                sqlCmd.Append(
                     @"                                                                                                       
 order by TRY_CONVERT(int, SUBSTRING(a.NLCode, 3, LEN(a.NLCode))), a.NLCode
 
---1)在途物料
-select * 
-from #tmpOnRoadMaterial 
-where Qty != 0  {0} {1} 
-order by POID,Seq
 
---2)W/H明細
-select * 
+
+--drop table  #tmpContract
+--            , #tmpDeclare
+--            , #tmpOrderList
+--            , #tmpOrderListAll
+--            , #tmpCustomSP
+--            , #tmpSewingOutput_WHNotClose
+--            , #tmpSewingOutput_InFty
+--            , #tmpOnRoadMaterial
+--            , #tmpWHQty
+--            , #tmpIssueQty
+--            , #tmpSPNotCloseSewingOutput
+--            , #tmpWIPDetail
+--            , #tmpPreProdQty
+--            , #tmpProdQty
+--            , #tmpPull
+--            , #tmpmax
+--            , #OnRoadProductQty
+--            , #tmpScrapQty
+--            , #tmpOutstanding 
+--			, #tmpIssueQty_forwip
+--			,#tmpIssueQty_forwip2
+--			,#tmpSPNotCloseSewingOutput_forwip
+--			,#tmpSPNotCloseSewingOutput_forwip2
+			
+");
+                #endregion
+            }
+            #endregion
+
+            DBProxy.Current.DefaultTimeout = 12000;  // 加長時間為 2 小時，避免timeout
+            if (this.connQueryData != null)
+            {
+                this.connQueryData.Close();
+                this.connQueryData.Dispose();
+            }
+
+            DBProxy._OpenConnection("Production", out this.connQueryData);
+            DualResult queryResult = MyUtility.Tool.ProcessWithDatatable(this.dtImportEcusData, string.Empty, sqlCmd.ToString(), out this.Summary, temptablename: "#CusQty", conn: this.connQueryData);
+            if (!queryResult)
+            {
+                this.connQueryData.Close();
+                this.connQueryData.Dispose();
+                return queryResult;
+            }
+
+            return Ict.Result.True;
+        }
+
+        private enum DetailExcel
+        {
+            /// <summary>
+            /// 在途物料
+            /// </summary>
+            OnRoadMaterial,
+
+            /// <summary>
+            /// W/H明細
+            /// </summary>
+            WHDetail,
+
+            /// <summary>
+            /// WIP明細
+            /// </summary>
+            WIPDetail,
+
+            /// <summary>
+            /// Prod明細
+            /// </summary>
+            ProdDetail,
+
+            /// <summary>
+            /// 在途成品
+            /// </summary>
+            OnRoadProduction,
+
+            /// <summary>
+            /// Scrap明細
+            /// </summary>
+            ScrapDetail,
+
+            /// <summary>
+            /// Outstanding List
+            /// </summary>
+            Outstanding,
+
+            /// <summary>
+            /// 未WH關單
+            /// </summary>
+            WarehouseNotClose,
+
+            /// <summary>
+            /// WIP Sewing Output List
+            /// </summary>
+            WIPSewingOutputList,
+
+            /// <summary>
+            /// WIP Sewing Output Custom SP and Consumption.
+            /// </summary>
+            WIPSewingOutputConsumption,
+
+            /// <summary>
+            /// 已SewingOutput數量
+            /// </summary>
+            AlreadySewingOutput,
+
+            /// <summary>
+            /// Prod. Stock List
+            /// </summary>
+            ProdStockList,
+
+            /// <summary>
+            /// Prod. Stock Custom SP and Consumption
+            /// </summary>
+            ProdStockListConsumption,
+        }
+
+        private string GetDetailDataSql(DetailExcel detailExcel, bool getCount, int rowStart = 0, int rowEnd = 0)
+        {
+            string sqlResult = string.Empty;
+            switch (detailExcel)
+            {
+                case DetailExcel.OnRoadMaterial:
+                    sqlResult = @"
+
+    select  [RowID] = ROW_NUMBER() OVER (ORDER BY POID,Seq),* 
+    from #tmpOnRoadMaterial 
+    where Qty != 0  {0} {1} 
+";
+                    break;
+                case DetailExcel.WHDetail:
+                    sqlResult = @"
+select [RowID] = ROW_NUMBER() OVER (ORDER BY POID,Seq),* 
 from #tmpWHQty 
-where Qty != 0 {0} {1} 
-order by POID,Seq
-
---3)WIP明細
-select * 
+where Qty != 0 {0} {1} ";
+                    break;
+                case DetailExcel.WIPDetail:
+                    sqlResult = @"
+select [RowID] = ROW_NUMBER() OVER (ORDER BY POID),* 
 from #tmpWIPDetail 
-where Qty != 0 {0} {1} 
-order by POID
-
---4)Prod明細
-select  HSCode,
+where Qty != 0 {0} {1} ";
+                    break;
+                case DetailExcel.ProdDetail:
+                    sqlResult = @"
+select  [RowID] = ROW_NUMBER() OVER (ORDER BY SP#, Article, SizeCode, ComboType),
+        HSCode,
         NLCode,
         [SP#],
         FactoryID,
@@ -2350,69 +2495,51 @@ select  HSCode,
         StockQty,
         StockUnit
 from #tmpProdQty 
-where Qty != 0 {0} {1} 
-order by SP#, Article, SizeCode, ComboType
-
---5)在途成品
-select * 
+where Qty != 0 {0} {1} ";
+                    break;
+                case DetailExcel.OnRoadProduction:
+                    sqlResult = @"
+select [RowID] = ROW_NUMBER() OVER (ORDER BY SP#,Article,SizeCode),* 
 from #OnRoadProductQty 
 where Qty != 0 {0} {1} 
-order by SP#,Article,SizeCode
-
---6)Scrap明細
-select * 
+";
+                    break;
+                case DetailExcel.ScrapDetail:
+                    sqlResult = @"
+select [RowID] = ROW_NUMBER() OVER (ORDER BY POID,Seq),* 
 from #tmpScrapQty 
 where Qty != 0 {0} {1} 
-order by POID,Seq
-
---7)Outstanding List 
-select * 
+";
+                    break;
+                case DetailExcel.Outstanding:
+                    sqlResult = @"
+select [RowID] = ROW_NUMBER() OVER (ORDER BY ID, Article, SizeCode, ComboType),* 
 from #tmpOutstanding 
-where WIPQaQty != 0 or GarmentStock != 0
-order by ID, Article, SizeCode, ComboType
-
--- 8) 未WH關單
-select  TransactionID
-        , TransactionName
-        , StyleID
-        , POID
-        , FactoryID
-        , Seq
-        , Refno
-        , Color
-        , Description
-        , NLCode
-        , Qty = sum (Qty)
-        , CustomsUnit
-        , StockQty = sum (StockQty)
-        , StockUnit
-from #tmpIssueQty1
+where WIPQaQty != 0 or GarmentStock != 0";
+                    break;
+                case DetailExcel.WarehouseNotClose:
+                    sqlResult = @"
+select [RowID] = ROW_NUMBER() OVER (ORDER BY POID),* 
+from    #WarehouseNotClose
 where Qty != 0  {0} {1} 
-group by TransactionID
-        , TransactionName
-        , StyleID
-        , POID
-        , FactoryID
-        , Seq
-        , Refno
-        , Color
-        , Description
-        , NLCode
-        , CustomsUnit
-        , StockUnit
-order by POID
 
--- 9) WIP Sewing Output List
-select  OrderID           ,
+";
+                    break;
+                case DetailExcel.WIPSewingOutputList:
+                    sqlResult = @"
+select  [RowID] = ROW_NUMBER() OVER (ORDER BY OrderID),
+        OrderID           ,
         FactoryID,
         Article       ,
         SizeCode      ,
 		ComboType     ,
 		QAQty       
-from #tmpSewingOutput_WHNotClose
-
--- 10) WIP Sewing Output Custom SP and Consumption.
-select	HSCode
+from #tmpSewingOutput_WHNotClose";
+                    break;
+                case DetailExcel.WIPSewingOutputConsumption:
+                    sqlResult = @"
+select	[RowID] = ROW_NUMBER() OVER (ORDER BY OrderID, Article, SizeCode, ComboType)
+        ,HSCode
 		, NLCode
 		, OrderID
 		, FactoryID
@@ -2429,10 +2556,12 @@ select	HSCode
 		, StockUnit
 from #tmpSPNotCloseSewingOutput
 where Qty != 0  {0} {1} 
-order by OrderID, Article, SizeCode, ComboType
-
--- 11) 已SewingOutput數量
-select	HSCode
+";
+                    break;
+                case DetailExcel.AlreadySewingOutput:
+                    sqlResult = @"
+select	[RowID] = ROW_NUMBER() OVER (ORDER BY OrderID, Article, SizeCode, ComboType)
+        , HSCode
 		, NLCode
 		, OrderID
 		, FactoryID
@@ -2448,10 +2577,12 @@ select	HSCode
 		, StockUnit
 from #tmpSPNotCloseSewingOutput
 where Qty != 0  {0} {1} 
-order by OrderID, Article, SizeCode, ComboType
-
--- 12) Prod. Stock List
-select  id 
+";
+                    break;
+                case DetailExcel.ProdStockList:
+                    sqlResult = @"
+select  [RowID] = ROW_NUMBER() OVER (ORDER BY id)
+        , id 
         , FactoryID
         , Article
         , SizeCode
@@ -2460,10 +2591,12 @@ select  id
         , PullQty
         , GMTAdjustQty
         , GarmentStock
-from #tmpPreProdQty
-
--- 13) Prod. Stock Custom SP and Consumption
-select  HSCode,
+from #tmpPreProdQty";
+                    break;
+                case DetailExcel.ProdStockListConsumption:
+                    sqlResult = @"
+select  [RowID] = ROW_NUMBER() OVER (ORDER BY HSCode),
+        HSCode,
         NLCode,
         [SP#],
         FactoryID,
@@ -2480,92 +2613,71 @@ select  HSCode,
         StockUnit
 from #tmpProdQty 
 where Qty != 0 {0} {1} 
-order by SP#, Article, SizeCode, ComboType
-
-drop table  #tmpContract
-            , #tmpDeclare
-            , #tmpOrderList
-            , #tmpOrderListAll
-            , #tmpCustomSP
-            , #tmpSewingOutput_WHNotClose
-            , #tmpSewingOutput_InFty
-            , #tmpOnRoadMaterial
-            , #tmpWHQty
-            , #tmpIssueQty
-            , #tmpSPNotCloseSewingOutput
-            , #tmpWIPDetail
-            , #tmpPreProdQty
-            , #tmpProdQty
-            , #tmpPull
-            , #tmpmax
-            , #OnRoadProductQty
-            , #tmpScrapQty
-            , #tmpOutstanding 
-			, #tmpIssueQty_forwip
-			,#tmpIssueQty_forwip2
-			,#tmpSPNotCloseSewingOutput_forwip
-			,#tmpSPNotCloseSewingOutput_forwip2
-			
-", MyUtility.Check.Empty(this.hscode) ? string.Empty : string.Format("and HSCode = '{0}'", this.hscode),
-                    MyUtility.Check.Empty(this.nlcode) ? string.Empty : string.Format("and NLCode = '{0}'", this.nlcode)));
-                #endregion
+";
+                    break;
+                default:
+                    break;
             }
-            #endregion
 
-            DataTable[] allData;
-            DBProxy.Current.DefaultTimeout = 12000;  // 加長時間為 2 小時，避免timeout
+            sqlResult = string.Format(
+                sqlResult,
+                MyUtility.Check.Empty(this.hscode) ? string.Empty : string.Format("and HSCode = '{0}'", this.hscode),
+                MyUtility.Check.Empty(this.nlcode) ? string.Empty : string.Format("and NLCode = '{0}'", this.nlcode));
 
-            DualResult queryResult = MyUtility.Tool.ProcessWithDatatable(this.dtImportEcusData, string.Empty, sqlCmd.ToString(), out allData, temptablename: "#CusQty");
-            if (!queryResult)
+            if (getCount)
             {
-                return queryResult;
+                sqlResult = $@"
+select Cnt = count(1)
+from (
+{sqlResult}
+) a
+";
             }
-
-            this.Summary = allData[0];
-
-            if (!this.liguidationonly)
+            else
             {
-                this.OnRoadMaterial = allData[1];
-                this.WHDetail = allData[2];
-                this.WIPDetail = allData[3];
-                this.ProdDetail = allData[4];
-                this.OnRoadProduction = allData[5];
-                this.ScrapDetail = allData[6];
-                this.Outstanding = allData[7];
-                this.WarehouseNotClose = allData[8];
-                this.WIPSewingOutputList = allData[9];
-                this.WIPSewingOutputConsumption = allData[10];
-                this.AlreadySewingOutput = allData[11];
-                this.ProdStockList = allData[12];
-                this.ProdStockListConsumption = allData[13];
+                sqlResult = $@"
+select a.*
+from (
+     {sqlResult}
+     ) a
+";
+                if (rowStart > 0)
+                {
+                    sqlResult = sqlResult + $" where a.RowID >= {rowStart} and a.RowID <= {rowEnd}";
+                }
             }
 
-            return Ict.Result.True;
+            return sqlResult;
         }
 
         private class ExcelStatus
         {
-            public Task CreateExcelTask { get; set; }
-
             public string ExcelName { get; set; }
+
+            public string Status { get; set; }
+
+            public Task ExcelTask { get; set; }
+
+            public DetailExcel DetailExcel { get; set; }
         }
 
-        private ExcelStatus CreateExcelStatusTask(string filename, DataTable dt, string strExcelMsg, string ftys)
+        private ExcelStatus CreateExcelStatusTask(string filename, DetailExcel detailExcel, string strExcelMsg, string ftys)
         {
-            Thread.Sleep(200);
-            return new ExcelStatus()
+            Thread.Sleep(500);
+            ExcelStatus excelStatus = new ExcelStatus()
             {
-                CreateExcelTask = Task.Run(() => this.CreateExcel(filename, dt, strExcelMsg, ftys)),
+                Status = "Initialization complete",
                 ExcelName = strExcelMsg,
+                ExcelTask = Task.Run(() => this.CreateExcel(filename, detailExcel, strExcelMsg, ftys)),
+                DetailExcel = detailExcel,
             };
+
+            return excelStatus;
         }
 
-        private void RefreshGridExcelStatus()
+        private void InvokeRefreshGridExcelStatus(string excelMSg, string status)
         {
-            lock (this.listTask)
-            {
-                this.Invoke(this.refreshGrid);
-            }
+            this.Invoke(this.refreshGrid, excelMSg, status);
         }
 
         /// <inheritdoc/>
@@ -2578,7 +2690,7 @@ drop table  #tmpContract
             }
 
             // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(this.Summary.Rows.Count + (this.liguidationonly ? 0 : this.OnRoadMaterial.Rows.Count + this.WHDetail.Rows.Count + this.WIPDetail.Rows.Count + this.ProdDetail.Rows.Count + this.ScrapDetail.Rows.Count + this.OnRoadProduction.Rows.Count + this.Outstanding.Rows.Count));
+            this.SetCount(this.Summary.Rows.Count);
 
             this.ShowWaitMessage("Starting EXCEL...");
 
@@ -2599,80 +2711,43 @@ drop table  #tmpContract
                 this.HideLoadingText();
                 this.listTask = new List<ExcelStatus>();
 
-                if (this.OnRoadMaterial.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_OnRoadMaterial.xltx", this.OnRoadMaterial, "On Road Material", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_OnRoadMaterial.xltx", DetailExcel.OnRoadMaterial, "On Road Material", ftys));
 
-                if (this.WHDetail.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_WHQtyDetail.xltx", this.WHDetail, "WHouse Qty Detail", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_WHQtyDetail.xltx", DetailExcel.WHDetail, "WHouse Qty Detail", ftys));
 
-                if (this.WIPDetail.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_WIPQtyDetail.xltx", this.WIPDetail, "WIP Qty Detail", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_WIPQtyDetail.xltx", DetailExcel.WIPDetail, "WIP Qty Detail", ftys));
 
-                if (this.ProdDetail.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_ProdQtyDetail.xltx", this.ProdDetail, "Prod. Qty Detail", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_ProdQtyDetail.xltx", DetailExcel.ProdDetail, "Prod. Qty Detail", ftys));
 
-                if (this.ScrapDetail.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_ScrapQtyDetail.xltx", this.ScrapDetail, "Scrap Qty Detail", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_ScrapQtyDetail.xltx", DetailExcel.ScrapDetail, "Scrap Qty Detail", ftys));
 
-                if (this.OnRoadProduction.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_OnRoadProduction.xltx", this.OnRoadProduction, "On Road Production", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_OnRoadProduction.xltx", DetailExcel.OnRoadProduction, "On Road Production", ftys));
 
-                if (this.Outstanding.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_OutStanding.xltx", this.Outstanding, "OutStanding", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_OutStanding.xltx", DetailExcel.Outstanding, "OutStanding", ftys));
 
-                if (this.WarehouseNotClose.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_WHNotClose.xltx", this.WarehouseNotClose, "Warehouse Not Close", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_WHNotClose.xltx", DetailExcel.WarehouseNotClose, "Warehouse Not Close", ftys));
 
-                if (this.WIPSewingOutputList.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_WIPSewingOutputList.xltx", this.WIPSewingOutputList, "WIP Sewing Output List", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_WIPSewingOutputList.xltx", DetailExcel.WIPSewingOutputList, "WIP Sewing Output List", ftys));
 
-                if (this.WIPSewingOutputConsumption.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_WIPSewingOutputCustomSPandConsumption.xltx", this.WIPSewingOutputConsumption, "WIP Sewing Output Consumption", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_WIPSewingOutputCustomSPandConsumption.xltx", DetailExcel.WIPSewingOutputConsumption, "WIP Sewing Output Consumption", ftys));
 
-                if (this.AlreadySewingOutput.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_AlreadySewingOutput.xltx", this.AlreadySewingOutput, "Already SewingOutput", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_AlreadySewingOutput.xltx", DetailExcel.AlreadySewingOutput, "Already SewingOutput", ftys));
 
-                if (this.ProdStockList.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_ProdStockList.xltx", this.ProdStockList, "Prod. Stock List", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_ProdStockList.xltx", DetailExcel.ProdStockList, "Prod. Stock List", ftys));
 
-                if (this.ProdStockListConsumption.Rows.Count > 0)
-                {
-                    this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_ProdStockConsumption.xltx", this.ProdStockListConsumption, "Prod. Stock Consumption", ftys));
-                }
+                this.listTask.Add(this.CreateExcelStatusTask("Shipping_R40_ProdStockConsumption.xltx", DetailExcel.ProdStockListConsumption, "Prod. Stock Consumption", ftys));
 
                 Thread.Sleep(200);
-                this.RefreshGridExcelStatus();
-                Task.WhenAll(this.listTask.Select(s => s.CreateExcelTask))
+                this.gridExcelStatus.DataSource = this.listTask.Select(s => new { s.ExcelName, s.Status }).ToList();
+                this.gridExcelStatus.AutoResizeColumns();
+                Task.WhenAll(this.listTask.Select(s => s.ExcelTask))
                     .ContinueWith(
                         s =>
-                        {
-                            this.HideWaitMessage();
-                            this.RefreshGridExcelStatus();
-                        }, TaskScheduler.FromCurrentSynchronizationContext());
+                    {
+                        this.connQueryData.Close();
+                        this.HideWaitMessage();
+                    },
+                        TaskScheduler.FromCurrentSynchronizationContext());
             }
             else
             {
@@ -2686,7 +2761,6 @@ drop table  #tmpContract
                 Excel.Worksheet worksheetSummary = excelSummary.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 worksheetSummary.Cells[1, 1] = "Summary-" + this.contract + "(" + ftys + ")";
                 this.SaveExcelwithName(excelSummary, "Summary");
-                this.HideLoadingText();
                 this.HideWaitMessage();
             }
 
@@ -2696,82 +2770,96 @@ drop table  #tmpContract
             return true;
         }
 
-        private void CreateExcel(string filename, DataTable dt, string strExcelMsg, string ftys)
+        private void CreateExcel(string filename, DetailExcel detailExcel, string strExcelMsg, string ftys)
         {
-            int excelMaxRow = 1000000;
-            DataTable tmpDatas = new DataTable();
-            int eachCopy = 10000;
-            int loadCounts = 0;
-            int loadCounts2 = 0;
-            int sheet = 1;
+            this.InvokeRefreshGridExcelStatus(strExcelMsg, "Running");
+            int excelMaxRow = 500000;
+            DataTable dt = new DataTable();
+            DataTable dtCnt = new DataTable();
 
-            if (dt.Rows.Count > excelMaxRow)
+            DualResult result;
+            lock (this.connQueryData)
+            {
+                result = DBProxy.Current.SelectByConn(this.connQueryData, this.GetDetailDataSql(detailExcel, true), out dtCnt);
+            }
+
+            if (!result)
+            {
+                this.InvokeRefreshGridExcelStatus(strExcelMsg, result.GetException().ToString());
+                return;
+            }
+
+            int rowCnt = MyUtility.Convert.GetInt(dtCnt.Rows[0]["Cnt"]);
+
+            if (rowCnt == 0)
+            {
+                this.InvokeRefreshGridExcelStatus(strExcelMsg, "No Data Found");
+                return;
+            }
+
+            if (rowCnt > excelMaxRow)
             {
                 Excel.Application excel = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
 
                 excel.DisplayAlerts = false;
-                tmpDatas = dt.Clone();
                 Utility.Report.ExcelCOM comDetail = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excel);
-                Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[1];
-                Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[2];
-                worksheet1.Copy(worksheetn);
 
-                foreach (DataRow dr in dt.Rows)
+                int sheetCnt = (rowCnt / excelMaxRow) + 1;
+
+                for (int i = 0; i < sheetCnt; i++)
                 {
-                    tmpDatas.ImportRow(dr);
-                    loadCounts++;
-                    loadCounts2++;
+                    int startRow = (i * excelMaxRow) + 1;
+                    int endRow = (i + 1) * excelMaxRow;
 
-                    // 每一萬筆資料匯進到Excel
-                    if (loadCounts % eachCopy == 0)
+                    lock (this.connQueryData)
                     {
-                        // 將datatable copy to excel
-                        ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[sheet]).Select();
-                        comDetail.WriteTable(tmpDatas, 1 + loadCounts2 - (eachCopy - 1));
-                        this.DataTableClearAll(tmpDatas);
-                        tmpDatas = dt.Clone();
-
-                        if (loadCounts % excelMaxRow == 0)
-                        {
-                            Microsoft.Office.Interop.Excel.Worksheet worksheetA = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[sheet + 1];
-                            Microsoft.Office.Interop.Excel.Worksheet worksheetB = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[sheet + 2];
-                            worksheetA.Copy(worksheetB);
-                            sheet++;
-                            loadCounts2 = 0;
-                        }
+                        result = DBProxy.Current.SelectByConn(this.connQueryData, this.GetDetailDataSql(detailExcel, false, startRow, endRow), out dt);
                     }
+
+                    if (!result)
+                    {
+                        this.InvokeRefreshGridExcelStatus(strExcelMsg, result.GetException().ToString());
+                        return;
+                    }
+
+                    Microsoft.Office.Interop.Excel.Worksheet worksheetA = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1];
+                    Microsoft.Office.Interop.Excel.Worksheet worksheetB = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 2];
+                    worksheetA.Copy(worksheetB);
+                    ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[i + 1]).Select();
+                    dt.Columns.RemoveAt(0);
+                    comDetail.WriteTable(dt, 3);
+                    this.DataTableClearAll(dt);
                 }
 
-                if (loadCounts > 0)
-                {
-                    ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[sheet]).Select();
-                    comDetail.WriteTable(tmpDatas, 1 + loadCounts2 - (loadCounts2 % eachCopy) + 1);
-                    this.DataTableClearAll(tmpDatas);
-                }
-
-                for (int i = 1; i <= sheet; i++)
-                {
-                    excel.Sheets[i].Cells[1, 1] = $"{strExcelMsg}-" + this.contract + "(" + ftys + ")";
-                }
-
-                ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[sheet + 1]).Delete();
+                ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[sheetCnt + 1]).Delete();
                 ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[1]).Select();
                 this.SaveExcelwithName(excel, strExcelMsg);
             }
             else
             {
+                lock (this.connQueryData)
+                {
+                    result = DBProxy.Current.SelectByConn(this.connQueryData, this.GetDetailDataSql(detailExcel, false), out dt);
+                }
+
+                if (!result)
+                {
+                    this.InvokeRefreshGridExcelStatus(strExcelMsg, result.GetException().ToString());
+                    return;
+                }
+
                 Excel.Application excelDetail = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
                 Utility.Report.ExcelCOM comDetail = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelDetail);
                 comDetail.ColumnsAutoFit = true;
+                dt.Columns.RemoveAt(0);
                 comDetail.WriteTable(dt, 3);
-
+                this.DataTableClearAll(dt);
                 Excel.Worksheet worksheetScrapDetail = excelDetail.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 worksheetScrapDetail.Cells[1, 1] = $"{strExcelMsg}-" + this.contract + "(" + ftys + ")";
                 this.SaveExcelwithName(excelDetail, strExcelMsg);
             }
 
-            this.DataTableClearAll(dt);
-            this.RefreshGridExcelStatus();
+            this.InvokeRefreshGridExcelStatus(strExcelMsg, "Complete");
         }
 
         private void DataTableClearAll(DataTable target)
