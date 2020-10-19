@@ -32,7 +32,7 @@ namespace Sci.Production.Automation
             string suppAPIThread = "api/GensongFinishingProcesses/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
-            string tableName = actionType == "Orders_Delete" ? "Orders_Delete" : "Orders";
+            string tableName = actionType == "Delete" ? "Order_Delete" : "Orders";
 
             Dictionary<string, object> dataTable = new Dictionary<string, object>();
 

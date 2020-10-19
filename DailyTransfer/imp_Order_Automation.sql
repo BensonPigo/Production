@@ -92,7 +92,10 @@ else
 
 		if(@orderList is not null and @orderList <> '')
 		begin
-			exec dbo.SentOrdersToFinishingProcesses @orderList,'Order_Delete'
+			----若OrderID不存在資料表，才能使用Order_Delete
+			----exec dbo.SentOrdersToFinishingProcesses @orderList,'Order_Delete'
+
+			exec dbo.SentOrdersToFinishingProcesses @orderList,'Orders,Order_QtyShip,Order_SizeCode,Order_Qty'
 		end
 
 		drop table #tmpDeleteOrder
@@ -138,6 +141,8 @@ else
 										and 
 										not exists (select 1 from #tmpDeleteOrder_Gensong t where t.OrderID = Orders.ID)
 								FOR XML PATH('')),1,1,'') 
+
+		----必須更新的訂單
 		if(@orderList is not null and @orderList <> '')
 		begin
 			exec dbo.SentOrdersToFinishingProcesses_Gensong @orderList,'Orders,Order_QtyShip'
@@ -145,10 +150,13 @@ else
 		
 
 		SELECT @orderList =  Stuff((select concat( ',',OrderId) from #tmpDeleteOrder_Gensong FOR XML PATH('')),1,1,'') 
-
+		----必須刪除的訂單
 		if(@orderList is not null and @orderList <> '')
 		begin
-			exec dbo.SentOrdersToFinishingProcesses_Gensong @orderList,'Order_Delete'
+			----若OrderID不存在資料表，才能使用Order_Delete
+			----exec dbo.SentOrdersToFinishingProcesses_Gensong @orderList,'Order_Delete'
+
+			exec dbo.SentOrdersToFinishingProcesses_Gensong @orderList,'Orders,Order_QtyShip'
 		end
 
 		drop table #tmpDeleteOrder_Gensong
